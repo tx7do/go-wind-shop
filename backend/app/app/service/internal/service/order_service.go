@@ -55,6 +55,10 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 		return nil, err
 	}
 
+	// 强制覆盖为当前登录用户，防止客户端伪造 userId/tenantId 越权
+	// 下单他人购物车或将订单挂到他人名下。
+	req.Data.UserId = trans.Ptr(operator.GetUserId())
+	req.Data.TenantId = trans.Ptr(operator.GetTenantId())
 	req.Data.CreatedBy = trans.Ptr(operator.UserId)
 
 	return s.orderServiceClient.Create(ctx, req)

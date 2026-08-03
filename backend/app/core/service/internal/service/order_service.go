@@ -18,6 +18,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/cart"
 	"go-wind-shop/app/core/service/internal/data/ent/cartitem"
 	"go-wind-shop/app/core/service/internal/data/ent/order"
+	"go-wind-shop/app/core/service/internal/data/ent/orderitem"
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 
@@ -72,7 +73,17 @@ func (s *OrderService) List(ctx context.Context, req *paginationV1.PagingRequest
 }
 
 func (s *OrderService) Get(ctx context.Context, req *orderV1.GetOrderRequest) (*orderV1.Order, error) {
-	return s.orderRepo.Get(ctx, req)
+	orderEnt, err := s.orderRepo.Get(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	// 越权校验：普通用户只能查自己的订单。系统/平台视图（如 asynq 超时任务）放行。
+	viewerUid, ok := viewerUserIDFromContext(ctx)
+	if ok && orderEnt.GetUserId() != viewerUid {
+		s.log.Warnf("user [%d] attempted to access order [%d] belonging to user [%d]", viewerUid, orderEnt.GetId(), orderEnt.GetUserId())
+		return nil, orderV1.ErrorForbidden("order not found")
+	}
+	return orderEnt, nil
 }
 
 // Update 通用更新。
@@ -251,7 +262,7 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 			return nil, err
 		}
 		unitPrice, parseErr := strconv.ParseInt(*priceEnt.Amount, 10, 64)
-		if parseErr != nil || unitPrice < 0 {
+		if parseErr != nil || unitPrice <= 0 {
 			s.log.Warnf("invalid price [%s] for sku [%d] currency [%s]: %v", *priceEnt.Amount, *skuId, currency, parseErr)
 			err = orderV1.ErrorBadRequest("sku [%d] has invalid price", *skuId)
 			return nil, err
@@ -400,10 +411,30 @@ func (s *OrderService) ExpireOrderByTimeout(ctx context.Context, req *orderV1.Ex
 		return &orderV1.ExpireOrderByTimeoutResponse{Expired: boolPtr(false)}, nil
 	}
 
-	// 释放库存：查询该订单的所有 OrderItem，将对应 SKU 的 stock_qty 加回。
-	items, err := s.orderItemRepo.ListByOrderId(ctx, orderId)
+	// 释放库存 + 状态推进 CANCELLED 在同一 ent 事务内完成，保证原子性。
+	// 任一步失败整事务回滚，避免库存已加回但订单未取消（或反之）的不一致。
+	tx, err := s.entClient.Client().Tx(ctx)
+	if err != nil {
+		s.log.Errorf("begin expire tx failed for order [%d]: %v", orderId, err)
+		return nil, fmt.Errorf("begin expire tx failed: %w", err)
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+
+	items, qErr := tx.OrderItem.Query().
+		Where(orderitem.OrderIDEQ(orderId)).
+		All(ctx)
+	if qErr != nil {
+		s.log.Errorf("list order [%d] items for stock release failed: %v", orderId, qErr)
+		err = qErr
+		return nil, fmt.Errorf("list order items failed: %w", qErr)
+	}
 	if err != nil {
 		s.log.Errorf("list order [%d] items for stock release failed: %v", orderId, err)
+		_ = tx.Rollback()
 		return nil, fmt.Errorf("list order items failed: %w", err)
 	}
 
@@ -416,31 +447,48 @@ func (s *OrderService) ExpireOrderByTimeout(ctx context.Context, req *orderV1.Ex
 		if qty == nil || *qty <= 0 {
 			continue
 		}
-		if rErr := s.skuRepo.AddStock(ctx, *skuId, *qty); rErr != nil {
+		// 释放库存（事务内）。
+		if rErr := tx.Sku.UpdateOneID(*skuId).
+			AddStockQty(*qty).
+			Exec(ctx); rErr != nil {
 			s.log.Errorf("release stock for sku [%d] during order [%d] expire failed: %v", *skuId, orderId, rErr)
-			// 释放失败不阻塞过期（订单状态仍推进 CANCELLED），库存差异由对账补偿。
+			_ = tx.Rollback()
+			return nil, fmt.Errorf("release stock for sku [%d] failed: %w", *skuId, rErr)
 		}
 	}
 
-	// 状态推进 PENDING_PAYMENT→CANCELLED（带前置条件，防并发覆盖）。
-	cancelled := orderV1.Order_CANCELLED
-	err = s.orderRepo.Update(ctx, &orderV1.UpdateOrderRequest{
-		Id: orderId,
-		Data: &orderV1.Order{
-			Status: &cancelled,
-		},
-		ExpectedStatus: []orderV1.Order_Status{orderV1.Order_PENDING_PAYMENT},
-	})
-	if err != nil {
-		if orderV1.IsConflict(err) {
+	// 状态推进 PENDING_PAYMENT→CANCELLED（事务内，batch Update + expected_status selector，
+	// 与 orderRepo.Update 同模式）。
+	// 目标状态 CANCELLED；expected_status 前置条件 = 当前须为 PENDING_PAYMENT。
+	cancelledEnt := order.StatusOrderStatusCancelled
+	pendingEnt := order.StatusOrderStatusPendingPayment
+	uErr := tx.Order.Update().
+		SetNillableStatus(&cancelledEnt).
+		SetUpdatedAt(time.Now()).
+		Where(
+			order.IDEQ(orderId),
+			order.StatusIn(pendingEnt),
+		).
+		Exec(ctx)
+	if uErr != nil {
+		err = uErr
+		_ = tx.Rollback()
+		// NotFound = 状态已被并发推进（expected_status 前置条件未满足），跳过。
+		if ent.IsNotFound(uErr) {
 			s.log.Infow(
 				"msg", "expire order skipped: status changed concurrently",
 				"order_id", orderId,
 			)
 			return &orderV1.ExpireOrderByTimeoutResponse{Expired: boolPtr(false)}, nil
 		}
-		return nil, fmt.Errorf("expire order [%d] failed: %w", orderId, err)
+		return nil, fmt.Errorf("expire order [%d] failed: %w", orderId, uErr)
 	}
+
+	if cErr := tx.Commit(); cErr != nil {
+		s.log.Errorf("commit expire tx failed for order [%d]: %v", orderId, cErr)
+		return nil, fmt.Errorf("commit expire tx failed: %w", cErr)
+	}
+	err = nil
 
 	s.log.Infow(
 		"msg", "order expired due to timeout",

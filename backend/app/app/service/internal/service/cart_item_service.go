@@ -55,6 +55,8 @@ func (s *CartItemService) Create(ctx context.Context, req *cartV1.CreateCartItem
 		return nil, err
 	}
 
+	// 强制覆盖 tenantId 为当前登录用户的租户，防伪造越权。
+	req.Data.TenantId = trans.Ptr(operator.GetTenantId())
 	req.Data.CreatedBy = trans.Ptr(operator.UserId)
 
 	return s.cartItemServiceClient.Create(ctx, req)
@@ -67,6 +69,8 @@ func (s *CartItemService) BatchCreate(ctx context.Context, req *cartV1.BatchCrea
 	}
 
 	for i := range req.Items {
+		// 同 Create，强制覆盖 tenantId。
+		req.Items[i].TenantId = trans.Ptr(operator.GetTenantId())
 		req.Items[i].CreatedBy = trans.Ptr(operator.UserId)
 	}
 
