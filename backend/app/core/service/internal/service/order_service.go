@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -19,6 +19,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/cartitem"
 	"go-wind-shop/app/core/service/internal/data/ent/order"
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
+	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
 
@@ -234,10 +235,36 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 			return nil, err
 		}
 
+		// 2b-1. 查询该 SKU 在结算币下的价格行（SkuPrice，sku_id + currency 唯一）。
+		//       订单按固定结算币（req.Data.currency，由 Currency mixin 注入，默认 CNY）结算。
+		//       无价格行或金额非法 → 不可售，整事务回滚。
+		currency := req.Data.GetCurrency()
+		priceEnt, priceErr := tx.SkuPrice.Query().
+			Where(
+				skuprice.SkuIDEQ(*skuId),
+				skuprice.CurrencyEQ(currency),
+			).
+			Only(ctx)
+		if priceErr != nil || priceEnt == nil || priceEnt.Amount == nil || *priceEnt.Amount == "" {
+			s.log.Warnf("no price row for sku [%d] currency [%s]: %v", *skuId, currency, priceErr)
+			err = orderV1.ErrorBadRequest("sku [%d] has no price for settlement currency", *skuId)
+			return nil, err
+		}
+		unitPrice, parseErr := strconv.ParseInt(*priceEnt.Amount, 10, 64)
+		if parseErr != nil || unitPrice < 0 {
+			s.log.Warnf("invalid price [%s] for sku [%d] currency [%s]: %v", *priceEnt.Amount, *skuId, currency, parseErr)
+			err = orderV1.ErrorBadRequest("sku [%d] has invalid price", *skuId)
+			return nil, err
+		}
+		subtotal := unitPrice * int64(qty)
+		totalAmount += subtotal
+
 		// 2b. 构造 SKU 快照 JSON（下单时名称/价格/属性固化，便于售后与展示）。
 		snapshot := map[string]any{
 			"sku_id":   *skuId,
 			"quantity": qty,
+			"currency": currency,
+			"unit_price": unitPrice,
 		}
 		snapshotJSON, mErr := json.Marshal(snapshot)
 		if mErr != nil {
@@ -245,10 +272,6 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 			err = orderV1.ErrorInternalServerError("create order failed")
 			return nil, err
 		}
-
-		unitPrice := int64(0) // MVP：价格取自 SKU 的固定结算币行（此处简化为 0，后续接入 SkuPrice 读取）
-		subtotal := unitPrice * int64(qty)
-		totalAmount += subtotal
 
 		// 2c. 插入 OrderItem。
 		if oErr := tx.OrderItem.Create().
@@ -454,6 +477,3 @@ func (s *OrderService) HandleOrderTimeout(taskType string, taskData *task.OrderT
 }
 
 func boolPtr(v bool) *bool { return &v }
-
-// 静默引用以避免未使用 import 报错（errors 在未来退款路径中使用）。
-var _ = errors.New
