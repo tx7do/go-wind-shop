@@ -40,6 +40,17 @@
     "loginPolicy": "Login Policy",
     "language": "Language Management"
   },
+  "mall": {
+    "moduleName": "Catalog Management",
+    "category": "Category Management",
+    "brand": "Brand Management",
+    "product": "Product Management",
+    "productAttribute": "Attribute Management",
+    "productAttributeValue": "Attribute Value Management",
+    "sku": "SKU Management",
+    "order": "Order Management",
+    "paymentTransaction": "Payment Transaction"
+  },
   "tenant": {
     "moduleName": "Tenant Management",
     "member": "Tenant Member"

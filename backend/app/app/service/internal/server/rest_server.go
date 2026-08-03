@@ -38,6 +38,23 @@ func NewRestMiddleware(
 	// add white list for authentication.
 	rpc.AddWhiteList(
 		appV1.OperationAuthenticationServiceLogin,
+
+		appV1.OperationCategoryServiceList,
+		appV1.OperationCategoryServiceGet,
+		appV1.OperationBrandServiceList,
+		appV1.OperationBrandServiceGet,
+		appV1.OperationProductServiceList,
+		appV1.OperationProductServiceGet,
+		appV1.OperationProductAttributeServiceList,
+		appV1.OperationProductAttributeServiceGet,
+		appV1.OperationProductAttributeValueServiceList,
+		appV1.OperationProductAttributeValueServiceGet,
+		appV1.OperationSkuServiceList,
+		appV1.OperationSkuServiceGet,
+		appV1.OperationSkuPriceServiceList,
+		appV1.OperationSkuPriceServiceGet,
+		appV1.OperationSkuAttributeCombinationServiceList,
+		appV1.OperationSkuAttributeCombinationServiceGet,
 	)
 
 	ms = append(ms, applogging.Server(
@@ -70,6 +87,22 @@ func NewRestServer(
 	authenticationService *service.AuthenticationService,
 	fileTransferService *service.FileTransferService,
 	userProfileService *service.UserProfileService,
+
+	categoryService *service.CategoryService,
+	brandService *service.BrandService,
+	productService *service.ProductService,
+	productAttributeService *service.ProductAttributeService,
+	productAttributeValueService *service.ProductAttributeValueService,
+	skuService *service.SkuService,
+	skuPriceService *service.SkuPriceService,
+	skuAttributeCombinationService *service.SkuAttributeCombinationService,
+
+	cartService *service.CartService,
+	cartItemService *service.CartItemService,
+	orderService *service.OrderService,
+	orderItemService *service.OrderItemService,
+	paymentTransactionService *service.PaymentTransactionService,
+	paymentRefundService *service.PaymentRefundService,
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -85,6 +118,22 @@ func NewRestServer(
 	appV1.RegisterAuthenticationServiceHTTPServer(srv, authenticationService)
 	appV1.RegisterFileTransferServiceHTTPServer(srv, fileTransferService)
 	appV1.RegisterUserProfileServiceHTTPServer(srv, userProfileService)
+
+	appV1.RegisterCategoryServiceHTTPServer(srv, categoryService)
+	appV1.RegisterBrandServiceHTTPServer(srv, brandService)
+	appV1.RegisterProductServiceHTTPServer(srv, productService)
+	appV1.RegisterProductAttributeServiceHTTPServer(srv, productAttributeService)
+	appV1.RegisterProductAttributeValueServiceHTTPServer(srv, productAttributeValueService)
+	appV1.RegisterSkuServiceHTTPServer(srv, skuService)
+	appV1.RegisterSkuPriceServiceHTTPServer(srv, skuPriceService)
+	appV1.RegisterSkuAttributeCombinationServiceHTTPServer(srv, skuAttributeCombinationService)
+
+	appV1.RegisterCartServiceHTTPServer(srv, cartService)
+	appV1.RegisterCartItemServiceHTTPServer(srv, cartItemService)
+	appV1.RegisterOrderServiceHTTPServer(srv, orderService)
+	appV1.RegisterOrderItemServiceHTTPServer(srv, orderItemService)
+	appV1.RegisterPaymentTransactionServiceHTTPServer(srv, paymentTransactionService)
+	appV1.RegisterPaymentRefundServiceHTTPServer(srv, paymentRefundService)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

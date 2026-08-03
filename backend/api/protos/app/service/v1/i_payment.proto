@@ -1,0 +1,91 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "payment/service/v1/payment.proto";
+
+// 支付流水前台服务
+service PaymentTransactionService {
+  rpc List (pagination.PagingRequest) returns (payment.service.v1.ListPaymentTransactionResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/payment-transactions"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (payment.service.v1.CountPaymentTransactionResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/payment-transactions/count"
+    };
+  }
+
+  rpc Get (payment.service.v1.GetPaymentTransactionRequest) returns (payment.service.v1.PaymentTransaction) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/payment-transactions/{id}"
+    };
+  }
+
+  rpc Create (payment.service.v1.CreatePaymentTransactionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/payment-transactions"
+      body: "*"
+    };
+  }
+
+  rpc Update (payment.service.v1.UpdatePaymentTransactionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/app/v1/mall/payment-transactions/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (payment.service.v1.DeletePaymentTransactionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/app/v1/mall/payment-transactions"
+    };
+  }
+}
+
+// 支付退款前台服务
+service PaymentRefundService {
+  rpc List (pagination.PagingRequest) returns (payment.service.v1.ListPaymentRefundResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/payment-refunds"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (payment.service.v1.CountPaymentRefundResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/payment-refunds/count"
+    };
+  }
+
+  rpc Get (payment.service.v1.GetPaymentRefundRequest) returns (payment.service.v1.PaymentRefund) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/payment-refunds/{id}"
+    };
+  }
+
+  rpc Create (payment.service.v1.CreatePaymentRefundRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/payment-refunds"
+      body: "*"
+    };
+  }
+
+  rpc Update (payment.service.v1.UpdatePaymentRefundRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/app/v1/mall/payment-refunds/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (payment.service.v1.DeletePaymentRefundRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/app/v1/mall/payment-refunds"
+    };
+  }
+}

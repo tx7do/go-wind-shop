@@ -1,0 +1,133 @@
+{
+  "moduleName": "Catalog Management",
+  "category": {
+    "moduleName": "Category Management",
+    "name": "Category Name",
+    "slug": "Category Slug",
+    "description": "Category Description",
+    "fullPath": "Full Path",
+    "sortOrder": "Sort Order",
+    "parent": "Parent Category",
+    "createdAt": "Created At",
+    "button": {
+      "create": "Create Category",
+      "update": "Edit Category"
+    }
+  },
+  "brand": {
+    "moduleName": "Brand Management",
+    "name": "Brand Name",
+    "slug": "Brand Slug",
+    "description": "Brand Description",
+    "logoUrl": "Brand Logo URL",
+    "sortOrder": "Sort Order",
+    "createdAt": "Created At",
+    "button": {
+      "create": "Create Brand",
+      "update": "Edit Brand"
+    }
+  },
+  "product": {
+    "moduleName": "Product Management",
+    "name": "Product Name",
+    "slug": "Product Slug",
+    "shortDescription": "Short Description",
+    "longDescription": "Long Description",
+    "status": "Product Status",
+    "category": "Category",
+    "brand": "Brand",
+    "sortOrder": "Sort Order",
+    "createdAt": "Created At",
+    "button": {
+      "create": "Create Product",
+      "update": "Edit Product"
+    }
+  },
+  "productAttribute": {
+    "moduleName": "Attribute Management",
+    "name": "Attribute Name",
+    "sortOrder": "Sort Order",
+    "createdAt": "Created At",
+    "button": {
+      "create": "Create Attribute",
+      "update": "Edit Attribute"
+    }
+  },
+  "productAttributeValue": {
+    "moduleName": "Attribute Value Management",
+    "displayName": "Attribute Value Name",
+    "sortOrder": "Sort Order",
+    "createdAt": "Created At",
+    "button": {
+      "create": "Create Attribute Value",
+      "update": "Edit Attribute Value"
+    }
+  },
+  "sku": {
+    "moduleName": "SKU Management",
+    "skuCode": "SKU Code",
+    "stockQty": "Stock Quantity",
+    "productId": "Product",
+    "createdAt": "Created At",
+    "button": {
+      "create": "Create SKU",
+      "update": "Edit SKU"
+    }
+  },
+  "order": {
+    "moduleName": "Order Management",
+    "title": "Order Management",
+    "detailTitle": "Order Detail",
+    "orderItemsTitle": "Order Item Details",
+    "id": "Order ID",
+    "userId": "User ID",
+    "totalAmount": "Total Amount",
+    "currency": "Currency",
+    "status": "Order Status",
+    "recipientName": "Recipient Name",
+    "recipientPhone": "Recipient Phone",
+    "shippingAddress": "Shipping Address",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At",
+    "statusTransition": "Status Action",
+    "fulfill": "Fulfill",
+    "close": "Close Order",
+    "orderItems": {
+      "id": "Order Item ID",
+      "skuId": "SKU ID",
+      "quantity": "Quantity",
+      "unitPrice": "Unit Price",
+      "subtotal": "Subtotal",
+      "skuSnapshot": "SKU Snapshot",
+      "createdAt": "Created At"
+    },
+    "statusLabel": {
+      "STATUS_UNSPECIFIED": "Unknown",
+      "PENDING_PAYMENT": "Pending Payment",
+      "PAID": "Paid",
+      "CANCELLED": "Cancelled",
+      "FULFILLED": "Fulfilled",
+      "CLOSED": "Closed"
+    }
+  },
+  "paymentTransaction": {
+    "moduleName": "Payment Transaction",
+    "title": "Payment Transaction Monitor",
+    "id": "Transaction ID",
+    "orderId": "Order ID",
+    "userId": "User ID",
+    "amount": "Amount",
+    "currency": "Currency",
+    "status": "Payment Status",
+    "paymentMethod": "Payment Method",
+    "businessType": "Business Type",
+    "createdAt": "Created At",
+    "statusLabel": {
+      "STATUS_UNSPECIFIED": "Unknown",
+      "PENDING": "Pending",
+      "SUCCEEDED": "Succeeded",
+      "FAILED": "Failed",
+      "REFUNDED": "Refunded"
+    }
+  }
+}

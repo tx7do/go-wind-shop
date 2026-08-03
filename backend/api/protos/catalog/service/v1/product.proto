@@ -1,0 +1,288 @@
+syntax = "proto3";
+
+package catalog.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 商品服务
+service ProductService {
+  // 分页查询商品列表
+  rpc List (pagination.PagingRequest) returns (ListProductResponse) {}
+
+  // 统计商品数量
+  rpc Count (pagination.PagingRequest) returns (CountProductResponse) {}
+
+  // 查询商品详情
+  rpc Get (GetProductRequest) returns (Product) {}
+
+  // 创建商品
+  rpc Create (CreateProductRequest) returns (google.protobuf.Empty) {}
+  // 批量创建商品
+  rpc BatchCreate (BatchCreateProductsRequest) returns (google.protobuf.Empty) {}
+
+  // 更新商品
+  rpc Update (UpdateProductRequest) returns (google.protobuf.Empty) {}
+
+  // 删除商品
+  rpc Delete (DeleteProductRequest) returns (google.protobuf.Empty) {}
+
+  // 检查翻译是否存在
+  rpc TranslationExists (ProductTranslationExistsRequest) returns (ProductTranslationExistsResponse) {}
+  // 获取翻译数据
+  rpc GetTranslation (GetProductRequest) returns (ProductTranslation) {}
+  // 创建翻译
+  rpc CreateTranslation (CreateProductTranslationRequest) returns (ProductTranslation) {}
+  // 更新翻译
+  rpc UpdateTranslation (UpdateProductTranslationRequest) returns (ProductTranslation) {}
+  // 删除翻译
+  rpc DeleteTranslation (DeleteProductTranslationRequest) returns (google.protobuf.Empty) {}
+}
+
+// 商品
+message Product {
+  // 商品状态
+  enum ProductStatus {
+    PRODUCT_STATUS_UNSPECIFIED = 0;
+    PRODUCT_STATUS_DRAFT = 1;     // 草稿（不可售卖、前台不可见）
+    PRODUCT_STATUS_ACTIVE = 2;    // 上架（前台可见、可购买）
+    PRODUCT_STATUS_INACTIVE = 3;  // 下架（前台不可见，保留数据）
+  }
+
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "商品ID"}
+  ]; // 商品ID
+
+  optional ProductStatus status = 2 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "商品状态"}
+  ]; // 商品状态（草稿/上架/下架）
+
+  optional uint32 category_id = 3 [
+    json_name = "categoryId",
+    (gnostic.openapi.v3.property) = {description: "所属类目ID"}
+  ]; // 所属类目ID
+
+  optional uint32 brand_id = 4 [
+    json_name = "brandId",
+    (gnostic.openapi.v3.property) = {description: "所属品牌ID"}
+  ]; // 所属品牌ID
+
+  optional uint32 sort_order = 5 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {description: "排序优先级"}
+  ]; // 排序优先级
+
+  repeated ProductTranslation translations = 20 [
+    json_name = "translations",
+    (gnostic.openapi.v3.property) = {description: "多语言翻译列表"}
+  ];
+
+  repeated string available_languages = 21 [
+    json_name = "availableLanguages",
+    (gnostic.openapi.v3.property) = {
+      description: "可用的语言代码列表",
+      example: {yaml: '["zh-CN", "en-US"]'}
+    }
+  ];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 商品翻译
+message ProductTranslation {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "翻译记录ID"}
+  ]; // 翻译记录ID
+
+  optional uint32 product_id = 2 [
+    json_name = "productId",
+    (gnostic.openapi.v3.property) = {description: "关联的商品ID"}
+  ]; // 关联的商品ID
+
+  optional string language_code = 3 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {description: "语言代码"}
+  ]; // 语言代码
+
+  optional string name = 10 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "商品名称"}
+  ]; // 商品名称
+
+  optional string slug = 11 [
+    json_name = "slug",
+    (gnostic.openapi.v3.property) = {description: "商品别名"}
+  ]; // 商品别名
+
+  optional string short_description = 12 [
+    json_name = "shortDescription",
+    (gnostic.openapi.v3.property) = {description: "商品简短描述"}
+  ]; // 商品简短描述
+
+  optional string long_description = 13 [
+    json_name = "longDescription",
+    (gnostic.openapi.v3.property) = {description: "商品长描述（HTML）"}
+  ]; // 商品长描述
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 商品列表 - 答复
+message ListProductResponse {
+  repeated Product items = 1;
+  uint64 total = 2;
+}
+
+// 商品数据 - 请求
+message GetProductRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+
+    string code = 2 [
+      (gnostic.openapi.v3.property) = {description: "唯一代码（如 slug 或其他唯一标识符，优先级高于 ID）", read_only: true},
+      json_name = "code"
+    ]; // 唯一代码
+  }
+
+  optional string locale = 10 [
+    json_name = "locale",
+    (gnostic.openapi.v3.property) = {description: "语言代码，用于指定返回哪个语言版本的数据"}
+  ]; // 语言代码
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器
+}
+
+// 创建商品 - 请求
+message CreateProductRequest {
+  Product data = 1;
+}
+
+// 更新商品 - 请求
+message UpdateProductRequest {
+  uint32 id = 1;
+
+  Product data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 允许缺失则插入
+}
+
+// 删除商品 - 请求
+message DeleteProductRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+message BatchCreateProductsRequest {
+  repeated Product items = 1;
+}
+message BatchCreateProductsResponse {
+  repeated int32 created_ids = 1 [
+    json_name = "createdIds",
+    (gnostic.openapi.v3.property) = {
+      description: "创建成功的商品ID列表"
+    }
+  ]; // 创建成功的商品ID列表
+}
+
+message CountProductResponse {
+  uint64 count = 1;
+}
+
+// ============ 翻译相关请求 ============
+
+message ProductTranslationExistsRequest {
+  uint32 product_id = 1 [
+    json_name = "productId",
+    (gnostic.openapi.v3.property) = {description: "商品ID"}
+  ];
+  string language_code = 2 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {description: "语言代码"}
+  ];
+}
+
+message ProductTranslationExistsResponse {
+  bool exists = 1 [
+    json_name = "exists",
+    (gnostic.openapi.v3.property) = {description: "是否存在"}
+  ];
+}
+
+message CreateProductTranslationRequest {
+  ProductTranslation data = 1;
+}
+
+message UpdateProductTranslationRequest {
+  uint32 id = 1;
+  ProductTranslation data = 2;
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ];
+}
+
+message DeleteProductTranslationRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "翻译记录ID", read_only: true},
+      json_name = "id"
+    ];
+
+    ProductTranslationIdentifier identifier = 2 [
+      (gnostic.openapi.v3.property) = {description: "商品ID与语言代码复合标识"}
+    ];
+  }
+}
+
+message ProductTranslationIdentifier {
+  uint32 product_id = 1 [json_name = "productId", (gnostic.openapi.v3.property) = {description: "商品ID"}];
+  string language_code = 2 [json_name = "languageCode", (gnostic.openapi.v3.property) = {description: "语言代码"}];
+}

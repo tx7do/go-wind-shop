@@ -1,0 +1,20 @@
+{
+  "notFound": "Order not found.",
+  "noItems": "This order has no items.",
+  "orderId": "Order ID",
+  "status": "Status",
+  "createdAt": "Created",
+  "total": "Order total",
+  "recipientTitle": "Shipping details",
+  "recipientName": "Recipient",
+  "recipientPhone": "Phone",
+  "shippingAddress": "Address",
+  "skuId": "SKU",
+  "backToList": "Back to orders",
+  "table": {
+    "item": "Item",
+    "unitPrice": "Unit price",
+    "quantity": "Quantity",
+    "subtotal": "Subtotal"
+  }
+}

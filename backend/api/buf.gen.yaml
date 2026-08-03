@@ -26,6 +26,18 @@ managed:
       path: admin/service/v1
       value: go-wind-shop/api/gen/go/admin/service/v1;adminpb
     - file_option: go_package
+      path: catalog/service/v1
+      value: go-wind-shop/api/gen/go/catalog/service/v1;catalogpb
+    - file_option: go_package
+      path: cart/service/v1
+      value: go-wind-shop/api/gen/go/cart/service/v1;cartpb
+    - file_option: go_package
+      path: order/service/v1
+      value: go-wind-shop/api/gen/go/order/service/v1;orderpb
+    - file_option: go_package
+      path: payment/service/v1
+      value: go-wind-shop/api/gen/go/payment/service/v1;paymentpb
+    - file_option: go_package
       path: audit/service/v1
       value: go-wind-shop/api/gen/go/audit/service/v1;auditpb
     - file_option: go_package

@@ -1,0 +1,133 @@
+{
+  "moduleName": "商品管理",
+  "category": {
+    "moduleName": "类目管理",
+    "name": "类目名称",
+    "slug": "类目标识",
+    "description": "类目描述",
+    "fullPath": "完整路径",
+    "sortOrder": "排序",
+    "parent": "父级类目",
+    "createdAt": "创建时间",
+    "button": {
+      "create": "创建类目",
+      "update": "编辑类目"
+    }
+  },
+  "brand": {
+    "moduleName": "品牌管理",
+    "name": "品牌名称",
+    "slug": "品牌标识",
+    "description": "品牌描述",
+    "logoUrl": "品牌Logo地址",
+    "sortOrder": "排序",
+    "createdAt": "创建时间",
+    "button": {
+      "create": "创建品牌",
+      "update": "编辑品牌"
+    }
+  },
+  "product": {
+    "moduleName": "商品管理",
+    "name": "商品名称",
+    "slug": "商品标识",
+    "shortDescription": "商品简述",
+    "longDescription": "商品详情",
+    "status": "商品状态",
+    "category": "所属类目",
+    "brand": "所属品牌",
+    "sortOrder": "排序",
+    "createdAt": "创建时间",
+    "button": {
+      "create": "创建商品",
+      "update": "编辑商品"
+    }
+  },
+  "productAttribute": {
+    "moduleName": "属性管理",
+    "name": "属性名称",
+    "sortOrder": "排序",
+    "createdAt": "创建时间",
+    "button": {
+      "create": "创建属性",
+      "update": "编辑属性"
+    }
+  },
+  "productAttributeValue": {
+    "moduleName": "属性值管理",
+    "displayName": "属性值名称",
+    "sortOrder": "排序",
+    "createdAt": "创建时间",
+    "button": {
+      "create": "创建属性值",
+      "update": "编辑属性值"
+    }
+  },
+  "sku": {
+    "moduleName": "SKU管理",
+    "skuCode": "SKU编码",
+    "stockQty": "库存数量",
+    "productId": "所属商品",
+    "createdAt": "创建时间",
+    "button": {
+      "create": "创建SKU",
+      "update": "编辑SKU"
+    }
+  },
+  "order": {
+    "moduleName": "订单管理",
+    "title": "订单管理",
+    "detailTitle": "订单详情",
+    "orderItemsTitle": "订单项明细",
+    "id": "订单ID",
+    "userId": "用户ID",
+    "totalAmount": "订单金额",
+    "currency": "币种",
+    "status": "订单状态",
+    "recipientName": "收件人",
+    "recipientPhone": "收件电话",
+    "shippingAddress": "收货地址",
+    "createdAt": "创建时间",
+    "updatedAt": "更新时间",
+    "statusTransition": "状态操作",
+    "fulfill": "发货",
+    "close": "关闭订单",
+    "orderItems": {
+      "id": "订单项ID",
+      "skuId": "SKU ID",
+      "quantity": "数量",
+      "unitPrice": "单价",
+      "subtotal": "小计",
+      "skuSnapshot": "SKU快照",
+      "createdAt": "创建时间"
+    },
+    "statusLabel": {
+      "STATUS_UNSPECIFIED": "未知",
+      "PENDING_PAYMENT": "待支付",
+      "PAID": "已支付",
+      "CANCELLED": "已取消",
+      "FULFILLED": "已发货",
+      "CLOSED": "已关闭"
+    }
+  },
+  "paymentTransaction": {
+    "moduleName": "支付流水",
+    "title": "支付流水监控",
+    "id": "流水ID",
+    "orderId": "订单ID",
+    "userId": "用户ID",
+    "amount": "金额",
+    "currency": "币种",
+    "status": "支付状态",
+    "paymentMethod": "支付方式",
+    "businessType": "业务类型",
+    "createdAt": "创建时间",
+    "statusLabel": {
+      "STATUS_UNSPECIFIED": "未知",
+      "PENDING": "处理中",
+      "SUCCEEDED": "成功",
+      "FAILED": "失败",
+      "REFUNDED": "已退款"
+    }
+  }
+}

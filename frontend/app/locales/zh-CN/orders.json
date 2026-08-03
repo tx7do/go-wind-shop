@@ -1,0 +1,11 @@
+{
+  "empty": "你还没有任何订单。",
+  "detail": "详情",
+  "table": {
+    "id": "订单号",
+    "status": "状态",
+    "total": "金额",
+    "createdAt": "创建时间",
+    "action": "操作"
+  }
+}

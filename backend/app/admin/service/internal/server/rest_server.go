@@ -97,6 +97,22 @@ func NewRestServer(
 
 	languageService *service.LanguageService,
 
+	categoryService *service.CategoryService,
+	brandService *service.BrandService,
+	productService *service.ProductService,
+	productAttributeService *service.ProductAttributeService,
+	productAttributeValueService *service.ProductAttributeValueService,
+	skuService *service.SkuService,
+	skuPriceService *service.SkuPriceService,
+	skuAttributeCombinationService *service.SkuAttributeCombinationService,
+
+	cartService *service.CartService,
+	cartItemService *service.CartItemService,
+	orderService *service.OrderService,
+	orderItemService *service.OrderItemService,
+	paymentTransactionService *service.PaymentTransactionService,
+	paymentRefundService *service.PaymentRefundService,
+
 	fileSvc *service.FileService,
 	fileTransferService *service.FileTransferService,
 
@@ -136,6 +152,22 @@ func NewRestServer(
 	adminV1.RegisterTaskServiceHTTPServer(srv, taskService)
 
 	adminV1.RegisterLanguageServiceHTTPServer(srv, languageService)
+
+	adminV1.RegisterCategoryServiceHTTPServer(srv, categoryService)
+	adminV1.RegisterBrandServiceHTTPServer(srv, brandService)
+	adminV1.RegisterProductServiceHTTPServer(srv, productService)
+	adminV1.RegisterProductAttributeServiceHTTPServer(srv, productAttributeService)
+	adminV1.RegisterProductAttributeValueServiceHTTPServer(srv, productAttributeValueService)
+	adminV1.RegisterSkuServiceHTTPServer(srv, skuService)
+	adminV1.RegisterSkuPriceServiceHTTPServer(srv, skuPriceService)
+	adminV1.RegisterSkuAttributeCombinationServiceHTTPServer(srv, skuAttributeCombinationService)
+
+	adminV1.RegisterCartServiceHTTPServer(srv, cartService)
+	adminV1.RegisterCartItemServiceHTTPServer(srv, cartItemService)
+	adminV1.RegisterOrderServiceHTTPServer(srv, orderService)
+	adminV1.RegisterOrderItemServiceHTTPServer(srv, orderItemService)
+	adminV1.RegisterPaymentTransactionServiceHTTPServer(srv, paymentTransactionService)
+	adminV1.RegisterPaymentRefundServiceHTTPServer(srv, paymentRefundService)
 
 	adminV1.RegisterApiServiceHTTPServer(srv, apiService)
 	adminV1.RegisterMenuServiceHTTPServer(srv, menuSvc)

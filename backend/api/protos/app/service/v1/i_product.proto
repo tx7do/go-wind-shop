@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/product.proto";
+
+// 商品前台服务
+service ProductService {
+  // 分页查询商品列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListProductResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/products"
+    };
+  }
+
+  // 查询商品详情
+  rpc Get (catalog.service.v1.GetProductRequest) returns (catalog.service.v1.Product) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/products/{id}"
+    };
+  }
+}

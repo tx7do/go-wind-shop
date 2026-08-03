@@ -19,9 +19,13 @@ import (
 
 	auditV1 "go-wind-shop/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-shop/api/gen/go/authentication/service/v1"
+	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
+	cartV1 "go-wind-shop/api/gen/go/cart/service/v1"
 	dictV1 "go-wind-shop/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
+	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
+	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
 	storageV1 "go-wind-shop/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-shop/api/gen/go/task/service/v1"
@@ -312,5 +316,131 @@ func NewTaskServiceClient(ctx *bootstrap.Context, r registry.Discovery) taskV1.T
 	}
 
 	return taskV1.NewTaskServiceClient(cli)
+}
+
+func NewCategoryServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.CategoryServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return catalogV1.NewCategoryServiceClient(cli)
+}
+
+func NewBrandServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.BrandServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return catalogV1.NewBrandServiceClient(cli)
+}
+
+func NewProductServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.ProductServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return catalogV1.NewProductServiceClient(cli)
+}
+
+func NewProductAttributeServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.ProductAttributeServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return catalogV1.NewProductAttributeServiceClient(cli)
+}
+
+func NewProductAttributeValueServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.ProductAttributeValueServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return catalogV1.NewProductAttributeValueServiceClient(cli)
+}
+
+func NewSkuServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.SkuServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return catalogV1.NewSkuServiceClient(cli)
+}
+
+func NewSkuPriceServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.SkuPriceServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return catalogV1.NewSkuPriceServiceClient(cli)
+}
+
+func NewSkuAttributeCombinationServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.SkuAttributeCombinationServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return catalogV1.NewSkuAttributeCombinationServiceClient(cli)
+}
+
+func NewCartServiceClient(ctx *bootstrap.Context, r registry.Discovery) cartV1.CartServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return cartV1.NewCartServiceClient(cli)
+}
+
+func NewCartItemServiceClient(ctx *bootstrap.Context, r registry.Discovery) cartV1.CartItemServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return cartV1.NewCartItemServiceClient(cli)
+}
+
+func NewOrderServiceClient(ctx *bootstrap.Context, r registry.Discovery) orderV1.OrderServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return orderV1.NewOrderServiceClient(cli)
+}
+
+func NewOrderItemServiceClient(ctx *bootstrap.Context, r registry.Discovery) orderV1.OrderItemServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return orderV1.NewOrderItemServiceClient(cli)
+}
+
+func NewPaymentTransactionServiceClient(ctx *bootstrap.Context, r registry.Discovery) paymentV1.PaymentTransactionServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return paymentV1.NewPaymentTransactionServiceClient(cli)
+}
+
+func NewPaymentRefundServiceClient(ctx *bootstrap.Context, r registry.Discovery) paymentV1.PaymentRefundServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return paymentV1.NewPaymentRefundServiceClient(cli)
 }
 

@@ -1,0 +1,162 @@
+syntax = "proto3";
+
+package catalog.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// SKU 服务
+service SkuService {
+  rpc List (pagination.PagingRequest) returns (ListSkuResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountSkuResponse) {}
+  rpc Get (GetSkuRequest) returns (Sku) {}
+  rpc Create (CreateSkuRequest) returns (google.protobuf.Empty) {}
+  rpc BatchCreate (BatchCreateSkusRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdateSkuRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteSkuRequest) returns (google.protobuf.Empty) {}
+}
+
+// SKU 价格服务
+service SkuPriceService {
+  rpc List (pagination.PagingRequest) returns (ListSkuPriceResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountSkuResponse) {}
+  rpc Get (GetSkuPriceRequest) returns (SkuPrice) {}
+  rpc Create (CreateSkuPriceRequest) returns (google.protobuf.Empty) {}
+  rpc BatchCreate (BatchCreateSkuPricesRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdateSkuPriceRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteSkuPriceRequest) returns (google.protobuf.Empty) {}
+}
+
+// SKU 属性组合服务
+service SkuAttributeCombinationService {
+  rpc List (pagination.PagingRequest) returns (ListSkuAttributeCombinationResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountSkuAttributeCombinationResponse) {}
+  rpc Get (GetSkuAttributeCombinationRequest) returns (SkuAttributeCombination) {}
+  rpc Create (CreateSkuAttributeCombinationRequest) returns (google.protobuf.Empty) {}
+  rpc BatchCreate (BatchCreateSkuAttributeCombinationsRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdateSkuAttributeCombinationRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteSkuAttributeCombinationRequest) returns (google.protobuf.Empty) {}
+}
+
+// ============ SKU ============
+
+message Sku {
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "SKU ID"}];
+  optional uint32 product_id = 2 [json_name = "productId", (gnostic.openapi.v3.property) = {description: "所属商品ID"}];
+  optional string sku_code = 3 [json_name = "skuCode", (gnostic.openapi.v3.property) = {description: "SKU 唯一编码"}];
+  optional int32 stock_qty = 4 [json_name = "stockQty", (gnostic.openapi.v3.property) = {description: "库存数量"}];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+message ListSkuResponse { repeated Sku items = 1; uint64 total = 2; }
+message GetSkuRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+    string code = 2 [(gnostic.openapi.v3.property) = {description: "SKU 唯一编码", read_only: true}, json_name = "code"];
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [json_name = "viewMask", (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}];
+}
+message CreateSkuRequest { Sku data = 1; }
+message UpdateSkuRequest {
+  uint32 id = 1;
+  Sku data = 2;
+  google.protobuf.FieldMask update_mask = 3 [(gnostic.openapi.v3.property) = {description: "要更新的字段列表", example: {yaml : "id,realname,username"}}, json_name = "updateMask"];
+  optional bool allow_missing = 4 [(gnostic.openapi.v3.property) = {description: "允许缺失则插入"}, json_name = "allowMissing"];
+}
+message DeleteSkuRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+}
+message BatchCreateSkusRequest { repeated Sku items = 1; }
+message BatchCreateSkusResponse { repeated int32 created_ids = 1 [json_name = "createdIds", (gnostic.openapi.v3.property) = {description: "创建成功的 SKU ID 列表"}]; }
+message CountSkuResponse { uint64 count = 1; }
+
+// ============ SKU 价格（多币种） ============
+
+message SkuPrice {
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "价格记录ID"}];
+  optional uint32 sku_id = 2 [json_name = "skuId", (gnostic.openapi.v3.property) = {description: "关联的 SKU ID"}];
+  optional string currency = 3 [json_name = "currency", (gnostic.openapi.v3.property) = {description: "币种（ISO 4217，如 CNY/USD/EUR）"}];
+  optional string amount = 4 [json_name = "amount", (gnostic.openapi.v3.property) = {description: "该币种下的价格金额（字符串表示，避免浮点精度问题）"}];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+message ListSkuPriceResponse { repeated SkuPrice items = 1; uint64 total = 2; }
+message GetSkuPriceRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [json_name = "viewMask", (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}];
+}
+message CreateSkuPriceRequest { SkuPrice data = 1; }
+message UpdateSkuPriceRequest {
+  uint32 id = 1;
+  SkuPrice data = 2;
+  google.protobuf.FieldMask update_mask = 3 [(gnostic.openapi.v3.property) = {description: "要更新的字段列表", example: {yaml : "id,realname,username"}}, json_name = "updateMask"];
+  optional bool allow_missing = 4 [(gnostic.openapi.v3.property) = {description: "允许缺失则插入"}, json_name = "allowMissing"];
+}
+message DeleteSkuPriceRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+}
+message BatchCreateSkuPricesRequest { repeated SkuPrice items = 1; }
+message BatchCreateSkuPricesResponse { repeated int32 created_ids = 1 [json_name = "createdIds", (gnostic.openapi.v3.property) = {description: "创建成功的价格记录ID列表"}]; }
+
+// ============ SKU 属性组合（junction） ============
+
+message SkuAttributeCombination {
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "组合记录ID"}];
+  optional uint32 sku_id = 2 [json_name = "skuId", (gnostic.openapi.v3.property) = {description: "关联的 SKU ID"}];
+  optional uint32 attribute_id = 3 [json_name = "attributeId", (gnostic.openapi.v3.property) = {description: "属性ID"}];
+  optional uint32 attribute_value_id = 4 [json_name = "attributeValueId", (gnostic.openapi.v3.property) = {description: "属性值ID"}];
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+message ListSkuAttributeCombinationResponse { repeated SkuAttributeCombination items = 1; uint64 total = 2; }
+message GetSkuAttributeCombinationRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [json_name = "viewMask", (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}];
+}
+message CreateSkuAttributeCombinationRequest { SkuAttributeCombination data = 1; }
+message UpdateSkuAttributeCombinationRequest {
+  uint32 id = 1;
+  SkuAttributeCombination data = 2;
+  google.protobuf.FieldMask update_mask = 3 [(gnostic.openapi.v3.property) = {description: "要更新的字段列表", example: {yaml : "id,realname,username"}}, json_name = "updateMask"];
+  optional bool allow_missing = 4 [(gnostic.openapi.v3.property) = {description: "允许缺失则插入"}, json_name = "allowMissing"];
+}
+message DeleteSkuAttributeCombinationRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+}
+message BatchCreateSkuAttributeCombinationsRequest { repeated SkuAttributeCombination items = 1; }
+message BatchCreateSkuAttributeCombinationsResponse { repeated int32 created_ids = 1 [json_name = "createdIds", (gnostic.openapi.v3.property) = {description: "创建成功的组合记录ID列表"}]; }
+message CountSkuAttributeCombinationResponse { uint64 count = 1; }

@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package cart.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 购物车服务
+service CartService {
+  rpc List (pagination.PagingRequest) returns (ListCartResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountCartResponse) {}
+  rpc Get (GetCartRequest) returns (Cart) {}
+  rpc Create (CreateCartRequest) returns (google.protobuf.Empty) {}
+  rpc BatchCreate (BatchCreateCartsRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdateCartRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteCartRequest) returns (google.protobuf.Empty) {}
+}
+
+// 购物车项服务
+service CartItemService {
+  rpc List (pagination.PagingRequest) returns (ListCartItemResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountCartItemResponse) {}
+  rpc Get (GetCartItemRequest) returns (CartItem) {}
+  rpc Create (CreateCartItemRequest) returns (google.protobuf.Empty) {}
+  rpc BatchCreate (BatchCreateCartItemsRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdateCartItemRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteCartItemRequest) returns (google.protobuf.Empty) {}
+}
+
+// 购物车
+message Cart {
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "购物车ID"}];
+  optional uint32 user_id = 2 [json_name = "userId", (gnostic.openapi.v3.property) = {description: "用户ID"}];
+  optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+// 购物车项
+message CartItem {
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "购物车项ID"}];
+  optional uint32 cart_id = 2 [json_name = "cartId", (gnostic.openapi.v3.property) = {description: "关联的购物车ID"}];
+  optional uint32 sku_id = 3 [json_name = "skuId", (gnostic.openapi.v3.property) = {description: "SKU ID"}];
+  optional int32 quantity = 4 [json_name = "quantity", (gnostic.openapi.v3.property) = {description: "数量"}];
+  optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+message ListCartResponse { repeated Cart items = 1; uint64 total = 2; }
+message ListCartItemResponse { repeated CartItem items = 1; uint64 total = 2; }
+
+message GetCartRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+    uint32 user_id = 2 [(gnostic.openapi.v3.property) = {description: "用户ID", read_only: true}, json_name = "userId"];
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [json_name = "viewMask", (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}];
+}
+
+message GetCartItemRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [json_name = "viewMask", (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}];
+}
+
+message CreateCartRequest { Cart data = 1; }
+message UpdateCartRequest {
+  uint32 id = 1;
+  Cart data = 2;
+  google.protobuf.FieldMask update_mask = 3 [(gnostic.openapi.v3.property) = {description: "要更新的字段列表"}, json_name = "updateMask"];
+  optional bool allow_missing = 4 [(gnostic.openapi.v3.property) = {description: "允许缺失则插入"}, json_name = "allowMissing"];
+}
+message DeleteCartRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+}
+message BatchCreateCartsRequest { repeated Cart items = 1; }
+message BatchCreateCartsResponse { repeated int32 created_ids = 1 [json_name = "createdIds", (gnostic.openapi.v3.property) = {description: "创建成功的购物车ID列表"}]; }
+message CountCartResponse { uint64 count = 1; }
+
+message CreateCartItemRequest { CartItem data = 1; }
+message UpdateCartItemRequest {
+  uint32 id = 1;
+  CartItem data = 2;
+  google.protobuf.FieldMask update_mask = 3 [(gnostic.openapi.v3.property) = {description: "要更新的字段列表"}, json_name = "updateMask"];
+  optional bool allow_missing = 4 [(gnostic.openapi.v3.property) = {description: "允许缺失则插入"}, json_name = "allowMissing"];
+}
+message DeleteCartItemRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+}
+message BatchCreateCartItemsRequest { repeated CartItem items = 1; }
+message BatchCreateCartItemsResponse { repeated int32 created_ids = 1 [json_name = "createdIds", (gnostic.openapi.v3.property) = {description: "创建成功的购物车项ID列表"}]; }
+message CountCartItemResponse { uint64 count = 1; }

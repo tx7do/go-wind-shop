@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/product.proto";
+
+// 商品管理服务
+service ProductService {
+  // 分页查询商品列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListProductResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/products"
+    };
+  }
+
+  // 统计商品数量
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountProductResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/products/count"
+    };
+  }
+
+  // 查询商品详情
+  rpc Get (catalog.service.v1.GetProductRequest) returns (catalog.service.v1.Product) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/products/{id}"
+    };
+  }
+
+  // 创建商品
+  rpc Create (catalog.service.v1.CreateProductRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/products"
+      body: "*"
+    };
+  }
+
+  // 批量创建商品
+  rpc BatchCreate (catalog.service.v1.BatchCreateProductsRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/products/batch"
+      body: "*"
+    };
+  }
+
+  // 更新商品
+  rpc Update (catalog.service.v1.UpdateProductRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/products/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除商品
+  rpc Delete (catalog.service.v1.DeleteProductRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/products"
+    };
+  }
+
+  // 检查翻译是否存在
+  rpc TranslationExists (catalog.service.v1.ProductTranslationExistsRequest) returns (catalog.service.v1.ProductTranslationExistsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/products/{product_id}/translations/{language_code}"
+    };
+  }
+
+  // 获取翻译数据
+  rpc GetTranslation (catalog.service.v1.GetProductRequest) returns (catalog.service.v1.ProductTranslation) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/products/{id}/translations"
+    };
+  }
+
+  // 创建翻译
+  rpc CreateTranslation (catalog.service.v1.CreateProductTranslationRequest) returns (catalog.service.v1.ProductTranslation) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/products/translations"
+      body: "*"
+    };
+  }
+
+  // 更新翻译
+  rpc UpdateTranslation (catalog.service.v1.UpdateProductTranslationRequest) returns (catalog.service.v1.ProductTranslation) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/products/{id}/translations"
+      body: "*"
+    };
+  }
+
+  // 删除翻译
+  rpc DeleteTranslation (catalog.service.v1.DeleteProductTranslationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/products/{id}/translations"
+    };
+  }
+}

@@ -12,9 +12,13 @@ import (
 
 	auditV1 "go-wind-shop/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-shop/api/gen/go/authentication/service/v1"
+	cartV1 "go-wind-shop/api/gen/go/cart/service/v1"
+	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 	dictV1 "go-wind-shop/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
+	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
+	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
 	storageV1 "go-wind-shop/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-shop/api/gen/go/task/service/v1"
@@ -65,6 +69,22 @@ func NewGrpcServer(
 	internalMessageService *service.InternalMessageService,
 	internalMessageCategoryService *service.InternalMessageCategoryService,
 	internalMessageRecipientService *service.InternalMessageRecipientService,
+
+	categoryService *service.CategoryService,
+	brandService *service.BrandService,
+	productService *service.ProductService,
+	productAttributeService *service.ProductAttributeService,
+	productAttributeValueService *service.ProductAttributeValueService,
+	skuService *service.SkuService,
+	skuPriceService *service.SkuPriceService,
+	skuAttributeCombinationService *service.SkuAttributeCombinationService,
+
+	cartService *service.CartService,
+	cartItemService *service.CartItemService,
+	orderService *service.OrderService,
+	orderItemService *service.OrderItemService,
+	paymentTransactionService *service.PaymentTransactionService,
+	paymentRefundService *service.PaymentRefundService,
 ) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
 
@@ -109,6 +129,22 @@ func NewGrpcServer(
 	internalMessageV1.RegisterInternalMessageServiceServer(srv, internalMessageService)
 	internalMessageV1.RegisterInternalMessageCategoryServiceServer(srv, internalMessageCategoryService)
 	internalMessageV1.RegisterInternalMessageRecipientServiceServer(srv, internalMessageRecipientService)
+
+	catalogV1.RegisterCategoryServiceServer(srv, categoryService)
+	catalogV1.RegisterBrandServiceServer(srv, brandService)
+	catalogV1.RegisterProductServiceServer(srv, productService)
+	catalogV1.RegisterProductAttributeServiceServer(srv, productAttributeService)
+	catalogV1.RegisterProductAttributeValueServiceServer(srv, productAttributeValueService)
+	catalogV1.RegisterSkuServiceServer(srv, skuService)
+	catalogV1.RegisterSkuPriceServiceServer(srv, skuPriceService)
+	catalogV1.RegisterSkuAttributeCombinationServiceServer(srv, skuAttributeCombinationService)
+
+	cartV1.RegisterCartServiceServer(srv, cartService)
+	cartV1.RegisterCartItemServiceServer(srv, cartItemService)
+	orderV1.RegisterOrderServiceServer(srv, orderService)
+	orderV1.RegisterOrderItemServiceServer(srv, orderItemService)
+	paymentV1.RegisterPaymentTransactionServiceServer(srv, paymentTransactionService)
+	paymentV1.RegisterPaymentRefundServiceServer(srv, paymentRefundService)
 
 	return srv, nil
 }

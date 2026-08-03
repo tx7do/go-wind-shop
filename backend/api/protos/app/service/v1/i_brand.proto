@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/brand.proto";
+
+// 品牌前台服务
+service BrandService {
+  // 分页查询品牌列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListBrandResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/brands"
+    };
+  }
+
+  // 查询品牌详情
+  rpc Get (catalog.service.v1.GetBrandRequest) returns (catalog.service.v1.Brand) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/brands/{id}"
+    };
+  }
+}

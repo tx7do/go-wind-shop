@@ -1,0 +1,105 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "cart/service/v1/cart.proto";
+
+// 购物车前台服务
+service CartService {
+  rpc List (pagination.PagingRequest) returns (cart.service.v1.ListCartResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/carts"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (cart.service.v1.CountCartResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/carts/count"
+    };
+  }
+
+  rpc Get (cart.service.v1.GetCartRequest) returns (cart.service.v1.Cart) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/carts/{id}"
+    };
+  }
+
+  rpc Create (cart.service.v1.CreateCartRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/carts"
+      body: "*"
+    };
+  }
+
+  rpc BatchCreate (cart.service.v1.BatchCreateCartsRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/carts/batch"
+      body: "*"
+    };
+  }
+
+  rpc Update (cart.service.v1.UpdateCartRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/app/v1/mall/carts/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (cart.service.v1.DeleteCartRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/app/v1/mall/carts"
+    };
+  }
+}
+
+// 购物车项前台服务
+service CartItemService {
+  rpc List (pagination.PagingRequest) returns (cart.service.v1.ListCartItemResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/cart-items"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (cart.service.v1.CountCartItemResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/cart-items/count"
+    };
+  }
+
+  rpc Get (cart.service.v1.GetCartItemRequest) returns (cart.service.v1.CartItem) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/cart-items/{id}"
+    };
+  }
+
+  rpc Create (cart.service.v1.CreateCartItemRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/cart-items"
+      body: "*"
+    };
+  }
+
+  rpc BatchCreate (cart.service.v1.BatchCreateCartItemsRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/cart-items/batch"
+      body: "*"
+    };
+  }
+
+  rpc Update (cart.service.v1.UpdateCartItemRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/app/v1/mall/cart-items/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (cart.service.v1.DeleteCartItemRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/app/v1/mall/cart-items"
+    };
+  }
+}

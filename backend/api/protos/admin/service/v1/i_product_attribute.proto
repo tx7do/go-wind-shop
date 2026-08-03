@@ -1,0 +1,193 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/product_attribute.proto";
+
+// 商品属性管理服务
+service ProductAttributeService {
+  // 分页查询商品属性列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListProductAttributeResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/product-attributes"
+    };
+  }
+
+  // 统计商品属性数量
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountProductAttributeResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/product-attributes/count"
+    };
+  }
+
+  // 查询商品属性详情
+  rpc Get (catalog.service.v1.GetProductAttributeRequest) returns (catalog.service.v1.ProductAttribute) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/product-attributes/{id}"
+    };
+  }
+
+  // 创建商品属性
+  rpc Create (catalog.service.v1.CreateProductAttributeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/product-attributes"
+      body: "*"
+    };
+  }
+
+  // 批量创建商品属性
+  rpc BatchCreate (catalog.service.v1.BatchCreateProductAttributesRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/product-attributes/batch"
+      body: "*"
+    };
+  }
+
+  // 更新商品属性
+  rpc Update (catalog.service.v1.UpdateProductAttributeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/product-attributes/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除商品属性
+  rpc Delete (catalog.service.v1.DeleteProductAttributeRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/product-attributes"
+    };
+  }
+
+  // 检查翻译是否存在
+  rpc TranslationExists (catalog.service.v1.ProductAttributeTranslationExistsRequest) returns (catalog.service.v1.ProductAttributeTranslationExistsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/product-attributes/{attribute_id}/translations/{language_code}"
+    };
+  }
+
+  // 获取翻译数据
+  rpc GetTranslation (catalog.service.v1.GetProductAttributeRequest) returns (catalog.service.v1.ProductAttributeTranslation) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/product-attributes/{id}/translations"
+    };
+  }
+
+  // 创建翻译
+  rpc CreateTranslation (catalog.service.v1.CreateProductAttributeTranslationRequest) returns (catalog.service.v1.ProductAttributeTranslation) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/product-attributes/translations"
+      body: "*"
+    };
+  }
+
+  // 更新翻译
+  rpc UpdateTranslation (catalog.service.v1.UpdateProductAttributeTranslationRequest) returns (catalog.service.v1.ProductAttributeTranslation) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/product-attributes/{id}/translations"
+      body: "*"
+    };
+  }
+
+  // 删除翻译
+  rpc DeleteTranslation (catalog.service.v1.DeleteProductAttributeTranslationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/product-attributes/{id}/translations"
+    };
+  }
+}
+
+// 商品属性值管理服务
+service ProductAttributeValueService {
+  // 分页查询商品属性值列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListProductAttributeValueResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/product-attribute-values"
+    };
+  }
+
+  // 统计商品属性值数量
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountProductAttributeValueResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/product-attribute-values/count"
+    };
+  }
+
+  // 查询商品属性值详情
+  rpc Get (catalog.service.v1.GetProductAttributeValueRequest) returns (catalog.service.v1.ProductAttributeValue) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/product-attribute-values/{id}"
+    };
+  }
+
+  // 创建商品属性值
+  rpc Create (catalog.service.v1.CreateProductAttributeValueRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/product-attribute-values"
+      body: "*"
+    };
+  }
+
+  // 批量创建商品属性值
+  rpc BatchCreate (catalog.service.v1.BatchCreateProductAttributeValuesRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/product-attribute-values/batch"
+      body: "*"
+    };
+  }
+
+  // 更新商品属性值
+  rpc Update (catalog.service.v1.UpdateProductAttributeValueRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/product-attribute-values/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除商品属性值
+  rpc Delete (catalog.service.v1.DeleteProductAttributeValueRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/product-attribute-values"
+    };
+  }
+
+  // 检查翻译是否存在
+  rpc TranslationExists (catalog.service.v1.ProductAttributeValueTranslationExistsRequest) returns (catalog.service.v1.ProductAttributeValueTranslationExistsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/product-attribute-values/{value_id}/translations/{language_code}"
+    };
+  }
+
+  // 获取翻译数据
+  rpc GetTranslation (catalog.service.v1.GetProductAttributeValueRequest) returns (catalog.service.v1.ProductAttributeValueTranslation) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/product-attribute-values/{id}/translations"
+    };
+  }
+
+  // 创建翻译
+  rpc CreateTranslation (catalog.service.v1.CreateProductAttributeValueTranslationRequest) returns (catalog.service.v1.ProductAttributeValueTranslation) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/product-attribute-values/translations"
+      body: "*"
+    };
+  }
+
+  // 更新翻译
+  rpc UpdateTranslation (catalog.service.v1.UpdateProductAttributeValueTranslationRequest) returns (catalog.service.v1.ProductAttributeValueTranslation) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/product-attribute-values/{id}/translations"
+      body: "*"
+    };
+  }
+
+  // 删除翻译
+  rpc DeleteTranslation (catalog.service.v1.DeleteProductAttributeValueTranslationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/product-attribute-values/{id}/translations"
+    };
+  }
+}

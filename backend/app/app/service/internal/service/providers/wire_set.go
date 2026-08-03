@@ -21,4 +21,20 @@ var ProviderSet = wire.NewSet(
 	service.NewAuthenticationService,
 	service.NewUserProfileService,
 	service.NewFileTransferService,
+
+	service.NewCategoryService,
+	service.NewBrandService,
+	service.NewProductService,
+	service.NewProductAttributeService,
+	service.NewProductAttributeValueService,
+	service.NewSkuService,
+	service.NewSkuPriceService,
+	service.NewSkuAttributeCombinationService,
+
+	service.NewCartService,
+	service.NewCartItemService,
+	service.NewOrderService,
+	service.NewOrderItemService,
+	service.NewPaymentTransactionService,
+	service.NewPaymentRefundService,
 )

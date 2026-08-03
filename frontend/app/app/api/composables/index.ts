@@ -11,3 +11,19 @@ export * from './user-profile';
 
 // 文件传输
 export * from './file-transfer';
+
+// 目录（只读：List + Get）
+export * from './brand';
+export * from './category';
+export * from './product';
+export * from './product-attribute';
+export * from './product-attribute-value';
+export * from './sku';
+export * from './sku-price';
+export * from './sku-attribute-combination';
+
+// 交易（购物车 / 订单 / 支付）
+export * from './cart';
+export * from './cart-item';
+export * from './order';
+export * from './payment-transaction';

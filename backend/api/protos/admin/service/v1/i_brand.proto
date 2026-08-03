@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/brand.proto";
+
+// 品牌管理服务
+service BrandService {
+  // 分页查询品牌列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListBrandResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/brands"
+    };
+  }
+
+  // 统计品牌数量
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountBrandResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/brands/count"
+    };
+  }
+
+  // 查询品牌详情
+  rpc Get (catalog.service.v1.GetBrandRequest) returns (catalog.service.v1.Brand) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/brands/{id}"
+    };
+  }
+
+  // 创建品牌
+  rpc Create (catalog.service.v1.CreateBrandRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/brands"
+      body: "*"
+    };
+  }
+
+  // 批量创建品牌
+  rpc BatchCreate (catalog.service.v1.BatchCreateBrandsRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/brands/batch"
+      body: "*"
+    };
+  }
+
+  // 更新品牌
+  rpc Update (catalog.service.v1.UpdateBrandRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/brands/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除品牌
+  rpc Delete (catalog.service.v1.DeleteBrandRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/brands"
+    };
+  }
+
+  // 检查翻译是否存在
+  rpc TranslationExists (catalog.service.v1.BrandTranslationExistsRequest) returns (catalog.service.v1.BrandTranslationExistsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/brands/{brand_id}/translations/{language_code}"
+    };
+  }
+
+  // 获取翻译数据
+  rpc GetTranslation (catalog.service.v1.GetBrandRequest) returns (catalog.service.v1.BrandTranslation) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/brands/{id}/translations"
+    };
+  }
+
+  // 创建翻译
+  rpc CreateTranslation (catalog.service.v1.CreateBrandTranslationRequest) returns (catalog.service.v1.BrandTranslation) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/brands/translations"
+      body: "*"
+    };
+  }
+
+  // 更新翻译
+  rpc UpdateTranslation (catalog.service.v1.UpdateBrandTranslationRequest) returns (catalog.service.v1.BrandTranslation) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/brands/{id}/translations"
+      body: "*"
+    };
+  }
+
+  // 删除翻译
+  rpc DeleteTranslation (catalog.service.v1.DeleteBrandTranslationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/brands/{id}/translations"
+    };
+  }
+}

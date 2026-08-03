@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package cart.service.v1;
+
+import "errors/errors.proto";
+
+enum CartErrorReason {
+  option (errors.default_code) = 500;
+  BAD_REQUEST = 0 [(errors.code) = 400];
+  UNAUTHORIZED = 100 [(errors.code) = 401];
+  FORBIDDEN = 300 [(errors.code) = 403];
+  NOT_FOUND = 400 [(errors.code) = 404];
+  CONFLICT = 500 [(errors.code) = 409];
+  INTERNAL_SERVER_ERROR = 600 [(errors.code) = 500];
+}

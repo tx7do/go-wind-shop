@@ -14,7 +14,6 @@ import CryptoJS from "crypto-js";
 import {
   login as authLogin,
   logout as authLogout,
-  registerUser as authRegisterUser,
   generateCaptcha as authGenerateCaptcha,
   getMyPermissionCode,
   getMe,
@@ -230,14 +229,6 @@ async function logout(redirect: boolean = true) {
   await _doLogout(redirect);
 }
 
-async function register(username: string, password: string) {
-  return await authRegisterUser({
-    username,
-    password: encryptPassword(password),
-    tenantCode: "master",
-  });
-}
-
 async function getCaptcha() {
   return await authGenerateCaptcha();
 }
@@ -301,7 +292,6 @@ export function useAuth() {
     loginLoading,
     login,
     logout,
-    register,
     getCaptcha,
     fetchUserInfo,
     fetchAccessCodes,

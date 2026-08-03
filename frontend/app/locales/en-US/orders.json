@@ -1,0 +1,11 @@
+{
+  "empty": "You have no orders yet.",
+  "detail": "Details",
+  "table": {
+    "id": "Order",
+    "status": "Status",
+    "total": "Total",
+    "createdAt": "Created",
+    "action": "Action"
+  }
+}

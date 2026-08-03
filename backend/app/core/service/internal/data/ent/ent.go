@@ -8,6 +8,12 @@ import (
 	"fmt"
 	"go-wind-shop/app/core/service/internal/data/ent/api"
 	"go-wind-shop/app/core/service/internal/data/ent/apiauditlog"
+	"go-wind-shop/app/core/service/internal/data/ent/brand"
+	"go-wind-shop/app/core/service/internal/data/ent/brandtranslation"
+	"go-wind-shop/app/core/service/internal/data/ent/cart"
+	"go-wind-shop/app/core/service/internal/data/ent/cartitem"
+	"go-wind-shop/app/core/service/internal/data/ent/category"
+	"go-wind-shop/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-shop/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
@@ -22,7 +28,11 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-shop/app/core/service/internal/data/ent/menu"
 	"go-wind-shop/app/core/service/internal/data/ent/operationauditlog"
+	"go-wind-shop/app/core/service/internal/data/ent/order"
+	"go-wind-shop/app/core/service/internal/data/ent/orderitem"
 	"go-wind-shop/app/core/service/internal/data/ent/orgunit"
+	"go-wind-shop/app/core/service/internal/data/ent/paymentrefund"
+	"go-wind-shop/app/core/service/internal/data/ent/paymenttransaction"
 	"go-wind-shop/app/core/service/internal/data/ent/permission"
 	"go-wind-shop/app/core/service/internal/data/ent/permissionapi"
 	"go-wind-shop/app/core/service/internal/data/ent/permissionauditlog"
@@ -31,9 +41,18 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/permissionpolicy"
 	"go-wind-shop/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-shop/app/core/service/internal/data/ent/position"
+	"go-wind-shop/app/core/service/internal/data/ent/product"
+	"go-wind-shop/app/core/service/internal/data/ent/productattribute"
+	"go-wind-shop/app/core/service/internal/data/ent/productattributetranslation"
+	"go-wind-shop/app/core/service/internal/data/ent/productattributevalue"
+	"go-wind-shop/app/core/service/internal/data/ent/productattributevaluetranslation"
+	"go-wind-shop/app/core/service/internal/data/ent/producttranslation"
 	"go-wind-shop/app/core/service/internal/data/ent/role"
 	"go-wind-shop/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-shop/app/core/service/internal/data/ent/sku"
+	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
+	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 	"go-wind-shop/app/core/service/internal/data/ent/task"
 	"go-wind-shop/app/core/service/internal/data/ent/tenant"
 	"go-wind-shop/app/core/service/internal/data/ent/user"
@@ -107,41 +126,60 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			api.Table:                      api.ValidColumn,
-			apiauditlog.Table:              apiauditlog.ValidColumn,
-			dataaccessauditlog.Table:       dataaccessauditlog.ValidColumn,
-			file.Table:                     file.ValidColumn,
-			internalmessage.Table:          internalmessage.ValidColumn,
-			internalmessagecategory.Table:  internalmessagecategory.ValidColumn,
-			internalmessagerecipient.Table: internalmessagerecipient.ValidColumn,
-			language.Table:                 language.ValidColumn,
-			loginauditlog.Table:            loginauditlog.ValidColumn,
-			loginpolicy.Table:              loginpolicy.ValidColumn,
-			membership.Table:               membership.ValidColumn,
-			membershiporgunit.Table:        membershiporgunit.ValidColumn,
-			membershipposition.Table:       membershipposition.ValidColumn,
-			membershiprole.Table:           membershiprole.ValidColumn,
-			menu.Table:                     menu.ValidColumn,
-			operationauditlog.Table:        operationauditlog.ValidColumn,
-			orgunit.Table:                  orgunit.ValidColumn,
-			permission.Table:               permission.ValidColumn,
-			permissionapi.Table:            permissionapi.ValidColumn,
-			permissionauditlog.Table:       permissionauditlog.ValidColumn,
-			permissiongroup.Table:          permissiongroup.ValidColumn,
-			permissionmenu.Table:           permissionmenu.ValidColumn,
-			permissionpolicy.Table:         permissionpolicy.ValidColumn,
-			policyevaluationlog.Table:      policyevaluationlog.ValidColumn,
-			position.Table:                 position.ValidColumn,
-			role.Table:                     role.ValidColumn,
-			rolemetadata.Table:             rolemetadata.ValidColumn,
-			rolepermission.Table:           rolepermission.ValidColumn,
-			task.Table:                     task.ValidColumn,
-			tenant.Table:                   tenant.ValidColumn,
-			user.Table:                     user.ValidColumn,
-			usercredential.Table:           usercredential.ValidColumn,
-			userorgunit.Table:              userorgunit.ValidColumn,
-			userposition.Table:             userposition.ValidColumn,
-			userrole.Table:                 userrole.ValidColumn,
+			api.Table:                              api.ValidColumn,
+			apiauditlog.Table:                      apiauditlog.ValidColumn,
+			brand.Table:                            brand.ValidColumn,
+			brandtranslation.Table:                 brandtranslation.ValidColumn,
+			cart.Table:                             cart.ValidColumn,
+			cartitem.Table:                         cartitem.ValidColumn,
+			category.Table:                         category.ValidColumn,
+			categorytranslation.Table:              categorytranslation.ValidColumn,
+			dataaccessauditlog.Table:               dataaccessauditlog.ValidColumn,
+			file.Table:                             file.ValidColumn,
+			internalmessage.Table:                  internalmessage.ValidColumn,
+			internalmessagecategory.Table:          internalmessagecategory.ValidColumn,
+			internalmessagerecipient.Table:         internalmessagerecipient.ValidColumn,
+			language.Table:                         language.ValidColumn,
+			loginauditlog.Table:                    loginauditlog.ValidColumn,
+			loginpolicy.Table:                      loginpolicy.ValidColumn,
+			membership.Table:                       membership.ValidColumn,
+			membershiporgunit.Table:                membershiporgunit.ValidColumn,
+			membershipposition.Table:               membershipposition.ValidColumn,
+			membershiprole.Table:                   membershiprole.ValidColumn,
+			menu.Table:                             menu.ValidColumn,
+			operationauditlog.Table:                operationauditlog.ValidColumn,
+			order.Table:                            order.ValidColumn,
+			orderitem.Table:                        orderitem.ValidColumn,
+			orgunit.Table:                          orgunit.ValidColumn,
+			paymentrefund.Table:                    paymentrefund.ValidColumn,
+			paymenttransaction.Table:               paymenttransaction.ValidColumn,
+			permission.Table:                       permission.ValidColumn,
+			permissionapi.Table:                    permissionapi.ValidColumn,
+			permissionauditlog.Table:               permissionauditlog.ValidColumn,
+			permissiongroup.Table:                  permissiongroup.ValidColumn,
+			permissionmenu.Table:                   permissionmenu.ValidColumn,
+			permissionpolicy.Table:                 permissionpolicy.ValidColumn,
+			policyevaluationlog.Table:              policyevaluationlog.ValidColumn,
+			position.Table:                         position.ValidColumn,
+			product.Table:                          product.ValidColumn,
+			productattribute.Table:                 productattribute.ValidColumn,
+			productattributetranslation.Table:      productattributetranslation.ValidColumn,
+			productattributevalue.Table:            productattributevalue.ValidColumn,
+			productattributevaluetranslation.Table: productattributevaluetranslation.ValidColumn,
+			producttranslation.Table:               producttranslation.ValidColumn,
+			role.Table:                             role.ValidColumn,
+			rolemetadata.Table:                     rolemetadata.ValidColumn,
+			rolepermission.Table:                   rolepermission.ValidColumn,
+			sku.Table:                              sku.ValidColumn,
+			skuattributecombination.Table:          skuattributecombination.ValidColumn,
+			skuprice.Table:                         skuprice.ValidColumn,
+			task.Table:                             task.ValidColumn,
+			tenant.Table:                           tenant.ValidColumn,
+			user.Table:                             user.ValidColumn,
+			usercredential.Table:                   usercredential.ValidColumn,
+			userorgunit.Table:                      userorgunit.ValidColumn,
+			userposition.Table:                     userposition.ValidColumn,
+			userrole.Table:                         userrole.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

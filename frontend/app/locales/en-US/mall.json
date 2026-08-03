@@ -1,0 +1,51 @@
+{
+  "home": {
+    "title": "Mall",
+    "subtitle": "Curated picks, within reach",
+    "featured": "Featured products",
+    "categories": "Browse categories",
+    "heroDescription": "Discover great products across categories, with a convenient shopping experience."
+  },
+  "category": {
+    "products": "Products in this category",
+    "empty": "No products in this category yet.",
+    "notFound": "Category not found."
+  },
+  "product": {
+    "addToCart": "Add to cart",
+    "outOfStock": "Out of stock",
+    "selectSku": "Please select a specification",
+    "description": "Product description",
+    "price": "Price",
+    "priceFrom": "From",
+    "viewDetail": "View details",
+    "notFound": "Product not found.",
+    "selectAttribute": "Please select",
+    "skuUnavailable": "This specification is not available.",
+    "currencyCny": "￥"
+  },
+  "loading": "Loading…",
+  "cart": {
+    "title": "Shopping Cart",
+    "subtitle": "Manage the items you're about to check out"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "subtitle": "Confirm shipping details and place your order"
+  },
+  "orders": {
+    "title": "My Orders",
+    "subtitle": "View your complete order history"
+  },
+  "orderDetail": {
+    "title": "Order Details"
+  },
+  "orderStatus": {
+    "status_unspecified": "Unknown",
+    "pending_payment": "Pending payment",
+    "paid": "Paid",
+    "cancelled": "Cancelled",
+    "fulfilled": "Fulfilled",
+    "closed": "Closed"
+  }
+}

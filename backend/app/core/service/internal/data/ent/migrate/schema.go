@@ -161,6 +161,197 @@ var (
 			},
 		},
 	}
+	// MallBrandsColumns holds the columns for the "mall_brands" table.
+	MallBrandsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "logo_url", Type: field.TypeString, Nullable: true, Comment: "品牌 Logo 资源 URL（locale 无关）"},
+	}
+	// MallBrandsTable holds the schema information for the "mall_brands" table.
+	MallBrandsTable = &schema.Table{
+		Name:       "mall_brands",
+		Comment:    "品牌表",
+		Columns:    MallBrandsColumns,
+		PrimaryKey: []*schema.Column{MallBrandsColumns[0]},
+	}
+	// MallBrandTranslationsColumns holds the columns for the "mall_brand_translations" table.
+	MallBrandTranslationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "brand_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的品牌ID"},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "品牌名称"},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "品牌别名"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "品牌描述"},
+	}
+	// MallBrandTranslationsTable holds the schema information for the "mall_brand_translations" table.
+	MallBrandTranslationsTable = &schema.Table{
+		Name:       "mall_brand_translations",
+		Comment:    "品牌翻译表",
+		Columns:    MallBrandTranslationsColumns,
+		PrimaryKey: []*schema.Column{MallBrandTranslationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "brandtranslation_brand_id_language_code",
+				Unique:  true,
+				Columns: []*schema.Column{MallBrandTranslationsColumns[7], MallBrandTranslationsColumns[8]},
+			},
+			{
+				Name:    "brandtranslation_brand_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallBrandTranslationsColumns[7]},
+			},
+			{
+				Name:    "brandtranslation_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{MallBrandTranslationsColumns[8]},
+			},
+			{
+				Name:    "brandtranslation_slug",
+				Unique:  false,
+				Columns: []*schema.Column{MallBrandTranslationsColumns[10]},
+			},
+		},
+	}
+	// MallCartsColumns holds the columns for the "mall_carts" table.
+	MallCartsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "用户ID"},
+	}
+	// MallCartsTable holds the schema information for the "mall_carts" table.
+	MallCartsTable = &schema.Table{
+		Name:       "mall_carts",
+		Comment:    "购物车表",
+		Columns:    MallCartsColumns,
+		PrimaryKey: []*schema.Column{MallCartsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "cart_tenant_id_user_id",
+				Unique:  true,
+				Columns: []*schema.Column{MallCartsColumns[7], MallCartsColumns[8]},
+			},
+		},
+	}
+	// MallCartItemsColumns holds the columns for the "mall_cart_items" table.
+	MallCartItemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "cart_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的购物车ID"},
+		{Name: "sku_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的 SKU ID"},
+		{Name: "quantity", Type: field.TypeInt32, Nullable: true, Comment: "数量", Default: 0},
+	}
+	// MallCartItemsTable holds the schema information for the "mall_cart_items" table.
+	MallCartItemsTable = &schema.Table{
+		Name:       "mall_cart_items",
+		Comment:    "购物车项表",
+		Columns:    MallCartItemsColumns,
+		PrimaryKey: []*schema.Column{MallCartItemsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "cartitem_cart_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallCartItemsColumns[8]},
+			},
+		},
+	}
+	// MallCategoriesColumns holds the columns for the "mall_categories" table.
+	MallCategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512, Comment: "树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。"},
+		{Name: "depth", Type: field.TypeInt32, Nullable: true, Comment: "类目层级深度", Default: 0},
+		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
+	}
+	// MallCategoriesTable holds the schema information for the "mall_categories" table.
+	MallCategoriesTable = &schema.Table{
+		Name:       "mall_categories",
+		Comment:    "商品类目表",
+		Columns:    MallCategoriesColumns,
+		PrimaryKey: []*schema.Column{MallCategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "mall_categories_mall_categories_children",
+				Columns:    []*schema.Column{MallCategoriesColumns[10]},
+				RefColumns: []*schema.Column{MallCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// MallCategoryTranslationsColumns holds the columns for the "mall_category_translations" table.
+	MallCategoryTranslationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "category_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的类目ID"},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "类目名称"},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "类目别名"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "类目描述"},
+		{Name: "full_path", Type: field.TypeString, Nullable: true, Comment: "完整路径"},
+	}
+	// MallCategoryTranslationsTable holds the schema information for the "mall_category_translations" table.
+	MallCategoryTranslationsTable = &schema.Table{
+		Name:       "mall_category_translations",
+		Comment:    "商品类目翻译表",
+		Columns:    MallCategoryTranslationsColumns,
+		PrimaryKey: []*schema.Column{MallCategoryTranslationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "categorytranslation_category_id_language_code",
+				Unique:  true,
+				Columns: []*schema.Column{MallCategoryTranslationsColumns[7], MallCategoryTranslationsColumns[8]},
+			},
+			{
+				Name:    "categorytranslation_category_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallCategoryTranslationsColumns[7]},
+			},
+			{
+				Name:    "categorytranslation_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{MallCategoryTranslationsColumns[8]},
+			},
+			{
+				Name:    "categorytranslation_slug",
+				Unique:  false,
+				Columns: []*schema.Column{MallCategoryTranslationsColumns[10]},
+			},
+		},
+	}
 	// SysDataAccessAuditLogsColumns holds the columns for the "sys_data_access_audit_logs" table.
 	SysDataAccessAuditLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -1283,6 +1474,80 @@ var (
 			},
 		},
 	}
+	// MallOrdersColumns holds the columns for the "mall_orders" table.
+	MallOrdersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "currency", Type: field.TypeString, Nullable: true, Comment: "币种（ISO 4217，当前仅支持CNY）", Default: "CNY"},
+		{Name: "business_ref_id", Type: field.TypeString, Nullable: true, Comment: "业务单号"},
+		{Name: "idempotency_key", Type: field.TypeString, Nullable: true, Comment: "幂等键"},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "下单用户ID"},
+		{Name: "total_amount", Type: field.TypeInt64, Nullable: true, Comment: "订单总金额（最小货币单位，分）", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "订单状态", Enums: []string{"PENDING_PAYMENT", "PAID", "CANCELLED", "FULFILLED", "CLOSED"}},
+		{Name: "recipient_name", Type: field.TypeString, Nullable: true, Comment: "收件人姓名"},
+		{Name: "recipient_phone", Type: field.TypeString, Nullable: true, Comment: "收件人电话"},
+		{Name: "shipping_address", Type: field.TypeString, Nullable: true, Comment: "收货地址（结构化文本）"},
+	}
+	// MallOrdersTable holds the schema information for the "mall_orders" table.
+	MallOrdersTable = &schema.Table{
+		Name:       "mall_orders",
+		Comment:    "订单表",
+		Columns:    MallOrdersColumns,
+		PrimaryKey: []*schema.Column{MallOrdersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "order_tenant_id_idempotency_key",
+				Unique:  true,
+				Columns: []*schema.Column{MallOrdersColumns[7], MallOrdersColumns[10]},
+			},
+			{
+				Name:    "order_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallOrdersColumns[11]},
+			},
+			{
+				Name:    "order_status",
+				Unique:  false,
+				Columns: []*schema.Column{MallOrdersColumns[13]},
+			},
+		},
+	}
+	// MallOrderItemsColumns holds the columns for the "mall_order_items" table.
+	MallOrderItemsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "order_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的订单ID"},
+		{Name: "sku_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的 SKU ID"},
+		{Name: "sku_snapshot", Type: field.TypeString, Nullable: true, Comment: "下单时 SKU 快照（JSON）"},
+		{Name: "quantity", Type: field.TypeInt32, Nullable: true, Comment: "数量", Default: 0},
+		{Name: "unit_price", Type: field.TypeInt64, Nullable: true, Comment: "单价（最小货币单位，分）", Default: 0},
+		{Name: "subtotal", Type: field.TypeInt64, Nullable: true, Comment: "小计金额（最小货币单位，分）", Default: 0},
+	}
+	// MallOrderItemsTable holds the schema information for the "mall_order_items" table.
+	MallOrderItemsTable = &schema.Table{
+		Name:       "mall_order_items",
+		Comment:    "订单项表",
+		Columns:    MallOrderItemsColumns,
+		PrimaryKey: []*schema.Column{MallOrderItemsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "orderitem_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallOrderItemsColumns[7]},
+			},
+		},
+	}
 	// SysOrgUnitsColumns holds the columns for the "sys_org_units" table.
 	SysOrgUnitsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -1415,6 +1680,71 @@ var (
 				Name:    "idx_org_created_at",
 				Unique:  false,
 				Columns: []*schema.Column{SysOrgUnitsColumns[1]},
+			},
+		},
+	}
+	// MallPaymentRefundsColumns holds the columns for the "mall_payment_refunds" table.
+	MallPaymentRefundsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "currency", Type: field.TypeString, Nullable: true, Comment: "币种（ISO 4217，当前仅支持CNY）", Default: "CNY"},
+		{Name: "business_ref_id", Type: field.TypeString, Nullable: true, Comment: "业务单号"},
+		{Name: "idempotency_key", Type: field.TypeString, Nullable: true, Comment: "幂等键"},
+		{Name: "transaction_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的支付流水ID"},
+		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "退款金额（最小货币单位，分）", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "退款状态", Enums: []string{"PENDING", "SUCCEEDED", "FAILED"}},
+	}
+	// MallPaymentRefundsTable holds the schema information for the "mall_payment_refunds" table.
+	MallPaymentRefundsTable = &schema.Table{
+		Name:       "mall_payment_refunds",
+		Comment:    "支付退款表",
+		Columns:    MallPaymentRefundsColumns,
+		PrimaryKey: []*schema.Column{MallPaymentRefundsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "paymentrefund_transaction_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallPaymentRefundsColumns[11]},
+			},
+		},
+	}
+	// MallPaymentTransactionsColumns holds the columns for the "mall_payment_transactions" table.
+	MallPaymentTransactionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "currency", Type: field.TypeString, Nullable: true, Comment: "币种（ISO 4217，当前仅支持CNY）", Default: "CNY"},
+		{Name: "business_ref_id", Type: field.TypeString, Nullable: true, Comment: "业务单号"},
+		{Name: "idempotency_key", Type: field.TypeString, Nullable: true, Comment: "幂等键"},
+		{Name: "payment_method", Type: field.TypeEnum, Nullable: true, Comment: "支付方式", Enums: []string{"BALANCE", "CREDIT", "WECHAT", "ALIPAY", "UNIONPAY", "STRIPE", "PAYPAL", "CRYPTO_BTC", "CRYPTO_ETH", "CRYPTO_USDT", "CRYPTO_USDC", "CRYPTO_TRON", "CRYPTO_TON", "CRYPTO_OTHER", "MIXED", "OFFLINE"}},
+		{Name: "business_type", Type: field.TypeEnum, Nullable: true, Comment: "业务类型", Enums: []string{"BUSINESS_TYPE_RECHARGE", "BUSINESS_TYPE_CONSUME", "BUSINESS_TYPE_REFUND", "BUSINESS_TYPE_GIFT", "BUSINESS_TYPE_EXPIRE", "BUSINESS_TYPE_ADJUST", "BUSINESS_TYPE_TRANSFER"}},
+		{Name: "order_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的订单ID"},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "用户ID"},
+		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "支付金额（最小货币单位，分）", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "支付状态", Enums: []string{"PENDING", "SUCCEEDED", "FAILED", "REFUNDED"}},
+	}
+	// MallPaymentTransactionsTable holds the schema information for the "mall_payment_transactions" table.
+	MallPaymentTransactionsTable = &schema.Table{
+		Name:       "mall_payment_transactions",
+		Comment:    "支付流水表",
+		Columns:    MallPaymentTransactionsColumns,
+		PrimaryKey: []*schema.Column{MallPaymentTransactionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "paymenttransaction_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallPaymentTransactionsColumns[13]},
 			},
 		},
 	}
@@ -1895,6 +2225,207 @@ var (
 			},
 		},
 	}
+	// MallProductsColumns holds the columns for the "mall_products" table.
+	MallProductsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "商品状态", Enums: []string{"PRODUCT_STATUS_DRAFT", "PRODUCT_STATUS_ACTIVE", "PRODUCT_STATUS_INACTIVE"}},
+		{Name: "category_id", Type: field.TypeUint32, Nullable: true, Comment: "所属类目ID"},
+		{Name: "brand_id", Type: field.TypeUint32, Nullable: true, Comment: "所属品牌ID"},
+	}
+	// MallProductsTable holds the schema information for the "mall_products" table.
+	MallProductsTable = &schema.Table{
+		Name:       "mall_products",
+		Comment:    "商品表",
+		Columns:    MallProductsColumns,
+		PrimaryKey: []*schema.Column{MallProductsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "product_category_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallProductsColumns[9]},
+			},
+			{
+				Name:    "product_brand_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallProductsColumns[10]},
+			},
+			{
+				Name:    "product_status",
+				Unique:  false,
+				Columns: []*schema.Column{MallProductsColumns[8]},
+			},
+		},
+	}
+	// MallProductAttributesColumns holds the columns for the "mall_product_attributes" table.
+	MallProductAttributesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+	}
+	// MallProductAttributesTable holds the schema information for the "mall_product_attributes" table.
+	MallProductAttributesTable = &schema.Table{
+		Name:       "mall_product_attributes",
+		Comment:    "商品属性表",
+		Columns:    MallProductAttributesColumns,
+		PrimaryKey: []*schema.Column{MallProductAttributesColumns[0]},
+	}
+	// MallProductAttributeTranslationsColumns holds the columns for the "mall_product_attribute_translations" table.
+	MallProductAttributeTranslationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "attribute_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的属性ID"},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "属性名称"},
+	}
+	// MallProductAttributeTranslationsTable holds the schema information for the "mall_product_attribute_translations" table.
+	MallProductAttributeTranslationsTable = &schema.Table{
+		Name:       "mall_product_attribute_translations",
+		Comment:    "商品属性翻译表",
+		Columns:    MallProductAttributeTranslationsColumns,
+		PrimaryKey: []*schema.Column{MallProductAttributeTranslationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "productattributetranslation_attribute_id_language_code",
+				Unique:  true,
+				Columns: []*schema.Column{MallProductAttributeTranslationsColumns[7], MallProductAttributeTranslationsColumns[8]},
+			},
+			{
+				Name:    "productattributetranslation_attribute_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallProductAttributeTranslationsColumns[7]},
+			},
+			{
+				Name:    "productattributetranslation_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{MallProductAttributeTranslationsColumns[8]},
+			},
+		},
+	}
+	// MallProductAttributeValuesColumns holds the columns for the "mall_product_attribute_values" table.
+	MallProductAttributeValuesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
+		{Name: "attribute_id", Type: field.TypeUint32, Nullable: true, Comment: "所属属性ID"},
+	}
+	// MallProductAttributeValuesTable holds the schema information for the "mall_product_attribute_values" table.
+	MallProductAttributeValuesTable = &schema.Table{
+		Name:       "mall_product_attribute_values",
+		Comment:    "商品属性值表",
+		Columns:    MallProductAttributeValuesColumns,
+		PrimaryKey: []*schema.Column{MallProductAttributeValuesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "productattributevalue_attribute_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallProductAttributeValuesColumns[8]},
+			},
+		},
+	}
+	// MallProductAttributeValueTranslationsColumns holds the columns for the "mall_product_attribute_value_translations" table.
+	MallProductAttributeValueTranslationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "value_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的属性值ID"},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
+		{Name: "display_name", Type: field.TypeString, Nullable: true, Comment: "属性值显示名"},
+	}
+	// MallProductAttributeValueTranslationsTable holds the schema information for the "mall_product_attribute_value_translations" table.
+	MallProductAttributeValueTranslationsTable = &schema.Table{
+		Name:       "mall_product_attribute_value_translations",
+		Comment:    "商品属性值翻译表",
+		Columns:    MallProductAttributeValueTranslationsColumns,
+		PrimaryKey: []*schema.Column{MallProductAttributeValueTranslationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "productattributevaluetranslation_value_id_language_code",
+				Unique:  true,
+				Columns: []*schema.Column{MallProductAttributeValueTranslationsColumns[7], MallProductAttributeValueTranslationsColumns[8]},
+			},
+			{
+				Name:    "productattributevaluetranslation_value_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallProductAttributeValueTranslationsColumns[7]},
+			},
+			{
+				Name:    "productattributevaluetranslation_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{MallProductAttributeValueTranslationsColumns[8]},
+			},
+		},
+	}
+	// MallProductTranslationsColumns holds the columns for the "mall_product_translations" table.
+	MallProductTranslationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "product_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的商品ID"},
+		{Name: "language_code", Type: field.TypeString, Nullable: true, Comment: "语言代码"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "商品名称"},
+		{Name: "slug", Type: field.TypeString, Nullable: true, Comment: "商品别名"},
+		{Name: "short_description", Type: field.TypeString, Nullable: true, Comment: "商品简短描述"},
+		{Name: "long_description", Type: field.TypeString, Nullable: true, Comment: "商品长描述"},
+	}
+	// MallProductTranslationsTable holds the schema information for the "mall_product_translations" table.
+	MallProductTranslationsTable = &schema.Table{
+		Name:       "mall_product_translations",
+		Comment:    "商品翻译表",
+		Columns:    MallProductTranslationsColumns,
+		PrimaryKey: []*schema.Column{MallProductTranslationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "producttranslation_product_id_language_code",
+				Unique:  true,
+				Columns: []*schema.Column{MallProductTranslationsColumns[7], MallProductTranslationsColumns[8]},
+			},
+			{
+				Name:    "producttranslation_product_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallProductTranslationsColumns[7]},
+			},
+			{
+				Name:    "producttranslation_language_code",
+				Unique:  false,
+				Columns: []*schema.Column{MallProductTranslationsColumns[8]},
+			},
+			{
+				Name:    "producttranslation_slug",
+				Unique:  false,
+				Columns: []*schema.Column{MallProductTranslationsColumns[10]},
+			},
+		},
+	}
 	// SysRolesColumns holds the columns for the "sys_roles" table.
 	SysRolesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2094,6 +2625,107 @@ var (
 				Name:    "idx_rp_created_by",
 				Unique:  false,
 				Columns: []*schema.Column{SysRolePermissionsColumns[4]},
+			},
+		},
+	}
+	// MallSkusColumns holds the columns for the "mall_skus" table.
+	MallSkusColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "product_id", Type: field.TypeUint32, Nullable: true, Comment: "所属商品ID"},
+		{Name: "sku_code", Type: field.TypeString, Nullable: true, Comment: "SKU 唯一编码"},
+		{Name: "stock_qty", Type: field.TypeInt32, Nullable: true, Comment: "库存数量", Default: 0},
+	}
+	// MallSkusTable holds the schema information for the "mall_skus" table.
+	MallSkusTable = &schema.Table{
+		Name:       "mall_skus",
+		Comment:    "SKU 表",
+		Columns:    MallSkusColumns,
+		PrimaryKey: []*schema.Column{MallSkusColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "sku_product_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallSkusColumns[7]},
+			},
+			{
+				Name:    "sku_sku_code",
+				Unique:  true,
+				Columns: []*schema.Column{MallSkusColumns[8]},
+			},
+		},
+	}
+	// MallSkuAttributeCombinationsColumns holds the columns for the "mall_sku_attribute_combinations" table.
+	MallSkuAttributeCombinationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sku_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的 SKU ID"},
+		{Name: "attribute_id", Type: field.TypeUint32, Nullable: true, Comment: "属性ID"},
+		{Name: "attribute_value_id", Type: field.TypeUint32, Nullable: true, Comment: "属性值ID"},
+	}
+	// MallSkuAttributeCombinationsTable holds the schema information for the "mall_sku_attribute_combinations" table.
+	MallSkuAttributeCombinationsTable = &schema.Table{
+		Name:       "mall_sku_attribute_combinations",
+		Comment:    "SKU 属性组合关联表",
+		Columns:    MallSkuAttributeCombinationsColumns,
+		PrimaryKey: []*schema.Column{MallSkuAttributeCombinationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "skuattributecombination_sku_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallSkuAttributeCombinationsColumns[7]},
+			},
+			{
+				Name:    "skuattributecombination_attribute_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallSkuAttributeCombinationsColumns[8]},
+			},
+			{
+				Name:    "skuattributecombination_attribute_value_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallSkuAttributeCombinationsColumns[9]},
+			},
+		},
+	}
+	// MallSkuPricesColumns holds the columns for the "mall_sku_prices" table.
+	MallSkuPricesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "currency", Type: field.TypeString, Nullable: true, Comment: "币种（ISO 4217，当前仅支持CNY）", Default: "CNY"},
+		{Name: "sku_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的 SKU ID"},
+		{Name: "amount", Type: field.TypeString, Nullable: true, Comment: "该币种下的价格金额（字符串表示，避免浮点精度问题）"},
+	}
+	// MallSkuPricesTable holds the schema information for the "mall_sku_prices" table.
+	MallSkuPricesTable = &schema.Table{
+		Name:       "mall_sku_prices",
+		Comment:    "SKU 多币种价格表",
+		Columns:    MallSkuPricesColumns,
+		PrimaryKey: []*schema.Column{MallSkuPricesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "skuprice_sku_id_currency",
+				Unique:  true,
+				Columns: []*schema.Column{MallSkuPricesColumns[8], MallSkuPricesColumns[7]},
+			},
+			{
+				Name:    "skuprice_sku_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallSkuPricesColumns[8]},
 			},
 		},
 	}
@@ -2657,6 +3289,12 @@ var (
 	Tables = []*schema.Table{
 		SysApisTable,
 		SysAPIAuditLogsTable,
+		MallBrandsTable,
+		MallBrandTranslationsTable,
+		MallCartsTable,
+		MallCartItemsTable,
+		MallCategoriesTable,
+		MallCategoryTranslationsTable,
 		SysDataAccessAuditLogsTable,
 		FilesTable,
 		InternalMessagesTable,
@@ -2671,7 +3309,11 @@ var (
 		SysMembershipRolesTable,
 		SysMenusTable,
 		SysOperationAuditLogsTable,
+		MallOrdersTable,
+		MallOrderItemsTable,
 		SysOrgUnitsTable,
+		MallPaymentRefundsTable,
+		MallPaymentTransactionsTable,
 		SysPermissionsTable,
 		SysPermissionApisTable,
 		SysPermissionAuditLogsTable,
@@ -2680,9 +3322,18 @@ var (
 		SysPermissionPoliciesTable,
 		SysPolicyEvaluationLogsTable,
 		SysPositionsTable,
+		MallProductsTable,
+		MallProductAttributesTable,
+		MallProductAttributeTranslationsTable,
+		MallProductAttributeValuesTable,
+		MallProductAttributeValueTranslationsTable,
+		MallProductTranslationsTable,
 		SysRolesTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
+		MallSkusTable,
+		MallSkuAttributeCombinationsTable,
+		MallSkuPricesTable,
 		SysTasksTable,
 		SysTenantsTable,
 		SysUsersTable,
@@ -2701,6 +3352,37 @@ func init() {
 	}
 	SysAPIAuditLogsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_api_audit_logs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallBrandsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_brands",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallBrandTranslationsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_brand_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallCartsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_carts",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallCartItemsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_cart_items",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallCategoriesTable.ForeignKeys[0].RefTable = MallCategoriesTable
+	MallCategoriesTable.Annotation = &entsql.Annotation{
+		Table:     "mall_categories",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallCategoryTranslationsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_category_translations",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
@@ -2775,9 +3457,29 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	MallOrdersTable.Annotation = &entsql.Annotation{
+		Table:     "mall_orders",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallOrderItemsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_order_items",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	SysOrgUnitsTable.ForeignKeys[0].RefTable = SysOrgUnitsTable
 	SysOrgUnitsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_org_units",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallPaymentRefundsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_payment_refunds",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallPaymentTransactionsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_payment_transactions",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
@@ -2822,6 +3524,36 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	MallProductsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_products",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallProductAttributesTable.Annotation = &entsql.Annotation{
+		Table:     "mall_product_attributes",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallProductAttributeTranslationsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_product_attribute_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallProductAttributeValuesTable.Annotation = &entsql.Annotation{
+		Table:     "mall_product_attribute_values",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallProductAttributeValueTranslationsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_product_attribute_value_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallProductTranslationsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_product_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	SysRolesTable.Annotation = &entsql.Annotation{
 		Table:     "sys_roles",
 		Charset:   "utf8mb4",
@@ -2834,6 +3566,21 @@ func init() {
 	}
 	SysRolePermissionsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_role_permissions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallSkusTable.Annotation = &entsql.Annotation{
+		Table:     "mall_skus",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallSkuAttributeCombinationsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_sku_attribute_combinations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallSkuPricesTable.Annotation = &entsql.Annotation{
+		Table:     "mall_sku_prices",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

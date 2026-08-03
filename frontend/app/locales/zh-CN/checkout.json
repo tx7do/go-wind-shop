@@ -1,0 +1,21 @@
+{
+  "recipientTitle": "收货信息",
+  "recipientDesc": "请填写真实的收货信息，以便商品顺利送达。",
+  "recipientName": "收货人姓名",
+  "recipientNamePlaceholder": "请输入收货人姓名",
+  "recipientPhone": "收货人电话",
+  "recipientPhonePlaceholder": "请输入收货人电话",
+  "shippingAddress": "收货地址",
+  "shippingAddressPlaceholder": "请输入详细收货地址",
+  "summary": "订单摘要",
+  "placeOrder": "提交订单",
+  "orderCreated": "订单已创建。",
+  "paymentSuccess": "支付完成。",
+  "disclaimer": "提交即表示你同意商城的交易条款。",
+  "errors": {
+    "invalidForm": "请完整填写收货信息。",
+    "emptyCart": "购物车为空，无法下单。",
+    "orderFailed": "下单失败，请稍后重试。",
+    "paymentFailed": "支付失败，请稍后重试。"
+  }
+}

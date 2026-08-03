@@ -1,0 +1,20 @@
+{
+  "empty": "你的购物车是空的。",
+  "continueShopping": "继续购物",
+  "skuId": "SKU",
+  "lineItemNote": "仅展示购物车项，商品信息以结算页为准。",
+  "total": "合计",
+  "totalNote": "金额以结算页实时校验结果为准。",
+  "checkout": "结算",
+  "table": {
+    "item": "商品",
+    "unitPrice": "单价",
+    "quantity": "数量",
+    "action": "操作"
+  },
+  "errors": {
+    "updateFailed": "更新数量失败，请稍后重试。",
+    "removeFailed": "移除商品失败，请稍后重试。",
+    "empty": "购物车为空，无法结算。"
+  }
+}

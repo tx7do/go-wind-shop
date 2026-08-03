@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, orderService *service.OrderService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -29,11 +29,16 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService) *a
 	)
 
 	taskService.RegisterTaskScheduler(srv)
+	orderService.RegisterTaskScheduler(srv)
 
 	var err error
 
 	// 注册任务
 	if err = asynq.RegisterSubscriber(srv, task.BackupTaskType, taskService.AsyncBackup); err != nil {
+		log.Error(err)
+	}
+	// 注册订单超时延时任务处理器（N 分钟后触发 ExpireOrderByTimeout，含幂等校验与库存释放）
+	if err = asynq.RegisterSubscriber(srv, task.OrderTimeoutTaskType, orderService.HandleOrderTimeout); err != nil {
 		log.Error(err)
 	}
 

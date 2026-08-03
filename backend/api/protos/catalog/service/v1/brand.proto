@@ -1,0 +1,264 @@
+syntax = "proto3";
+
+package catalog.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 品牌服务
+service BrandService {
+  // 分页查询品牌列表
+  rpc List (pagination.PagingRequest) returns (ListBrandResponse) {}
+
+  // 统计品牌数量
+  rpc Count (pagination.PagingRequest) returns (CountBrandResponse) {}
+
+  // 查询品牌详情
+  rpc Get (GetBrandRequest) returns (Brand) {}
+
+  // 创建品牌
+  rpc Create (CreateBrandRequest) returns (google.protobuf.Empty) {}
+  // 批量创建品牌
+  rpc BatchCreate (BatchCreateBrandsRequest) returns (google.protobuf.Empty) {}
+
+  // 更新品牌
+  rpc Update (UpdateBrandRequest) returns (google.protobuf.Empty) {}
+
+  // 删除品牌
+  rpc Delete (DeleteBrandRequest) returns (google.protobuf.Empty) {}
+
+  // 检查翻译是否存在
+  rpc TranslationExists (BrandTranslationExistsRequest) returns (BrandTranslationExistsResponse) {}
+  // 获取翻译数据
+  rpc GetTranslation (GetBrandRequest) returns (BrandTranslation) {}
+  // 创建翻译
+  rpc CreateTranslation (CreateBrandTranslationRequest) returns (BrandTranslation) {}
+  // 更新翻译
+  rpc UpdateTranslation (UpdateBrandTranslationRequest) returns (BrandTranslation) {}
+  // 删除翻译
+  rpc DeleteTranslation (DeleteBrandTranslationRequest) returns (google.protobuf.Empty) {}
+}
+
+// 品牌
+message Brand {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "品牌ID"}
+  ]; // 品牌ID
+
+  optional uint32 sort_order = 2 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {description: "排序优先级"}
+  ]; // 排序优先级
+
+  optional string logo_url = 3 [
+    json_name = "logoUrl",
+    (gnostic.openapi.v3.property) = {description: "品牌 Logo 的资源 URL（locale 无关）"}
+  ]; // 品牌 Logo 资源 URL
+
+  repeated BrandTranslation translations = 20 [
+    json_name = "translations",
+    (gnostic.openapi.v3.property) = {description: "多语言翻译列表"}
+  ];
+
+  repeated string available_languages = 21 [
+    json_name = "availableLanguages",
+    (gnostic.openapi.v3.property) = {
+      description: "可用的语言代码列表",
+      example: {yaml: '["zh-CN", "en-US"]'}
+    }
+  ];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 品牌翻译
+message BrandTranslation {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "翻译记录ID"}
+  ]; // 翻译记录ID
+
+  optional uint32 brand_id = 2 [
+    json_name = "brandId",
+    (gnostic.openapi.v3.property) = {description: "关联的品牌ID"}
+  ]; // 关联的品牌ID
+
+  optional string language_code = 3 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {description: "语言代码"}
+  ]; // 语言代码
+
+  optional string name = 10 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "品牌名称"}
+  ]; // 品牌名称
+
+  optional string slug = 11 [
+    json_name = "slug",
+    (gnostic.openapi.v3.property) = {description: "品牌别名"}
+  ]; // 品牌别名
+
+  optional string description = 12 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "品牌描述"}
+  ]; // 品牌描述
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 品牌列表 - 答复
+message ListBrandResponse {
+  repeated Brand items = 1;
+  uint64 total = 2;
+}
+
+// 品牌数据 - 请求
+message GetBrandRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+
+    string code = 2 [
+      (gnostic.openapi.v3.property) = {description: "唯一代码（如 slug 或其他唯一标识符，优先级高于 ID）", read_only: true},
+      json_name = "code"
+    ]; // 唯一代码
+  }
+
+  optional string locale = 10 [
+    json_name = "locale",
+    (gnostic.openapi.v3.property) = {description: "语言代码，用于指定返回哪个语言版本的数据"}
+  ]; // 语言代码
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器
+}
+
+// 创建品牌 - 请求
+message CreateBrandRequest {
+  Brand data = 1;
+}
+
+// 更新品牌 - 请求
+message UpdateBrandRequest {
+  uint32 id = 1;
+
+  Brand data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 允许缺失则插入
+}
+
+// 删除品牌 - 请求
+message DeleteBrandRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+message BatchCreateBrandsRequest {
+  repeated Brand items = 1;
+}
+message BatchCreateBrandsResponse {
+  repeated int32 created_ids = 1 [
+    json_name = "createdIds",
+    (gnostic.openapi.v3.property) = {
+      description: "创建成功的品牌ID列表"
+    }
+  ]; // 创建成功的品牌ID列表
+}
+
+message CountBrandResponse {
+  uint64 count = 1;
+}
+
+// ============ 翻译相关请求 ============
+
+message BrandTranslationExistsRequest {
+  uint32 brand_id = 1 [
+    json_name = "brandId",
+    (gnostic.openapi.v3.property) = {description: "品牌ID"}
+  ];
+  string language_code = 2 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {description: "语言代码"}
+  ];
+}
+
+message BrandTranslationExistsResponse {
+  bool exists = 1 [
+    json_name = "exists",
+    (gnostic.openapi.v3.property) = {description: "是否存在"}
+  ];
+}
+
+message CreateBrandTranslationRequest {
+  BrandTranslation data = 1;
+}
+
+message UpdateBrandTranslationRequest {
+  uint32 id = 1;
+  BrandTranslation data = 2;
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ];
+}
+
+message DeleteBrandTranslationRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "翻译记录ID", read_only: true},
+      json_name = "id"
+    ];
+
+    BrandTranslationIdentifier identifier = 2 [
+      (gnostic.openapi.v3.property) = {description: "品牌ID与语言代码复合标识"}
+    ];
+  }
+}
+
+message BrandTranslationIdentifier {
+  uint32 brand_id = 1 [json_name = "brandId", (gnostic.openapi.v3.property) = {description: "品牌ID"}];
+  string language_code = 2 [json_name = "languageCode", (gnostic.openapi.v3.property) = {description: "语言代码"}];
+}

@@ -1,0 +1,20 @@
+{
+  "empty": "Your shopping cart is empty.",
+  "continueShopping": "Continue shopping",
+  "skuId": "SKU",
+  "lineItemNote": "Shows cart items only; product details are confirmed at checkout.",
+  "total": "Total",
+  "totalNote": "Final amount is validated at checkout.",
+  "checkout": "Checkout",
+  "table": {
+    "item": "Item",
+    "unitPrice": "Unit price",
+    "quantity": "Quantity",
+    "action": "Action"
+  },
+  "errors": {
+    "updateFailed": "Failed to update quantity. Please try again later.",
+    "removeFailed": "Failed to remove item. Please try again later.",
+    "empty": "Your cart is empty; checkout is unavailable."
+  }
+}

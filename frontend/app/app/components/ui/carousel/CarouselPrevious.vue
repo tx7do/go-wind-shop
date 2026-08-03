@@ -2,7 +2,7 @@
 import { type HTMLAttributes } from 'vue'
 import { XIcon } from '@/plugins/xicon'
 import { cn } from '@/lib/utils'
-import { UiButton } from '@/components/ui/button'
+import { Button as UiButton } from '@/components/ui/button'
 import { useCarousel } from '.'
 
 const props = withDefaults(defineProps<{

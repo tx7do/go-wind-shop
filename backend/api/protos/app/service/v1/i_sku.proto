@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/sku.proto";
+
+// SKU 前台服务
+service SkuService {
+  // 分页查询 SKU 列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListSkuResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/skus"
+    };
+  }
+
+  // 查询 SKU 详情
+  rpc Get (catalog.service.v1.GetSkuRequest) returns (catalog.service.v1.Sku) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/skus/{id}"
+    };
+  }
+}
+
+// SKU 价格前台服务
+service SkuPriceService {
+  // 分页查询 SKU 价格列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListSkuPriceResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/sku-prices"
+    };
+  }
+
+  // 查询 SKU 价格详情
+  rpc Get (catalog.service.v1.GetSkuPriceRequest) returns (catalog.service.v1.SkuPrice) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/sku-prices/{id}"
+    };
+  }
+}
+
+// SKU 属性组合前台服务
+service SkuAttributeCombinationService {
+  // 分页查询 SKU 属性组合列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListSkuAttributeCombinationResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/sku-attribute-combinations"
+    };
+  }
+
+  // 查询 SKU 属性组合详情
+  rpc Get (catalog.service.v1.GetSkuAttributeCombinationRequest) returns (catalog.service.v1.SkuAttributeCombination) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/sku-attribute-combinations/{id}"
+    };
+  }
+}

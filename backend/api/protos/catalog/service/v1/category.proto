@@ -1,0 +1,282 @@
+syntax = "proto3";
+
+package catalog.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 商品类目服务
+service CategoryService {
+  // 分页查询类目列表
+  rpc List (pagination.PagingRequest) returns (ListCategoryResponse) {}
+
+  // 统计类目数量
+  rpc Count (pagination.PagingRequest) returns (CountCategoryResponse) {}
+
+  // 查询类目详情
+  rpc Get (GetCategoryRequest) returns (Category) {}
+
+  // 创建类目
+  rpc Create (CreateCategoryRequest) returns (google.protobuf.Empty) {}
+  // 批量创建类目
+  rpc BatchCreate (BatchCreateCategoriesRequest) returns (google.protobuf.Empty) {}
+
+  // 更新类目
+  rpc Update (UpdateCategoryRequest) returns (google.protobuf.Empty) {}
+
+  // 删除类目
+  rpc Delete (DeleteCategoryRequest) returns (google.protobuf.Empty) {}
+
+  // 检查翻译是否存在
+  rpc TranslationExists (CategoryTranslationExistsRequest) returns (CategoryTranslationExistsResponse) {}
+  // 获取翻译数据
+  rpc GetTranslation (GetCategoryRequest) returns (CategoryTranslation) {}
+  // 创建翻译
+  rpc CreateTranslation (CreateCategoryTranslationRequest) returns (CategoryTranslation) {}
+  // 更新翻译
+  rpc UpdateTranslation (UpdateCategoryTranslationRequest) returns (CategoryTranslation) {}
+  // 删除翻译
+  rpc DeleteTranslation (DeleteCategoryTranslationRequest) returns (google.protobuf.Empty) {}
+}
+
+// 商品类目
+message Category {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "类目ID"}
+  ]; // 类目ID
+
+  optional uint32 sort_order = 2 [
+    json_name = "sortOrder",
+    (gnostic.openapi.v3.property) = {description: "排序优先级（数值越小越靠前，同级类目间排序）"}
+  ]; // 排序优先级
+
+  repeated CategoryTranslation translations = 20 [
+    json_name = "translations",
+    (gnostic.openapi.v3.property) = {description: "多语言翻译列表"}
+  ];
+
+  repeated string available_languages = 21 [
+    json_name = "availableLanguages",
+    (gnostic.openapi.v3.property) = {
+      description: "可用的语言代码列表（快速查询，避免遍历 translations）",
+      example: {yaml: '["zh-CN", "en-US"]'}
+    }
+  ];
+
+  optional uint32 parent_id = 60 [
+    json_name = "parentId",
+    (gnostic.openapi.v3.property) = {description: "父节点ID"}
+  ]; // 父节点ID
+  repeated Category children = 61 [
+    json_name = "children",
+    (gnostic.openapi.v3.property) = {description: "子节点树"}
+  ]; // 子节点树
+  optional int32 depth = 62 [
+    json_name = "depth",
+    (gnostic.openapi.v3.property) = {description: "类目层级深度（0=顶级，1=二级，以此类推）"}
+  ]; // 类目层级深度
+  optional string path = 63 [
+    json_name = "path",
+    (gnostic.openapi.v3.property) = {description: "物化路径（Materialized Path），如 '1/5/23'，便于层级查询"}
+  ]; // 物化路径
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 类目翻译
+message CategoryTranslation {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {description: "翻译记录ID"}
+  ]; // 翻译记录ID
+
+  optional uint32 category_id = 2 [
+    json_name = "categoryId",
+    (gnostic.openapi.v3.property) = {description: "关联的类目ID"}
+  ]; // 关联的类目ID
+
+  optional string language_code = 3 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {description: "语言代码"}
+  ]; // 语言代码
+
+  optional string name = 10 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "类目名称"}
+  ]; // 类目名称
+
+  optional string slug = 11 [
+    json_name = "slug",
+    (gnostic.openapi.v3.property) = {description: "类目别名"}
+  ]; // 类目别名
+
+  optional string description = 12 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "类目描述"}
+  ]; // 类目描述
+
+  optional string full_path = 20 [
+    json_name = "fullPath",
+    (gnostic.openapi.v3.property) = {description: "完整路径（如 /zh-CN/category/tech）"}
+  ]; // 完整路径
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 类目列表 - 答复
+message ListCategoryResponse {
+  repeated Category items = 1;
+  uint64 total = 2;
+}
+
+// 类目数据 - 请求
+message GetCategoryRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+
+    string code = 2 [
+      (gnostic.openapi.v3.property) = {description: "唯一代码（如 slug 或其他唯一标识符，优先级高于 ID）", read_only: true},
+      json_name = "code"
+    ]; // 唯一代码
+  }
+
+  optional string locale = 10 [
+    json_name = "locale",
+    (gnostic.openapi.v3.property) = {description: "语言代码，用于指定返回哪个语言版本的数据"}
+  ]; // 语言代码
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器
+}
+
+// 创建类目 - 请求
+message CreateCategoryRequest {
+  Category data = 1;
+}
+
+// 更新类目 - 请求
+message UpdateCategoryRequest {
+  uint32 id = 1;
+
+  Category data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 允许缺失则插入
+}
+
+// 删除类目 - 请求
+message DeleteCategoryRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
+      json_name = "id"
+    ]; // ID
+  }
+}
+
+message BatchCreateCategoriesRequest {
+  repeated Category items = 1;
+}
+message BatchCreateCategoriesResponse {
+  repeated int32 created_ids = 1 [
+    json_name = "createdIds",
+    (gnostic.openapi.v3.property) = {
+      description: "创建成功的类目ID列表"
+    }
+  ]; // 创建成功的类目ID列表
+}
+
+message CountCategoryResponse {
+  uint64 count = 1;
+}
+
+// ============ 翻译相关请求 ============
+
+message CategoryTranslationExistsRequest {
+  uint32 category_id = 1 [
+    json_name = "categoryId",
+    (gnostic.openapi.v3.property) = {description: "类目ID"}
+  ];
+  string language_code = 2 [
+    json_name = "languageCode",
+    (gnostic.openapi.v3.property) = {description: "语言代码"}
+  ];
+}
+
+message CategoryTranslationExistsResponse {
+  bool exists = 1 [
+    json_name = "exists",
+    (gnostic.openapi.v3.property) = {description: "是否存在"}
+  ];
+}
+
+message CreateCategoryTranslationRequest {
+  CategoryTranslation data = 1;
+}
+
+message UpdateCategoryTranslationRequest {
+  uint32 id = 1;
+  CategoryTranslation data = 2;
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "id,realname,username"}
+    },
+    json_name = "updateMask"
+  ];
+}
+
+message DeleteCategoryTranslationRequest {
+  oneof query_by {
+    uint32 id = 1 [
+      (gnostic.openapi.v3.property) = {description: "翻译记录ID", read_only: true},
+      json_name = "id"
+    ];
+
+    CategoryTranslationIdentifier identifier = 2 [
+      (gnostic.openapi.v3.property) = {description: "类目ID与语言代码复合标识"}
+    ];
+  }
+}
+
+message CategoryTranslationIdentifier {
+  uint32 category_id = 1 [json_name = "categoryId", (gnostic.openapi.v3.property) = {description: "类目ID"}];
+  string language_code = 2 [json_name = "languageCode", (gnostic.openapi.v3.property) = {description: "语言代码"}];
+}

@@ -41,6 +41,17 @@
     "loginPolicy": "登录策略",
     "language": "语言管理"
   },
+  "mall": {
+    "moduleName": "商品管理",
+    "category": "类目管理",
+    "brand": "品牌管理",
+    "product": "商品管理",
+    "productAttribute": "属性管理",
+    "productAttributeValue": "属性值管理",
+    "sku": "SKU管理",
+    "order": "订单管理",
+    "paymentTransaction": "支付流水"
+  },
   "tenant": {
     "moduleName": "租户管理",
     "member": "租户列表"

@@ -1,0 +1,248 @@
+syntax = "proto3";
+
+package order.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 订单服务
+service OrderService {
+  rpc List (pagination.PagingRequest) returns (ListOrderResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountOrderResponse) {}
+  rpc Get (GetOrderRequest) returns (Order) {}
+  rpc Create (CreateOrderRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdateOrderRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteOrderRequest) returns (google.protobuf.Empty) {}
+
+  // 超时过期订单（由 Task Service 的 Asynq 延时任务调用）
+  // 内含幂等校验、状态置 CANCELLED、释放库存，无需调用方关心
+  rpc ExpireOrderByTimeout (ExpireOrderByTimeoutRequest) returns (ExpireOrderByTimeoutResponse) {}
+}
+
+// 订单项服务
+service OrderItemService {
+  rpc List (pagination.PagingRequest) returns (ListOrderItemResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountOrderItemResponse) {}
+  rpc Get (GetOrderItemRequest) returns (OrderItem) {}
+  rpc Create (CreateOrderItemRequest) returns (google.protobuf.Empty) {}
+  rpc BatchCreate (BatchCreateOrderItemsRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdateOrderItemRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteOrderItemRequest) returns (google.protobuf.Empty) {}
+}
+
+// 订单
+message Order {
+  // 订单状态
+  //
+  // 订单状态流转规则：
+  // 初始：PENDING_PAYMENT
+  // 成功路径：PENDING_PAYMENT → PAID → FULFILLED → CLOSED
+  // 取消路径：PENDING_PAYMENT → CANCELLED（超时未支付自动取消并释放库存）
+  // 终态不可回退：CANCELLED / CLOSED
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+
+    PENDING_PAYMENT = 1;   // 待支付
+    PAID = 2;              // 已支付
+    CANCELLED = 3;         // 已取消（含超时自动取消）
+    FULFILLED = 4;         // 已履约（已发货）
+    CLOSED = 5;            // 已关闭（终态）
+  }
+
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "订单ID"}];
+
+  optional uint32 user_id = 2 [json_name = "userId", (gnostic.openapi.v3.property) = {description: "下单用户ID"}];
+
+  optional int64 total_amount = 3 [
+    json_name = "totalAmount",
+    (gnostic.openapi.v3.property) = {description: "订单总金额（最小货币单位，分）"}
+  ];
+
+  optional string currency = 4 [
+    json_name = "currency",
+    (gnostic.openapi.v3.property) = {description: "结算币种（ISO 4217）"}
+  ];
+
+  optional Status status = 5 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "订单状态"}
+  ];
+
+  optional string business_ref_id = 6 [
+    json_name = "businessRefId",
+    (gnostic.openapi.v3.property) = {description: "业务单号（对账主键，与支付流水的 business_ref_id 对齐）"}
+  ];
+
+  optional string idempotency_key = 7 [
+    json_name = "idempotencyKey",
+    (gnostic.openapi.v3.property) = {description: "下单幂等键（客户端生成，租户内唯一）"}
+  ];
+
+  optional string recipient_name = 8 [
+    json_name = "recipientName",
+    (gnostic.openapi.v3.property) = {description: "收件人姓名"}
+  ];
+
+  optional string recipient_phone = 9 [
+    json_name = "recipientPhone",
+    (gnostic.openapi.v3.property) = {description: "收件人电话"}
+  ];
+
+  optional string shipping_address = 10 [
+    json_name = "shippingAddress",
+    (gnostic.openapi.v3.property) = {description: "收货地址（结构化文本）"}
+  ];
+
+  optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+// 订单项
+message OrderItem {
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "订单项ID"}];
+
+  optional uint32 order_id = 2 [json_name = "orderId", (gnostic.openapi.v3.property) = {description: "关联的订单ID"}];
+
+  optional uint32 sku_id = 3 [json_name = "skuId", (gnostic.openapi.v3.property) = {description: "关联的 SKU ID"}];
+
+  optional string sku_snapshot = 4 [
+    json_name = "skuSnapshot",
+    (gnostic.openapi.v3.property) = {description: "下单时 SKU 快照（JSON，含名称/价格/属性）"}
+  ];
+
+  optional int32 quantity = 5 [
+    json_name = "quantity",
+    (gnostic.openapi.v3.property) = {description: "数量"}
+  ];
+
+  optional int64 unit_price = 6 [
+    json_name = "unitPrice",
+    (gnostic.openapi.v3.property) = {description: "单价（最小货币单位，分）"}
+  ];
+
+  optional int64 subtotal = 7 [
+    json_name = "subtotal",
+    (gnostic.openapi.v3.property) = {description: "小计金额（最小货币单位，分）"}
+  ];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+message ListOrderResponse { repeated Order items = 1; uint64 total = 2; }
+message ListOrderItemResponse { repeated OrderItem items = 1; uint64 total = 2; }
+
+message GetOrderRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "订单ID", read_only: true}, json_name = "id"];
+
+    string idempotency_key = 2 [
+      json_name = "idempotencyKey",
+      (gnostic.openapi.v3.property) = {description: "下单幂等键（需配合 tenant_id 过滤）"}
+    ];
+  }
+
+  // 按 idempotency_key 查询时必须携带的租户ID（唯一索引为 tenant_id + idempotency_key）。
+  optional uint32 tenant_id = 101 [
+    json_name = "tenantId",
+    (gnostic.openapi.v3.property) = {description: "租户ID（按 idempotency_key 查询时必填）"}
+  ];
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}
+  ];
+}
+
+message GetOrderItemRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}
+  ];
+}
+
+message CreateOrderRequest { Order data = 1; }
+message UpdateOrderRequest {
+  uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "订单ID", read_only: true}, json_name = "id"];
+  Order data = 2;
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
+    json_name = "updateMask"
+  ];
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "允许缺失则插入"},
+    json_name = "allowMissing"
+  ];
+
+  // 状态前置条件（乐观状态机）：仅当订单当前 status ∈ expected_status 时更新才生效，
+  // 否则 affected_rows=0 返回 Conflict。留空表示不校验。
+  // 用于并发场景下防止终态被覆盖。
+  repeated Order.Status expected_status = 5 [
+    json_name = "expectedStatus",
+    (gnostic.openapi.v3.property) = {description: "状态前置条件白名单，订单当前状态须在其中更新才生效，否则返回 Conflict"}
+  ];
+}
+message DeleteOrderRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "订单ID", read_only: true}, json_name = "id"];
+  }
+}
+message BatchCreateOrdersRequest { repeated Order items = 1; }
+message BatchCreateOrdersResponse { repeated int32 created_ids = 1 [json_name = "createdIds", (gnostic.openapi.v3.property) = {description: "创建成功的订单ID列表"}]; }
+message CountOrderResponse { uint64 count = 1; }
+
+message CreateOrderItemRequest { OrderItem data = 1; }
+message UpdateOrderItemRequest {
+  uint32 id = 1;
+  OrderItem data = 2;
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
+    json_name = "updateMask"
+  ];
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "允许缺失则插入"},
+    json_name = "allowMissing"
+  ];
+}
+message DeleteOrderItemRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+}
+message BatchCreateOrderItemsRequest { repeated OrderItem items = 1; }
+message BatchCreateOrderItemsResponse { repeated int32 created_ids = 1 [json_name = "createdIds", (gnostic.openapi.v3.property) = {description: "创建成功的订单项ID列表"}]; }
+message CountOrderItemResponse { uint64 count = 1; }
+
+// 超时过期订单 - 请求
+message ExpireOrderByTimeoutRequest {
+  optional uint32 order_id = 1 [json_name = "orderId", (gnostic.openapi.v3.property) = {description: "订单ID"}];
+  optional string task_id = 2 [json_name = "taskId", (gnostic.openapi.v3.property) = {description: "Asynq 任务 ID（幂等/追踪）"}];
+  optional string trace_id = 3 [json_name = "traceId", (gnostic.openapi.v3.property) = {description: "链路追踪 ID"}];
+}
+
+// 超时过期订单 - 回应
+message ExpireOrderByTimeoutResponse {
+  optional bool expired = 1 [json_name = "expired", (gnostic.openapi.v3.property) = {description: "是否执行了过期（false 表示订单已非 PENDING_PAYMENT 状态，跳过）"}];
+}

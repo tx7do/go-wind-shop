@@ -12,6 +12,24 @@ type Api func(*sql.Selector)
 // ApiAuditLog is the predicate function for apiauditlog builders.
 type ApiAuditLog func(*sql.Selector)
 
+// Brand is the predicate function for brand builders.
+type Brand func(*sql.Selector)
+
+// BrandTranslation is the predicate function for brandtranslation builders.
+type BrandTranslation func(*sql.Selector)
+
+// Cart is the predicate function for cart builders.
+type Cart func(*sql.Selector)
+
+// CartItem is the predicate function for cartitem builders.
+type CartItem func(*sql.Selector)
+
+// Category is the predicate function for category builders.
+type Category func(*sql.Selector)
+
+// CategoryTranslation is the predicate function for categorytranslation builders.
+type CategoryTranslation func(*sql.Selector)
+
 // DataAccessAuditLog is the predicate function for dataaccessauditlog builders.
 type DataAccessAuditLog func(*sql.Selector)
 
@@ -54,8 +72,20 @@ type Menu func(*sql.Selector)
 // OperationAuditLog is the predicate function for operationauditlog builders.
 type OperationAuditLog func(*sql.Selector)
 
+// Order is the predicate function for order builders.
+type Order func(*sql.Selector)
+
+// OrderItem is the predicate function for orderitem builders.
+type OrderItem func(*sql.Selector)
+
 // OrgUnit is the predicate function for orgunit builders.
 type OrgUnit func(*sql.Selector)
+
+// PaymentRefund is the predicate function for paymentrefund builders.
+type PaymentRefund func(*sql.Selector)
+
+// PaymentTransaction is the predicate function for paymenttransaction builders.
+type PaymentTransaction func(*sql.Selector)
 
 // Permission is the predicate function for permission builders.
 type Permission func(*sql.Selector)
@@ -81,6 +111,24 @@ type PolicyEvaluationLog func(*sql.Selector)
 // Position is the predicate function for position builders.
 type Position func(*sql.Selector)
 
+// Product is the predicate function for product builders.
+type Product func(*sql.Selector)
+
+// ProductAttribute is the predicate function for productattribute builders.
+type ProductAttribute func(*sql.Selector)
+
+// ProductAttributeTranslation is the predicate function for productattributetranslation builders.
+type ProductAttributeTranslation func(*sql.Selector)
+
+// ProductAttributeValue is the predicate function for productattributevalue builders.
+type ProductAttributeValue func(*sql.Selector)
+
+// ProductAttributeValueTranslation is the predicate function for productattributevaluetranslation builders.
+type ProductAttributeValueTranslation func(*sql.Selector)
+
+// ProductTranslation is the predicate function for producttranslation builders.
+type ProductTranslation func(*sql.Selector)
+
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)
 
@@ -89,6 +137,15 @@ type RoleMetadata func(*sql.Selector)
 
 // RolePermission is the predicate function for rolepermission builders.
 type RolePermission func(*sql.Selector)
+
+// Sku is the predicate function for sku builders.
+type Sku func(*sql.Selector)
+
+// SkuAttributeCombination is the predicate function for skuattributecombination builders.
+type SkuAttributeCombination func(*sql.Selector)
+
+// SkuPrice is the predicate function for skuprice builders.
+type SkuPrice func(*sql.Selector)
 
 // Task is the predicate function for task builders.
 type Task func(*sql.Selector)

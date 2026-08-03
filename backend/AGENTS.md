@@ -527,6 +527,80 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 - [ ] Step 13: make build → make run 验证
 ```
 
+## 交易域（cart / order / payment）特殊架构
+
+交易域在通用 CRUD 模板之上引入了事务编排、状态机、幂等、延时任务四个关键机制。下面是各机制的实现位置与约定，修改交易域代码前务必通读。
+
+### 下单事务（OrderService.Create）
+
+`app/core/service/internal/service/order_service.go` 的 `Create` 方法在**单个 ent 事务**内完成：
+1. 插入 Order（状态固定 `PENDING_PAYMENT`，忽略客户端传入；携带 `idempotency_key` / `business_ref_id` / `currency` 等支付 mixin 字段）
+2. 查询用户购物车（`(tenant_id, user_id)` 唯一索引），遍历其 CartItem：
+   - 对每个 SKU 执行 `tx.Sku.Query().Where(IDEQ).ForUpdate().Only()` **行锁查询**（ent `sql/lock` feature），防超卖
+   - 校验 `stock_qty >= quantity`，不足则整事务回滚
+   - 插入 OrderItem（含 SKU 快照 JSON）
+   - `tx.Sku.UpdateOneID().SetStockQty(newStock)` 扣减库存（行锁内）
+3. 删除该购物车的全部 CartItem（清空）
+4. 回写 Order.total_amount
+5. `tx.Commit()`
+6. **事务提交后**注册 asynq 订单超时延时任务（`OrderPendingTTL` = 30 min 后触发 `ExpireOrderByTimeout`）
+
+任一步失败 → `defer { tx.Rollback() }` 整事务回滚。库存扣减的原子性由行锁 + 单事务保证。
+
+### 支付 stub 与 MarkPaid（PaymentTransactionService.Create）
+
+`app/core/service/internal/service/payment_transaction_service.go`：
+- **MVP 阶段支付网关为 STUB**：`Create` 直接将流水状态置 `SUCCEEDED`（忽略客户端传入）。
+- **进程内 MarkPaid**：若流水携带 `order_id`，则**直接调用** `OrderService.Update`（非 gRPC，同进程方法调用）推进订单 `PENDING_PAYMENT → PAID`，携带 `expected_status = [PENDING_PAYMENT]` 前置条件。
+- 真实网关（Stripe/PayPal webhook）接入后：`Create` 改为创建 `PENDING` 流水，由 webhook 回调更新 `SUCCEEDED` 再触发 MarkPaid。
+
+### 乐观并发状态机（expected_status）
+
+`OrderRepo.Update`（`app/core/service/internal/data/order_repo.go`）支持 `expected_status` 前置条件：
+- proto `UpdateOrderRequest.expected_status` 是状态白名单数组。
+- repo 的 `UpdateX` selector 在 `s.Where(sql.EQ(FieldID, id))` 之外，若 `expected_status` 非空，追加 `s.Where(sql.In(FieldStatus, expectedStatusVals...))`。
+- 当订单当前状态不在白名单内时，UPDATE 命中 0 行 → ent 返回 NotFound → repo 转译为 `orderV1.ErrorConflict`。
+- `OrderService.Update` 强制：任何 `status` 变更（非 UNSPECIFIED）必须携带 `expected_status`，否则 `ErrorBadRequest`。
+- 这保证 MarkPaid（`[PENDING_PAYMENT]→PAID`）与超时取消（`[PENDING_PAYMENT]→CANCELLED`）都走乐观并发路径，防并发覆盖终态。
+
+### 订单超时过期（ExpireOrderByTimeout / asynq 延时任务）
+
+- **任务定义**：`pkg/task/order_timeout.go`（`OrderTimeoutTaskType`、`OrderTimeoutTaskData`、`CreateOrderTimeoutTaskID`）。
+- **投递**：`OrderService.scheduleOrderTimeout` 在事务提交后调用 `taskScheduler.NewTask(type, payload, asynq.ProcessIn(TTL), asynq.TaskID(id), asynq.Unique(TTL))`。
+- **handler 注册**：`app/core/service/internal/server/asynq_server.go` 调用 `asynq.RegisterSubscriber(srv, OrderTimeoutTaskType, orderService.HandleOrderTimeout)`，与 `BackupTaskType` 并列。
+- **handler**：`OrderService.HandleOrderTimeout` 是薄委托，调用本服务 `ExpireOrderByTimeout`。
+- **ExpireOrderByTimeout 逻辑**：查订单 → 幂等检查（仅 `PENDING_PAYMENT` 才处理）→ 遍历 OrderItem 调 `SkuRepo.AddStock` 释放库存 → `OrderRepo.Update(status=CANCELLED, expected_status=[PENDING_PAYMENT])` 推进终态。库存释放失败不阻塞过期（差异由对账补偿）。Conflict（状态已并发推进）则跳过。
+
+### 支付 mixin 字段在 ent / proto 的映射
+
+订单 / 支付实体通过 `pkg/entgo/mixin/` 的支付 mixin 注入字段，这些字段在 ent 与 proto 中都存在，repo 用 `SetNillableXxx` 设置（与普通业务字段同区间，低编号）：
+
+| mixin | ent 字段 | proto 字段 | 备注 |
+|---|---|---|---|
+| `Currency` | `currency` (string, nillable) | `currency` | ISO 4217 |
+| `BusinessRefId` | `business_ref_id` (string, nillable) | `business_ref_id` | 对账主键 |
+| `IdempotencyKey` | `idempotency_key` (string, nillable) | `idempotency_key` | 租户内唯一索引 `(tenant_id, idempotency_key)` |
+| `PaymentMethod` | `payment_method` (enum, nillable) | `payment_method` | proto enum `PaymentMethod` |
+| `BusinessType` | `business_type` (enum, nillable) | `business_type` | proto enum `BusinessType` |
+
+含 enum mixin 的 repo 需注册 `EnumTypeConverter`（参照 `payment_transaction_repo.go` 的 `statusConverter` / `paymentMethodConverter` / `businessTypeConverter`）。
+
+### 公开读白名单（app BFF）
+
+`app/app/service/internal/server/rest_server.go` 的 `rpc.AddWhiteList(...)` 仅放行：
+- `AuthenticationServiceLogin`
+- catalog 域的 List/Get（Category/Brand/Product/ProductAttribute/ProductAttributeValue/Sku/SkuPrice/SkuAttributeCombination）
+
+**cart / order / payment 全部不在白名单** → 默认强制 JWT。新增交易域 RPC 时切勿误加入白名单。
+
+### 待办（post-MVP）
+
+- 真实支付网关（Stripe/PayPal/Alipay webhook）替换 stub
+- SkuPrice 多币种行接入 `OrderService.Create` 的 unit_price 读取（当前硬编码 0）
+- DTM 分布式事务替换进程内 MarkPaid
+- 语言 / 类目 / 品牌 / 示例商品的种子数据（当前无 seed 机制，依赖 admin UI 手动录入）
+- 订单超时的真实退款逻辑（当前 stub 无真实扣款，无需退款）
+
 ## 常见错误与纠正
 
 | 错误做法 | 正确做法 |

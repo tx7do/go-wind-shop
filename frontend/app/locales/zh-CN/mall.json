@@ -1,0 +1,51 @@
+{
+  "home": {
+    "title": "商城",
+    "subtitle": "精选好物，触手可及",
+    "featured": "精选商品",
+    "categories": "浏览分类",
+    "heroDescription": "在这里发现来自各品类的好物，享受便捷的购物体验。"
+  },
+  "category": {
+    "products": "该分类下的商品",
+    "empty": "该分类下暂无商品。",
+    "notFound": "未找到该分类。"
+  },
+  "product": {
+    "addToCart": "加入购物车",
+    "outOfStock": "已售罄",
+    "selectSku": "请选择规格",
+    "description": "商品详情",
+    "price": "价格",
+    "priceFrom": "起售",
+    "viewDetail": "查看详情",
+    "notFound": "未找到该商品。",
+    "selectAttribute": "请选择",
+    "skuUnavailable": "当前规格不可购买。",
+    "currencyCny": "￥"
+  },
+  "loading": "加载中…",
+  "cart": {
+    "title": "购物车",
+    "subtitle": "管理你准备结算的商品"
+  },
+  "checkout": {
+    "title": "结算",
+    "subtitle": "确认收货信息并提交订单"
+  },
+  "orders": {
+    "title": "我的订单",
+    "subtitle": "查看你的全部订单记录"
+  },
+  "orderDetail": {
+    "title": "订单详情"
+  },
+  "orderStatus": {
+    "status_unspecified": "未知",
+    "pending_payment": "待支付",
+    "paid": "已支付",
+    "cancelled": "已取消",
+    "fulfilled": "已履约",
+    "closed": "已关闭"
+  }
+}

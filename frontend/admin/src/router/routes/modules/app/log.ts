@@ -80,17 +80,6 @@ const log: RouteRecordRaw[] = [
         },
         component: () => import("@/pages/app/log/policy_evaluation_log/index.vue"),
       },
-
-      {
-        path: "redis-cache-monitor",
-        name: "RedisCacheMonitor",
-        meta: {
-          icon: "lucide:database",
-          title: "routes.log.redisCacheMonitor",
-          authority: ["sys:platform_admin"],
-        },
-        component: () => import("@/pages/app/log/redis_cache_monitor/index.vue"),
-      },
     ],
   },
 ];

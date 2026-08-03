@@ -47,8 +47,21 @@ export * from "./data-access-audit-log";
 export * from "./permission-audit-log";
 export * from "./policy-evaluation-log";
 
-// 缓存监控
-export * from "./redis-cache-monitor";
-
 // 内部消息
 export * from "./internal-message";
+
+// 商品目录管理 (Mall / Catalog)
+export * from "./category";
+export * from "./brand";
+export * from "./product";
+export * from "./product-attribute";
+export * from "./product-attribute-value";
+export * from "./sku";
+export * from "./sku-price";
+export * from "./sku-attribute-combination";
+
+// 商城订单与支付管理 (Mall / Order & Payment)
+export * from "./order";
+export * from "./order-item";
+export * from "./payment-transaction";
+export * from "./payment-refund";

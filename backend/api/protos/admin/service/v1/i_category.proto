@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/category.proto";
+
+// 商品类目管理服务
+service CategoryService {
+  // 分页查询类目列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListCategoryResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/categories"
+    };
+  }
+
+  // 统计类目数量
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountCategoryResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/categories/count"
+    };
+  }
+
+  // 查询类目详情
+  rpc Get (catalog.service.v1.GetCategoryRequest) returns (catalog.service.v1.Category) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/categories/{id}"
+    };
+  }
+
+  // 创建类目
+  rpc Create (catalog.service.v1.CreateCategoryRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/categories"
+      body: "*"
+    };
+  }
+
+  // 批量创建类目
+  rpc BatchCreate (catalog.service.v1.BatchCreateCategoriesRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/categories/batch"
+      body: "*"
+    };
+  }
+
+  // 更新类目
+  rpc Update (catalog.service.v1.UpdateCategoryRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/categories/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除类目
+  rpc Delete (catalog.service.v1.DeleteCategoryRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/categories"
+    };
+  }
+
+  // 检查翻译是否存在
+  rpc TranslationExists (catalog.service.v1.CategoryTranslationExistsRequest) returns (catalog.service.v1.CategoryTranslationExistsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/categories/{category_id}/translations/{language_code}"
+    };
+  }
+
+  // 获取翻译数据
+  rpc GetTranslation (catalog.service.v1.GetCategoryRequest) returns (catalog.service.v1.CategoryTranslation) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/categories/{id}/translations"
+    };
+  }
+
+  // 创建翻译
+  rpc CreateTranslation (catalog.service.v1.CreateCategoryTranslationRequest) returns (catalog.service.v1.CategoryTranslation) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/categories/translations"
+      body: "*"
+    };
+  }
+
+  // 更新翻译
+  rpc UpdateTranslation (catalog.service.v1.UpdateCategoryTranslationRequest) returns (catalog.service.v1.CategoryTranslation) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/categories/{id}/translations"
+      body: "*"
+    };
+  }
+
+  // 删除翻译
+  rpc DeleteTranslation (catalog.service.v1.DeleteCategoryTranslationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/categories/{id}/translations"
+    };
+  }
+}

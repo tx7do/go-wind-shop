@@ -1,0 +1,174 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/sku.proto";
+
+// SKU 管理服务
+service SkuService {
+  // 分页查询 SKU 列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListSkuResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/skus"
+    };
+  }
+
+  // 统计 SKU 数量
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountSkuResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/skus/count"
+    };
+  }
+
+  // 查询 SKU 详情
+  rpc Get (catalog.service.v1.GetSkuRequest) returns (catalog.service.v1.Sku) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/skus/{id}"
+    };
+  }
+
+  // 创建 SKU
+  rpc Create (catalog.service.v1.CreateSkuRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/skus"
+      body: "*"
+    };
+  }
+
+  // 批量创建 SKU
+  rpc BatchCreate (catalog.service.v1.BatchCreateSkusRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/skus/batch"
+      body: "*"
+    };
+  }
+
+  // 更新 SKU
+  rpc Update (catalog.service.v1.UpdateSkuRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/skus/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除 SKU
+  rpc Delete (catalog.service.v1.DeleteSkuRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/skus"
+    };
+  }
+}
+
+// SKU 价格管理服务
+service SkuPriceService {
+  // 分页查询 SKU 价格列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListSkuPriceResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/sku-prices"
+    };
+  }
+
+  // 统计 SKU 数量
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountSkuResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/sku-prices/count"
+    };
+  }
+
+  // 查询 SKU 价格详情
+  rpc Get (catalog.service.v1.GetSkuPriceRequest) returns (catalog.service.v1.SkuPrice) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/sku-prices/{id}"
+    };
+  }
+
+  // 创建 SKU 价格
+  rpc Create (catalog.service.v1.CreateSkuPriceRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/sku-prices"
+      body: "*"
+    };
+  }
+
+  // 批量创建 SKU 价格
+  rpc BatchCreate (catalog.service.v1.BatchCreateSkuPricesRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/sku-prices/batch"
+      body: "*"
+    };
+  }
+
+  // 更新 SKU 价格
+  rpc Update (catalog.service.v1.UpdateSkuPriceRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/sku-prices/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除 SKU 价格
+  rpc Delete (catalog.service.v1.DeleteSkuPriceRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/sku-prices"
+    };
+  }
+}
+
+// SKU 属性组合管理服务
+service SkuAttributeCombinationService {
+  // 分页查询 SKU 属性组合列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListSkuAttributeCombinationResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/sku-attribute-combinations"
+    };
+  }
+
+  // 统计 SKU 属性组合数量
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountSkuAttributeCombinationResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/sku-attribute-combinations/count"
+    };
+  }
+
+  // 查询 SKU 属性组合详情
+  rpc Get (catalog.service.v1.GetSkuAttributeCombinationRequest) returns (catalog.service.v1.SkuAttributeCombination) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/sku-attribute-combinations/{id}"
+    };
+  }
+
+  // 创建 SKU 属性组合
+  rpc Create (catalog.service.v1.CreateSkuAttributeCombinationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/sku-attribute-combinations"
+      body: "*"
+    };
+  }
+
+  // 批量创建 SKU 属性组合
+  rpc BatchCreate (catalog.service.v1.BatchCreateSkuAttributeCombinationsRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/sku-attribute-combinations/batch"
+      body: "*"
+    };
+  }
+
+  // 更新 SKU 属性组合
+  rpc Update (catalog.service.v1.UpdateSkuAttributeCombinationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/sku-attribute-combinations/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除 SKU 属性组合
+  rpc Delete (catalog.service.v1.DeleteSkuAttributeCombinationRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/sku-attribute-combinations"
+    };
+  }
+}

@@ -1,0 +1,85 @@
+package service
+
+import (
+	"context"
+
+	"github.com/go-kratos/kratos/v2/log"
+	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"google.golang.org/protobuf/types/known/emptypb"
+
+	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
+	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
+
+	"go-wind-shop/pkg/middleware/auth"
+)
+
+type PaymentTransactionService struct {
+	adminV1.PaymentTransactionServiceHTTPServer
+
+	log *log.Helper
+
+	paymentTransactionServiceClient paymentV1.PaymentTransactionServiceClient
+}
+
+func NewPaymentTransactionService(
+	ctx *bootstrap.Context,
+	paymentTransactionServiceClient paymentV1.PaymentTransactionServiceClient,
+) *PaymentTransactionService {
+	return &PaymentTransactionService{
+		log:                             ctx.NewLoggerHelper("payment-transaction/service/admin-service"),
+		paymentTransactionServiceClient: paymentTransactionServiceClient,
+	}
+}
+
+func (s *PaymentTransactionService) List(ctx context.Context, req *paginationV1.PagingRequest) (*paymentV1.ListPaymentTransactionResponse, error) {
+	return s.paymentTransactionServiceClient.List(ctx, req)
+}
+
+func (s *PaymentTransactionService) Count(ctx context.Context, req *paginationV1.PagingRequest) (*paymentV1.CountPaymentTransactionResponse, error) {
+	return s.paymentTransactionServiceClient.Count(ctx, req)
+}
+
+func (s *PaymentTransactionService) Get(ctx context.Context, req *paymentV1.GetPaymentTransactionRequest) (*paymentV1.PaymentTransaction, error) {
+	return s.paymentTransactionServiceClient.Get(ctx, req)
+}
+
+func (s *PaymentTransactionService) Create(ctx context.Context, req *paymentV1.CreatePaymentTransactionRequest) (*emptypb.Empty, error) {
+	if req.Data == nil {
+		return nil, adminV1.ErrorBadRequest("invalid parameter")
+	}
+
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Data.CreatedBy = trans.Ptr(operator.UserId)
+
+	return s.paymentTransactionServiceClient.Create(ctx, req)
+}
+
+func (s *PaymentTransactionService) Update(ctx context.Context, req *paymentV1.UpdatePaymentTransactionRequest) (*emptypb.Empty, error) {
+	if req.Data == nil {
+		return nil, adminV1.ErrorBadRequest("invalid parameter")
+	}
+
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Data.Id = trans.Ptr(req.GetId())
+
+	req.Data.UpdatedBy = trans.Ptr(operator.GetUserId())
+	if req.UpdateMask != nil {
+		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
+	}
+
+	return s.paymentTransactionServiceClient.Update(ctx, req)
+}
+
+func (s *PaymentTransactionService) Delete(ctx context.Context, req *paymentV1.DeletePaymentTransactionRequest) (*emptypb.Empty, error) {
+	return s.paymentTransactionServiceClient.Delete(ctx, req)
+}

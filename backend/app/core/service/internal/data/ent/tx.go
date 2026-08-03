@@ -16,6 +16,18 @@ type Tx struct {
 	Api *APIClient
 	// ApiAuditLog is the client for interacting with the ApiAuditLog builders.
 	ApiAuditLog *ApiAuditLogClient
+	// Brand is the client for interacting with the Brand builders.
+	Brand *BrandClient
+	// BrandTranslation is the client for interacting with the BrandTranslation builders.
+	BrandTranslation *BrandTranslationClient
+	// Cart is the client for interacting with the Cart builders.
+	Cart *CartClient
+	// CartItem is the client for interacting with the CartItem builders.
+	CartItem *CartItemClient
+	// Category is the client for interacting with the Category builders.
+	Category *CategoryClient
+	// CategoryTranslation is the client for interacting with the CategoryTranslation builders.
+	CategoryTranslation *CategoryTranslationClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
 	// File is the client for interacting with the File builders.
@@ -44,8 +56,16 @@ type Tx struct {
 	Menu *MenuClient
 	// OperationAuditLog is the client for interacting with the OperationAuditLog builders.
 	OperationAuditLog *OperationAuditLogClient
+	// Order is the client for interacting with the Order builders.
+	Order *OrderClient
+	// OrderItem is the client for interacting with the OrderItem builders.
+	OrderItem *OrderItemClient
 	// OrgUnit is the client for interacting with the OrgUnit builders.
 	OrgUnit *OrgUnitClient
+	// PaymentRefund is the client for interacting with the PaymentRefund builders.
+	PaymentRefund *PaymentRefundClient
+	// PaymentTransaction is the client for interacting with the PaymentTransaction builders.
+	PaymentTransaction *PaymentTransactionClient
 	// Permission is the client for interacting with the Permission builders.
 	Permission *PermissionClient
 	// PermissionApi is the client for interacting with the PermissionApi builders.
@@ -62,12 +82,30 @@ type Tx struct {
 	PolicyEvaluationLog *PolicyEvaluationLogClient
 	// Position is the client for interacting with the Position builders.
 	Position *PositionClient
+	// Product is the client for interacting with the Product builders.
+	Product *ProductClient
+	// ProductAttribute is the client for interacting with the ProductAttribute builders.
+	ProductAttribute *ProductAttributeClient
+	// ProductAttributeTranslation is the client for interacting with the ProductAttributeTranslation builders.
+	ProductAttributeTranslation *ProductAttributeTranslationClient
+	// ProductAttributeValue is the client for interacting with the ProductAttributeValue builders.
+	ProductAttributeValue *ProductAttributeValueClient
+	// ProductAttributeValueTranslation is the client for interacting with the ProductAttributeValueTranslation builders.
+	ProductAttributeValueTranslation *ProductAttributeValueTranslationClient
+	// ProductTranslation is the client for interacting with the ProductTranslation builders.
+	ProductTranslation *ProductTranslationClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// RoleMetadata is the client for interacting with the RoleMetadata builders.
 	RoleMetadata *RoleMetadataClient
 	// RolePermission is the client for interacting with the RolePermission builders.
 	RolePermission *RolePermissionClient
+	// Sku is the client for interacting with the Sku builders.
+	Sku *SkuClient
+	// SkuAttributeCombination is the client for interacting with the SkuAttributeCombination builders.
+	SkuAttributeCombination *SkuAttributeCombinationClient
+	// SkuPrice is the client for interacting with the SkuPrice builders.
+	SkuPrice *SkuPriceClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
 	// Tenant is the client for interacting with the Tenant builders.
@@ -215,6 +253,12 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.Api = NewAPIClient(tx.config)
 	tx.ApiAuditLog = NewApiAuditLogClient(tx.config)
+	tx.Brand = NewBrandClient(tx.config)
+	tx.BrandTranslation = NewBrandTranslationClient(tx.config)
+	tx.Cart = NewCartClient(tx.config)
+	tx.CartItem = NewCartItemClient(tx.config)
+	tx.Category = NewCategoryClient(tx.config)
+	tx.CategoryTranslation = NewCategoryTranslationClient(tx.config)
 	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)
 	tx.File = NewFileClient(tx.config)
 	tx.InternalMessage = NewInternalMessageClient(tx.config)
@@ -229,7 +273,11 @@ func (tx *Tx) init() {
 	tx.MembershipRole = NewMembershipRoleClient(tx.config)
 	tx.Menu = NewMenuClient(tx.config)
 	tx.OperationAuditLog = NewOperationAuditLogClient(tx.config)
+	tx.Order = NewOrderClient(tx.config)
+	tx.OrderItem = NewOrderItemClient(tx.config)
 	tx.OrgUnit = NewOrgUnitClient(tx.config)
+	tx.PaymentRefund = NewPaymentRefundClient(tx.config)
+	tx.PaymentTransaction = NewPaymentTransactionClient(tx.config)
 	tx.Permission = NewPermissionClient(tx.config)
 	tx.PermissionApi = NewPermissionApiClient(tx.config)
 	tx.PermissionAuditLog = NewPermissionAuditLogClient(tx.config)
@@ -238,9 +286,18 @@ func (tx *Tx) init() {
 	tx.PermissionPolicy = NewPermissionPolicyClient(tx.config)
 	tx.PolicyEvaluationLog = NewPolicyEvaluationLogClient(tx.config)
 	tx.Position = NewPositionClient(tx.config)
+	tx.Product = NewProductClient(tx.config)
+	tx.ProductAttribute = NewProductAttributeClient(tx.config)
+	tx.ProductAttributeTranslation = NewProductAttributeTranslationClient(tx.config)
+	tx.ProductAttributeValue = NewProductAttributeValueClient(tx.config)
+	tx.ProductAttributeValueTranslation = NewProductAttributeValueTranslationClient(tx.config)
+	tx.ProductTranslation = NewProductTranslationClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
 	tx.RolePermission = NewRolePermissionClient(tx.config)
+	tx.Sku = NewSkuClient(tx.config)
+	tx.SkuAttributeCombination = NewSkuAttributeCombinationClient(tx.config)
+	tx.SkuPrice = NewSkuPriceClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)
 	tx.User = NewUserClient(tx.config)

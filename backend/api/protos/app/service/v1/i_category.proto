@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/category.proto";
+
+// 商品类目前台服务
+service CategoryService {
+  // 分页查询类目列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListCategoryResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/categories"
+    };
+  }
+
+  // 查询类目详情
+  rpc Get (catalog.service.v1.GetCategoryRequest) returns (catalog.service.v1.Category) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/categories/{id}"
+    };
+  }
+}

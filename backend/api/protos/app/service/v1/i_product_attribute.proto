@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/product_attribute.proto";
+
+// 商品属性前台服务
+service ProductAttributeService {
+  // 分页查询商品属性列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListProductAttributeResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/product-attributes"
+    };
+  }
+
+  // 查询商品属性详情
+  rpc Get (catalog.service.v1.GetProductAttributeRequest) returns (catalog.service.v1.ProductAttribute) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/product-attributes/{id}"
+    };
+  }
+}
+
+// 商品属性值前台服务
+service ProductAttributeValueService {
+  // 分页查询商品属性值列表
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListProductAttributeValueResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/product-attribute-values"
+    };
+  }
+
+  // 查询商品属性值详情
+  rpc Get (catalog.service.v1.GetProductAttributeValueRequest) returns (catalog.service.v1.ProductAttributeValue) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/product-attribute-values/{id}"
+    };
+  }
+}

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package catalog.service.v1;
+
+import "errors/errors.proto";
+
+// 商城目录系统错误定义
+enum CatalogErrorReason {
+  option (errors.default_code) = 500;
+
+  // 400
+  BAD_REQUEST = 0 [(errors.code) = 400]; // 错误请求
+
+  // 401
+  UNAUTHORIZED = 100 [(errors.code) = 401]; // 未授权
+
+  // 403
+  FORBIDDEN = 300 [(errors.code) = 403]; // 禁止访问
+
+  // 404
+  NOT_FOUND = 400 [(errors.code) = 404]; // 资源不存在
+
+  // 409
+  CONFLICT = 500 [(errors.code) = 409]; // 冲突
+
+  // 500
+  INTERNAL_SERVER_ERROR = 600 [(errors.code) = 500]; // 服务器内部错误
+}
