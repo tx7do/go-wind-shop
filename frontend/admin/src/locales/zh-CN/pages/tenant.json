@@ -1,0 +1,21 @@
+{
+  "moduleName": "租户",
+  "name": "租户名称",
+  "code": "租户编码",
+  "type": "租户类型",
+  "auditStatus": "审核状态",
+  "adminUserName": "管理员用户名",
+  "adminPassword": "管理员密码",
+  "adminPasswordConfirm": "确认密码",
+  "adminMobile": "管理员手机号",
+  "adminEmail": "管理员邮箱",
+  "adminSetting": "管理员设置",
+  "status": "状态",
+  "remark": "备注",
+  "createdAt": "创建时间",
+  "tenant_code_exists": "租户编码已存在",
+  "notification": {
+    "user_username_exists": "用户名已存在",
+    "password_mismatch": "两次输入的密码不一致"
+  }
+}

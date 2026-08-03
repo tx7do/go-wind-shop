@@ -1,0 +1,92 @@
+version: v2
+
+clean: true
+
+managed:
+  enabled: true
+
+  disable:
+    - module: buf.build/googleapis/googleapis
+    - module: 'buf.build/envoyproxy/protoc-gen-validate'
+    - module: 'buf.build/kratos/apis'
+    - module: 'buf.build/gnostic/gnostic'
+    - module: 'buf.build/gogo/protobuf'
+    - module: 'buf.build/tx7do/pagination'
+    - module: 'buf.build/go-wind/redact'
+
+  override:
+    # global go_package_prefix option
+    # 如果没有在各目录下单独配置go_package，则会使用该前缀。
+    - file_option: go_package_prefix
+      value: go-wind-shop/api/gen/go
+
+    # per-directory go_package options
+    # value第一部分是生成代码的包路径，第二部分是go包名。
+    - file_option: go_package
+      path: admin/service/v1
+      value: go-wind-shop/api/gen/go/admin/service/v1;adminpb
+    - file_option: go_package
+      path: audit/service/v1
+      value: go-wind-shop/api/gen/go/audit/service/v1;auditpb
+    - file_option: go_package
+      path: authentication/service/v1
+      value: go-wind-shop/api/gen/go/authentication/service/v1;authenticationpb
+    - file_option: go_package
+      path: dict/service/v1
+      value: go-wind-shop/api/gen/go/dict/service/v1;dictpb
+    - file_option: go_package
+      path: storage/service/v1
+      value: go-wind-shop/api/gen/go/storage/service/v1;storagepb
+    - file_option: go_package
+      path: internal_message/service/v1
+      value: go-wind-shop/api/gen/go/internal_message/service/v1;internalmessagepb
+    - file_option: go_package
+      path: permission/service/v1
+      value: go-wind-shop/api/gen/go/permission/service/v1;permissionpb
+    - file_option: go_package
+      path: task/service/v1
+      value: go-wind-shop/api/gen/go/task/service/v1;taskpb
+    - file_option: go_package
+      path: identity/service/v1
+      value: go-wind-shop/api/gen/go/identity/service/v1;identitypb
+
+plugins:
+  # generate go code
+  #- plugin: buf.build/protocolbuffers/go
+  - local: protoc-gen-go
+    out: gen/go
+    opt: paths=source_relative # use relative paths
+
+  # generate grpc service code
+  #- plugin: buf.build/grpc/go
+  - local: protoc-gen-go-grpc
+    out: gen/go
+    opt:
+      - paths=source_relative # use relative paths
+
+  # generate rest service code
+  - local: protoc-gen-go-http
+    out: gen/go
+    opt:
+      - paths=source_relative # use relative paths
+
+  # generate kratos errors code
+  - local: protoc-gen-go-errors
+    out: gen/go
+    opt:
+      - paths=source_relative # use relative paths
+
+  # generate message validator code
+  #- plugin: buf.build/bufbuild/validate-go
+  - local: protoc-gen-validate
+    out: gen/go
+    opt:
+      - paths=source_relative # use relative paths
+      - lang=go
+
+  # generate redact code
+  - local: protoc-gen-go-redact
+    out: gen/go
+    opt:
+      - paths=source_relative # use relative paths
+      - lang=go

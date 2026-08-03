@@ -1,0 +1,21 @@
+{
+  "moduleName": "Tenant",
+  "name": "Tenant Name",
+  "code": "Tenant Code",
+  "type": "Tenant Type",
+  "auditStatus": "Audit Status",
+  "adminUserName": "Admin Username",
+  "adminPassword": "Admin Password",
+  "adminPasswordConfirm": "Confirm Password",
+  "adminMobile": "Admin Mobile",
+  "adminEmail": "Admin Email",
+  "adminSetting": "Admin Settings",
+  "status": "Status",
+  "remark": "Remark",
+  "createdAt": "Created At",
+  "tenant_code_exists": "Tenant code already exists",
+  "notification": {
+    "user_username_exists": "Username already exists",
+    "password_mismatch": "Passwords do not match"
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "dashboard": {
+    "title": "Dashboard",
+    "analytics": "Analytics"
+  },
+  "opm": {
+    "moduleName": "Organizational Personnel Management",
+    "orgUnit": "Organization Structure",
+    "position": "Position Management",
+    "user": "User Management",
+    "userDetail": "User Detail"
+  },
+  "permission": {
+    "moduleName": "Permission Management",
+    "code": "Permission Point Management",
+    "role": "Role Management",
+    "menu": "Menu Management",
+    "api": "API Management"
+  },
+  "internalMessage": {
+    "moduleName": "Internal Message Management",
+    "internalMessage": "Message List",
+    "internalMessageCategory": "Message Category"
+  },
+  "log": {
+    "moduleName": "Log Audit Management",
+    "loginAuditLog": "Login Audit Log",
+    "apiAuditLog": "API Audit Log",
+    "operationAuditLog": "Operation Audit Log",
+    "dataAccessAuditLog": "Data Access Audit Log",
+    "permissionAuditLog": "Permission Audit Log",
+    "policyEvaluationLog": "Policy Evaluation Log",
+    "redisCacheMonitor": "Redis Cache Monitor"
+  },
+  "system": {
+    "moduleName": "System Management",
+    "dict": "Dictionary Management",
+    "file": "File Management",
+    "task": "Task Management",
+    "loginPolicy": "Login Policy",
+    "language": "Language Management"
+  },
+  "tenant": {
+    "moduleName": "Tenant Management",
+    "member": "Tenant Member"
+  },
+  "profile": {
+    "settings": "Profile Center",
+    "internalMessage": "Internal Message"
+  }
+}
