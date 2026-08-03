@@ -9,8 +9,19 @@ TRUNCATE TABLE public.sys_org_units,
                public.sys_login_policies,
                public.sys_dict_types,
                public.sys_dict_entries,
-               public.internal_message_categories
+               public.internal_message_categories,
+               public.sys_languages
 RESTART IDENTITY CASCADE;
+
+-- ----------------------------
+-- 插入 sys_languages 语言注册表
+-- 仅注册 MVP 支持的语种。翻译表（catalog 域）依赖此表存在对应行。
+-- ----------------------------
+INSERT INTO public.sys_languages (language_code, language_name, native_name, is_default, is_enabled, sort_order, created_at, updated_at)
+VALUES
+    ('zh-CN', '简体中文', '简体中文', true, true, 1, now(), now()),
+    ('en-US', 'English (US)', 'English (US)', false, true, 2, now(), now())
+;
 
 -- ----------------------------
 -- 插入 sys_tenants 租户

@@ -598,7 +598,7 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 - 真实支付网关（Stripe/PayPal/Alipay webhook）替换 stub
 - SkuPrice 多币种行接入 `OrderService.Create` 的 unit_price 读取（当前硬编码 0）
 - DTM 分布式事务替换进程内 MarkPaid
-- 语言 / 类目 / 品牌 / 示例商品的种子数据（当前无 seed 机制，依赖 admin UI 手动录入）
+- 类目 / 品牌 / 示例商品的种子数据（语言注册表已 seed 见 `sql/postgresql-demo-data.sql` 的 `sys_languages`，其余目录内容仍依赖 admin UI 手动录入）
 - 订单超时的真实退款逻辑（当前 stub 无真实扣款，无需退款）
 
 ## 常见错误与纠正
