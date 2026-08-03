@@ -25,6 +25,7 @@ import (
 	entCrud "github.com/tx7do/go-crud/entgo"
 
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
+	appViewer "go-wind-shop/pkg/entgo/viewer"
 	"go-wind-shop/pkg/task"
 )
 
@@ -512,7 +513,10 @@ func (s *OrderService) HandleOrderTimeout(taskType string, taskData *task.OrderT
 	)
 
 	// 调用本服务 ExpireOrderByTimeout。
-	ctx := context.Background()
+	// asynq 任务无 HTTP/gRPC 上下文，注入 SystemViewer context 以通过 ent privacy
+	// 的 viewer 校验（SystemViewer.IsSystemContext() 放行，不做 tenant 过滤）。
+	// 与 asynq_server.go 的 StartAllTask 使用同一 SystemViewer 注入模式。
+	ctx := appViewer.NewSystemViewerContext(context.Background())
 	_, err := s.ExpireOrderByTimeout(ctx, &orderV1.ExpireOrderByTimeoutRequest{
 		OrderId: &taskData.OrderId,
 		TaskId:  &taskData.TaskId,

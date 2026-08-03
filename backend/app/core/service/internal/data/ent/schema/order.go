@@ -10,10 +10,17 @@ import (
 	"github.com/tx7do/go-crud/entgo/mixin"
 
 	appmixin "go-wind-shop/pkg/entgo/mixin"
+	appPrivacy "go-wind-shop/pkg/entgo/privacy"
 )
 
 type Order struct {
 	ent.Schema
+}
+
+// Policy 注入 UserPrivacy：普通用户只能查询/变更 user_id = 自身 userID 的订单。
+// 系统/平台视图（如 asynq 超时任务）放行。防同租户内越权看/改他人订单。
+func (Order) Policy() ent.Policy {
+	return appPrivacy.UserPrivacy{}
 }
 
 func (Order) Annotations() []schema.Annotation {

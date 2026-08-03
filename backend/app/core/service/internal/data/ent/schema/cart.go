@@ -8,10 +8,18 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/tx7do/go-crud/entgo/mixin"
+
+	appPrivacy "go-wind-shop/pkg/entgo/privacy"
 )
 
 type Cart struct {
 	ent.Schema
+}
+
+// Policy 注入 UserPrivacy：普通用户只能查询/变更 user_id = 自身 userID 的购物车。
+// 系统/平台视图放行。防同租户内越权看/改他人购物车。
+func (Cart) Policy() ent.Policy {
+	return appPrivacy.UserPrivacy{}
 }
 
 func (Cart) Annotations() []schema.Annotation {
