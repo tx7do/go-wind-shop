@@ -99,7 +99,11 @@ export function useDeleteSkuAttributeCombination(
 }
 
 export function useBatchCreateSkuAttributeCombinations(
-  options?: UseMutationOptions<{}, Error, catalogservicev1_BatchCreateSkuAttributeCombinationsRequest>
+  options?: UseMutationOptions<
+    {},
+    Error,
+    catalogservicev1_BatchCreateSkuAttributeCombinationsRequest
+  >
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.skuAttributeCombinationService.BatchCreate(data),

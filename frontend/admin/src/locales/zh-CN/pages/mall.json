@@ -9,6 +9,7 @@
     "sortOrder": "排序",
     "parent": "父级类目",
     "createdAt": "创建时间",
+    "imageUrl": "图片地址",
     "button": {
       "create": "创建类目",
       "update": "编辑类目"
@@ -37,6 +38,7 @@
     "category": "所属类目",
     "brand": "所属品牌",
     "sortOrder": "排序",
+    "imageUrl": "图片地址",
     "createdAt": "创建时间",
     "button": {
       "create": "创建商品",

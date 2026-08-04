@@ -151,7 +151,11 @@ export function useUpdateProductAttributeValueTranslation(
 }
 
 export function useDeleteProductAttributeValueTranslation(
-  options?: UseMutationOptions<{}, Error, catalogservicev1_DeleteProductAttributeValueTranslationRequest>
+  options?: UseMutationOptions<
+    {},
+    Error,
+    catalogservicev1_DeleteProductAttributeValueTranslationRequest
+  >
 ) {
   return useMutation({
     mutationFn: (data) => apiClient.productAttributeValueService.DeleteTranslation(data),

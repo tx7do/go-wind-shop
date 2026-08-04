@@ -68,7 +68,9 @@ export async function fetchGetCategory(req: catalogservicev1_GetCategoryRequest)
 export function useCreateCategory(options?: UseMutationOptions<{}, Error, Record<string, any>>) {
   return useMutation({
     mutationFn: (values) =>
-      apiClient.categoryService.Create({ data: { ...values } as unknown as catalogservicev1_Category }),
+      apiClient.categoryService.Create({
+        data: { ...values } as unknown as catalogservicev1_Category,
+      }),
     ...options,
   });
 }

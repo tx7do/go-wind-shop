@@ -68,7 +68,9 @@ export async function fetchGetProduct(req: catalogservicev1_GetProductRequest) {
 export function useCreateProduct(options?: UseMutationOptions<{}, Error, Record<string, any>>) {
   return useMutation({
     mutationFn: (values) =>
-      apiClient.productService.Create({ data: { ...values } as unknown as catalogservicev1_Product }),
+      apiClient.productService.Create({
+        data: { ...values } as unknown as catalogservicev1_Product,
+      }),
     ...options,
   });
 }

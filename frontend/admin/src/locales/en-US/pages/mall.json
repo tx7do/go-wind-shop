@@ -9,6 +9,7 @@
     "sortOrder": "Sort Order",
     "parent": "Parent Category",
     "createdAt": "Created At",
+    "imageUrl": "Image URL",
     "button": {
       "create": "Create Category",
       "update": "Edit Category"
@@ -37,6 +38,7 @@
     "category": "Category",
     "brand": "Brand",
     "sortOrder": "Sort Order",
+    "imageUrl": "Image URL",
     "createdAt": "Created At",
     "button": {
       "create": "Create Product",

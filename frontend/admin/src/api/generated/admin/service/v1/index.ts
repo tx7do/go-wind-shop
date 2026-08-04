@@ -2887,6 +2887,7 @@ export type catalogservicev1_Category = {
   deletedBy?: number;
   depth?: number;
   id?: number;
+  imageUrl?: string;
   parentId?: number;
   path?: string;
   sortOrder?: number;
@@ -9097,6 +9098,7 @@ export type catalogservicev1_Product = {
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
   id?: number;
+  imageUrl?: string;
   sortOrder?: number;
   status?: catalogservicev1_Product_ProductStatus;
   translations: catalogservicev1_ProductTranslation[] | undefined;

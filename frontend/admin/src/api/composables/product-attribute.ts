@@ -56,9 +56,7 @@ export function useGetProductAttribute(
   });
 }
 
-export async function fetchGetProductAttribute(
-  req: catalogservicev1_GetProductAttributeRequest
-) {
+export async function fetchGetProductAttribute(req: catalogservicev1_GetProductAttributeRequest) {
   return queryClient.fetchQuery({
     queryKey: ["getProductAttribute", req],
     queryFn: () => apiClient.productAttributeService.Get(req),
