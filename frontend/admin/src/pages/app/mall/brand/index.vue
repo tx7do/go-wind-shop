@@ -2,10 +2,10 @@
   <div class="app-container h-full flex flex-1 flex-col">
     <ProPage ref="pageRef" :config="pageConfig" @add="handleAdd" @edit="handleEdit">
       <template #name="scope: any">
-        <span>{{ getFirstTranslationField(scope.row, "name") }}</span>
+        <span>{{ getTranslationField(scope.row, "name") }}</span>
       </template>
       <template #slug="scope: any">
-        <span>{{ getFirstTranslationField(scope.row, "slug") }}</span>
+        <span>{{ getTranslationField(scope.row, "slug") }}</span>
       </template>
     </ProPage>
 
@@ -23,18 +23,23 @@ import BrandDrawer from "./brand-drawer.vue";
 
 import { fetchListBrands, useDeleteBrand } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
-import { $t } from "@/core/i18n";
+import { $t, useI18n } from "@/core/i18n";
 
 const { mutateAsync: deleteBrand } = useDeleteBrand();
+const { locale } = useI18n();
 
 const pageRef = ref();
 const drawerRef = ref();
 
-function getFirstTranslationField(row: any, field: string): string {
-  if (Array.isArray(row?.translations) && row.translations.length > 0) {
-    return (row.translations[0] as any)?.[field] ?? "-";
-  }
-  return "-";
+// 按 UI 当前语言从 translations 中取对应字段的字面值。
+// List 响应含全部语言的 translations，须匹配 languageCode 才能取到
+// 当前界面语言的文案；未命中则显示 "-"。
+function getTranslationField(row: any, field: string): string {
+  const translations = Array.isArray(row?.translations) ? row.translations : [];
+  const matched = translations.find(
+    (t: any) => t?.languageCode === locale.value
+  );
+  return matched?.[field] ?? "-";
 }
 
 const pageConfig = computed<ProPageConfig>(() => ({

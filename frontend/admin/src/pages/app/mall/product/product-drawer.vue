@@ -93,8 +93,14 @@
 import { computed, reactive, ref, watch } from "vue";
 import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 
-import { useCreateProduct, useUpdateProduct, fetchGetProduct, fetchListCategories, fetchListBrands } from "@/api/composables";
-import { $t } from "@/core/i18n";
+import {
+  useCreateProduct,
+  useUpdateProduct,
+  fetchGetProduct,
+  fetchListCategories,
+  fetchListBrands,
+} from "@/api/composables";
+import { $t, useI18n } from "@/core/i18n";
 import { DRAWER_WIDTH } from "@/constants";
 import ProModal from "@/components/Pro/ProModal/index.vue";
 import TranslationTabs from "@/components/Pro/TranslationTabs/index.vue";
@@ -107,6 +113,7 @@ const emit = defineEmits<{
 
 const { mutateAsync: createProduct } = useCreateProduct();
 const { mutateAsync: updateProduct } = useUpdateProduct();
+const { locale } = useI18n();
 
 const visible = ref(false);
 const submitLoading = ref(false);
@@ -155,11 +162,11 @@ async function loadOptions() {
     ]);
     categoryOptions.value = ((catResp.items || []) as any[]).map((c) => ({
       value: c.id,
-      label: getFirstTranslationField(c, "name") || `#${c.id}`,
+      label: getTranslationField(c, "name") || `#${c.id}`,
     }));
     brandOptions.value = ((brandResp.items || []) as any[]).map((b) => ({
       value: b.id,
-      label: getFirstTranslationField(b, "name") || `#${b.id}`,
+      label: getTranslationField(b, "name") || `#${b.id}`,
     }));
   } catch (e) {
     categoryOptions.value = [];
@@ -167,11 +174,15 @@ async function loadOptions() {
   }
 }
 
-function getFirstTranslationField(row: any, field: string): string {
-  if (Array.isArray(row?.translations) && row.translations.length > 0) {
-    return (row.translations[0] as any)?.[field] ?? "";
-  }
-  return "";
+// 按 UI 当前语言从 translations 中取对应字段的字面值。
+// List 响应含全部语言的 translations，须匹配 languageCode 才能取到
+// 当前界面语言的文案；未命中返回空串。
+function getTranslationField(row: any, field: string): string {
+  const translations = Array.isArray(row?.translations) ? row.translations : [];
+  const matched = translations.find(
+    (t: any) => t?.languageCode === locale.value
+  );
+  return matched?.[field] ?? "";
 }
 
 function open(row?: any) {

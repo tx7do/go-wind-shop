@@ -2,12 +2,16 @@
   <div class="app-container h-full flex flex-1 flex-col">
     <ProPage ref="pageRef" :config="pageConfig" @add="handleAdd" @edit="handleEdit">
       <template #displayName="scope: any">
-        <span>{{ getFirstTranslationField(scope.row, "displayName") }}</span>
+        <span>{{ getTranslationField(scope.row, "displayName") }}</span>
       </template>
     </ProPage>
 
     <!-- 新增/编辑抽屉 -->
-    <ProductAttributeValueDrawer ref="drawerRef" :attribute-id="attributeId" @success="handleSuccess" />
+    <ProductAttributeValueDrawer
+      ref="drawerRef"
+      :attribute-id="attributeId"
+      @success="handleSuccess"
+    />
   </div>
 </template>
 
@@ -21,10 +25,11 @@ import ProductAttributeValueDrawer from "./product-attribute-value-drawer.vue";
 
 import { fetchListProductAttributeValues, useDeleteProductAttributeValue } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
-import { $t } from "@/core/i18n";
+import { $t, useI18n } from "@/core/i18n";
 
 const { mutateAsync: deleteProductAttributeValue } = useDeleteProductAttributeValue();
 const route = useRoute();
+const { locale } = useI18n();
 
 const pageRef = ref();
 const drawerRef = ref();
@@ -41,11 +46,15 @@ watch(attributeId, () => {
   pageRef.value?.refresh();
 });
 
-function getFirstTranslationField(row: any, field: string): string {
-  if (Array.isArray(row?.translations) && row.translations.length > 0) {
-    return (row.translations[0] as any)?.[field] ?? "-";
-  }
-  return "-";
+// 按 UI 当前语言从 translations 中取对应字段的字面值。
+// List 响应含全部语言的 translations，须匹配 languageCode 才能取到
+// 当前界面语言的文案；未命中则显示 "-"。
+function getTranslationField(row: any, field: string): string {
+  const translations = Array.isArray(row?.translations) ? row.translations : [];
+  const matched = translations.find(
+    (t: any) => t?.languageCode === locale.value
+  );
+  return matched?.[field] ?? "-";
 }
 
 const pageConfig = computed<ProPageConfig>(() => ({
