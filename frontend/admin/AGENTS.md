@@ -1,10 +1,10 @@
-# AGENTS.md — GoWind Admin (Vue3 + Element Plus) 脚手架开发指南
+# AGENTS.md — GoWind Shop Admin (Vue3 + Element Plus) 脚手架开发指南
 
 本文件定义此项目的编码约定和架构规范，供 AI Agent 在生成和修改代码时遵循。
 
 ## 项目身份
 
-**go-wind-shop-admin** — 基于 Vue 3 + Vite + TypeScript + Element Plus 的后台管理脚手架（Vue3 版 vue-element-admin）。
+**GoWind Shop Admin** — 基于 Vue 3 + Vite + TypeScript + Element Plus 的后台管理脚手架。
 
 ### 技术栈
 

@@ -254,10 +254,10 @@ const userStore = new StorageManager({ prefix: "user" });
 const appStore = new StorageManager({ prefix: "app" });
 
 userStore.setItem("name", "张三");
-appStore.setItem("name", "GoWind Admin");
+appStore.setItem("name", "Example App");
 
 userStore.getItem("name"); // "张三"
-appStore.getItem("name");  // "GoWind Admin"
+appStore.getItem("name");  // "Example App"
 
 userStore.clear();  // 只清除 user 前缀的项，不影响 app
 ```

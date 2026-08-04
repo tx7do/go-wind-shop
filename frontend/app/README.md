@@ -1,6 +1,6 @@
-# GoWind CMS — Vue Frontend
+# GoWind Shop Storefront — Vue Frontend
 
-基于 [Nuxt](https://nuxt.com/) 的现代 CMS 前端，使用 Tailwind CSS + shadcn-vue 构建。
+基于 [Nuxt](https://nuxt.com/) 的电商店铺前台，使用 Tailwind CSS + shadcn-vue 构建。
 
 ## 环境准备
 

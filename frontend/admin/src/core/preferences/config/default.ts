@@ -19,7 +19,7 @@ const defaultPreferences: Preferences = {
     layout: "sidebar-nav",
     locale: "zh-CN",
     loginExpiredMode: "page",
-    name: "GoWind Admin",
+    name: "GoWind Shop Admin",
     version: "0.0.0",
     preferencesButtonPosition: "auto",
     watermark: false,

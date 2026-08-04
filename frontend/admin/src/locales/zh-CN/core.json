@@ -31,9 +31,9 @@
     "copyright": "Copyright © 2021 - 2026 GoWind"
   },
   "login": {
-    "headerTitle": "GoWind Admin",
-    "brandTitle": "风行中后台管理系统",
-    "brandDesc": "开箱即用的企业级中后台管理系统",
+    "headerTitle": "GoWind Shop Admin",
+    "brandTitle": "GoWind Shop Admin System",
+    "brandDesc": "开箱即用的企业级商城后台管理系统",
     "welcomeTitle": "欢迎回来",
     "welcomeSubtitle": "请输入您的账户信息以开始管理您的系统",
     "copyright": "Copyright © 2026 GoWind",

@@ -42,7 +42,7 @@ async function bootstrap(namespace: string) {
     namespace,
     overrides: {
       app: {
-        name: import.meta.env.VITE_APP_TITLE || "GoWind Admin",
+        name: import.meta.env.VITE_APP_TITLE || "GoWind Shop Admin",
         version: import.meta.env.VITE_APP_VERSION || "0.0.0",
         enableTenant: import.meta.env.VITE_APP_TENANT_ENABLED === "true",
       },

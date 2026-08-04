@@ -1,12 +1,12 @@
-# 基于 Nuxt 4 的现代 Headless CMS 前端：架构深度解析与二次开发指南
+# 基于 Nuxt 4 的电商店铺前台：架构深度解析与二次开发指南
 
-> 本文面向希望基于此项目进行二次开发的前端工程师，系统性地讲解项目的技术选型、架构设计与模块划分，并提供扩展开发的实操指引。
+> 本文面向希望基于 GoWind Shop 店铺前台进行二次开发的前端工程师，系统性地讲解项目的技术选型、架构设计与模块划分，并提供扩展开发的实操指引。
 
 ---
 
 ## 一、项目概览
 
-本项目是一个**面向内容管理的现代前端应用**，使用 Nuxt 4（Vue 3）构建，支持 SSR/SSG 双模式部署，提供文章、分类、标签、评论等完整的内容管理功能，并内置多语言（中英文）和暗色模式支持。
+本项目是 GoWind Shop（风行商城）的店铺前台，使用 Nuxt 4（Vue 3）构建，支持 SSR/SSG 双模式部署，提供商品浏览、类目导航、购物车、下单结算、订单与支付等完整的电商购物链路，并内置多语言（中英文）和暗色模式支持。
 
 ### 核心特性一览
 
@@ -18,8 +18,6 @@
 | 状态管理 | Pinia + 持久化插件 |
 | 数据请求 | Axios + TanStack Vue Query |
 | 国际化 | @nuxtjs/i18n（prefix 路由策略） |
-| 内容渲染 | marked + Shiki + KaTeX + Mermaid |
-| 富文本编辑 | Tiptap |
 | API 协议 | Protobuf 生成 TypeScript HTTP 客户端 |
 | 部署 | SSG 静态生成 + SPA fallback |
 
@@ -46,21 +44,20 @@ export default defineNuxtConfig({
 
 ### 2.2 Tailwind CSS v4 + 语义化主题
 
-项目使用 **Tailwind CSS v4**（通过 `@tailwindcss/vite` 插件集成），并采用 CSS 变量构建完整的语义化配色系统：
+项目使用 **Tailwind CSS v4**（通过 `@tailwindcss/vite` 插件集成），并采用 CSS 变量构建语义化配色系统：
 
 ```css
 /* main.css 主题变量定义 */
 :root {
-  --primary: 142.1 76.2% 36.3%;       /* 极光电能绿 */
-  --accent: 217.2 91.2% 59.8%;        /* 赛博科技蓝 */
+  --primary: 142.1 76.2% 36.3%;
   --background: 210 40% 98%;
   --foreground: 224 71.4% 4.1%;
   /* ...更多语义 token */
 }
 
 .dark {
-  --primary: 142.1 86.2% 50.3%;       /* 霓虹电能绿 */
-  --background: 224 45% 6%;
+  --primary: 142.1 86.2% 50.3%;
+  --background = 224 45% 6%;
   /* ... */
 }
 ```
@@ -71,26 +68,9 @@ export default defineNuxtConfig({
 
 ### 2.3 shadcn-vue 组件体系
 
-UI 组件基于 [shadcn-vue](https://www.shadcn-vue.com/) 构建，底层依赖 Reka UI（无头组件库）。项目在 `app/components/ui/` 下维护了完整的组件集合：
+UI 组件基于 [shadcn-vue](https://www.shadcn-vue.com/) 构建，底层依赖 Reka UI（无头组件库）。项目在 `app/components/ui/` 下维护了基础组件集合（button / input / select / dropdown-menu / pagination / skeleton / sonner / carousel / avatar / switch / image 等）。这些组件可以通过 `npx shadcn-vue@latest add <component>` 按需添加，遵循 shadcn 的 "拥有代码" 哲学——组件代码直接存在于你的项目中，可完全自定义。
 
-```
-ui/
-├── button/          # 按钮
-├── input/           # 输入框
-├── select/          # 下拉选择
-├── sheet/           # 侧边抽屉
-├── dropdown-menu/   # 下拉菜单
-├── pagination/      # 分页
-├── skeleton/        # 骨架屏
-├── sonner/          # Toast 通知
-├── carousel/        # 轮播
-├── avatar/          # 头像
-├── switch/          # 开关
-├── image/           # 图片（含加载失败占位）
-└── ...              # 更多
-```
-
-这些组件可以通过 `npx shadcn-vue@latest add <component>` 按需添加，遵循 shadcn 的 "拥有代码" 哲学——组件代码直接存在于你的项目中，可完全自定义。
+> 店铺前台的 `app/components/` 仅包含三个子目录：`auth`（登录/注册等认证组件）、`layout`（页面布局组件）、`ui`（shadcn-vue 基础组件）。不存在文章、评论、内容渲染等 CMS 专属组件。
 
 ---
 
@@ -122,7 +102,7 @@ api/
 ├── generated/           ← 第一层：Protobuf 自动生成的 TypeScript 客户端
 │   └── index.ts             # 类型定义 + Service Client 工厂 + ApiClient 类
 └── composables/         ← 第二层：业务逻辑封装 + Vue Query 集成
-    ├── post.ts              # 纯函数(listPost...) + Hook(useListPost...) + fetch(fetchListPost...)
+    ├── product.ts            # 纯函数(listProduct...) + Hook(useListProduct...) + fetch(fetchListProduct...)
     └── ...
 ```
 
@@ -133,14 +113,16 @@ api/
 ```ts
 // generated/index.ts（自动生成，不要修改）
 export class ApiClient {
-  private _postService?: PostService;
-  get postService(): PostService {
-    return this._postService ??= createPostServiceClient(this._transport);
+  private _productService?: ProductService;
+  get productService(): ProductService {
+    return this._productService ??= createProductServiceClient(this._transport);
   }
   // ... 其他服务同理
 }
 export function createApiClient(transport: ClientTransport): ApiClient;
 ```
+
+`ApiClient` 实际暴露的全部 Service Client getter 见 [`app/api/README.md` 的「支持的服务」](./app/api/README.md#支持的服务)。覆盖认证、用户资料、商品/属性/属性值、SKU/SKU 价格/SKU 属性组合、类目、品牌、购物车/购物车项、订单/订单明细、支付交易/退款、文件传输等店铺业务域。
 
 **ApiClient 单例**
 
@@ -164,12 +146,12 @@ export const apiClient = createApiClient(transport);
 每个 Composables 文件同时包含三层内容：业务纯函数、Vue Query Hooks、fetch 方法。业务逻辑直接调用 `apiClient`：
 
 ```ts
-// composables/post.ts
+// composables/product.ts
 import { apiClient } from '@/api/client';
 
 // 业务纯函数（组装参数，调用 apiClient）
-export async function listPost(paging?, formValues?, fieldMask?, orderBy?, options?) {
-  return await apiClient.postService.List({
+export async function listProduct(paging?, formValues?, fieldMask?, orderBy?, options?) {
+  return await apiClient.productService.List({
     fieldMask,
     orderBy: makeOrderBy(orderBy),
     query: makeQueryString(merged, options?.isTenantUser),
@@ -180,21 +162,21 @@ export async function listPost(paging?, formValues?, fieldMask?, orderBy?, optio
 }
 
 // Vue Query Hook（用于组件）
-export function useListPost(options?) {
+export function useListProduct(options?) {
   return useMutation({
     mutationFn: (params) => {
       const locale = getCurrentLocale();  // 自动注入当前语言
-      return listPost(params.paging, params.formValues, ...);
+      return listProduct(params.paging, params.formValues, ...);
     },
     ...options,
   });
 }
 
 // fetch 方法（供 Store / 非组件上下文使用）
-export async function fetchListPost(params: ListPostParams) {
+export async function fetchListProduct(params: ListProductParams) {
   return queryClient.fetchQuery({
-    queryKey: ['listPost', params, locale],
-    queryFn: () => listPost(...),
+    queryKey: ['listProduct', params, locale],
+    queryFn: () => listProduct(...),
   });
 }
 ```
@@ -204,6 +186,8 @@ export async function fetchListPost(params: ListPostParams) {
 - **统一管理**：`apiClient` 单例统一管理所有 Service Client 的创建和缓存
 - **灵活调用**：组件中使用 `useXxx` Hook，Store 中使用 `fetchXxx` 方法，无需缓存时直接调用纯函数
 - **语言感知**：Composable 层自动注入当前 locale，组件无需关心
+
+> 完整的命名规范、类型规范、错误处理规范与最佳实践见 [`app/api/README.md`](./app/api/README.md)。
 
 ### 3.3 请求客户端（RequestClient）
 
@@ -277,7 +261,7 @@ Token 过期 ← 401 拦截 → 自动刷新 Token → 失败则跳转登录页
 
 ### 3.5 偏好设置系统（Preferences）
 
-`core/preferences/` 实现了一套完整的用户偏好管理：
+`core/preferences/` 实现了一套用户偏好管理：
 
 ```
 preferences/
@@ -300,6 +284,8 @@ preferences/
 // 组件中使用
 const { isDark, theme, locale, toggleTheme, setLocale } = usePreferences();
 ```
+
+> **店铺前台的偏好字段集与后台 admin 不同**：本端只包含 `app`（应用配置）/`theme`（主题）/`widget`（功能部件）/`logo`/`copyright`/`transition`（页面切换动画）六类，不包含侧边栏、标签页、顶栏、面包屑、导航、快捷键等后台布局类偏好，也没有偏好设置面板。完整字段见 [`app/core/preferences/README.md`](./app/core/preferences/README.md)。
 
 ### 3.6 存储管理器（StorageManager）
 
@@ -327,19 +313,7 @@ i18n: {
 }
 ```
 
-翻译文件按模块拆分：
-
-```
-locales/zh-CN/
-├── app.json            # 应用全局
-├── authentication.json # 认证相关
-├── cms.json            # 内容管理
-├── comment.json        # 评论
-├── common.json         # 通用
-├── navbar.json         # 导航栏
-├── page.json           # 页面
-└── ...
-```
+翻译文件按模块拆分在 `locales/` 目录下。
 
 **语言感知 API 调用**：通过 `getCurrentLocale()` 工具函数统一获取当前语言，确保 API 请求的语言参数与 UI 语言同步：
 
@@ -357,51 +331,41 @@ export function getCurrentLocale(): SupportedLanguagesType {
 
 ## 四、核心功能模块
 
-### 4.1 内容渲染引擎（ContentViewer）
+### 4.1 商品浏览
 
-`components/content/Viewer.vue` 是一个功能丰富的 Markdown / HTML 渲染器：
-
-| 能力 | 实现 |
-|------|------|
-| Markdown 解析 | marked（自定义 Renderer） |
-| 代码高亮 | Shiki（双主题 light/dark 切换） |
-| 数学公式 | KaTeX（行内 `$...$`，块级 `$$...$$`） |
-| 流程图 | Mermaid.js |
-| HTML 消毒 | DOMPurify（白名单过滤） |
-| 图片处理 | figure/figcaption 语义化包裹 |
-
-渲染流程：`Markdown → marked 解析 → KaTeX 公式处理 → DOMPurify 消毒 → HTML 输出`
-
-### 4.2 富文本评论编辑器
-
-`components/comment/RichTextEditor.vue` 基于 Tiptap 构建，支持：
-
-- **格式化**：加粗、斜体、删除线、代码块、无序列表
-- **字数统计**：实时显示，超出限制时警告
-- **快捷键**：`Ctrl + Enter` 快速提交
-- **双向绑定**：`v-model` 集成
-
-### 4.3 页面路由结构
+店铺前台的购物链路由以下页面承载：
 
 ```
 pages/
-├── index.vue              # 首页（Hero + 精选文章 + 分类 + 标签 + 最新文章）
+├── index.vue              # 首页
 ├── login.vue              # 登录页
 ├── register.vue           # 注册页
-├── about.vue              # 关于页
-├── contact.vue            # 联系页
 ├── settings.vue           # 设置页
 ├── user.vue               # 用户中心
-├── post/
-│   ├── index.vue          # 文章列表
-│   └── [id].vue           # 文章详情
+├── product/
+│   └── [id].vue           # 商品详情
 ├── category/
-│   ├── index.vue          # 分类列表
-│   └── [id].vue           # 分类详情
-└── tag/
-    ├── index.vue          # 标签列表
-    └── [id].vue           # 标签详情
+│   ├── index.vue          # 类目列表
+│   └── [id].vue           # 类目详情
+├── cart.vue               # 购物车
+├── checkout.vue           # 结算
+└── orders/
+    ├── index.vue          # 订单列表
+    └── [id].vue           # 订单详情
 ```
+
+商品与类目数据通过 `productService` / `categoryService` / `brandService` / `skuService` / `skuPriceService` / `skuAttributeCombinationService` / `productAttributeService` / `productAttributeValueService` 等 Composable 获取，列表/详情接口在 app BFF 的公开读白名单内，无需登录即可浏览。
+
+### 4.2 交易链路
+
+购物车 → 结算 → 订单 → 支付构成完整交易闭环：
+
+- **购物车**：`cartService` / `cartItemService` 管理购物车与购物车项
+- **下单结算**：`checkout.vue` 调用 `orderService` 创建订单
+- **订单管理**：`orderService` / `orderItemService` 查询与管理订单
+- **支付**：`paymentTransactionService` / `paymentRefundService` 处理支付交易与退款
+
+> 交易域（cart / order / payment）接口默认强制 JWT，不在 app BFF 的公开读白名单内，需登录后访问。
 
 首页使用了 `IntersectionObserver` + `MutationObserver` 实现滚动渐显动画，性能开销极低。
 
@@ -425,6 +389,8 @@ NUXT_PUBLIC_ENABLE_MOCK=false
 NUXT_PUBLIC_AES_KEY=your-secret-key
 ```
 
+> `NUXT_PUBLIC_API_BASE_URL` 在开发环境指向 app-service（前台 BFF，REST:6700）。
+
 ### 5.2 构建命令
 
 ```bash
@@ -439,7 +405,7 @@ pnpm preview      # 预览构建结果
 项目支持静态站点生成（SSG）部署：
 
 1. **预渲染**：Nitro 引擎预渲染 `/` 首页，并自动爬取内部链接
-2. **动态路由**：`/post/:id`、`/category/:id` 等动态路由由客户端渲染（SPA fallback）
+2. **动态路由**：`/product/:id`、`/category/:id` 等动态路由由客户端渲染（SPA fallback）
 3. **根路径重定向**：构建后自动生成 `index.html`，将根路径 `/` 重定向到 `/zh-CN/`
 
 ```ts
@@ -464,64 +430,26 @@ nitro: {
 
 ### 6.1 新增业务模块
 
-以添加一个「产品」模块为例：
+以添加一个「商品评价」模块为例（假设后端已提供 `productReview` 服务）：
 
 **第一步：确认 API 类型定义**
 
-在 `api/generated/` 中确保后端已生成对应的 TypeScript 客户端（如 `createProductServiceClient`）。
+在 `api/generated/` 中确保后端已生成对应的 TypeScript 客户端（如 `createProductReviewServiceClient`，并出现在 `ApiClient` 的 getter 中）。
 
 **第二步：编写 Composables 层**
 
-在 `api/composables/product.ts` 中同时编写业务纯函数、Vue Query Hooks 和 fetch 方法，直接使用 `apiClient`：
-
-```ts
-// api/composables/product.ts
-import { useMutation, type UseMutationOptions } from '@tanstack/vue-query';
-import { type Paging, makeOrderBy, makeQueryString, makeUpdateMask } from '@/core/transport/rest';
-import { apiClient } from '@/api/client';
-import { queryClient } from '@/plugins/vue-query';
-import { getCurrentLocale } from '@/utils/locale';
-
-// 业务纯函数
-export async function listProduct(paging?: Paging, formValues?, options?) {
-  return await apiClient.productService.List({ /* 组装参数 */ });
-}
-
-export async function getProduct(id: number, locale?: string) {
-  return await apiClient.productService.Get({ id, locale });
-}
-
-// Vue Query Hook
-export function useListProduct(options?: UseMutationOptions<any, Error, ListProductParams>) {
-  return useMutation({
-    mutationFn: (params) => {
-      const locale = getCurrentLocale();
-      return listProduct(params.paging, params.formValues, { locale });
-    },
-    ...options,
-  });
-}
-
-// fetch 方法
-export async function fetchProduct(id: number) {
-  const locale = getCurrentLocale();
-  return queryClient.fetchQuery({
-    queryKey: ['getProduct', id, locale],
-    queryFn: () => getProduct(id, locale),
-  });
-}
-```
+在 `api/composables/product-review.ts` 中同时编写业务纯函数、Vue Query Hooks 和 fetch 方法，直接使用 `apiClient`。命名遵循 `listXxx` / `useListXxx` / `fetchListXxx` 的三态约定（详见 [`app/api/README.md`](./app/api/README.md)）。
 
 **第三步：注册导出**
 
 在 `api/composables/index.ts` 中添加：
 ```ts
-export * from './product';
+export * from './product-review';
 ```
 
 **第四步：创建页面**
 
-在 `pages/product/` 下创建路由页面，使用 Composable 获取数据。
+在 `pages/` 下创建路由页面，使用 Composable 获取数据。
 
 ### 6.2 新增 UI 组件
 
@@ -538,7 +466,7 @@ npx shadcn-vue@latest add dialog
 1. 在 `locales/` 下创建新的语言目录（如 `ja-JP/`）
 2. 复制现有语言文件并翻译
 3. 在 `nuxt.config.ts` 的 `i18n.locales` 中注册新语言
-4. 在 `core/preferences/types.ts` 的 `SupportedLanguagesType` 中添加新语言类型
+4. 在 `core/preferences/types/layout.ts` 的 `SupportedLanguagesType` 中添加新语言类型
 
 ### 6.4 自定义主题
 
@@ -551,7 +479,7 @@ npx shadcn-vue@latest add dialog
 }
 ```
 
-如需添加更多预设主题，可在 `core/preferences/config/` 中扩展。
+如需切换内置主题，可通过偏好系统设置 `theme.builtinType`（可选值见 [`app/core/preferences/README.md`](./app/core/preferences/README.md) 的内置主题色板表）。
 
 ### 6.5 扩展请求拦截器
 
@@ -581,7 +509,7 @@ client.addResponseInterceptor({
 
 | 场景 | 注意事项 |
 |------|----------|
-| Composable 函数命名 | 需精确匹配单复数（如 `useListPosts` vs `useListPost`） |
+| Composable 函数命名 | 需精确匹配单复数（如 `useListProducts` vs `useListProduct`） |
 | 组件中使用 i18n | 需使用 `useI18n()` composable，不要直接引用 `$t` |
 | 路由导航 | 使用 `navigateTo()` 而非 `useRouter().push()` |
 | 语言切换 | 通过 `switchLocalePath()` 并传入配置的 locale 联合类型 |
@@ -600,16 +528,11 @@ app/
 ├── api/                    # API 两层架构 + ApiClient
 │   ├── client.ts           #   ApiClient 单例
 │   ├── generated/          #   Protobuf 生成代码
-│   └── composables/        #   业务逻辑 + Vue Query Hooks
+│   └── composables/        #   业务逻辑 + Vue Query Hooks（auth/user-profile/file-transfer/product/category/brand/cart/cart-item/order/payment-transaction/sku/sku-price/...）
 ├── assets/css/             # 全局样式 + 主题变量
 ├── components/             # Vue 组件
 │   ├── auth/               #   认证组件（登录/注册）
-│   ├── category/           #   分类组件
-│   ├── comment/            #   评论组件
-│   ├── content/            #   内容渲染（Viewer）
-│   ├── home/               #   首页区块
 │   ├── layout/             #   布局组件（Header/Footer/Nav）
-│   ├── post/               #   文章组件
 │   └── ui/                 #   基础 UI 组件（shadcn-vue）
 ├── constants/              # 常量定义
 ├── core/                   # 核心基础设施

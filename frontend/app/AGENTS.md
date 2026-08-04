@@ -4,9 +4,9 @@
 
 ## 项目概览
 
-基于 **Nuxt 4 (Vue 3)** 的现代 Headless CMS 内容展示前端，支持 SSR/SSG 双模式部署。
+基于 **Nuxt 4 (Vue 3)** 的电商店铺前台，支持 SSR/SSG 双模式部署。
 
-**核心技术栈**：Nuxt 4 + Vue 3.5 + TypeScript + Tailwind CSS v4 + shadcn-vue (Reka UI) + Pinia + TanStack Vue Query + @nuxtjs/i18n + Axios + marked/Shiki/KaTeX/Mermaid/Tiptap
+**核心技术栈**：Nuxt 4 + Vue 3.5 + TypeScript + Tailwind CSS v4 + shadcn-vue (Reka UI) + Pinia + TanStack Vue Query + @nuxtjs/i18n + Axios
 
 **包管理器**：pnpm
 
@@ -24,7 +24,7 @@ export default defineNuxtConfig({
 })
 ```
 
-**SSG 部署策略**：Nitro 预渲染 `/`，动态路由（`/post/:id` 等）由客户端 SPA fallback；构建后自动生成根 `index.html` 重定向到 `/zh-CN/`。
+**SSG 部署策略**：Nitro 预渲染 `/`，动态路由（`/product/:id` 等）由客户端 SPA fallback；构建后自动生成根 `index.html` 重定向到 `/zh-CN/`。
 
 ### API 两层架构 + 统一 ApiClient
 
@@ -32,7 +32,7 @@ export default defineNuxtConfig({
 api/
 ├── client.ts            ← ApiClient 单例（createApiClient(transport)，懒加载各 Service）
 ├── generated/           ← [自动生成] protoc-gen-typescript-http（禁止手改）
-│   └── index.ts             # ApiClient 类（get postService() 懒加载缓存）
+│   └── index.ts             # ApiClient 类（get productService() 等懒加载缓存）
 └── composables/         ← [业务逻辑 + Vue Query] 纯函数 + use* Hook + fetch* 三合一
 ```
 
@@ -98,12 +98,12 @@ const { isDark, theme, locale, toggleTheme, setLocale } = usePreferences();
 app/
 ├── api/                    # 两层架构（client + generated + composables）
 ├── assets/css/             # 全局样式 + 主题变量（main.css）
-├── components/             # auth/category/comment/content/home/layout/post/ui(shadcn-vue)
+├── components/             # auth/layout/ui(shadcn-vue)
 ├── constants/              # 常量
 ├── core/                   # preferences / storage(StorageManager) / transport(rest+sse)
 ├── hooks/                  # 通用 Composables
 ├── layouts/                # 页面布局
-├── pages/                  # 路由页面（index/login/about/post/[id]/category/[id]/tag/[id]...）
+├── pages/                  # 路由页面（index/login/register/settings/user/cart/checkout/orders/product/[id]/category/[id]...）
 ├── plugins/                # Nuxt 插件（01.init-client.ts 等）
 ├── stores/                 # Pinia（modules/core + modules/app）
 ├── utils/ typings/

@@ -67,8 +67,8 @@ gow run admin
 ssh user@server.com
 
 # 步骤 2：克隆项目
-git clone https://github.com/tx7do/go-wind-admin.git
-cd go-wind-admin/backend
+git clone https://github.com/tx7do/go-wind-shop.git
+cd go-wind-shop/backend
 
 # 步骤 3：准备生产环境
 ./scripts/env/install_unix_prod.sh
@@ -133,15 +133,15 @@ pm2 logs
 
 ```bash
 # 项目负责人
-git clone https://github.com/tx7do/go-wind-admin.git
-cd go-wind-admin/backend
+git clone https://github.com/tx7do/go-wind-shop.git
+cd go-wind-shop/backend
 ./scripts/env/install_unix_dev.sh
 ./scripts/docker/full_deploy.sh
 git push  # 确保项目配置已推送
 
 # 其他开发者
-git clone https://github.com/tx7do/go-wind-admin.git
-cd go-wind-admin/backend
+git clone https://github.com/tx7do/go-wind-shop.git
+cd go-wind-shop/backend
 ./scripts/env/install_unix_dev.sh  # 一次性
 ./scripts/docker/libs_only.sh      # 每天开发时
 gow run admin

@@ -1,6 +1,6 @@
 <div align="center">
-  <img alt="go-wind-admin element-admin" width="80" height="80" src="./src/assets/images/logo.png">
-  <h1>GoWind Admin - Element Plus</h1>
+  <img alt="go-wind-shop admin" width="80" height="80" src="./src/assets/images/logo.png">
+  <h1>GoWind Shop Admin - Element Plus</h1>
 
   <img src="https://img.shields.io/badge/Vue-3.5.30-brightgreen.svg"/>
   <img src="https://img.shields.io/badge/Vite-8.0.0-green.svg"/>
@@ -11,7 +11,7 @@
 
 ## 项目简介
 
-[GoWind Admin - Element Plus](https://github.com/tx7do/go-wind-admin/tree/main/frontend/admin/vue-element) 是一个基于 Vue3、Vite 8、TypeScript 和 Element Plus 构建的企业级后台管理系统，适配 Go-Wind 后端 gRPC 服务。
+[GoWind Shop Admin - Element Plus](https://github.com/tx7do/go-wind-shop) 是一个基于 Vue3、Vite 8、TypeScript 和 Element Plus 构建的企业级后台管理系统，适配 Go-Wind 后端 gRPC 服务。
 
 **核心技术栈：**
 
@@ -46,7 +46,7 @@
 npm install pnpm -g                    # 安装 pnpm（如未安装）
 pnpm config set registry https://registry.npmmirror.com  # 国内镜像（可选）
 pnpm install                           # 安装依赖
-pnpm run dev                           # 启动开发服务器 → http://localhost:3000
+pnpm run dev                           # 启动开发服务器 → http://localhost:3001
 ```
 
 ### 构建
@@ -394,8 +394,8 @@ VITE_APP_TENANT_ENABLED=false                 # 多租户开关
 **生产环境** (`.env.production`)：
 
 ```bash
-VITE_APP_API_URL=https://api.demo.admin.gowind.cloud
-VITE_APP_SSE_URL=https://sse.demo.admin.gowind.cloud/events
+VITE_APP_API_URL=https://api.example.com
+VITE_APP_SSE_URL=https://sse.example.com/events
 VITE_APP_TENANT_ENABLED=true
 ```
 
@@ -463,7 +463,6 @@ server {
 - [Vue.js](https://vuejs.org/) - 渐进式 JavaScript 框架
 - [Vite](https://vitejs.dev/) - 下一代前端构建工具
 - [Element Plus](https://element-plus.org/) - Vue 3 组件库
-- [vue3-element-admin](https://gitee.com/panjiachen/vue-element-admin) - 灵感来源
 
 ---
 
