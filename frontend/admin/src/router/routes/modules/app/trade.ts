@@ -42,7 +42,7 @@ const trade: RouteRecordRaw[] = [
         name: "TradeRefundManagement",
         meta: {
           order: 3,
-          icon: "lucide:rotatable-ccw-solid",
+          icon: "lucide:rotate-ccw",
           title: "routes.trade.refund",
           authority: ["sys:platform_admin"],
         },
