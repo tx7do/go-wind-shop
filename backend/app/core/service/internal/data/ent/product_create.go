@@ -162,6 +162,20 @@ func (_c *ProductCreate) SetNillableBrandID(v *uint32) *ProductCreate {
 	return _c
 }
 
+// SetImageURL sets the "image_url" field.
+func (_c *ProductCreate) SetImageURL(v string) *ProductCreate {
+	_c.mutation.SetImageURL(v)
+	return _c
+}
+
+// SetNillableImageURL sets the "image_url" field if the given value is not nil.
+func (_c *ProductCreate) SetNillableImageURL(v *string) *ProductCreate {
+	if v != nil {
+		_c.SetImageURL(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *ProductCreate) SetID(v uint32) *ProductCreate {
 	_c.mutation.SetID(v)
@@ -293,6 +307,10 @@ func (_c *ProductCreate) createSpec() (*Product, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.BrandID(); ok {
 		_spec.SetField(product.FieldBrandID, field.TypeUint32, value)
 		_node.BrandID = &value
+	}
+	if value, ok := _c.mutation.ImageURL(); ok {
+		_spec.SetField(product.FieldImageURL, field.TypeString, value)
+		_node.ImageURL = &value
 	}
 	return _node, _spec
 }
@@ -541,6 +559,24 @@ func (u *ProductUpsert) AddBrandID(v uint32) *ProductUpsert {
 // ClearBrandID clears the value of the "brand_id" field.
 func (u *ProductUpsert) ClearBrandID() *ProductUpsert {
 	u.SetNull(product.FieldBrandID)
+	return u
+}
+
+// SetImageURL sets the "image_url" field.
+func (u *ProductUpsert) SetImageURL(v string) *ProductUpsert {
+	u.Set(product.FieldImageURL, v)
+	return u
+}
+
+// UpdateImageURL sets the "image_url" field to the value that was provided on create.
+func (u *ProductUpsert) UpdateImageURL() *ProductUpsert {
+	u.SetExcluded(product.FieldImageURL)
+	return u
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (u *ProductUpsert) ClearImageURL() *ProductUpsert {
+	u.SetNull(product.FieldImageURL)
 	return u
 }
 
@@ -823,6 +859,27 @@ func (u *ProductUpsertOne) UpdateBrandID() *ProductUpsertOne {
 func (u *ProductUpsertOne) ClearBrandID() *ProductUpsertOne {
 	return u.Update(func(s *ProductUpsert) {
 		s.ClearBrandID()
+	})
+}
+
+// SetImageURL sets the "image_url" field.
+func (u *ProductUpsertOne) SetImageURL(v string) *ProductUpsertOne {
+	return u.Update(func(s *ProductUpsert) {
+		s.SetImageURL(v)
+	})
+}
+
+// UpdateImageURL sets the "image_url" field to the value that was provided on create.
+func (u *ProductUpsertOne) UpdateImageURL() *ProductUpsertOne {
+	return u.Update(func(s *ProductUpsert) {
+		s.UpdateImageURL()
+	})
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (u *ProductUpsertOne) ClearImageURL() *ProductUpsertOne {
+	return u.Update(func(s *ProductUpsert) {
+		s.ClearImageURL()
 	})
 }
 
@@ -1271,6 +1328,27 @@ func (u *ProductUpsertBulk) UpdateBrandID() *ProductUpsertBulk {
 func (u *ProductUpsertBulk) ClearBrandID() *ProductUpsertBulk {
 	return u.Update(func(s *ProductUpsert) {
 		s.ClearBrandID()
+	})
+}
+
+// SetImageURL sets the "image_url" field.
+func (u *ProductUpsertBulk) SetImageURL(v string) *ProductUpsertBulk {
+	return u.Update(func(s *ProductUpsert) {
+		s.SetImageURL(v)
+	})
+}
+
+// UpdateImageURL sets the "image_url" field to the value that was provided on create.
+func (u *ProductUpsertBulk) UpdateImageURL() *ProductUpsertBulk {
+	return u.Update(func(s *ProductUpsert) {
+		s.UpdateImageURL()
+	})
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (u *ProductUpsertBulk) ClearImageURL() *ProductUpsertBulk {
+	return u.Update(func(s *ProductUpsert) {
+		s.ClearImageURL()
 	})
 }
 

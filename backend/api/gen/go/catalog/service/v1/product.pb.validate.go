@@ -110,6 +110,10 @@ func (m *Product) validate(all bool) error {
 		// no validation rules for SortOrder
 	}
 
+	if m.ImageUrl != nil {
+		// no validation rules for ImageUrl
+	}
+
 	if m.CreatedBy != nil {
 		// no validation rules for CreatedBy
 	}

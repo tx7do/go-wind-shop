@@ -9126,6 +9126,9 @@ components:
                     type: integer
                     description: 排序优先级（数值越小越靠前，同级类目间排序）
                     format: uint32
+                imageUrl:
+                    type: string
+                    description: 类目图片资源 URL（locale 无关）
                 translations:
                     type: array
                     items:
@@ -9441,6 +9444,9 @@ components:
                     type: integer
                     description: 排序优先级
                     format: uint32
+                imageUrl:
+                    type: string
+                    description: 商品主图资源 URL（locale 无关）
                 translations:
                     type: array
                     items:

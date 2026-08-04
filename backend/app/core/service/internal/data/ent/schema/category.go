@@ -33,6 +33,11 @@ func (Category) Fields() []ent.Field {
 			Default(0).
 			Optional().
 			Nillable(),
+
+		field.String("image_url").
+			Comment("类目图片资源 URL（locale 无关）").
+			Optional().
+			Nillable(),
 	}
 }
 

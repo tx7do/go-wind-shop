@@ -251,6 +251,26 @@ func (_u *ProductUpdate) ClearBrandID() *ProductUpdate {
 	return _u
 }
 
+// SetImageURL sets the "image_url" field.
+func (_u *ProductUpdate) SetImageURL(v string) *ProductUpdate {
+	_u.mutation.SetImageURL(v)
+	return _u
+}
+
+// SetNillableImageURL sets the "image_url" field if the given value is not nil.
+func (_u *ProductUpdate) SetNillableImageURL(v *string) *ProductUpdate {
+	if v != nil {
+		_u.SetImageURL(*v)
+	}
+	return _u
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (_u *ProductUpdate) ClearImageURL() *ProductUpdate {
+	_u.mutation.ClearImageURL()
+	return _u
+}
+
 // Mutation returns the ProductMutation object of the builder.
 func (_u *ProductUpdate) Mutation() *ProductMutation {
 	return _u.mutation
@@ -385,6 +405,12 @@ func (_u *ProductUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.BrandIDCleared() {
 		_spec.ClearField(product.FieldBrandID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.ImageURL(); ok {
+		_spec.SetField(product.FieldImageURL, field.TypeString, value)
+	}
+	if _u.mutation.ImageURLCleared() {
+		_spec.ClearField(product.FieldImageURL, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -630,6 +656,26 @@ func (_u *ProductUpdateOne) ClearBrandID() *ProductUpdateOne {
 	return _u
 }
 
+// SetImageURL sets the "image_url" field.
+func (_u *ProductUpdateOne) SetImageURL(v string) *ProductUpdateOne {
+	_u.mutation.SetImageURL(v)
+	return _u
+}
+
+// SetNillableImageURL sets the "image_url" field if the given value is not nil.
+func (_u *ProductUpdateOne) SetNillableImageURL(v *string) *ProductUpdateOne {
+	if v != nil {
+		_u.SetImageURL(*v)
+	}
+	return _u
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (_u *ProductUpdateOne) ClearImageURL() *ProductUpdateOne {
+	_u.mutation.ClearImageURL()
+	return _u
+}
+
 // Mutation returns the ProductMutation object of the builder.
 func (_u *ProductUpdateOne) Mutation() *ProductMutation {
 	return _u.mutation
@@ -794,6 +840,12 @@ func (_u *ProductUpdateOne) sqlSave(ctx context.Context) (_node *Product, err er
 	}
 	if _u.mutation.BrandIDCleared() {
 		_spec.ClearField(product.FieldBrandID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.ImageURL(); ok {
+		_spec.SetField(product.FieldImageURL, field.TypeString, value)
+	}
+	if _u.mutation.ImageURLCleared() {
+		_spec.ClearField(product.FieldImageURL, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &Product{config: _u.config}

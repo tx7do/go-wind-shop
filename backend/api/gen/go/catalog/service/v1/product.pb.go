@@ -88,6 +88,7 @@ type Product struct {
 	CategoryId         *uint32                `protobuf:"varint,3,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty"`                     // 所属类目ID
 	BrandId            *uint32                `protobuf:"varint,4,opt,name=brand_id,json=brandId,proto3,oneof" json:"brand_id,omitempty"`                              // 所属品牌ID
 	SortOrder          *uint32                `protobuf:"varint,5,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                        // 排序优先级
+	ImageUrl           *string                `protobuf:"bytes,6,opt,name=image_url,json=imageUrl,proto3,oneof" json:"image_url,omitempty"`                            // 商品主图资源 URL
 	Translations       []*ProductTranslation  `protobuf:"bytes,20,rep,name=translations,proto3" json:"translations,omitempty"`
 	AvailableLanguages []string               `protobuf:"bytes,21,rep,name=available_languages,json=availableLanguages,proto3" json:"available_languages,omitempty"`
 	CreatedBy          *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"` // 创建者用户ID
@@ -163,6 +164,13 @@ func (x *Product) GetSortOrder() uint32 {
 		return *x.SortOrder
 	}
 	return 0
+}
+
+func (x *Product) GetImageUrl() string {
+	if x != nil && x.ImageUrl != nil {
+		return *x.ImageUrl
+	}
+	return ""
 }
 
 func (x *Product) GetTranslations() []*ProductTranslation {
@@ -1165,7 +1173,8 @@ var File_catalog_service_v1_product_proto protoreflect.FileDescriptor
 
 const file_catalog_service_v1_product_proto_rawDesc = "" +
 	"\n" +
-	" catalog/service/v1/product.proto\x12\x12catalog.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xdc\t\n" +
+	" catalog/service/v1/product.proto\x12\x12catalog.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xbd\n" +
+	"\n" +
 	"\aProduct\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b商品IDH\x00R\x02id\x88\x01\x01\x12Z\n" +
 	"\x06status\x18\x02 \x01(\x0e2).catalog.service.v1.Product.ProductStatusB\x12\xbaG\x0f\x92\x02\f商品状态H\x01R\x06status\x88\x01\x01\x12:\n" +
@@ -1173,22 +1182,23 @@ const file_catalog_service_v1_product_proto_rawDesc = "" +
 	"categoryId\x88\x01\x01\x124\n" +
 	"\bbrand_id\x18\x04 \x01(\rB\x14\xbaG\x11\x92\x02\x0e所属品牌IDH\x03R\abrandId\x88\x01\x01\x129\n" +
 	"\n" +
-	"sort_order\x18\x05 \x01(\rB\x15\xbaG\x12\x92\x02\x0f排序优先级H\x04R\tsortOrder\x88\x01\x01\x12g\n" +
+	"sort_order\x18\x05 \x01(\rB\x15\xbaG\x12\x92\x02\x0f排序优先级H\x04R\tsortOrder\x88\x01\x01\x12Q\n" +
+	"\timage_url\x18\x06 \x01(\tB/\xbaG,\x92\x02)商品主图资源 URL（locale 无关）H\x05R\bimageUrl\x88\x01\x01\x12g\n" +
 	"\ftranslations\x18\x14 \x03(\v2&.catalog.service.v1.ProductTranslationB\x1b\xbaG\x18\x92\x02\x15多语言翻译列表R\ftranslations\x12h\n" +
 	"\x13available_languages\x18\x15 \x03(\tB7\xbaG4:\x14\x12\x12[\"zh-CN\", \"en-US\"]\x92\x02\x1b可用的语言代码列表R\x12availableLanguages\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x05R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x06R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x06R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\aR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\aR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\bR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\bR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\tR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\tR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\n" +
+	"R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\n" +
-	"R\tdeletedAt\x88\x01\x01\"\x81\x01\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\vR\tdeletedAt\x88\x01\x01\"\x81\x01\n" +
 	"\rProductStatus\x12\x1e\n" +
 	"\x1aPRODUCT_STATUS_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14PRODUCT_STATUS_DRAFT\x10\x01\x12\x19\n" +
@@ -1198,7 +1208,9 @@ const file_catalog_service_v1_product_proto_rawDesc = "" +
 	"\a_statusB\x0e\n" +
 	"\f_category_idB\v\n" +
 	"\t_brand_idB\r\n" +
-	"\v_sort_orderB\r\n" +
+	"\v_sort_orderB\f\n" +
+	"\n" +
+	"_image_urlB\r\n" +
 	"\v_created_byB\r\n" +
 	"\v_updated_byB\r\n" +
 	"\v_deleted_byB\r\n" +

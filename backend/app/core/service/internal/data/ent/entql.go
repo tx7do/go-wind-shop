@@ -245,6 +245,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			category.FieldPath:      {Type: field.TypeString, Column: category.FieldPath},
 			category.FieldParentID:  {Type: field.TypeUint32, Column: category.FieldParentID},
 			category.FieldDepth:     {Type: field.TypeInt32, Column: category.FieldDepth},
+			category.FieldImageURL:  {Type: field.TypeString, Column: category.FieldImageURL},
 		},
 	}
 	graph.Nodes[7] = &sqlgraph.Node{
@@ -1067,6 +1068,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			product.FieldStatus:     {Type: field.TypeEnum, Column: product.FieldStatus},
 			product.FieldCategoryID: {Type: field.TypeUint32, Column: product.FieldCategoryID},
 			product.FieldBrandID:    {Type: field.TypeUint32, Column: product.FieldBrandID},
+			product.FieldImageURL:   {Type: field.TypeString, Column: product.FieldImageURL},
 		},
 	}
 	graph.Nodes[36] = &sqlgraph.Node{
@@ -2366,6 +2368,11 @@ func (f *CategoryFilter) WhereParentID(p entql.Uint32P) {
 // WhereDepth applies the entql int32 predicate on the depth field.
 func (f *CategoryFilter) WhereDepth(p entql.Int32P) {
 	f.Where(p.Field(category.FieldDepth))
+}
+
+// WhereImageURL applies the entql string predicate on the image_url field.
+func (f *CategoryFilter) WhereImageURL(p entql.StringP) {
+	f.Where(p.Field(category.FieldImageURL))
 }
 
 // WhereHasParent applies a predicate to check if query has an edge parent.
@@ -5863,6 +5870,11 @@ func (f *ProductFilter) WhereCategoryID(p entql.Uint32P) {
 // WhereBrandID applies the entql uint32 predicate on the brand_id field.
 func (f *ProductFilter) WhereBrandID(p entql.Uint32P) {
 	f.Where(p.Field(product.FieldBrandID))
+}
+
+// WhereImageURL applies the entql string predicate on the image_url field.
+func (f *ProductFilter) WhereImageURL(p entql.StringP) {
+	f.Where(p.Field(product.FieldImageURL))
 }
 
 // addPredicate implements the predicateAdder interface.

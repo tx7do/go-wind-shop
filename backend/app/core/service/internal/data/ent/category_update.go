@@ -244,6 +244,26 @@ func (_u *CategoryUpdate) ClearDepth() *CategoryUpdate {
 	return _u
 }
 
+// SetImageURL sets the "image_url" field.
+func (_u *CategoryUpdate) SetImageURL(v string) *CategoryUpdate {
+	_u.mutation.SetImageURL(v)
+	return _u
+}
+
+// SetNillableImageURL sets the "image_url" field if the given value is not nil.
+func (_u *CategoryUpdate) SetNillableImageURL(v *string) *CategoryUpdate {
+	if v != nil {
+		_u.SetImageURL(*v)
+	}
+	return _u
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (_u *CategoryUpdate) ClearImageURL() *CategoryUpdate {
+	_u.mutation.ClearImageURL()
+	return _u
+}
+
 // SetParent sets the "parent" edge to the Category entity.
 func (_u *CategoryUpdate) SetParent(v *Category) *CategoryUpdate {
 	return _u.SetParentID(v.ID)
@@ -416,6 +436,12 @@ func (_u *CategoryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.DepthCleared() {
 		_spec.ClearField(category.FieldDepth, field.TypeInt32)
+	}
+	if value, ok := _u.mutation.ImageURL(); ok {
+		_spec.SetField(category.FieldImageURL, field.TypeString, value)
+	}
+	if _u.mutation.ImageURLCleared() {
+		_spec.ClearField(category.FieldImageURL, field.TypeString)
 	}
 	if _u.mutation.ParentCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -728,6 +754,26 @@ func (_u *CategoryUpdateOne) ClearDepth() *CategoryUpdateOne {
 	return _u
 }
 
+// SetImageURL sets the "image_url" field.
+func (_u *CategoryUpdateOne) SetImageURL(v string) *CategoryUpdateOne {
+	_u.mutation.SetImageURL(v)
+	return _u
+}
+
+// SetNillableImageURL sets the "image_url" field if the given value is not nil.
+func (_u *CategoryUpdateOne) SetNillableImageURL(v *string) *CategoryUpdateOne {
+	if v != nil {
+		_u.SetImageURL(*v)
+	}
+	return _u
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (_u *CategoryUpdateOne) ClearImageURL() *CategoryUpdateOne {
+	_u.mutation.ClearImageURL()
+	return _u
+}
+
 // SetParent sets the "parent" edge to the Category entity.
 func (_u *CategoryUpdateOne) SetParent(v *Category) *CategoryUpdateOne {
 	return _u.SetParentID(v.ID)
@@ -930,6 +976,12 @@ func (_u *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err 
 	}
 	if _u.mutation.DepthCleared() {
 		_spec.ClearField(category.FieldDepth, field.TypeInt32)
+	}
+	if value, ok := _u.mutation.ImageURL(); ok {
+		_spec.SetField(category.FieldImageURL, field.TypeString, value)
+	}
+	if _u.mutation.ImageURLCleared() {
+		_spec.ClearField(category.FieldImageURL, field.TypeString)
 	}
 	if _u.mutation.ParentCleared() {
 		edge := &sqlgraph.EdgeSpec{

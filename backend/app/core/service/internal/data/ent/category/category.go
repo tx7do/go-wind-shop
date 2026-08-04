@@ -32,6 +32,8 @@ const (
 	FieldParentID = "parent_id"
 	// FieldDepth holds the string denoting the depth field in the database.
 	FieldDepth = "depth"
+	// FieldImageURL holds the string denoting the image_url field in the database.
+	FieldImageURL = "image_url"
 	// EdgeParent holds the string denoting the parent edge name in mutations.
 	EdgeParent = "parent"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
@@ -61,6 +63,7 @@ var Columns = []string{
 	FieldPath,
 	FieldParentID,
 	FieldDepth,
+	FieldImageURL,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -140,6 +143,11 @@ func ByParentID(opts ...sql.OrderTermOption) OrderOption {
 // ByDepth orders the results by the depth field.
 func ByDepth(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDepth, opts...).ToFunc()
+}
+
+// ByImageURL orders the results by the image_url field.
+func ByImageURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldImageURL, opts...).ToFunc()
 }
 
 // ByParentField orders the results by parent field.

@@ -33,6 +33,8 @@ const (
 	FieldCategoryID = "category_id"
 	// FieldBrandID holds the string denoting the brand_id field in the database.
 	FieldBrandID = "brand_id"
+	// FieldImageURL holds the string denoting the image_url field in the database.
+	FieldImageURL = "image_url"
 	// Table holds the table name of the product in the database.
 	Table = "mall_products"
 )
@@ -50,6 +52,7 @@ var Columns = []string{
 	FieldStatus,
 	FieldCategoryID,
 	FieldBrandID,
+	FieldImageURL,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -149,4 +152,9 @@ func ByCategoryID(opts ...sql.OrderTermOption) OrderOption {
 // ByBrandID orders the results by the brand_id field.
 func ByBrandID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldBrandID, opts...).ToFunc()
+}
+
+// ByImageURL orders the results by the image_url field.
+func ByImageURL(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldImageURL, opts...).ToFunc()
 }

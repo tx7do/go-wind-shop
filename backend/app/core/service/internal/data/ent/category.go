@@ -38,6 +38,8 @@ type Category struct {
 	ParentID *uint32 `json:"parent_id,omitempty"`
 	// 类目层级深度
 	Depth *int32 `json:"depth,omitempty"`
+	// 类目图片资源 URL（locale 无关）
+	ImageURL *string `json:"image_url,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CategoryQuery when eager-loading is set.
 	Edges        CategoryEdges `json:"edges"`
@@ -82,7 +84,7 @@ func (*Category) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case category.FieldID, category.FieldCreatedBy, category.FieldUpdatedBy, category.FieldDeletedBy, category.FieldSortOrder, category.FieldParentID, category.FieldDepth:
 			values[i] = new(sql.NullInt64)
-		case category.FieldPath:
+		case category.FieldPath, category.FieldImageURL:
 			values[i] = new(sql.NullString)
 		case category.FieldCreatedAt, category.FieldUpdatedAt, category.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -176,6 +178,13 @@ func (_m *Category) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.Depth = new(int32)
 				*_m.Depth = int32(value.Int64)
+			}
+		case category.FieldImageURL:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field image_url", values[i])
+			} else if value.Valid {
+				_m.ImageURL = new(string)
+				*_m.ImageURL = value.String
 			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
@@ -271,6 +280,11 @@ func (_m *Category) String() string {
 	if v := _m.Depth; v != nil {
 		builder.WriteString("depth=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.ImageURL; v != nil {
+		builder.WriteString("image_url=")
+		builder.WriteString(*v)
 	}
 	builder.WriteByte(')')
 	return builder.String()

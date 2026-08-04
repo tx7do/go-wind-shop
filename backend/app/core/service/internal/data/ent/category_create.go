@@ -162,6 +162,20 @@ func (_c *CategoryCreate) SetNillableDepth(v *int32) *CategoryCreate {
 	return _c
 }
 
+// SetImageURL sets the "image_url" field.
+func (_c *CategoryCreate) SetImageURL(v string) *CategoryCreate {
+	_c.mutation.SetImageURL(v)
+	return _c
+}
+
+// SetNillableImageURL sets the "image_url" field if the given value is not nil.
+func (_c *CategoryCreate) SetNillableImageURL(v *string) *CategoryCreate {
+	if v != nil {
+		_c.SetImageURL(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *CategoryCreate) SetID(v uint32) *CategoryCreate {
 	_c.mutation.SetID(v)
@@ -313,6 +327,10 @@ func (_c *CategoryCreate) createSpec() (*Category, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Depth(); ok {
 		_spec.SetField(category.FieldDepth, field.TypeInt32, value)
 		_node.Depth = &value
+	}
+	if value, ok := _c.mutation.ImageURL(); ok {
+		_spec.SetField(category.FieldImageURL, field.TypeString, value)
+		_node.ImageURL = &value
 	}
 	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -591,6 +609,24 @@ func (u *CategoryUpsert) ClearDepth() *CategoryUpsert {
 	return u
 }
 
+// SetImageURL sets the "image_url" field.
+func (u *CategoryUpsert) SetImageURL(v string) *CategoryUpsert {
+	u.Set(category.FieldImageURL, v)
+	return u
+}
+
+// UpdateImageURL sets the "image_url" field to the value that was provided on create.
+func (u *CategoryUpsert) UpdateImageURL() *CategoryUpsert {
+	u.SetExcluded(category.FieldImageURL)
+	return u
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (u *CategoryUpsert) ClearImageURL() *CategoryUpsert {
+	u.SetNull(category.FieldImageURL)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -863,6 +899,27 @@ func (u *CategoryUpsertOne) UpdateDepth() *CategoryUpsertOne {
 func (u *CategoryUpsertOne) ClearDepth() *CategoryUpsertOne {
 	return u.Update(func(s *CategoryUpsert) {
 		s.ClearDepth()
+	})
+}
+
+// SetImageURL sets the "image_url" field.
+func (u *CategoryUpsertOne) SetImageURL(v string) *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.SetImageURL(v)
+	})
+}
+
+// UpdateImageURL sets the "image_url" field to the value that was provided on create.
+func (u *CategoryUpsertOne) UpdateImageURL() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateImageURL()
+	})
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (u *CategoryUpsertOne) ClearImageURL() *CategoryUpsertOne {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearImageURL()
 	})
 }
 
@@ -1304,6 +1361,27 @@ func (u *CategoryUpsertBulk) UpdateDepth() *CategoryUpsertBulk {
 func (u *CategoryUpsertBulk) ClearDepth() *CategoryUpsertBulk {
 	return u.Update(func(s *CategoryUpsert) {
 		s.ClearDepth()
+	})
+}
+
+// SetImageURL sets the "image_url" field.
+func (u *CategoryUpsertBulk) SetImageURL(v string) *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.SetImageURL(v)
+	})
+}
+
+// UpdateImageURL sets the "image_url" field to the value that was provided on create.
+func (u *CategoryUpsertBulk) UpdateImageURL() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.UpdateImageURL()
+	})
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (u *CategoryUpsertBulk) ClearImageURL() *CategoryUpsertBulk {
+	return u.Update(func(s *CategoryUpsert) {
+		s.ClearImageURL()
 	})
 }
 

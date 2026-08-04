@@ -47,6 +47,11 @@ func (Product) Fields() []ent.Field {
 			Comment("所属品牌ID").
 			Optional().
 			Nillable(),
+
+		field.String("image_url").
+			Comment("商品主图资源 URL（locale 无关）").
+			Optional().
+			Nillable(),
 	}
 }
 

@@ -8453,6 +8453,7 @@ type CategoryMutation struct {
 	_path           *string
 	depth           *int32
 	adddepth        *int32
+	image_url       *string
 	clearedFields   map[string]struct{}
 	parent          *uint32
 	clearedparent   bool
@@ -9163,6 +9164,55 @@ func (m *CategoryMutation) ResetDepth() {
 	delete(m.clearedFields, category.FieldDepth)
 }
 
+// SetImageURL sets the "image_url" field.
+func (m *CategoryMutation) SetImageURL(s string) {
+	m.image_url = &s
+}
+
+// ImageURL returns the value of the "image_url" field in the mutation.
+func (m *CategoryMutation) ImageURL() (r string, exists bool) {
+	v := m.image_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldImageURL returns the old "image_url" field's value of the Category entity.
+// If the Category object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CategoryMutation) OldImageURL(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldImageURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldImageURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldImageURL: %w", err)
+	}
+	return oldValue.ImageURL, nil
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (m *CategoryMutation) ClearImageURL() {
+	m.image_url = nil
+	m.clearedFields[category.FieldImageURL] = struct{}{}
+}
+
+// ImageURLCleared returns if the "image_url" field was cleared in this mutation.
+func (m *CategoryMutation) ImageURLCleared() bool {
+	_, ok := m.clearedFields[category.FieldImageURL]
+	return ok
+}
+
+// ResetImageURL resets all changes to the "image_url" field.
+func (m *CategoryMutation) ResetImageURL() {
+	m.image_url = nil
+	delete(m.clearedFields, category.FieldImageURL)
+}
+
 // ClearParent clears the "parent" edge to the Category entity.
 func (m *CategoryMutation) ClearParent() {
 	m.clearedparent = true
@@ -9278,7 +9328,7 @@ func (m *CategoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CategoryMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, category.FieldCreatedAt)
 	}
@@ -9309,6 +9359,9 @@ func (m *CategoryMutation) Fields() []string {
 	if m.depth != nil {
 		fields = append(fields, category.FieldDepth)
 	}
+	if m.image_url != nil {
+		fields = append(fields, category.FieldImageURL)
+	}
 	return fields
 }
 
@@ -9337,6 +9390,8 @@ func (m *CategoryMutation) Field(name string) (ent.Value, bool) {
 		return m.ParentID()
 	case category.FieldDepth:
 		return m.Depth()
+	case category.FieldImageURL:
+		return m.ImageURL()
 	}
 	return nil, false
 }
@@ -9366,6 +9421,8 @@ func (m *CategoryMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldParentID(ctx)
 	case category.FieldDepth:
 		return m.OldDepth(ctx)
+	case category.FieldImageURL:
+		return m.OldImageURL(ctx)
 	}
 	return nil, fmt.Errorf("unknown Category field %s", name)
 }
@@ -9444,6 +9501,13 @@ func (m *CategoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDepth(v)
+		return nil
+	case category.FieldImageURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetImageURL(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Category field %s", name)
@@ -9568,6 +9632,9 @@ func (m *CategoryMutation) ClearedFields() []string {
 	if m.FieldCleared(category.FieldDepth) {
 		fields = append(fields, category.FieldDepth)
 	}
+	if m.FieldCleared(category.FieldImageURL) {
+		fields = append(fields, category.FieldImageURL)
+	}
 	return fields
 }
 
@@ -9612,6 +9679,9 @@ func (m *CategoryMutation) ClearField(name string) error {
 	case category.FieldDepth:
 		m.ClearDepth()
 		return nil
+	case category.FieldImageURL:
+		m.ClearImageURL()
+		return nil
 	}
 	return fmt.Errorf("unknown Category nullable field %s", name)
 }
@@ -9649,6 +9719,9 @@ func (m *CategoryMutation) ResetField(name string) error {
 		return nil
 	case category.FieldDepth:
 		m.ResetDepth()
+		return nil
+	case category.FieldImageURL:
+		m.ResetImageURL()
 		return nil
 	}
 	return fmt.Errorf("unknown Category field %s", name)
@@ -54294,6 +54367,7 @@ type ProductMutation struct {
 	addcategory_id *int32
 	brand_id       *uint32
 	addbrand_id    *int32
+	image_url      *string
 	clearedFields  map[string]struct{}
 	done           bool
 	oldValue       func(context.Context) (*Product, error)
@@ -55020,6 +55094,55 @@ func (m *ProductMutation) ResetBrandID() {
 	delete(m.clearedFields, product.FieldBrandID)
 }
 
+// SetImageURL sets the "image_url" field.
+func (m *ProductMutation) SetImageURL(s string) {
+	m.image_url = &s
+}
+
+// ImageURL returns the value of the "image_url" field in the mutation.
+func (m *ProductMutation) ImageURL() (r string, exists bool) {
+	v := m.image_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldImageURL returns the old "image_url" field's value of the Product entity.
+// If the Product object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ProductMutation) OldImageURL(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldImageURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldImageURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldImageURL: %w", err)
+	}
+	return oldValue.ImageURL, nil
+}
+
+// ClearImageURL clears the value of the "image_url" field.
+func (m *ProductMutation) ClearImageURL() {
+	m.image_url = nil
+	m.clearedFields[product.FieldImageURL] = struct{}{}
+}
+
+// ImageURLCleared returns if the "image_url" field was cleared in this mutation.
+func (m *ProductMutation) ImageURLCleared() bool {
+	_, ok := m.clearedFields[product.FieldImageURL]
+	return ok
+}
+
+// ResetImageURL resets all changes to the "image_url" field.
+func (m *ProductMutation) ResetImageURL() {
+	m.image_url = nil
+	delete(m.clearedFields, product.FieldImageURL)
+}
+
 // Where appends a list predicates to the ProductMutation builder.
 func (m *ProductMutation) Where(ps ...predicate.Product) {
 	m.predicates = append(m.predicates, ps...)
@@ -55054,7 +55177,7 @@ func (m *ProductMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ProductMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, product.FieldCreatedAt)
 	}
@@ -55085,6 +55208,9 @@ func (m *ProductMutation) Fields() []string {
 	if m.brand_id != nil {
 		fields = append(fields, product.FieldBrandID)
 	}
+	if m.image_url != nil {
+		fields = append(fields, product.FieldImageURL)
+	}
 	return fields
 }
 
@@ -55113,6 +55239,8 @@ func (m *ProductMutation) Field(name string) (ent.Value, bool) {
 		return m.CategoryID()
 	case product.FieldBrandID:
 		return m.BrandID()
+	case product.FieldImageURL:
+		return m.ImageURL()
 	}
 	return nil, false
 }
@@ -55142,6 +55270,8 @@ func (m *ProductMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCategoryID(ctx)
 	case product.FieldBrandID:
 		return m.OldBrandID(ctx)
+	case product.FieldImageURL:
+		return m.OldImageURL(ctx)
 	}
 	return nil, fmt.Errorf("unknown Product field %s", name)
 }
@@ -55220,6 +55350,13 @@ func (m *ProductMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetBrandID(v)
+		return nil
+	case product.FieldImageURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetImageURL(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Product field %s", name)
@@ -55356,6 +55493,9 @@ func (m *ProductMutation) ClearedFields() []string {
 	if m.FieldCleared(product.FieldBrandID) {
 		fields = append(fields, product.FieldBrandID)
 	}
+	if m.FieldCleared(product.FieldImageURL) {
+		fields = append(fields, product.FieldImageURL)
+	}
 	return fields
 }
 
@@ -55400,6 +55540,9 @@ func (m *ProductMutation) ClearField(name string) error {
 	case product.FieldBrandID:
 		m.ClearBrandID()
 		return nil
+	case product.FieldImageURL:
+		m.ClearImageURL()
+		return nil
 	}
 	return fmt.Errorf("unknown Product nullable field %s", name)
 }
@@ -55437,6 +55580,9 @@ func (m *ProductMutation) ResetField(name string) error {
 		return nil
 	case product.FieldBrandID:
 		m.ResetBrandID()
+		return nil
+	case product.FieldImageURL:
+		m.ResetImageURL()
 		return nil
 	}
 	return fmt.Errorf("unknown Product field %s", name)
