@@ -73,6 +73,17 @@ func (s *OrderService) List(ctx context.Context, req *paginationV1.PagingRequest
 	return s.orderRepo.List(ctx, req)
 }
 
+func (s *OrderService) Count(ctx context.Context, req *paginationV1.PagingRequest) (*orderV1.CountOrderResponse, error) {
+	count, err := s.orderRepo.Count(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &orderV1.CountOrderResponse{
+		Count: uint64(count),
+	}, nil
+}
+
 func (s *OrderService) Get(ctx context.Context, req *orderV1.GetOrderRequest) (*orderV1.Order, error) {
 	orderEnt, err := s.orderRepo.Get(ctx, req)
 	if err != nil {

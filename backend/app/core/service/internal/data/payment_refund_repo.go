@@ -68,15 +68,17 @@ func (r *PaymentRefundRepo) init() {
 	r.mapper.AppendConverters(r.statusConverter.NewConverterPair())
 }
 
-func (r *PaymentRefundRepo) Count(ctx context.Context, whereCond []func(s *sql.Selector)) (int, error) {
+func (r *PaymentRefundRepo) Count(ctx context.Context, req *paginationV1.PagingRequest) (int, error) {
 	builder := r.entClient.Client().PaymentRefund.Query()
-	if len(whereCond) != 0 {
-		builder.Modify(whereCond...)
+
+	whereSelectors, _, err := r.repository.BuildListSelectorWithPaging(builder, req)
+	if len(whereSelectors) != 0 {
+		builder.Modify(whereSelectors...)
 	}
 
 	count, err := builder.Count(ctx)
 	if err != nil {
-		r.log.Errorf("query count failed: %s", err.Error())
+		r.log.Errorf("query payment refund count failed: %s", err.Error())
 		return 0, paymentV1.ErrorInternalServerError("query count failed")
 	}
 

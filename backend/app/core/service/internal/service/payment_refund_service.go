@@ -31,6 +31,17 @@ func (s *PaymentRefundService) List(ctx context.Context, req *paginationV1.Pagin
 	return s.repo.List(ctx, req)
 }
 
+func (s *PaymentRefundService) Count(ctx context.Context, req *paginationV1.PagingRequest) (*paymentV1.CountPaymentRefundResponse, error) {
+	count, err := s.repo.Count(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &paymentV1.CountPaymentRefundResponse{
+		Count: uint64(count),
+	}, nil
+}
+
 func (s *PaymentRefundService) Get(ctx context.Context, req *paymentV1.GetPaymentRefundRequest) (*paymentV1.PaymentRefund, error) {
 	return s.repo.Get(ctx, req)
 }

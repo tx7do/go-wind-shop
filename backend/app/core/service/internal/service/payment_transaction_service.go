@@ -38,6 +38,17 @@ func (s *PaymentTransactionService) List(ctx context.Context, req *paginationV1.
 	return s.repo.List(ctx, req)
 }
 
+func (s *PaymentTransactionService) Count(ctx context.Context, req *paginationV1.PagingRequest) (*paymentV1.CountPaymentTransactionResponse, error) {
+	count, err := s.repo.Count(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &paymentV1.CountPaymentTransactionResponse{
+		Count: uint64(count),
+	}, nil
+}
+
 func (s *PaymentTransactionService) Get(ctx context.Context, req *paymentV1.GetPaymentTransactionRequest) (*paymentV1.PaymentTransaction, error) {
 	return s.repo.Get(ctx, req)
 }

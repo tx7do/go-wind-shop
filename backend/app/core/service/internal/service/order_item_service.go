@@ -31,6 +31,17 @@ func (s *OrderItemService) List(ctx context.Context, req *paginationV1.PagingReq
 	return s.repo.List(ctx, req)
 }
 
+func (s *OrderItemService) Count(ctx context.Context, req *paginationV1.PagingRequest) (*orderV1.CountOrderItemResponse, error) {
+	count, err := s.repo.Count(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	return &orderV1.CountOrderItemResponse{
+		Count: uint64(count),
+	}, nil
+}
+
 func (s *OrderItemService) Get(ctx context.Context, req *orderV1.GetOrderItemRequest) (*orderV1.OrderItem, error) {
 	return s.repo.Get(ctx, req)
 }
