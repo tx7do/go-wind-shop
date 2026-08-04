@@ -7,31 +7,29 @@
     -->
 
     <!-- 概览卡片 -->
-    <el-row :gutter="16" class="mb-5">
-      <el-col v-for="(card, index) in metricCards" :key="index" :xs="24" :sm="12" :md="6">
-        <el-card shadow="hover" class="metric-card">
-          <div class="metric-header">
-            <div class="metric-header__text">
-              <div class="metric-title">{{ card.title }}</div>
-              <div class="metric-value">
-                <el-skeleton v-if="card.isLoading" :rows="0" animated style="width: 60px" />
-                <span v-else>{{ card.error ? "—" : card.value }}</span>
-              </div>
-            </div>
-            <div class="metric-header__icon">
-              <SvgIcon :icon="card.icon" :size="32" />
+    <div class="metric-grid mb-5">
+      <el-card v-for="(card, index) in metricCards" :key="index" shadow="hover" class="metric-card">
+        <div class="metric-header">
+          <div class="metric-header__text">
+            <div class="metric-title">{{ card.title }}</div>
+            <div class="metric-value">
+              <el-skeleton v-if="card.isLoading" :rows="0" animated style="width: 60px" />
+              <span v-else>{{ card.error ? "—" : card.value }}</span>
             </div>
           </div>
-          <div class="metric-footer">
-            <span class="metric-footer-label">{{ card.desc }}</span>
-            <span class="metric-footer-total">
-              {{ $t("pages.dashboard.total") }}
-              <strong v-if="!card.isLoading && !card.error">{{ card.totalLabel }}</strong>
-            </span>
+          <div class="metric-header__icon">
+            <SvgIcon :icon="card.icon" :size="32" />
           </div>
-        </el-card>
-      </el-col>
-    </el-row>
+        </div>
+        <div class="metric-footer">
+          <span class="metric-footer-label">{{ card.desc }}</span>
+          <span class="metric-footer-total">
+            {{ $t("pages.dashboard.total") }}
+            <strong v-if="!card.isLoading && !card.error">{{ card.totalLabel }}</strong>
+          </span>
+        </div>
+      </el-card>
+    </div>
 
     <!-- 图表 -->
     <el-row :gutter="16" class="mb-5">
@@ -288,7 +286,9 @@ const refundStatusQuery = useQuery({
   staleTime: 60_000,
 });
 
-// 将 DistributionEntry[] 映射为图表所需 {name,label,color} 形态。
+// 将 DistributionEntry[] 映射为图表所需 {name,value,semantic} 形态。
+// 颜色不在父组件解析——图表组件内部按 semantic 经 getComputedStyle
+// 取当前主题色（ECharts canvas 无法解析 CSS var()）。
 // 非法/未知 key 会被过滤。
 const orderStatusSlices = computed(() => {
   const raw = orderStatusQuery.data.value ?? [];
@@ -299,7 +299,7 @@ const orderStatusSlices = computed(() => {
       return {
         name: orderStatusLabelMap[e.key] ?? e.key,
         value: e.count,
-        color: tagTypeToColor(tagType),
+        semantic: tagType,
       };
     });
 });
@@ -313,7 +313,7 @@ const refundStatusSlices = computed(() => {
       return {
         name: refundStatusLabelMap[e.key] ?? e.key,
         value: e.count,
-        color: tagTypeToColor(tagType),
+        semantic: tagType,
       };
     });
 });
@@ -334,19 +334,6 @@ const paymentMethodLabelMap: Record<string, string> = {
   ALIPAY: $t("pages.mall.paymentTransaction.methodLabel.ALIPAY"),
   WECHAT: $t("pages.mall.paymentTransaction.methodLabel.WECHAT"),
 };
-
-// 将 ElTag 语义 type 映射为可在 Echarts 中使用的 CSS 颜色变量。
-// 直接读取 Element Plus 主题变量，确保 dark mode 下颜色一致。
-function tagTypeToColor(type: "success" | "primary" | "warning" | "danger" | "info"): string {
-  const cssVarMap: Record<string, string> = {
-    success: "var(--el-color-success)",
-    primary: "var(--el-color-primary)",
-    warning: "var(--el-color-warning)",
-    danger: "var(--el-color-danger)",
-    info: "var(--el-color-info)",
-  };
-  return cssVarMap[type] ?? "var(--el-color-info)";
-}
 
 // ============================================================
 // 最近订单表格数据
@@ -422,7 +409,15 @@ const metricCards = computed(() => {
   padding: 20px;
 }
 
+.metric-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
 .metric-card {
+  flex: 1 1 220px;
+  min-width: 0;
   border: 1px solid var(--el-border-color-lighter);
   border-radius: 12px;
   transition: all 0.3s ease;
