@@ -128,6 +128,27 @@
       "SUCCEEDED": "成功",
       "FAILED": "失败",
       "REFUNDED": "已退款"
+    },
+    "methodLabel": {
+      "ALIPAY": "支付宝",
+      "WECHAT": "微信支付"
+    }
+  },
+  "refund": {
+    "moduleName": "退款管理",
+    "title": "退款流水监控",
+    "id": "退款ID",
+    "transactionId": "关联流水ID",
+    "amount": "退款金额",
+    "currency": "币种",
+    "status": "退款状态",
+    "businessRefId": "业务单号",
+    "createdAt": "创建时间",
+    "statusLabel": {
+      "STATUS_UNSPECIFIED": "未知",
+      "PENDING": "处理中",
+      "SUCCEEDED": "成功",
+      "FAILED": "失败"
     }
   }
 }

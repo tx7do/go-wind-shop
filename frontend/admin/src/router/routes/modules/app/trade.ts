@@ -37,6 +37,17 @@ const trade: RouteRecordRaw[] = [
         },
         component: () => import("@/pages/app/trade/payment-transaction/index.vue"),
       },
+      {
+        path: "refunds",
+        name: "TradeRefundManagement",
+        meta: {
+          order: 3,
+          icon: "lucide:rotatable-ccw-solid",
+          title: "routes.trade.refund",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/refund/index.vue"),
+      },
     ],
   },
 ];

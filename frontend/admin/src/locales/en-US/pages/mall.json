@@ -128,6 +128,27 @@
       "SUCCEEDED": "Succeeded",
       "FAILED": "Failed",
       "REFUNDED": "Refunded"
+    },
+    "methodLabel": {
+      "ALIPAY": "Alipay",
+      "WECHAT": "WeChat Pay"
+    }
+  },
+  "refund": {
+    "moduleName": "Refund Management",
+    "title": "Refund Transaction Monitor",
+    "id": "Refund ID",
+    "transactionId": "Transaction ID",
+    "amount": "Refund Amount",
+    "currency": "Currency",
+    "status": "Refund Status",
+    "businessRefId": "Business Reference",
+    "createdAt": "Created At",
+    "statusLabel": {
+      "STATUS_UNSPECIFIED": "Unknown",
+      "PENDING": "Pending",
+      "SUCCEEDED": "Succeeded",
+      "FAILED": "Failed"
     }
   }
 }
