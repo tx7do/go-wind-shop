@@ -1,145 +1,420 @@
 <template>
   <div class="analytics-page">
-    <!-- Overview Cards -->
+    <!--
+      商城分析仪表盘。
+      各小部件独立 useQuery 拉取后端数据（staleTime=60s），
+      loading/error/empty 各自处理，互不阻塞。
+    -->
+
+    <!-- 概览卡片 -->
     <el-row :gutter="16" class="mb-5">
-      <el-col v-for="(item, index) in overviewItems" :key="index" :xs="24" :sm="12" :md="6">
-        <el-card shadow="hover" class="overview-card">
-          <div class="overview-header">
-            <div class="overview-header__text">
-              <div class="title">{{ item.title }}</div>
-              <div class="value-row">
-                <span class="value">{{ item.value.toLocaleString() }}</span>
-                <span :class="['trend', item.trend >= 0 ? 'trend--up' : 'trend--down']">
-                  <SvgIcon :icon="item.trend >= 0 ? 'lucide:trending-up' : 'lucide:trending-down'" :size="14" />
-                  {{ Math.abs(item.trend) }}%
-                </span>
+      <el-col v-for="(card, index) in metricCards" :key="index" :xs="24" :sm="12" :md="6">
+        <el-card shadow="hover" class="metric-card">
+          <div class="metric-header">
+            <div class="metric-header__text">
+              <div class="metric-title">{{ card.title }}</div>
+              <div class="metric-value">
+                <el-skeleton v-if="card.isLoading" :rows="0" animated style="width: 60px" />
+                <span v-else>{{ card.error ? "—" : card.value }}</span>
               </div>
             </div>
-            <div class="overview-header__icon">
-              <SvgIcon :icon="item.icon" :size="32" />
+            <div class="metric-header__icon">
+              <SvgIcon :icon="card.icon" :size="32" />
             </div>
           </div>
-          <div class="overview-footer">
-            <span class="footer-label">{{ $t("pages.dashboard.vsYesterday") }}</span>
-            <span class="footer-total">
+          <div class="metric-footer">
+            <span class="metric-footer-label">{{ card.desc }}</span>
+            <span class="metric-footer-total">
               {{ $t("pages.dashboard.total") }}
-              <strong>{{ item.totalValue.toLocaleString() }}</strong>
+              <strong v-if="!card.isLoading && !card.error">{{ card.totalLabel }}</strong>
             </span>
           </div>
         </el-card>
       </el-col>
     </el-row>
 
-    <!-- Trends Chart -->
-    <el-card shadow="hover" class="mb-5">
-      <template #header>
-        <div class="card-header-tabs">
-          <el-radio-group v-model="activeTab" size="small">
-            <el-radio-button value="trends">
-              {{ $t("pages.dashboard.visitsTrend") }}
-            </el-radio-button>
-            <el-radio-button value="visits">
-              {{ $t("pages.dashboard.monthVisits") }}
-            </el-radio-button>
-          </el-radio-group>
-        </div>
-      </template>
-      <div class="chart-container chart-container-trend">
-        <AnalyticsTrends v-if="activeTab === 'trends'" />
-        <AnalyticsVisits v-else />
-      </div>
-    </el-card>
-
-    <!-- Chart Cards Grid -->
-    <el-row :gutter="16">
-      <el-col :xs="24" :sm="24" :md="8">
+    <!-- 图表 -->
+    <el-row :gutter="16" class="mb-5">
+      <el-col :xs="24" :md="12">
         <el-card shadow="hover">
           <template #header>
-            <span class="card-title">{{ $t("pages.dashboard.visitCount") }}</span>
+            <div class="card-title-block">
+              <span class="card-title">{{ $t("pages.dashboard.chartOrderStatusTitle") }}</span>
+              <span class="card-desc">{{ $t("pages.dashboard.chartOrderStatusDesc") }}</span>
+            </div>
           </template>
-          <div class="chart-container chart-container-small">
-            <AnalyticsVisitsData />
+          <div class="chart-state">
+            <el-skeleton v-if="orderStatusQuery.isLoading.value" :rows="8" animated />
+            <el-alert
+              v-else-if="orderStatusQuery.error.value"
+              :title="$t('pages.dashboard.loadError')"
+              type="error"
+              :closable="false"
+              show-icon
+            />
+            <div v-else-if="orderStatusSlices.length === 0" class="chart-empty">
+              {{ $t("pages.dashboard.noData") }}
+            </div>
+            <div v-else class="chart-container chart-container-pie">
+              <AnalyticsOrderStatusChart :data="orderStatusSlices" />
+            </div>
           </div>
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="24" :md="8">
+      <el-col :xs="24" :md="12">
         <el-card shadow="hover">
           <template #header>
-            <span class="card-title">{{ $t("pages.dashboard.visitSource") }}</span>
+            <div class="card-title-block">
+              <span class="card-title">{{ $t("pages.dashboard.chartPaymentMethodTitle") }}</span>
+              <span class="card-desc">{{ $t("pages.dashboard.chartPaymentMethodDesc") }}</span>
+            </div>
           </template>
-          <div class="chart-container chart-container-small">
-            <AnalyticsVisitsSource />
+          <div class="chart-state">
+            <el-skeleton v-if="paymentMethodQuery.isLoading.value" :rows="8" animated />
+            <el-alert
+              v-else-if="paymentMethodQuery.error.value"
+              :title="$t('pages.dashboard.loadError')"
+              type="error"
+              :closable="false"
+              show-icon
+            />
+            <div v-else-if="paymentMethodSlices.length === 0" class="chart-empty">
+              {{ $t("pages.dashboard.noData") }}
+            </div>
+            <div v-else class="chart-container chart-container-pie">
+              <AnalyticsPaymentMethodChart :data="paymentMethodSlices" />
+            </div>
           </div>
         </el-card>
       </el-col>
-      <el-col :xs="24" :sm="24" :md="8">
+      <el-col :xs="24" :md="12">
         <el-card shadow="hover">
           <template #header>
-            <span class="card-title">{{ $t("pages.dashboard.salesDistribution") }}</span>
+            <div class="card-title-block">
+              <span class="card-title">{{ $t("pages.dashboard.chartRefundStatusTitle") }}</span>
+              <span class="card-desc">{{ $t("pages.dashboard.chartRefundStatusDesc") }}</span>
+            </div>
           </template>
-          <div class="chart-container chart-container-small">
-            <AnalyticsVisitsSales />
+          <div class="chart-state">
+            <el-skeleton v-if="refundStatusQuery.isLoading.value" :rows="8" animated />
+            <el-alert
+              v-else-if="refundStatusQuery.error.value"
+              :title="$t('pages.dashboard.loadError')"
+              type="error"
+              :closable="false"
+              show-icon
+            />
+            <div v-else-if="refundStatusSlices.length === 0" class="chart-empty">
+              {{ $t("pages.dashboard.noData") }}
+            </div>
+            <div v-else class="chart-container chart-container-pie">
+              <AnalyticsRefundStatusChart :data="refundStatusSlices" />
+            </div>
           </div>
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 最近订单 -->
+    <el-card shadow="hover">
+      <template #header>
+        <div class="card-title-block">
+          <span class="card-title">{{ $t("pages.dashboard.recentOrdersTitle") }}</span>
+          <span class="card-desc">{{ $t("pages.dashboard.recentOrdersDesc") }}</span>
+        </div>
+      </template>
+      <div class="chart-state">
+        <el-skeleton v-if="recentOrdersQuery.isLoading.value" :rows="6" animated />
+        <el-alert
+          v-else-if="recentOrdersQuery.error.value"
+          :title="$t('pages.dashboard.loadError')"
+          type="error"
+          :closable="false"
+          show-icon
+        />
+        <el-table
+          v-else
+          :data="recentOrders"
+          border
+          stripe
+          size="small"
+          :empty-text="$t('pages.dashboard.noData')"
+        >
+          <el-table-column prop="id" :label="$t('pages.mall.order.id')" width="100" />
+          <el-table-column :label="$t('pages.mall.order.status')" width="120">
+            <template #default="scope">
+              <el-tag
+                v-if="scope.row.status && orderStatusLabelMap[scope.row.status]"
+                size="small"
+                effect="dark"
+                round
+                :type="orderStatusTagTypeMap[scope.row.status] ?? 'info'"
+              >
+                {{ orderStatusLabelMap[scope.row.status] }}
+              </el-tag>
+              <span v-else>-</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            prop="totalAmount"
+            :label="$t('pages.mall.order.totalAmount')"
+            width="120"
+            align="right"
+          >
+            <template #default="scope">
+              <span>{{ scope.row.totalAmount ?? "-" }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="currency" :label="$t('pages.mall.order.currency')" width="90" />
+          <el-table-column :label="$t('pages.mall.order.createdAt')">
+            <template #default="scope">
+              <span>{{ formatDateTime(scope.row.createdAt ?? "") }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-card>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from "vue";
+import { computed } from "vue";
+import { useQuery } from "@tanstack/vue-query";
 
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import { $t } from "@/core/i18n";
+import { formatDateTime } from "@/utils";
 
-import AnalyticsTrends from "./analytics-trends.vue";
-import AnalyticsVisits from "./analytics-visits.vue";
-import AnalyticsVisitsData from "./analytics-visits-data.vue";
-import AnalyticsVisitsSales from "./analytics-visits-sales.vue";
-import AnalyticsVisitsSource from "./analytics-visits-source.vue";
+import AnalyticsOrderStatusChart from "./analytics-order-status.vue";
+import AnalyticsRefundStatusChart from "./analytics-order-status.vue";
+import AnalyticsPaymentMethodChart from "./analytics-payment-method.vue";
 
-// 定义 OverviewItem 接口
-interface OverviewItem {
-  icon: string;
-  title: string;
-  totalValue: number;
-  trend: number;
-  value: number;
+import {
+  fetchCatalogTotals,
+  fetchOrderStatusCounts,
+  fetchPaymentMethodCounts,
+  fetchOrderTotal,
+  fetchPaymentTransactionTotal,
+  fetchRefundTotal,
+  fetchRefundStatusCounts,
+  fetchRecentOrders,
+  type DistributionEntry,
+} from "@/api/composables/analytics";
+
+// ============================================================
+// 订单状态 -> 标签 + 颜色映射（复用 pages.mall.order.statusLabel
+// 与既有 trade/order 页面的语义着色，保证一致）。
+// ============================================================
+const orderStatusLabelMap: Record<string, string> = {
+  STATUS_UNSPECIFIED: $t("pages.mall.order.statusLabel.STATUS_UNSPECIFIED"),
+  PENDING_PAYMENT: $t("pages.mall.order.statusLabel.PENDING_PAYMENT"),
+  PAID: $t("pages.mall.order.statusLabel.PAID"),
+  CANCELLED: $t("pages.mall.order.statusLabel.CANCELLED"),
+  FULFILLED: $t("pages.mall.order.statusLabel.FULFILLED"),
+  CLOSED: $t("pages.mall.order.statusLabel.CLOSED"),
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const orderStatusTagTypeMap: Record<string, "success" | "primary" | "warning" | "danger" | "info"> =
+  {
+    PENDING_PAYMENT: "warning",
+    PAID: "primary",
+    CANCELLED: "info",
+    FULFILLED: "success",
+    CLOSED: "info",
+    STATUS_UNSPECIFIED: "info",
+  };
+
+// ============================================================
+// 退款状态 -> 标签 + 颜色映射（复用 pages.mall.refund.statusLabel
+// 与 trade/refund 页面的语义着色，保证一致）。
+// 退款状态枚举仅 PENDING/SUCCEEDED/FAILED（无 REFUNDED，
+// STATUS_UNSPECIFIED 不在分布统计枚举内）。
+// ============================================================
+const refundStatusLabelMap: Record<string, string> = {
+  PENDING: $t("pages.mall.refund.statusLabel.PENDING"),
+  SUCCEEDED: $t("pages.mall.refund.statusLabel.SUCCEEDED"),
+  FAILED: $t("pages.mall.refund.statusLabel.FAILED"),
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const refundStatusTagTypeMap: Record<
+  string,
+  "success" | "primary" | "warning" | "danger" | "info"
+> = {
+  PENDING: "warning",
+  SUCCEEDED: "success",
+  FAILED: "danger",
+};
+
+// ============================================================
+// 概览卡片数据
+// ============================================================
+const ordersTotalQuery = useQuery({
+  queryKey: ["analytics_orderTotal"],
+  queryFn: () => fetchOrderTotal(),
+  staleTime: 60_000,
+});
+const paymentsTotalQuery = useQuery({
+  queryKey: ["analytics_paymentTxTotal"],
+  queryFn: () => fetchPaymentTransactionTotal(),
+  staleTime: 60_000,
+});
+const refundsTotalQuery = useQuery({
+  queryKey: ["analytics_refundTotal"],
+  queryFn: () => fetchRefundTotal(),
+  staleTime: 60_000,
+});
+const catalogTotalsQuery = useQuery({
+  queryKey: ["analytics_catalogTotals"],
+  queryFn: () => fetchCatalogTotals(),
+  staleTime: 60_000,
+});
+
+// ============================================================
+// 分布图表数据
+// ============================================================
+const orderStatusQuery = useQuery({
+  queryKey: ["analytics_orderStatusCounts"],
+  queryFn: () => fetchOrderStatusCounts(),
+  staleTime: 60_000,
+});
+const paymentMethodQuery = useQuery({
+  queryKey: ["analytics_paymentMethodCounts"],
+  queryFn: () => fetchPaymentMethodCounts(),
+  staleTime: 60_000,
+});
+const refundStatusQuery = useQuery({
+  queryKey: ["analytics_refundStatusCounts"],
+  queryFn: () => fetchRefundStatusCounts(),
+  staleTime: 60_000,
+});
+
+// 将 DistributionEntry[] 映射为图表所需 {name,label,color} 形态。
+// 非法/未知 key 会被过滤。
+const orderStatusSlices = computed(() => {
+  const raw = orderStatusQuery.data.value ?? [];
+  return raw
+    .filter((e: DistributionEntry) => orderStatusLabelMap[e.key] !== undefined)
+    .map((e: DistributionEntry) => {
+      const tagType = orderStatusTagTypeMap[e.key] ?? "info";
+      return {
+        name: orderStatusLabelMap[e.key] ?? e.key,
+        value: e.count,
+        color: tagTypeToColor(tagType),
+      };
+    });
+});
+
+const refundStatusSlices = computed(() => {
+  const raw = refundStatusQuery.data.value ?? [];
+  return raw
+    .filter((e: DistributionEntry) => refundStatusLabelMap[e.key] !== undefined)
+    .map((e: DistributionEntry) => {
+      const tagType = refundStatusTagTypeMap[e.key] ?? "info";
+      return {
+        name: refundStatusLabelMap[e.key] ?? e.key,
+        value: e.count,
+        color: tagTypeToColor(tagType),
+      };
+    });
+});
+
+const paymentMethodSlices = computed(() => {
+  const raw = paymentMethodQuery.data.value ?? [];
+  return raw
+    .filter((e: DistributionEntry) => paymentMethodLabelMap[e.key] !== undefined)
+    .map((e: DistributionEntry) => ({
+      name: paymentMethodLabelMap[e.key] ?? e.key,
+      value: e.count,
+      color: "#4080ff",
+    }));
+});
+
+// 支付方式 -> 显示文案（仅枚举已知渠道，未知归入“其他”）。
+const paymentMethodLabelMap: Record<string, string> = {
+  ALIPAY: $t("pages.mall.paymentTransaction.methodLabel.ALIPAY"),
+  WECHAT: $t("pages.mall.paymentTransaction.methodLabel.WECHAT"),
+};
+
+// 将 ElTag 语义 type 映射为可在 Echarts 中使用的 CSS 颜色变量。
+// 直接读取 Element Plus 主题变量，确保 dark mode 下颜色一致。
+function tagTypeToColor(type: "success" | "primary" | "warning" | "danger" | "info"): string {
+  const cssVarMap: Record<string, string> = {
+    success: "var(--el-color-success)",
+    primary: "var(--el-color-primary)",
+    warning: "var(--el-color-warning)",
+    danger: "var(--el-color-danger)",
+    info: "var(--el-color-info)",
+  };
+  return cssVarMap[type] ?? "var(--el-color-info)";
 }
 
-const overviewItems = ref<OverviewItem[]>([
-  {
-    icon: "svg:color_card",
-    title: $t("pages.dashboard.currentUserCount"),
-    totalValue: 120_000,
-    trend: 12,
-    value: 2000,
-  },
-  {
-    icon: "svg:color_cake",
-    title: $t("pages.dashboard.currentAccessCount"),
-    totalValue: 500_000,
-    trend: -5,
-    value: 20_000,
-  },
-  {
-    icon: "svg:color_download",
-    title: $t("pages.dashboard.currentDownloadCount"),
-    totalValue: 120_000,
-    trend: 18,
-    value: 8000,
-  },
-  {
-    icon: "svg:color_bell",
-    title: $t("pages.dashboard.currentUsageCount"),
-    totalValue: 50_000,
-    trend: 8,
-    value: 5000,
-  },
-]);
+// ============================================================
+// 最近订单表格数据
+// ============================================================
+const recentOrdersQuery = useQuery({
+  queryKey: ["analytics_recentOrders"],
+  queryFn: () => fetchRecentOrders(20),
+  staleTime: 60_000,
+});
+const recentOrders = computed(() => recentOrdersQuery.data.value?.items ?? []);
 
-// 当前激活的标签
-const activeTab = ref<"trends" | "visits">("trends");
+// ============================================================
+// 概览卡片配置（绑定各 query 的 loading/error/data）。
+// ============================================================
+const metricCards = computed(() => {
+  const ordersValue = ordersTotalQuery.data.value ?? 0;
+  const paymentsValue = paymentsTotalQuery.data.value ?? 0;
+  const refundsValue = refundsTotalQuery.data.value ?? 0;
+  const catalog = catalogTotalsQuery.data.value;
+
+  return [
+    {
+      title: $t("pages.dashboard.metricCardOrdersTitle"),
+      desc: $t("pages.dashboard.metricCardOrdersDesc"),
+      icon: "svg:color_card",
+      value: ordersValue,
+      totalLabel: ordersValue,
+      isLoading: ordersTotalQuery.isLoading.value,
+      error: ordersTotalQuery.error.value,
+    },
+    {
+      title: $t("pages.dashboard.metricCardPaymentsTitle"),
+      desc: $t("pages.dashboard.metricCardPaymentsDesc"),
+      icon: "svg:color_bell",
+      value: paymentsValue,
+      totalLabel: paymentsValue,
+      isLoading: paymentsTotalQuery.isLoading.value,
+      error: paymentsTotalQuery.error.value,
+    },
+    {
+      title: $t("pages.dashboard.metricCardRefundsTitle"),
+      desc: $t("pages.dashboard.metricCardRefundsDesc"),
+      icon: "svg:color_bell",
+      value: refundsValue,
+      totalLabel: refundsValue,
+      isLoading: refundsTotalQuery.isLoading.value,
+      error: refundsTotalQuery.error.value,
+    },
+    {
+      title: $t("pages.dashboard.metricCardProductsTitle"),
+      desc: $t("pages.dashboard.metricCardProductsDesc"),
+      icon: "svg:color_download",
+      value: catalog?.products ?? 0,
+      totalLabel: catalog?.products ?? 0,
+      isLoading: catalogTotalsQuery.isLoading.value,
+      error: catalogTotalsQuery.error.value,
+    },
+    {
+      title: $t("pages.dashboard.metricCardCatalogTitle"),
+      desc: $t("pages.dashboard.metricCardCatalogDesc"),
+      icon: "svg:color_cake",
+      value: (catalog?.brands ?? 0) + (catalog?.categories ?? 0),
+      totalLabel: `${catalog?.brands ?? 0} / ${catalog?.categories ?? 0}`,
+      isLoading: catalogTotalsQuery.isLoading.value,
+      error: catalogTotalsQuery.error.value,
+    },
+  ];
+});
 </script>
 
 <style lang="scss" scoped>
@@ -147,38 +422,37 @@ const activeTab = ref<"trends" | "visits">("trends");
   padding: 20px;
 }
 
-.overview-card {
+.metric-card {
+  border: 1px solid var(--el-border-color-lighter);
   border-radius: 12px;
   transition: all 0.3s ease;
-  border: 1px solid var(--el-border-color-lighter);
 
   &:hover {
     border-color: var(--el-color-primary-light-5);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
   }
 
-  // 暗黑模式 hover 阴影
   html.dark & {
     &:hover {
       border-color: var(--el-color-primary-light-3);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     }
 
-    .overview-header__icon {
+    .metric-header__icon {
       background: rgba(64, 128, 255, 0.15);
     }
   }
 
   :deep(.el-card__body) {
-    padding: 20px;
-    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     gap: 12px;
+    justify-content: space-between;
+    height: 100%;
+    padding: 20px;
   }
 
-  .overview-header {
+  .metric-header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
@@ -189,93 +463,86 @@ const activeTab = ref<"trends" | "visits">("trends");
     }
 
     &__icon {
-      flex-shrink: 0;
       display: flex;
+      flex-shrink: 0;
       align-items: center;
       justify-content: center;
       width: 48px;
       height: 48px;
-      border-radius: 12px;
       background: var(--el-color-primary-light-9);
+      border-radius: 12px;
     }
   }
 
-  .title {
+  .metric-title {
+    margin-bottom: 8px;
     font-size: 14px;
     font-weight: 500;
     color: var(--el-text-color-regular);
-    margin-bottom: 8px;
   }
 
-  .value-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .value {
+  .metric-value {
     font-size: 28px;
     font-weight: 700;
-    color: var(--el-text-color-primary);
     line-height: 1;
+    color: var(--el-text-color-primary);
     letter-spacing: -0.5px;
   }
 
-  .trend {
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    font-size: 12px;
-    font-weight: 600;
-    line-height: 1;
-    padding: 2px 6px;
-    border-radius: 4px;
-
-    &--up {
-      color: var(--el-color-success);
-      background: var(--el-color-success-light-9);
-    }
-
-    &--down {
-      color: var(--el-color-danger);
-      background: var(--el-color-danger-light-9);
-    }
-  }
-
-  .overview-footer {
+  .metric-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding-top: 10px;
-    border-top: 1px solid var(--el-border-color-lighter);
     font-size: 12px;
+    border-top: 1px solid var(--el-border-color-lighter);
 
-    .footer-label {
+    .metric-footer-label {
       color: var(--el-text-color-regular);
     }
 
-    .footer-total {
+    .metric-footer-total {
       color: var(--el-text-color-regular);
 
       strong {
-        color: var(--el-text-color-primary);
         font-weight: 600;
+        color: var(--el-text-color-primary);
       }
     }
   }
 }
 
-.card-header-tabs {
+.card-title-block {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .card-title {
+  display: block;
+  padding-top: 2px;
   font-size: 15px;
   font-weight: 600;
   color: var(--el-text-color-primary);
-  display: block;
-  padding-top: 2px;
+}
+
+.card-desc {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--el-text-color-secondary);
+}
+
+.chart-state {
+  width: 100%;
+}
+
+.chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 320px;
+  font-size: 13px;
+  color: var(--el-text-color-secondary);
 }
 
 .chart-container {
@@ -283,11 +550,11 @@ const activeTab = ref<"trends" | "visits">("trends");
   height: 100%;
 }
 
-.chart-container-trend {
-  height: 380px;
+.chart-container-pie {
+  height: 320px;
 }
 
-.chart-container-small {
-  height: 300px;
+.mb-5 {
+  margin-bottom: 20px;
 }
 </style>
