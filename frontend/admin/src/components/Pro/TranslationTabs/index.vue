@@ -9,11 +9,7 @@
         :name="String(index)"
       >
         <ElForm label-width="120px" class="translation-form">
-          <ElFormItem
-            v-for="field in fields"
-            :key="field.prop"
-            :label="field.label"
-          >
+          <ElFormItem v-for="field in fields" :key="field.prop" :label="field.label">
             <ElInput
               v-if="field.type === 'input'"
               v-model="getOrCreateEntry(lang.languageCode!)![field.prop]"
@@ -63,7 +59,9 @@ const activeName = ref("0");
 // 加载启用的语言列表
 async function loadLanguages() {
   try {
-    const resp = await fetchListLanguages(new PaginationQuery({ paging: { page: 1, pageSize: 999 } }));
+    const resp = await fetchListLanguages(
+      new PaginationQuery({ paging: { page: 1, pageSize: 999 } })
+    );
     languages.value = (resp.items || []).filter((l) => l.isEnabled === true);
     if (languages.value.length > 0) {
       activeName.value = "0";

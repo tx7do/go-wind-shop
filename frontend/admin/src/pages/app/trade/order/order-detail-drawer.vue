@@ -46,17 +46,8 @@
       <!-- 订单项明细 -->
       <ElDivider content-position="left">{{ $t("pages.mall.order.orderItemsTitle") }}</ElDivider>
       <ElTable :data="orderItems" border stripe size="small">
-        <ElTableColumn
-          type="index"
-          :label="$t('common.table.seq')"
-          width="60"
-          align="center"
-        />
-        <ElTableColumn
-          prop="id"
-          :label="$t('pages.mall.order.orderItems.id')"
-          min-width="80"
-        />
+        <ElTableColumn type="index" :label="$t('common.table.seq')" width="60" align="center" />
+        <ElTableColumn prop="id" :label="$t('pages.mall.order.orderItems.id')" min-width="80" />
         <ElTableColumn
           prop="skuId"
           :label="$t('pages.mall.order.orderItems.skuId')"
@@ -101,7 +92,14 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import { ElDivider, ElDescriptions, ElDescriptionsItem, ElTag, ElTable, ElTableColumn } from "element-plus";
+import {
+  ElDivider,
+  ElDescriptions,
+  ElDescriptionsItem,
+  ElTag,
+  ElTable,
+  ElTableColumn,
+} from "element-plus";
 
 import ProModal from "@/components/Pro/ProModal/index.vue";
 import { formatDateTime } from "@/utils";

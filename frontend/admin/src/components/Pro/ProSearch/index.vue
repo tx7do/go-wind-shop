@@ -426,7 +426,9 @@ defineExpose({
 
     // 重置按钮（default）—— 中性灰
     // stylelint-disable-next-line selector-max-universal
-    &:not(.el-button--primary):not(.el-button--danger):not(.el-button--success):not(.el-button--warning):not(.el-button--info) {
+    &:not(.el-button--primary):not(.el-button--danger):not(.el-button--success):not(
+        .el-button--warning
+      ):not(.el-button--info) {
       background-color: rgba(0, 0, 0, 0.04);
       border-color: #dcdfe6;
       color: var(--el-text-color-regular);
@@ -456,8 +458,8 @@ defineExpose({
 // ======== 暗色模式适配 ========
 :global(html.dark) {
   .pro-search {
-    background-color: #14171C; // 比页面底色 #0C0E13 亮一个色阶，建立层级
-    border-color: #23272F;
+    background-color: #14171c; // 比页面底色 #0C0E13 亮一个色阶，建立层级
+    border-color: #23272f;
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 20%);
   }
 }

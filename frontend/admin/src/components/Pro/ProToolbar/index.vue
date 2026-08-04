@@ -329,7 +329,9 @@ defineExpose({
 
     // ======== 普通按钮（default）—— 中性灰 ========
     // stylelint-disable-next-line selector-max-universal
-    &:not(.el-button--primary):not(.el-button--danger):not(.el-button--success):not(.el-button--warning):not(.el-button--info):not(.is-circle) {
+    &:not(.el-button--primary):not(.el-button--danger):not(.el-button--success):not(
+        .el-button--warning
+      ):not(.el-button--info):not(.is-circle) {
       background-color: rgba(0, 0, 0, 0.04);
       border-color: #dcdfe6;
       color: var(--el-text-color-regular);
@@ -356,7 +358,7 @@ defineExpose({
     border-radius: 50%;
     background-color: transparent;
     border: none;
-    color: #6B7280;
+    color: #6b7280;
     transition: all 0.2s ease;
     font-size: 16px;
 
@@ -421,7 +423,9 @@ defineExpose({
       // 普通按钮
       // 同时覆盖 EP CSS 变量 + 直接属性，确保不被全局暗色主题覆盖
       // stylelint-disable-next-line selector-max-universal
-      &:not(.el-button--primary):not(.el-button--danger):not(.el-button--success):not(.el-button--warning):not(.el-button--info):not(.is-circle) {
+      &:not(.el-button--primary):not(.el-button--danger):not(.el-button--success):not(
+          .el-button--warning
+        ):not(.el-button--info):not(.is-circle) {
         --el-button-bg-color: rgba(255, 255, 255, 0.06);
         --el-button-border-color: rgba(255, 255, 255, 0.15);
         --el-button-text-color: var(--el-text-color-regular);

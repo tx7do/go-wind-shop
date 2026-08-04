@@ -1,6 +1,6 @@
 <template>
   <div class="app-container h-full flex flex-1 flex-col">
-    <ProPage ref="pageRef" :config="pageConfig"> </ProPage>
+    <ProPage ref="pageRef" :config="pageConfig"></ProPage>
   </div>
 </template>
 

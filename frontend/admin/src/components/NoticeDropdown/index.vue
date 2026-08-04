@@ -57,7 +57,7 @@
           <template v-else>
             <div class="notice-dropdown__empty">
               <SvgIcon icon="lucide:inbox" :size="48" class="notice-dropdown__empty-icon" />
-              <p class="notice-dropdown__empty-text">{{ t('core.notice.empty') }}</p>
+              <p class="notice-dropdown__empty-text">{{ t("core.notice.empty") }}</p>
             </div>
           </template>
         </div>

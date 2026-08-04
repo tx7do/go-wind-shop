@@ -1,6 +1,6 @@
 <template>
   <div class="app-container h-full flex flex-1 flex-col">
-    <ProPage ref="pageRef" :config="pageConfig" @add="handleAdd" @edit="handleEdit"> </ProPage>
+    <ProPage ref="pageRef" :config="pageConfig" @add="handleAdd" @edit="handleEdit"></ProPage>
 
     <!-- 新增/编辑抽屉 -->
     <SkuDrawer ref="drawerRef" @success="handleSuccess" />

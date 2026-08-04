@@ -37,6 +37,14 @@
           style="width: 100%"
         />
       </ElFormItem>
+
+      <ElFormItem :label="$t('pages.mall.category.imageUrl')" prop="imageUrl">
+        <ElInput
+          v-model="formData.imageUrl"
+          :placeholder="$t('common.placeholder.input')"
+          clearable
+        />
+      </ElFormItem>
     </ElForm>
 
     <!-- 多语言翻译 -->
@@ -90,9 +98,10 @@ const formRef = ref<FormInstance>();
 
 const parentTreeData = ref<any[]>([]);
 
-const formData = reactive<{ sortOrder: number; parentId: any; translations: any[] }>({
+const formData = reactive<{ sortOrder: number; parentId: any; imageUrl: string; translations: any[] }>({
   sortOrder: 1,
   parentId: undefined,
+  imageUrl: "",
   translations: [],
 });
 
@@ -185,6 +194,7 @@ function handleClose() {
 function resetForm() {
   formData.sortOrder = 1;
   formData.parentId = undefined;
+  formData.imageUrl = "";
   formData.translations = [];
   formRef.value?.clearValidate();
 }

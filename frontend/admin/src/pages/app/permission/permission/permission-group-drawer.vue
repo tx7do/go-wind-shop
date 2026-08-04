@@ -16,7 +16,11 @@
       class="drawer-form"
     >
       <ElFormItem :label="$t('pages.permission_group.name')" prop="name">
-        <ElInput v-model="drawer.formData.name" :placeholder="$t('common.placeholder.input')" clearable />
+        <ElInput
+          v-model="drawer.formData.name"
+          :placeholder="$t('common.placeholder.input')"
+          clearable
+        />
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.permission_group.module')" prop="module">

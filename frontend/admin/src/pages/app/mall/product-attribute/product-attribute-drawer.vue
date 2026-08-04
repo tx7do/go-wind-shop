@@ -48,7 +48,11 @@
 import { computed, reactive, ref, watch } from "vue";
 import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 
-import { useCreateProductAttribute, useUpdateProductAttribute, fetchGetProductAttribute } from "@/api/composables";
+import {
+  useCreateProductAttribute,
+  useUpdateProductAttribute,
+  fetchGetProductAttribute,
+} from "@/api/composables";
 import { $t } from "@/core/i18n";
 import { DRAWER_WIDTH } from "@/constants";
 import ProModal from "@/components/Pro/ProModal/index.vue";

@@ -69,6 +69,14 @@
           style="width: 100%"
         />
       </ElFormItem>
+
+      <ElFormItem :label="$t('pages.mall.product.imageUrl')" prop="imageUrl">
+        <ElInput
+          v-model="formData.imageUrl"
+          :placeholder="$t('common.placeholder.input')"
+          clearable
+        />
+      </ElFormItem>
     </ElForm>
 
     <!-- 多语言翻译 -->
@@ -129,12 +137,14 @@ const formData = reactive<{
   categoryId: any;
   brandId: any;
   sortOrder: number;
+  imageUrl: string;
   translations: any[];
 }>({
   status: "PRODUCT_STATUS_DRAFT",
   categoryId: undefined,
   brandId: undefined,
   sortOrder: 1,
+  imageUrl: "",
   translations: [],
 });
 
@@ -219,6 +229,7 @@ function resetForm() {
   formData.categoryId = undefined;
   formData.brandId = undefined;
   formData.sortOrder = 1;
+  formData.imageUrl = "";
   formData.translations = [];
   formRef.value?.clearValidate();
 }

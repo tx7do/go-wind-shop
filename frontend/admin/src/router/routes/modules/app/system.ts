@@ -19,7 +19,7 @@ const system: RouteRecordRaw[] = [
         path: "files",
         name: "FileManagement",
         meta: {
-          order: 4,
+          order: 1,
           icon: "lucide:file-search",
           title: "routes.system.file",
           authority: ["sys:platform_admin", "sys:tenant_manager"],
@@ -31,7 +31,7 @@ const system: RouteRecordRaw[] = [
         path: "tasks",
         name: "TaskManagement",
         meta: {
-          order: 5,
+          order: 2,
           icon: "lucide:list-todo",
           title: "routes.system.task",
           authority: ["sys:platform_admin", "sys:tenant_manager"],
@@ -43,7 +43,7 @@ const system: RouteRecordRaw[] = [
         path: "login-policies",
         name: "LoginPolicyManagement",
         meta: {
-          order: 6,
+          order: 3,
           icon: "lucide:shield-x",
           title: "routes.system.loginPolicy",
           authority: ["sys:platform_admin"],
@@ -55,7 +55,7 @@ const system: RouteRecordRaw[] = [
         path: "languages",
         name: "LanguageManagement",
         meta: {
-          order: 7,
+          order: 4,
           icon: "lucide:globe",
           title: "routes.system.language",
           authority: ["sys:platform_admin"],

@@ -29,13 +29,13 @@ function handleToggle(event: MouseEvent) {
   // 计算从左下角到按钮的最大半径（切暗色用）
   const darkMaxRadius = Math.hypot(
     Math.max(btnX, window.innerWidth - cornerX),
-    Math.max(cornerY - btnY, cornerY),
+    Math.max(cornerY - btnY, cornerY)
   );
 
   // 计算从按钮覆盖全屏的最大半径（切亮色用）
   const lightMaxRadius = Math.hypot(
     Math.max(btnX, window.innerWidth - btnX),
-    Math.max(btnY, window.innerHeight - btnY),
+    Math.max(btnY, window.innerHeight - btnY)
   );
 
   // 动态注入 z-index 样式
@@ -64,7 +64,7 @@ function handleToggle(event: MouseEvent) {
           duration: 600,
           easing: "ease-in-out",
           pseudoElement: "::view-transition-new(root)",
-        },
+        }
       );
     } else {
       // 切亮色：白色光明从按钮释放，扩散到整个页面
@@ -82,7 +82,7 @@ function handleToggle(event: MouseEvent) {
           duration: 600,
           easing: "ease-in-out",
           pseudoElement: "::view-transition-new(root)",
-        },
+        }
       );
     }
   });

@@ -1,6 +1,6 @@
 <template>
   <div class="app-container h-full flex flex-1 flex-col">
-    <ProPage ref="pageRef" :config="pageConfig" @operate="handleOperate"> </ProPage>
+    <ProPage ref="pageRef" :config="pageConfig" @operate="handleOperate"></ProPage>
 
     <!-- 订单详情抽屉（只读） -->
     <OrderDetailDrawer ref="drawerRef" @close="handleRefresh" />
@@ -25,17 +25,15 @@ const pageRef = ref();
 const drawerRef = ref();
 
 // 订单状态 -> Tag 颜色映射
-const orderStatusTagTypeMap: Record<
-  string,
-  "success" | "primary" | "warning" | "danger" | "info"
-> = {
-  PENDING_PAYMENT: "warning",
-  PAID: "primary",
-  CANCELLED: "info",
-  FULFILLED: "success",
-  CLOSED: "info",
-  STATUS_UNSPECIFIED: "info",
-};
+const orderStatusTagTypeMap: Record<string, "success" | "primary" | "warning" | "danger" | "info"> =
+  {
+    PENDING_PAYMENT: "warning",
+    PAID: "primary",
+    CANCELLED: "info",
+    FULFILLED: "success",
+    CLOSED: "info",
+    STATUS_UNSPECIFIED: "info",
+  };
 
 // 订单状态 -> 显示文案映射
 const orderStatusLabelMap: Record<string, string> = {
@@ -155,9 +153,7 @@ async function handleOperate(data: { name: string; row: any }) {
   if (name === "fulfill" || name === "close") {
     const targetStatus = name === "fulfill" ? "FULFILLED" : "CLOSED";
     const confirmText =
-      name === "fulfill"
-        ? $t("pages.mall.order.fulfill")
-        : $t("pages.mall.order.close");
+      name === "fulfill" ? $t("pages.mall.order.fulfill") : $t("pages.mall.order.close");
 
     try {
       await ElMessageBox.confirm(confirmText, $t("common.notification.confirmTitle"), {

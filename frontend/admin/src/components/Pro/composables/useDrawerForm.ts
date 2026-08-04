@@ -75,10 +75,7 @@ export function useDrawerForm<T extends Record<string, any>>(options: {
   }
 
   // === 打开 ===
-  async function open(
-    data?: { create?: boolean; row?: any },
-    onEditFill?: (row: any) => void,
-  ) {
+  async function open(data?: { create?: boolean; row?: any }, onEditFill?: (row: any) => void) {
     visible.value = true;
     isCreate.value = data?.create ?? true;
     currentId.value = data?.row?.id;
@@ -113,7 +110,7 @@ export function useDrawerForm<T extends Record<string, any>>(options: {
   async function handleSubmit(
     formRef: any,
     onSuccess?: () => void,
-    transformValues?: (values: T) => any,
+    transformValues?: (values: T) => any
   ) {
     if (!formRef) return;
 
@@ -138,7 +135,7 @@ export function useDrawerForm<T extends Record<string, any>>(options: {
         ElMessage.error(
           isCreate.value
             ? $t("common.notification.createFailed")
-            : $t("common.notification.updateFailed"),
+            : $t("common.notification.updateFailed")
         );
       }
     } finally {
