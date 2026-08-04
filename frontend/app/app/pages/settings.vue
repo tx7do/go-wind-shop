@@ -56,13 +56,13 @@ const menuItems = [
             <p class="mb-4 text-sm text-muted-foreground">{{ t('settings.account.section_desc') }}</p>
             <div class="space-y-3">
               <UiSettingRow :label="t('settings.account.password')" :description="t('settings.account.password_not_set')">
-                <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
+                <UiButton variant="outline" size="sm" disabled>{{ t('settings.account.edit') }}</UiButton>
               </UiSettingRow>
-              <UiSettingRow :label="t('settings.account.bind_phone')" :description="t('settings.account.password_not_set')">
-                <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
+              <UiSettingRow :label="t('settings.account.bind_phone')" :description="t('settings.account.email_not_bound')">
+                <UiButton variant="outline" size="sm" disabled>{{ t('settings.account.edit') }}</UiButton>
               </UiSettingRow>
               <UiSettingRow :label="t('settings.account.bind_email')" :description="t('settings.account.email_not_bound')">
-                <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
+                <UiButton variant="outline" size="sm" disabled>{{ t('settings.account.edit') }}</UiButton>
               </UiSettingRow>
             </div>
           </div>
@@ -78,9 +78,9 @@ const menuItems = [
             <h2 class="mb-2 text-lg font-semibold text-foreground">{{ t('settings.message.email_notifications') }}</h2>
             <div class="space-y-3">
               <UiSettingRow :label="t('settings.message.system_messages')" />
-              <UiSettingRow :label="t('settings.message.comment_notifications')" />
-              <UiSettingRow :label="t('settings.message.activity_updates')" />
-              <UiSettingRow :label="t('settings.message.recommended_content')" />
+              <UiSettingRow :label="t('settings.message.order_updates')" />
+              <UiSettingRow :label="t('settings.message.logistics_updates')" />
+              <UiSettingRow :label="t('settings.message.promotion_updates')" />
             </div>
           </div>
         </template>

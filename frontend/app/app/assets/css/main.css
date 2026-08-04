@@ -99,10 +99,10 @@
     --background: 224 45% 6%;
     --foreground: 210 20% 98%;
 
-    --card: 222.2 47.4% 11%;
+    --card: 222.2 40% 14%;
     --card-foreground: 210 20% 98%;
 
-    --popover: 222.2 47.4% 11%;
+    --popover: 222.2 40% 14%;
     --popover-foreground: 210 20% 98%;
 
     /* 核心主色：霓虹電能綠 */
@@ -127,13 +127,13 @@
     --warning: 38 92% 55%;
     --warning-foreground: 0 0% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    --border: 217.2 32% 22%;
+    --input: 217.2 32% 22%;
     --ring: 142.1 86.2% 50.3%;
 
     /* Hero 渐变背景 */
-    --hero-gradient-from: hsl(222, 47%, 11%);
-    --hero-gradient-via: hsl(222, 47%, 14%);
+    --hero-gradient-from: hsl(222, 40%, 9%);
+    --hero-gradient-via: hsl(222, 40%, 12%);
     --hero-gradient-to: hsl(var(--background));
 }
 

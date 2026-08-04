@@ -4,7 +4,12 @@
     "subtitle": "Curated picks, within reach",
     "featured": "Featured products",
     "categories": "Browse categories",
-    "heroDescription": "Discover great products across categories, with a convenient shopping experience."
+    "heroDescription": "Discover great products across categories, with a convenient shopping experience.",
+    "promoBanner": {
+      "title": "Exclusive new-user offer",
+      "subtitle": "Discount on your first order — curated picks await",
+      "cta": "Shop now"
+    }
   },
   "category": {
     "products": "Products in this category",

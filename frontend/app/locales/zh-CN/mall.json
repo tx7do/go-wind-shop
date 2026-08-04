@@ -4,7 +4,12 @@
     "subtitle": "精选好物，触手可及",
     "featured": "精选商品",
     "categories": "浏览分类",
-    "heroDescription": "在这里发现来自各品类的好物，享受便捷的购物体验。"
+    "heroDescription": "在这里发现来自各品类的好物，享受便捷的购物体验。",
+    "promoBanner": {
+      "title": "新人专享优惠",
+      "subtitle": "首单立减，精选好物等你挑选",
+      "cta": "立即抢购"
+    }
   },
   "category": {
     "products": "该分类下的商品",

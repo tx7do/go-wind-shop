@@ -65,9 +65,9 @@ const cartItems = computed<CartItemEntity[]>(() => {
 });
 const itemsLoading = computed(() => cartItemsQuery.isLoading.value);
 
-const DISPLAY_CURRENCY = 'CNY';
+// 价格占位：列表接口返回的 Product 无价格字段，单价/总价需拉 SKU 价格子表聚合，
+// 待后端补齐后替换为真实价格计算。当前用占位符保持结构完整。
 const UNIT_PRICE_PLACEHOLDER = '—';
-
 const totalAmount = computed(() => 0);
 const totalLabel = computed(() => `${t('mall.product.currencyCny')}${totalAmount.value}`);
 
@@ -139,9 +139,18 @@ function goCheckout() {
     </div>
 
     <!-- 加载中 -->
-    <div v-else-if="itemsLoading" class="rounded-2xl border border-border bg-card p-8">
-      <UiSkeleton class="mb-4 h-24 w-full" />
-      <UiSkeleton class="h-24 w-full" />
+    <div v-else-if="itemsLoading" class="rounded-2xl border border-border bg-card overflow-hidden">
+      <div class="border-b border-border bg-muted/40 px-6 py-3">
+        <UiSkeleton class="h-4 w-32" />
+      </div>
+      <div v-for="i in 3" :key="i" class="border-b border-border px-6 py-4 last:border-b-0">
+        <div class="flex items-center gap-4">
+          <UiSkeleton class="h-16 w-16 shrink-0 rounded-md" />
+          <UiSkeleton class="h-4 flex-1" />
+          <UiSkeleton class="h-8 w-16" />
+          <UiSkeleton class="h-8 w-8" />
+        </div>
+      </div>
     </div>
 
     <!-- 空购物车 -->
@@ -158,7 +167,8 @@ function goCheckout() {
 
     <!-- 购物车列表 -->
     <div v-else class="flex flex-col gap-6">
-      <div class="rounded-2xl border border-border bg-card overflow-hidden">
+      <div class="overflow-x-auto rounded-2xl border border-border bg-card">
+        <div class="min-w-[640px]">
         <div class="border-b border-border bg-muted/40 px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           <div class="grid grid-cols-[1fr_120px_160px_48px] items-center gap-4">
             <span>{{ t('cart.table.item') }}</span>
@@ -176,9 +186,10 @@ function goCheckout() {
           <div class="grid grid-cols-[1fr_120px_160px_48px] items-center gap-4">
             <!-- 商品占位 -->
             <div class="flex items-center gap-4">
-              <div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-md bg-primary/5 text-2xl">
-                📦
-              </div>
+              <UiProductPlaceholder
+                :seed="item.skuId ?? 0"
+                class="h-16 w-16 shrink-0 rounded-md text-muted-foreground"
+              />
               <div class="min-w-0">
                 <p class="line-clamp-1 text-sm font-medium text-foreground">
                   {{ t('cart.skuId') }}#{{ item.skuId ?? '—' }}
@@ -227,6 +238,7 @@ function goCheckout() {
               </UiButton>
             </div>
           </div>
+        </div>
         </div>
       </div>
 

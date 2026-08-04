@@ -35,10 +35,6 @@ const socialLinks = [
 const handleFooterLinkClick = (key: FooterLinkKey) => {
   navigateTo(localePath(footerRouteMap[key]))
 }
-
-const handleSocialClick = (name: string) => {
-  console.log(name)
-}
 </script>
 
 <template>
@@ -67,9 +63,9 @@ const handleSocialClick = (name: string) => {
             :key="social.key"
             variant="ghost"
             size="icon"
-            class="text-2xl text-muted-foreground hover:text-primary transition-colors duration-300 hover:-translate-y-0.5"
+            class="text-2xl text-muted-foreground opacity-50"
             :aria-label="social.name"
-            @click="handleSocialClick(social.name)"
+            disabled
           >
             <XIcon :icon="social.icon" />
           </UiButton>

@@ -48,8 +48,8 @@ const handleClickLogout = async () => {
         </span>
       </button>
 
-      <!-- 桌面端功能按钮区 -->
-      <div class="flex shrink-0 items-center gap-1 max-md:hidden">
+      <!-- 功能按钮区 -->
+      <div class="flex shrink-0 items-center gap-1">
         <!-- 用户菜单 -->
         <UiDropdownMenu :modal="false">
           <UiDropdownMenuTrigger as-child>
@@ -95,43 +95,15 @@ const handleClickLogout = async () => {
           </UiDropdownMenuTrigger>
           <UiDropdownMenuContent align="end">
             <UiDropdownMenuItem @click="changeLocale('zh-CN')">
-              简体中文
+              {{ t('navbar.language.zh-CN') }}
             </UiDropdownMenuItem>
             <UiDropdownMenuItem @click="changeLocale('en-US')">
-              English
+              {{ t('navbar.language.en-US') }}
             </UiDropdownMenuItem>
           </UiDropdownMenuContent>
         </UiDropdownMenu>
 
         <!-- 主题菜单 -->
-        <UiDropdownMenu :modal="false">
-          <UiDropdownMenuTrigger as-child>
-            <UiButton variant="ghost" size="icon" aria-label="Toggle theme">
-              <XIcon                 :icon="currentMode === 'dark' ? 'lucide:moon' : currentMode === 'light' ? 'lucide:sun' : 'lucide:monitor'"
-                width="16" height="16"
-                class="theme-icon-animate"
-              />
-            </UiButton>
-          </UiDropdownMenuTrigger>
-          <UiDropdownMenuContent align="end">
-            <UiDropdownMenuItem @click="setThemeMode('dark')">
-              <XIcon icon="lucide:moon" width="16" height="16" />
-              {{ t('navbar.theme.dark') }}
-            </UiDropdownMenuItem>
-            <UiDropdownMenuItem @click="setThemeMode('light')">
-              <XIcon icon="lucide:sun" width="16" height="16" />
-              {{ t('navbar.theme.light') }}
-            </UiDropdownMenuItem>
-            <UiDropdownMenuItem @click="setThemeMode('auto')">
-              <XIcon icon="lucide:monitor" width="16" height="16" />
-              {{ t('navbar.theme.system') }}
-            </UiDropdownMenuItem>
-          </UiDropdownMenuContent>
-        </UiDropdownMenu>
-      </div>
-
-      <!-- 手机端：主题切换 + 汉堡选单 -->
-      <div class="flex shrink-0 items-center gap-1 md:hidden">
         <UiDropdownMenu :modal="false">
           <UiDropdownMenuTrigger as-child>
             <UiButton variant="ghost" size="icon" aria-label="Toggle theme">

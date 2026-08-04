@@ -2,6 +2,7 @@
 import { computed } from 'vue';
 import { useListCategories, useListProducts } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
+import { XIcon } from '@/plugins/xicon';
 
 const { t } = useI18n();
 const localePath = useLocalePath();
@@ -17,6 +18,7 @@ type CategoryTranslation = {
 };
 type CategoryEntity = {
   id?: number;
+  imageUrl?: string;
   translations?: CategoryTranslation[];
 };
 
@@ -26,6 +28,7 @@ type ProductTranslation = {
 };
 type ProductEntity = {
   id?: number;
+  imageUrl?: string;
   translations?: ProductTranslation[];
 };
 
@@ -62,38 +65,43 @@ const featuredLoading = computed(() => featuredQuery.isLoading.value);
 </script>
 
 <template>
-  <LayoutPageHero
-    :title="t('mall.home.title')"
-    :subtitle="t('mall.home.subtitle')"
-    :description="t('mall.home.heroDescription')"
-    icon="carbon:shopping-bag"
-    size="lg"
+  <LayoutPromoBanner />
+
+  <!-- 分类导航：移动端金刚区 -->
+  <LayoutCategoryQuickNav
+    v-if="categoriesLoading || categories.length > 0"
+    :categories="categories"
+    class="md:hidden"
   />
 
-  <!-- 分类导航 -->
-  <LayoutSectionContainer>
+  <!-- 分类导航：PC 端卡片网格 -->
+  <LayoutSectionContainer class="hidden md:block">
     <h2 class="mb-6 text-2xl font-bold text-foreground">
       {{ t('mall.home.categories') }}
     </h2>
 
-    <UiCategoryListSkeleton v-if="categoriesLoading" :count="4" />
+    <UiCategoryListSkeleton v-if="categoriesLoading" :count="8" />
 
     <div
       v-else-if="categories.length > 0"
-      class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6"
+      class="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5"
     >
       <NuxtLink
         v-for="cat in categories"
         :key="cat.id"
         :to="localePath('/category/' + cat.id)"
-        class="group block rounded-2xl border border-border bg-card p-6 transition-colors hover:border-primary/60"
+        class="group block overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/60"
       >
-        <div class="flex h-32 items-center justify-center rounded-xl bg-primary/5 text-5xl">
-          🛍️
+        <UiImage
+          :src="cat.imageUrl"
+          :alt="pickTranslation(cat.translations)?.name || ''"
+          class="aspect-square w-full rounded-none object-cover"
+        />
+        <div class="p-3">
+          <h3 class="line-clamp-1 text-sm font-medium text-foreground">
+            {{ pickTranslation(cat.translations)?.name || '—' }}
+          </h3>
         </div>
-        <h3 class="mt-4 line-clamp-1 text-base font-semibold text-foreground">
-          {{ pickTranslation(cat.translations)?.name || '—' }}
-        </h3>
       </NuxtLink>
     </div>
 
@@ -106,28 +114,35 @@ const featuredLoading = computed(() => featuredQuery.isLoading.value);
       {{ t('mall.home.featured') }}
     </h2>
 
-    <UiCategoryListSkeleton v-if="featuredLoading" :count="4" />
+    <div v-if="featuredLoading" class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+      <UiPostCardSkeleton v-for="_, i in 8" :key="i" />
+    </div>
 
     <div
       v-else-if="featured.length > 0"
-      class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6"
+      class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
     >
       <NuxtLink
         v-for="product in featured"
         :key="product.id"
         :to="localePath('/product/' + product.id)"
-        class="group block overflow-hidden rounded-2xl border border-border bg-card transition-colors hover:border-primary/60"
+        class="group block overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/60"
       >
-        <div class="flex h-40 items-center justify-center bg-primary/5 text-5xl">
-          📦
-        </div>
-        <div class="p-4">
+        <UiImage
+          :src="product.imageUrl"
+          :alt="pickTranslation(product.translations)?.name || ''"
+          class="aspect-[3/4] w-full rounded-none object-cover"
+        />
+        <div class="p-3">
           <h3 class="line-clamp-2 text-sm font-medium text-foreground">
             {{ pickTranslation(product.translations)?.name || '—' }}
           </h3>
-          <p class="mt-3 text-xs text-muted-foreground">
-            {{ t('mall.product.viewDetail') }}
-          </p>
+          <div class="mt-3 flex items-center justify-between">
+            <span class="text-xs text-muted-foreground">{{ t('mall.product.viewDetail') }}</span>
+            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+              <XIcon icon="carbon:shopping-cart" :size="14" />
+            </span>
+          </div>
         </div>
       </NuxtLink>
     </div>

@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<{
 </script>
 
 <template>
-  <div :class="cn('grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-6', props.class)">
+  <div :class="cn('grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5', props.class)">
     <UiCategoryCardSkeleton v-for="(_, i) in count" :key="i" />
   </div>
 </template>

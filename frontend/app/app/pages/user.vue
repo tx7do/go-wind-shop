@@ -63,16 +63,44 @@ const userInfo = computed(() => me.value || userStore.user)
             </div>
           </div>
 
-          <div class="mt-8 space-y-4">
-            <UiSettingRow :label="t('settings.account.password')" :description="t('settings.account.password_not_set')">
-              <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
-            </UiSettingRow>
-            <UiSettingRow :label="t('settings.account.bind_phone')" :description="t('settings.account.password_not_set')">
-              <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
-            </UiSettingRow>
-            <UiSettingRow :label="t('settings.account.bind_email')" :description="t('settings.account.email_not_bound')">
-              <UiButton variant="outline" size="sm">{{ t('settings.account.edit') }}</UiButton>
-            </UiSettingRow>
+          <!-- 电商入口 -->
+          <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <NuxtLink
+              :to="localePath('/orders')"
+              class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
+            >
+              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <XIcon icon="carbon:document" :size="22" />
+              </span>
+              <span class="text-xs font-medium text-foreground">{{ t('mall.orders.title') }}</span>
+            </NuxtLink>
+            <NuxtLink
+              :to="localePath('/cart')"
+              class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
+            >
+              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <XIcon icon="carbon:shopping-cart" :size="22" />
+              </span>
+              <span class="text-xs font-medium text-foreground">{{ t('mall.cart.title') }}</span>
+            </NuxtLink>
+            <NuxtLink
+              :to="localePath('/settings')"
+              class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
+            >
+              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <XIcon icon="carbon:settings" :size="22" />
+              </span>
+              <span class="text-xs font-medium text-foreground">{{ t('menu.my_account_security') }}</span>
+            </NuxtLink>
+            <NuxtLink
+              :to="localePath('/')"
+              class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
+            >
+              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <XIcon icon="carbon:home" :size="22" />
+              </span>
+              <span class="text-xs font-medium text-foreground">{{ t('mall.home.title') }}</span>
+            </NuxtLink>
           </div>
         </div>
       </div>

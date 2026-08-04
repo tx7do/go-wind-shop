@@ -98,10 +98,22 @@ function statusTagClass(s: OrderStatus | undefined): string {
 function formatCreatedAt(ts: string | undefined): string {
   if (!ts) return '—';
   try {
-    return new Date(ts).toLocaleString();
+    return new Date(ts).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
   } catch {
     return '—';
   }
+}
+
+// PII 脱敏：手机号中间四位、地址只保留前段
+function maskPhone(phone: string | undefined): string {
+  if (!phone) return '—';
+  const s = String(phone);
+  if (s.length < 7) return s.replace(/\d/g, '*');
+  return s.slice(0, 3) + '****' + s.slice(-4);
+}
+function maskAddress(addr: string | undefined): string {
+  if (!addr) return '—';
+  return addr.length > 12 ? addr.slice(0, 12) + '…' : addr;
 }
 
 function displayAmount(v: number | undefined, currency?: string): string {
@@ -133,9 +145,10 @@ const orderTotalLabel = computed(() => displayAmount(order.value?.totalAmount, o
     </div>
 
     <!-- 加载中 / 不存在 -->
-    <div v-else-if="orderLoading" class="rounded-2xl border border-border bg-card p-8">
-      <UiSkeleton class="mb-4 h-24 w-full" />
-      <UiSkeleton class="h-24 w-full" />
+    <div v-else-if="orderLoading" class="rounded-2xl border border-border bg-card p-6">
+      <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <UiSkeleton v-for="i in 4" :key="i" class="h-16 w-full rounded-md" />
+      </div>
     </div>
 
     <div
@@ -188,13 +201,13 @@ const orderTotalLabel = computed(() => displayAmount(order.value?.totalAmount, o
             <p class="text-[10px] uppercase tracking-wide text-muted-foreground">
               {{ t('orderDetail.recipientPhone') }}
             </p>
-            <p class="mt-1 text-sm text-foreground">{{ order.recipientPhone || '—' }}</p>
+            <p class="mt-1 text-sm tabular-nums text-foreground">{{ maskPhone(order.recipientPhone) }}</p>
           </div>
           <div class="rounded-md border border-border bg-background/40 p-3">
             <p class="text-[10px] uppercase tracking-wide text-muted-foreground">
               {{ t('orderDetail.shippingAddress') }}
             </p>
-            <p class="mt-1 text-sm text-foreground">{{ order.shippingAddress || '—' }}</p>
+            <p class="mt-1 text-sm text-foreground">{{ maskAddress(order.shippingAddress) }}</p>
           </div>
         </div>
       </div>
@@ -202,7 +215,7 @@ const orderTotalLabel = computed(() => displayAmount(order.value?.totalAmount, o
       <!-- 订单项 -->
       <div class="overflow-hidden rounded-2xl border border-border bg-card">
         <div class="border-b border-border bg-muted/40 px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          <div class="grid grid-cols-[1fr_100px_100px_120px] items-center gap-4">
+          <div class="grid grid-cols-[1fr_90px_70px_90px] items-center gap-4">
             <span>{{ t('orderDetail.table.item') }}</span>
             <span class="text-right">{{ t('orderDetail.table.unitPrice') }}</span>
             <span class="text-right">{{ t('orderDetail.table.quantity') }}</span>
@@ -210,7 +223,17 @@ const orderTotalLabel = computed(() => displayAmount(order.value?.totalAmount, o
           </div>
         </div>
 
-        <UiSkeleton v-if="itemsLoading" class="m-6 h-12 w-full" />
+        <div v-if="itemsLoading" class="flex flex-col">
+          <div v-for="i in 3" :key="i" class="border-b border-border px-6 py-4 last:border-b-0">
+            <div class="flex items-center gap-3">
+              <UiSkeleton class="h-10 w-10 shrink-0 rounded" />
+              <UiSkeleton class="h-4 flex-1" />
+              <UiSkeleton class="h-4 w-12" />
+              <UiSkeleton class="h-4 w-8" />
+              <UiSkeleton class="h-4 w-12" />
+            </div>
+          </div>
+        </div>
 
         <div
           v-else-if="orderItems.length === 0"
@@ -224,11 +247,12 @@ const orderTotalLabel = computed(() => displayAmount(order.value?.totalAmount, o
           :key="item.id"
           class="border-b border-border px-6 py-4 last:border-b-0"
         >
-          <div class="grid grid-cols-[1fr_100px_100px_120px] items-center gap-4">
+          <div class="grid grid-cols-[1fr_90px_70px_90px] items-center gap-4">
             <div class="flex items-center gap-3">
-              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-primary/5 text-lg">
-                📦
-              </div>
+              <UiProductPlaceholder
+                :seed="item.skuId ?? 0"
+                class="h-10 w-10 shrink-0 rounded text-muted-foreground"
+              />
               <span class="line-clamp-1 text-xs text-foreground">
                 {{ t('orderDetail.skuId') }}#{{ item.skuId ?? '—' }}
               </span>

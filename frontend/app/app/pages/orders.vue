@@ -79,7 +79,7 @@ function statusTagClass(s: OrderStatus | undefined): string {
 function formatCreatedAt(ts: string | undefined): string {
   if (!ts) return '—';
   try {
-    return new Date(ts).toLocaleString();
+    return new Date(ts).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
   } catch {
     return '—';
   }
@@ -113,9 +113,19 @@ function displayTotal(order: OrderEntity): string {
     </div>
 
     <!-- 加载中 -->
-    <div v-else-if="ordersLoading" class="rounded-2xl border border-border bg-card p-8">
-      <UiSkeleton class="mb-4 h-16 w-full" />
-      <UiSkeleton class="h-16 w-full" />
+    <div v-else-if="ordersLoading" class="overflow-hidden rounded-2xl border border-border bg-card">
+      <div class="border-b border-border bg-muted/40 px-6 py-3">
+        <UiSkeleton class="h-4 w-48" />
+      </div>
+      <div v-for="i in 4" :key="i" class="border-b border-border px-6 py-4 last:border-b-0">
+        <div class="flex items-center gap-4">
+          <UiSkeleton class="h-4 w-10" />
+          <UiSkeleton class="h-5 w-16" />
+          <UiSkeleton class="h-4 w-14 ml-auto" />
+          <UiSkeleton class="h-4 w-24" />
+          <UiSkeleton class="h-4 w-8" />
+        </div>
+      </div>
     </div>
 
     <!-- 空列表 -->
@@ -131,7 +141,8 @@ function displayTotal(order: OrderEntity): string {
     </div>
 
     <!-- 订单列表 -->
-    <div v-else class="overflow-hidden rounded-2xl border border-border bg-card">
+    <div v-else class="overflow-x-auto rounded-2xl border border-border bg-card">
+      <div class="min-w-[700px]">
       <div class="border-b border-border bg-muted/40 px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
         <div class="grid grid-cols-[80px_1fr_120px_140px_80px] items-center gap-4">
           <span>{{ t('orders.table.id') }}</span>
@@ -171,6 +182,7 @@ function displayTotal(order: OrderEntity): string {
           </span>
         </div>
       </NuxtLink>
+      </div>
     </div>
   </LayoutSectionContainer>
 </template>
