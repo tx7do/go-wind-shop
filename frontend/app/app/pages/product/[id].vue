@@ -8,8 +8,14 @@ import {
   useListSkus,
   fetchListSkuAttributeCombinationsStore,
   fetchListSkuPricesStore,
+  useListCarts,
+  useCreateCart,
+  useCreateCartItem,
 } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
+import { useAccessStore } from '@/stores/modules/core/access.state';
+import { useUserStore } from '@/stores/modules/core/user.state';
+import { queryClient } from '@/plugins/vue-query';
 
 const route = useRoute();
 const { t } = useI18n();
@@ -17,6 +23,16 @@ const localePath = useLocalePath();
 
 const productId = computed(() => Number(route.params.id));
 const currentLocale = computed(() => getCurrentLocale());
+
+// ---------- 登录态 / 当前用户 ----------
+const accessStore = useAccessStore();
+const userStore = useUserStore();
+const isLogin = computed(() => {
+  const token = accessStore.accessToken;
+  return !!token?.value && !accessStore.loginExpired;
+});
+const currentUserId = computed(() => userStore.user?.id ?? 0);
+const currentTenantId = computed(() => userStore.tenantId ?? 0);
 
 // ---------- 类型 ----------
 type ProductTranslation = {
@@ -27,6 +43,7 @@ type ProductTranslation = {
 };
 type ProductEntity = {
   id?: number;
+  imageUrl?: string;
   translations?: ProductTranslation[];
 };
 type AttributeTranslation = {
@@ -183,16 +200,28 @@ watch(
 // 注意：reka-ui Select 使用字符串值，因此选择以字符串存储，匹配时转为数字。
 const selections = reactive<Record<number, string | undefined>>({});
 const allAttributesSelected = computed(() => {
+  // 无属性商品（单 SKU）：无可选属性，视为已满足选择前提。
+  if (attributes.value.length === 0) return true;
   for (const attr of attributes.value) {
     if (attr.id === undefined) continue;
     if (selections[attr.id] === undefined) return false;
   }
-  return attributes.value.length > 0;
+  return true;
 });
 
 // ---------- 匹配 SKU ----------
 const matchedSku = computed<SkuEntity | undefined>(() => {
   if (!allAttributesSelected.value) return undefined;
+
+  // 无属性商品（单 SKU）：无属性组合，若恰好存在一个 SKU 则直接匹配。
+  if (attributes.value.length === 0) {
+    if (skus.value.length === 1) {
+      const only = skus.value[0];
+      if (only && only.id !== undefined) return only;
+    }
+    return undefined;
+  }
+
   const selectionEntries: { attrId: number; valId: number }[] = [];
   for (const [attrIdStr, valIdStr] of Object.entries(selections)) {
     if (valIdStr === undefined) continue;
@@ -243,10 +272,79 @@ const displayPrice = computed(() => {
   return price.amount;
 });
 
-// ---------- 添加购物车（占位） ----------
-function addToCart() {
+// ---------- 当前用户的购物车（与 cart.vue 同样的按 userId 过滤逻辑） ----------
+type CartEntity = { id?: number; userId?: number };
+
+const cartsQuery = useListCarts(
+  computed(() => ({
+    page: 1,
+    pageSize: 1,
+    noPaging: false,
+    query: JSON.stringify({ userId: currentUserId.value }),
+  })),
+);
+const cart = computed<CartEntity | undefined>(() => {
+  const items = ((cartsQuery.data?.value as any)?.items ?? []) as CartEntity[];
+  return items[0];
+});
+
+const createCartMutation = useCreateCart({
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['listCarts'] });
+  },
+  onError: (err: any) => {
+    toast.error(err?.message || t('cart.errors.updateFailed'));
+  },
+});
+const createCartItemMutation = useCreateCartItem({
+  onSuccess: () => {
+    // 购物车内容已变，刷新购物车项与购物车列表缓存
+    queryClient.invalidateQueries({ queryKey: ['listCartItems'] });
+    queryClient.invalidateQueries({ queryKey: ['listCarts'] });
+    toast.success(t('mall.product.addToCart'));
+  },
+  onError: (err: any) => {
+    toast.error(err?.message || t('cart.errors.updateFailed'));
+  },
+});
+
+// ---------- 添加购物车 ----------
+async function addToCart() {
   if (!canAddToCart.value) return;
-  toast.success(t('mall.product.addToCart'));
+  if (!isLogin.value) {
+    toast.error(t('authentication.login.please_login'));
+    navigateTo(localePath('/login'));
+    return;
+  }
+  const sku = matchedSku.value;
+  if (sku?.id === undefined) return;
+
+  let targetCartId = cart.value?.id;
+
+  // 新用户尚无购物车：先创建
+  if (targetCartId === undefined) {
+    try {
+      const created: any = await createCartMutation.mutateAsync({
+        userId: currentUserId.value,
+        tenantId: currentTenantId.value,
+      } as any);
+      targetCartId = created?.id;
+    } catch {
+      return;
+    }
+  }
+
+  if (targetCartId === undefined) {
+    toast.error(t('cart.errors.updateFailed'));
+    return;
+  }
+
+  await createCartItemMutation.mutateAsync({
+    cartId: targetCartId,
+    skuId: sku.id,
+    quantity: 1,
+    tenantId: currentTenantId.value,
+  } as any);
 }
 </script>
 
@@ -262,14 +360,16 @@ function addToCart() {
     <UiSkeleton v-if="productLoading" class="h-8 w-1/2" />
 
     <div v-else-if="productTranslation" class="grid gap-10 md:grid-cols-2">
-      <!-- 图片轮播（占位） -->
+      <!-- 图片轮播 -->
       <div class="rounded-2xl border border-border bg-card overflow-hidden">
         <UiCarousel class="relative">
           <UiCarouselContent>
             <UiCarouselItem>
-              <div class="flex h-96 items-center justify-center bg-primary/5 text-7xl">
-                📦
-              </div>
+              <UiImage
+                :src="product.imageUrl"
+                :alt="productTranslation?.name || ''"
+                class="h-96 w-full rounded-none object-cover"
+              />
             </UiCarouselItem>
           </UiCarouselContent>
           <UiCarouselPrevious />
@@ -358,9 +458,15 @@ function addToCart() {
       <h2 class="mb-4 text-xl font-bold text-foreground">
         {{ t('mall.product.description') }}
       </h2>
-      <article class="prose prose-sm max-w-none text-muted-foreground">
-        {{ productTranslation.longDescription }}
-      </article>
+      <ClientOnly>
+        <ContentViewer
+          :content="productTranslation.longDescription"
+          type="markdown"
+        />
+        <template #fallback>
+          <UiSkeleton class="h-64 w-full" />
+        </template>
+      </ClientOnly>
     </div>
 
     <div
