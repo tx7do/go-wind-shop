@@ -101,6 +101,13 @@ func (r *BrandRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (
 		return &catalogV1.ListBrandResponse{Total: 0, Items: nil}, nil
 	}
 
+	// 填充每个返回项的 availableLanguages 与 translations（与 Get 同逻辑）。
+	for _, item := range ret.Items {
+		if err := r.populateTranslations(ctx, item, ""); err != nil {
+			return nil, err
+		}
+	}
+
 	return &catalogV1.ListBrandResponse{
 		Total: ret.Total,
 		Items: ret.Items,
@@ -146,32 +153,47 @@ func (r *BrandRepo) Get(ctx context.Context, req *catalogV1.GetBrandRequest) (*c
 
 	dto := r.mapper.ToDTO(entity)
 
+	if err := r.populateTranslations(ctx, dto, req.GetLocale()); err != nil {
+		return nil, err
+	}
+
+	return dto, nil
+}
+
+// populateTranslations 为单个 Brand DTO 填充 availableLanguages 与
+// translations。locale 为空串时回填全部语言，否则只回填该语言的单条
+// 翻译。List 与 Get 共用此逻辑。
+func (r *BrandRepo) populateTranslations(
+	ctx context.Context,
+	dto *catalogV1.Brand,
+	locale string,
+) error {
 	languages, err := r.brandTranslationRepo.ListAvailedLanguages(ctx, dto.GetId())
 	if err != nil {
 		r.log.Errorf("query availed languages failed: %s", err.Error())
-		return nil, catalogV1.ErrorInternalServerError("query availed languages failed")
+		return catalogV1.ErrorInternalServerError("query availed languages failed")
 	}
 	dto.AvailableLanguages = languages
 
-	if req.Locale == nil {
+	if locale == "" {
 		translations, err := r.brandTranslationRepo.ListTranslations(ctx, dto.GetId(), "", nil)
 		if err != nil {
 			r.log.Errorf("query translations failed: %s", err.Error())
-			return nil, catalogV1.ErrorInternalServerError("query translations failed")
+			return catalogV1.ErrorInternalServerError("query translations failed")
 		}
 		dto.Translations = translations
 	} else {
-		translation, err := r.brandTranslationRepo.GetTranslation(ctx, dto.GetId(), req.GetLocale())
+		translation, err := r.brandTranslationRepo.GetTranslation(ctx, dto.GetId(), locale)
 		if err != nil {
 			r.log.Errorf("query translation failed: %s", err.Error())
-			return nil, catalogV1.ErrorInternalServerError("query translation failed")
+			return catalogV1.ErrorInternalServerError("query translation failed")
 		}
 		if translation != nil {
 			dto.Translations = append(dto.Translations, translation)
 		}
 	}
 
-	return dto, nil
+	return nil
 }
 
 func (r *BrandRepo) Create(ctx context.Context, req *catalogV1.CreateBrandRequest) (dto *catalogV1.Brand, err error) {
