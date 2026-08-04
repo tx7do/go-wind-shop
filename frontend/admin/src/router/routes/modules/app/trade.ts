@@ -1,0 +1,44 @@
+import type { RouteRecordRaw } from "vue-router";
+import { Layout } from "@/layouts";
+
+const trade: RouteRecordRaw[] = [
+  {
+    path: "/trade",
+    name: "TradeManagement",
+    component: Layout,
+    redirect: "/trade/orders",
+    meta: {
+      order: 2007,
+      icon: "lucide:receipt",
+      title: "routes.trade.moduleName",
+      keepAlive: true,
+      authority: ["sys:platform_admin"],
+    },
+    children: [
+      {
+        path: "orders",
+        name: "TradeOrderManagement",
+        meta: {
+          order: 1,
+          icon: "lucide:clipboard-list",
+          title: "routes.trade.order",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/order/index.vue"),
+      },
+      {
+        path: "payment-transactions",
+        name: "TradePaymentTransactionManagement",
+        meta: {
+          order: 2,
+          icon: "lucide:credit-card",
+          title: "routes.trade.paymentTransaction",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/payment-transaction/index.vue"),
+      },
+    ],
+  },
+];
+
+export default trade;

@@ -47,7 +47,10 @@
     "product": "Product Management",
     "productAttribute": "Attribute Management",
     "productAttributeValue": "Attribute Value Management",
-    "sku": "SKU Management",
+    "sku": "SKU Management"
+  },
+  "trade": {
+    "moduleName": "Trade Management",
     "order": "Order Management",
     "paymentTransaction": "Payment Transaction"
   },

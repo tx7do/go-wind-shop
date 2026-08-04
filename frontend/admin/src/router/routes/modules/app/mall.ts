@@ -81,28 +81,6 @@ const mall: RouteRecordRaw[] = [
         },
         component: () => import("@/pages/app/mall/sku/index.vue"),
       },
-      {
-        path: "orders",
-        name: "MallOrderManagement",
-        meta: {
-          order: 7,
-          icon: "lucide:clipboard-list",
-          title: "routes.mall.order",
-          authority: ["sys:platform_admin"],
-        },
-        component: () => import("@/pages/app/mall/order/index.vue"),
-      },
-      {
-        path: "payment-transactions",
-        name: "MallPaymentTransactionManagement",
-        meta: {
-          order: 8,
-          icon: "lucide:credit-card",
-          title: "routes.mall.paymentTransaction",
-          authority: ["sys:platform_admin"],
-        },
-        component: () => import("@/pages/app/mall/payment-transaction/index.vue"),
-      },
     ],
   },
 ];

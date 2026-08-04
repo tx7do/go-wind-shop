@@ -48,7 +48,10 @@
     "product": "商品管理",
     "productAttribute": "属性管理",
     "productAttributeValue": "属性值管理",
-    "sku": "SKU管理",
+    "sku": "SKU管理"
+  },
+  "trade": {
+    "moduleName": "交易管理",
     "order": "订单管理",
     "paymentTransaction": "支付流水"
   },
