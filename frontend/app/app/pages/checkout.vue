@@ -7,9 +7,11 @@ import {
   useListCartItems,
   useCreateOrder,
   useCreatePaymentTransaction,
+  fetchGetOrderByIdempotencyKey,
 } from '@/api/composables';
 import { useAccessStore } from '@/stores/modules/core/access.state';
 import { useUserStore } from '@/stores/modules/core/user.state';
+import { queryClient } from '@/plugins/vue-query';
 import type {
   orderservicev1_Order,
   paymentservicev1_PaymentTransaction,
@@ -111,6 +113,20 @@ async function placeOrder() {
     return;
   }
 
+  // 为本次下单生成一对幂等键与业务单号。
+  // idempotency_key：订单与支付各一个，防止重放导致重复下单/重复扣款。
+  // business_ref_id：跨域对账键，订单与支付共用同一值，便于后续对账。
+  const uuidGen = (
+    globalThis as unknown as { crypto?: { randomUUID?: () => string } }
+  )?.crypto?.randomUUID;
+  const orderIdempotencyKey = uuidGen?.() ?? '';
+  const paymentIdempotencyKey = uuidGen?.() ?? '';
+  const businessRefId = uuidGen?.() ?? '';
+  if (!orderIdempotencyKey || !paymentIdempotencyKey || !businessRefId) {
+    toast.error(t('checkout.errors.orderFailed'));
+    return;
+  }
+
   const orderData: orderservicev1_Order = {
     userId: currentUserId.value,
     tenantId: currentTenantId.value,
@@ -118,7 +134,9 @@ async function placeOrder() {
     recipientPhone: form.recipientPhone,
     shippingAddress: form.shippingAddress,
     currency: 'CNY',
-    totalAmount: totalAmount.value,
+    totalAmount: 0,
+    idempotencyKey: orderIdempotencyKey,
+    businessRefId: businessRefId,
   } as orderservicev1_Order;
 
   try {
@@ -127,18 +145,45 @@ async function placeOrder() {
     return;
   }
 
-  // 支付占位：触发后端 stub，将订单标记为 PAID
+  // 订单创建后回查以拿到 orderId 与后端计算的真实 totalAmount。
+  // Order.Create 返回 empty，只能通过 (idempotency_key, tenant_id) 反查。
+  let createdOrder: orderservicev1_Order | null = null;
+  try {
+    createdOrder = (await fetchGetOrderByIdempotencyKey(
+      orderIdempotencyKey,
+      currentTenantId.value,
+    )) as orderservicev1_Order;
+  } catch {
+    toast.error(t('checkout.errors.orderFailed'));
+    return;
+  }
+
+  const orderId = createdOrder?.id;
+  const realAmount = createdOrder?.totalAmount ?? 0;
+  if (!orderId || realAmount <= 0) {
+    toast.error(t('checkout.errors.orderFailed'));
+    return;
+  }
+
+  // 余额支付（暂固定为 BALANCE，待后端支持多支付方式后扩展选择 UI）
   const paymentData: paymentservicev1_PaymentTransaction = {
     userId: currentUserId.value,
     tenantId: currentTenantId.value,
-    amount: totalAmount.value,
+    orderId: orderId,
+    amount: realAmount,
     currency: 'CNY',
     paymentMethod: 'BALANCE' as paymentservicev1_PaymentMethod,
     businessType: 'BUSINESS_TYPE_CONSUME' as paymentservicev1_BusinessType,
+    idempotencyKey: paymentIdempotencyKey,
+    businessRefId: businessRefId,
   } as paymentservicev1_PaymentTransaction;
 
   try {
     await paymentMutation.mutateAsync(paymentData);
+    // 订单事务已在后端清空购物车（扣库存+清 cart_item 同事务），
+    // 此处仅需刷新前端缓存以反映空车状态。
+    queryClient.invalidateQueries({ queryKey: ['listCarts'] });
+    queryClient.invalidateQueries({ queryKey: ['listCartItems'] });
     toast.success(t('checkout.paymentSuccess'));
     navigateTo(localePath('/orders'));
   } catch {
@@ -151,7 +196,7 @@ async function placeOrder() {
   <LayoutPageHero
     :title="t('mall.checkout.title')"
     :description="t('mall.checkout.subtitle')"
-    icon="carbon:document-unknown"
+    icon="carbon:document"
     size="sm"
   />
 
@@ -209,11 +254,24 @@ async function placeOrder() {
       <div class="rounded-2xl border border-border bg-card p-6 lg:sticky lg:top-24 lg:self-start">
         <h2 class="mb-4 text-xl font-bold text-foreground">{{ t('checkout.summary') }}</h2>
 
-        <UiSkeleton v-if="itemsLoading" class="mb-4 h-40 w-full" />
+        <div v-if="itemsLoading" class="flex flex-col gap-3">
+          <div v-for="i in 3" :key="i" class="flex items-center gap-3 rounded-md border border-border bg-background/40 p-3">
+            <UiSkeleton class="h-10 w-10 shrink-0 rounded" />
+            <UiSkeleton class="h-4 flex-1" />
+            <UiSkeleton class="h-4 w-6" />
+          </div>
+        </div>
 
         <template v-else>
-          <div v-if="cartItems.length === 0" class="py-8 text-center text-sm text-muted-foreground">
-            {{ t('cart.empty') }}
+          <div
+            v-if="cartItems.length === 0"
+            class="flex flex-col items-center gap-3 py-10 text-center"
+          >
+            <XIcon icon="carbon:shopping-cart" :size="40" class="text-muted-foreground" />
+            <p class="text-sm text-muted-foreground">{{ t('cart.empty') }}</p>
+            <UiButton variant="outline" size="sm" @click="navigateTo(localePath('/'))">
+              {{ t('cart.continueShopping') }}
+            </UiButton>
           </div>
 
           <ul v-else class="flex flex-col gap-3">
@@ -222,9 +280,10 @@ async function placeOrder() {
               :key="item.id"
               class="flex items-center gap-3 rounded-md border border-border bg-background/40 p-3"
             >
-              <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded bg-primary/5 text-lg">
-                📦
-              </div>
+              <UiProductPlaceholder
+                :seed="item.skuId ?? 0"
+                class="h-10 w-10 shrink-0 rounded text-muted-foreground"
+              />
               <div class="min-w-0 flex-1">
                 <p class="line-clamp-1 text-xs text-foreground">
                   {{ t('cart.skuId') }}#{{ item.skuId ?? '—' }}

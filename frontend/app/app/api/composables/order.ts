@@ -61,6 +61,19 @@ export async function fetchGetOrderStore(id: number) {
 }
 
 // ==============================
+// 按 idempotency_key + tenant_id 查询订单（下单后回查 orderId 用）
+// ==============================
+export async function fetchGetOrderByIdempotencyKey(
+  idempotencyKey: string,
+  tenantId: number,
+) {
+  return await apiClient.orderService.Get({
+    idempotencyKey,
+    tenantId,
+  } as any);
+}
+
+// ==============================
 // 创建订单 / 结算（Mutation）
 // ==============================
 export async function createOrder(data: orderservicev1_Order) {
