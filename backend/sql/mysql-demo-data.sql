@@ -13,6 +13,7 @@ TRUNCATE TABLE sys_login_policies AUTO_INCREMENT = 1;
 TRUNCATE TABLE sys_dict_types AUTO_INCREMENT = 1;
 TRUNCATE TABLE sys_dict_entries AUTO_INCREMENT = 1;
 TRUNCATE TABLE internal_message_categories AUTO_INCREMENT = 1;
+TRUNCATE TABLE sys_languages AUTO_INCREMENT = 1;
 TRUNCATE TABLE sys_tenants AUTO_INCREMENT = 1;
 TRUNCATE TABLE sys_users AUTO_INCREMENT = 1;
 TRUNCATE TABLE sys_user_credentials AUTO_INCREMENT = 1;
@@ -171,6 +172,267 @@ VALUES
     (402, 'user_profile_updated', '资料变更', '用户手机号、邮箱等信息修改后通知', 16, true, NOW()),
     (403, 'user_permission_changed', '权限变更', '账号角色或功能权限调整通知', 17, true, NOW());
 ALTER TABLE internal_message_categories AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM internal_message_categories);
+
+-- ----------------------------
+-- 语言注册表（与 postgresql-demo-data.sql 对齐；mall_*_translations 依赖此表存在对应行）
+-- ----------------------------
+INSERT INTO sys_languages (language_code, language_name, native_name, is_default, is_enabled, sort_order, created_at, updated_at)
+VALUES
+    ('zh-CN', '简体中文', '简体中文', true, true, 1, NOW(), NOW()),
+    ('en-US', 'English (US)', 'English (US)', false, true, 2, NOW(), NOW());
+ALTER TABLE sys_languages AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM sys_languages);
+
+-- ====================================================================
+-- 商城 · 目录域（catalog）种子数据
+-- 说明：演示用。所有金额为最小货币单位（分）；翻译表成对写入 zh-CN + en-US。
+-- ====================================================================
+
+-- ----------------------------
+-- 类目（树形：1 顶层 → 2 个二级）
+-- ----------------------------
+INSERT INTO mall_categories (id, parent_id, path, depth, sort_order, image_url, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, NULL, '/',      0, 1, '/demo-images/cat-1.png', NOW(), NOW(), 1, 1, NULL),
+    (2, 1,    '/1/',    1, 1, '/demo-images/cat-2.png', NOW(), NOW(), 1, 1, NULL),
+    (3, 1,    '/1/',    1, 2, '/demo-images/cat-3.png', NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_categories AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_categories);
+
+-- 类目翻译
+INSERT INTO mall_category_translations (category_id, language_code, name, slug, description, full_path, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 'zh-CN', '数码电子', 'digital', '数码电子产品类目', '/1',    NOW(), NOW(), 1, 1, NULL),
+    (1, 'en-US', 'Digital',  'digital', 'Digital electronics', '/1', NOW(), NOW(), 1, 1, NULL),
+    (2, 'zh-CN', '手机',     'phones',  '移动电话类目', '/1/2',     NOW(), NOW(), 1, 1, NULL),
+    (2, 'en-US', 'Phones',   'phones',  'Mobile phones', '/1/2',    NOW(), NOW(), 1, 1, NULL),
+    (3, 'zh-CN', '配件',     'accessories', '数码配件类目', '/1/3',  NOW(), NOW(), 1, 1, NULL),
+    (3, 'en-US', 'Accessories','accessories','Digital accessories','/1/3', NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_category_translations AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_category_translations);
+
+-- ----------------------------
+-- 品牌
+-- ----------------------------
+INSERT INTO mall_brands (id, logo_url, sort_order, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, '/demo-images/brand-1.png', 1, NOW(), NOW(), 1, 1, NULL),
+    (2, '/demo-images/brand-2.png', 2, NOW(), NOW(), 1, 1, NULL),
+    (3, '/demo-images/brand-3.png', 3, NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_brands AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_brands);
+
+-- 品牌翻译
+INSERT INTO mall_brand_translations (brand_id, language_code, name, slug, description, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 'zh-CN', '北辰',   'beichen',   '国产数码品牌',   NOW(), NOW(), 1, 1, NULL),
+    (1, 'en-US', 'Beichen','beichen',   'Domestic digital brand', NOW(), NOW(), 1, 1, NULL),
+    (2, 'zh-CN', '远洋',   'yuanyang',  '海洋电子品牌',   NOW(), NOW(), 1, 1, NULL),
+    (2, 'en-US', 'Yuanyang','yuanyang', 'Marine electronics brand', NOW(), NOW(), 1, 1, NULL),
+    (3, 'zh-CN', '极光',   'jiguang',   '消费配件品牌',   NOW(), NOW(), 1, 1, NULL),
+    (3, 'en-US', 'Aurora', 'jiguang',   'Consumer accessory brand', NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_brand_translations AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_brand_translations);
+
+-- ----------------------------
+-- 商品（挂类目+品牌，状态 ACTIVE）
+-- ----------------------------
+INSERT INTO mall_products (id, status, category_id, brand_id, sort_order, image_url, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 'PRODUCT_STATUS_ACTIVE', 2, 1, 1, '/demo-images/prod-1.png', NOW(), NOW(), 1, 1, NULL),
+    (2, 'PRODUCT_STATUS_ACTIVE', 2, 2, 2, '/demo-images/prod-2.png', NOW(), NOW(), 1, 1, NULL),
+    (3, 'PRODUCT_STATUS_ACTIVE', 2, 1, 3, '/demo-images/prod-3.png', NOW(), NOW(), 1, 1, NULL),
+    (4, 'PRODUCT_STATUS_ACTIVE', 3, 3, 1, '/demo-images/prod-4.png', NOW(), NOW(), 1, 1, NULL),
+    (5, 'PRODUCT_STATUS_ACTIVE', 3, 3, 2, '/demo-images/prod-5.png', NOW(), NOW(), 1, 1, NULL),
+    (6, 'PRODUCT_STATUS_ACTIVE', 3, 1, 3, '/demo-images/prod-6.png', NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_products AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_products);
+
+-- 商品翻译
+INSERT INTO mall_product_translations (product_id, language_code, name, slug, short_description, long_description, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 'zh-CN', '北辰 X1 智能手机', 'beichen-x1', '入门级智能手机', '北辰 X1 是一款面向入门市场的智能手机，配备基础通信与娱乐功能。', NOW(), NOW(), 1, 1, NULL),
+    (1, 'en-US', 'Beichen X1 Smartphone', 'beichen-x1', 'Entry-level smartphone', 'Beichen X1 is an entry-level smartphone with basic communication and entertainment features.', NOW(), NOW(), 1, 1, NULL),
+    (2, 'zh-CN', '远洋 M2 平板', 'yuanyang-m2', '中端娱乐平板', '远洋 M2 平板定位于影音娱乐，配备较大屏幕与长续航。', NOW(), NOW(), 1, 1, NULL),
+    (2, 'en-US', 'Yuanyang M2 Tablet', 'yuanyang-m2', 'Mid-range entertainment tablet', 'Yuanyang M2 tablet is positioned for audio-visual entertainment with a large screen and long battery life.', NOW(), NOW(), 1, 1, NULL),
+    (3, 'zh-CN', '北辰 T3 老人机', 'beichen-t3', '大按键老人机', '北辰 T3 面向老年用户，大按键大字体，操作简便。', NOW(), NOW(), 1, 1, NULL),
+    (3, 'en-US', 'Beichen T3 Feature Phone', 'beichen-t3', 'Large-button feature phone', 'Beichen T3 targets elderly users with large buttons and fonts for ease of use.', NOW(), NOW(), 1, 1, NULL),
+    (4, 'zh-CN', '极光 USB-C 数据线', 'aurora-usb-c-cable', 'USB-C 编织数据线', '极光 USB-C 数据线采用编织外被，支持快充与数据传输。', NOW(), NOW(), 1, 1, NULL),
+    (4, 'en-US', 'Aurora USB-C Cable', 'aurora-usb-c-cable', 'USB-C braided cable', 'Aurora USB-C cable features a braided jacket and supports fast charging and data transfer.', NOW(), NOW(), 1, 1, NULL),
+    (5, 'zh-CN', '极光无线充电板', 'aurora-wireless-charger', 'Qi 协议无线充电板', '极光无线充电板兼容 Qi 协议，提供基础无线充电体验。', NOW(), NOW(), 1, 1, NULL),
+    (5, 'en-US', 'Aurora Wireless Charger', 'aurora-wireless-charger', 'Qi-compatible wireless charging pad', 'Aurora wireless charging pad is Qi-compatible and provides basic wireless charging.', NOW(), NOW(), 1, 1, NULL),
+    (6, 'zh-CN', '北辰蓝牙耳机', 'beichen-bluetooth-headset', '入门蓝牙耳机', '北辰蓝牙耳机提供基础无线音频连接。', NOW(), NOW(), 1, 1, NULL),
+    (6, 'en-US', 'Beichen Bluetooth Headset', 'beichen-bluetooth-headset', 'Entry-level Bluetooth headset', 'Beichen Bluetooth headset provides basic wireless audio connectivity.', NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_product_translations AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_product_translations);
+
+-- ----------------------------
+-- 商品属性（颜色 / 容量）+ 属性值 + 翻译
+-- ----------------------------
+INSERT INTO mall_product_attributes (id, sort_order, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 1, NOW(), NOW(), 1, 1, NULL),
+    (2, 2, NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_product_attributes AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_product_attributes);
+
+-- 属性翻译
+INSERT INTO mall_product_attribute_translations (attribute_id, language_code, name, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 'zh-CN', '颜色', NOW(), NOW(), 1, 1, NULL),
+    (1, 'en-US', 'Color', NOW(), NOW(), 1, 1, NULL),
+    (2, 'zh-CN', '容量', NOW(), NOW(), 1, 1, NULL),
+    (2, 'en-US', 'Capacity', NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_product_attribute_translations AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_product_attribute_translations);
+
+-- 属性值（属性1=颜色: 黑/白；属性2=容量: 64/128）
+INSERT INTO mall_product_attribute_values (id, attribute_id, sort_order, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 1, 1, NOW(), NOW(), 1, 1, NULL),
+    (2, 1, 2, NOW(), NOW(), 1, 1, NULL),
+    (3, 2, 1, NOW(), NOW(), 1, 1, NULL),
+    (4, 2, 2, NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_product_attribute_values AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_product_attribute_values);
+
+-- 属性值翻译
+INSERT INTO mall_product_attribute_value_translations (value_id, language_code, display_name, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 'zh-CN', '黑色', NOW(), NOW(), 1, 1, NULL),
+    (1, 'en-US', 'Black', NOW(), NOW(), 1, 1, NULL),
+    (2, 'zh-CN', '白色', NOW(), NOW(), 1, 1, NULL),
+    (2, 'en-US', 'White', NOW(), NOW(), 1, 1, NULL),
+    (3, 'zh-CN', '64GB', NOW(), NOW(), 1, 1, NULL),
+    (3, 'en-US', '64GB', NOW(), NOW(), 1, 1, NULL),
+    (4, 'zh-CN', '128GB', NOW(), NOW(), 1, 1, NULL),
+    (4, 'en-US', '128GB', NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_product_attribute_value_translations AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_product_attribute_value_translations);
+
+-- ----------------------------
+-- SKU（每商品 2 个，颜色×容量组合）
+-- ----------------------------
+INSERT INTO mall_skus (id, product_id, sku_code, stock_qty, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 1, 'BC-X1-BLK-64',  100, NOW(), NOW(), 1, 1, NULL),
+    (2, 1, 'BC-X1-WHT-128', 100, NOW(), NOW(), 1, 1, NULL),
+    (3, 2, 'YY-M2-BLK-64',  100, NOW(), NOW(), 1, 1, NULL),
+    (4, 2, 'YY-M2-WHT-128', 100, NOW(), NOW(), 1, 1, NULL),
+    (5, 3, 'BC-T3-BLK-64',  100, NOW(), NOW(), 1, 1, NULL),
+    (6, 3, 'BC-T3-WHT-128', 100, NOW(), NOW(), 1, 1, NULL),
+    (7, 4, 'AU-CBL-BLK-64', 100, NOW(), NOW(), 1, 1, NULL),
+    (8, 4, 'AU-CBL-WHT-128',100, NOW(), NOW(), 1, 1, NULL),
+    (9, 5, 'AU-WC-BLK-64',  100, NOW(), NOW(), 1, 1, NULL),
+    (10, 5, 'AU-WC-WHT-128',100, NOW(), NOW(), 1, 1, NULL),
+    (11, 6, 'BC-BT-BLK-64', 100, NOW(), NOW(), 1, 1, NULL),
+    (12, 6, 'BC-BT-WHT-128',100, NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_skus AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_skus);
+
+-- SKU 价格（每 SKU 一行 CNY，amount 为字符串）
+INSERT INTO mall_sku_prices (sku_id, currency, amount, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 'CNY', '199900',  NOW(), NOW(), 1, 1, NULL),
+    (2, 'CNY', '229900',  NOW(), NOW(), 1, 1, NULL),
+    (3, 'CNY', '159900',  NOW(), NOW(), 1, 1, NULL),
+    (4, 'CNY', '189900',  NOW(), NOW(), 1, 1, NULL),
+    (5, 'CNY', '99900',   NOW(), NOW(), 1, 1, NULL),
+    (6, 'CNY', '109900',  NOW(), NOW(), 1, 1, NULL),
+    (7, 'CNY', '1900',    NOW(), NOW(), 1, 1, NULL),
+    (8, 'CNY', '1900',    NOW(), NOW(), 1, 1, NULL),
+    (9, 'CNY', '9900',    NOW(), NOW(), 1, 1, NULL),
+    (10, 'CNY', '9900',   NOW(), NOW(), 1, 1, NULL),
+    (11, 'CNY', '5900',   NOW(), NOW(), 1, 1, NULL),
+    (12, 'CNY', '5900',   NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_sku_prices AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_sku_prices);
+
+-- SKU 属性组合（每 SKU 关联颜色值+容量值）
+INSERT INTO mall_sku_attribute_combinations (sku_id, attribute_id, attribute_value_id, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 1, 1, NOW(), NOW(), 1, 1, NULL),
+    (1, 2, 3, NOW(), NOW(), 1, 1, NULL),
+    (2, 1, 2, NOW(), NOW(), 1, 1, NULL),
+    (2, 2, 4, NOW(), NOW(), 1, 1, NULL),
+    (3, 1, 1, NOW(), NOW(), 1, 1, NULL),
+    (3, 2, 3, NOW(), NOW(), 1, 1, NULL),
+    (4, 1, 2, NOW(), NOW(), 1, 1, NULL),
+    (4, 2, 4, NOW(), NOW(), 1, 1, NULL),
+    (5, 1, 1, NOW(), NOW(), 1, 1, NULL),
+    (5, 2, 3, NOW(), NOW(), 1, 1, NULL),
+    (6, 1, 2, NOW(), NOW(), 1, 1, NULL),
+    (6, 2, 4, NOW(), NOW(), 1, 1, NULL),
+    (7, 1, 1, NOW(), NOW(), 1, 1, NULL),
+    (7, 2, 3, NOW(), NOW(), 1, 1, NULL),
+    (8, 1, 2, NOW(), NOW(), 1, 1, NULL),
+    (8, 2, 4, NOW(), NOW(), 1, 1, NULL),
+    (9, 1, 1, NOW(), NOW(), 1, 1, NULL),
+    (9, 2, 3, NOW(), NOW(), 1, 1, NULL),
+    (10, 1, 2, NOW(), NOW(), 1, 1, NULL),
+    (10, 2, 4, NOW(), NOW(), 1, 1, NULL),
+    (11, 1, 1, NOW(), NOW(), 1, 1, NULL),
+    (11, 2, 3, NOW(), NOW(), 1, 1, NULL),
+    (12, 1, 2, NOW(), NOW(), 1, 1, NULL),
+    (12, 2, 4, NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_sku_attribute_combinations AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_sku_attribute_combinations);
+
+-- ====================================================================
+-- 商城 · 顾客用户（交易域 user_id 依赖）
+-- 注：shopper(id=3) 仅作演示用普通顾客，凭证密码同为 admin。
+-- sys_roles 由运行时 createDefaultRoles 生成，此处不重复 seed。
+-- ====================================================================
+INSERT INTO sys_users (id, tenant_id, username, nickname, realname, email, gender, created_at)
+VALUES (3, 1, 'shopper', '测试顾客', '李顾客', 'shopper@company.com', 'MALE', NOW());
+ALTER TABLE sys_users AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM sys_users);
+
+INSERT INTO sys_user_credentials (tenant_id, user_id, identity_type, identifier, credential_type, credential, status, is_primary, created_at)
+VALUES
+    (1, 3, 'USERNAME', 'shopper', 'PASSWORD_HASH', '$2a$10$yajZDX20Y40FkG0Bu4N19eXNqRizez/S9fK63.JxGkfLq.RoNKR/a', 'ENABLED', true, NOW()),
+    (1, 3, 'EMAIL', 'shopper@company.com', 'PASSWORD_HASH', '$2a$10$yajZDX20Y40FkG0Bu4N19eXNqRizez/S9fK63.JxGkfLq.RoNKR/a', 'ENABLED', false, NOW());
+ALTER TABLE sys_user_credentials AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM sys_user_credentials);
+
+INSERT INTO sys_memberships (id, tenant_id, user_id, org_unit_id, position_id, role_id, is_primary, status)
+VALUES (3, 1, 3, null, null, 2, true, 'ACTIVE');
+ALTER TABLE sys_memberships AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM sys_memberships);
+
+INSERT INTO sys_membership_roles (id, membership_id, tenant_id, role_id, is_primary, status)
+VALUES (3, 3, 1, 2, true, 'ACTIVE');
+ALTER TABLE sys_membership_roles AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM sys_membership_roles);
+
+-- ====================================================================
+-- 商城 · 交易域种子数据（演示用）
+-- UserPrivacy 行级隔离在应用层经 viewer context 生效，直 SQL 不受影响。
+-- tenant_id 显式写 1；所有金额单位为分。
+-- ====================================================================
+
+-- 购物车（shopper 的购物车）
+INSERT INTO mall_carts (id, user_id, tenant_id, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES (1, 3, 1, NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_carts AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_carts);
+
+-- 购物车项
+INSERT INTO mall_cart_items (id, cart_id, sku_id, quantity, tenant_id, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 1, 7,  2, 1, NOW(), NOW(), 1, 1, NULL),
+    (2, 1, 11, 1, 1, NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_cart_items AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_cart_items);
+
+-- 订单（三种状态各一：待支付 / 已支付 / 已履约）
+INSERT INTO mall_orders (id, user_id, tenant_id, total_amount, status, recipient_name, recipient_phone, shipping_address, business_ref_id, idempotency_key, currency, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 3, 1, 3800,  'PENDING_PAYMENT', '张三', '13800000001', '北京市朝阳区演示街1号', 'ORD-DEMO-1001', 'idem-order-1001', 'CNY', NOW(), NOW(), 1, 1, NULL),
+    (2, 3, 1, 5900,  'PAID',            '李四', '13800000002', '上海市浦东新区演示路2号', 'ORD-DEMO-1002', 'idem-order-1002', 'CNY', NOW(), NOW(), 1, 1, NULL),
+    (3, 3, 1, 9900,  'FULFILLED',       '王五', '13800000003', '广州市天河区演示道3号', 'ORD-DEMO-1003', 'idem-order-1003', 'CNY', NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_orders AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_orders);
+
+-- 订单项
+INSERT INTO mall_order_items (id, order_id, sku_id, sku_snapshot, quantity, unit_price, subtotal, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 1, 7,  '{"sku":"AU-CBL-BLK-64","name":"Aurora USB-C Cable"}', 2, 1900, 3800,  NOW(), NOW(), 1, 1, NULL),
+    (2, 2, 11, '{"sku":"BC-BT-BLK-64","name":"Beichen Bluetooth Headset"}', 1, 5900, 5900, NOW(), NOW(), 1, 1, NULL),
+    (3, 3, 9,  '{"sku":"AU-WC-BLK-64","name":"Aurora Wireless Charger"}', 1, 9900, 9900,  NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_order_items AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_order_items);
+
+-- 支付流水（仅对应已支付订单）
+INSERT INTO mall_payment_transactions (id, order_id, user_id, tenant_id, amount, status, business_ref_id, idempotency_key, currency, payment_method, business_type, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 2, 3, 1, 5900, 'SUCCEEDED', 'PAY-DEMO-2001', 'idem-pay-2001', 'CNY', 'ALIPAY', 'BUSINESS_TYPE_CONSUME', NOW(), NOW(), 1, 1, NULL),
+    (2, 3, 3, 1, 9900, 'SUCCEEDED', 'PAY-DEMO-2002', 'idem-pay-2002', 'CNY', 'WECHAT',  'BUSINESS_TYPE_CONSUME', NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_payment_transactions AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_payment_transactions);
+
+-- 退款（对应第二笔支付，状态 PENDING，演示退款流程）
+INSERT INTO mall_payment_refunds (id, transaction_id, tenant_id, amount, status, business_ref_id, idempotency_key, currency, created_at, updated_at, created_by, updated_by, deleted_by)
+VALUES
+    (1, 1, 1, 5900, 'PENDING', 'REF-DEMO-3001', 'idem-refund-3001', 'CNY', NOW(), NOW(), 1, 1, NULL);
+ALTER TABLE mall_payment_refunds AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM mall_payment_refunds);
 
 -- 提交事务+恢复外键检查
 COMMIT;

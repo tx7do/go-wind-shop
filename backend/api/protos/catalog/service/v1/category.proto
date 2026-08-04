@@ -58,6 +58,11 @@ message Category {
     (gnostic.openapi.v3.property) = {description: "排序优先级（数值越小越靠前，同级类目间排序）"}
   ]; // 排序优先级
 
+  optional string image_url = 64 [
+    json_name = "imageUrl",
+    (gnostic.openapi.v3.property) = {description: "类目图片资源 URL（locale 无关）"}
+  ]; // 类目图片资源 URL
+
   repeated CategoryTranslation translations = 20 [
     json_name = "translations",
     (gnostic.openapi.v3.property) = {description: "多语言翻译列表"}

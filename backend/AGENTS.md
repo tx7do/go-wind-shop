@@ -436,7 +436,7 @@ if cfg.Data.Database.GetMigrate() { ... }
 ## 数据库迁移
 
 - **schema 即代码**：ent schema 定义表结构，运行时 `client.Schema.Create(...)` 自动建表/加索引（`data.yaml` 中 `migrate: true` 时）
-- **种子/演示数据**：`sql/` 目录的 `postgresql-demo-data.sql` / `mysql-demo-data.sql`
+- **种子/演示数据**：`sql/` 目录的 `postgresql-demo-data.sql` / `mysql-demo-data.sql`（两份对齐，覆盖系统域 + 商城目录域/交易域；含一个演示顾客 `shopper`(id=3)，密码同 `admin`）
 - **部分默认数据 Go 初始化**：如默认超级用户在 `UserService.init()` 中从 `pkg/constants` 写入
 
 ## 请求校验（双轨制）
@@ -598,7 +598,7 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 - 真实支付网关（Stripe/PayPal/Alipay webhook）替换 stub
 - SkuPrice 多币种行接入 `OrderService.Create` 的 unit_price 读取（当前硬编码 0）
 - DTM 分布式事务替换进程内 MarkPaid
-- 类目 / 品牌 / 示例商品的种子数据（语言注册表已 seed 见 `sql/postgresql-demo-data.sql` 的 `sys_languages`，其余目录内容仍依赖 admin UI 手动录入）
+- ~~类目 / 品牌 / 示例商品的种子数据~~ ✅ 已完成：`sql/{mysql,postgresql}-demo-data.sql` 已补齐商城目录域（类目/品牌/商品/属性/SKU/价格 + 翻译）与交易域（订单/购物车/支付，含演示顾客 `shopper`）的演示数据；`sys_languages` 已在两份 SQL 中对齐（zh-CN/en-US）。注：交易数据仅为演示，真实支付/退款仍为 stub。
 - 订单超时的真实退款逻辑（当前 stub 无真实扣款，无需退款）
 
 ## 常见错误与纠正

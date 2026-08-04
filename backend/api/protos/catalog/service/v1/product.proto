@@ -81,6 +81,11 @@ message Product {
     (gnostic.openapi.v3.property) = {description: "排序优先级"}
   ]; // 排序优先级
 
+  optional string image_url = 6 [
+    json_name = "imageUrl",
+    (gnostic.openapi.v3.property) = {description: "商品主图资源 URL（locale 无关）"}
+  ]; // 商品主图资源 URL
+
   repeated ProductTranslation translations = 20 [
     json_name = "translations",
     (gnostic.openapi.v3.property) = {description: "多语言翻译列表"}
