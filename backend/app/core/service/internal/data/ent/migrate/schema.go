@@ -290,6 +290,7 @@ var (
 		{Name: "sort_order", Type: field.TypeUint32, Nullable: true, Comment: "排序值（越小越靠前）", Default: 0},
 		{Name: "path", Type: field.TypeString, Nullable: true, Size: 512, Comment: "树路径，规范： 根节点: /，非根节点: /1/2/3/（以 / 开头且以 / 结尾）。禁止空字符串（NULL 表示未设置）。"},
 		{Name: "depth", Type: field.TypeInt32, Nullable: true, Comment: "类目层级深度", Default: 0},
+		{Name: "image_url", Type: field.TypeString, Nullable: true, Comment: "类目图片资源 URL（locale 无关）"},
 		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
 	}
 	// MallCategoriesTable holds the schema information for the "mall_categories" table.
@@ -301,7 +302,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "mall_categories_mall_categories_children",
-				Columns:    []*schema.Column{MallCategoriesColumns[10]},
+				Columns:    []*schema.Column{MallCategoriesColumns[11]},
 				RefColumns: []*schema.Column{MallCategoriesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -1712,6 +1713,11 @@ var (
 				Unique:  false,
 				Columns: []*schema.Column{MallPaymentRefundsColumns[11]},
 			},
+			{
+				Name:    "paymentrefund_tenant_id_idempotency_key",
+				Unique:  true,
+				Columns: []*schema.Column{MallPaymentRefundsColumns[7], MallPaymentRefundsColumns[10]},
+			},
 		},
 	}
 	// MallPaymentTransactionsColumns holds the columns for the "mall_payment_transactions" table.
@@ -1745,6 +1751,11 @@ var (
 				Name:    "paymenttransaction_order_id",
 				Unique:  false,
 				Columns: []*schema.Column{MallPaymentTransactionsColumns[13]},
+			},
+			{
+				Name:    "paymenttransaction_tenant_id_idempotency_key",
+				Unique:  true,
+				Columns: []*schema.Column{MallPaymentTransactionsColumns[7], MallPaymentTransactionsColumns[10]},
 			},
 		},
 	}
@@ -2238,6 +2249,7 @@ var (
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "商品状态", Enums: []string{"PRODUCT_STATUS_DRAFT", "PRODUCT_STATUS_ACTIVE", "PRODUCT_STATUS_INACTIVE"}},
 		{Name: "category_id", Type: field.TypeUint32, Nullable: true, Comment: "所属类目ID"},
 		{Name: "brand_id", Type: field.TypeUint32, Nullable: true, Comment: "所属品牌ID"},
+		{Name: "image_url", Type: field.TypeString, Nullable: true, Comment: "商品主图资源 URL（locale 无关）"},
 	}
 	// MallProductsTable holds the schema information for the "mall_products" table.
 	MallProductsTable = &schema.Table{

@@ -16,14 +16,20 @@ import (
 type PaymentRefundService struct {
 	paymentV1.UnimplementedPaymentRefundServiceServer
 
-	log  *log.Helper
-	repo *data.PaymentRefundRepo
+	log              *log.Helper
+	repo             *data.PaymentRefundRepo
+	transactionRepo  *data.PaymentTransactionRepo
 }
 
-func NewPaymentRefundService(ctx *bootstrap.Context, repo *data.PaymentRefundRepo) *PaymentRefundService {
+func NewPaymentRefundService(
+	ctx *bootstrap.Context,
+	repo *data.PaymentRefundRepo,
+	transactionRepo *data.PaymentTransactionRepo,
+) *PaymentRefundService {
 	return &PaymentRefundService{
-		log:  ctx.NewLoggerHelper("payment-refund/service/core-service"),
-		repo: repo,
+		log:             ctx.NewLoggerHelper("payment-refund/service/core-service"),
+		repo:            repo,
+		transactionRepo: transactionRepo,
 	}
 }
 
@@ -63,8 +69,45 @@ func (s *PaymentRefundService) Update(ctx context.Context, req *paymentV1.Update
 		return nil, paymentV1.ErrorBadRequest("invalid parameter")
 	}
 
+	// 退款状态机校验：仅允许 PENDING→SUCCEEDED 与 PENDING→FAILED。
+	// 退款记录当前状态需先查库。
+	targetStatus := req.Data.GetStatus()
+	if targetStatus != paymentV1.PaymentRefund_STATUS_UNSPECIFIED {
+		existing, gErr := s.repo.Get(ctx, &paymentV1.GetPaymentRefundRequest{
+			QueryBy: &paymentV1.GetPaymentRefundRequest_Id{Id: req.GetId()},
+		})
+		if gErr != nil {
+			return nil, gErr
+		}
+		if existing.GetStatus() != paymentV1.PaymentRefund_PENDING {
+			return nil, paymentV1.ErrorBadRequest("refund cannot transition from %v to %v", existing.GetStatus(), targetStatus)
+		}
+		if targetStatus != paymentV1.PaymentRefund_SUCCEEDED && targetStatus != paymentV1.PaymentRefund_FAILED {
+			return nil, paymentV1.ErrorBadRequest("illegal refund status transition to %v", targetStatus)
+		}
+	}
+
 	if err := s.repo.Update(ctx, req); err != nil {
 		return nil, err
+	}
+
+	// 退款成功联动：将关联的支付流水翻为 REFUNDED。
+	// 仅当目标状态为 SUCCEEDED 且退款记录携带 transaction_id 时执行。
+	if targetStatus == paymentV1.PaymentRefund_SUCCEEDED {
+		txId := req.Data.GetTransactionId()
+		if txId != 0 {
+			txData := &paymentV1.PaymentTransaction{
+				Status: paymentV1.PaymentTransaction_REFUNDED.Enum(),
+			}
+			updateTxReq := &paymentV1.UpdatePaymentTransactionRequest{
+				Id:   txId,
+				Data: txData,
+			}
+			if uErr := s.transactionRepo.Update(ctx, updateTxReq); uErr != nil {
+				s.log.Errorf("flip payment_transaction [%d] to REFUNDED failed: %v", txId, uErr)
+				return nil, uErr
+			}
+		}
 	}
 
 	return &emptypb.Empty{}, nil

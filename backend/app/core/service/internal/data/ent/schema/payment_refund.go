@@ -68,5 +68,8 @@ func (PaymentRefund) Mixin() []ent.Mixin {
 func (PaymentRefund) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("transaction_id"),
+		// 幂等键唯一索引：与 order/payment_transaction 一致，同租户内
+		// idempotency_key 唯一，防止重放导致重复退款记录。
+		index.Fields("tenant_id", "idempotency_key").Unique(),
 	}
 }

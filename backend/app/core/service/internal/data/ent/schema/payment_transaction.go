@@ -10,10 +10,17 @@ import (
 	"github.com/tx7do/go-crud/entgo/mixin"
 
 	appmixin "go-wind-shop/pkg/entgo/mixin"
+	appPrivacy "go-wind-shop/pkg/entgo/privacy"
 )
 
 type PaymentTransaction struct {
 	ent.Schema
+}
+
+// Policy 注入 UserPrivacy：普通用户只能查询/变更 user_id = 自身 userID
+// 的支付流水。系统/平台视图放行。防同租户内越权看/改他人支付记录。
+func (PaymentTransaction) Policy() ent.Policy {
+	return appPrivacy.UserPrivacy{}
 }
 
 func (PaymentTransaction) Annotations() []schema.Annotation {
@@ -76,5 +83,8 @@ func (PaymentTransaction) Mixin() []ent.Mixin {
 func (PaymentTransaction) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("order_id"),
+		// 幂等键唯一索引：与 order 一致，同租户内 idempotency_key 唯一，
+		// 防止重放导致重复支付流水。
+		index.Fields("tenant_id", "idempotency_key").Unique(),
 	}
 }

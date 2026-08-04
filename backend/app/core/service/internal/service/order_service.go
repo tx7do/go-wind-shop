@@ -19,6 +19,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/cartitem"
 	"go-wind-shop/app/core/service/internal/data/ent/order"
 	"go-wind-shop/app/core/service/internal/data/ent/orderitem"
+	"go-wind-shop/app/core/service/internal/data/ent/paymenttransaction"
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 
@@ -113,6 +114,20 @@ func (s *OrderService) Update(ctx context.Context, req *orderV1.UpdateOrderReque
 		if len(req.GetExpectedStatus()) == 0 {
 			return nil, orderV1.ErrorBadRequest("status update requires expected_status precondition")
 		}
+		// 校验状态转换合法性。expected_status 是调用方声明的当前状态，
+		// target 是要求变更到的目标状态。仅允许下列转换，其余拒绝：
+		//   PENDING_PAYMENT → PAID        （MarkPaid，支付 stub 调用）
+		//   PENDING_PAYMENT → CANCELLED   （超时自动取消）
+		//   PAID → FULFILLED               （发货）
+		//   PAID → CLOSED                  （关闭）
+		//   FULFILLED → CLOSED            （关闭）
+		// 终态（CANCELLED/CLOSED）为吸收态，不可再翻转。
+		target := req.Data.GetStatus()
+		for _, from := range req.GetExpectedStatus() {
+			if !isAllowedTransition(from, target) {
+				return nil, orderV1.ErrorBadRequest("illegal order status transition: %v -> %v", from, target)
+			}
+		}
 	}
 
 	if err := s.orderRepo.Update(ctx, req); err != nil {
@@ -120,6 +135,28 @@ func (s *OrderService) Update(ctx context.Context, req *orderV1.UpdateOrderReque
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+// isAllowedTransition 校验订单状态转换是否在允许列表内。
+func isAllowedTransition(from, to orderV1.Order_Status) bool {
+	allowed := map[orderV1.Order_Status]map[orderV1.Order_Status]bool{
+		orderV1.Order_PENDING_PAYMENT: {
+			orderV1.Order_PAID:      true,
+			orderV1.Order_CANCELLED: true,
+		},
+		orderV1.Order_PAID: {
+			orderV1.Order_FULFILLED: true,
+			orderV1.Order_CLOSED:    true,
+		},
+		orderV1.Order_FULFILLED: {
+			orderV1.Order_CLOSED: true,
+		},
+	}
+	allowedTo, ok := allowed[from]
+	if !ok {
+		return false
+	}
+	return allowedTo[to]
 }
 
 func (s *OrderService) Delete(ctx context.Context, req *orderV1.DeleteOrderRequest) (*emptypb.Empty, error) {
@@ -494,6 +531,25 @@ func (s *OrderService) ExpireOrderByTimeout(ctx context.Context, req *orderV1.Ex
 			return &orderV1.ExpireOrderByTimeoutResponse{Expired: boolPtr(false)}, nil
 		}
 		return nil, fmt.Errorf("expire order [%d] failed: %w", orderId, uErr)
+	}
+
+	// 孤儿支付清理：若该订单存在因 MarkPaid 竞态失败而遗留的 SUCCEEDED
+	// 支付记录（支付"成功"但订单未推进到 PAID，现已被取消），在同一事务
+	// 内将其翻为 FAILED，消除"已成功支付但订单已取消"的不一致。
+	failedStatus := paymenttransaction.StatusPaymentTransactionStatusFailed
+	succeededStatus := paymenttransaction.StatusPaymentTransactionStatusSucceeded
+	if cErr := tx.PaymentTransaction.Update().
+		SetStatus(failedStatus).
+		SetUpdatedAt(time.Now()).
+		Where(
+			paymenttransaction.OrderIDEQ(orderId),
+			paymenttransaction.StatusEQ(succeededStatus),
+		).
+		Exec(ctx); cErr != nil {
+		err = cErr
+		_ = tx.Rollback()
+		s.log.Errorf("cleanup orphan succeeded payments for order [%d] failed: %v", orderId, cErr)
+		return nil, fmt.Errorf("cleanup orphan payments for order [%d] failed: %w", orderId, cErr)
 	}
 
 	if cErr := tx.Commit(); cErr != nil {
