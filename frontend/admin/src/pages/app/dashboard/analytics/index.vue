@@ -32,86 +32,80 @@
     </div>
 
     <!-- 图表 -->
-    <el-row :gutter="16" class="mb-5">
-      <el-col :xs="24" :md="12">
-        <el-card shadow="hover">
-          <template #header>
-            <div class="card-title-block">
-              <span class="card-title">{{ $t("pages.dashboard.chartOrderStatusTitle") }}</span>
-              <span class="card-desc">{{ $t("pages.dashboard.chartOrderStatusDesc") }}</span>
-            </div>
-          </template>
-          <div class="chart-state">
-            <el-skeleton v-if="orderStatusQuery.isLoading.value" :rows="8" animated />
-            <el-alert
-              v-else-if="orderStatusQuery.error.value"
-              :title="$t('pages.dashboard.loadError')"
-              type="error"
-              :closable="false"
-              show-icon
-            />
-            <div v-else-if="orderStatusSlices.length === 0" class="chart-empty">
-              {{ $t("pages.dashboard.noData") }}
-            </div>
-            <div v-else class="chart-container chart-container-pie">
-              <AnalyticsOrderStatusChart :data="orderStatusSlices" />
-            </div>
+    <div class="chart-grid mb-5">
+      <el-card shadow="hover">
+        <template #header>
+          <div class="card-title-block">
+            <span class="card-title">{{ $t("pages.dashboard.chartOrderStatusTitle") }}</span>
+            <span class="card-desc">{{ $t("pages.dashboard.chartOrderStatusDesc") }}</span>
           </div>
-        </el-card>
-      </el-col>
-      <el-col :xs="24" :md="12">
-        <el-card shadow="hover">
-          <template #header>
-            <div class="card-title-block">
-              <span class="card-title">{{ $t("pages.dashboard.chartPaymentMethodTitle") }}</span>
-              <span class="card-desc">{{ $t("pages.dashboard.chartPaymentMethodDesc") }}</span>
-            </div>
-          </template>
-          <div class="chart-state">
-            <el-skeleton v-if="paymentMethodQuery.isLoading.value" :rows="8" animated />
-            <el-alert
-              v-else-if="paymentMethodQuery.error.value"
-              :title="$t('pages.dashboard.loadError')"
-              type="error"
-              :closable="false"
-              show-icon
-            />
-            <div v-else-if="paymentMethodSlices.length === 0" class="chart-empty">
-              {{ $t("pages.dashboard.noData") }}
-            </div>
-            <div v-else class="chart-container chart-container-pie">
-              <AnalyticsPaymentMethodChart :data="paymentMethodSlices" />
-            </div>
+        </template>
+        <div class="chart-state">
+          <el-skeleton v-if="orderStatusQuery.isLoading.value" :rows="8" animated />
+          <el-alert
+            v-else-if="orderStatusQuery.error.value"
+            :title="$t('pages.dashboard.loadError')"
+            type="error"
+            :closable="false"
+            show-icon
+          />
+          <div v-else-if="orderStatusSlices.length === 0" class="chart-empty">
+            {{ $t("pages.dashboard.noData") }}
           </div>
-        </el-card>
-      </el-col>
-      <el-col :xs="24" :md="12">
-        <el-card shadow="hover">
-          <template #header>
-            <div class="card-title-block">
-              <span class="card-title">{{ $t("pages.dashboard.chartRefundStatusTitle") }}</span>
-              <span class="card-desc">{{ $t("pages.dashboard.chartRefundStatusDesc") }}</span>
-            </div>
-          </template>
-          <div class="chart-state">
-            <el-skeleton v-if="refundStatusQuery.isLoading.value" :rows="8" animated />
-            <el-alert
-              v-else-if="refundStatusQuery.error.value"
-              :title="$t('pages.dashboard.loadError')"
-              type="error"
-              :closable="false"
-              show-icon
-            />
-            <div v-else-if="refundStatusSlices.length === 0" class="chart-empty">
-              {{ $t("pages.dashboard.noData") }}
-            </div>
-            <div v-else class="chart-container chart-container-pie">
-              <AnalyticsRefundStatusChart :data="refundStatusSlices" />
-            </div>
+          <div v-else class="chart-container chart-container-pie">
+            <AnalyticsOrderStatusChart :data="orderStatusSlices" />
           </div>
-        </el-card>
-      </el-col>
-    </el-row>
+        </div>
+      </el-card>
+      <el-card shadow="hover">
+        <template #header>
+          <div class="card-title-block">
+            <span class="card-title">{{ $t("pages.dashboard.chartPaymentMethodTitle") }}</span>
+            <span class="card-desc">{{ $t("pages.dashboard.chartPaymentMethodDesc") }}</span>
+          </div>
+        </template>
+        <div class="chart-state">
+          <el-skeleton v-if="paymentMethodQuery.isLoading.value" :rows="8" animated />
+          <el-alert
+            v-else-if="paymentMethodQuery.error.value"
+            :title="$t('pages.dashboard.loadError')"
+            type="error"
+            :closable="false"
+            show-icon
+          />
+          <div v-else-if="paymentMethodSlices.length === 0" class="chart-empty">
+            {{ $t("pages.dashboard.noData") }}
+          </div>
+          <div v-else class="chart-container chart-container-pie">
+            <AnalyticsPaymentMethodChart :data="paymentMethodSlices" />
+          </div>
+        </div>
+      </el-card>
+      <el-card shadow="hover">
+        <template #header>
+          <div class="card-title-block">
+            <span class="card-title">{{ $t("pages.dashboard.chartRefundStatusTitle") }}</span>
+            <span class="card-desc">{{ $t("pages.dashboard.chartRefundStatusDesc") }}</span>
+          </div>
+        </template>
+        <div class="chart-state">
+          <el-skeleton v-if="refundStatusQuery.isLoading.value" :rows="8" animated />
+          <el-alert
+            v-else-if="refundStatusQuery.error.value"
+            :title="$t('pages.dashboard.loadError')"
+            type="error"
+            :closable="false"
+            show-icon
+          />
+          <div v-else-if="refundStatusSlices.length === 0" class="chart-empty">
+            {{ $t("pages.dashboard.noData") }}
+          </div>
+          <div v-else class="chart-container chart-container-pie">
+            <AnalyticsRefundStatusChart :data="refundStatusSlices" />
+          </div>
+        </div>
+      </el-card>
+    </div>
 
     <!-- 最近订单 -->
     <el-card shadow="hover">
@@ -413,6 +407,17 @@ const metricCards = computed(() => {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
+}
+
+.chart-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  > :deep(.el-card) {
+    flex: 1 1 360px;
+    min-width: 0;
+  }
 }
 
 .metric-card {
