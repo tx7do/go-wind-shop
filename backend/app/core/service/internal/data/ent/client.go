@@ -3903,7 +3903,8 @@ func (c *OrderItemClient) GetX(ctx context.Context, id uint32) *OrderItem {
 
 // Hooks returns the client hooks.
 func (c *OrderItemClient) Hooks() []Hook {
-	return c.hooks.OrderItem
+	hooks := c.hooks.OrderItem
+	return append(hooks[:len(hooks):len(hooks)], orderitem.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

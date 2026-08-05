@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-wind-shop/app/core/service/internal/data/ent/orderitem"
 	"go-wind-shop/app/core/service/internal/data/ent/predicate"
@@ -329,6 +330,12 @@ func (_q *OrderItemQuery) prepareQuery(ctx context.Context) error {
 			return err
 		}
 		_q.sql = prev
+	}
+	if orderitem.Policy == nil {
+		return errors.New("ent: uninitialized orderitem.Policy (forgotten import ent/runtime?)")
+	}
+	if err := orderitem.Policy.EvalQuery(ctx, _q); err != nil {
+		return err
 	}
 	return nil
 }

@@ -177,6 +177,33 @@ func (_u *OrderItemUpdate) ClearOrderID() *OrderItemUpdate {
 	return _u
 }
 
+// SetUserID sets the "user_id" field.
+func (_u *OrderItemUpdate) SetUserID(v uint32) *OrderItemUpdate {
+	_u.mutation.ResetUserID()
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *OrderItemUpdate) SetNillableUserID(v *uint32) *OrderItemUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// AddUserID adds value to the "user_id" field.
+func (_u *OrderItemUpdate) AddUserID(v int32) *OrderItemUpdate {
+	_u.mutation.AddUserID(v)
+	return _u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (_u *OrderItemUpdate) ClearUserID() *OrderItemUpdate {
+	_u.mutation.ClearUserID()
+	return _u
+}
+
 // SetSkuID sets the "sku_id" field.
 func (_u *OrderItemUpdate) SetSkuID(v uint32) *OrderItemUpdate {
 	_u.mutation.ResetSkuID()
@@ -394,6 +421,9 @@ func (_u *OrderItemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(orderitem.FieldDeletedBy, field.TypeUint32)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(orderitem.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.OrderID(); ok {
 		_spec.SetField(orderitem.FieldOrderID, field.TypeUint32, value)
 	}
@@ -402,6 +432,15 @@ func (_u *OrderItemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.OrderIDCleared() {
 		_spec.ClearField(orderitem.FieldOrderID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.UserID(); ok {
+		_spec.SetField(orderitem.FieldUserID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedUserID(); ok {
+		_spec.AddField(orderitem.FieldUserID, field.TypeUint32, value)
+	}
+	if _u.mutation.UserIDCleared() {
+		_spec.ClearField(orderitem.FieldUserID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.SkuID(); ok {
 		_spec.SetField(orderitem.FieldSkuID, field.TypeUint32, value)
@@ -612,6 +651,33 @@ func (_u *OrderItemUpdateOne) AddOrderID(v int32) *OrderItemUpdateOne {
 // ClearOrderID clears the value of the "order_id" field.
 func (_u *OrderItemUpdateOne) ClearOrderID() *OrderItemUpdateOne {
 	_u.mutation.ClearOrderID()
+	return _u
+}
+
+// SetUserID sets the "user_id" field.
+func (_u *OrderItemUpdateOne) SetUserID(v uint32) *OrderItemUpdateOne {
+	_u.mutation.ResetUserID()
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *OrderItemUpdateOne) SetNillableUserID(v *uint32) *OrderItemUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// AddUserID adds value to the "user_id" field.
+func (_u *OrderItemUpdateOne) AddUserID(v int32) *OrderItemUpdateOne {
+	_u.mutation.AddUserID(v)
+	return _u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (_u *OrderItemUpdateOne) ClearUserID() *OrderItemUpdateOne {
+	_u.mutation.ClearUserID()
 	return _u
 }
 
@@ -862,6 +928,9 @@ func (_u *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, er
 	if _u.mutation.DeletedByCleared() {
 		_spec.ClearField(orderitem.FieldDeletedBy, field.TypeUint32)
 	}
+	if _u.mutation.TenantIDCleared() {
+		_spec.ClearField(orderitem.FieldTenantID, field.TypeUint32)
+	}
 	if value, ok := _u.mutation.OrderID(); ok {
 		_spec.SetField(orderitem.FieldOrderID, field.TypeUint32, value)
 	}
@@ -870,6 +939,15 @@ func (_u *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, er
 	}
 	if _u.mutation.OrderIDCleared() {
 		_spec.ClearField(orderitem.FieldOrderID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.UserID(); ok {
+		_spec.SetField(orderitem.FieldUserID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedUserID(); ok {
+		_spec.AddField(orderitem.FieldUserID, field.TypeUint32, value)
+	}
+	if _u.mutation.UserIDCleared() {
+		_spec.ClearField(orderitem.FieldUserID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.SkuID(); ok {
 		_spec.SetField(orderitem.FieldSkuID, field.TypeUint32, value)

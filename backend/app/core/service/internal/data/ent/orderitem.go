@@ -30,8 +30,12 @@ type OrderItem struct {
 	UpdatedBy *uint32 `json:"updated_by,omitempty"`
 	// 删除者ID
 	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	// 租户ID
+	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 关联的订单ID
 	OrderID *uint32 `json:"order_id,omitempty"`
+	// 用户ID（随所属订单归属，由隐私层强制）
+	UserID *uint32 `json:"user_id,omitempty"`
 	// 关联的 SKU ID
 	SkuID *uint32 `json:"sku_id,omitempty"`
 	// 下单时 SKU 快照（JSON）
@@ -50,7 +54,7 @@ func (*OrderItem) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case orderitem.FieldID, orderitem.FieldCreatedBy, orderitem.FieldUpdatedBy, orderitem.FieldDeletedBy, orderitem.FieldOrderID, orderitem.FieldSkuID, orderitem.FieldQuantity, orderitem.FieldUnitPrice, orderitem.FieldSubtotal:
+		case orderitem.FieldID, orderitem.FieldCreatedBy, orderitem.FieldUpdatedBy, orderitem.FieldDeletedBy, orderitem.FieldTenantID, orderitem.FieldOrderID, orderitem.FieldUserID, orderitem.FieldSkuID, orderitem.FieldQuantity, orderitem.FieldUnitPrice, orderitem.FieldSubtotal:
 			values[i] = new(sql.NullInt64)
 		case orderitem.FieldSkuSnapshot:
 			values[i] = new(sql.NullString)
@@ -119,12 +123,26 @@ func (_m *OrderItem) assignValues(columns []string, values []any) error {
 				_m.DeletedBy = new(uint32)
 				*_m.DeletedBy = uint32(value.Int64)
 			}
+		case orderitem.FieldTenantID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tenant_id", values[i])
+			} else if value.Valid {
+				_m.TenantID = new(uint32)
+				*_m.TenantID = uint32(value.Int64)
+			}
 		case orderitem.FieldOrderID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field order_id", values[i])
 			} else if value.Valid {
 				_m.OrderID = new(uint32)
 				*_m.OrderID = uint32(value.Int64)
+			}
+		case orderitem.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				_m.UserID = new(uint32)
+				*_m.UserID = uint32(value.Int64)
 			}
 		case orderitem.FieldSkuID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -227,8 +245,18 @@ func (_m *OrderItem) String() string {
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")
+	if v := _m.TenantID; v != nil {
+		builder.WriteString("tenant_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
 	if v := _m.OrderID; v != nil {
 		builder.WriteString("order_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.UserID; v != nil {
+		builder.WriteString("user_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

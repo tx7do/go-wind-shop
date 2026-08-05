@@ -35780,8 +35780,12 @@ type OrderItemMutation struct {
 	addupdated_by *int32
 	deleted_by    *uint32
 	adddeleted_by *int32
+	tenant_id     *uint32
+	addtenant_id  *int32
 	order_id      *uint32
 	addorder_id   *int32
+	user_id       *uint32
+	adduser_id    *int32
 	sku_id        *uint32
 	addsku_id     *int32
 	sku_snapshot  *string
@@ -36258,6 +36262,76 @@ func (m *OrderItemMutation) ResetDeletedBy() {
 	delete(m.clearedFields, orderitem.FieldDeletedBy)
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (m *OrderItemMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *OrderItemMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the OrderItem entity.
+// If the OrderItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderItemMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *OrderItemMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *OrderItemMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *OrderItemMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[orderitem.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *OrderItemMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[orderitem.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *OrderItemMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, orderitem.FieldTenantID)
+}
+
 // SetOrderID sets the "order_id" field.
 func (m *OrderItemMutation) SetOrderID(u uint32) {
 	m.order_id = &u
@@ -36326,6 +36400,76 @@ func (m *OrderItemMutation) ResetOrderID() {
 	m.order_id = nil
 	m.addorder_id = nil
 	delete(m.clearedFields, orderitem.FieldOrderID)
+}
+
+// SetUserID sets the "user_id" field.
+func (m *OrderItemMutation) SetUserID(u uint32) {
+	m.user_id = &u
+	m.adduser_id = nil
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *OrderItemMutation) UserID() (r uint32, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the OrderItem entity.
+// If the OrderItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderItemMutation) OldUserID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// AddUserID adds u to the "user_id" field.
+func (m *OrderItemMutation) AddUserID(u int32) {
+	if m.adduser_id != nil {
+		*m.adduser_id += u
+	} else {
+		m.adduser_id = &u
+	}
+}
+
+// AddedUserID returns the value that was added to the "user_id" field in this mutation.
+func (m *OrderItemMutation) AddedUserID() (r int32, exists bool) {
+	v := m.adduser_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *OrderItemMutation) ClearUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	m.clearedFields[orderitem.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *OrderItemMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[orderitem.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *OrderItemMutation) ResetUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	delete(m.clearedFields, orderitem.FieldUserID)
 }
 
 // SetSkuID sets the "sku_id" field.
@@ -36691,7 +36835,7 @@ func (m *OrderItemMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderItemMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, orderitem.FieldCreatedAt)
 	}
@@ -36710,8 +36854,14 @@ func (m *OrderItemMutation) Fields() []string {
 	if m.deleted_by != nil {
 		fields = append(fields, orderitem.FieldDeletedBy)
 	}
+	if m.tenant_id != nil {
+		fields = append(fields, orderitem.FieldTenantID)
+	}
 	if m.order_id != nil {
 		fields = append(fields, orderitem.FieldOrderID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, orderitem.FieldUserID)
 	}
 	if m.sku_id != nil {
 		fields = append(fields, orderitem.FieldSkuID)
@@ -36748,8 +36898,12 @@ func (m *OrderItemMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedBy()
 	case orderitem.FieldDeletedBy:
 		return m.DeletedBy()
+	case orderitem.FieldTenantID:
+		return m.TenantID()
 	case orderitem.FieldOrderID:
 		return m.OrderID()
+	case orderitem.FieldUserID:
+		return m.UserID()
 	case orderitem.FieldSkuID:
 		return m.SkuID()
 	case orderitem.FieldSkuSnapshot:
@@ -36781,8 +36935,12 @@ func (m *OrderItemMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldUpdatedBy(ctx)
 	case orderitem.FieldDeletedBy:
 		return m.OldDeletedBy(ctx)
+	case orderitem.FieldTenantID:
+		return m.OldTenantID(ctx)
 	case orderitem.FieldOrderID:
 		return m.OldOrderID(ctx)
+	case orderitem.FieldUserID:
+		return m.OldUserID(ctx)
 	case orderitem.FieldSkuID:
 		return m.OldSkuID(ctx)
 	case orderitem.FieldSkuSnapshot:
@@ -36844,12 +37002,26 @@ func (m *OrderItemMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDeletedBy(v)
 		return nil
+	case orderitem.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
 	case orderitem.FieldOrderID:
 		v, ok := value.(uint32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetOrderID(v)
+		return nil
+	case orderitem.FieldUserID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
 		return nil
 	case orderitem.FieldSkuID:
 		v, ok := value.(uint32)
@@ -36903,8 +37075,14 @@ func (m *OrderItemMutation) AddedFields() []string {
 	if m.adddeleted_by != nil {
 		fields = append(fields, orderitem.FieldDeletedBy)
 	}
+	if m.addtenant_id != nil {
+		fields = append(fields, orderitem.FieldTenantID)
+	}
 	if m.addorder_id != nil {
 		fields = append(fields, orderitem.FieldOrderID)
+	}
+	if m.adduser_id != nil {
+		fields = append(fields, orderitem.FieldUserID)
 	}
 	if m.addsku_id != nil {
 		fields = append(fields, orderitem.FieldSkuID)
@@ -36932,8 +37110,12 @@ func (m *OrderItemMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedUpdatedBy()
 	case orderitem.FieldDeletedBy:
 		return m.AddedDeletedBy()
+	case orderitem.FieldTenantID:
+		return m.AddedTenantID()
 	case orderitem.FieldOrderID:
 		return m.AddedOrderID()
+	case orderitem.FieldUserID:
+		return m.AddedUserID()
 	case orderitem.FieldSkuID:
 		return m.AddedSkuID()
 	case orderitem.FieldQuantity:
@@ -36972,12 +37154,26 @@ func (m *OrderItemMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDeletedBy(v)
 		return nil
+	case orderitem.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
 	case orderitem.FieldOrderID:
 		v, ok := value.(int32)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddOrderID(v)
+		return nil
+	case orderitem.FieldUserID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUserID(v)
 		return nil
 	case orderitem.FieldSkuID:
 		v, ok := value.(int32)
@@ -37033,8 +37229,14 @@ func (m *OrderItemMutation) ClearedFields() []string {
 	if m.FieldCleared(orderitem.FieldDeletedBy) {
 		fields = append(fields, orderitem.FieldDeletedBy)
 	}
+	if m.FieldCleared(orderitem.FieldTenantID) {
+		fields = append(fields, orderitem.FieldTenantID)
+	}
 	if m.FieldCleared(orderitem.FieldOrderID) {
 		fields = append(fields, orderitem.FieldOrderID)
+	}
+	if m.FieldCleared(orderitem.FieldUserID) {
+		fields = append(fields, orderitem.FieldUserID)
 	}
 	if m.FieldCleared(orderitem.FieldSkuID) {
 		fields = append(fields, orderitem.FieldSkuID)
@@ -37083,8 +37285,14 @@ func (m *OrderItemMutation) ClearField(name string) error {
 	case orderitem.FieldDeletedBy:
 		m.ClearDeletedBy()
 		return nil
+	case orderitem.FieldTenantID:
+		m.ClearTenantID()
+		return nil
 	case orderitem.FieldOrderID:
 		m.ClearOrderID()
+		return nil
+	case orderitem.FieldUserID:
+		m.ClearUserID()
 		return nil
 	case orderitem.FieldSkuID:
 		m.ClearSkuID()
@@ -37127,8 +37335,14 @@ func (m *OrderItemMutation) ResetField(name string) error {
 	case orderitem.FieldDeletedBy:
 		m.ResetDeletedBy()
 		return nil
+	case orderitem.FieldTenantID:
+		m.ResetTenantID()
+		return nil
 	case orderitem.FieldOrderID:
 		m.ResetOrderID()
+		return nil
+	case orderitem.FieldUserID:
+		m.ResetUserID()
 		return nil
 	case orderitem.FieldSkuID:
 		m.ResetSkuID()

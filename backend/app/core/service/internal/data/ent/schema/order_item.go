@@ -8,10 +8,21 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/tx7do/go-crud/entgo/mixin"
+
+	appPrivacy "go-wind-shop/pkg/entgo/privacy"
 )
 
 type OrderItem struct {
 	ent.Schema
+}
+
+// Policy 注入 UserPrivacy：订单项随所属订单按用户隔离。
+// user_id 在 Create 时由 UserPrivacy.EvalMutation 强制覆盖为 viewer（即所属 Order
+// 的 user_id，因 Order 也受 UserPrivacy 约束、归属同一 viewer），List/Update/Delete
+// 注入 user_id=viewer 过滤。防枚举他人 order_id 越权查/改他人订单项（与 CartItem
+// 同模式）。系统/平台视图放行。
+func (OrderItem) Policy() ent.Policy {
+	return appPrivacy.UserPrivacy{}
 }
 
 func (OrderItem) Annotations() []schema.Annotation {
@@ -30,6 +41,11 @@ func (OrderItem) Fields() []ent.Field {
 	return []ent.Field{
 		field.Uint32("order_id").
 			Comment("关联的订单ID").
+			Optional().
+			Nillable(),
+
+		field.Uint32("user_id").
+			Comment("用户ID（随所属订单归属，由隐私层强制）").
 			Optional().
 			Nillable(),
 
@@ -68,6 +84,7 @@ func (OrderItem) Mixin() []ent.Mixin {
 		mixin.AutoIncrementId{},
 		mixin.TimeAt{},
 		mixin.OperatorID{},
+		mixin.TenantID[uint32]{},
 	}
 }
 

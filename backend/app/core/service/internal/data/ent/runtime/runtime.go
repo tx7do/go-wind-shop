@@ -629,20 +629,35 @@ func init() {
 	// order.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	order.IDValidator = orderDescID.Validators[0].(func(uint32) error)
 	orderitemMixin := schema.OrderItem{}.Mixin()
+	orderitem.Policy = privacy.NewPolicies(orderitemMixin[3], schema.OrderItem{})
+	orderitem.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := orderitem.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
 	orderitemMixinFields0 := orderitemMixin[0].Fields()
 	_ = orderitemMixinFields0
+	orderitemMixinFields3 := orderitemMixin[3].Fields()
+	_ = orderitemMixinFields3
 	orderitemFields := schema.OrderItem{}.Fields()
 	_ = orderitemFields
+	// orderitemDescTenantID is the schema descriptor for tenant_id field.
+	orderitemDescTenantID := orderitemMixinFields3[0].Descriptor()
+	// orderitem.DefaultTenantID holds the default value on creation for the tenant_id field.
+	orderitem.DefaultTenantID = orderitemDescTenantID.Default.(uint32)
 	// orderitemDescQuantity is the schema descriptor for quantity field.
-	orderitemDescQuantity := orderitemFields[3].Descriptor()
+	orderitemDescQuantity := orderitemFields[4].Descriptor()
 	// orderitem.DefaultQuantity holds the default value on creation for the quantity field.
 	orderitem.DefaultQuantity = orderitemDescQuantity.Default.(int32)
 	// orderitemDescUnitPrice is the schema descriptor for unit_price field.
-	orderitemDescUnitPrice := orderitemFields[4].Descriptor()
+	orderitemDescUnitPrice := orderitemFields[5].Descriptor()
 	// orderitem.DefaultUnitPrice holds the default value on creation for the unit_price field.
 	orderitem.DefaultUnitPrice = orderitemDescUnitPrice.Default.(int64)
 	// orderitemDescSubtotal is the schema descriptor for subtotal field.
-	orderitemDescSubtotal := orderitemFields[5].Descriptor()
+	orderitemDescSubtotal := orderitemFields[6].Descriptor()
 	// orderitem.DefaultSubtotal holds the default value on creation for the subtotal field.
 	orderitem.DefaultSubtotal = orderitemDescSubtotal.Default.(int64)
 	// orderitemDescID is the schema descriptor for id field.

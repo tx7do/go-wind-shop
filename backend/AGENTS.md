@@ -557,10 +557,10 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 
 ### 行级隔离（UserPrivacy）
 
-`Order` / `Cart` / `CartItem` / `PaymentTransaction` 四实体的 schema `Policy()` 返回 `appPrivacy.UserPrivacy{}`（`pkg/entgo/privacy/user_scope.go`）：
-- 普通用户 viewer：`EvalQuery` 注入 `WHERE user_id = viewer.uid`，`EvalMutation`（Create）强制 `SetUserID(viewer.uid)`、（Update/Delete）注入 `user_id` 谓词。防同租户内越权看/改他人订单/购物车/购物车项/支付流水。
+`Order` / `OrderItem` / `Cart` / `CartItem` / `PaymentTransaction` 五实体的 schema `Policy()` 返回 `appPrivacy.UserPrivacy{}`（`pkg/entgo/privacy/user_scope.go`）：
+- 普通用户 viewer：`EvalQuery` 注入 `WHERE user_id = viewer.uid`，`EvalMutation`（Create）强制 `SetUserID(viewer.uid)`、（Update/Delete）注入 `user_id` 谓词。防同租户内越权看/改他人订单/订单项/购物车/购物车项/支付流水。
 - 系统/平台 viewer（如 asynq 超时任务的 `NewSystemViewerContext`）：`IsSystemContext()==true` 短路放行，无 user_id 过滤。
-- `CartItem` 的 `user_id` 随所属 `Cart` 归属——加购时 `CartItem.Create` 由 `UserPrivacy.EvalMutation` 强制 `SetUserID(viewer)`，与所属 Cart 的 `user_id`（同为 viewer）一致；查询时 `EvalQuery` 注入 `user_id=viewer`，使"枚举他人 cart_id 越权查同租户购物车项"的缺口在 ent 隐私层闭合（此前 CartItem 仅有 TenantPrivacy，存在枚举型越权）。
+- `CartItem` / `OrderItem` 的 `user_id` 随所属 `Cart` / `Order` 归属——Create 时由 `UserPrivacy.EvalMutation` 强制 `SetUserID(viewer)`，与所属父实体（Cart/Order，同为 viewer）的 `user_id` 一致；查询时 `EvalQuery` 注入 `user_id=viewer`，使"枚举他人 cart_id / order_id 越权查同租户购物车项 / 订单项"的缺口在 ent 隐私层闭合（此前两子实体仅 TenantPrivacy 或无隔离，存在枚举型越权）。
 - `PaymentRefund` 不持 `user_id`，仅 `TenantID` 隔离（退款记录同租户内可见，按业务设计）。
 
 ### 乐观并发状态机（expected_status）

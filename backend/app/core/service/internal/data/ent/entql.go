@@ -729,7 +729,9 @@ var schemaGraph = func() *sqlgraph.Schema {
 			orderitem.FieldCreatedBy:   {Type: field.TypeUint32, Column: orderitem.FieldCreatedBy},
 			orderitem.FieldUpdatedBy:   {Type: field.TypeUint32, Column: orderitem.FieldUpdatedBy},
 			orderitem.FieldDeletedBy:   {Type: field.TypeUint32, Column: orderitem.FieldDeletedBy},
+			orderitem.FieldTenantID:    {Type: field.TypeUint32, Column: orderitem.FieldTenantID},
 			orderitem.FieldOrderID:     {Type: field.TypeUint32, Column: orderitem.FieldOrderID},
+			orderitem.FieldUserID:      {Type: field.TypeUint32, Column: orderitem.FieldUserID},
 			orderitem.FieldSkuID:       {Type: field.TypeUint32, Column: orderitem.FieldSkuID},
 			orderitem.FieldSkuSnapshot: {Type: field.TypeString, Column: orderitem.FieldSkuSnapshot},
 			orderitem.FieldQuantity:    {Type: field.TypeInt32, Column: orderitem.FieldQuantity},
@@ -4422,9 +4424,19 @@ func (f *OrderItemFilter) WhereDeletedBy(p entql.Uint32P) {
 	f.Where(p.Field(orderitem.FieldDeletedBy))
 }
 
+// WhereTenantID applies the entql uint32 predicate on the tenant_id field.
+func (f *OrderItemFilter) WhereTenantID(p entql.Uint32P) {
+	f.Where(p.Field(orderitem.FieldTenantID))
+}
+
 // WhereOrderID applies the entql uint32 predicate on the order_id field.
 func (f *OrderItemFilter) WhereOrderID(p entql.Uint32P) {
 	f.Where(p.Field(orderitem.FieldOrderID))
+}
+
+// WhereUserID applies the entql uint32 predicate on the user_id field.
+func (f *OrderItemFilter) WhereUserID(p entql.Uint32P) {
+	f.Where(p.Field(orderitem.FieldUserID))
 }
 
 // WhereSkuID applies the entql uint32 predicate on the sku_id field.

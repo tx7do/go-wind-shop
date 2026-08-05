@@ -1529,7 +1529,9 @@ var (
 		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
 		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "order_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的订单ID"},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "用户ID（随所属订单归属，由隐私层强制）"},
 		{Name: "sku_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的 SKU ID"},
 		{Name: "sku_snapshot", Type: field.TypeString, Nullable: true, Comment: "下单时 SKU 快照（JSON）"},
 		{Name: "quantity", Type: field.TypeInt32, Nullable: true, Comment: "数量", Default: 0},
@@ -1546,7 +1548,7 @@ var (
 			{
 				Name:    "orderitem_order_id",
 				Unique:  false,
-				Columns: []*schema.Column{MallOrderItemsColumns[7]},
+				Columns: []*schema.Column{MallOrderItemsColumns[8]},
 			},
 		},
 	}

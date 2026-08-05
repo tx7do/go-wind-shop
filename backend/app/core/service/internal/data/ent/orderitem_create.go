@@ -106,6 +106,20 @@ func (_c *OrderItemCreate) SetNillableDeletedBy(v *uint32) *OrderItemCreate {
 	return _c
 }
 
+// SetTenantID sets the "tenant_id" field.
+func (_c *OrderItemCreate) SetTenantID(v uint32) *OrderItemCreate {
+	_c.mutation.SetTenantID(v)
+	return _c
+}
+
+// SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
+func (_c *OrderItemCreate) SetNillableTenantID(v *uint32) *OrderItemCreate {
+	if v != nil {
+		_c.SetTenantID(*v)
+	}
+	return _c
+}
+
 // SetOrderID sets the "order_id" field.
 func (_c *OrderItemCreate) SetOrderID(v uint32) *OrderItemCreate {
 	_c.mutation.SetOrderID(v)
@@ -116,6 +130,20 @@ func (_c *OrderItemCreate) SetOrderID(v uint32) *OrderItemCreate {
 func (_c *OrderItemCreate) SetNillableOrderID(v *uint32) *OrderItemCreate {
 	if v != nil {
 		_c.SetOrderID(*v)
+	}
+	return _c
+}
+
+// SetUserID sets the "user_id" field.
+func (_c *OrderItemCreate) SetUserID(v uint32) *OrderItemCreate {
+	_c.mutation.SetUserID(v)
+	return _c
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_c *OrderItemCreate) SetNillableUserID(v *uint32) *OrderItemCreate {
+	if v != nil {
+		_c.SetUserID(*v)
 	}
 	return _c
 }
@@ -203,7 +231,9 @@ func (_c *OrderItemCreate) Mutation() *OrderItemMutation {
 
 // Save creates the OrderItem in the database.
 func (_c *OrderItemCreate) Save(ctx context.Context) (*OrderItem, error) {
-	_c.defaults()
+	if err := _c.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, _c.sqlSave, _c.mutation, _c.hooks)
 }
 
@@ -230,7 +260,11 @@ func (_c *OrderItemCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (_c *OrderItemCreate) defaults() {
+func (_c *OrderItemCreate) defaults() error {
+	if _, ok := _c.mutation.TenantID(); !ok {
+		v := orderitem.DefaultTenantID
+		_c.mutation.SetTenantID(v)
+	}
 	if _, ok := _c.mutation.Quantity(); !ok {
 		v := orderitem.DefaultQuantity
 		_c.mutation.SetQuantity(v)
@@ -243,6 +277,7 @@ func (_c *OrderItemCreate) defaults() {
 		v := orderitem.DefaultSubtotal
 		_c.mutation.SetSubtotal(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -309,9 +344,17 @@ func (_c *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 		_spec.SetField(orderitem.FieldDeletedBy, field.TypeUint32, value)
 		_node.DeletedBy = &value
 	}
+	if value, ok := _c.mutation.TenantID(); ok {
+		_spec.SetField(orderitem.FieldTenantID, field.TypeUint32, value)
+		_node.TenantID = &value
+	}
 	if value, ok := _c.mutation.OrderID(); ok {
 		_spec.SetField(orderitem.FieldOrderID, field.TypeUint32, value)
 		_node.OrderID = &value
+	}
+	if value, ok := _c.mutation.UserID(); ok {
+		_spec.SetField(orderitem.FieldUserID, field.TypeUint32, value)
+		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.SkuID(); ok {
 		_spec.SetField(orderitem.FieldSkuID, field.TypeUint32, value)
@@ -517,6 +560,30 @@ func (u *OrderItemUpsert) ClearOrderID() *OrderItemUpsert {
 	return u
 }
 
+// SetUserID sets the "user_id" field.
+func (u *OrderItemUpsert) SetUserID(v uint32) *OrderItemUpsert {
+	u.Set(orderitem.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *OrderItemUpsert) UpdateUserID() *OrderItemUpsert {
+	u.SetExcluded(orderitem.FieldUserID)
+	return u
+}
+
+// AddUserID adds v to the "user_id" field.
+func (u *OrderItemUpsert) AddUserID(v uint32) *OrderItemUpsert {
+	u.Add(orderitem.FieldUserID, v)
+	return u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *OrderItemUpsert) ClearUserID() *OrderItemUpsert {
+	u.SetNull(orderitem.FieldUserID)
+	return u
+}
+
 // SetSkuID sets the "sku_id" field.
 func (u *OrderItemUpsert) SetSkuID(v uint32) *OrderItemUpsert {
 	u.Set(orderitem.FieldSkuID, v)
@@ -650,6 +717,9 @@ func (u *OrderItemUpsertOne) UpdateNewValues() *OrderItemUpsertOne {
 		}
 		if _, exists := u.create.mutation.CreatedAt(); exists {
 			s.SetIgnore(orderitem.FieldCreatedAt)
+		}
+		if _, exists := u.create.mutation.TenantID(); exists {
+			s.SetIgnore(orderitem.FieldTenantID)
 		}
 	}))
 	return u
@@ -833,6 +903,34 @@ func (u *OrderItemUpsertOne) UpdateOrderID() *OrderItemUpsertOne {
 func (u *OrderItemUpsertOne) ClearOrderID() *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.ClearOrderID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *OrderItemUpsertOne) SetUserID(v uint32) *OrderItemUpsertOne {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// AddUserID adds v to the "user_id" field.
+func (u *OrderItemUpsertOne) AddUserID(v uint32) *OrderItemUpsertOne {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.AddUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *OrderItemUpsertOne) UpdateUserID() *OrderItemUpsertOne {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *OrderItemUpsertOne) ClearUserID() *OrderItemUpsertOne {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.ClearUserID()
 	})
 }
 
@@ -1154,6 +1252,9 @@ func (u *OrderItemUpsertBulk) UpdateNewValues() *OrderItemUpsertBulk {
 			if _, exists := b.mutation.CreatedAt(); exists {
 				s.SetIgnore(orderitem.FieldCreatedAt)
 			}
+			if _, exists := b.mutation.TenantID(); exists {
+				s.SetIgnore(orderitem.FieldTenantID)
+			}
 		}
 	}))
 	return u
@@ -1337,6 +1438,34 @@ func (u *OrderItemUpsertBulk) UpdateOrderID() *OrderItemUpsertBulk {
 func (u *OrderItemUpsertBulk) ClearOrderID() *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.ClearOrderID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *OrderItemUpsertBulk) SetUserID(v uint32) *OrderItemUpsertBulk {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// AddUserID adds v to the "user_id" field.
+func (u *OrderItemUpsertBulk) AddUserID(v uint32) *OrderItemUpsertBulk {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.AddUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *OrderItemUpsertBulk) UpdateUserID() *OrderItemUpsertBulk {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *OrderItemUpsertBulk) ClearUserID() *OrderItemUpsertBulk {
+	return u.Update(func(s *OrderItemUpsert) {
+		s.ClearUserID()
 	})
 }
 
