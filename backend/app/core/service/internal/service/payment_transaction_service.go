@@ -99,11 +99,52 @@ func (s *PaymentTransactionService) Update(ctx context.Context, req *paymentV1.U
 		return nil, paymentV1.ErrorBadRequest("invalid parameter")
 	}
 
+	// 支付流水状态机校验：状态变更须先查库确认当前状态，仅允许白名单内转换。
+	//   SUCCEEDED → REFUNDED   （退款联动，由 PaymentRefundService.Update 调用）
+	//   PENDING → FAILED/SUCCEEDED  （支付回调，真实网关接入后）
+	// 其他转换（含 REFUNDED→任意、FAILED→任意、SUCCEEDED→FAILED 等）拒绝。
+	// 这防止退款联动把流水翻 REFUNDED 后，又被并发 Update 翻回 SUCCEEDED。
+	targetStatus := req.Data.GetStatus()
+	if targetStatus != paymentV1.PaymentTransaction_STATUS_UNSPECIFIED && req.GetId() != 0 {
+		existing, gErr := s.repo.Get(ctx, &paymentV1.GetPaymentTransactionRequest{
+			QueryBy: &paymentV1.GetPaymentTransactionRequest_Id{Id: req.GetId()},
+		})
+		if gErr != nil || existing == nil {
+			return nil, paymentV1.ErrorBadRequest("payment transaction not found")
+		}
+		if !isAllowedTxTransition(existing.GetStatus(), targetStatus) {
+			s.log.Warnf("illegal payment transaction status transition: %v -> %v", existing.GetStatus(), targetStatus)
+			return nil, paymentV1.ErrorBadRequest("illegal payment transaction status transition: %v -> %v", existing.GetStatus(), targetStatus)
+		}
+	}
+
 	if err := s.repo.Update(ctx, req); err != nil {
 		return nil, err
 	}
 
 	return &emptypb.Empty{}, nil
+}
+
+// isAllowedTxTransition 校验支付流水状态转换是否在允许列表内。
+// 仅允许：
+//   PENDING → SUCCEEDED / FAILED   （支付回调）
+//   SUCCEEDED → REFUNDED            （退款联动）
+// 终态 REFUNDED/FAILED 无出边（吸收态）。
+func isAllowedTxTransition(from, to paymentV1.PaymentTransaction_Status) bool {
+	allowed := map[paymentV1.PaymentTransaction_Status]map[paymentV1.PaymentTransaction_Status]bool{
+		paymentV1.PaymentTransaction_PENDING: {
+			paymentV1.PaymentTransaction_SUCCEEDED: true,
+			paymentV1.PaymentTransaction_FAILED:    true,
+		},
+		paymentV1.PaymentTransaction_SUCCEEDED: {
+			paymentV1.PaymentTransaction_REFUNDED: true,
+		},
+	}
+	allowedTo, ok := allowed[from]
+	if !ok {
+		return false
+	}
+	return allowedTo[to]
 }
 
 func (s *PaymentTransactionService) Delete(ctx context.Context, req *paymentV1.DeletePaymentTransactionRequest) (*emptypb.Empty, error) {

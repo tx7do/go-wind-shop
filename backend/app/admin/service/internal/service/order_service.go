@@ -62,6 +62,20 @@ func (s *OrderService) Update(ctx context.Context, req *orderV1.UpdateOrderReque
 		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
 	}
 
+	// 状态变更必须携带 expected_status 前置条件（core OrderService.Update 强制要求）。
+	// 发货（PAID→FULFILLED）、关闭（PAID→CLOSED 或 FULFILLED→CLOSED）均属状态机白名单内转换，
+	// 这里按目标状态补全 expected_status，让 core 的乐观状态机校验通过：
+	//   - 目标 FULFILLED：当前须为 PAID
+	//   - 目标 CLOSED：当前须为 PAID 或 FULFILLED
+	// 目标 PENDING_PAYMENT/CANCELLED 不由 admin 发起，无需补；其他目标态留空由 core 拒绝。
+	targetStatus := req.Data.GetStatus()
+	switch targetStatus {
+	case orderV1.Order_FULFILLED:
+		req.ExpectedStatus = []orderV1.Order_Status{orderV1.Order_PAID}
+	case orderV1.Order_CLOSED:
+		req.ExpectedStatus = []orderV1.Order_Status{orderV1.Order_PAID, orderV1.Order_FULFILLED}
+	}
+
 	return s.orderServiceClient.Update(ctx, req)
 }
 

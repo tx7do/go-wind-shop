@@ -571,8 +571,13 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 - `OrderService.Update` 强制：任何 `status` 变更（非 UNSPECIFIED）必须携带 `expected_status`，否则 `ErrorBadRequest`。
 - **转换合法性校验**：`OrderService.Update` 在调 repo 前，对每个 `(expected_status, target_status)` 对调 `isAllowedTransition` 白名单校验。仅允许 `PENDING_PAYMENT→PAID`（MarkPaid）、`PENDING_PAYMENT→CANCELLED`（超时）、`PAID→FULFILLED`、`PAID→CLOSED`、`FULFILLED→CLOSED`。终态 `CANCELLED`/`CLOSED` 为吸收态不可再翻转。非法转换返回 `ErrorBadRequest`。
 - 这保证 MarkPaid（`[PENDING_PAYMENT]→PAID`）与超时取消（`[PENDING_PAYMENT]→CANCELLED`）都走乐观并发路径，防并发覆盖终态。
+- **admin BFF 补 `expected_status`**：`admin-service` 的 `OrderService.Update`（`app/admin/service/internal/service/order_service.go`）在转发前按目标状态补 `expected_status`——目标 `FULFILLED` 补 `[PAID]`，目标 `CLOSED` 补 `[PAID, FULFILLED]`。这是 admin 发货/关闭操作能与 core 状态机衔接的前提（admin 前端 composable 不直接传 `expected_status`，由 BFF 按白名单补全）。目标 `PENDING_PAYMENT`/`CANCELLED` 不由 admin 发起，不补。
 
-`PaymentRefundService.Update` 同样带退款状态机：仅允许 `PENDING→SUCCEEDED` 与 `PENDING→FAILED`。当退款翻 `SUCCEEDED` 时，同调用 `PaymentTransactionRepo.Update` 将关联 `payment_transaction`（按 `transaction_id`）翻为 `REFUNDED`，闭合退款分支。
+`PaymentRefundService.Update` 同样带退款状态机：仅允许 `PENDING→SUCCEEDED` 与 `PENDING→FAILED`。当退款翻 `SUCCEEDED` 时，联动前先 `transactionRepo.Get` 校验关联 `payment_transaction` 仍为 `SUCCEEDED`（防已被孤儿清理翻 `FAILED` 或已被并发退款翻 `REFUNDED` 时仍盲目翻状态），校验通过才调 `PaymentTransactionRepo.Update` 翻为 `REFUNDED`，闭合退款分支。
+
+**`PaymentTransactionService.Update` 带支付流水状态机**（`isAllowedTxTransition`）：仅允许 `PENDING→SUCCEEDED`/`PENDING→FAILED`（支付回调）与 `SUCCEEDED→REFUNDED`（退款联动）。终态 `REFUNDED`/`FAILED` 为吸收态无出边。这防退款联动把流水翻 `REFUNDED` 后又被并发 `Update` 翻回 `SUCCEEDED`。状态变更前先 `repo.Get` 查当前状态校验转换合法性，非法返回 `ErrorBadRequest`。
+
+**退款 Create 校验**（`PaymentRefundService.Create`）：退款记录必须关联 `transaction_id`，且该流水须存在、属同租户、当前 `SUCCEEDED`（只能对已成功支付退款）；并通过 List refund 检查同 transaction 是否已存在 `SUCCEEDED` 退款（重复退款保护）。任一校验失败返回 `ErrorBadRequest`。
 
 ### 订单超时过期（ExpireOrderByTimeout / asynq 延时任务）
 
