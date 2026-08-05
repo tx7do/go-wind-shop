@@ -18,7 +18,7 @@
 - **搜索**: ElasticSearch / OpenSearch
 - **服务发现**: etcd
 - **可观测性**: OpenTelemetry + Jaeger
-- **分布式事务**: DTM
+- **异步任务**: Asynq（延时任务，如订单超时）
 - **日志**: zap / logrus（经 kratos-bootstrap 封装为 `log.Helper`）
 
 **基础设施全家桶**: 大量依赖 `tx7do` 系列库（go-utils / go-crud / kratos-bootstrap / kratos-transport / kratos-authn/authz），是项目基建主力。修改这些集成点时需先理解其封装。
@@ -31,7 +31,7 @@ HTTP/REST 请求
        └─ gRPC → core-service  (核心业务 + 数据落点)
                  ├─ ent ORM → PostgreSQL
                  ├─ Redis / MinIO / ElasticSearch
-                 └─ DTM / Asynq
+                 └─ Asynq（延时任务）
 
 app-service (前台 BFF，REST:6700) ──gRPC──→ core-service
 core-service (gRPC，真正干活)
@@ -552,6 +552,7 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 `app/core/service/internal/service/payment_transaction_service.go`：
 - **MVP 阶段支付网关为 STUB**：`Create` 直接将流水状态置 `SUCCEEDED`（忽略客户端传入）。
 - **进程内 MarkPaid**：若流水携带 `order_id`，则**直接调用** `OrderService.Update`（非 gRPC，同进程方法调用）推进订单 `PENDING_PAYMENT → PAID`，携带 `expected_status = [PENDING_PAYMENT]` 前置条件。
+- **无需 DTM**：`PaymentTransactionService` 与 `OrderService` 同属 core-service 单二进制，跨域调用为进程内方法调用，非跨服务 RPC。三服务架构（core + admin/app BFF）中 BFF 仅转发、不持库、不参与交易编排，故交易域无跨服务事务，DTM 不适用。若未来将支付/订单拆为独立微服务才需引入分布式事务。
 - 真实网关（Stripe/PayPal webhook）接入后：`Create` 改为创建 `PENDING` 流水，由 webhook 回调更新 `SUCCEEDED` 再触发 MarkPaid。
 
 ### 行级隔离（UserPrivacy）
@@ -607,7 +608,7 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 
 - 真实支付网关（Stripe/PayPal/Alipay webhook）替换 stub
 - ~~SkuPrice 多币种行接入 `OrderService.Create` 的 unit_price 读取~~ ✅ 已完成：`OrderService.Create` 事务内按 `(sku_id, settlement_currency)` 查 `SkuPrice` 取 `unit_price`，缺失/非正金额回滚事务；OrderItem 持该单价快照，订单 `total_amount` 由后端事务内回写（前端传 0 无影响）。
-- DTM 分布式事务替换进程内 MarkPaid
+- ~~DTM 分布式事务替换进程内 MarkPaid~~ ❌ 不适用：三服务架构中 PaymentTransactionService 与 OrderService 同属 core-service 单二进制，MarkPaid 为进程内方法调用（非跨服务 RPC），无跨服务事务。BFF 不持库不参与交易编排。DTM 仅在将来把支付/订单拆为独立微服务时才需引入，当前架构不需要。
 - ~~类目 / 品牌 / 示例商品的种子数据~~ ✅ 已完成：`sql/{mysql,postgresql}-demo-data.sql` 已补齐商城目录域（类目/品牌/商品/属性/SKU/价格 + 翻译）与交易域（订单/购物车/支付，含演示顾客 `shopper`）的演示数据；`sys_languages` 已在两份 SQL 中对齐（zh-CN/en-US）。注：交易数据仅为演示，真实支付/退款仍为 stub。
 - 订单超时的真实退款逻辑（当前 stub 无真实扣款，无需退款）
 
