@@ -92,6 +92,15 @@ export default defineNuxtConfig({
             tokenKey: process.env.NUXT_PUBLIC_TOKEN_KEY || 'access_token',
             refreshTokenKey: process.env.NUXT_PUBLIC_REFRESH_TOKEN_KEY || 'refresh_token',
             aesKey: process.env.NUXT_PUBLIC_AES_KEY || '',
+            // pinia-plugin-persistedstate v4 默认用 cookie 存储（SSR 友好）。
+            // 显式约束 cookie 属性：sameSite=lax 防 CSRF 跨站携带，secure 仅生产
+            // 启用（开发 HTTP 下 secure 会导致 cookie 不写入，丢失登录态）。
+            piniaPluginPersistedstate: {
+                cookieOptions: {
+                    sameSite: 'lax',
+                    secure: process.env.NODE_ENV === 'production',
+                },
+            },
         },
     },
     pinia: {

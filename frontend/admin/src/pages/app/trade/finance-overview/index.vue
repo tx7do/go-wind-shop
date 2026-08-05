@@ -160,13 +160,33 @@ const txStatusTagTypeMap: Record<
 
 // ============================================================
 // 金额聚合（样本内 SUCCEEDED 记录求和）。
-// 金额字段为字符串，Number 解析失败回退 0。
+// 跨币种不可直接相减——按币种分组，仅取样本中频次最高的主币种做展示，
+// 其他币种忽略并在卡片标注。金额字段为 number（int64 经 protojson 以 number
+// 下发），Number 解析失败回退 0。
 // ============================================================
+const dominantCurrency = computed(() => {
+  const items = (txQuery.data.value?.items ?? []) as any[];
+  const counts = new Map<string, number>();
+  for (const it of items) {
+    const c = it.currency;
+    if (typeof c === "string" && c) counts.set(c, (counts.get(c) ?? 0) + 1);
+  }
+  let dom = "";
+  let domN = 0;
+  for (const [c, n] of counts) {
+    if (n > domN) {
+      dom = c;
+      domN = n;
+    }
+  }
+  return dom;
+});
 const txVolume = computed(() => {
   const items = (txQuery.data.value?.items ?? []) as any[];
+  const dom = dominantCurrency.value;
   let sum = 0;
   for (const it of items) {
-    if (it.status === "SUCCEEDED") {
+    if (it.status === "SUCCEEDED" && it.currency === dom) {
       sum += Number(it.amount ?? 0);
     }
   }
@@ -174,9 +194,10 @@ const txVolume = computed(() => {
 });
 const refundVolume = computed(() => {
   const items = (refundQuery.data.value?.items ?? []) as any[];
+  const dom = dominantCurrency.value;
   let sum = 0;
   for (const it of items) {
-    if (it.status === "SUCCEEDED") {
+    if (it.status === "SUCCEEDED" && it.currency === dom) {
       sum += Number(it.amount ?? 0);
     }
   }
@@ -184,14 +205,15 @@ const refundVolume = computed(() => {
 });
 
 // ============================================================
-// 趋势数据：按 createdAt 的日期（YYYY-MM-DD）聚合 SUCCEEDED 流水金额。
+// 趋势数据：按 createdAt 的日期（YYYY-MM-DD）聚合主币种 SUCCEEDED 流水金额。
 // 按日期升序输出，供折线图。
 // ============================================================
 const txTrend = computed(() => {
   const items = (txQuery.data.value?.items ?? []) as any[];
+  const dom = dominantCurrency.value;
   const byDate = new Map<string, number>();
   for (const it of items) {
-    if (it.status !== "SUCCEEDED") continue;
+    if (it.status !== "SUCCEEDED" || it.currency !== dom) continue;
     const ts = it.createdAt ?? "";
     const day = typeof ts === "string" ? ts.slice(0, 10) : "";
     if (!day) continue;
@@ -207,6 +229,8 @@ const txTrend = computed(() => {
 
 // ============================================================
 // 状态分布：按 status 聚合金额。颜色由图表组件内按 semantic 解析。
+// 口径与 txVolume 对齐：REFUNDED 属退款联动后的终态，其金额已计入退款侧，
+// 不再纳入"支付状态金额分布"，避免与交易总额卡片口径矛盾。
 // 非法/未知 key 被过滤。
 // ============================================================
 const txStatusSlices = computed(() => {
@@ -215,6 +239,7 @@ const txStatusSlices = computed(() => {
   for (const it of items) {
     const st = it.status;
     if (typeof st !== "string") continue;
+    if (st === "REFUNDED") continue; // 终态不进分布饼，与 txVolume 口径一致
     byStatus.set(st, (byStatus.get(st) ?? 0) + Number(it.amount ?? 0));
   }
   const slices: {

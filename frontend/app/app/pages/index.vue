@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { useListCategories, useListProducts } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { XIcon } from '@/plugins/xicon';
+import { PaginationQuery } from '@/core/transport/rest';
 
 const { t } = useI18n();
 const localePath = useLocalePath();
@@ -51,12 +52,12 @@ const categories = computed<CategoryEntity[]>(() => {
 });
 const categoriesLoading = computed(() => categoriesQuery.isLoading.value);
 
-const featuredQuery = useListProducts({
-  page: 1,
-  pageSize: 12,
-  noPaging: false,
-  sorting: [{ field: 'sort_order', direction: 'asc' }],
-});
+const featuredQuery = useListProducts(
+  new PaginationQuery({
+    paging: { page: 1, pageSize: 12 },
+    orderBy: ['sort_order'],
+  }).toRawParams(),
+);
 const featured = computed<ProductEntity[]>(() => {
   const items = (featuredQuery.data?.value as any)?.items ?? [];
   return (items as ProductEntity[]) ?? [];

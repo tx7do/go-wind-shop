@@ -3,6 +3,7 @@ import { computed, ref } from 'vue';
 import { useGetCategory, useListCategories, useListProducts, useListBrands } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { XIcon } from '@/plugins/xicon';
+import { PaginationQuery } from '@/core/transport/rest';
 
 const route = useRoute();
 const { t } = useI18n();
@@ -84,25 +85,23 @@ const selectedSort = ref<'featured' | 'latest'>('featured');
 const selectedBrandId = ref<number | undefined>(undefined);
 
 // 该分类下的商品（按 categoryId 过滤 + 可选 brandId + 排序）
-// sorting 传单对象（修正 generated 客户端第 332 行把 sorting 当单对象序列化的 bug，
-// 传数组形式时 .field 为 undefined，排序参数不会发送）
+// 排序走 orderBy 字符串数组（后端 ListWithPaging 的 orderByStringConverter 路径，
+// 非 sorting 结构化切片——后者被 generated 客户端按单对象序列化，与后端
+// []*Sorting 切片不匹配，排序参数会丢失）。
 const productsQuery = useListProducts(
   computed(() => {
     const q: Record<string, unknown> = { categoryId: categoryId.value };
     if (selectedBrandId.value !== undefined) {
       q.brandId = selectedBrandId.value;
     }
-    const sorting =
-      selectedSort.value === 'latest'
-        ? { field: 'created_at', direction: 'DESC' }
-        : { field: 'sort_order', direction: 'ASC' };
-    return {
-      page: 1,
-      pageSize: 48,
-      noPaging: false,
-      query: JSON.stringify(q),
-      sorting: sorting as any,
-    };
+    // orderBy 用 "-" 前缀表示 DESC，无前缀 ASC（与后端 OrderByStringConverter 约定一致）
+    const orderBy =
+      selectedSort.value === 'latest' ? ['-created_at'] : ['sort_order'];
+    return new PaginationQuery({
+      paging: { page: 1, pageSize: 48 },
+      formValues: q,
+      orderBy,
+    });
   }),
 );
 const products = computed<ProductEntity[]>(() => {

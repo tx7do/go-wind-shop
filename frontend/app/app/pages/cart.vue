@@ -454,13 +454,14 @@ function goCheckout() {
         <!-- 表头（含全选） -->
         <div class="border-b border-border bg-muted/40 px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           <div class="grid grid-cols-[32px_1fr_120px_160px_48px] items-center gap-4">
-            <span>
+            <span class="flex items-center gap-2">
               <input
                 type="checkbox"
                 class="h-4 w-4 rounded border-border accent-[hsl(var(--primary))]"
                 :checked="allSelected"
                 @change="toggleSelectAll(($event.target as HTMLInputElement).checked)"
               />
+              <span class="sr-only">{{ t('cart.selectAll') }}</span>
             </span>
             <span>{{ t('cart.table.item') }}</span>
             <span class="text-center">{{ t('cart.table.unitPrice') }}</span>
