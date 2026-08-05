@@ -1,9 +1,24 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { toast } from 'vue-sonner';
 import { XIcon } from '@/plugins/xicon';
-import { useGetOrder, useListOrderItems } from '@/api/composables';
+import {
+  useGetOrder,
+  useListOrderItems,
+  useUpdateOrder,
+  useCreatePaymentTransaction,
+  useListPaymentTransactions,
+  useCreatePaymentRefund,
+} from '@/api/composables';
+import { queryClient } from '@/plugins/vue-query';
 import { useAccessStore } from '@/stores/modules/core/access.state';
 import { useUserStore } from '@/stores/modules/core/user.state';
+import type {
+  orderservicev1_Order_Status,
+  paymentservicev1_PaymentTransaction,
+  paymentservicev1_PaymentMethod,
+  paymentservicev1_BusinessType,
+} from '@/api/generated/app/service/v1';
 
 const route = useRoute();
 const { t } = useI18n();
@@ -122,6 +137,156 @@ function displayAmount(v: number | undefined, currency?: string): string {
 }
 
 const orderTotalLabel = computed(() => displayAmount(order.value?.totalAmount, order.value?.currency));
+
+// ---------- 订单操作 ----------
+// 状态机：PENDING_PAYMENT → PAID → FULFILLED → CLOSED；PENDING_PAYMENT → CANCELLED
+// 买家可执行：去支付 / 取消（待付款）；申请退款（已付款）；确认收货（已履约）
+const orderIdValue = computed(() => order.value?.id ?? 0);
+
+// 该订单的支付流水（用于「申请退款」拿到 transactionId/amount/currency，
+// 以及判断订单是否已有成功支付可退款）
+const transactionsQuery = useListPaymentTransactions(
+  computed(() => ({
+    page: 1,
+    pageSize: 20,
+    noPaging: false,
+    query:
+      orderIdValue.value > 0 ? JSON.stringify({ orderId: orderIdValue.value }) : undefined,
+  })),
+);
+type TxnEntity = {
+  id?: number;
+  amount?: number;
+  currency?: string;
+  status?: 'PENDING' | 'SUCCEEDED' | 'FAILED' | 'REFUNDED' | 'STATUS_UNSPECIFIED';
+};
+const transactions = computed<TxnEntity[]>(() => {
+  const items = (transactionsQuery.data?.value as any)?.items ?? [];
+  return (items as TxnEntity[]) ?? [];
+};
+// 取已成功的支付流水作为退款来源（一笔订单正常只有一笔 SUCCEEDED）。
+const succeededTxn = computed<TxnEntity | undefined>(() =>
+  transactions.value.find((t) => t.status === 'SUCCEEDED'),
+);
+
+const updateOrderMutation = useUpdateOrder();
+const payMutation = useCreatePaymentTransaction();
+const refundMutation = useCreatePaymentRefund();
+
+const anyActionPending = computed(
+  () =>
+    updateOrderMutation.isPending.value ||
+    payMutation.isPending.value ||
+    refundMutation.isPending.value,
+);
+
+function refreshOrderAndList() {
+  queryClient.invalidateQueries({ queryKey: ['getOrder'] });
+  queryClient.invalidateQueries({ queryKey: ['listOrders'] });
+  queryClient.invalidateQueries({ queryKey: ['listPaymentTransactions'] });
+}
+
+// 取消订单：PENDING_PAYMENT → CANCELLED（乐观锁 expectedStatus）
+async function handleCancel() {
+  if (!order.value?.id) return;
+  if (!window.confirm(t('orderDetail.confirm.cancel'))) return;
+  try {
+    await updateOrderMutation.mutateAsync({
+      id: order.value.id,
+      values: { status: 'CANCELLED' },
+      expectedStatus: ['PENDING_PAYMENT'] as orderservicev1_Order_Status[],
+    });
+    toast.success(t('orderDetail.result.cancelled'));
+    refreshOrderAndList();
+  } catch (err: any) {
+    toast.error(err?.message || t('orderDetail.errors.cancelFailed'));
+  }
+}
+
+// 确认收货：FULFILLED → CLOSED
+async function handleConfirmReceipt() {
+  if (!order.value?.id) return;
+  if (!window.confirm(t('orderDetail.confirm.confirmReceipt'))) return;
+  try {
+    await updateOrderMutation.mutateAsync({
+      id: order.value.id,
+      values: { status: 'CLOSED' },
+      expectedStatus: ['FULFILLED'] as orderservicev1_Order_Status[],
+    });
+    toast.success(t('orderDetail.result.confirmed'));
+    refreshOrderAndList();
+  } catch (err: any) {
+    toast.error(err?.message || t('orderDetail.errors.confirmFailed'));
+  }
+}
+
+// 立即支付：订单处于待付款时，创建一笔支付流水（余额支付，与结算页一致）
+async function handlePayNow() {
+  const o = order.value;
+  if (!o?.id) return;
+  const cryptoObj = (globalThis as unknown as { crypto?: { randomUUID?: () => string } }).crypto;
+  const paymentIdempotencyKey = cryptoObj?.randomUUID?.() ?? '';
+  if (!paymentIdempotencyKey) {
+    toast.error(t('orderDetail.errors.payFailed'));
+    return;
+  }
+  const paymentData: paymentservicev1_PaymentTransaction = {
+    userId: o.userId,
+    tenantId: o.tenantId,
+    orderId: o.id,
+    amount: o.totalAmount ?? 0,
+    currency: o.currency || 'CNY',
+    paymentMethod: 'BALANCE' as paymentservicev1_PaymentMethod,
+    businessType: 'BUSINESS_TYPE_CONSUME' as paymentservicev1_BusinessType,
+    idempotencyKey: paymentIdempotencyKey,
+    businessRefId: o.businessRefId,
+  } as paymentservicev1_PaymentTransaction;
+  try {
+    await payMutation.mutateAsync(paymentData);
+    toast.success(t('orderDetail.result.paid'));
+    refreshOrderAndList();
+  } catch (err: any) {
+    toast.error(err?.message || t('orderDetail.errors.payFailed'));
+  }
+}
+
+// 申请退款：基于该订单的成功支付流水创建退款单
+async function handleRequestRefund() {
+  const o = order.value;
+  const txn = succeededTxn.value;
+  if (!o?.id) return;
+  if (!txn?.id) {
+    toast.error(t('orderDetail.errors.noTransaction'));
+    return;
+  }
+  if (!window.confirm(t('orderDetail.confirm.requestRefund'))) return;
+  const cryptoObj = (globalThis as unknown as { crypto?: { randomUUID?: () => string } }).crypto;
+  const refundIdempotencyKey = cryptoObj?.randomUUID?.() ?? '';
+  try {
+    await refundMutation.mutateAsync({
+      userId: o.userId,
+      tenantId: o.tenantId,
+      transactionId: txn.id,
+      amount: txn.amount ?? o.totalAmount ?? 0,
+      currency: txn.currency ?? o.currency ?? 'CNY',
+      idempotencyKey: refundIdempotencyKey,
+      businessRefId: o.businessRefId,
+    } as any);
+    toast.success(t('orderDetail.result.refundRequested'));
+    refreshOrderAndList();
+  } catch (err: any) {
+    toast.error(err?.message || t('orderDetail.errors.refundFailed'));
+  }
+}
+
+// 各操作按钮是否可见（仅依据订单当前状态，终态不显示任何操作）
+const canPay = computed(() => order.value?.status === 'PENDING_PAYMENT');
+const canCancel = computed(() => order.value?.status === 'PENDING_PAYMENT');
+const canRefund = computed(() => order.value?.status === 'PAID' && !!succeededTxn.value?.id);
+const canConfirm = computed(() => order.value?.status === 'FULFILLED');
+const hasAnyAction = computed(
+  () => canPay.value || canCancel.value || canRefund.value || canConfirm.value,
+);
 </script>
 
 <template>
@@ -267,6 +432,47 @@ const orderTotalLabel = computed(() => displayAmount(order.value?.totalAmount, o
               {{ displayAmount(item.subtotal, order.currency) }}
             </span>
           </div>
+        </div>
+      </div>
+
+      <!-- 订单操作 -->
+      <div
+        v-if="hasAnyAction"
+        class="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card p-6"
+      >
+        <span class="text-sm font-medium text-foreground">{{ t('orderDetail.actions.title') }}</span>
+        <div class="flex flex-wrap items-center gap-3">
+          <UiButton
+            v-if="canPay"
+            :disabled="anyActionPending"
+            @click="handlePayNow"
+          >
+            {{ t('orderDetail.actions.payNow') }}
+          </UiButton>
+          <UiButton
+            v-if="canConfirm"
+            :disabled="anyActionPending"
+            @click="handleConfirmReceipt"
+          >
+            {{ t('orderDetail.actions.confirmReceipt') }}
+          </UiButton>
+          <UiButton
+            v-if="canRefund"
+            variant="outline"
+            :disabled="anyActionPending"
+            @click="handleRequestRefund"
+          >
+            {{ t('orderDetail.actions.requestRefund') }}
+          </UiButton>
+          <UiButton
+            v-if="canCancel"
+            variant="ghost"
+            class="text-destructive hover:text-destructive"
+            :disabled="anyActionPending"
+            @click="handleCancel"
+          >
+            {{ t('orderDetail.actions.cancel') }}
+          </UiButton>
         </div>
       </div>
 

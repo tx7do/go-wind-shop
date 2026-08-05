@@ -1,9 +1,14 @@
 <script setup lang="ts">
 const { t } = useI18n()
+const localePath = useLocalePath()
 const searchQuery = ref('')
 
+// 回车或点击搜索时跳转到搜索结果页，携带 ?q= 关键字。
+// 空关键字不跳转，避免进入无意义结果页。
 const handleSearch = () => {
-  console.log('Searching for:', searchQuery.value)
+  const q = searchQuery.value.trim()
+  if (!q) return
+  navigateTo(localePath('/search') + `?q=${encodeURIComponent(q)}`)
 }
 </script>
 
@@ -14,7 +19,7 @@ const handleSearch = () => {
       <UiInput
         class="h-full w-full pl-8"
         v-model="searchQuery"
-        @keyup="handleSearch"
+        @keyup.enter="handleSearch"
         :placeholder="t('navbar.top.search_placeholder')"
       />
     </div>

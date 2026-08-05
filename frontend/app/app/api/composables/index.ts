@@ -22,8 +22,9 @@ export * from './sku';
 export * from './sku-price';
 export * from './sku-attribute-combination';
 
-// 交易（购物车 / 订单 / 支付）
+// 交易（购物车 / 订单 / 支付 / 退款）
 export * from './cart';
 export * from './cart-item';
 export * from './order';
 export * from './payment-transaction';
+export * from './payment-refund';

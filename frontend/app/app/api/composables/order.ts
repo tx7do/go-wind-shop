@@ -6,9 +6,11 @@ import {
 } from '@tanstack/vue-query';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
+import { makeUpdateMask } from '@/core/transport/rest';
 import { getCurrentLocale } from '@/utils/locale';
 import type {
   orderservicev1_Order,
+  orderservicev1_Order_Status,
   orderservicev1_CreateOrderRequest,
 } from '@/api/generated/app/service/v1';
 
@@ -92,6 +94,51 @@ export async function fetchCreateOrderStore(data: orderservicev1_Order) {
   return queryClient.fetchQuery({
     queryKey: ['createOrder', data],
     queryFn: () => createOrder(data),
+    retry: 0,
+  });
+}
+
+// ==============================
+// 更新订单（Mutation）
+// 用于买家侧的状态推进：取消订单（PENDING_PAYMENT → CANCELLED）、
+// 确认收货（FULFILLED → CLOSED）等。借助乐观状态机 expectedStatus 防止终态被并发覆盖。
+// ==============================
+export async function updateOrder(
+  id: number,
+  values: Record<string, any> = {},
+  expectedStatus?: orderservicev1_Order_Status[],
+) {
+  const updateMask = makeUpdateMask(Object.keys(values ?? {}));
+  return await apiClient.orderService.Update({
+    id,
+    // @ts-ignore proto generated code is error.
+    data: { ...values, id },
+    // @ts-ignore proto generated code is error.
+    updateMask,
+    expectedStatus,
+  });
+}
+export function useUpdateOrder(
+  options?: UseMutationOptions<
+    {},
+    Error,
+    { id: number; values: Record<string, any>; expectedStatus?: orderservicev1_Order_Status[] }
+  >,
+) {
+  return useMutation({
+    mutationFn: ({ id, values, expectedStatus }) =>
+      updateOrder(id, values, expectedStatus),
+    ...options,
+  });
+}
+export async function fetchUpdateOrderStore(
+  id: number,
+  values: Record<string, any> = {},
+  expectedStatus?: orderservicev1_Order_Status[],
+) {
+  return queryClient.fetchQuery({
+    queryKey: ['updateOrder', id, values, expectedStatus],
+    queryFn: () => updateOrder(id, values, expectedStatus),
     retry: 0,
   });
 }

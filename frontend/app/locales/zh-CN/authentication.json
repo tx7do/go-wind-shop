@@ -83,6 +83,8 @@
     "email": "邮箱",
     "send": "发送",
     "back_to_login": "返回登录",
-    "forgot_password_description": "请输入您的邮箱，我们将发送一封邮件给您，点击邮件中的链接重置密码"
+    "forgot_password_description": "请输入您的邮箱，我们将发送一封邮件给您，点击邮件中的链接重置密码",
+    "unavailable": "功能暂未上线",
+    "unavailableTip": "找回密码功能正在开发中，如需重置密码请联系客服。"
   }
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { XIcon } from '@/plugins/xicon';
 import { useListOrders } from '@/api/composables';
 import { useAccessStore } from '@/stores/modules/core/access.state';
@@ -7,6 +7,8 @@ import { useUserStore } from '@/stores/modules/core/user.state';
 
 const { t } = useI18n();
 const localePath = useLocalePath();
+const route = useRoute();
+const router = useRouter();
 
 useHead({ title: t('mall.orders.title') });
 
@@ -89,6 +91,44 @@ function displayTotal(order: OrderEntity): string {
   const currency = order.currency === 'CNY' ? t('mall.product.currencyCny') : '';
   return currency + (order.totalAmount ?? 0);
 }
+
+// ---------- 状态筛选 Tab ----------
+// 订单数据全量拉取当前用户的订单（pageSize 50），筛选项在前端过滤，
+// 既不依赖后端 query DSL 对 status 的支持，切换也即时无网络抖动。
+type FilterKey = 'all' | OrderStatus;
+const FILTER_TABS: FilterKey[] = [
+  'all',
+  'PENDING_PAYMENT',
+  'PAID',
+  'FULFILLED',
+  'CLOSED',
+  'CANCELLED',
+];
+const activeFilter = ref<FilterKey>('all');
+// 支持 URL ?status=xxx 预选筛选项（来自个人中心等入口的快捷跳转）。
+// 非法值回退到 'all'，避免恶意/错误参数。
+function normalizeFilter(v: unknown): FilterKey {
+  return (FILTER_TABS as string[]).includes(v as string) ? (v as FilterKey) : 'all';
+}
+const initialStatus = route.query.status;
+if (initialStatus) activeFilter.value = normalizeFilter(initialStatus);
+// 切换 Tab 时同步到 URL query（replace，不入历史栈），便于刷新保持与分享。
+watch(activeFilter, (v) => {
+  const query = { ...route.query };
+  if (v === 'all') delete query.status;
+  else query.status = v;
+  router.replace({ query });
+});
+function filterLabel(key: FilterKey): string {
+  if (key === 'all') return t('orders.filter.all');
+  // 复用 mall.orderStatus.* 的状态文案
+  const statusKey = STATUS_LABEL_KEY[key as OrderStatus];
+  return t('mall.' + statusKey);
+}
+const filteredOrders = computed<OrderEntity[]>(() => {
+  if (activeFilter.value === 'all') return orders.value;
+  return orders.value.filter((o) => o.status === activeFilter.value);
+});
 </script>
 
 <template>
@@ -128,33 +168,68 @@ function displayTotal(order: OrderEntity): string {
       </div>
     </div>
 
-    <!-- 空列表 -->
-    <div
-      v-else-if="orders.length === 0"
-      class="rounded-2xl border border-border bg-card p-16 text-center"
-    >
-      <XIcon icon="carbon:document" :size="48" class="mx-auto mb-4 text-muted-foreground" />
-      <p class="text-lg text-muted-foreground">{{ t('orders.empty') }}</p>
-      <UiButton variant="outline" class="mt-6" @click="navigateTo(localePath('/'))">
-        {{ t('cart.continueShopping') }}
-      </UiButton>
-    </div>
-
-    <!-- 订单列表 -->
-    <div v-else class="overflow-x-auto rounded-2xl border border-border bg-card">
-      <div class="min-w-[700px]">
-      <div class="border-b border-border bg-muted/40 px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-        <div class="grid grid-cols-[80px_1fr_120px_140px_80px] items-center gap-4">
-          <span>{{ t('orders.table.id') }}</span>
-          <span>{{ t('orders.table.status') }}</span>
-          <span class="text-right">{{ t('orders.table.total') }}</span>
-          <span class="text-right">{{ t('orders.table.createdAt') }}</span>
-          <span class="text-right">{{ t('orders.table.action') }}</span>
-        </div>
+    <!-- 已加载：Tab 条 + 内容 -->
+    <div v-else class="flex flex-col gap-4">
+      <!-- 状态筛选 Tab（仅有订单时显示） -->
+      <div
+        v-if="orders.length > 0"
+        class="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-card p-3"
+      >
+        <button
+          v-for="key in FILTER_TABS"
+          :key="key"
+          type="button"
+          :class="[
+            'rounded-full px-4 py-1.5 text-xs font-medium transition-colors',
+            activeFilter === key
+              ? 'bg-primary text-primary-foreground'
+              : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+          ]"
+          @click="activeFilter = key"
+        >
+          {{ filterLabel(key) }}
+        </button>
       </div>
 
+      <!-- 全空（一个订单都没有） -->
+      <div
+        v-if="orders.length === 0"
+        class="rounded-2xl border border-border bg-card p-16 text-center"
+      >
+        <XIcon icon="carbon:document" :size="48" class="mx-auto mb-4 text-muted-foreground" />
+        <p class="text-lg text-muted-foreground">{{ t('orders.empty') }}</p>
+        <UiButton variant="outline" class="mt-6" @click="navigateTo(localePath('/'))">
+          {{ t('cart.continueShopping') }}
+        </UiButton>
+      </div>
+
+      <!-- 筛选后无结果 -->
+      <div
+        v-else-if="filteredOrders.length === 0"
+        class="rounded-2xl border border-border bg-card p-16 text-center"
+      >
+        <XIcon icon="carbon:document" :size="48" class="mx-auto mb-4 text-muted-foreground" />
+        <p class="text-lg text-muted-foreground">{{ t('orders.emptyFiltered') }}</p>
+        <UiButton variant="outline" class="mt-6" @click="activeFilter = 'all'">
+          {{ t('orders.filter.all') }}
+        </UiButton>
+      </div>
+
+      <!-- 订单列表 -->
+      <div v-else class="overflow-x-auto rounded-2xl border border-border bg-card">
+        <div class="min-w-[700px]">
+        <div class="border-b border-border bg-muted/40 px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          <div class="grid grid-cols-[80px_1fr_120px_140px_80px] items-center gap-4">
+            <span>{{ t('orders.table.id') }}</span>
+            <span>{{ t('orders.table.status') }}</span>
+            <span class="text-right">{{ t('orders.table.total') }}</span>
+            <span class="text-right">{{ t('orders.table.createdAt') }}</span>
+            <span class="text-right">{{ t('orders.table.action') }}</span>
+          </div>
+        </div>
+
       <NuxtLink
-        v-for="order in orders"
+        v-for="order in filteredOrders"
         :key="order.id"
         :to="localePath('/orders/' + order.id)"
         class="block border-b border-border px-6 py-4 transition-colors last:border-b-0 hover:bg-muted/30"
@@ -183,6 +258,7 @@ function displayTotal(order: OrderEntity): string {
         </div>
       </NuxtLink>
       </div>
+    </div>
     </div>
   </LayoutSectionContainer>
 </template>

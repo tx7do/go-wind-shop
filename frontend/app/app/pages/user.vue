@@ -75,6 +75,15 @@ const userInfo = computed(() => me.value || userStore.user)
               <span class="text-xs font-medium text-foreground">{{ t('mall.orders.title') }}</span>
             </NuxtLink>
             <NuxtLink
+              :to="localePath('/refunds')"
+              class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
+            >
+              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <XIcon icon="carbon:rotate-ccw" :size="22" />
+              </span>
+              <span class="text-xs font-medium text-foreground">{{ t('refunds.title') }}</span>
+            </NuxtLink>
+            <NuxtLink
               :to="localePath('/cart')"
               class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
             >
@@ -92,14 +101,28 @@ const userInfo = computed(() => me.value || userStore.user)
               </span>
               <span class="text-xs font-medium text-foreground">{{ t('menu.my_account_security') }}</span>
             </NuxtLink>
+          </div>
+
+          <!-- 我的订单：按状态快捷入口（带 ?status= 预选订单列表筛选项） -->
+          <div class="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-background/40 p-4">
+            <span class="text-xs font-medium text-muted-foreground">{{ t('mall.orders.title') }}：</span>
             <NuxtLink
-              :to="localePath('/')"
-              class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
+              :to="localePath('/orders') + '?status=PENDING_PAYMENT'"
+              class="rounded-full bg-muted px-3 py-1 text-[11px] text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
             >
-              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <XIcon icon="carbon:home" :size="22" />
-              </span>
-              <span class="text-xs font-medium text-foreground">{{ t('mall.home.title') }}</span>
+              {{ t('orders.filter.pending_payment') }}
+            </NuxtLink>
+            <NuxtLink
+              :to="localePath('/orders') + '?status=FULFILLED'"
+              class="rounded-full bg-muted px-3 py-1 text-[11px] text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+            >
+              {{ t('orders.filter.fulfilled') }}
+            </NuxtLink>
+            <NuxtLink
+              :to="localePath('/orders')"
+              class="rounded-full bg-muted px-3 py-1 text-[11px] text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+            >
+              {{ t('orders.filter.all') }}
             </NuxtLink>
           </div>
         </div>

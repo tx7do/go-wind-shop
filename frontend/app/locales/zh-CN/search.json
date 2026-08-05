@@ -1,0 +1,8 @@
+{
+  "title": "搜索结果",
+  "resultFor": "“{q}” 的搜索结果",
+  "empty": "未找到匹配“{q}”的商品。",
+  "resultCount": "找到 {count} 个商品",
+  "submitSearch": "搜索",
+  "placeholder": "请输入商品关键字"
+}

@@ -16,5 +16,30 @@
     "unitPrice": "单价",
     "quantity": "数量",
     "subtotal": "小计"
+  },
+  "actions": {
+    "title": "订单操作",
+    "payNow": "立即支付",
+    "cancel": "取消订单",
+    "confirmReceipt": "确认收货",
+    "requestRefund": "申请退款"
+  },
+  "confirm": {
+    "cancel": "确认取消此订单？取消后无法恢复。",
+    "confirmReceipt": "确认已收到商品？确认后订单将完成。",
+    "requestRefund": "确认对此订单申请退款？"
+  },
+  "result": {
+    "cancelled": "订单已取消。",
+    "confirmed": "已确认收货。",
+    "refundRequested": "退款申请已提交。",
+    "paid": "支付完成。"
+  },
+  "errors": {
+    "cancelFailed": "取消订单失败，请稍后重试。",
+    "confirmFailed": "确认收货失败，请稍后重试。",
+    "refundFailed": "申请退款失败，请稍后重试。",
+    "payFailed": "支付失败，请稍后重试。",
+    "noTransaction": "未找到支付流水，无法申请退款。"
   }
 }

@@ -13,6 +13,8 @@ import cart from './cart.json'
 import checkout from './checkout.json'
 import orders from './orders.json'
 import orderDetail from './orderDetail.json'
+import search from './search.json'
+import refunds from './refunds.json'
 
 export default {
     app,
@@ -30,4 +32,6 @@ export default {
     checkout,
     orders,
     orderDetail,
+    search,
+    refunds,
 }

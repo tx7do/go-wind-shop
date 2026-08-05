@@ -16,5 +16,30 @@
     "unitPrice": "Unit price",
     "quantity": "Quantity",
     "subtotal": "Subtotal"
+  },
+  "actions": {
+    "title": "Order actions",
+    "payNow": "Pay now",
+    "cancel": "Cancel order",
+    "confirmReceipt": "Confirm receipt",
+    "requestRefund": "Request refund"
+  },
+  "confirm": {
+    "cancel": "Cancel this order? This cannot be undone.",
+    "confirmReceipt": "Confirm you have received the items? The order will be completed.",
+    "requestRefund": "Request a refund for this order?"
+  },
+  "result": {
+    "cancelled": "Order cancelled.",
+    "confirmed": "Receipt confirmed.",
+    "refundRequested": "Refund request submitted.",
+    "paid": "Payment completed."
+  },
+  "errors": {
+    "cancelFailed": "Failed to cancel the order. Please try again later.",
+    "confirmFailed": "Failed to confirm receipt. Please try again later.",
+    "refundFailed": "Failed to request a refund. Please try again later.",
+    "payFailed": "Payment failed. Please try again later.",
+    "noTransaction": "No payment transaction found; refund cannot be requested."
   }
 }

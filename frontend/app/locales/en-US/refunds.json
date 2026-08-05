@@ -1,0 +1,18 @@
+{
+  "title": "My refunds",
+  "subtitle": "Review your refund requests and their status",
+  "empty": "You have no refund records.",
+  "table": {
+    "id": "Refund ID",
+    "transactionId": "Transaction",
+    "amount": "Amount",
+    "status": "Status",
+    "createdAt": "Requested"
+  },
+  "status": {
+    "pending": "Processing",
+    "succeeded": "Refunded",
+    "failed": "Failed",
+    "status_unspecified": "Unknown"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "title": "Search results",
+  "resultFor": "Search results for “{q}”",
+  "empty": "No products matched “{q}”.",
+  "resultCount": "{count} products found",
+  "submitSearch": "Search",
+  "placeholder": "Enter a product keyword"
+}

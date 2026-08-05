@@ -1,0 +1,18 @@
+{
+  "title": "我的退款",
+  "subtitle": "查看你的退款申请记录与处理状态",
+  "empty": "你还没有任何退款记录。",
+  "table": {
+    "id": "退款单号",
+    "transactionId": "支付流水",
+    "amount": "退款金额",
+    "status": "状态",
+    "createdAt": "申请时间"
+  },
+  "status": {
+    "pending": "处理中",
+    "succeeded": "已到账",
+    "failed": "已失败",
+    "status_unspecified": "未知"
+  }
+}

@@ -1,6 +1,15 @@
 {
   "empty": "You have no orders yet.",
+  "emptyFiltered": "No orders in this status.",
   "detail": "Details",
+  "filter": {
+    "all": "All",
+    "pending_payment": "Unpaid",
+    "paid": "Awaiting shipment",
+    "fulfilled": "Awaiting receipt",
+    "closed": "Completed",
+    "cancelled": "Cancelled"
+  },
   "table": {
     "id": "Order",
     "status": "Status",

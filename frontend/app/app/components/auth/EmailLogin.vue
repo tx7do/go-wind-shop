@@ -82,6 +82,7 @@ const inputBase = 'w-full rounded-lg border border-border bg-background px-4 py-
       </label>
       <button
         class="cursor-pointer border-none bg-transparent text-sm text-primary transition-colors hover:text-primary/80 hover:underline"
+        @click="navigateTo(localePath('/forgot-password'))"
       >
         {{ t('authentication.login.forgot_password') }}
       </button>

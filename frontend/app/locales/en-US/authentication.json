@@ -83,6 +83,8 @@
     "email": "Email",
     "send": "Send",
     "back_to_login": "Back to Login",
-    "forgot_password_description": "Please enter your email address, we will send you an email, click the link in the email to reset your password"
+    "forgot_password_description": "Please enter your email address, we will send you an email, click the link in the email to reset your password",
+    "unavailable": "Feature unavailable",
+    "unavailableTip": "Password reset is under development. Please contact support to reset your password."
   }
 }
