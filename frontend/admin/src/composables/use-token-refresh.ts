@@ -124,7 +124,17 @@ export async function reauthenticate(): Promise<void> {
 // ==============================
 
 /**
- * 停止刷新定时器 → 重置所有 Store → 关闭 SSE → 跳转登录页
+ * 停止刷新定时器 → 重置 Store 清凭证 → 关闭 SSE → 跳转登录页 → 跳转完成后清理 queryClient 缓存
+ *
+ * 顺序很关键：
+ *  - resetAllStores（清 accessToken/refreshToken）必须在跳转前执行，否则登录页守卫
+ *    （auth.guard.ts：已登录访问 /login 会被弹回首页）会把用户挡回业务页。
+ *  - queryClient.clear() 必须在跳转完成后执行。若在源组件（如 /analytics）仍挂载时
+ *    clear，TanStack Query 会因缓存被清空而对仍订阅的 useQuery 立即重建 query 并
+ *    重新 fetch（queryObserver.shouldFetchOptionally：query!==prevQuery && isStale
+ *    均为 true）。这些重发请求带着已清空的空 token 打后端 → 又触发 401 → reauthenticate
+ *    循环，并与本次 router.replace(/login) 产生并发导航互相取消，污染后续登录跳转。
+ *    跳转完成后再 clear，源组件已卸载、observer 已 unsubscribe，不会触发重发。
  * @param redirect 是否携带回跳地址
  */
 export async function logoutToLoginPage(redirect: boolean = true): Promise<void> {
@@ -132,28 +142,29 @@ export async function logoutToLoginPage(redirect: boolean = true): Promise<void>
 
   stopRefreshTimer();
 
+  // 清凭证必须在跳转前：登录页守卫依 accessToken 判断是否已登录
   resetAllStores();
 
   const accessStore = useAccessStore();
   accessStore.setLoginExpired(false);
 
-  // 清除 queryClient 缓存，防止登出期间被缓存污染的查询结果
-  // 导致重新登录时命中脏数据
-  queryClient.clear();
-
   globalSSEClient.close();
 
-  console.log("currentRoute", router.currentRoute.value);
-  if (router.currentRoute.value.path === LOGIN_PATH) return;
+  // 记录回跳地址：必须在跳转前读取，跳转后 currentRoute 即变为登录页
+  const fromFullPath = router.currentRoute.value.fullPath;
+  if (fromFullPath === LOGIN_PATH) return;
 
   await router.replace({
     path: LOGIN_PATH,
     query: redirect
       ? {
-          redirect: encodeURIComponent(router.currentRoute.value.fullPath),
+          redirect: encodeURIComponent(fromFullPath),
         }
       : {},
   });
+
+  // 跳转完成、源组件卸载后再清 queryClient 缓存，避免触发 useQuery 重发风暴
+  queryClient.clear();
 }
 
 // ==============================
