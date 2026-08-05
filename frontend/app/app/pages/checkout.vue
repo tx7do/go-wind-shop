@@ -406,6 +406,9 @@ async function placeOrder() {
     // 此处仅需刷新前端缓存以反映空车状态。
     queryClient.invalidateQueries({ queryKey: ['listCarts'] });
     queryClient.invalidateQueries({ queryKey: ['listCartItems'] });
+    // 刷新订单列表缓存，使跳转 /orders 后立即显示新订单（默认 staleTime 会导致
+    // 5 分钟内不重拉，需显式 invalidate）。
+    queryClient.invalidateQueries({ queryKey: ['listOrders'] });
     toast.success(t('checkout.paymentSuccess'));
     navigateTo(localePath('/orders'));
   } catch {
