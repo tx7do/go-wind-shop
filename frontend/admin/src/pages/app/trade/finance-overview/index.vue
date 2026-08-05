@@ -160,30 +160,38 @@ const txStatusTagTypeMap: Record<
 
 // ============================================================
 // 金额聚合（样本内 SUCCEEDED 记录求和）。
-// 跨币种不可直接相减——按币种分组，仅取样本中频次最高的主币种做展示，
-// 其他币种忽略并在卡片标注。金额字段为 number（int64 经 protojson 以 number
-// 下发），Number 解析失败回退 0。
+// 跨币种不可直接相减——按币种分组，仅取样本中金额占比最高的主币种做展示，
+// 其他币种忽略。金额字段为 number（int64 经 protojson 以 number 下发），
+// Number 解析失败回退 0。
+// 主币种按金额占比（而非记录频次）选取，避免"频次高但金额低"的币种被选为主
+// 币种导致交易总额被系统性低估。
 // ============================================================
-const dominantCurrency = computed(() => {
-  const items = (txQuery.data.value?.items ?? []) as any[];
-  const counts = new Map<string, number>();
-  for (const it of items) {
+const txDominantCurrency = computed(() => dominantCurrencyByAmount(txQuery.data.value?.items));
+const refundDominantCurrency = computed(() =>
+  dominantCurrencyByAmount(refundQuery.data.value?.items)
+);
+function dominantCurrencyByAmount(items: unknown): string {
+  const arr = (items ?? []) as any[];
+  const sums = new Map<string, number>();
+  for (const it of arr) {
+    if (it.status !== "SUCCEEDED") continue;
     const c = it.currency;
-    if (typeof c === "string" && c) counts.set(c, (counts.get(c) ?? 0) + 1);
+    if (typeof c !== "string" || !c) continue;
+    sums.set(c, (sums.get(c) ?? 0) + Number(it.amount ?? 0));
   }
   let dom = "";
-  let domN = 0;
-  for (const [c, n] of counts) {
-    if (n > domN) {
+  let domSum = -1;
+  for (const [c, s] of sums) {
+    if (s > domSum) {
       dom = c;
-      domN = n;
+      domSum = s;
     }
   }
   return dom;
-});
+}
 const txVolume = computed(() => {
   const items = (txQuery.data.value?.items ?? []) as any[];
-  const dom = dominantCurrency.value;
+  const dom = txDominantCurrency.value;
   let sum = 0;
   for (const it of items) {
     if (it.status === "SUCCEEDED" && it.currency === dom) {
@@ -194,7 +202,7 @@ const txVolume = computed(() => {
 });
 const refundVolume = computed(() => {
   const items = (refundQuery.data.value?.items ?? []) as any[];
-  const dom = dominantCurrency.value;
+  const dom = refundDominantCurrency.value;
   let sum = 0;
   for (const it of items) {
     if (it.status === "SUCCEEDED" && it.currency === dom) {
@@ -210,7 +218,7 @@ const refundVolume = computed(() => {
 // ============================================================
 const txTrend = computed(() => {
   const items = (txQuery.data.value?.items ?? []) as any[];
-  const dom = dominantCurrency.value;
+  const dom = txDominantCurrency.value;
   const byDate = new Map<string, number>();
   for (const it of items) {
     if (it.status !== "SUCCEEDED" || it.currency !== dom) continue;
@@ -278,7 +286,12 @@ const metricCards = computed(() => {
     {
       title: $t("pages.mall.financeOverview.metricCardNetRevenueTitle"),
       desc: $t("pages.mall.financeOverview.metricCardNetRevenueDesc"),
-      value: txVolume.value - refundVolume.value,
+      // 净收入仅在两 query 主币种一致时才可相减；不一致时跨币种相减无意义，标 N/A。
+      value:
+        txDominantCurrency.value === refundDominantCurrency.value &&
+        txDominantCurrency.value !== ""
+          ? txVolume.value - refundVolume.value
+          : "N/A",
       isLoading: txQuery.isLoading.value || refundQuery.isLoading.value,
       error: txQuery.error.value || refundQuery.error.value,
     },
