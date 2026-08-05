@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "internal_message/service/v1/internal_message_recipient.proto";
+
+// 站内信收件箱前台服务（BFF 网关，REST）
+// 仅暴露收件视角：查收件箱、标记已读、删除。所有操作的 user_id 由网关从登录态
+// 强制注入，客户端无法读取/操作他人收件箱。
+service InternalMessageRecipientService {
+  // 获取当前用户的收件箱列表（通知类）
+  rpc ListUserInbox (pagination.PagingRequest) returns (internal_message.service.v1.ListUserInboxResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/messages"
+    };
+  }
+
+  // 将收件箱中的通知标记为已读
+  rpc MarkNotificationAsRead (internal_message.service.v1.MarkNotificationAsReadRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/app/v1/mall/messages/read"
+      body: "*"
+    };
+  }
+
+  // 删除收件箱中的通知记录
+  rpc DeleteNotificationFromInbox (internal_message.service.v1.DeleteNotificationFromInboxRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/messages/delete"
+      body: "*"
+    };
+  }
+}

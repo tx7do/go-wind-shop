@@ -3,6 +3,7 @@ import { XIcon } from '@/plugins/xicon'
 import { useUserStore } from '@/stores/modules/core/user.state'
 import { useAccessStore } from '@/stores/modules/core/access.state'
 import { useGetMe } from '@/api/composables/user-profile'
+import { useListUserInbox } from '@/api/composables'
 
 const { t } = useI18n()
 
@@ -19,6 +20,18 @@ const isLogin = computed(() => {
 const { data: me, isLoading, error } = useGetMe({ enabled: isLogin })
 
 const userInfo = computed(() => me.value || userStore.user)
+
+// 未读消息数（用于个人中心入口角标提示）
+const inboxQuery = useListUserInbox(
+  computed(() => ({ page: 1, pageSize: 50, noPaging: false })),
+  { enabled: isLogin },
+)
+const unreadMessageCount = computed(() => {
+  const items = (inboxQuery.data?.value as any)?.items ?? []
+  return items.filter(
+    (m: any) => m.status === 'SENT' || m.status === 'RECEIVED',
+  ).length
+})
 </script>
 
 <template>
@@ -73,6 +86,21 @@ const userInfo = computed(() => me.value || userStore.user)
                 <XIcon icon="carbon:document" :size="22" />
               </span>
               <span class="text-xs font-medium text-foreground">{{ t('mall.orders.title') }}</span>
+            </NuxtLink>
+            <NuxtLink
+              :to="localePath('/messages')"
+              class="group relative flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
+            >
+              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <XIcon icon="carbon:message" :size="22" />
+              </span>
+              <span
+                v-if="unreadMessageCount > 0"
+                class="absolute right-3 top-3 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground"
+              >
+                {{ unreadMessageCount > 99 ? '99+' : unreadMessageCount }}
+              </span>
+              <span class="text-xs font-medium text-foreground">{{ t('messages.title') }}</span>
             </NuxtLink>
             <NuxtLink
               :to="localePath('/refunds')"

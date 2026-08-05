@@ -1,0 +1,27 @@
+{
+  "title": "My messages",
+  "subtitle": "View your in-app notifications",
+  "empty": "No messages.",
+  "markRead": "Mark as read",
+  "delete": "Delete",
+  "viewDetail": "View detail",
+  "unread": "Unread",
+  "status": {
+    "sent": "Unread",
+    "received": "Unread",
+    "read": "Read",
+    "revoked": "Revoked",
+    "deleted": "Deleted"
+  },
+  "confirm": {
+    "delete": "Delete this message?"
+  },
+  "result": {
+    "markedRead": "Marked as read.",
+    "deleted": "Message deleted."
+  },
+  "errors": {
+    "markReadFailed": "Failed to mark as read. Please try again later.",
+    "deleteFailed": "Failed to delete. Please try again later."
+  }
+}

@@ -1729,6 +1729,203 @@ export type storageservicev1_UploadFileResponse = {
   presignedUrl?: string;
 };
 
+// 站内信收件箱前台服务（BFF 网关，REST）
+// 仅暴露收件视角：查收件箱、标记已读、删除。所有操作的 user_id 由网关从登录态
+// 强制注入，客户端无法读取/操作他人收件箱。
+export interface InternalMessageRecipientService {
+  // 获取当前用户的收件箱列表（通知类）
+  ListUserInbox(
+    request: pagination_PagingRequest,
+  ): Promise<internal_messageservicev1_ListUserInboxResponse>;
+  // 将收件箱中的通知标记为已读
+  MarkNotificationAsRead(
+    request: internal_messageservicev1_MarkNotificationAsReadRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除收件箱中的通知记录
+  DeleteNotificationFromInbox(
+    request: internal_messageservicev1_DeleteNotificationFromInboxRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createInternalMessageRecipientServiceClient(
+  transport: ClientTransport,
+): InternalMessageRecipientService {
+  return {
+    ListUserInbox(request) {
+      const path = `app/v1/mall/messages`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'InternalMessageRecipientService',
+        method: 'ListUserInbox',
+      }) as Promise<internal_messageservicev1_ListUserInboxResponse>;
+    },
+    MarkNotificationAsRead(request) {
+      const path = `app/v1/mall/messages/read`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'InternalMessageRecipientService',
+        method: 'MarkNotificationAsRead',
+      }) as Promise<wellKnownEmpty>;
+    },
+    DeleteNotificationFromInbox(request) {
+      const path = `app/v1/mall/messages/delete`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InternalMessageRecipientService',
+        method: 'DeleteNotificationFromInbox',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type internal_messageservicev1_ListUserInboxResponse = {
+  items: internal_messageservicev1_InternalMessageRecipient[] | undefined;
+  total: number | undefined;
+};
+
+// 站内信消息用户接收信息
+export type internal_messageservicev1_InternalMessageRecipient = {
+  content?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  messageId?: number;
+  readAt?: wellKnownTimestamp;
+  receivedAt?: wellKnownTimestamp;
+  recipientUserId?: number;
+  status?: internal_messageservicev1_InternalMessageRecipient_Status;
+  tenantId?: number;
+  tenantName?: string;
+  title?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 消息状态
+export type internal_messageservicev1_InternalMessageRecipient_Status =
+  | 'DELETED'
+  | 'READ'
+  | 'RECEIVED'
+  | 'REVOKED'
+  | 'SENT';
+export type internal_messageservicev1_MarkNotificationAsReadRequest = {
+  recipientIds: number[] | undefined;
+  userId: number | undefined;
+};
+
+export type internal_messageservicev1_DeleteNotificationFromInboxRequest = {
+  recipientIds: number[] | undefined;
+  userId: number | undefined;
+};
+
 // 订单前台服务
 export interface OrderService {
   List(
@@ -5028,6 +5225,7 @@ export class ApiClient {
   private _cartService?: CartService;
   private _categoryService?: CategoryService;
   private _fileTransferService?: FileTransferService;
+  private _internalMessageRecipientService?: InternalMessageRecipientService;
   private _orderItemService?: OrderItemService;
   private _orderService?: OrderService;
   private _paymentRefundService?: PaymentRefundService;
@@ -5068,6 +5266,10 @@ export class ApiClient {
 
   get fileTransferService(): FileTransferService {
     return this._fileTransferService ??= createFileTransferServiceClient(this._transport);
+  }
+
+  get internalMessageRecipientService(): InternalMessageRecipientService {
+    return this._internalMessageRecipientService ??= createInternalMessageRecipientServiceClient(this._transport);
   }
 
   get orderItemService(): OrderItemService {

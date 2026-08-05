@@ -1,0 +1,27 @@
+{
+  "title": "我的消息",
+  "subtitle": "查看你的站内通知",
+  "empty": "没有消息。",
+  "markRead": "标记已读",
+  "delete": "删除",
+  "viewDetail": "查看详情",
+  "unread": "未读",
+  "status": {
+    "sent": "未读",
+    "received": "未读",
+    "read": "已读",
+    "revoked": "已撤回",
+    "deleted": "已删除"
+  },
+  "confirm": {
+    "delete": "确认删除该消息？"
+  },
+  "result": {
+    "markedRead": "已标记为已读。",
+    "deleted": "消息已删除。"
+  },
+  "errors": {
+    "markReadFailed": "标记已读失败，请稍后重试。",
+    "deleteFailed": "删除失败，请稍后重试。"
+  }
+}

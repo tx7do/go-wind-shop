@@ -104,6 +104,7 @@ func NewRestServer(
 	paymentTransactionService *service.PaymentTransactionService,
 	paymentRefundService *service.PaymentRefundService,
 	shippingAddressService *service.ShippingAddressService,
+	internalMessageRecipientService *service.InternalMessageRecipientService,
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -136,6 +137,7 @@ func NewRestServer(
 	appV1.RegisterPaymentTransactionServiceHTTPServer(srv, paymentTransactionService)
 	appV1.RegisterPaymentRefundServiceHTTPServer(srv, paymentRefundService)
 	appV1.RegisterShippingAddressServiceHTTPServer(srv, shippingAddressService)
+	appV1.RegisterInternalMessageRecipientServiceHTTPServer(srv, internalMessageRecipientService)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(
