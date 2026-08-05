@@ -110,7 +110,7 @@ const captchaImage = ref("");
 const loginFormData = ref<any>({
   tenant_code: "",
   username: "admin",
-  password: "123456",
+  password: "admin",
   captchaCode: "",
 });
 

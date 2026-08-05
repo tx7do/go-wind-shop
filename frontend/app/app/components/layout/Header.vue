@@ -58,7 +58,6 @@ const cartCount = computed(() => {
 
 const handleClickLogo = () => navigateTo(localePath('/'))
 const handleClickSettings = () => navigateTo(localePath('/settings'))
-const handleClickUserHomepage = () => navigateTo(localePath('/user'))
 const handleClickLogin = () => navigateTo(localePath('/login'))
 const handleClickRegister = () => navigateTo(localePath('/register'))
 const handleClickCart = () => navigateTo(localePath('/cart'))
@@ -109,10 +108,6 @@ const handleClickLogout = async () => {
           </UiDropdownMenuTrigger>
           <UiDropdownMenuContent align="end">
             <template v-if="isLogin">
-              <UiDropdownMenuItem @click="handleClickUserHomepage">
-                <XIcon icon="lucide:home" width="16" height="16" />
-                {{ t('menu.homepage') }}
-              </UiDropdownMenuItem>
               <UiDropdownMenuItem @click="handleClickSettings">
                 <XIcon icon="lucide:user" width="16" height="16" />
                 {{ t('menu.my_profile') }}
