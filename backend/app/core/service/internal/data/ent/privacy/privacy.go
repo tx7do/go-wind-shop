@@ -1167,6 +1167,30 @@ func (f RolePermissionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RolePermissionMutation", m)
 }
 
+// The ShippingAddressQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ShippingAddressQueryRuleFunc func(context.Context, *ent.ShippingAddressQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ShippingAddressQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ShippingAddressQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ShippingAddressQuery", q)
+}
+
+// The ShippingAddressMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ShippingAddressMutationRuleFunc func(context.Context, *ent.ShippingAddressMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ShippingAddressMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ShippingAddressMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ShippingAddressMutation", m)
+}
+
 // The SkuQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type SkuQueryRuleFunc func(context.Context, *ent.SkuQuery) error
@@ -1530,6 +1554,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.RolePermissionQuery:
 		return q.Filter(), nil
+	case *ent.ShippingAddressQuery:
+		return q.Filter(), nil
 	case *ent.SkuQuery:
 		return q.Filter(), nil
 	case *ent.SkuAttributeCombinationQuery:
@@ -1644,6 +1670,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.RoleMetadataMutation:
 		return m.Filter(), nil
 	case *ent.RolePermissionMutation:
+		return m.Filter(), nil
+	case *ent.ShippingAddressMutation:
 		return m.Filter(), nil
 	case *ent.SkuMutation:
 		return m.Filter(), nil

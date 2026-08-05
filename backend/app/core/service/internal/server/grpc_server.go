@@ -11,6 +11,7 @@ import (
 	"go-wind-shop/app/core/service/internal/service"
 
 	auditV1 "go-wind-shop/api/gen/go/audit/service/v1"
+	addressV1 "go-wind-shop/api/gen/go/address/service/v1"
 	authenticationV1 "go-wind-shop/api/gen/go/authentication/service/v1"
 	cartV1 "go-wind-shop/api/gen/go/cart/service/v1"
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
@@ -85,6 +86,7 @@ func NewGrpcServer(
 	orderItemService *service.OrderItemService,
 	paymentTransactionService *service.PaymentTransactionService,
 	paymentRefundService *service.PaymentRefundService,
+	shippingAddressService *service.ShippingAddressService,
 ) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
 
@@ -145,6 +147,8 @@ func NewGrpcServer(
 	orderV1.RegisterOrderItemServiceServer(srv, orderItemService)
 	paymentV1.RegisterPaymentTransactionServiceServer(srv, paymentTransactionService)
 	paymentV1.RegisterPaymentRefundServiceServer(srv, paymentRefundService)
+
+	addressV1.RegisterShippingAddressServiceServer(srv, shippingAddressService)
 
 	return srv, nil
 }

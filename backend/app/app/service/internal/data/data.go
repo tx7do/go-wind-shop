@@ -18,6 +18,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/rpc"
 
 	authenticationV1 "go-wind-shop/api/gen/go/authentication/service/v1"
+	addressV1 "go-wind-shop/api/gen/go/address/service/v1"
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 	cartV1 "go-wind-shop/api/gen/go/cart/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
@@ -265,6 +266,15 @@ func NewOrderItemServiceClient(ctx *bootstrap.Context, r registry.Discovery) ord
 	}
 
 	return orderV1.NewOrderItemServiceClient(cli)
+}
+
+func NewShippingAddressServiceClient(ctx *bootstrap.Context, r registry.Discovery) addressV1.ShippingAddressServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return addressV1.NewShippingAddressServiceClient(cli)
 }
 
 func NewPaymentTransactionServiceClient(ctx *bootstrap.Context, r registry.Discovery) paymentV1.PaymentTransactionServiceClient {

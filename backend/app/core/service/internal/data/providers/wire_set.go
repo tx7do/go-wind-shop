@@ -99,4 +99,5 @@ var ProviderSet = wire.NewSet(
 	data.NewOrderItemRepo,
 	data.NewPaymentTransactionRepo,
 	data.NewPaymentRefundRepo,
+	data.NewShippingAddressRepo,
 )

@@ -1,0 +1,44 @@
+{
+  "title": "Shipping addresses",
+  "subtitle": "Manage your address book",
+  "empty": "You haven't added any shipping address yet.",
+  "add": "Add address",
+  "edit": "Edit",
+  "delete": "Delete",
+  "setDefault": "Set as default",
+  "defaultBadge": "Default",
+  "form": {
+    "titleAdd": "Add shipping address",
+    "titleEdit": "Edit shipping address",
+    "recipientName": "Recipient name",
+    "recipientNamePlaceholder": "Enter recipient name",
+    "recipientPhone": "Recipient phone",
+    "recipientPhonePlaceholder": "Enter recipient phone",
+    "region": "Region",
+    "regionPlaceholder": "Province / City / District",
+    "detailAddress": "Detailed address",
+    "detailAddressPlaceholder": "Street, building, unit",
+    "postalCode": "Postal code",
+    "postalCodePlaceholder": "Postal code (optional)",
+    "tag": "Tag",
+    "tagPlaceholder": "e.g. Home, Office, School (optional)",
+    "isDefault": "Set as default address",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "confirm": {
+    "delete": "Delete this shipping address?"
+  },
+  "result": {
+    "created": "Address added.",
+    "updated": "Address updated.",
+    "deleted": "Address deleted.",
+    "defaultSet": "Set as default address."
+  },
+  "errors": {
+    "invalidForm": "Please complete recipient, phone and detailed address.",
+    "createFailed": "Failed to add address. Please try again later.",
+    "updateFailed": "Failed to update address. Please try again later.",
+    "deleteFailed": "Failed to delete address. Please try again later."
+  }
+}

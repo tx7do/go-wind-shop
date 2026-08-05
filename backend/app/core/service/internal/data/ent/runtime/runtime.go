@@ -50,6 +50,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-shop/app/core/service/internal/data/ent/schema"
+	"go-wind-shop/app/core/service/internal/data/ent/shippingaddress"
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
@@ -1143,6 +1144,34 @@ func init() {
 	rolepermissionDescID := rolepermissionMixinFields0[0].Descriptor()
 	// rolepermission.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	rolepermission.IDValidator = rolepermissionDescID.Validators[0].(func(uint32) error)
+	shippingaddressMixin := schema.ShippingAddress{}.Mixin()
+	shippingaddress.Policy = privacy.NewPolicies(shippingaddressMixin[3], schema.ShippingAddress{})
+	shippingaddress.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := shippingaddress.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	shippingaddressMixinFields0 := shippingaddressMixin[0].Fields()
+	_ = shippingaddressMixinFields0
+	shippingaddressMixinFields3 := shippingaddressMixin[3].Fields()
+	_ = shippingaddressMixinFields3
+	shippingaddressFields := schema.ShippingAddress{}.Fields()
+	_ = shippingaddressFields
+	// shippingaddressDescTenantID is the schema descriptor for tenant_id field.
+	shippingaddressDescTenantID := shippingaddressMixinFields3[0].Descriptor()
+	// shippingaddress.DefaultTenantID holds the default value on creation for the tenant_id field.
+	shippingaddress.DefaultTenantID = shippingaddressDescTenantID.Default.(uint32)
+	// shippingaddressDescIsDefault is the schema descriptor for is_default field.
+	shippingaddressDescIsDefault := shippingaddressFields[7].Descriptor()
+	// shippingaddress.DefaultIsDefault holds the default value on creation for the is_default field.
+	shippingaddress.DefaultIsDefault = shippingaddressDescIsDefault.Default.(bool)
+	// shippingaddressDescID is the schema descriptor for id field.
+	shippingaddressDescID := shippingaddressMixinFields0[0].Descriptor()
+	// shippingaddress.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	shippingaddress.IDValidator = shippingaddressDescID.Validators[0].(func(uint32) error)
 	skuMixin := schema.Sku{}.Mixin()
 	skuMixinFields0 := skuMixin[0].Fields()
 	_ = skuMixinFields0

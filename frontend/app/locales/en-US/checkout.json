@@ -23,5 +23,7 @@
     "confirm": "Review order",
     "pay": "Online payment",
     "done": "Complete"
-  }
+  },
+  "useSavedAddress": "Choose from address book",
+  "noSavedAddress": "No saved address yet. Add one in My Profile - Shipping addresses."
 }

@@ -1,0 +1,44 @@
+{
+  "title": "收货地址",
+  "subtitle": "管理你的收货地址簿",
+  "empty": "你还没有添加收货地址。",
+  "add": "新增地址",
+  "edit": "编辑",
+  "delete": "删除",
+  "setDefault": "设为默认",
+  "defaultBadge": "默认",
+  "form": {
+    "titleAdd": "新增收货地址",
+    "titleEdit": "编辑收货地址",
+    "recipientName": "收件人姓名",
+    "recipientNamePlaceholder": "请输入收件人姓名",
+    "recipientPhone": "收件人电话",
+    "recipientPhonePlaceholder": "请输入收件人电话",
+    "region": "所在地区",
+    "regionPlaceholder": "省 / 市 / 区",
+    "detailAddress": "详细地址",
+    "detailAddressPlaceholder": "街道、楼栋、门牌号",
+    "postalCode": "邮政编码",
+    "postalCodePlaceholder": "邮政编码（选填）",
+    "tag": "标签",
+    "tagPlaceholder": "如：家、公司、学校（选填）",
+    "isDefault": "设为默认地址",
+    "save": "保存",
+    "cancel": "取消"
+  },
+  "confirm": {
+    "delete": "确认删除该收货地址？"
+  },
+  "result": {
+    "created": "地址已添加。",
+    "updated": "地址已更新。",
+    "deleted": "地址已删除。",
+    "defaultSet": "已设为默认地址。"
+  },
+  "errors": {
+    "invalidForm": "请完整填写收件人、电话和详细地址。",
+    "createFailed": "添加地址失败，请稍后重试。",
+    "updateFailed": "更新地址失败，请稍后重试。",
+    "deleteFailed": "删除地址失败，请稍后重试。"
+  }
+}

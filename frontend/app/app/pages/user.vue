@@ -93,6 +93,15 @@ const userInfo = computed(() => me.value || userStore.user)
               <span class="text-xs font-medium text-foreground">{{ t('mall.cart.title') }}</span>
             </NuxtLink>
             <NuxtLink
+              :to="localePath('/addresses')"
+              class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
+            >
+              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                <XIcon icon="carbon:location" :size="22" />
+              </span>
+              <span class="text-xs font-medium text-foreground">{{ t('addresses.title') }}</span>
+            </NuxtLink>
+            <NuxtLink
               :to="localePath('/settings')"
               class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
             >

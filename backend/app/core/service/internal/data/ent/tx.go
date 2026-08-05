@@ -100,6 +100,8 @@ type Tx struct {
 	RoleMetadata *RoleMetadataClient
 	// RolePermission is the client for interacting with the RolePermission builders.
 	RolePermission *RolePermissionClient
+	// ShippingAddress is the client for interacting with the ShippingAddress builders.
+	ShippingAddress *ShippingAddressClient
 	// Sku is the client for interacting with the Sku builders.
 	Sku *SkuClient
 	// SkuAttributeCombination is the client for interacting with the SkuAttributeCombination builders.
@@ -295,6 +297,7 @@ func (tx *Tx) init() {
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
 	tx.RolePermission = NewRolePermissionClient(tx.config)
+	tx.ShippingAddress = NewShippingAddressClient(tx.config)
 	tx.Sku = NewSkuClient(tx.config)
 	tx.SkuAttributeCombination = NewSkuAttributeCombinationClient(tx.config)
 	tx.SkuPrice = NewSkuPriceClient(tx.config)

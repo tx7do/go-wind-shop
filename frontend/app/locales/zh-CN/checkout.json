@@ -23,5 +23,7 @@
     "confirm": "核对订单",
     "pay": "线上支付",
     "done": "完成"
-  }
+  },
+  "useSavedAddress": "从地址簿选择",
+  "noSavedAddress": "还没有地址，可在「我的-收货地址」添加"
 }

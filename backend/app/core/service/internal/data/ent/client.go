@@ -55,6 +55,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/role"
 	"go-wind-shop/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-shop/app/core/service/internal/data/ent/shippingaddress"
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
@@ -165,6 +166,8 @@ type Client struct {
 	RoleMetadata *RoleMetadataClient
 	// RolePermission is the client for interacting with the RolePermission builders.
 	RolePermission *RolePermissionClient
+	// ShippingAddress is the client for interacting with the ShippingAddress builders.
+	ShippingAddress *ShippingAddressClient
 	// Sku is the client for interacting with the Sku builders.
 	Sku *SkuClient
 	// SkuAttributeCombination is the client for interacting with the SkuAttributeCombination builders.
@@ -240,6 +243,7 @@ func (c *Client) init() {
 	c.Role = NewRoleClient(c.config)
 	c.RoleMetadata = NewRoleMetadataClient(c.config)
 	c.RolePermission = NewRolePermissionClient(c.config)
+	c.ShippingAddress = NewShippingAddressClient(c.config)
 	c.Sku = NewSkuClient(c.config)
 	c.SkuAttributeCombination = NewSkuAttributeCombinationClient(c.config)
 	c.SkuPrice = NewSkuPriceClient(c.config)
@@ -386,6 +390,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Role:                             NewRoleClient(cfg),
 		RoleMetadata:                     NewRoleMetadataClient(cfg),
 		RolePermission:                   NewRolePermissionClient(cfg),
+		ShippingAddress:                  NewShippingAddressClient(cfg),
 		Sku:                              NewSkuClient(cfg),
 		SkuAttributeCombination:          NewSkuAttributeCombinationClient(cfg),
 		SkuPrice:                         NewSkuPriceClient(cfg),
@@ -459,6 +464,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Role:                             NewRoleClient(cfg),
 		RoleMetadata:                     NewRoleMetadataClient(cfg),
 		RolePermission:                   NewRolePermissionClient(cfg),
+		ShippingAddress:                  NewShippingAddressClient(cfg),
 		Sku:                              NewSkuClient(cfg),
 		SkuAttributeCombination:          NewSkuAttributeCombinationClient(cfg),
 		SkuPrice:                         NewSkuPriceClient(cfg),
@@ -508,9 +514,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Product,
 		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
 		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Sku, c.SkuAttributeCombination, c.SkuPrice,
-		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole,
+		c.RoleMetadata, c.RolePermission, c.ShippingAddress, c.Sku,
+		c.SkuAttributeCombination, c.SkuPrice, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -530,9 +536,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Product,
 		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
 		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Sku, c.SkuAttributeCombination, c.SkuPrice,
-		c.Task, c.Tenant, c.User, c.UserCredential, c.UserOrgUnit, c.UserPosition,
-		c.UserRole,
+		c.RoleMetadata, c.RolePermission, c.ShippingAddress, c.Sku,
+		c.SkuAttributeCombination, c.SkuPrice, c.Task, c.Tenant, c.User,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -629,6 +635,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.RoleMetadata.mutate(ctx, m)
 	case *RolePermissionMutation:
 		return c.RolePermission.mutate(ctx, m)
+	case *ShippingAddressMutation:
+		return c.ShippingAddress.mutate(ctx, m)
 	case *SkuMutation:
 		return c.Sku.mutate(ctx, m)
 	case *SkuAttributeCombinationMutation:
@@ -6660,6 +6668,140 @@ func (c *RolePermissionClient) mutate(ctx context.Context, m *RolePermissionMuta
 	}
 }
 
+// ShippingAddressClient is a client for the ShippingAddress schema.
+type ShippingAddressClient struct {
+	config
+}
+
+// NewShippingAddressClient returns a client for the ShippingAddress from the given config.
+func NewShippingAddressClient(c config) *ShippingAddressClient {
+	return &ShippingAddressClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `shippingaddress.Hooks(f(g(h())))`.
+func (c *ShippingAddressClient) Use(hooks ...Hook) {
+	c.hooks.ShippingAddress = append(c.hooks.ShippingAddress, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `shippingaddress.Intercept(f(g(h())))`.
+func (c *ShippingAddressClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ShippingAddress = append(c.inters.ShippingAddress, interceptors...)
+}
+
+// Create returns a builder for creating a ShippingAddress entity.
+func (c *ShippingAddressClient) Create() *ShippingAddressCreate {
+	mutation := newShippingAddressMutation(c.config, OpCreate)
+	return &ShippingAddressCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ShippingAddress entities.
+func (c *ShippingAddressClient) CreateBulk(builders ...*ShippingAddressCreate) *ShippingAddressCreateBulk {
+	return &ShippingAddressCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ShippingAddressClient) MapCreateBulk(slice any, setFunc func(*ShippingAddressCreate, int)) *ShippingAddressCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ShippingAddressCreateBulk{err: fmt.Errorf("calling to ShippingAddressClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ShippingAddressCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ShippingAddressCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ShippingAddress.
+func (c *ShippingAddressClient) Update() *ShippingAddressUpdate {
+	mutation := newShippingAddressMutation(c.config, OpUpdate)
+	return &ShippingAddressUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ShippingAddressClient) UpdateOne(_m *ShippingAddress) *ShippingAddressUpdateOne {
+	mutation := newShippingAddressMutation(c.config, OpUpdateOne, withShippingAddress(_m))
+	return &ShippingAddressUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ShippingAddressClient) UpdateOneID(id uint32) *ShippingAddressUpdateOne {
+	mutation := newShippingAddressMutation(c.config, OpUpdateOne, withShippingAddressID(id))
+	return &ShippingAddressUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ShippingAddress.
+func (c *ShippingAddressClient) Delete() *ShippingAddressDelete {
+	mutation := newShippingAddressMutation(c.config, OpDelete)
+	return &ShippingAddressDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ShippingAddressClient) DeleteOne(_m *ShippingAddress) *ShippingAddressDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ShippingAddressClient) DeleteOneID(id uint32) *ShippingAddressDeleteOne {
+	builder := c.Delete().Where(shippingaddress.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ShippingAddressDeleteOne{builder}
+}
+
+// Query returns a query builder for ShippingAddress.
+func (c *ShippingAddressClient) Query() *ShippingAddressQuery {
+	return &ShippingAddressQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeShippingAddress},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ShippingAddress entity by its id.
+func (c *ShippingAddressClient) Get(ctx context.Context, id uint32) (*ShippingAddress, error) {
+	return c.Query().Where(shippingaddress.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ShippingAddressClient) GetX(ctx context.Context, id uint32) *ShippingAddress {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ShippingAddressClient) Hooks() []Hook {
+	hooks := c.hooks.ShippingAddress
+	return append(hooks[:len(hooks):len(hooks)], shippingaddress.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ShippingAddressClient) Interceptors() []Interceptor {
+	return c.inters.ShippingAddress
+}
+
+func (c *ShippingAddressClient) mutate(ctx context.Context, m *ShippingAddressMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ShippingAddressCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ShippingAddressUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ShippingAddressUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ShippingAddressDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ShippingAddress mutation op: %q", m.Op())
+	}
+}
+
 // SkuClient is a client for the Sku schema.
 type SkuClient struct {
 	config
@@ -8008,9 +8150,9 @@ type (
 		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
 		Position, Product, ProductAttribute, ProductAttributeTranslation,
 		ProductAttributeValue, ProductAttributeValueTranslation, ProductTranslation,
-		Role, RoleMetadata, RolePermission, Sku, SkuAttributeCombination, SkuPrice,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole []ent.Hook
+		Role, RoleMetadata, RolePermission, ShippingAddress, Sku,
+		SkuAttributeCombination, SkuPrice, Task, Tenant, User, UserCredential,
+		UserOrgUnit, UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
 		Api, ApiAuditLog, Brand, BrandTranslation, Cart, CartItem, Category,
@@ -8022,8 +8164,8 @@ type (
 		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
 		Position, Product, ProductAttribute, ProductAttributeTranslation,
 		ProductAttributeValue, ProductAttributeValueTranslation, ProductTranslation,
-		Role, RoleMetadata, RolePermission, Sku, SkuAttributeCombination, SkuPrice,
-		Task, Tenant, User, UserCredential, UserOrgUnit, UserPosition,
-		UserRole []ent.Interceptor
+		Role, RoleMetadata, RolePermission, ShippingAddress, Sku,
+		SkuAttributeCombination, SkuPrice, Task, Tenant, User, UserCredential,
+		UserOrgUnit, UserPosition, UserRole []ent.Interceptor
 	}
 )

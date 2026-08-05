@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "address/service/v1/shipping_address.proto";
+
+// 收货地址前台服务（BFF 网关，REST）
+// 写操作由网关层强制注入当前登录用户的 user_id/tenant_id，客户端无法伪造。
+service ShippingAddressService {
+  rpc List (pagination.PagingRequest) returns (address.service.v1.ListShippingAddressResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/addresses"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (address.service.v1.CountShippingAddressResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/addresses/count"
+    };
+  }
+
+  rpc Get (address.service.v1.GetShippingAddressRequest) returns (address.service.v1.ShippingAddress) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/addresses/{id}"
+    };
+  }
+
+  rpc Create (address.service.v1.CreateShippingAddressRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/addresses"
+      body: "*"
+    };
+  }
+
+  rpc Update (address.service.v1.UpdateShippingAddressRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/app/v1/mall/addresses/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (address.service.v1.DeleteShippingAddressRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/app/v1/mall/addresses"
+    };
+  }
+}

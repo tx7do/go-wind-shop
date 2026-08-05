@@ -3901,6 +3901,372 @@ export type catalogservicev1_GetProductAttributeValueRequest = {
   viewMask?: wellKnownFieldMask;
 };
 
+// 收货地址前台服务（BFF 网关，REST）
+// 写操作由网关层强制注入当前登录用户的 user_id/tenant_id，客户端无法伪造。
+export interface ShippingAddressService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<addressservicev1_ListShippingAddressResponse>;
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<addressservicev1_CountShippingAddressResponse>;
+  Get(
+    request: addressservicev1_GetShippingAddressRequest,
+  ): Promise<addressservicev1_ShippingAddress>;
+  Create(
+    request: addressservicev1_CreateShippingAddressRequest,
+  ): Promise<wellKnownEmpty>;
+  Update(
+    request: addressservicev1_UpdateShippingAddressRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: addressservicev1_DeleteShippingAddressRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createShippingAddressServiceClient(
+  transport: ClientTransport,
+): ShippingAddressService {
+  return {
+    List(request) {
+      const path = `app/v1/mall/addresses`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ShippingAddressService',
+        method: 'List',
+      }) as Promise<addressservicev1_ListShippingAddressResponse>;
+    },
+    Count(request) {
+      const path = `app/v1/mall/addresses/count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ShippingAddressService',
+        method: 'Count',
+      }) as Promise<addressservicev1_CountShippingAddressResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `app/v1/mall/addresses/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ShippingAddressService',
+        method: 'Get',
+      }) as Promise<addressservicev1_ShippingAddress>;
+    },
+    Create(request) {
+      const path = `app/v1/mall/addresses`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ShippingAddressService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `app/v1/mall/addresses/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'ShippingAddressService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      const path = `app/v1/mall/addresses`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'DELETE', body, {
+        service: 'ShippingAddressService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type addressservicev1_ListShippingAddressResponse = {
+  items: addressservicev1_ShippingAddress[] | undefined;
+  total: number | undefined;
+};
+
+// 收货地址
+export type addressservicev1_ShippingAddress = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  detailAddress?: string;
+  id?: number;
+  isDefault?: boolean;
+  postalCode?: string;
+  recipientName?: string;
+  recipientPhone?: string;
+  region?: string;
+  tag?: string;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  userId?: number;
+};
+
+export type addressservicev1_CountShippingAddressResponse = {
+  count: number | undefined;
+};
+
+export type addressservicev1_GetShippingAddressRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type addressservicev1_CreateShippingAddressRequest = {
+  data: addressservicev1_ShippingAddress | undefined;
+};
+
+export type addressservicev1_UpdateShippingAddressRequest = {
+  allowMissing?: boolean;
+  data: addressservicev1_ShippingAddress | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type addressservicev1_DeleteShippingAddressRequest = {
+  id?: number;
+};
+
 // SKU 前台服务
 export interface SkuService {
   // 分页查询 SKU 列表
@@ -4669,6 +5035,7 @@ export class ApiClient {
   private _productAttributeService?: ProductAttributeService;
   private _productAttributeValueService?: ProductAttributeValueService;
   private _productService?: ProductService;
+  private _shippingAddressService?: ShippingAddressService;
   private _skuAttributeCombinationService?: SkuAttributeCombinationService;
   private _skuPriceService?: SkuPriceService;
   private _skuService?: SkuService;
@@ -4729,6 +5096,10 @@ export class ApiClient {
 
   get productService(): ProductService {
     return this._productService ??= createProductServiceClient(this._transport);
+  }
+
+  get shippingAddressService(): ShippingAddressService {
+    return this._shippingAddressService ??= createShippingAddressServiceClient(this._transport);
   }
 
   get skuAttributeCombinationService(): SkuAttributeCombinationService {

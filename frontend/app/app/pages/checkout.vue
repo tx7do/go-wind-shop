@@ -15,6 +15,7 @@ import {
   useListProductAttributeValues,
   fetchGetSkuStore,
   fetchGetProductStore,
+  useListShippingAddresses,
 } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { useAccessStore } from '@/stores/modules/core/access.state';
@@ -306,6 +307,50 @@ const formValid = computed(() => {
   );
 });
 
+// ---------- 地址簿快捷填充 ----------
+// 下单时可从已存地址簿选择一条，自动填充收货表单。无地址时该区域不显示。
+type SavedAddress = {
+  id?: number;
+  recipientName?: string;
+  recipientPhone?: string;
+  region?: string;
+  detailAddress?: string;
+  isDefault?: boolean;
+};
+const savedAddressesQuery = useListShippingAddresses(
+  computed(() => ({
+    page: 1,
+    pageSize: 20,
+    noPaging: false,
+    sorting: [{ field: 'id', direction: 'DESC' }],
+  })),
+  { enabled: isLogin },
+);
+const savedAddresses = computed<SavedAddress[]>(() => {
+  const items = (savedAddressesQuery.data?.value as any)?.items ?? [];
+  return (items as SavedAddress[]) ?? [];
+});
+const sortedSavedAddresses = computed(() => {
+  return [...savedAddresses.value].sort((a, b) => {
+    if (a.isDefault && !b.isDefault) return -1;
+    if (!a.isDefault && b.isDefault) return 1;
+    return 0;
+  });
+});
+
+function useSavedAddress(addr: SavedAddress) {
+  form.recipientName = addr.recipientName ?? '';
+  form.recipientPhone = addr.recipientPhone ?? '';
+  // region + detailAddress 拼成结构化地址文本（与订单 shipping_address 字段一致）
+  const parts = [addr.region, addr.detailAddress].filter((s) => s && s.trim()).map((s) => s!.trim());
+  form.shippingAddress = parts.join(' ');
+}
+
+function addressLabel(addr: SavedAddress): string {
+  const region = addr.region ? addr.region + ' ' : '';
+  return `${addr.recipientName ?? '—'} · ${region}${addr.detailAddress ?? ''}`;
+}
+
 // ---------- 下单 + 支付 ----------
 const orderMutation = useCreateOrder({
   onSuccess: () => {
@@ -486,6 +531,25 @@ async function placeOrder() {
       <div class="rounded-2xl border border-border bg-card p-6">
         <h2 class="mb-1 text-xl font-bold text-foreground">{{ t('checkout.recipientTitle') }}</h2>
         <p class="mb-6 text-sm text-muted-foreground">{{ t('checkout.recipientDesc') }}</p>
+
+        <!-- 地址簿快捷选择：点击自动填充下方表单 -->
+        <div v-if="sortedSavedAddresses.length > 0" class="mb-5 flex flex-wrap gap-2">
+          <button
+            v-for="addr in sortedSavedAddresses"
+            :key="addr.id"
+            type="button"
+            class="flex items-center gap-2 rounded-lg border border-border bg-background/40 px-3 py-2 text-xs text-foreground transition-colors hover:border-primary/60"
+            @click="useSavedAddress(addr)"
+          >
+            <span
+              v-if="addr.isDefault"
+              class="rounded-full bg-primary/15 px-1.5 py-0.5 text-[9px] font-medium text-primary"
+            >
+              {{ t('addresses.defaultBadge') }}
+            </span>
+            <span>{{ addressLabel(addr) }}</span>
+          </button>
+        </div>
 
         <div class="flex flex-col gap-5">
           <div class="flex flex-col gap-2">

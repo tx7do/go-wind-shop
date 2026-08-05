@@ -28,3 +28,4 @@ export * from './cart-item';
 export * from './order';
 export * from './payment-transaction';
 export * from './payment-refund';
+export * from './shipping-address';

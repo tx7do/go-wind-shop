@@ -2643,6 +2643,39 @@ var (
 			},
 		},
 	}
+	// UserShippingAddressesColumns holds the columns for the "user_shipping_addresses" table.
+	UserShippingAddressesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "所属用户ID"},
+		{Name: "recipient_name", Type: field.TypeString, Nullable: true, Comment: "收件人姓名"},
+		{Name: "recipient_phone", Type: field.TypeString, Nullable: true, Comment: "收件人电话"},
+		{Name: "region", Type: field.TypeString, Nullable: true, Comment: "省/市/区（结构化文本）"},
+		{Name: "detail_address", Type: field.TypeString, Nullable: true, Comment: "详细地址"},
+		{Name: "postal_code", Type: field.TypeString, Nullable: true, Comment: "邮政编码"},
+		{Name: "tag", Type: field.TypeString, Nullable: true, Comment: "地址标签（如：家、公司、学校）"},
+		{Name: "is_default", Type: field.TypeBool, Nullable: true, Comment: "是否默认地址", Default: false},
+	}
+	// UserShippingAddressesTable holds the schema information for the "user_shipping_addresses" table.
+	UserShippingAddressesTable = &schema.Table{
+		Name:       "user_shipping_addresses",
+		Comment:    "用户收货地址表",
+		Columns:    UserShippingAddressesColumns,
+		PrimaryKey: []*schema.Column{UserShippingAddressesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "shippingaddress_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{UserShippingAddressesColumns[8]},
+			},
+		},
+	}
 	// MallSkusColumns holds the columns for the "mall_skus" table.
 	MallSkusColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3346,6 +3379,7 @@ var (
 		SysRolesTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
+		UserShippingAddressesTable,
 		MallSkusTable,
 		MallSkuAttributeCombinationsTable,
 		MallSkuPricesTable,
@@ -3581,6 +3615,11 @@ func init() {
 	}
 	SysRolePermissionsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_role_permissions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	UserShippingAddressesTable.Annotation = &entsql.Annotation{
+		Table:     "user_shipping_addresses",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

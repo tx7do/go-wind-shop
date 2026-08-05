@@ -61,6 +61,9 @@ managed:
     - file_option: go_package
       path: identity/service/v1
       value: go-wind-shop/api/gen/go/identity/service/v1;identitypb
+    - file_option: go_package
+      path: address/service/v1
+      value: go-wind-shop/api/gen/go/address/service/v1;addresspb
 
 plugins:
   # generate go code

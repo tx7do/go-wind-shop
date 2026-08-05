@@ -15,6 +15,7 @@ import orders from './orders.json'
 import orderDetail from './orderDetail.json'
 import search from './search.json'
 import refunds from './refunds.json'
+import addresses from './addresses.json'
 
 export default {
     app,
@@ -34,4 +35,5 @@ export default {
     orderDetail,
     search,
     refunds,
+    addresses,
 }
