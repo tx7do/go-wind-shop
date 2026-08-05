@@ -18,20 +18,23 @@ import (
 type PaymentRefundService struct {
 	paymentV1.UnimplementedPaymentRefundServiceServer
 
-	log              *log.Helper
-	repo             *data.PaymentRefundRepo
-	transactionRepo  *data.PaymentTransactionRepo
+	log                   *log.Helper
+	repo                  *data.PaymentRefundRepo
+	transactionRepo       *data.PaymentTransactionRepo
+	transactionService    *PaymentTransactionService
 }
 
 func NewPaymentRefundService(
 	ctx *bootstrap.Context,
 	repo *data.PaymentRefundRepo,
 	transactionRepo *data.PaymentTransactionRepo,
+	transactionService *PaymentTransactionService,
 ) *PaymentRefundService {
 	return &PaymentRefundService{
-		log:             ctx.NewLoggerHelper("payment-refund/service/core-service"),
-		repo:            repo,
-		transactionRepo: transactionRepo,
+		log:                ctx.NewLoggerHelper("payment-refund/service/core-service"),
+		repo:               repo,
+		transactionRepo:    transactionRepo,
+		transactionService: transactionService,
 	}
 }
 
@@ -60,13 +63,15 @@ func (s *PaymentRefundService) Create(ctx context.Context, req *paymentV1.Create
 	}
 
 	// 退款记录必须关联一条具体的支付流水（transaction_id），且该流水须存在、
-	// 属同租户、当前状态为 SUCCEEDED（只能对已成功的支付发起退款）。
+	// 当前状态为 SUCCEEDED（只能对已成功的支付发起退款）。
+	// 退款记录的 tenant_id 强制取自该流水——退款归属到交易所在租户，
+	// 而非调用方 token 的 tenant（平台 admin token tenant=0，若用 token 值会
+	// 导致跨租户运营退款被误拒、且退款记录 tenant_id=0 归属错乱）。
 	txId := req.Data.GetTransactionId()
 	if txId == 0 {
 		return nil, paymentV1.ErrorBadRequest("transaction_id is required for refund")
 	}
-	txCtx := ctx
-	tx, gErr := s.transactionRepo.Get(txCtx, &paymentV1.GetPaymentTransactionRequest{
+	tx, gErr := s.transactionRepo.Get(ctx, &paymentV1.GetPaymentTransactionRequest{
 		QueryBy: &paymentV1.GetPaymentTransactionRequest_Id{Id: txId},
 	})
 	if gErr != nil || tx == nil {
@@ -75,20 +80,23 @@ func (s *PaymentRefundService) Create(ctx context.Context, req *paymentV1.Create
 	if tx.GetStatus() != paymentV1.PaymentTransaction_SUCCEEDED {
 		return nil, paymentV1.ErrorBadRequest("cannot refund a non-succeeded payment transaction")
 	}
-	if tx.GetTenantId() != req.Data.GetTenantId() {
-		return nil, paymentV1.ErrorBadRequest("refund tenant mismatch with transaction")
-	}
+	txTenantId := tx.GetTenantId()
+	req.Data.TenantId = &txTenantId
 
 	// 重复退款保护：同一 transaction 已存在 SUCCEEDED 退款记录则拒绝。
 	// 通过 List refund 过滤 transaction_id=txId 检查（退款表的 transaction_id
 	// 仅有普通索引，需遍历结果过滤状态）。NoPaging=true 取全量匹配记录。
+	// List 失败时拒绝（fail-closed），不静默降级跳过校验。
 	existingRefunds, lErr := s.repo.List(ctx, &paginationV1.PagingRequest{
 		NoPaging: trans.Ptr(true),
 		FilteringType: &paginationV1.PagingRequest_Query{
 			Query: s.buildRefundFilterQuery(txId),
 		},
 	})
-	if lErr == nil && existingRefunds != nil {
+	if lErr != nil {
+		return nil, paymentV1.ErrorInternalServerError("duplicate refund check failed")
+	}
+	if existingRefunds != nil {
 		for _, r := range existingRefunds.Items {
 			if r.GetTransactionId() == txId && r.GetStatus() == paymentV1.PaymentRefund_SUCCEEDED {
 				return nil, paymentV1.ErrorBadRequest("payment transaction already refunded")
@@ -140,6 +148,8 @@ func (s *PaymentRefundService) Update(ctx context.Context, req *paymentV1.Update
 	// 仅当目标状态为 SUCCEEDED 且退款记录携带 transaction_id 时执行。
 	// 联动前先校验该 transaction 仍为 SUCCEEDED（防已被孤儿清理翻为 FAILED 或
 	// 已被并发退款翻为 REFUNDED 时仍盲目翻状态）。
+	// 联动走 PaymentTransactionService.Update（经支付流水状态机校验
+	// SUCCEEDED→REFUNDED），消除"联动直接打 repo 绕过状态机"的旁路。
 	if targetStatus == paymentV1.PaymentRefund_SUCCEEDED {
 		txId := req.Data.GetTransactionId()
 		if txId != 0 {
@@ -154,15 +164,29 @@ func (s *PaymentRefundService) Update(ctx context.Context, req *paymentV1.Update
 				s.log.Warnf("linked payment transaction [%d] status %v, cannot flip to REFUNDED", txId, tx.GetStatus())
 				return nil, paymentV1.ErrorBadRequest("linked payment transaction is not succeeded")
 			}
-			txData := &paymentV1.PaymentTransaction{
-				Status: paymentV1.PaymentTransaction_REFUNDED.Enum(),
-			}
+			refundedStatus := paymentV1.PaymentTransaction_REFUNDED
 			updateTxReq := &paymentV1.UpdatePaymentTransactionRequest{
-				Id:   txId,
-				Data: txData,
+				Id: txId,
+				Data: &paymentV1.PaymentTransaction{
+					Status: &refundedStatus,
+				},
 			}
-			if uErr := s.transactionRepo.Update(ctx, updateTxReq); uErr != nil {
-				s.log.Errorf("flip payment_transaction [%d] to REFUNDED failed: %v", txId, uErr)
+			if _, uErr := s.transactionService.Update(ctx, updateTxReq); uErr != nil {
+				// 联动失败补偿：退款记录已在前面 repo.Update 翻为 SUCCEEDED，
+				// 但关联流水未能翻 REFUNDED。为避免"退款成功但流水未 REFUNDED"
+				// 的持久不一致，回滚退款记录为 PENDING。
+				// 当前 repo 模式不支持跨实体事务，故用补偿回滚兜底。
+				s.log.Errorf("flip payment_transaction [%d] to REFUNDED via service layer failed: %v", txId, uErr)
+				pendingStatus := paymentV1.PaymentRefund_PENDING
+				rollbackReq := &paymentV1.UpdatePaymentRefundRequest{
+					Id: req.GetId(),
+					Data: &paymentV1.PaymentRefund{
+						Status: &pendingStatus,
+					},
+				}
+				if rErr := s.repo.Update(ctx, rollbackReq); rErr != nil {
+					s.log.Errorf("compensating rollback refund [%d] to PENDING failed: %v", req.GetId(), rErr)
+				}
 				return nil, uErr
 			}
 		}

@@ -128,7 +128,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	paymentTransactionRepo := data.NewPaymentTransactionRepo(context, entClient)
 	paymentTransactionService := service.NewPaymentTransactionService(context, paymentTransactionRepo, orderService)
 	paymentRefundRepo := data.NewPaymentRefundRepo(context, entClient)
-	paymentRefundService := service.NewPaymentRefundService(context, paymentRefundRepo, paymentTransactionRepo)
+	paymentRefundService := service.NewPaymentRefundService(context, paymentRefundRepo, paymentTransactionRepo, paymentTransactionService)
 	grpcServer, err := server.NewGrpcServer(context, v, authenticationService, loginPolicyService, userCredentialService, taskService, fileService, languageService, tenantService, userService, roleService, positionService, orgUnitService, menuService, apiService, permissionService, permissionGroupService, permissionAuditLogService, policyEvaluationLogService, loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, categoryService, brandService, productService, productAttributeService, productAttributeValueService, skuService, skuPriceService, skuAttributeCombinationService, cartService, cartItemService, orderService, orderItemService, paymentTransactionService, paymentRefundService)
 	if err != nil {
 		cleanup2()

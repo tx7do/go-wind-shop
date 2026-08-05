@@ -12,6 +12,8 @@ import (
 
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
+
+	"github.com/tx7do/go-crud/viewer"
 )
 
 type PaymentTransactionService struct {
@@ -102,8 +104,12 @@ func (s *PaymentTransactionService) Update(ctx context.Context, req *paymentV1.U
 	// 支付流水状态机校验：状态变更须先查库确认当前状态，仅允许白名单内转换。
 	//   SUCCEEDED → REFUNDED   （退款联动，由 PaymentRefundService.Update 调用）
 	//   PENDING → FAILED/SUCCEEDED  （支付回调，真实网关接入后）
-	// 其他转换（含 REFUNDED→任意、FAILED→任意、SUCCEEDED→FAILED 等）拒绝。
+	//   SUCCEEDED → FAILED  （仅系统上下文：ExpireOrderByTimeout 的孤儿支付清理，
+	//     消除"支付 stub 成功但订单已取消"的遗留流水。普通调用方拒绝此转换。）
+	// 其他转换（含 REFUNDED→任意、FAILED→任意）拒绝。
 	// 这防止退款联动把流水翻 REFUNDED 后，又被并发 Update 翻回 SUCCEEDED。
+	// 系统上下文判断由 isAllowedTxTransition 内 viewer.FromContext 完成，
+	// 消除"状态机只守 service.Update 入口、而清理/联动走 ent builder 旁路"的缺口。
 	targetStatus := req.Data.GetStatus()
 	if targetStatus != paymentV1.PaymentTransaction_STATUS_UNSPECIFIED && req.GetId() != 0 {
 		existing, gErr := s.repo.Get(ctx, &paymentV1.GetPaymentTransactionRequest{
@@ -112,7 +118,7 @@ func (s *PaymentTransactionService) Update(ctx context.Context, req *paymentV1.U
 		if gErr != nil || existing == nil {
 			return nil, paymentV1.ErrorBadRequest("payment transaction not found")
 		}
-		if !isAllowedTxTransition(existing.GetStatus(), targetStatus) {
+		if !isAllowedTxTransition(ctx, existing.GetStatus(), targetStatus) {
 			s.log.Warnf("illegal payment transaction status transition: %v -> %v", existing.GetStatus(), targetStatus)
 			return nil, paymentV1.ErrorBadRequest("illegal payment transaction status transition: %v -> %v", existing.GetStatus(), targetStatus)
 		}
@@ -126,11 +132,13 @@ func (s *PaymentTransactionService) Update(ctx context.Context, req *paymentV1.U
 }
 
 // isAllowedTxTransition 校验支付流水状态转换是否在允许列表内。
-// 仅允许：
+// 普通调用方仅允许：
 //   PENDING → SUCCEEDED / FAILED   （支付回调）
 //   SUCCEEDED → REFUNDED            （退款联动）
-// 终态 REFUNDED/FAILED 无出边（吸收态）。
-func isAllowedTxTransition(from, to paymentV1.PaymentTransaction_Status) bool {
+// 系统上下文（ExpireOrderByTimeout 注入的 SystemViewer）额外允许：
+//   SUCCEEDED → FAILED  （孤儿支付清理）
+// 终态 REFUNDED/FAILED 对所有调用方均为吸收态无出边。
+func isAllowedTxTransition(ctx context.Context, from, to paymentV1.PaymentTransaction_Status) bool {
 	allowed := map[paymentV1.PaymentTransaction_Status]map[paymentV1.PaymentTransaction_Status]bool{
 		paymentV1.PaymentTransaction_PENDING: {
 			paymentV1.PaymentTransaction_SUCCEEDED: true,
@@ -139,6 +147,14 @@ func isAllowedTxTransition(from, to paymentV1.PaymentTransaction_Status) bool {
 		paymentV1.PaymentTransaction_SUCCEEDED: {
 			paymentV1.PaymentTransaction_REFUNDED: true,
 		},
+	}
+	// 系统上下文口子：ExpireOrderByTimeout 的孤儿支付清理需 SUCCEEDED→FAILED。
+	vc, exist := viewer.FromContext(ctx)
+	if exist && vc.IsSystemContext() {
+		if allowed[paymentV1.PaymentTransaction_SUCCEEDED] == nil {
+			allowed[paymentV1.PaymentTransaction_SUCCEEDED] = map[paymentV1.PaymentTransaction_Status]bool{}
+		}
+		allowed[paymentV1.PaymentTransaction_SUCCEEDED][paymentV1.PaymentTransaction_FAILED] = true
 	}
 	allowedTo, ok := allowed[from]
 	if !ok {

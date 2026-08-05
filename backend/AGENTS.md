@@ -573,11 +573,11 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 - 这保证 MarkPaid（`[PENDING_PAYMENT]→PAID`）与超时取消（`[PENDING_PAYMENT]→CANCELLED`）都走乐观并发路径，防并发覆盖终态。
 - **admin BFF 补 `expected_status`**：`admin-service` 的 `OrderService.Update`（`app/admin/service/internal/service/order_service.go`）在转发前按目标状态补 `expected_status`——目标 `FULFILLED` 补 `[PAID]`，目标 `CLOSED` 补 `[PAID, FULFILLED]`。这是 admin 发货/关闭操作能与 core 状态机衔接的前提（admin 前端 composable 不直接传 `expected_status`，由 BFF 按白名单补全）。目标 `PENDING_PAYMENT`/`CANCELLED` 不由 admin 发起，不补。
 
-`PaymentRefundService.Update` 同样带退款状态机：仅允许 `PENDING→SUCCEEDED` 与 `PENDING→FAILED`。当退款翻 `SUCCEEDED` 时，联动前先 `transactionRepo.Get` 校验关联 `payment_transaction` 仍为 `SUCCEEDED`（防已被孤儿清理翻 `FAILED` 或已被并发退款翻 `REFUNDED` 时仍盲目翻状态），校验通过才调 `PaymentTransactionRepo.Update` 翻为 `REFUNDED`，闭合退款分支。
+`PaymentRefundService.Update` 同样带退款状态机：仅允许 `PENDING→SUCCEEDED` 与 `PENDING→FAILED`。当退款翻 `SUCCEEDED` 时，联动前先 `transactionRepo.Get` 校验关联 `payment_transaction` 仍为 `SUCCEEDED`（防已被孤儿清理翻 `FAILED` 或已被并发退款翻 `REFUNDED` 时仍盲目翻状态），校验通过才调 `PaymentTransactionService.Update`（**经支付流水状态机**校验 `SUCCEEDED→REFUNDED`）翻为 `REFUNDED`，闭合退款分支。联动走 service 层而非直接打 repo，消除"状态机只守 service.Update 入口、而联动走 repo 旁路"的缺口。若联动失败，补偿回滚退款记录为 `PENDING`（当前 repo 模式不支持跨实体事务，用补偿兜底避免"退款成功但流水未 REFUNDED"持久不一致）。
 
-**`PaymentTransactionService.Update` 带支付流水状态机**（`isAllowedTxTransition`）：仅允许 `PENDING→SUCCEEDED`/`PENDING→FAILED`（支付回调）与 `SUCCEEDED→REFUNDED`（退款联动）。终态 `REFUNDED`/`FAILED` 为吸收态无出边。这防退款联动把流水翻 `REFUNDED` 后又被并发 `Update` 翻回 `SUCCEEDED`。状态变更前先 `repo.Get` 查当前状态校验转换合法性，非法返回 `ErrorBadRequest`。
+**`PaymentTransactionService.Update` 带支付流水状态机**（`isAllowedTxTransition(ctx, from, to)`）：普通调用方仅允许 `PENDING→SUCCEEDED`/`PENDING→FAILED`（支付回调）与 `SUCCEEDED→REFUNDED`（退款联动）。**系统上下文**（`viewer.IsSystemContext()`，即 `ExpireOrderByTimeout` 注入的 `SystemViewer`）额外允许 `SUCCEEDED→FAILED`（孤儿支付清理）。终态 `REFUNDED`/`FAILED` 对所有调用方为吸收态无出边。状态变更前先 `repo.Get` 查当前状态校验转换合法性，非法返回 `ErrorBadRequest`。系统口子由 `isAllowedTxTransition` 内 `viewer.FromContext` 判断，消除"状态机禁止 `SUCCEEDED→FAILED` 但超时清理实际执行"的空头支票矛盾。
 
-**退款 Create 校验**（`PaymentRefundService.Create`）：退款记录必须关联 `transaction_id`，且该流水须存在、属同租户、当前 `SUCCEEDED`（只能对已成功支付退款）；并通过 List refund 检查同 transaction 是否已存在 `SUCCEEDED` 退款（重复退款保护）。任一校验失败返回 `ErrorBadRequest`。
+**退款 Create 校验**（`PaymentRefundService.Create`）：退款记录必须关联 `transaction_id`，且该流水须存在、当前 `SUCCEEDED`（只能对已成功支付退款）。**退款记录的 `tenant_id` 强制取自该流水**（非调用方 token 的 tenant）——平台 admin（token tenant=0）对真实租户交易发起退款时，退款记录归属到交易所在租户，避免用 token tenant 作比较基准导致误判拒绝、以及退款记录 tenant_id=0 归属错乱。重复退款保护：通过 List refund 过滤 `transaction_id` 检查同 transaction 是否已存在 `SUCCEEDED` 退款，**List 失败时 fail-closed 拒绝**（不静默降级跳过校验）。任一校验失败返回错误。
 
 ### 订单超时过期（ExpireOrderByTimeout / asynq 延时任务）
 
@@ -585,7 +585,7 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 - **投递**：`OrderService.scheduleOrderTimeout` 在事务提交后调用 `taskScheduler.NewTask(type, payload, asynq.ProcessIn(TTL), asynq.TaskID(id), asynq.Unique(TTL))`。
 - **handler 注册**：`app/core/service/internal/server/asynq_server.go` 调用 `asynq.RegisterSubscriber(srv, OrderTimeoutTaskType, orderService.HandleOrderTimeout)`，与 `BackupTaskType` 并列。
 - **handler**：`OrderService.HandleOrderTimeout` 是薄委托，调用本服务 `ExpireOrderByTimeout`。
-- **ExpireOrderByTimeout 逻辑**：查订单 → 幂等检查（仅 `PENDING_PAYMENT` 才处理）→ 遍历 OrderItem 调 `SkuRepo.AddStock` 释放库存 → `OrderRepo.Update(status=CANCELLED, expected_status=[PENDING_PAYMENT])` 推进终态 → **孤儿支付清理**：将该订单关联的 `payment_transaction`（按 `order_id`）中 `SUCCEEDED` 状态的记录翻为 `FAILED`，消除"支付已成功但订单已取消"的不一致（MarkPaid 竞态失败时的遗留）。库存释放失败不阻塞过期（差异由对账补偿）。Conflict（状态已并发推进）则跳过。
+- **ExpireOrderByTimeout 逻辑**：查订单 → 幂等检查（仅 `PENDING_PAYMENT` 才处理）→ 遍历 OrderItem 调 `SkuRepo.AddStock` 释放库存 → `OrderRepo.Update(status=CANCELLED, expected_status=[PENDING_PAYMENT])` 推进终态 → **孤儿支付清理**：将该订单关联的 `payment_transaction`（按 `order_id`）中 `SUCCEEDED` 状态的记录翻为 `FAILED`，消除"支付已成功但订单已取消"的不一致（MarkPaid 竞态失败时的遗留）。该 `SUCCEEDED→FAILED` 转换由 `isAllowedTxTransition` 的系统上下文口子背书（见上节），在 ent 事务内批量执行以保证与订单取消的原子性（系统特权操作，不走 service 层单条 Update 以保留跨实体事务原子性）。库存释放失败不阻塞过期（差异由对账补偿）。Conflict（状态已并发推进）则跳过。
 
 ### 支付 mixin 字段在 ent / proto 的映射
 
