@@ -134,6 +134,20 @@ func (_c *CartItemCreate) SetNillableCartID(v *uint32) *CartItemCreate {
 	return _c
 }
 
+// SetUserID sets the "user_id" field.
+func (_c *CartItemCreate) SetUserID(v uint32) *CartItemCreate {
+	_c.mutation.SetUserID(v)
+	return _c
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_c *CartItemCreate) SetNillableUserID(v *uint32) *CartItemCreate {
+	if v != nil {
+		_c.SetUserID(*v)
+	}
+	return _c
+}
+
 // SetSkuID sets the "sku_id" field.
 func (_c *CartItemCreate) SetSkuID(v uint32) *CartItemCreate {
 	_c.mutation.SetSkuID(v)
@@ -287,6 +301,10 @@ func (_c *CartItemCreate) createSpec() (*CartItem, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.CartID(); ok {
 		_spec.SetField(cartitem.FieldCartID, field.TypeUint32, value)
 		_node.CartID = &value
+	}
+	if value, ok := _c.mutation.UserID(); ok {
+		_spec.SetField(cartitem.FieldUserID, field.TypeUint32, value)
+		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.SkuID(); ok {
 		_spec.SetField(cartitem.FieldSkuID, field.TypeUint32, value)
@@ -477,6 +495,30 @@ func (u *CartItemUpsert) AddCartID(v uint32) *CartItemUpsert {
 // ClearCartID clears the value of the "cart_id" field.
 func (u *CartItemUpsert) ClearCartID() *CartItemUpsert {
 	u.SetNull(cartitem.FieldCartID)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *CartItemUpsert) SetUserID(v uint32) *CartItemUpsert {
+	u.Set(cartitem.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *CartItemUpsert) UpdateUserID() *CartItemUpsert {
+	u.SetExcluded(cartitem.FieldUserID)
+	return u
+}
+
+// AddUserID adds v to the "user_id" field.
+func (u *CartItemUpsert) AddUserID(v uint32) *CartItemUpsert {
+	u.Add(cartitem.FieldUserID, v)
+	return u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *CartItemUpsert) ClearUserID() *CartItemUpsert {
+	u.SetNull(cartitem.FieldUserID)
 	return u
 }
 
@@ -733,6 +775,34 @@ func (u *CartItemUpsertOne) UpdateCartID() *CartItemUpsertOne {
 func (u *CartItemUpsertOne) ClearCartID() *CartItemUpsertOne {
 	return u.Update(func(s *CartItemUpsert) {
 		s.ClearCartID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *CartItemUpsertOne) SetUserID(v uint32) *CartItemUpsertOne {
+	return u.Update(func(s *CartItemUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// AddUserID adds v to the "user_id" field.
+func (u *CartItemUpsertOne) AddUserID(v uint32) *CartItemUpsertOne {
+	return u.Update(func(s *CartItemUpsert) {
+		s.AddUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *CartItemUpsertOne) UpdateUserID() *CartItemUpsertOne {
+	return u.Update(func(s *CartItemUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *CartItemUpsertOne) ClearUserID() *CartItemUpsertOne {
+	return u.Update(func(s *CartItemUpsert) {
+		s.ClearUserID()
 	})
 }
 
@@ -1163,6 +1233,34 @@ func (u *CartItemUpsertBulk) UpdateCartID() *CartItemUpsertBulk {
 func (u *CartItemUpsertBulk) ClearCartID() *CartItemUpsertBulk {
 	return u.Update(func(s *CartItemUpsert) {
 		s.ClearCartID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *CartItemUpsertBulk) SetUserID(v uint32) *CartItemUpsertBulk {
+	return u.Update(func(s *CartItemUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// AddUserID adds v to the "user_id" field.
+func (u *CartItemUpsertBulk) AddUserID(v uint32) *CartItemUpsertBulk {
+	return u.Update(func(s *CartItemUpsert) {
+		s.AddUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *CartItemUpsertBulk) UpdateUserID() *CartItemUpsertBulk {
+	return u.Update(func(s *CartItemUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *CartItemUpsertBulk) ClearUserID() *CartItemUpsertBulk {
+	return u.Update(func(s *CartItemUpsert) {
+		s.ClearUserID()
 	})
 }
 

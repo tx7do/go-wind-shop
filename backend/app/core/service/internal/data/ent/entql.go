@@ -220,6 +220,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			cartitem.FieldDeletedBy: {Type: field.TypeUint32, Column: cartitem.FieldDeletedBy},
 			cartitem.FieldTenantID:  {Type: field.TypeUint32, Column: cartitem.FieldTenantID},
 			cartitem.FieldCartID:    {Type: field.TypeUint32, Column: cartitem.FieldCartID},
+			cartitem.FieldUserID:    {Type: field.TypeUint32, Column: cartitem.FieldUserID},
 			cartitem.FieldSkuID:     {Type: field.TypeUint32, Column: cartitem.FieldSkuID},
 			cartitem.FieldQuantity:  {Type: field.TypeInt32, Column: cartitem.FieldQuantity},
 		},
@@ -2268,6 +2269,11 @@ func (f *CartItemFilter) WhereTenantID(p entql.Uint32P) {
 // WhereCartID applies the entql uint32 predicate on the cart_id field.
 func (f *CartItemFilter) WhereCartID(p entql.Uint32P) {
 	f.Where(p.Field(cartitem.FieldCartID))
+}
+
+// WhereUserID applies the entql uint32 predicate on the user_id field.
+func (f *CartItemFilter) WhereUserID(p entql.Uint32P) {
+	f.Where(p.Field(cartitem.FieldUserID))
 }
 
 // WhereSkuID applies the entql uint32 predicate on the sku_id field.

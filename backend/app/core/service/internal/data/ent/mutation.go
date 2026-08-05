@@ -7200,6 +7200,8 @@ type CartItemMutation struct {
 	addtenant_id  *int32
 	cart_id       *uint32
 	addcart_id    *int32
+	user_id       *uint32
+	adduser_id    *int32
 	sku_id        *uint32
 	addsku_id     *int32
 	quantity      *int32
@@ -7811,6 +7813,76 @@ func (m *CartItemMutation) ResetCartID() {
 	delete(m.clearedFields, cartitem.FieldCartID)
 }
 
+// SetUserID sets the "user_id" field.
+func (m *CartItemMutation) SetUserID(u uint32) {
+	m.user_id = &u
+	m.adduser_id = nil
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *CartItemMutation) UserID() (r uint32, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the CartItem entity.
+// If the CartItem object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CartItemMutation) OldUserID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// AddUserID adds u to the "user_id" field.
+func (m *CartItemMutation) AddUserID(u int32) {
+	if m.adduser_id != nil {
+		*m.adduser_id += u
+	} else {
+		m.adduser_id = &u
+	}
+}
+
+// AddedUserID returns the value that was added to the "user_id" field in this mutation.
+func (m *CartItemMutation) AddedUserID() (r int32, exists bool) {
+	v := m.adduser_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *CartItemMutation) ClearUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	m.clearedFields[cartitem.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *CartItemMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[cartitem.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *CartItemMutation) ResetUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	delete(m.clearedFields, cartitem.FieldUserID)
+}
+
 // SetSkuID sets the "sku_id" field.
 func (m *CartItemMutation) SetSkuID(u uint32) {
 	m.sku_id = &u
@@ -7985,7 +8057,7 @@ func (m *CartItemMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CartItemMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, cartitem.FieldCreatedAt)
 	}
@@ -8009,6 +8081,9 @@ func (m *CartItemMutation) Fields() []string {
 	}
 	if m.cart_id != nil {
 		fields = append(fields, cartitem.FieldCartID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, cartitem.FieldUserID)
 	}
 	if m.sku_id != nil {
 		fields = append(fields, cartitem.FieldSkuID)
@@ -8040,6 +8115,8 @@ func (m *CartItemMutation) Field(name string) (ent.Value, bool) {
 		return m.TenantID()
 	case cartitem.FieldCartID:
 		return m.CartID()
+	case cartitem.FieldUserID:
+		return m.UserID()
 	case cartitem.FieldSkuID:
 		return m.SkuID()
 	case cartitem.FieldQuantity:
@@ -8069,6 +8146,8 @@ func (m *CartItemMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldTenantID(ctx)
 	case cartitem.FieldCartID:
 		return m.OldCartID(ctx)
+	case cartitem.FieldUserID:
+		return m.OldUserID(ctx)
 	case cartitem.FieldSkuID:
 		return m.OldSkuID(ctx)
 	case cartitem.FieldQuantity:
@@ -8138,6 +8217,13 @@ func (m *CartItemMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetCartID(v)
 		return nil
+	case cartitem.FieldUserID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
 	case cartitem.FieldSkuID:
 		v, ok := value.(uint32)
 		if !ok {
@@ -8175,6 +8261,9 @@ func (m *CartItemMutation) AddedFields() []string {
 	if m.addcart_id != nil {
 		fields = append(fields, cartitem.FieldCartID)
 	}
+	if m.adduser_id != nil {
+		fields = append(fields, cartitem.FieldUserID)
+	}
 	if m.addsku_id != nil {
 		fields = append(fields, cartitem.FieldSkuID)
 	}
@@ -8199,6 +8288,8 @@ func (m *CartItemMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedTenantID()
 	case cartitem.FieldCartID:
 		return m.AddedCartID()
+	case cartitem.FieldUserID:
+		return m.AddedUserID()
 	case cartitem.FieldSkuID:
 		return m.AddedSkuID()
 	case cartitem.FieldQuantity:
@@ -8247,6 +8338,13 @@ func (m *CartItemMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddCartID(v)
 		return nil
+	case cartitem.FieldUserID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUserID(v)
+		return nil
 	case cartitem.FieldSkuID:
 		v, ok := value.(int32)
 		if !ok {
@@ -8293,6 +8391,9 @@ func (m *CartItemMutation) ClearedFields() []string {
 	if m.FieldCleared(cartitem.FieldCartID) {
 		fields = append(fields, cartitem.FieldCartID)
 	}
+	if m.FieldCleared(cartitem.FieldUserID) {
+		fields = append(fields, cartitem.FieldUserID)
+	}
 	if m.FieldCleared(cartitem.FieldSkuID) {
 		fields = append(fields, cartitem.FieldSkuID)
 	}
@@ -8337,6 +8438,9 @@ func (m *CartItemMutation) ClearField(name string) error {
 	case cartitem.FieldCartID:
 		m.ClearCartID()
 		return nil
+	case cartitem.FieldUserID:
+		m.ClearUserID()
+		return nil
 	case cartitem.FieldSkuID:
 		m.ClearSkuID()
 		return nil
@@ -8374,6 +8478,9 @@ func (m *CartItemMutation) ResetField(name string) error {
 		return nil
 	case cartitem.FieldCartID:
 		m.ResetCartID()
+		return nil
+	case cartitem.FieldUserID:
+		m.ResetUserID()
 		return nil
 	case cartitem.FieldSkuID:
 		m.ResetSkuID()

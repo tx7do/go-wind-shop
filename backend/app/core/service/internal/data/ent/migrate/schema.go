@@ -261,6 +261,7 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "cart_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的购物车ID"},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "用户ID（随所属购物车归属，由隐私层强制）"},
 		{Name: "sku_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的 SKU ID"},
 		{Name: "quantity", Type: field.TypeInt32, Nullable: true, Comment: "数量", Default: 0},
 	}

@@ -34,6 +34,8 @@ type CartItem struct {
 	TenantID *uint32 `json:"tenant_id,omitempty"`
 	// 关联的购物车ID
 	CartID *uint32 `json:"cart_id,omitempty"`
+	// 用户ID（随所属购物车归属，由隐私层强制）
+	UserID *uint32 `json:"user_id,omitempty"`
 	// 关联的 SKU ID
 	SkuID *uint32 `json:"sku_id,omitempty"`
 	// 数量
@@ -46,7 +48,7 @@ func (*CartItem) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case cartitem.FieldID, cartitem.FieldCreatedBy, cartitem.FieldUpdatedBy, cartitem.FieldDeletedBy, cartitem.FieldTenantID, cartitem.FieldCartID, cartitem.FieldSkuID, cartitem.FieldQuantity:
+		case cartitem.FieldID, cartitem.FieldCreatedBy, cartitem.FieldUpdatedBy, cartitem.FieldDeletedBy, cartitem.FieldTenantID, cartitem.FieldCartID, cartitem.FieldUserID, cartitem.FieldSkuID, cartitem.FieldQuantity:
 			values[i] = new(sql.NullInt64)
 		case cartitem.FieldCreatedAt, cartitem.FieldUpdatedAt, cartitem.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -126,6 +128,13 @@ func (_m *CartItem) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.CartID = new(uint32)
 				*_m.CartID = uint32(value.Int64)
+			}
+		case cartitem.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				_m.UserID = new(uint32)
+				*_m.UserID = uint32(value.Int64)
 			}
 		case cartitem.FieldSkuID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -214,6 +223,11 @@ func (_m *CartItem) String() string {
 	builder.WriteString(", ")
 	if v := _m.CartID; v != nil {
 		builder.WriteString("cart_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.UserID; v != nil {
+		builder.WriteString("user_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

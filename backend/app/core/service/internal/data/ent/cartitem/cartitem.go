@@ -28,6 +28,8 @@ const (
 	FieldTenantID = "tenant_id"
 	// FieldCartID holds the string denoting the cart_id field in the database.
 	FieldCartID = "cart_id"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
 	// FieldSkuID holds the string denoting the sku_id field in the database.
 	FieldSkuID = "sku_id"
 	// FieldQuantity holds the string denoting the quantity field in the database.
@@ -47,6 +49,7 @@ var Columns = []string{
 	FieldDeletedBy,
 	FieldTenantID,
 	FieldCartID,
+	FieldUserID,
 	FieldSkuID,
 	FieldQuantity,
 }
@@ -123,6 +126,11 @@ func ByTenantID(opts ...sql.OrderTermOption) OrderOption {
 // ByCartID orders the results by the cart_id field.
 func ByCartID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCartID, opts...).ToFunc()
+}
+
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
 }
 
 // BySkuID orders the results by the sku_id field.

@@ -94,6 +94,11 @@ func CartID(v uint32) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldCartID, v))
 }
 
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v uint32) predicate.CartItem {
+	return predicate.CartItem(sql.FieldEQ(FieldUserID, v))
+}
+
 // SkuID applies equality check predicate on the "sku_id" field. It's identical to SkuIDEQ.
 func SkuID(v uint32) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldSkuID, v))
@@ -502,6 +507,56 @@ func CartIDIsNil() predicate.CartItem {
 // CartIDNotNil applies the NotNil predicate on the "cart_id" field.
 func CartIDNotNil() predicate.CartItem {
 	return predicate.CartItem(sql.FieldNotNull(FieldCartID))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v uint32) predicate.CartItem {
+	return predicate.CartItem(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v uint32) predicate.CartItem {
+	return predicate.CartItem(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...uint32) predicate.CartItem {
+	return predicate.CartItem(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...uint32) predicate.CartItem {
+	return predicate.CartItem(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// UserIDGT applies the GT predicate on the "user_id" field.
+func UserIDGT(v uint32) predicate.CartItem {
+	return predicate.CartItem(sql.FieldGT(FieldUserID, v))
+}
+
+// UserIDGTE applies the GTE predicate on the "user_id" field.
+func UserIDGTE(v uint32) predicate.CartItem {
+	return predicate.CartItem(sql.FieldGTE(FieldUserID, v))
+}
+
+// UserIDLT applies the LT predicate on the "user_id" field.
+func UserIDLT(v uint32) predicate.CartItem {
+	return predicate.CartItem(sql.FieldLT(FieldUserID, v))
+}
+
+// UserIDLTE applies the LTE predicate on the "user_id" field.
+func UserIDLTE(v uint32) predicate.CartItem {
+	return predicate.CartItem(sql.FieldLTE(FieldUserID, v))
+}
+
+// UserIDIsNil applies the IsNil predicate on the "user_id" field.
+func UserIDIsNil() predicate.CartItem {
+	return predicate.CartItem(sql.FieldIsNull(FieldUserID))
+}
+
+// UserIDNotNil applies the NotNil predicate on the "user_id" field.
+func UserIDNotNil() predicate.CartItem {
+	return predicate.CartItem(sql.FieldNotNull(FieldUserID))
 }
 
 // SkuIDEQ applies the EQ predicate on the "sku_id" field.

@@ -557,9 +557,10 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 
 ### 行级隔离（UserPrivacy）
 
-`Order` / `Cart` / `PaymentTransaction` 三实体的 schema `Policy()` 返回 `appPrivacy.UserPrivacy{}`（`pkg/entgo/privacy/user_scope.go`）：
-- 普通用户 viewer：`EvalQuery` 注入 `WHERE user_id = viewer.uid`，`EvalMutation`（Create）强制 `SetUserID(viewer.uid)`、（Update/Delete）注入 `user_id` 谓词。防同租户内越权看/改他人订单/购物车/支付流水。
+`Order` / `Cart` / `CartItem` / `PaymentTransaction` 四实体的 schema `Policy()` 返回 `appPrivacy.UserPrivacy{}`（`pkg/entgo/privacy/user_scope.go`）：
+- 普通用户 viewer：`EvalQuery` 注入 `WHERE user_id = viewer.uid`，`EvalMutation`（Create）强制 `SetUserID(viewer.uid)`、（Update/Delete）注入 `user_id` 谓词。防同租户内越权看/改他人订单/购物车/购物车项/支付流水。
 - 系统/平台 viewer（如 asynq 超时任务的 `NewSystemViewerContext`）：`IsSystemContext()==true` 短路放行，无 user_id 过滤。
+- `CartItem` 的 `user_id` 随所属 `Cart` 归属——加购时 `CartItem.Create` 由 `UserPrivacy.EvalMutation` 强制 `SetUserID(viewer)`，与所属 Cart 的 `user_id`（同为 viewer）一致；查询时 `EvalQuery` 注入 `user_id=viewer`，使"枚举他人 cart_id 越权查同租户购物车项"的缺口在 ent 隐私层闭合（此前 CartItem 仅有 TenantPrivacy，存在枚举型越权）。
 - `PaymentRefund` 不持 `user_id`，仅 `TenantID` 隔离（退款记录同租户内可见，按业务设计）。
 
 ### 乐观并发状态机（expected_status）
@@ -573,7 +574,9 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 - 这保证 MarkPaid（`[PENDING_PAYMENT]→PAID`）与超时取消（`[PENDING_PAYMENT]→CANCELLED`）都走乐观并发路径，防并发覆盖终态。
 - **admin BFF 补 `expected_status`**：`admin-service` 的 `OrderService.Update`（`app/admin/service/internal/service/order_service.go`）在转发前按目标状态补 `expected_status`——目标 `FULFILLED` 补 `[PAID]`，目标 `CLOSED` 补 `[PAID, FULFILLED]`。这是 admin 发货/关闭操作能与 core 状态机衔接的前提（admin 前端 composable 不直接传 `expected_status`，由 BFF 按白名单补全）。目标 `PENDING_PAYMENT`/`CANCELLED` 不由 admin 发起，不补。
 
-`PaymentRefundService.Update` 同样带退款状态机：仅允许 `PENDING→SUCCEEDED` 与 `PENDING→FAILED`。当退款翻 `SUCCEEDED` 时，联动前先 `transactionRepo.Get` 校验关联 `payment_transaction` 仍为 `SUCCEEDED`（防已被孤儿清理翻 `FAILED` 或已被并发退款翻 `REFUNDED` 时仍盲目翻状态），校验通过才调 `PaymentTransactionService.Update`（**经支付流水状态机**校验 `SUCCEEDED→REFUNDED`）翻为 `REFUNDED`，闭合退款分支。联动走 service 层而非直接打 repo，消除"状态机只守 service.Update 入口、而联动走 repo 旁路"的缺口。若联动失败，补偿回滚退款记录为 `PENDING`（当前 repo 模式不支持跨实体事务，用补偿兜底避免"退款成功但流水未 REFUNDED"持久不一致）。
+`PaymentRefundService.Update` 同样带退款状态机：仅允许 `PENDING→SUCCEEDED` 与 `PENDING→FAILED`。当退款翻 `SUCCEEDED` 时，联动前先 `transactionRepo.Get` 校验关联 `payment_transaction` 仍为 `SUCCEEDED`（防已被孤儿清理翻 `FAILED` 或已被并发退款翻 `REFUNDED` 时仍盲目翻状态），校验通过才调 `PaymentTransactionService.Update`（**经支付流水状态机**校验 `SUCCEEDED→REFUNDED`）翻为 `REFUNDED`，闭合退款分支。联动走 service 层而非直接打 repo，消除"状态机只守 service.Update 入口、而联动走 repo 旁路"的缺口。
+
+**联动失败补偿回滚**：若联动（`PaymentTransactionService.Update` 翻 REFUNDED）失败，退款记录已被前面 `repo.Update` 翻为 SUCCEEDED，此时补偿调 `s.repo.Update` 把退款记录回滚为 `PENDING`。**此补偿有意绕过退款状态机**——`SUCCEEDED→PENDING` 不在退款白名单内，但补偿是联动失败兜底的特权操作（回退到初始态而非越权提升终态），直连 repo 层执行。当前 repo 模式不支持跨实体事务（退款记录 Update 与流水翻 REFUNDED 无法同事务），故用此补偿兜底；补偿本身失败时仅记日志，残留不一致需监控告警补救。
 
 **`PaymentTransactionService.Update` 带支付流水状态机**（`isAllowedTxTransition(ctx, from, to)`）：普通调用方仅允许 `PENDING→SUCCEEDED`/`PENDING→FAILED`（支付回调）与 `SUCCEEDED→REFUNDED`（退款联动）。**系统上下文**（`viewer.IsSystemContext()`，即 `ExpireOrderByTimeout` 注入的 `SystemViewer`）额外允许 `SUCCEEDED→FAILED`（孤儿支付清理）。终态 `REFUNDED`/`FAILED` 对所有调用方为吸收态无出边。状态变更前先 `repo.Get` 查当前状态校验转换合法性，非法返回 `ErrorBadRequest`。系统口子由 `isAllowedTxTransition` 内 `viewer.FromContext` 判断，消除"状态机禁止 `SUCCEEDED→FAILED` 但超时清理实际执行"的空头支票矛盾。
 

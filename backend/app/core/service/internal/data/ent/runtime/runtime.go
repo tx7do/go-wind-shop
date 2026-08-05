@@ -173,7 +173,7 @@ func init() {
 	// cartitem.DefaultTenantID holds the default value on creation for the tenant_id field.
 	cartitem.DefaultTenantID = cartitemDescTenantID.Default.(uint32)
 	// cartitemDescQuantity is the schema descriptor for quantity field.
-	cartitemDescQuantity := cartitemFields[2].Descriptor()
+	cartitemDescQuantity := cartitemFields[3].Descriptor()
 	// cartitem.DefaultQuantity holds the default value on creation for the quantity field.
 	cartitem.DefaultQuantity = cartitemDescQuantity.Default.(int32)
 	// cartitemDescID is the schema descriptor for id field.

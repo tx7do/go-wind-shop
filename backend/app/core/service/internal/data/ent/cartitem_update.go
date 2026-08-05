@@ -177,6 +177,33 @@ func (_u *CartItemUpdate) ClearCartID() *CartItemUpdate {
 	return _u
 }
 
+// SetUserID sets the "user_id" field.
+func (_u *CartItemUpdate) SetUserID(v uint32) *CartItemUpdate {
+	_u.mutation.ResetUserID()
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *CartItemUpdate) SetNillableUserID(v *uint32) *CartItemUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// AddUserID adds value to the "user_id" field.
+func (_u *CartItemUpdate) AddUserID(v int32) *CartItemUpdate {
+	_u.mutation.AddUserID(v)
+	return _u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (_u *CartItemUpdate) ClearUserID() *CartItemUpdate {
+	_u.mutation.ClearUserID()
+	return _u
+}
+
 // SetSkuID sets the "sku_id" field.
 func (_u *CartItemUpdate) SetSkuID(v uint32) *CartItemUpdate {
 	_u.mutation.ResetSkuID()
@@ -331,6 +358,15 @@ func (_u *CartItemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.CartIDCleared() {
 		_spec.ClearField(cartitem.FieldCartID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.UserID(); ok {
+		_spec.SetField(cartitem.FieldUserID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedUserID(); ok {
+		_spec.AddField(cartitem.FieldUserID, field.TypeUint32, value)
+	}
+	if _u.mutation.UserIDCleared() {
+		_spec.ClearField(cartitem.FieldUserID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.SkuID(); ok {
 		_spec.SetField(cartitem.FieldSkuID, field.TypeUint32, value)
@@ -520,6 +556,33 @@ func (_u *CartItemUpdateOne) ClearCartID() *CartItemUpdateOne {
 	return _u
 }
 
+// SetUserID sets the "user_id" field.
+func (_u *CartItemUpdateOne) SetUserID(v uint32) *CartItemUpdateOne {
+	_u.mutation.ResetUserID()
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *CartItemUpdateOne) SetNillableUserID(v *uint32) *CartItemUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// AddUserID adds value to the "user_id" field.
+func (_u *CartItemUpdateOne) AddUserID(v int32) *CartItemUpdateOne {
+	_u.mutation.AddUserID(v)
+	return _u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (_u *CartItemUpdateOne) ClearUserID() *CartItemUpdateOne {
+	_u.mutation.ClearUserID()
+	return _u
+}
+
 // SetSkuID sets the "sku_id" field.
 func (_u *CartItemUpdateOne) SetSkuID(v uint32) *CartItemUpdateOne {
 	_u.mutation.ResetSkuID()
@@ -704,6 +767,15 @@ func (_u *CartItemUpdateOne) sqlSave(ctx context.Context) (_node *CartItem, err 
 	}
 	if _u.mutation.CartIDCleared() {
 		_spec.ClearField(cartitem.FieldCartID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.UserID(); ok {
+		_spec.SetField(cartitem.FieldUserID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedUserID(); ok {
+		_spec.AddField(cartitem.FieldUserID, field.TypeUint32, value)
+	}
+	if _u.mutation.UserIDCleared() {
+		_spec.ClearField(cartitem.FieldUserID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.SkuID(); ok {
 		_spec.SetField(cartitem.FieldSkuID, field.TypeUint32, value)

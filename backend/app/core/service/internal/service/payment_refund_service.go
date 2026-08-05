@@ -175,7 +175,13 @@ func (s *PaymentRefundService) Update(ctx context.Context, req *paymentV1.Update
 				// 联动失败补偿：退款记录已在前面 repo.Update 翻为 SUCCEEDED，
 				// 但关联流水未能翻 REFUNDED。为避免"退款成功但流水未 REFUNDED"
 				// 的持久不一致，回滚退款记录为 PENDING。
-				// 当前 repo 模式不支持跨实体事务，故用补偿回滚兜底。
+				//
+				// 注意：此补偿调 s.repo.Update 直连 repo 层，有意绕过退款状态机
+				// （退款白名单只允许 PENDING→SUCCEEDED/FAILED，SUCCEEDED→PENDING
+				// 不在白名单内）。这是联动失败兜底的特权操作——目标是回退到初始态
+				// 而非越权提升终态，故可接受绕状态机。当前 repo 模式不支持跨实体
+				// 事务（退款记录 Update 与流水翻 REFUNDED 无法同事务），故用此
+				// 补偿回滚兜底；补偿本身失败时仅记日志，残留不一致需监控告警补救。
 				s.log.Errorf("flip payment_transaction [%d] to REFUNDED via service layer failed: %v", txId, uErr)
 				pendingStatus := paymentV1.PaymentRefund_PENDING
 				rollbackReq := &paymentV1.UpdatePaymentRefundRequest{
