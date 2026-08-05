@@ -34,3 +34,323 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 )
+
+// Validate checks the field values on SendResetCodeRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SendResetCodeRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SendResetCodeRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SendResetCodeRequestMultiError, or nil if none found.
+func (m *SendResetCodeRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SendResetCodeRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Email
+
+	if len(errors) > 0 {
+		return SendResetCodeRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SendResetCodeRequestMultiError is an error wrapping multiple validation
+// errors returned by SendResetCodeRequest.ValidateAll() if the designated
+// constraints aren't met.
+type SendResetCodeRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SendResetCodeRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SendResetCodeRequestMultiError) AllErrors() []error { return m }
+
+// SendResetCodeRequestValidationError is the validation error returned by
+// SendResetCodeRequest.Validate if the designated constraints aren't met.
+type SendResetCodeRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SendResetCodeRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SendResetCodeRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SendResetCodeRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SendResetCodeRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SendResetCodeRequestValidationError) ErrorName() string {
+	return "SendResetCodeRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SendResetCodeRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSendResetCodeRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SendResetCodeRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SendResetCodeRequestValidationError{}
+
+// Validate checks the field values on SendResetCodeResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SendResetCodeResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SendResetCodeResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SendResetCodeResponseMultiError, or nil if none found.
+func (m *SendResetCodeResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SendResetCodeResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for EmailPreview
+
+	// no validation rules for ExpiresIn
+
+	if len(errors) > 0 {
+		return SendResetCodeResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SendResetCodeResponseMultiError is an error wrapping multiple validation
+// errors returned by SendResetCodeResponse.ValidateAll() if the designated
+// constraints aren't met.
+type SendResetCodeResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SendResetCodeResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SendResetCodeResponseMultiError) AllErrors() []error { return m }
+
+// SendResetCodeResponseValidationError is the validation error returned by
+// SendResetCodeResponse.Validate if the designated constraints aren't met.
+type SendResetCodeResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SendResetCodeResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SendResetCodeResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SendResetCodeResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SendResetCodeResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SendResetCodeResponseValidationError) ErrorName() string {
+	return "SendResetCodeResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SendResetCodeResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSendResetCodeResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SendResetCodeResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SendResetCodeResponseValidationError{}
+
+// Validate checks the field values on ResetPasswordRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ResetPasswordRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ResetPasswordRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ResetPasswordRequestMultiError, or nil if none found.
+func (m *ResetPasswordRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ResetPasswordRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Email
+
+	// no validation rules for Code
+
+	// no validation rules for NewPassword
+
+	// no validation rules for NeedDecrypt
+
+	if len(errors) > 0 {
+		return ResetPasswordRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ResetPasswordRequestMultiError is an error wrapping multiple validation
+// errors returned by ResetPasswordRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ResetPasswordRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ResetPasswordRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ResetPasswordRequestMultiError) AllErrors() []error { return m }
+
+// ResetPasswordRequestValidationError is the validation error returned by
+// ResetPasswordRequest.Validate if the designated constraints aren't met.
+type ResetPasswordRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ResetPasswordRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ResetPasswordRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ResetPasswordRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ResetPasswordRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ResetPasswordRequestValidationError) ErrorName() string {
+	return "ResetPasswordRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ResetPasswordRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sResetPasswordRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ResetPasswordRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ResetPasswordRequestValidationError{}

@@ -24,6 +24,8 @@ const _ = http.SupportPackageIsVersion1
 const OperationAuthenticationServiceLogin = "/app.service.v1.AuthenticationService/Login"
 const OperationAuthenticationServiceLogout = "/app.service.v1.AuthenticationService/Logout"
 const OperationAuthenticationServiceRefreshToken = "/app.service.v1.AuthenticationService/RefreshToken"
+const OperationAuthenticationServiceResetPassword = "/app.service.v1.AuthenticationService/ResetPassword"
+const OperationAuthenticationServiceSendResetCode = "/app.service.v1.AuthenticationService/SendResetCode"
 
 type AuthenticationServiceHTTPServer interface {
 	// Login 登录
@@ -32,6 +34,14 @@ type AuthenticationServiceHTTPServer interface {
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// RefreshToken 刷新认证令牌
 	RefreshToken(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
+	// ResetPassword 校验验证码并重置密码
+	// 校验 Redis 中的验证码（校验即删，一次性），通过后按邮箱反查用户名，
+	// 调用核心 ResetCredential 重置 USERNAME 凭证（注册时仅创建 USERNAME 凭证）。
+	ResetPassword(context.Context, *ResetPasswordRequest) (*emptypb.Empty, error)
+	// SendResetCode 发送密码重置验证码到邮箱
+	// 生成 6 位数字验证码，存 Redis（TTL），并通过 SMTP 发送。
+	// 未配置 SMTP 时降级为日志输出（便于开发/演示），流程仍可端到端验证。
+	SendResetCode(context.Context, *SendResetCodeRequest) (*SendResetCodeResponse, error)
 }
 
 func RegisterAuthenticationServiceHTTPServer(s *http.Server, srv AuthenticationServiceHTTPServer) {
@@ -39,6 +49,8 @@ func RegisterAuthenticationServiceHTTPServer(s *http.Server, srv AuthenticationS
 	r.POST("/app/v1/login", _AuthenticationService_Login0_HTTP_Handler(srv))
 	r.POST("/app/v1/logout", _AuthenticationService_Logout0_HTTP_Handler(srv))
 	r.POST("/app/v1/refresh-token", _AuthenticationService_RefreshToken0_HTTP_Handler(srv))
+	r.POST("/app/v1/send-reset-code", _AuthenticationService_SendResetCode0_HTTP_Handler(srv))
+	r.POST("/app/v1/reset-password", _AuthenticationService_ResetPassword0_HTTP_Handler(srv))
 }
 
 func _AuthenticationService_Login0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
@@ -107,6 +119,50 @@ func _AuthenticationService_RefreshToken0_HTTP_Handler(srv AuthenticationService
 	}
 }
 
+func _AuthenticationService_SendResetCode0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in SendResetCodeRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAuthenticationServiceSendResetCode)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.SendResetCode(ctx, req.(*SendResetCodeRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*SendResetCodeResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _AuthenticationService_ResetPassword0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in ResetPasswordRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAuthenticationServiceResetPassword)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ResetPassword(ctx, req.(*ResetPasswordRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AuthenticationServiceHTTPClient interface {
 	// Login 登录
 	Login(ctx context.Context, req *v1.LoginRequest, opts ...http.CallOption) (rsp *v1.LoginResponse, err error)
@@ -114,6 +170,14 @@ type AuthenticationServiceHTTPClient interface {
 	Logout(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// RefreshToken 刷新认证令牌
 	RefreshToken(ctx context.Context, req *v1.LoginRequest, opts ...http.CallOption) (rsp *v1.LoginResponse, err error)
+	// ResetPassword 校验验证码并重置密码
+	// 校验 Redis 中的验证码（校验即删，一次性），通过后按邮箱反查用户名，
+	// 调用核心 ResetCredential 重置 USERNAME 凭证（注册时仅创建 USERNAME 凭证）。
+	ResetPassword(ctx context.Context, req *ResetPasswordRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// SendResetCode 发送密码重置验证码到邮箱
+	// 生成 6 位数字验证码，存 Redis（TTL），并通过 SMTP 发送。
+	// 未配置 SMTP 时降级为日志输出（便于开发/演示），流程仍可端到端验证。
+	SendResetCode(ctx context.Context, req *SendResetCodeRequest, opts ...http.CallOption) (rsp *SendResetCodeResponse, err error)
 }
 
 type AuthenticationServiceHTTPClientImpl struct {
@@ -158,6 +222,38 @@ func (c *AuthenticationServiceHTTPClientImpl) RefreshToken(ctx context.Context, 
 	pattern := "/app/v1/refresh-token"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAuthenticationServiceRefreshToken))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ResetPassword 校验验证码并重置密码
+// 校验 Redis 中的验证码（校验即删，一次性），通过后按邮箱反查用户名，
+// 调用核心 ResetCredential 重置 USERNAME 凭证（注册时仅创建 USERNAME 凭证）。
+func (c *AuthenticationServiceHTTPClientImpl) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/app/v1/reset-password"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAuthenticationServiceResetPassword))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SendResetCode 发送密码重置验证码到邮箱
+// 生成 6 位数字验证码，存 Redis（TTL），并通过 SMTP 发送。
+// 未配置 SMTP 时降级为日志输出（便于开发/演示），流程仍可端到端验证。
+func (c *AuthenticationServiceHTTPClientImpl) SendResetCode(ctx context.Context, in *SendResetCodeRequest, opts ...http.CallOption) (*SendResetCodeResponse, error) {
+	var out SendResetCodeResponse
+	pattern := "/app/v1/send-reset-code"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAuthenticationServiceSendResetCode))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

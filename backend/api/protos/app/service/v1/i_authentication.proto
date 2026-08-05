@@ -38,4 +38,79 @@ service AuthenticationService {
       body: "*"
     };
   }
+
+  // 发送密码重置验证码到邮箱
+  // 生成 6 位数字验证码，存 Redis（TTL），并通过 SMTP 发送。
+  // 未配置 SMTP 时降级为日志输出（便于开发/演示），流程仍可端到端验证。
+  rpc SendResetCode (SendResetCodeRequest) returns (SendResetCodeResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/send-reset-code"
+      body: "*"
+    };
+
+    option(gnostic.openapi.v3.operation) = {
+      security: {}
+    };
+  }
+
+  // 校验验证码并重置密码
+  // 校验 Redis 中的验证码（校验即删，一次性），通过后按邮箱反查用户名，
+  // 调用核心 ResetCredential 重置 USERNAME 凭证（注册时仅创建 USERNAME 凭证）。
+  rpc ResetPassword (ResetPasswordRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/reset-password"
+      body: "*"
+    };
+
+    option(gnostic.openapi.v3.operation) = {
+      security: {}
+    };
+  }
+}
+
+// 发送密码重置验证码 - 请求
+message SendResetCodeRequest {
+  string email = 1 [
+    json_name = "email",
+    (gnostic.openapi.v3.property) = {description: "注册邮箱"}
+  ];
+}
+
+// 发送密码重置验证码 - 回应
+message SendResetCodeResponse {
+  // 邮箱脱敏后的预览（如 a***@b.com），用于前端提示“验证码已发送至 xxx”
+  string email_preview = 1 [
+    json_name = "emailPreview",
+    (gnostic.openapi.v3.property) = {description: "脱敏邮箱预览"}
+  ];
+
+  // 验证码有效期（秒），用于前端倒计时
+  uint32 expires_in = 2 [
+    json_name = "expiresIn",
+    (gnostic.openapi.v3.property) = {description: "验证码有效期（秒）"}
+  ];
+}
+
+// 重置密码 - 请求
+message ResetPasswordRequest {
+  string email = 1 [
+    json_name = "email",
+    (gnostic.openapi.v3.property) = {description: "注册邮箱"}
+  ];
+
+  string code = 2 [
+    json_name = "code",
+    (gnostic.openapi.v3.property) = {description: "邮箱收到的验证码"}
+  ];
+
+  string new_password = 3 [
+    json_name = "newPassword",
+    (gnostic.openapi.v3.property) = {description: "新密码"}
+  ];
+
+  // 新密码是否需要 AES 解密（与登录/注册的 needDecrypt 约定一致）
+  bool need_decrypt = 4 [
+    json_name = "needDecrypt",
+    (gnostic.openapi.v3.property) = {description: "新密码是否需要 AES 解密"}
+  ];
 }

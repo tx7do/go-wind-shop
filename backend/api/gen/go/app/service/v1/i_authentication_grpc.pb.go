@@ -21,9 +21,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthenticationService_Login_FullMethodName        = "/app.service.v1.AuthenticationService/Login"
-	AuthenticationService_Logout_FullMethodName       = "/app.service.v1.AuthenticationService/Logout"
-	AuthenticationService_RefreshToken_FullMethodName = "/app.service.v1.AuthenticationService/RefreshToken"
+	AuthenticationService_Login_FullMethodName         = "/app.service.v1.AuthenticationService/Login"
+	AuthenticationService_Logout_FullMethodName        = "/app.service.v1.AuthenticationService/Logout"
+	AuthenticationService_RefreshToken_FullMethodName  = "/app.service.v1.AuthenticationService/RefreshToken"
+	AuthenticationService_SendResetCode_FullMethodName = "/app.service.v1.AuthenticationService/SendResetCode"
+	AuthenticationService_ResetPassword_FullMethodName = "/app.service.v1.AuthenticationService/ResetPassword"
 )
 
 // AuthenticationServiceClient is the client API for AuthenticationService service.
@@ -38,6 +40,14 @@ type AuthenticationServiceClient interface {
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 刷新认证令牌
 	RefreshToken(ctx context.Context, in *v1.LoginRequest, opts ...grpc.CallOption) (*v1.LoginResponse, error)
+	// 发送密码重置验证码到邮箱
+	// 生成 6 位数字验证码，存 Redis（TTL），并通过 SMTP 发送。
+	// 未配置 SMTP 时降级为日志输出（便于开发/演示），流程仍可端到端验证。
+	SendResetCode(ctx context.Context, in *SendResetCodeRequest, opts ...grpc.CallOption) (*SendResetCodeResponse, error)
+	// 校验验证码并重置密码
+	// 校验 Redis 中的验证码（校验即删，一次性），通过后按邮箱反查用户名，
+	// 调用核心 ResetCredential 重置 USERNAME 凭证（注册时仅创建 USERNAME 凭证）。
+	ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type authenticationServiceClient struct {
@@ -78,6 +88,26 @@ func (c *authenticationServiceClient) RefreshToken(ctx context.Context, in *v1.L
 	return out, nil
 }
 
+func (c *authenticationServiceClient) SendResetCode(ctx context.Context, in *SendResetCodeRequest, opts ...grpc.CallOption) (*SendResetCodeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendResetCodeResponse)
+	err := c.cc.Invoke(ctx, AuthenticationService_SendResetCode_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authenticationServiceClient) ResetPassword(ctx context.Context, in *ResetPasswordRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, AuthenticationService_ResetPassword_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AuthenticationServiceServer is the server API for AuthenticationService service.
 // All implementations must embed UnimplementedAuthenticationServiceServer
 // for forward compatibility.
@@ -90,6 +120,14 @@ type AuthenticationServiceServer interface {
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 刷新认证令牌
 	RefreshToken(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
+	// 发送密码重置验证码到邮箱
+	// 生成 6 位数字验证码，存 Redis（TTL），并通过 SMTP 发送。
+	// 未配置 SMTP 时降级为日志输出（便于开发/演示），流程仍可端到端验证。
+	SendResetCode(context.Context, *SendResetCodeRequest) (*SendResetCodeResponse, error)
+	// 校验验证码并重置密码
+	// 校验 Redis 中的验证码（校验即删，一次性），通过后按邮箱反查用户名，
+	// 调用核心 ResetCredential 重置 USERNAME 凭证（注册时仅创建 USERNAME 凭证）。
+	ResetPassword(context.Context, *ResetPasswordRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAuthenticationServiceServer()
 }
 
@@ -108,6 +146,12 @@ func (UnimplementedAuthenticationServiceServer) Logout(context.Context, *emptypb
 }
 func (UnimplementedAuthenticationServiceServer) RefreshToken(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RefreshToken not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) SendResetCode(context.Context, *SendResetCodeRequest) (*SendResetCodeResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SendResetCode not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) ResetPassword(context.Context, *ResetPasswordRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method ResetPassword not implemented")
 }
 func (UnimplementedAuthenticationServiceServer) mustEmbedUnimplementedAuthenticationServiceServer() {}
 func (UnimplementedAuthenticationServiceServer) testEmbeddedByValue()                               {}
@@ -184,6 +228,42 @@ func _AuthenticationService_RefreshToken_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AuthenticationService_SendResetCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendResetCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).SendResetCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_SendResetCode_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).SendResetCode(ctx, req.(*SendResetCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthenticationService_ResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ResetPasswordRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).ResetPassword(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_ResetPassword_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).ResetPassword(ctx, req.(*ResetPasswordRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AuthenticationService_ServiceDesc is the grpc.ServiceDesc for AuthenticationService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -202,6 +282,14 @@ var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RefreshToken",
 			Handler:    _AuthenticationService_RefreshToken_Handler,
+		},
+		{
+			MethodName: "SendResetCode",
+			Handler:    _AuthenticationService_SendResetCode_Handler,
+		},
+		{
+			MethodName: "ResetPassword",
+			Handler:    _AuthenticationService_ResetPassword_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

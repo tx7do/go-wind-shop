@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import { computed, reactive, ref } from 'vue';
 import { toast } from 'vue-sonner';
+import { useSendResetCode, useResetPassword } from '@/api/composables';
 
 definePageMeta({ layout: 'auth' });
 
@@ -8,23 +10,78 @@ const localePath = useLocalePath();
 
 useHead({ title: t('authentication.forgotPassword.title') });
 
-const email = ref('');
-const sending = ref(false);
+// 两步流程：1=发送验证码，2=设置新密码
+const step = ref<1 | 2>(1);
 
-// 后端 AuthenticationService 暂未提供密码重置 RPC（无发送重置邮件 / 校验令牌接口）。
-// 此页先作为占位，保留邮箱表单与文案骨架；点击发送给出明确提示，避免死链与误操作。
-// 后端补齐 ResetPassword / SendResetEmail 后，在此接通即可。
-async function handleSend() {
-  if (!email.value.trim()) {
+const email = ref('');
+const code = ref('');
+const newPassword = ref('');
+const confirmPassword = ref('');
+
+// 发送验证码后的脱敏邮箱预览 + 倒计时
+const emailPreview = ref('');
+const resendSeconds = ref(0);
+let resendTimer: ReturnType<typeof setInterval> | null = null;
+
+function startCountdown(seconds: number) {
+  resendSeconds.value = seconds;
+  if (resendTimer) clearInterval(resendTimer);
+  resendTimer = setInterval(() => {
+    resendSeconds.value -= 1;
+    if (resendSeconds.value <= 0 && resendTimer) {
+      clearInterval(resendTimer);
+      resendTimer = null;
+    }
+  }, 1000);
+}
+
+const emailValid = computed(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()));
+const codeValid = computed(() => code.value.trim().length > 0);
+const passwordValid = computed(() => newPassword.value.length >= 6);
+const passwordMatch = computed(() => newPassword.value === confirmPassword.value);
+
+const sendMutation = useSendResetCode({
+  onSuccess: (resp: any) => {
+    emailPreview.value = resp?.emailPreview ?? email.value;
+    toast.success(t('authentication.forgotPassword.sentTo', { email: emailPreview.value }));
+    step.value = 2;
+    // expiresIn 由后端返回（秒），默认 600（10 分钟）
+    startCountdown(resp?.expiresIn ?? 600);
+  },
+  onError: (err: any) => toast.error(err?.message || t('authentication.forgotPassword.sendFailed')),
+});
+
+const resetMutation = useResetPassword({
+  onSuccess: () => {
+    toast.success(t('authentication.forgotPassword.resetSuccess'));
+    navigateTo(localePath('/login'));
+  },
+  onError: (err: any) => toast.error(err?.message || t('authentication.forgotPassword.resetFailed')),
+});
+
+function handleSendCode() {
+  if (!emailValid.value) {
     toast.error(t('authentication.forgotPassword.unavailableTip'));
     return;
   }
-  sending.value = true;
-  // 模拟极短延时以呈现按钮态；功能未上线，统一以提示收尾。
-  await new Promise((r) => setTimeout(r, 300));
-  sending.value = false;
-  toast.info(t('authentication.forgotPassword.unavailableTip'));
+  sendMutation.mutate(email.value.trim());
 }
+
+function handleReset() {
+  if (!codeValid.value) return;
+  if (!passwordValid.value) return;
+  if (!passwordMatch.value) {
+    toast.error(t('authentication.forgotPassword.passwordMismatch'));
+    return;
+  }
+  resetMutation.mutate({
+    email: email.value.trim(),
+    code: code.value.trim(),
+    newPassword: newPassword.value,
+  });
+}
+
+const anyPending = computed(() => sendMutation.isPending.value || resetMutation.isPending.value);
 </script>
 
 <template>
@@ -37,28 +94,77 @@ async function handleSend() {
         {{ t('authentication.forgotPassword.forgot_password_description') }}
       </p>
 
-      <div class="mt-6 flex flex-col gap-2">
-        <UiLabel class="text-xs text-foreground">
-          {{ t('authentication.forgotPassword.email') }}
-        </UiLabel>
-        <UiInput
-          v-model="email"
-          type="email"
-          autocomplete="email"
-          :placeholder="t('authentication.login.placeholder_email')"
-        />
+      <!-- 步骤 1：发送验证码 -->
+      <div v-if="step === 1" class="mt-6 flex flex-col gap-4">
+        <div class="flex flex-col gap-2">
+          <UiLabel class="text-xs text-foreground">{{ t('authentication.forgotPassword.email') }}</UiLabel>
+          <UiInput
+            v-model="email"
+            type="email"
+            autocomplete="email"
+            :placeholder="t('authentication.login.placeholder_email')"
+            @keyup.enter="handleSendCode"
+          />
+        </div>
+        <UiButton class="w-full" :disabled="!emailValid || anyPending" @click="handleSendCode">
+          {{ t('authentication.forgotPassword.sendCode') }}
+        </UiButton>
       </div>
 
-      <!-- 功能未上线提示条 -->
-      <div class="mt-4 rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-600 dark:text-amber-400">
-        {{ t('authentication.forgotPassword.unavailableTip') }}
+      <!-- 步骤 2：设置新密码 -->
+      <div v-else class="mt-6 flex flex-col gap-4">
+        <p class="rounded-md bg-muted/60 px-3 py-2 text-xs text-muted-foreground">
+          {{ t('authentication.forgotPassword.sentTo', { email: emailPreview }) }}
+        </p>
+
+        <div class="flex flex-col gap-2">
+          <UiLabel class="text-xs text-foreground">{{ t('authentication.forgotPassword.code') }}</UiLabel>
+          <UiInput v-model="code" :placeholder="t('authentication.forgotPassword.codePlaceholder')" />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <UiLabel class="text-xs text-foreground">{{ t('authentication.forgotPassword.newPassword') }}</UiLabel>
+          <UiInput
+            v-model="newPassword"
+            type="password"
+            autocomplete="new-password"
+            :placeholder="t('authentication.forgotPassword.newPasswordPlaceholder')"
+          />
+        </div>
+
+        <div class="flex flex-col gap-2">
+          <UiLabel class="text-xs text-foreground">{{ t('authentication.forgotPassword.confirmPassword') }}</UiLabel>
+          <UiInput
+            v-model="confirmPassword"
+            type="password"
+            autocomplete="new-password"
+            :placeholder="t('authentication.forgotPassword.confirmPasswordPlaceholder')"
+          />
+        </div>
+
+        <UiButton
+          class="w-full"
+          :disabled="!codeValid || !passwordValid || !passwordMatch || anyPending"
+          @click="handleReset"
+        >
+          {{ t('authentication.forgotPassword.resetNow') }}
+        </UiButton>
+
+        <!-- 重发验证码 -->
+        <button
+          type="button"
+          class="text-center text-xs text-muted-foreground transition-colors hover:text-primary disabled:opacity-50"
+          :disabled="resendSeconds > 0 || anyPending"
+          @click="handleSendCode"
+        >
+          <span v-if="resendSeconds > 0">
+            {{ t('authentication.forgotPassword.resendIn', { s: resendSeconds }) }}
+          </span>
+          <span v-else>{{ t('authentication.forgotPassword.resend') }}</span>
+        </button>
       </div>
 
-      <UiButton class="mt-5 w-full" :disabled="sending" @click="handleSend">
-        {{ t('authentication.forgotPassword.send') }}
-      </UiButton>
-
-      <div class="mt-4 text-center">
+      <div class="mt-6 text-center">
         <button
           class="cursor-pointer border-none bg-transparent text-sm text-primary transition-colors hover:text-primary/80 hover:underline"
           @click="navigateTo(localePath('/login'))"

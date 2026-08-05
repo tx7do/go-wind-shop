@@ -125,6 +125,28 @@ export type AppErrorReason =
   | 'USER_NOT_FOUND'
   // 506
   | 'VARIANT_ALSO_NEGOTIATES';
+// 发送密码重置验证码 - 请求
+export type SendResetCodeRequest = {
+  email: string | undefined;
+};
+
+// 发送密码重置验证码 - 回应
+export type SendResetCodeResponse = {
+  // 邮箱脱敏后的预览（如 a***@b.com），用于前端提示“验证码已发送至 xxx”
+  emailPreview: string | undefined;
+  // 验证码有效期（秒），用于前端倒计时
+  expiresIn: number | undefined;
+};
+
+// 重置密码 - 请求
+export type ResetPasswordRequest = {
+  code: string | undefined;
+  email: string | undefined;
+  // 新密码是否需要 AES 解密（与登录/注册的 needDecrypt 约定一致）
+  needDecrypt: boolean | undefined;
+  newPassword: string | undefined;
+};
+
 // 用户前台登录认证服务
 export interface AuthenticationService {
   // 登录
@@ -139,6 +161,18 @@ export interface AuthenticationService {
   RefreshToken(
     request: authenticationservicev1_LoginRequest,
   ): Promise<authenticationservicev1_LoginResponse>;
+  // 发送密码重置验证码到邮箱
+  // 生成 6 位数字验证码，存 Redis（TTL），并通过 SMTP 发送。
+  // 未配置 SMTP 时降级为日志输出（便于开发/演示），流程仍可端到端验证。
+  SendResetCode(
+    request: SendResetCodeRequest,
+  ): Promise<SendResetCodeResponse>;
+  // 校验验证码并重置密码
+  // 校验 Redis 中的验证码（校验即删，一次性），通过后按邮箱反查用户名，
+  // 调用核心 ResetCredential 重置 USERNAME 凭证（注册时仅创建 USERNAME 凭证）。
+  ResetPassword(
+    request: ResetPasswordRequest,
+  ): Promise<wellKnownEmpty>;
 }
 
 export function createAuthenticationServiceClient(
@@ -168,6 +202,22 @@ export function createAuthenticationServiceClient(
         service: 'AuthenticationService',
         method: 'RefreshToken',
       }) as Promise<authenticationservicev1_LoginResponse>;
+    },
+    SendResetCode(request) {
+      const path = `app/v1/send-reset-code`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AuthenticationService',
+        method: 'SendResetCode',
+      }) as Promise<SendResetCodeResponse>;
+    },
+    ResetPassword(request) {
+      const path = `app/v1/reset-password`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AuthenticationService',
+        method: 'ResetPassword',
+      }) as Promise<wellKnownEmpty>;
     },
   };
 }

@@ -15,6 +15,7 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -25,31 +26,234 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// 发送密码重置验证码 - 请求
+type SendResetCodeRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Email         string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SendResetCodeRequest) Reset() {
+	*x = SendResetCodeRequest{}
+	mi := &file_app_service_v1_i_authentication_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SendResetCodeRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendResetCodeRequest) ProtoMessage() {}
+
+func (x *SendResetCodeRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_service_v1_i_authentication_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendResetCodeRequest.ProtoReflect.Descriptor instead.
+func (*SendResetCodeRequest) Descriptor() ([]byte, []int) {
+	return file_app_service_v1_i_authentication_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *SendResetCodeRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+// 发送密码重置验证码 - 回应
+type SendResetCodeResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 邮箱脱敏后的预览（如 a***@b.com），用于前端提示“验证码已发送至 xxx”
+	EmailPreview string `protobuf:"bytes,1,opt,name=email_preview,json=emailPreview,proto3" json:"email_preview,omitempty"`
+	// 验证码有效期（秒），用于前端倒计时
+	ExpiresIn     uint32 `protobuf:"varint,2,opt,name=expires_in,json=expiresIn,proto3" json:"expires_in,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SendResetCodeResponse) Reset() {
+	*x = SendResetCodeResponse{}
+	mi := &file_app_service_v1_i_authentication_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SendResetCodeResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SendResetCodeResponse) ProtoMessage() {}
+
+func (x *SendResetCodeResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_service_v1_i_authentication_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SendResetCodeResponse.ProtoReflect.Descriptor instead.
+func (*SendResetCodeResponse) Descriptor() ([]byte, []int) {
+	return file_app_service_v1_i_authentication_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *SendResetCodeResponse) GetEmailPreview() string {
+	if x != nil {
+		return x.EmailPreview
+	}
+	return ""
+}
+
+func (x *SendResetCodeResponse) GetExpiresIn() uint32 {
+	if x != nil {
+		return x.ExpiresIn
+	}
+	return 0
+}
+
+// 重置密码 - 请求
+type ResetPasswordRequest struct {
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Email       string                 `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Code        string                 `protobuf:"bytes,2,opt,name=code,proto3" json:"code,omitempty"`
+	NewPassword string                 `protobuf:"bytes,3,opt,name=new_password,json=newPassword,proto3" json:"new_password,omitempty"`
+	// 新密码是否需要 AES 解密（与登录/注册的 needDecrypt 约定一致）
+	NeedDecrypt   bool `protobuf:"varint,4,opt,name=need_decrypt,json=needDecrypt,proto3" json:"need_decrypt,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ResetPasswordRequest) Reset() {
+	*x = ResetPasswordRequest{}
+	mi := &file_app_service_v1_i_authentication_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ResetPasswordRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ResetPasswordRequest) ProtoMessage() {}
+
+func (x *ResetPasswordRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_service_v1_i_authentication_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ResetPasswordRequest.ProtoReflect.Descriptor instead.
+func (*ResetPasswordRequest) Descriptor() ([]byte, []int) {
+	return file_app_service_v1_i_authentication_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *ResetPasswordRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *ResetPasswordRequest) GetCode() string {
+	if x != nil {
+		return x.Code
+	}
+	return ""
+}
+
+func (x *ResetPasswordRequest) GetNewPassword() string {
+	if x != nil {
+		return x.NewPassword
+	}
+	return ""
+}
+
+func (x *ResetPasswordRequest) GetNeedDecrypt() bool {
+	if x != nil {
+		return x.NeedDecrypt
+	}
+	return false
+}
+
 var File_app_service_v1_i_authentication_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_authentication_proto_rawDesc = "" +
 	"\n" +
-	"%app/service/v1/i_authentication.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1eidentity/service/v1/user.proto\x1a.authentication/service/v1/authentication.proto2\xed\x02\n" +
+	"%app/service/v1/i_authentication.proto\x12\x0eapp.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1eidentity/service/v1/user.proto\x1a.authentication/service/v1/authentication.proto\"@\n" +
+	"\x14SendResetCodeRequest\x12(\n" +
+	"\x05email\x18\x01 \x01(\tB\x12\xbaG\x0f\x92\x02\f注册邮箱R\x05email\"\x98\x01\n" +
+	"\x15SendResetCodeResponse\x12=\n" +
+	"\remail_preview\x18\x01 \x01(\tB\x18\xbaG\x15\x92\x02\x12脱敏邮箱预览R\femailPreview\x12@\n" +
+	"\n" +
+	"expires_in\x18\x02 \x01(\rB!\xbaG\x1e\x92\x02\x1b验证码有效期（秒）R\texpiresIn\"\xf3\x01\n" +
+	"\x14ResetPasswordRequest\x12(\n" +
+	"\x05email\x18\x01 \x01(\tB\x12\xbaG\x0f\x92\x02\f注册邮箱R\x05email\x122\n" +
+	"\x04code\x18\x02 \x01(\tB\x1e\xbaG\x1b\x92\x02\x18邮箱收到的验证码R\x04code\x122\n" +
+	"\fnew_password\x18\x03 \x01(\tB\x0f\xbaG\f\x92\x02\t新密码R\vnewPassword\x12I\n" +
+	"\fneed_decrypt\x18\x04 \x01(\bB&\xbaG#\x92\x02 新密码是否需要 AES 解密R\vneedDecrypt2\xec\x04\n" +
 	"\x15AuthenticationService\x12y\n" +
 	"\x05Login\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\"\x1d\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/app/v1/login\x12S\n" +
 	"\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/app/v1/logout\x12\x83\x01\n" +
-	"\fRefreshToken\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/app/v1/refresh-tokenB\xb6\x01\n" +
+	"\fRefreshToken\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/app/v1/refresh-token\x12\x85\x01\n" +
+	"\rSendResetCode\x12$.app.service.v1.SendResetCodeRequest\x1a%.app.service.v1.SendResetCodeResponse\"'\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/app/v1/send-reset-code\x12u\n" +
+	"\rResetPassword\x12$.app.service.v1.ResetPasswordRequest\x1a\x16.google.protobuf.Empty\"&\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/app/v1/reset-passwordB\xb6\x01\n" +
 	"\x12com.app.service.v1B\x14IAuthenticationProtoP\x01Z0go-wind-shop/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
+var (
+	file_app_service_v1_i_authentication_proto_rawDescOnce sync.Once
+	file_app_service_v1_i_authentication_proto_rawDescData []byte
+)
+
+func file_app_service_v1_i_authentication_proto_rawDescGZIP() []byte {
+	file_app_service_v1_i_authentication_proto_rawDescOnce.Do(func() {
+		file_app_service_v1_i_authentication_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_service_v1_i_authentication_proto_rawDesc), len(file_app_service_v1_i_authentication_proto_rawDesc)))
+	})
+	return file_app_service_v1_i_authentication_proto_rawDescData
+}
+
+var file_app_service_v1_i_authentication_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_app_service_v1_i_authentication_proto_goTypes = []any{
-	(*v1.LoginRequest)(nil),  // 0: authentication.service.v1.LoginRequest
-	(*emptypb.Empty)(nil),    // 1: google.protobuf.Empty
-	(*v1.LoginResponse)(nil), // 2: authentication.service.v1.LoginResponse
+	(*SendResetCodeRequest)(nil),  // 0: app.service.v1.SendResetCodeRequest
+	(*SendResetCodeResponse)(nil), // 1: app.service.v1.SendResetCodeResponse
+	(*ResetPasswordRequest)(nil),  // 2: app.service.v1.ResetPasswordRequest
+	(*v1.LoginRequest)(nil),       // 3: authentication.service.v1.LoginRequest
+	(*emptypb.Empty)(nil),         // 4: google.protobuf.Empty
+	(*v1.LoginResponse)(nil),      // 5: authentication.service.v1.LoginResponse
 }
 var file_app_service_v1_i_authentication_proto_depIdxs = []int32{
-	0, // 0: app.service.v1.AuthenticationService.Login:input_type -> authentication.service.v1.LoginRequest
-	1, // 1: app.service.v1.AuthenticationService.Logout:input_type -> google.protobuf.Empty
-	0, // 2: app.service.v1.AuthenticationService.RefreshToken:input_type -> authentication.service.v1.LoginRequest
-	2, // 3: app.service.v1.AuthenticationService.Login:output_type -> authentication.service.v1.LoginResponse
-	1, // 4: app.service.v1.AuthenticationService.Logout:output_type -> google.protobuf.Empty
-	2, // 5: app.service.v1.AuthenticationService.RefreshToken:output_type -> authentication.service.v1.LoginResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	3, // 0: app.service.v1.AuthenticationService.Login:input_type -> authentication.service.v1.LoginRequest
+	4, // 1: app.service.v1.AuthenticationService.Logout:input_type -> google.protobuf.Empty
+	3, // 2: app.service.v1.AuthenticationService.RefreshToken:input_type -> authentication.service.v1.LoginRequest
+	0, // 3: app.service.v1.AuthenticationService.SendResetCode:input_type -> app.service.v1.SendResetCodeRequest
+	2, // 4: app.service.v1.AuthenticationService.ResetPassword:input_type -> app.service.v1.ResetPasswordRequest
+	5, // 5: app.service.v1.AuthenticationService.Login:output_type -> authentication.service.v1.LoginResponse
+	4, // 6: app.service.v1.AuthenticationService.Logout:output_type -> google.protobuf.Empty
+	5, // 7: app.service.v1.AuthenticationService.RefreshToken:output_type -> authentication.service.v1.LoginResponse
+	1, // 8: app.service.v1.AuthenticationService.SendResetCode:output_type -> app.service.v1.SendResetCodeResponse
+	4, // 9: app.service.v1.AuthenticationService.ResetPassword:output_type -> google.protobuf.Empty
+	5, // [5:10] is the sub-list for method output_type
+	0, // [0:5] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -66,12 +270,13 @@ func file_app_service_v1_i_authentication_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_service_v1_i_authentication_proto_rawDesc), len(file_app_service_v1_i_authentication_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_app_service_v1_i_authentication_proto_goTypes,
 		DependencyIndexes: file_app_service_v1_i_authentication_proto_depIdxs,
+		MessageInfos:      file_app_service_v1_i_authentication_proto_msgTypes,
 	}.Build()
 	File_app_service_v1_i_authentication_proto = out.File
 	file_app_service_v1_i_authentication_proto_goTypes = nil

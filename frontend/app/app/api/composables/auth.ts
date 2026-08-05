@@ -5,6 +5,9 @@ import {
 import type {
   authenticationservicev1_LoginRequest,
   authenticationservicev1_LoginResponse,
+  SendResetCodeRequest,
+  SendResetCodeResponse,
+  ResetPasswordRequest,
 } from '@/api/generated/app/service/v1';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
@@ -109,5 +112,42 @@ export async function fetchRefreshToken(refreshTokenValue: string) {
     queryKey: ['refreshToken', refreshTokenValue],
     queryFn: () => refreshToken(refreshTokenValue),
     retry: 0,
+  });
+}
+
+// ==============================
+// 找回密码：发送验证码 / 重置密码
+// ==============================
+
+/**
+ * 发送密码重置验证码到邮箱
+ * 返回脱敏邮箱预览与有效期，用于前端提示与倒计时。
+ */
+export async function sendResetCode(email: string): Promise<SendResetCodeResponse> {
+  const request: SendResetCodeRequest = { email };
+  return apiClient.authenticationService.SendResetCode(request);
+}
+export function useSendResetCode(
+  options?: UseMutationOptions<SendResetCodeResponse, Error, string>,
+) {
+  return useMutation({
+    mutationFn: (email) => sendResetCode(email),
+    ...options,
+  });
+}
+
+/**
+ * 校验验证码并重置密码
+ */
+export async function resetPassword(email: string, code: string, newPassword: string): Promise<void> {
+  const request: ResetPasswordRequest = { email, code, newPassword };
+  await apiClient.authenticationService.ResetPassword(request);
+}
+export function useResetPassword(
+  options?: UseMutationOptions<void, Error, { email: string; code: string; newPassword: string }>,
+) {
+  return useMutation({
+    mutationFn: ({ email, code, newPassword }) => resetPassword(email, code, newPassword),
+    ...options,
   });
 }

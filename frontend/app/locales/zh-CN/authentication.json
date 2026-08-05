@@ -85,6 +85,24 @@
     "back_to_login": "返回登录",
     "forgot_password_description": "请输入您的邮箱，我们将发送一封邮件给您，点击邮件中的链接重置密码",
     "unavailable": "功能暂未上线",
-    "unavailableTip": "找回密码功能正在开发中，如需重置密码请联系客服。"
+    "unavailableTip": "找回密码功能正在开发中，如需重置密码请联系客服。",
+    "step_send": "发送验证码",
+    "step_reset": "设置新密码",
+    "code": "验证码",
+    "codePlaceholder": "请输入邮箱收到的验证码",
+    "newPassword": "新密码",
+    "newPasswordPlaceholder": "请输入新密码",
+    "confirmPassword": "确认新密码",
+    "confirmPasswordPlaceholder": "请再次输入新密码",
+    "sendCode": "发送验证码",
+    "resend": "重新发送",
+    "resendIn": "{s}s 后重发",
+    "next": "下一步",
+    "resetNow": "重置密码",
+    "sentTo": "验证码已发送至 {email}",
+    "passwordMismatch": "两次输入的密码不一致",
+    "resetSuccess": "密码重置成功，请使用新密码登录。",
+    "sendFailed": "发送验证码失败，请稍后重试。",
+    "resetFailed": "重置密码失败，请稍后重试。"
   }
 }

@@ -85,6 +85,24 @@
     "back_to_login": "Back to Login",
     "forgot_password_description": "Please enter your email address, we will send you an email, click the link in the email to reset your password",
     "unavailable": "Feature unavailable",
-    "unavailableTip": "Password reset is under development. Please contact support to reset your password."
+    "unavailableTip": "Password reset is under development. Please contact support to reset your password.",
+    "step_send": "Send code",
+    "step_reset": "Set new password",
+    "code": "Verification code",
+    "codePlaceholder": "Enter the code from your email",
+    "newPassword": "New password",
+    "newPasswordPlaceholder": "Enter new password",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Enter new password again",
+    "sendCode": "Send code",
+    "resend": "Resend",
+    "resendIn": "Resend in {s}s",
+    "next": "Next",
+    "resetNow": "Reset password",
+    "sentTo": "Code sent to {email}",
+    "passwordMismatch": "Passwords do not match",
+    "resetSuccess": "Password reset. Please log in with your new password.",
+    "sendFailed": "Failed to send code. Try again later.",
+    "resetFailed": "Failed to reset password. Try again later."
   }
 }

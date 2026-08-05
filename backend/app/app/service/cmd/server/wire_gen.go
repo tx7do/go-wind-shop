@@ -30,16 +30,20 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	accessTokenChecker := auth.NewTokenChecker(context, authenticationServiceClient, clientType)
 	engine := data.NewAuthorizer()
 	v := server.NewRestMiddleware(context, accessTokenChecker, engine)
-	authenticationService := service.NewAuthenticationService(context, authenticationServiceClient)
+	userServiceClient := data.NewUserServiceClient(context, discovery)
+	userCredentialServiceClient := data.NewUserCredentialServiceClient(context, discovery)
+	client, cleanup, err := data.NewRedisClient(context)
+	if err != nil {
+		return nil, nil, err
+	}
+	authenticationService := service.NewAuthenticationService(context, authenticationServiceClient, userServiceClient, userCredentialServiceClient, client)
 	minIOClient := data.NewMinIoClient(context)
 	fileServiceClient := data.NewFileServiceClient(context, discovery)
 	fileTransferService := service.NewFileTransferService(context, minIOClient, fileServiceClient)
-	userServiceClient := data.NewUserServiceClient(context, discovery)
 	tenantServiceClient := data.NewTenantServiceClient(context, discovery)
 	orgUnitServiceClient := data.NewOrgUnitServiceClient(context, discovery)
 	positionServiceClient := data.NewPositionServiceClient(context, discovery)
 	roleServiceClient := data.NewRoleServiceClient(context, discovery)
-	userCredentialServiceClient := data.NewUserCredentialServiceClient(context, discovery)
 	userProfileService := service.NewUserProfileService(context, userServiceClient, tenantServiceClient, orgUnitServiceClient, positionServiceClient, roleServiceClient, userCredentialServiceClient)
 	categoryServiceClient := data.NewCategoryServiceClient(context, discovery)
 	categoryService := service.NewCategoryService(context, categoryServiceClient)
@@ -77,10 +81,12 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	grpcMiddlewares := server.NewGrpcMiddleware(context)
 	grpcServer, err := server.NewGrpcServer(context, grpcMiddlewares)
 	if err != nil {
+		cleanup()
 		return nil, nil, err
 	}
 	sseServer := server.NewSseServer(context)
 	app := newApp(context, httpServer, grpcServer, sseServer)
 	return app, func() {
+		cleanup()
 	}, nil
 }
