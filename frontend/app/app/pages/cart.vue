@@ -12,6 +12,8 @@ import {
   fetchListSkuAttributeCombinationsStore,
   useListProductAttributes,
   useListProductAttributeValues,
+  fetchGetSkuStore,
+  fetchGetProductStore,
 } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { useAccessStore } from '@/stores/modules/core/access.state';
@@ -197,6 +199,48 @@ watch(
   },
   { immediate: true },
 );
+
+// ---------- 商品名 / 商品图片：skuId → SKU → productId → Product ----------
+// productInfoMap: skuId → { name, imageUrl }
+const productInfoMap = reactive<Record<number, { name: string; imageUrl: string }>>({});
+
+watch(
+  cartItems,
+  async (items) => {
+    for (const k of Object.keys(productInfoMap)) delete productInfoMap[Number(k)];
+    if (!items || items.length === 0) return;
+    await Promise.all(
+      items.map(async (item) => {
+        const skuId = item.skuId;
+        if (skuId === undefined) return;
+        try {
+          const sku: any = await fetchGetSkuStore(skuId);
+          const productId = sku?.productId;
+          if (productId === undefined) return;
+          const product: any = await fetchGetProductStore(productId);
+          const imageUrl = product?.imageUrl ?? '';
+          const tr = pickTranslation(
+            product?.translations as Array<{ name?: string; languageCode?: string }> | undefined,
+          );
+          const name = tr?.name ?? '';
+          productInfoMap[skuId] = { name, imageUrl };
+        } catch {
+          // ignore
+        }
+      }),
+    );
+  },
+  { immediate: true },
+);
+
+function productName(skuId: number | undefined): string {
+  if (skuId === undefined) return '';
+  return productInfoMap[skuId]?.name ?? '';
+}
+function productImageUrl(skuId: number | undefined): string {
+  if (skuId === undefined) return '';
+  return productInfoMap[skuId]?.imageUrl ?? '';
+}
 
 function describeSku(skuId: number | undefined): string {
   if (skuId === undefined) return '';
@@ -444,13 +488,26 @@ function goCheckout() {
 
             <!-- 商品缩略图（1:1）+ 标题 + 规格描述 -->
             <div class="flex items-center gap-4">
+              <img
+                v-if="productImageUrl(item.skuId)"
+                :src="productImageUrl(item.skuId)"
+                :alt="productName(item.skuId)"
+                class="aspect-square h-16 w-16 shrink-0 rounded-md object-cover"
+              />
               <UiProductPlaceholder
+                v-else
                 :seed="item.skuId ?? 0"
                 class="aspect-square h-16 w-16 shrink-0 rounded-md text-muted-foreground"
               />
               <div class="min-w-0">
                 <p class="line-clamp-1 text-sm font-semibold text-foreground dark:text-slate-200">
-                  {{ describeSku(item.skuId) || '—' }}
+                  {{ productName(item.skuId) || '—' }}
+                </p>
+                <p
+                  v-if="describeSku(item.skuId)"
+                  class="mt-1 line-clamp-1 text-xs text-muted-foreground"
+                >
+                  {{ describeSku(item.skuId) }}
                 </p>
               </div>
             </div>

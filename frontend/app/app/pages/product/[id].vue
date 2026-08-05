@@ -149,6 +149,10 @@ const valuesByAttribute = computed(() => {
   return map;
 });
 
+// ---------- 用户选择 ----------
+// 注意：reka-ui Select 使用字符串值，因此选择以字符串存储，匹配时转为数字。
+const selections = reactive<Record<number, string | undefined>>({});
+
 // ---------- 默认选中每个属性的第一个值 ----------
 // 当属性与属性值数据加载完成后，为每个尚无选中值的属性设默认选中其第一个值，
 // 使页面初始即有完整选中态，便于用户直观看到当前 SKU 与价格。
@@ -219,9 +223,6 @@ watch(
   { immediate: true },
 );
 
-// ---------- 用户选择 ----------
-// 注意：reka-ui Select 使用字符串值，因此选择以字符串存储，匹配时转为数字。
-const selections = reactive<Record<number, string | undefined>>({});
 const allAttributesSelected = computed(() => {
   // 无属性商品（单 SKU）：无可选属性，视为已满足选择前提。
   if (attributes.value.length === 0) return true;

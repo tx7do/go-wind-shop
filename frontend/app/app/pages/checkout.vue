@@ -13,6 +13,8 @@ import {
   fetchListSkuAttributeCombinationsStore,
   useListProductAttributes,
   useListProductAttributeValues,
+  fetchGetSkuStore,
+  fetchGetProductStore,
 } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { useAccessStore } from '@/stores/modules/core/access.state';
@@ -38,10 +40,13 @@ const isLogin = computed(() => {
   return !!token?.value && !accessStore.loginExpired;
 });
 const currentUserId = computed(() => userStore.user?.id ?? 0);
-const currentTenantId = computed(() => userStore.tenantId ?? 0);
 
 // ---------- 购物车快照（用于订单摘要） ----------
-type CartEntity = { id?: number; userId?: number };
+// 注意：下单所需 tenantId/userId 必须取自购物车实体本身（即购物车数据行的
+// 真实归属租户与用户），而不是 userStore 里的登录态 tenantId/userId。
+// 后端 Order.Create 用 (tenant_id, user_id) 复合查购物车，若两值与购物车
+// 实际归属不一致即报 "cart is empty or not found"。
+type CartEntity = { id?: number; userId?: number; tenantId?: number };
 type CartItemEntity = { id?: number; skuId?: number; quantity?: number };
 
 const cartsQuery = useListCarts(
@@ -57,6 +62,9 @@ const cart = computed<CartEntity | undefined>(() => {
   return items[0];
 });
 const cartId = computed(() => cart.value?.id);
+// 购物车真实归属（下单时以此为准，避免与登录态租户错配）。
+const cartUserId = computed(() => cart.value?.userId ?? 0);
+const cartTenantId = computed(() => cart.value?.tenantId ?? 0);
 
 const cartItemsQuery = useListCartItems(
   computed(() => ({
@@ -206,6 +214,48 @@ watch(
   { immediate: true },
 );
 
+// ---------- 商品名 / 商品图片：skuId → SKU → productId → Product ----------
+// productInfoMap: skuId → { name, imageUrl }
+const productInfoMap = reactive<Record<number, { name: string; imageUrl: string }>>({});
+
+watch(
+  cartItems,
+  async (items) => {
+    for (const k of Object.keys(productInfoMap)) delete productInfoMap[Number(k)];
+    if (!items || items.length === 0) return;
+    await Promise.all(
+      items.map(async (item) => {
+        const skuId = item.skuId;
+        if (skuId === undefined) return;
+        try {
+          const sku: any = await fetchGetSkuStore(skuId);
+          const productId = sku?.productId;
+          if (productId === undefined) return;
+          const product: any = await fetchGetProductStore(productId);
+          const imageUrl = product?.imageUrl ?? '';
+          const tr = pickTranslation(
+            product?.translations as Array<{ name?: string; languageCode?: string }> | undefined,
+          );
+          const name = tr?.name ?? '';
+          productInfoMap[skuId] = { name, imageUrl };
+        } catch {
+          // ignore
+        }
+      }),
+    );
+  },
+  { immediate: true },
+);
+
+function productName(skuId: number | undefined): string {
+  if (skuId === undefined) return '';
+  return productInfoMap[skuId]?.name ?? '';
+}
+function productImageUrl(skuId: number | undefined): string {
+  if (skuId === undefined) return '';
+  return productInfoMap[skuId]?.imageUrl ?? '';
+}
+
 // 将单个 SKU 的规格组合翻译成人类可读描述，如 "颜色: 黑色，容量: 64GB"。
 // 任何一项属性名或属性值查不到时返回空串，避免显示残缺信息。
 function describeSku(skuId: number | undefined): string {
@@ -300,8 +350,8 @@ async function placeOrder() {
   }
 
   const orderData: orderservicev1_Order = {
-    userId: currentUserId.value,
-    tenantId: currentTenantId.value,
+    userId: cartUserId.value,
+    tenantId: cartTenantId.value,
     recipientName: form.recipientName,
     recipientPhone: form.recipientPhone,
     shippingAddress: form.shippingAddress,
@@ -323,7 +373,7 @@ async function placeOrder() {
   try {
     createdOrder = (await fetchGetOrderByIdempotencyKey(
       orderIdempotencyKey,
-      currentTenantId.value,
+      cartTenantId.value,
     )) as orderservicev1_Order;
   } catch {
     toast.error(t('checkout.errors.orderFailed'));
@@ -339,8 +389,8 @@ async function placeOrder() {
 
   // 余额支付（暂固定为 BALANCE，待后端支持多支付方式后扩展选择 UI）
   const paymentData: paymentservicev1_PaymentTransaction = {
-    userId: currentUserId.value,
-    tenantId: currentTenantId.value,
+    userId: cartUserId.value,
+    tenantId: cartTenantId.value,
     orderId: orderId,
     amount: realAmount,
     currency: 'CNY',
@@ -495,13 +545,26 @@ async function placeOrder() {
               :key="item.id"
               class="flex items-center gap-3 rounded-md border border-border bg-background/40 p-3"
             >
+              <img
+                v-if="productImageUrl(item.skuId)"
+                :src="productImageUrl(item.skuId)"
+                :alt="productName(item.skuId)"
+                class="h-10 w-10 shrink-0 rounded object-cover"
+              />
               <UiProductPlaceholder
+                v-else
                 :seed="item.skuId ?? 0"
                 class="h-10 w-10 shrink-0 rounded text-muted-foreground"
               />
               <div class="min-w-0 flex-1">
-                <p class="line-clamp-2 text-xs text-foreground">
-                  {{ describeSku(item.skuId) || '—' }}
+                <p class="line-clamp-1 text-xs text-foreground">
+                  {{ productName(item.skuId) || '—' }}
+                </p>
+                <p
+                  v-if="describeSku(item.skuId)"
+                  class="mt-0.5 line-clamp-1 text-[10px] text-muted-foreground"
+                >
+                  {{ describeSku(item.skuId) }}
                 </p>
               </div>
               <span class="text-xs tabular-nums text-muted-foreground">×{{ item.quantity ?? 0 }}</span>
