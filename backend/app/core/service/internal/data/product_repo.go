@@ -2,6 +2,8 @@ package data
 
 import (
 	"context"
+	"encoding/json"
+	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -18,6 +20,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 	"go-wind-shop/app/core/service/internal/data/ent/product"
+	productTranslation "go-wind-shop/app/core/service/internal/data/ent/producttranslation"
 
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 )
@@ -100,6 +103,23 @@ func (r *ProductRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 
 	builder := r.entClient.Client().Product.Query()
 
+	// 商品名搜索：商品名落在关联翻译表 mall_product_translations，不在 products 表，
+	// 通用 DSL 会把 name 当作 products.name 列处理而报 SQL 错误。因此这里在交给
+	// 通用分页框架前，先把 name 关键字从 query JSON 里剥离出来，改用子查询
+	// products.id IN (SELECT product_id FROM translations WHERE name ILIKE %q%)
+	// 实现（跨任意语言命中）。剥离后剩余字段（categoryId/brandId 等）仍走 DSL。
+	if nameKeyword := extractAndStripNameKeyword(req); nameKeyword != "" {
+		like := "%" + strings.ToLower(nameKeyword) + "%"
+		builder.Modify(func(s *sql.Selector) {
+			s.Where(sql.ExprP(
+				"\""+product.FieldID+"\" IN (SELECT \""+productTranslation.FieldProductID+
+					"\" FROM \""+productTranslation.Table+
+					"\" WHERE LOWER(\""+productTranslation.FieldName+"\") LIKE ?)",
+				like,
+			))
+		})
+	}
+
 	ret, err := r.repository.ListWithPaging(ctx, builder, builder.Clone(), req)
 	if err != nil {
 		return nil, err
@@ -119,6 +139,39 @@ func (r *ProductRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 		Total: ret.Total,
 		Items: ret.Items,
 	}, nil
+}
+
+// extractAndStripNameKeyword 从分页请求的 query JSON 中取出名称搜索关键字
+// （兼容 name / keyword / q 三个前端字段名），并将其从 query 中移除，
+// 避免通用 DSL 再以 products.name 列处理而报错。无 query 或不含这些字段时返回空串。
+func extractAndStripNameKeyword(req *paginationV1.PagingRequest) string {
+	if req == nil || req.GetQuery() == "" {
+		return ""
+	}
+	raw := req.GetQuery()
+	var m map[string]any
+	if err := json.Unmarshal([]byte(raw), &m); err != nil {
+		return ""
+	}
+	var keyword string
+	for _, key := range []string{"name", "keyword", "q"} {
+		if v, ok := m[key]; ok {
+			if s, ok2 := v.(string); ok2 && strings.TrimSpace(s) != "" {
+				keyword = strings.TrimSpace(s)
+			}
+			delete(m, key)
+		}
+	}
+	if keyword == "" {
+		return ""
+	}
+	// 剩余字段写回 query；若全部被剥离则置空 query，清空 oneof 过滤。
+	if len(m) == 0 {
+		req.FilteringType = nil
+	} else if newJSON, err := json.Marshal(m); err == nil {
+		req.FilteringType = &paginationV1.PagingRequest_Query{Query: string(newJSON)}
+	}
+	return keyword
 }
 
 func (r *ProductRepo) IsExist(ctx context.Context, id uint32) (bool, error) {

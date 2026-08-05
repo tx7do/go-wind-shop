@@ -40,31 +40,31 @@ function pickTranslation<T extends { languageCode?: string }>(
   return match ?? translations[0];
 }
 
-// 拉取在售商品（按 sort_order 排序）。
-// 注：后端商品 List 目前不支持按名称模糊搜索（product_repo 未接入 translation
-// 的 ContainsFold 查询），故搜索在此 MVP 阶段为前端过滤。pageSize 取较大值以
-// 覆盖常见商品规模；后续若后端补齐 name 搜索能力，可将过滤下推至 query。
+// 按关键字搜索商品：将 name 关键字下推到后端 query。
+// 后端 product_repo 会从 query 中剥离 name，对翻译表 mall_product_translations
+// 做子查询 ILIKE 匹配（跨任意语言命中），剩余字段仍走通用 DSL。
+// 仅当有关键字时才发起请求；切换关键字时 computed 自动重建请求。
 const productsQuery = useListProducts(
-  new PaginationQuery({
-    paging: { page: 1, pageSize: 200 },
-    orderBy: ['sort_order'],
+  computed(() => {
+    const q = keyword.value;
+    return new PaginationQuery({
+      paging: { page: 1, pageSize: 48 },
+      orderBy: ['sort_order'],
+      formValues: q ? { name: q } : undefined,
+    });
   }),
+  { enabled: computed(() => !!keyword.value) },
 );
-const allProducts = computed<ProductEntity[]>(() => {
-  const items = (productsQuery.data?.value as any)?.items ?? [];
-  return (items as ProductEntity[]) ?? [];
-});
 const loading = computed(() => productsQuery.isLoading.value);
 
-// 按当前语言的商品名做大小写不敏感包含匹配。
 function productName(p: ProductEntity): string {
   return pickTranslation(p.translations)?.name ?? '';
 }
 
+// 后端已按 name 过滤，前端直接使用返回结果，无需再过滤。
 const results = computed<ProductEntity[]>(() => {
-  const q = keyword.value.toLowerCase();
-  if (!q) return [];
-  return allProducts.value.filter((p) => productName(p).toLowerCase().includes(q));
+  const items = (productsQuery.data?.value as any)?.items ?? [];
+  return (items as ProductEntity[]) ?? [];
 });
 
 // 顶部搜索框提交：跳转到 /search?q=xxx（交由路由驱动结果）
