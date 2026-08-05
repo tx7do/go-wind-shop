@@ -6,6 +6,10 @@
   "total": "Total",
   "totalNote": "Final amount is validated at checkout.",
   "checkout": "Checkout",
+  "goCheckout": "Go to checkout",
+  "selectAll": "Select all",
+  "selectedAmount": "Selected total",
+  "emptySelected": "Please select items before checkout",
   "table": {
     "item": "Item",
     "unitPrice": "Unit price",

@@ -17,5 +17,11 @@
     "emptyCart": "购物车为空，无法下单。",
     "orderFailed": "下单失败，请稍后重试。",
     "paymentFailed": "支付失败，请稍后重试。"
+  },
+  "steps": {
+    "cart": "购物车",
+    "confirm": "核对订单",
+    "pay": "线上支付",
+    "done": "完成"
   }
 }

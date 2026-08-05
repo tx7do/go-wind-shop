@@ -82,8 +82,8 @@ export const useAccessStore = defineStore('access', {
         },
     },
     persist: {
-        // 持久化
-        paths: ['accessToken', 'refreshToken', 'accessCodes', 'accessMenus', 'accessRoutes'],
+        // 持久化（v4 用 pick 替代 paths；Nuxt module 默认 cookie storage，SSR 友好）
+        pick: ['accessToken', 'refreshToken', 'accessCodes', 'accessMenus', 'accessRoutes'],
     },
 })
 

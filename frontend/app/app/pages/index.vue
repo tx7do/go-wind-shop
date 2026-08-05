@@ -65,7 +65,15 @@ const featuredLoading = computed(() => featuredQuery.isLoading.value);
 </script>
 
 <template>
-  <LayoutPromoBanner />
+  <!-- 首屏複合物件：PC 端左側垂直分類菜單 + 右側大寬屏 Banner（md 以上渲染） -->
+  <div class="hidden md:grid md:grid-cols-5 gap-6 px-8 mx-auto max-w-[1200px]">
+    <LayoutCategorySideMenu
+      v-if="categoriesLoading || categories.length > 0"
+      :categories="categories"
+      class="md:col-span-1"
+    />
+    <LayoutHeroBanner class="md:col-span-4" />
+  </div>
 
   <!-- 分类导航：移动端金刚区 -->
   <LayoutCategoryQuickNav
@@ -73,40 +81,6 @@ const featuredLoading = computed(() => featuredQuery.isLoading.value);
     :categories="categories"
     class="md:hidden"
   />
-
-  <!-- 分类导航：PC 端卡片网格 -->
-  <LayoutSectionContainer class="hidden md:block">
-    <h2 class="mb-6 text-2xl font-bold text-foreground">
-      {{ t('mall.home.categories') }}
-    </h2>
-
-    <UiCategoryListSkeleton v-if="categoriesLoading" :count="8" />
-
-    <div
-      v-else-if="categories.length > 0"
-      class="grid grid-cols-2 gap-4 md:grid-cols-4 lg:grid-cols-5"
-    >
-      <NuxtLink
-        v-for="cat in categories"
-        :key="cat.id"
-        :to="localePath('/category/' + cat.id)"
-        class="group block overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/60"
-      >
-        <UiImage
-          :src="cat.imageUrl"
-          :alt="pickTranslation(cat.translations)?.name || ''"
-          class="aspect-square w-full rounded-none object-cover"
-        />
-        <div class="p-3">
-          <h3 class="line-clamp-1 text-sm font-medium text-foreground">
-            {{ pickTranslation(cat.translations)?.name || '—' }}
-          </h3>
-        </div>
-      </NuxtLink>
-    </div>
-
-    <p v-else class="text-muted-foreground">{{ t('mall.loading') }}</p>
-  </LayoutSectionContainer>
 
   <!-- 精选商品 -->
   <LayoutSectionContainer>
@@ -131,15 +105,15 @@ const featuredLoading = computed(() => featuredQuery.isLoading.value);
         <UiImage
           :src="product.imageUrl"
           :alt="pickTranslation(product.translations)?.name || ''"
-          class="aspect-[3/4] w-full rounded-none object-cover"
+          class="aspect-square w-full rounded-none object-cover"
         />
         <div class="p-3">
-          <h3 class="line-clamp-2 text-sm font-medium text-foreground">
-            {{ pickTranslation(product.translations)?.name || '—' }}
-          </h3>
+        <h3 class="line-clamp-2 text-sm font-semibold text-foreground dark:text-slate-200">
+          {{ pickTranslation(product.translations)?.name || '—' }}
+        </h3>
           <div class="mt-3 flex items-center justify-between">
             <span class="text-xs text-muted-foreground">{{ t('mall.product.viewDetail') }}</span>
-            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground dark:bg-green-500/20 dark:text-green-400 dark:group-hover:bg-green-500 dark:group-hover:text-green-950">
               <XIcon icon="carbon:shopping-cart" :size="14" />
             </span>
           </div>

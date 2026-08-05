@@ -3,6 +3,8 @@ import { XIcon } from '@/plugins/xicon'
 import { usePreferences } from '@/core/preferences/use-preferences'
 import { useAccessStore } from '@/stores/modules/core/access.state'
 import { useAuthStore } from '@/stores/modules/app/auth.state'
+import { useUserStore } from '@/stores/modules/core/user.state'
+import { useListCarts, useListCartItems } from '@/api/composables'
 
 const { t } = useI18n()
 const { themePreferences: themePref, setTheme: setThemeMode } = usePreferences()
@@ -16,10 +18,42 @@ const changeLocale = (code: 'zh-CN' | 'en-US') => {
 }
 const accessStore = useAccessStore()
 const authStore = useAuthStore()
+const userStore = useUserStore()
 
 const isLogin = computed(() => {
   const token = accessStore.accessToken
   return !!token?.value && !accessStore.loginExpired
+})
+
+const currentUserId = computed(() => userStore.user?.id ?? 0)
+
+// 购物车数量徽标：查询当前用户的购物车项，总数用于红点显示。
+const cartsQuery = useListCarts(
+  computed(() => ({
+    page: 1,
+    pageSize: 1,
+    noPaging: false,
+    query: JSON.stringify({ userId: currentUserId.value }),
+  })),
+)
+const cartId = computed(() => {
+  const items = ((cartsQuery.data?.value as any)?.items ?? []) as Array<{ id?: number }>
+  return items[0]?.id
+})
+const cartItemsQuery = useListCartItems(
+  computed(() => ({
+    page: 1,
+    pageSize: 100,
+    noPaging: false,
+    query: cartId.value === undefined ? undefined : JSON.stringify({ cartId: cartId.value }),
+  })),
+)
+const cartCount = computed(() => {
+  const items = (cartItemsQuery.data?.value as any)?.items ?? []
+  return (items as Array<{ quantity?: number }>).reduce(
+    (acc, it) => acc + (it.quantity ?? 0),
+    0,
+  )
 })
 
 const handleClickLogo = () => navigateTo(localePath('/'))
@@ -27,6 +61,7 @@ const handleClickSettings = () => navigateTo(localePath('/settings'))
 const handleClickUserHomepage = () => navigateTo(localePath('/user'))
 const handleClickLogin = () => navigateTo(localePath('/login'))
 const handleClickRegister = () => navigateTo(localePath('/register'))
+const handleClickCart = () => navigateTo(localePath('/cart'))
 const handleClickLogout = async () => {
   if (isLogin.value) await authStore.logout()
 }
@@ -50,6 +85,21 @@ const handleClickLogout = async () => {
 
       <!-- 功能按钮区 -->
       <div class="flex shrink-0 items-center gap-1">
+        <!-- 购物车入口（带数量徽标） -->
+        <NuxtLink
+          :to="localePath('/cart')"
+          class="relative flex h-9 w-9 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-primary/10"
+          aria-label="Shopping cart"
+        >
+          <XIcon icon="carbon:shopping-cart" width="18" height="18" />
+          <span
+            v-if="cartCount > 0"
+            class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-green-500 px-1 text-[9px] font-bold text-white dark:bg-green-400 dark:text-green-950"
+          >
+            {{ cartCount > 99 ? '99+' : cartCount }}
+          </span>
+        </NuxtLink>
+
         <!-- 用户菜单 -->
         <UiDropdownMenu :modal="false">
           <UiDropdownMenuTrigger as-child>

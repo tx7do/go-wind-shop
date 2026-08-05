@@ -6,6 +6,10 @@
   "total": "合计",
   "totalNote": "金额以结算页实时校验结果为准。",
   "checkout": "结算",
+  "goCheckout": "去结算",
+  "selectAll": "全选",
+  "selectedAmount": "已选商品总额",
+  "emptySelected": "请勾选商品后再结算",
   "table": {
     "item": "商品",
     "unitPrice": "单价",

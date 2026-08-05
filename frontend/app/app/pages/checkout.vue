@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { toast } from 'vue-sonner';
+import { cn } from '@/lib/utils';
 import { XIcon } from '@/plugins/xicon';
 import {
   useListCarts,
@@ -8,7 +9,12 @@ import {
   useCreateOrder,
   useCreatePaymentTransaction,
   fetchGetOrderByIdempotencyKey,
+  fetchListSkuPricesStore,
+  fetchListSkuAttributeCombinationsStore,
+  useListProductAttributes,
+  useListProductAttributeValues,
 } from '@/api/composables';
+import { getCurrentLocale } from '@/utils/locale';
 import { useAccessStore } from '@/stores/modules/core/access.state';
 import { useUserStore } from '@/stores/modules/core/user.state';
 import { queryClient } from '@/plugins/vue-query';
@@ -66,7 +72,173 @@ const cartItems = computed<CartItemEntity[]>(() => {
 });
 const itemsLoading = computed(() => cartItemsQuery.isLoading.value);
 
-const totalAmount = computed(() => 0);
+// ---------- 属性名 / 属性值 displayName 反查 map ----------
+// 全量拉取属性与属性值，建立 id→name / id→displayName 映射，
+// 用于把 SKU 组合的 attributeId/attributeValueId 翻译成人类可读的规格描述。
+const currentLocale = computed(() => getCurrentLocale());
+
+function pickTranslation<T extends { languageCode?: string }>(
+  translations: T[] | undefined,
+): T | undefined {
+  if (!translations || translations.length === 0) return undefined;
+  const match = translations.find((tr) => tr.languageCode === currentLocale.value);
+  return match ?? translations[0];
+}
+
+const attributesQuery = useListProductAttributes({
+  page: 1,
+  pageSize: 100,
+  noPaging: false,
+});
+const attributeValuesQuery = useListProductAttributeValues({
+  page: 1,
+  pageSize: 200,
+  noPaging: false,
+});
+
+// attributeNameMap: attributeId → 属性名（如 "颜色"）
+const attributeNameMap = computed(() => {
+  const items = ((attributesQuery.data?.value as any)?.items ?? []) as Array<{
+    id?: number;
+    translations?: Array<{ name?: string; languageCode?: string }>;
+  }>;
+  const map = new Map<number, string>();
+  for (const a of items) {
+    if (a.id === undefined) continue;
+    const tr = pickTranslation(a.translations);
+    if (tr?.name) map.set(a.id, tr.name);
+  }
+  return map;
+});
+
+// attributeValueDisplayNameMap: attributeValueId → 属性值 displayName（如 "黑色"）
+const attributeValueDisplayNameMap = computed(() => {
+  const items = ((attributeValuesQuery.data?.value as any)?.items ?? []) as Array<{
+    id?: number;
+    attributeId?: number;
+    translations?: Array<{ displayName?: string; languageCode?: string }>;
+  }>;
+  const map = new Map<number, string>();
+  for (const v of items) {
+    if (v.id === undefined) continue;
+    const tr = pickTranslation(v.translations);
+    if (tr?.displayName) map.set(v.id, tr.displayName);
+  }
+  return map;
+});
+
+// ---------- 每个 SKU 的价格（通过 fetchListSkuPricesStore 在 watch 中拉取） ----------
+// skuPricesMap: skuId → amount（string，CNY）
+const skuPricesMap = reactive<Record<number, string>>({});
+
+watch(
+  cartItems,
+  async (items) => {
+    for (const k of Object.keys(skuPricesMap)) delete skuPricesMap[Number(k)];
+    if (!items || items.length === 0) return;
+    await Promise.all(
+      items.map(async (item) => {
+        const skuId = item.skuId;
+        if (skuId === undefined) return;
+        try {
+          const resp: any = await fetchListSkuPricesStore({
+            page: 1,
+            pageSize: 10,
+            noPaging: false,
+            query: JSON.stringify({ skuId }),
+          });
+          const prices = (resp?.items ?? []) as Array<{
+            skuId?: number;
+            currency?: string;
+            amount?: string;
+          }>;
+          const cny = prices.find((p) => p.currency === 'CNY') ?? prices[0];
+          if (cny?.amount) {
+            skuPricesMap[skuId] = cny.amount;
+          }
+        } catch {
+          // ignore
+        }
+      }),
+    );
+  },
+  { immediate: true },
+);
+
+// ---------- 每个 SKU 的规格组合（用于订单摘要显示规格描述） ----------
+// skuCombosMap: skuId → [{attrId, valId}, ...]
+const skuCombosMap = reactive<Record<number, Array<{ attrId: number; valId: number }>>>({});
+
+watch(
+  cartItems,
+  async (items) => {
+    for (const k of Object.keys(skuCombosMap)) delete skuCombosMap[Number(k)];
+    if (!items || items.length === 0) return;
+    await Promise.all(
+      items.map(async (item) => {
+        const skuId = item.skuId;
+        if (skuId === undefined) return;
+        try {
+          const resp: any = await fetchListSkuAttributeCombinationsStore({
+            page: 1,
+            pageSize: 100,
+            noPaging: false,
+            query: JSON.stringify({ skuId }),
+          });
+          const combos = (resp?.items ?? []) as Array<{
+            skuId?: number;
+            attributeId?: number;
+            attributeValueId?: number;
+          }>;
+          const list: Array<{ attrId: number; valId: number }> = [];
+          for (const c of combos) {
+            if (c.attributeId !== undefined && c.attributeValueId !== undefined) {
+              list.push({ attrId: c.attributeId, valId: c.attributeValueId });
+            }
+          }
+          if (list.length > 0) skuCombosMap[skuId] = list;
+        } catch {
+          // ignore
+        }
+      }),
+    );
+  },
+  { immediate: true },
+);
+
+// 将单个 SKU 的规格组合翻译成人类可读描述，如 "颜色: 黑色，容量: 64GB"。
+// 任何一项属性名或属性值查不到时返回空串，避免显示残缺信息。
+function describeSku(skuId: number | undefined): string {
+  if (skuId === undefined) return '';
+  const combos = skuCombosMap[skuId];
+  if (!combos || combos.length === 0) return '';
+  const parts: string[] = [];
+  for (const { attrId, valId } of combos) {
+    const attrName = attributeNameMap.value.get(attrId);
+    const valName = attributeValueDisplayNameMap.value.get(valId);
+    if (!attrName || !valName) return '';
+    parts.push(`${attrName}: ${valName}`);
+  }
+  return parts.join('，');
+}
+
+// ---------- 合计金额：累加每个 cart item 的 SKU 价格 × 数量 ----------
+// 后端 SKU 价格 amount 以「分」为单位整型存储，展示时需 /100 转为元。
+const totalAmount = computed(() => {
+  let sum = 0;
+  for (const item of cartItems.value) {
+    const skuId = item.skuId;
+    if (skuId === undefined) continue;
+    const amountStr = skuPricesMap[skuId];
+    if (!amountStr) continue;
+    const priceCents = parseFloat(amountStr);
+    if (Number.isNaN(priceCents)) continue;
+    const priceYuan = priceCents / 100;
+    const qty = item.quantity ?? 0;
+    sum += priceYuan * qty;
+  }
+  return sum.toFixed(2);
+});
 const totalLabel = computed(() => `${t('mall.product.currencyCny')}${totalAmount.value}`);
 
 // ---------- 收货表单 ----------
@@ -116,12 +288,12 @@ async function placeOrder() {
   // 为本次下单生成一对幂等键与业务单号。
   // idempotency_key：订单与支付各一个，防止重放导致重复下单/重复扣款。
   // business_ref_id：跨域对账键，订单与支付共用同一值，便于后续对账。
-  const uuidGen = (
-    globalThis as unknown as { crypto?: { randomUUID?: () => string } }
-  )?.crypto?.randomUUID;
-  const orderIdempotencyKey = uuidGen?.() ?? '';
-  const paymentIdempotencyKey = uuidGen?.() ?? '';
-  const businessRefId = uuidGen?.() ?? '';
+  // 直接通过 crypto.randomUUID() 调用，保持方法在 crypto 对象上的 this 绑定，
+  // 避免取出方法引用裸调导致 "Illegal invocation"。
+  const cryptoObj = (globalThis as unknown as { crypto?: { randomUUID?: () => string } }).crypto;
+  const orderIdempotencyKey = cryptoObj?.randomUUID?.() ?? '';
+  const paymentIdempotencyKey = cryptoObj?.randomUUID?.() ?? '';
+  const businessRefId = cryptoObj?.randomUUID?.() ?? '';
   if (!orderIdempotencyKey || !paymentIdempotencyKey || !businessRefId) {
     toast.error(t('checkout.errors.orderFailed'));
     return;
@@ -193,12 +365,55 @@ async function placeOrder() {
 </script>
 
 <template>
-  <LayoutPageHero
-    :title="t('mall.checkout.title')"
-    :description="t('mall.checkout.subtitle')"
-    icon="carbon:document"
-    size="sm"
-  />
+  <!-- 交易进度条：1.购物车 → 2.核对订单(当前) → 3.线上支付 → 4.完成 -->
+  <LayoutSectionContainer class="!py-4">
+    <ol class="flex items-center justify-center gap-2 md:gap-4">
+      <li
+        v-for="(step, idx) in [
+          { key: 'cart', label: t('checkout.steps.cart') },
+          { key: 'confirm', label: t('checkout.steps.confirm') },
+          { key: 'pay', label: t('checkout.steps.pay') },
+          { key: 'done', label: t('checkout.steps.done') },
+        ]"
+        :key="step.key"
+        class="flex items-center gap-2 md:gap-4"
+      >
+        <!-- 步骤节点：序号圆 + 标签 -->
+        <div class="flex flex-col items-center gap-1">
+          <span
+            :class="cn(
+              'flex h-7 w-7 items-center justify-center rounded-full border text-xs font-bold transition-colors',
+              idx === 1
+                ? 'border-primary bg-primary/10 text-primary dark:border-green-500 dark:bg-green-500/10 dark:text-green-400'
+                : 'border-border text-muted-foreground',
+            )"
+          >
+            {{ idx + 1 }}
+          </span>
+          <span
+            :class="cn(
+              'text-[10px] font-medium transition-colors',
+              idx === 1
+                ? 'text-primary dark:text-green-400'
+                : 'text-muted-foreground',
+            )"
+          >
+            {{ step.label }}
+          </span>
+        </div>
+        <!-- 连接线（最后一步不渲染） -->
+        <span
+          v-if="idx < 3"
+          :class="cn(
+            'h-px w-8 md:w-16 transition-colors',
+            idx < 1
+              ? 'bg-primary dark:bg-green-500'
+              : 'bg-border',
+          )"
+        ></span>
+      </li>
+    </ol>
+  </LayoutSectionContainer>
 
   <LayoutSectionContainer>
     <!-- 未登录 -->
@@ -285,10 +500,9 @@ async function placeOrder() {
                 class="h-10 w-10 shrink-0 rounded text-muted-foreground"
               />
               <div class="min-w-0 flex-1">
-                <p class="line-clamp-1 text-xs text-foreground">
-                  {{ t('cart.skuId') }}#{{ item.skuId ?? '—' }}
+                <p class="line-clamp-2 text-xs text-foreground">
+                  {{ describeSku(item.skuId) || '—' }}
                 </p>
-                <p class="text-[10px] text-muted-foreground">{{ t('cart.lineItemNote') }}</p>
               </div>
               <span class="text-xs tabular-nums text-muted-foreground">×{{ item.quantity ?? 0 }}</span>
             </li>
@@ -311,9 +525,6 @@ async function placeOrder() {
         >
           {{ t('checkout.placeOrder') }}
         </UiButton>
-        <p class="mt-3 text-center text-[10px] text-muted-foreground">
-          {{ t('checkout.disclaimer') }}
-        </p>
       </div>
     </div>
   </LayoutSectionContainer>

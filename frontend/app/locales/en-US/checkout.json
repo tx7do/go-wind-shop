@@ -17,5 +17,11 @@
     "emptyCart": "Your cart is empty; order cannot be placed.",
     "orderFailed": "Failed to place the order. Please try again later.",
     "paymentFailed": "Payment failed. Please try again later."
+  },
+  "steps": {
+    "cart": "Cart",
+    "confirm": "Review order",
+    "pay": "Online payment",
+    "done": "Complete"
   }
 }

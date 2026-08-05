@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
+import { cn } from '@/lib/utils';
+import { XIcon } from '@/plugins/xicon';
 import {
   useGetProduct,
   useListProductAttributes,
@@ -137,7 +139,7 @@ const allAttributeValues = computed<AttributeValueEntity[]>(() => {
 });
 
 const valuesByAttribute = computed(() => {
-  const map = new Map<number, AttributeValueEntity[]>();
+  const map = new Map<number, AttributeEntity[]>();
   for (const v of allAttributeValues.value) {
     if (v.attributeId === undefined) continue;
     const arr = map.get(v.attributeId) ?? [];
@@ -146,6 +148,27 @@ const valuesByAttribute = computed(() => {
   }
   return map;
 });
+
+// ---------- 默认选中每个属性的第一个值 ----------
+// 当属性与属性值数据加载完成后，为每个尚无选中值的属性设默认选中其第一个值，
+// 使页面初始即有完整选中态，便于用户直观看到当前 SKU 与价格。
+watch(
+  [attributes, valuesByAttribute],
+  ([attrs, valsMap]) => {
+    if (!attrs || attrs.length === 0 || !valsMap || valsMap.size === 0) return;
+    for (const attr of attrs) {
+      if (attr.id === undefined) continue;
+      if (selections[attr.id] !== undefined) continue;
+      const vals = valsMap.get(attr.id);
+      if (!vals || vals.length === 0) continue;
+      const first = vals[0];
+      if (first?.id !== undefined) {
+        selections[attr.id] = String(first.id);
+      }
+    }
+  },
+  { immediate: true },
+);
 
 // ---------- 每个 SKU 的属性组合 & 价格（通过 fetch*Store 在 watch 中拉取） ----------
 const skuCombinationsMap = reactive<Record<number, Map<number, number>>>({});
@@ -308,8 +331,31 @@ const createCartItemMutation = useCreateCartItem({
   },
 });
 
+// ---------- 数量与库存 ----------
+const quantity = ref(1);
+
+// 当前匹配 SKU 的库存上限（无匹配 SKU 时回落 1，此时数量框禁用）
+const matchedSkuStock = computed(() => {
+  const sku = matchedSku.value;
+  if (!sku || sku.id === undefined) return 1;
+  const s = sku.stockQty ?? 1;
+  return s < 1 ? 1 : s;
+});
+
+function incrementQty() {
+  if (quantity.value < matchedSkuStock.value) {
+    quantity.value++;
+  }
+}
+
+function decrementQty() {
+  if (quantity.value > 1) {
+    quantity.value--;
+  }
+}
+
 // ---------- 添加购物车 ----------
-async function addToCart() {
+async function addToCartWithQty(qty: number) {
   if (!canAddToCart.value) return;
   if (!isLogin.value) {
     toast.error(t('authentication.login.please_login'));
@@ -342,33 +388,68 @@ async function addToCart() {
   await createCartItemMutation.mutateAsync({
     cartId: targetCartId,
     skuId: sku.id,
-    quantity: 1,
+    quantity: qty,
     tenantId: currentTenantId.value,
   } as any);
+}
+
+// ---------- 立即购买：加购后跳转结算页 ----------
+async function buyNow() {
+  if (!canAddToCart.value) return;
+  await addToCartWithQty(quantity.value);
+  navigateTo(localePath('/checkout'));
+}
+
+// ---------- SKU 卡片选择器：键盘方向键在当前组内切换 ----------
+function onRadioKeydown(e: KeyboardEvent, attrId: number) {
+  const vals = valuesByAttribute.value.get(attrId) ?? [];
+  if (vals.length === 0) return;
+  const cur = selections[attrId];
+  let idx = vals.findIndex((v) => v.id !== undefined && String(v.id) === cur);
+  if (idx < 0) idx = -1;
+  let next = idx;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+    next = (idx + 1) % vals.length;
+  } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    next = (idx - 1 + vals.length) % vals.length;
+  } else {
+    return;
+  }
+  e.preventDefault();
+  const nv = vals[next];
+  if (nv?.id !== undefined) {
+    selections[attrId] = String(nv.id);
+  }
 }
 </script>
 
 <template>
-  <LayoutPageHero
-    :title="productTranslation?.name || ''"
-    :description="productTranslation?.shortDescription"
-    icon="carbon:product"
-    size="sm"
-  />
+  <!-- 麵包屑導航（壓縮的左對齊標題區，替代原 PageHero） -->
+  <LayoutSectionContainer class="!py-4">
+    <nav class="flex items-center gap-2 text-sm text-muted-foreground">
+      <NuxtLink :to="localePath('/')" class="hover:text-foreground">
+        {{ t('mall.category.breadcrumbHome') }}
+      </NuxtLink>
+      <span>/</span>
+      <span class="text-foreground">
+        {{ productTranslation?.name || t('mall.product.notFound') }}
+      </span>
+    </nav>
+  </LayoutSectionContainer>
 
   <LayoutSectionContainer>
     <UiSkeleton v-if="productLoading" class="h-8 w-1/2" />
 
-    <div v-else-if="productTranslation" class="grid gap-10 md:grid-cols-2">
-      <!-- 图片轮播 -->
-      <div class="rounded-2xl border border-border bg-card overflow-hidden">
+    <div v-else-if="productTranslation" class="grid gap-8 md:grid-cols-12">
+      <!-- 左侧：商品图片（1:1 正方形） -->
+      <div class="md:col-span-5 rounded-2xl border border-border bg-card overflow-hidden">
         <UiCarousel class="relative">
           <UiCarouselContent>
             <UiCarouselItem>
               <UiImage
                 :src="product.imageUrl"
                 :alt="productTranslation?.name || ''"
-                class="h-96 w-full rounded-none object-cover"
+                class="aspect-square w-full rounded-none object-cover"
               />
             </UiCarouselItem>
           </UiCarouselContent>
@@ -377,8 +458,8 @@ async function addToCart() {
         </UiCarousel>
       </div>
 
-      <!-- 信息 & SKU 选择 -->
-      <div class="flex flex-col gap-6">
+      <!-- 右侧：商品信息 & SKU 选择 -->
+      <div class="md:col-span-7 flex flex-col gap-6">
         <h1 class="text-3xl font-bold text-foreground">
           {{ productTranslation.name }}
         </h1>
@@ -386,39 +467,47 @@ async function addToCart() {
           {{ productTranslation.shortDescription }}
         </p>
 
+        <!-- 价格区（高亮，无删除线，无原价） -->
         <div
           v-if="displayPrice !== null"
-          class="rounded-xl border border-border bg-primary/5 p-4"
+          class="rounded-xl border border-primary/40 bg-primary/5 p-5 dark:border-green-500/40 dark:bg-green-500/5"
         >
           <p class="text-xs text-muted-foreground">{{ t('mall.product.price') }}</p>
-          <p class="mt-1 text-2xl font-bold text-primary">
+          <p class="mt-1 text-3xl font-extrabold text-primary dark:text-green-400">
             {{ t('mall.product.currencyCny') }}{{ displayPrice }}
           </p>
         </div>
 
-        <!-- SKU 选择器 -->
+        <!-- SKU 卡片选择器（aria-radiogroup，保留键盘可访问性） -->
         <div v-if="attributes.length > 0" class="flex flex-col gap-4">
           <p class="text-sm text-muted-foreground">{{ t('mall.product.selectSku') }}</p>
           <div v-for="attr in attributes" :key="attr.id" class="flex flex-col gap-2">
             <label class="text-xs font-medium text-foreground">
               {{ pickTranslation(attr.translations)?.name || '—' }}
             </label>
-            <UiSelect v-model="selection[attr.id!]">
-              <UiSelectTrigger>
-                <UiSelectValue
-                  :placeholder="t('mall.product.selectAttribute')"
-                />
-              </UiSelectTrigger>
-              <UiSelectContent>
-                <UiSelectItem
-                  v-for="val in valuesByAttribute.get(attr.id!) ?? []"
-                  :key="val.id"
-                  :value="String(val.id)"
-                >
-                  {{ pickTranslation(val.translations)?.displayName || '—' }}
-                </UiSelectItem>
-              </UiSelectContent>
-            </UiSelect>
+            <div
+              role="radiogroup"
+              :aria-label="pickTranslation(attr.translations)?.name || ''"
+              class="flex flex-wrap gap-2"
+              @keydown="onRadioKeydown($event, attr.id!)"
+            >
+              <button
+                v-for="val in valuesByAttribute.get(attr.id!) ?? []"
+                :key="val.id"
+                type="button"
+                role="radio"
+                :aria-checked="selections[attr.id!] === String(val.id)"
+                :class="cn(
+                  'rounded-lg border px-4 py-2 text-sm transition-colors',
+                  selections[attr.id!] === String(val.id)
+                    ? 'border-primary bg-primary/10 text-primary dark:border-green-500 dark:bg-green-500/10 dark:text-green-400'
+                    : 'border-border text-foreground hover:border-primary/40 dark:text-zinc-400',
+                )"
+                @click="selections[attr.id!] = String(val.id)"
+              >
+                {{ pickTranslation(val.translations)?.displayName || '—' }}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -435,25 +524,64 @@ async function addToCart() {
           {{ t('mall.product.outOfStock') }}
         </p>
 
-        <UiButton
-          class="mt-2"
-          size="lg"
-          :disabled="!canAddToCart"
-          @click="addToCart"
-        >
-          {{
-            isOutOfStock
-              ? t('mall.product.outOfStock')
-              : t('mall.product.addToCart')
-          }}
-        </UiButton>
+        <!-- 数量框 + 双按钮 -->
+        <div class="mt-2 flex items-center gap-3">
+          <div class="flex items-center rounded-xl border border-border bg-card">
+            <button
+              type="button"
+              class="flex h-10 w-10 items-center justify-center text-foreground disabled:opacity-40"
+              :disabled="quantity <= 1"
+              @click="decrementQty"
+              aria-label="decrease quantity"
+            >
+              <XIcon icon="carbon:subtract" :size="16" />
+            </button>
+            <input
+              type="number"
+              class="h-10 w-12 bg-transparent text-center text-sm text-foreground outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+              v-model.number="quantity"
+              :min="1"
+              :max="matchedSkuStock"
+              readonly
+            />
+            <button
+              type="button"
+              class="flex h-10 w-10 items-center justify-center text-foreground disabled:opacity-40"
+              :disabled="quantity >= matchedSkuStock"
+              @click="incrementQty"
+              aria-label="increase quantity"
+            >
+              <XIcon icon="carbon:add" :size="16" />
+            </button>
+          </div>
+
+          <UiButton
+            variant="outline"
+            class="flex-1"
+            size="lg"
+            :disabled="!canAddToCart"
+            @click="addToCartWithQty(quantity)"
+          >
+            <XIcon icon="carbon:shopping-cart" :size="16" class="mr-2" />
+            {{ t('mall.product.addToCart') }}
+          </UiButton>
+
+          <UiButton
+            class="flex-1"
+            size="lg"
+            :disabled="!canAddToCart"
+            @click="buyNow"
+          >
+            {{ t('mall.product.buyNow') }}
+          </UiButton>
+        </div>
       </div>
     </div>
 
-    <!-- 商品详情描述 -->
+    <!-- 商品详情描述（通栏居中，限宽 max-w-4xl，增加内边距提升阅读呼吸感） -->
     <div
       v-if="productTranslation?.longDescription"
-      class="mt-12 rounded-2xl border border-border bg-card p-8"
+      class="mx-auto mt-12 w-full max-w-4xl rounded-2xl border border-border bg-card p-8 md:p-12"
     >
       <h2 class="mb-4 text-xl font-bold text-foreground">
         {{ t('mall.product.description') }}

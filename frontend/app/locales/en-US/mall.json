@@ -14,10 +14,18 @@
   "category": {
     "products": "Products in this category",
     "empty": "No products in this category yet.",
-    "notFound": "Category not found."
+    "notFound": "Category not found.",
+    "breadcrumbHome": "Home",
+    "filters": "Filters",
+    "filterCategories": "Categories",
+    "filterBrands": "Brands",
+    "sortBy": "Sort by",
+    "sortFeatured": "Featured",
+    "sortLatest": "Latest"
   },
   "product": {
     "addToCart": "Add to cart",
+    "buyNow": "Buy now",
     "outOfStock": "Out of stock",
     "selectSku": "Please select a specification",
     "description": "Product description",

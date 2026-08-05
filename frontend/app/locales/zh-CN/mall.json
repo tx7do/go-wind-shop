@@ -14,10 +14,18 @@
   "category": {
     "products": "该分类下的商品",
     "empty": "该分类下暂无商品。",
-    "notFound": "未找到该分类。"
+    "notFound": "未找到该分类。",
+    "breadcrumbHome": "首页",
+    "filters": "筛选",
+    "filterCategories": "分类",
+    "filterBrands": "品牌",
+    "sortBy": "排序方式",
+    "sortFeatured": "综合",
+    "sortLatest": "最新"
   },
   "product": {
     "addToCart": "加入购物车",
+    "buyNow": "立即购买",
     "outOfStock": "已售罄",
     "selectSku": "请选择规格",
     "description": "商品详情",
