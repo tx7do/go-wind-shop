@@ -554,6 +554,13 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 - **进程内 MarkPaid**：若流水携带 `order_id`，则**直接调用** `OrderService.Update`（非 gRPC，同进程方法调用）推进订单 `PENDING_PAYMENT → PAID`，携带 `expected_status = [PENDING_PAYMENT]` 前置条件。
 - 真实网关（Stripe/PayPal webhook）接入后：`Create` 改为创建 `PENDING` 流水，由 webhook 回调更新 `SUCCEEDED` 再触发 MarkPaid。
 
+### 行级隔离（UserPrivacy）
+
+`Order` / `Cart` / `PaymentTransaction` 三实体的 schema `Policy()` 返回 `appPrivacy.UserPrivacy{}`（`pkg/entgo/privacy/user_scope.go`）：
+- 普通用户 viewer：`EvalQuery` 注入 `WHERE user_id = viewer.uid`，`EvalMutation`（Create）强制 `SetUserID(viewer.uid)`、（Update/Delete）注入 `user_id` 谓词。防同租户内越权看/改他人订单/购物车/支付流水。
+- 系统/平台 viewer（如 asynq 超时任务的 `NewSystemViewerContext`）：`IsSystemContext()==true` 短路放行，无 user_id 过滤。
+- `PaymentRefund` 不持 `user_id`，仅 `TenantID` 隔离（退款记录同租户内可见，按业务设计）。
+
 ### 乐观并发状态机（expected_status）
 
 `OrderRepo.Update`（`app/core/service/internal/data/order_repo.go`）支持 `expected_status` 前置条件：
@@ -561,7 +568,10 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 - repo 的 `UpdateX` selector 在 `s.Where(sql.EQ(FieldID, id))` 之外，若 `expected_status` 非空，追加 `s.Where(sql.In(FieldStatus, expectedStatusVals...))`。
 - 当订单当前状态不在白名单内时，UPDATE 命中 0 行 → ent 返回 NotFound → repo 转译为 `orderV1.ErrorConflict`。
 - `OrderService.Update` 强制：任何 `status` 变更（非 UNSPECIFIED）必须携带 `expected_status`，否则 `ErrorBadRequest`。
+- **转换合法性校验**：`OrderService.Update` 在调 repo 前，对每个 `(expected_status, target_status)` 对调 `isAllowedTransition` 白名单校验。仅允许 `PENDING_PAYMENT→PAID`（MarkPaid）、`PENDING_PAYMENT→CANCELLED`（超时）、`PAID→FULFILLED`、`PAID→CLOSED`、`FULFILLED→CLOSED`。终态 `CANCELLED`/`CLOSED` 为吸收态不可再翻转。非法转换返回 `ErrorBadRequest`。
 - 这保证 MarkPaid（`[PENDING_PAYMENT]→PAID`）与超时取消（`[PENDING_PAYMENT]→CANCELLED`）都走乐观并发路径，防并发覆盖终态。
+
+`PaymentRefundService.Update` 同样带退款状态机：仅允许 `PENDING→SUCCEEDED` 与 `PENDING→FAILED`。当退款翻 `SUCCEEDED` 时，同调用 `PaymentTransactionRepo.Update` 将关联 `payment_transaction`（按 `transaction_id`）翻为 `REFUNDED`，闭合退款分支。
 
 ### 订单超时过期（ExpireOrderByTimeout / asynq 延时任务）
 
@@ -569,7 +579,7 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 - **投递**：`OrderService.scheduleOrderTimeout` 在事务提交后调用 `taskScheduler.NewTask(type, payload, asynq.ProcessIn(TTL), asynq.TaskID(id), asynq.Unique(TTL))`。
 - **handler 注册**：`app/core/service/internal/server/asynq_server.go` 调用 `asynq.RegisterSubscriber(srv, OrderTimeoutTaskType, orderService.HandleOrderTimeout)`，与 `BackupTaskType` 并列。
 - **handler**：`OrderService.HandleOrderTimeout` 是薄委托，调用本服务 `ExpireOrderByTimeout`。
-- **ExpireOrderByTimeout 逻辑**：查订单 → 幂等检查（仅 `PENDING_PAYMENT` 才处理）→ 遍历 OrderItem 调 `SkuRepo.AddStock` 释放库存 → `OrderRepo.Update(status=CANCELLED, expected_status=[PENDING_PAYMENT])` 推进终态。库存释放失败不阻塞过期（差异由对账补偿）。Conflict（状态已并发推进）则跳过。
+- **ExpireOrderByTimeout 逻辑**：查订单 → 幂等检查（仅 `PENDING_PAYMENT` 才处理）→ 遍历 OrderItem 调 `SkuRepo.AddStock` 释放库存 → `OrderRepo.Update(status=CANCELLED, expected_status=[PENDING_PAYMENT])` 推进终态 → **孤儿支付清理**：将该订单关联的 `payment_transaction`（按 `order_id`）中 `SUCCEEDED` 状态的记录翻为 `FAILED`，消除"支付已成功但订单已取消"的不一致（MarkPaid 竞态失败时的遗留）。库存释放失败不阻塞过期（差异由对账补偿）。Conflict（状态已并发推进）则跳过。
 
 ### 支付 mixin 字段在 ent / proto 的映射
 
@@ -579,7 +589,7 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 |---|---|---|---|
 | `Currency` | `currency` (string, nillable) | `currency` | ISO 4217 |
 | `BusinessRefId` | `business_ref_id` (string, nillable) | `business_ref_id` | 对账主键 |
-| `IdempotencyKey` | `idempotency_key` (string, nillable) | `idempotency_key` | 租户内唯一索引 `(tenant_id, idempotency_key)` |
+| `IdempotencyKey` | `idempotency_key` (string, nillable) | `idempotency_key` | 租户内唯一索引 `(tenant_id, idempotency_key)`，覆盖 order / payment_transaction / payment_refund 三实体，防重放插重 |
 | `PaymentMethod` | `payment_method` (enum, nillable) | `payment_method` | proto enum `PaymentMethod` |
 | `BusinessType` | `business_type` (enum, nillable) | `business_type` | proto enum `BusinessType` |
 
@@ -596,7 +606,7 @@ OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行�
 ### 待办（post-MVP）
 
 - 真实支付网关（Stripe/PayPal/Alipay webhook）替换 stub
-- SkuPrice 多币种行接入 `OrderService.Create` 的 unit_price 读取（当前硬编码 0）
+- ~~SkuPrice 多币种行接入 `OrderService.Create` 的 unit_price 读取~~ ✅ 已完成：`OrderService.Create` 事务内按 `(sku_id, settlement_currency)` 查 `SkuPrice` 取 `unit_price`，缺失/非正金额回滚事务；OrderItem 持该单价快照，订单 `total_amount` 由后端事务内回写（前端传 0 无影响）。
 - DTM 分布式事务替换进程内 MarkPaid
 - ~~类目 / 品牌 / 示例商品的种子数据~~ ✅ 已完成：`sql/{mysql,postgresql}-demo-data.sql` 已补齐商城目录域（类目/品牌/商品/属性/SKU/价格 + 翻译）与交易域（订单/购物车/支付，含演示顾客 `shopper`）的演示数据；`sys_languages` 已在两份 SQL 中对齐（zh-CN/en-US）。注：交易数据仅为演示，真实支付/退款仍为 stub。
 - 订单超时的真实退款逻辑（当前 stub 无真实扣款，无需退款）
