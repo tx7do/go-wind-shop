@@ -53,7 +53,8 @@
     "moduleName": "Trade Management",
     "order": "Order Management",
     "paymentTransaction": "Payment Transaction",
-    "refund": "Refund Management"
+    "refund": "Refund Management",
+    "financeOverview": "Finance Overview"
   },
   "tenant": {
     "moduleName": "Tenant Management",

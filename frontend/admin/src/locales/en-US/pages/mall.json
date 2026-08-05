@@ -152,5 +152,19 @@
       "SUCCEEDED": "Succeeded",
       "FAILED": "Failed"
     }
+  },
+  "financeOverview": {
+    "title": "Finance Overview",
+    "disclaimer": "Note: Payments are currently a simulated stub (forced success). The amounts below are display samples, not settlement-grade data, and must not be used for reconciliation.",
+    "metricCardTransactionVolumeTitle": "Transaction Volume (Sample)",
+    "metricCardTransactionVolumeDesc": "Sum of recent succeeded payment amounts",
+    "metricCardRefundVolumeTitle": "Refund Volume (Sample)",
+    "metricCardRefundVolumeDesc": "Sum of recent succeeded refund amounts",
+    "metricCardNetRevenueTitle": "Net Revenue (Sample)",
+    "metricCardNetRevenueDesc": "Transaction volume minus refund volume",
+    "chartTrendTitle": "Transaction Volume Trend",
+    "chartTrendDesc": "Daily aggregated succeeded payment amount",
+    "chartTxStatusTitle": "Payment Status Volume Distribution",
+    "chartTxStatusDesc": "Amount share by payment transaction status"
   }
 }

@@ -152,5 +152,19 @@
       "SUCCEEDED": "成功",
       "FAILED": "失败"
     }
+  },
+  "financeOverview": {
+    "title": "财务总览",
+    "disclaimer": "提示：当前支付为模拟桩（强制成功），以下金额为展示样本而非真实结算依据，不可用作对账。",
+    "metricCardTransactionVolumeTitle": "交易总额（样本）",
+    "metricCardTransactionVolumeDesc": "近期成功支付流水金额求和",
+    "metricCardRefundVolumeTitle": "退款总额（样本）",
+    "metricCardRefundVolumeDesc": "近期成功退款金额求和",
+    "metricCardNetRevenueTitle": "净收入（样本）",
+    "metricCardNetRevenueDesc": "交易总额减退款总额",
+    "chartTrendTitle": "交易额趋势",
+    "chartTrendDesc": "按日聚合的成功支付流水金额",
+    "chartTxStatusTitle": "支付状态金额分布",
+    "chartTxStatusDesc": "按支付流水状态聚合的金额占比"
   }
 }

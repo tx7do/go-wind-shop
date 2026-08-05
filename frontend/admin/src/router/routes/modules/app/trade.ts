@@ -48,6 +48,17 @@ const trade: RouteRecordRaw[] = [
         },
         component: () => import("@/pages/app/trade/refund/index.vue"),
       },
+      {
+        path: "finance-overview",
+        name: "TradeFinanceOverview",
+        meta: {
+          order: 4,
+          icon: "lucide:area-chart",
+          title: "routes.trade.financeOverview",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/finance-overview/index.vue"),
+      },
     ],
   },
 ];
