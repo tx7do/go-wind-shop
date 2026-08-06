@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -149,9 +150,13 @@ func (s *AuthenticationService) ResetPassword(ctx context.Context, req *appV1.Re
 		return nil, appV1.ErrorBadRequest("email, code and new password are required")
 	}
 
-	// 校验验证码（正确则删除，错误则保留供重试）。
+	// 校验验证码（正确则删除，错误则累加尝试次数；超限则作废验证码）。
 	ok, err := s.codeStore.Verify(ctx, emailAddr, code)
 	if err != nil {
+		if errors.Is(err, resetcode.ErrTooManyAttempts) {
+			// 尝试次数耗尽，验证码已作废，要求重新获取。
+			return nil, appV1.ErrorTooManyRequests("too many failed attempts, please request a new code")
+		}
 		s.log.Errorf("verify reset code failed: %s", err.Error())
 		return nil, appV1.ErrorInternalServerError("reset password failed")
 	}

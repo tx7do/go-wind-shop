@@ -140,11 +140,15 @@ func (r *ShippingAddressRepo) Get(ctx context.Context, req *addressV1.GetShippin
 
 // clearOtherDefaults 把指定用户（tenantId+userId）下的其它地址的 is_default 置 false，
 // 用于"默认地址唯一"互斥：当新增/更新某地址为默认时，先清掉旧默认。
-func (r *ShippingAddressRepo) clearOtherDefaults(ctx context.Context, tenantId, userId, exceptId uint32) error {
+// client 参数允许在事务上下文中执行（传 tx.Client()），保证 clear 与主操作原子性。
+func (r *ShippingAddressRepo) clearOtherDefaults(ctx context.Context, client *ent.ShippingAddressClient, tenantId, userId, exceptId uint32) error {
 	if userId == 0 {
 		return nil
 	}
-	builder := r.entClient.Client().ShippingAddress.Update()
+	if client == nil {
+		client = r.entClient.Client().ShippingAddress
+	}
+	builder := client.Update()
 	err := r.repository.UpdateX(ctx, builder, &addressV1.ShippingAddress{}, nil,
 		func(_ *addressV1.ShippingAddress) {
 			builder.
@@ -178,13 +182,54 @@ func (r *ShippingAddressRepo) Create(ctx context.Context, req *addressV1.CreateS
 		return addressV1.ErrorBadRequest("invalid parameter")
 	}
 
-	// 默认地址互斥：若新建为默认，先把该用户其它默认地址置 false。
+	// 默认地址互斥：若新建为默认，clear + insert 必须在同一事务内，避免并发
+	// 下两个请求交错导致出现两个默认地址。
 	if req.Data.GetIsDefault() {
-		if err := r.clearOtherDefaults(ctx, req.Data.GetTenantId(), req.Data.GetUserId(), 0); err != nil {
+		tx, err := r.entClient.Client().Tx(ctx)
+		if err != nil {
+			r.log.Errorf("start transaction failed: %s", err.Error())
+			return addressV1.ErrorInternalServerError("start transaction failed")
+		}
+		commit := false
+		defer func() {
+			if !commit {
+				_ = tx.Rollback()
+			}
+		}()
+
+		if err := r.clearOtherDefaults(ctx, tx.ShippingAddress, req.Data.GetTenantId(), req.Data.GetUserId(), 0); err != nil {
 			return err
 		}
+
+		builder := tx.ShippingAddress.Create().
+			SetNillableUserID(req.Data.UserId).
+			SetNillableRecipientName(req.Data.RecipientName).
+			SetNillableRecipientPhone(req.Data.RecipientPhone).
+			SetNillableRegion(req.Data.Region).
+			SetNillableDetailAddress(req.Data.DetailAddress).
+			SetNillablePostalCode(req.Data.PostalCode).
+			SetNillableTag(req.Data.Tag).
+			SetNillableIsDefault(req.Data.IsDefault).
+			SetNillableTenantID(req.Data.TenantId).
+			SetNillableCreatedBy(req.Data.CreatedBy).
+			SetCreatedAt(time.Now())
+		if req.Data.Id != nil {
+			builder.SetID(req.GetData().GetId())
+		}
+		if err := builder.Exec(ctx); err != nil {
+			r.log.Errorf("insert shipping address failed: %s", err.Error())
+			return addressV1.ErrorInternalServerError("insert data failed")
+		}
+
+		if err := tx.Commit(); err != nil {
+			r.log.Errorf("commit transaction failed: %s", err.Error())
+			return addressV1.ErrorInternalServerError("commit transaction failed")
+		}
+		commit = true
+		return nil
 	}
 
+	// 非默认地址：无需互斥，直接插入。
 	builder := r.entClient.Client().ShippingAddress.Create().
 		SetNillableUserID(req.Data.UserId).
 		SetNillableRecipientName(req.Data.RecipientName).
@@ -232,8 +277,20 @@ func (r *ShippingAddressRepo) Update(ctx context.Context, req *addressV1.UpdateS
 		}
 	}
 
-	// 默认地址互斥：若更新为默认，先把该用户其它默认地址置 false（排除自身）。
+	// 默认地址互斥：若更新为默认，clear + 主更新必须在同一事务内，避免并发交错。
 	if req.Data.GetIsDefault() {
+		tx, txErr := r.entClient.Client().Tx(ctx)
+		if txErr != nil {
+			r.log.Errorf("start transaction failed: %s", txErr.Error())
+			return addressV1.ErrorInternalServerError("start transaction failed")
+		}
+		commit := false
+		defer func() {
+			if !commit {
+				_ = tx.Rollback()
+			}
+		}()
+
 		var tenantId, userId uint32
 		if req.Data.TenantId != nil {
 			tenantId = req.Data.GetTenantId()
@@ -252,11 +309,41 @@ func (r *ShippingAddressRepo) Update(ctx context.Context, req *addressV1.UpdateS
 				}
 			}
 		}
-		if err := r.clearOtherDefaults(ctx, tenantId, userId, req.GetId()); err != nil {
+		if err := r.clearOtherDefaults(ctx, tx.ShippingAddress, tenantId, userId, req.GetId()); err != nil {
 			return err
 		}
+
+		builder := tx.ShippingAddress.Update()
+		if err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),
+			func(dto *addressV1.ShippingAddress) {
+				builder.
+					SetNillableUserID(req.Data.UserId).
+					SetNillableRecipientName(req.Data.RecipientName).
+					SetNillableRecipientPhone(req.Data.RecipientPhone).
+					SetNillableRegion(req.Data.Region).
+					SetNillableDetailAddress(req.Data.DetailAddress).
+					SetNillablePostalCode(req.Data.PostalCode).
+					SetNillableTag(req.Data.Tag).
+					SetNillableIsDefault(req.Data.IsDefault).
+					SetNillableUpdatedBy(req.Data.UpdatedBy).
+					SetUpdatedAt(time.Now())
+			},
+			func(s *sql.Selector) {
+				s.Where(sql.EQ(shippingaddress.FieldID, req.GetId()))
+			},
+		); err != nil {
+			return err
+		}
+
+		if err := tx.Commit(); err != nil {
+			r.log.Errorf("commit transaction failed: %s", err.Error())
+			return addressV1.ErrorInternalServerError("commit transaction failed")
+		}
+		commit = true
+		return nil
 	}
 
+	// 非设默认的更新：无需互斥，直接更新。
 	builder := r.entClient.Client().ShippingAddress.Update()
 
 	err := r.repository.UpdateX(ctx, builder, req.Data, req.GetUpdateMask(),

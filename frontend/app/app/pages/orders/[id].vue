@@ -9,6 +9,7 @@ import {
   useCreatePaymentTransaction,
   useListPaymentTransactions,
   useCreatePaymentRefund,
+  useListPaymentRefunds,
 } from '@/api/composables';
 import { queryClient } from '@/plugins/vue-query';
 import { useAccessStore } from '@/stores/modules/core/access.state';
@@ -144,7 +145,8 @@ const orderTotalLabel = computed(() => displayAmount(order.value?.totalAmount, o
 const orderIdValue = computed(() => order.value?.id ?? 0);
 
 // 该订单的支付流水（用于「申请退款」拿到 transactionId/amount/currency，
-// 以及判断订单是否已有成功支付可退款）
+// 以及判断订单是否已有成功支付可退款）。
+// enabled 守卫：订单未加载完（id=0）时不发起请求，避免无过滤条件拉全租户流水。
 const transactionsQuery = useListPaymentTransactions(
   computed(() => ({
     page: 1,
@@ -153,6 +155,7 @@ const transactionsQuery = useListPaymentTransactions(
     query:
       orderIdValue.value > 0 ? JSON.stringify({ orderId: orderIdValue.value }) : undefined,
   })),
+  { enabled: computed(() => isLogin.value && orderIdValue.value > 0) },
 );
 type TxnEntity = {
   id?: number;
@@ -163,10 +166,36 @@ type TxnEntity = {
 const transactions = computed<TxnEntity[]>(() => {
   const items = (transactionsQuery.data?.value as any)?.items ?? [];
   return (items as TxnEntity[]) ?? [];
-};
+});
 // 取已成功的支付流水作为退款来源（一笔订单正常只有一笔 SUCCEEDED）。
 const succeededTxn = computed<TxnEntity | undefined>(() =>
   transactions.value.find((t) => t.status === 'SUCCEEDED'),
+);
+
+// 已存在的退款单（按 transactionId 查）。若已有一笔 PENDING/SUCCEEDED 退款，
+// 则隐藏「申请退款」按钮，防止重复申请造成多笔退款。
+const refundQuery = useListPaymentRefunds(
+  computed(() => ({
+    page: 1,
+    pageSize: 10,
+    noPaging: false,
+    query: succeededTxn.value?.id
+      ? JSON.stringify({ transactionId: succeededTxn.value.id })
+      : undefined,
+  })),
+  { enabled: computed(() => isLogin.value && !!succeededTxn.value?.id) },
+);
+type RefundEntity = {
+  id?: number;
+  status?: 'PENDING' | 'SUCCEEDED' | 'FAILED' | 'STATUS_UNSPECIFIED';
+};
+const existingRefunds = computed<RefundEntity[]>(() => {
+  const items = (refundQuery.data?.value as any)?.items ?? [];
+  return (items as RefundEntity[]) ?? [];
+});
+// 是否存在未完结的退款（PENDING 处理中 / SUCCEEDED 已到账）。
+const hasActiveRefund = computed(() =>
+  existingRefunds.value.some((r) => r.status === 'PENDING' || r.status === 'SUCCEEDED'),
 );
 
 const updateOrderMutation = useUpdateOrder();
@@ -184,11 +213,13 @@ function refreshOrderAndList() {
   queryClient.invalidateQueries({ queryKey: ['getOrder'] });
   queryClient.invalidateQueries({ queryKey: ['listOrders'] });
   queryClient.invalidateQueries({ queryKey: ['listPaymentTransactions'] });
+  queryClient.invalidateQueries({ queryKey: ['listPaymentRefunds'] });
 }
 
 // 取消订单：PENDING_PAYMENT → CANCELLED（乐观锁 expectedStatus）
 async function handleCancel() {
   if (!order.value?.id) return;
+  if (anyActionPending.value) return;
   if (!window.confirm(t('orderDetail.confirm.cancel'))) return;
   try {
     await updateOrderMutation.mutateAsync({
@@ -206,6 +237,7 @@ async function handleCancel() {
 // 确认收货：FULFILLED → CLOSED
 async function handleConfirmReceipt() {
   if (!order.value?.id) return;
+  if (anyActionPending.value) return;
   if (!window.confirm(t('orderDetail.confirm.confirmReceipt'))) return;
   try {
     await updateOrderMutation.mutateAsync({
@@ -224,6 +256,7 @@ async function handleConfirmReceipt() {
 async function handlePayNow() {
   const o = order.value;
   if (!o?.id) return;
+  if (anyActionPending.value) return;
   const cryptoObj = (globalThis as unknown as { crypto?: { randomUUID?: () => string } }).crypto;
   const paymentIdempotencyKey = cryptoObj?.randomUUID?.() ?? '';
   if (!paymentIdempotencyKey) {
@@ -255,6 +288,7 @@ async function handleRequestRefund() {
   const o = order.value;
   const txn = succeededTxn.value;
   if (!o?.id) return;
+  if (anyActionPending.value) return;
   if (!txn?.id) {
     toast.error(t('orderDetail.errors.noTransaction'));
     return;
@@ -262,6 +296,10 @@ async function handleRequestRefund() {
   if (!window.confirm(t('orderDetail.confirm.requestRefund'))) return;
   const cryptoObj = (globalThis as unknown as { crypto?: { randomUUID?: () => string } }).crypto;
   const refundIdempotencyKey = cryptoObj?.randomUUID?.() ?? '';
+  if (!refundIdempotencyKey) {
+    toast.error(t('orderDetail.errors.refundFailed'));
+    return;
+  }
   try {
     await refundMutation.mutateAsync({
       userId: o.userId,
@@ -279,10 +317,14 @@ async function handleRequestRefund() {
   }
 }
 
-// 各操作按钮是否可见（仅依据订单当前状态，终态不显示任何操作）
+// 各操作按钮是否可见（仅依据订单当前状态，终态不显示任何操作）。
+// canRefund 额外校验：若已存在未完结退款（PENDING/SUCCEEDED），则隐藏按钮，
+// 防止对同一笔支付流水重复发起退款造成多笔退款。
 const canPay = computed(() => order.value?.status === 'PENDING_PAYMENT');
 const canCancel = computed(() => order.value?.status === 'PENDING_PAYMENT');
-const canRefund = computed(() => order.value?.status === 'PAID' && !!succeededTxn.value?.id);
+const canRefund = computed(
+  () => order.value?.status === 'PAID' && !!succeededTxn.value?.id && !hasActiveRefund.value,
+);
 const canConfirm = computed(() => order.value?.status === 'FULFILLED');
 const hasAnyAction = computed(
   () => canPay.value || canCancel.value || canRefund.value || canConfirm.value,

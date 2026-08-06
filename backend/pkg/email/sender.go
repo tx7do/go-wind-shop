@@ -85,11 +85,12 @@ func (s *Sender) IsConfigured() bool {
 }
 
 // Send 发送一封纯文本邮件到 to。
-// 未配置 SMTP 时降级：把正文写入日志（含验证码），方便开发环境查看。
+// 未配置 SMTP 时降级：不发送，仅记录收件人与主题（不记录正文，避免验证码等
+// 敏感信息泄露到日志）。开发环境如需查看验证码，应配置真实 SMTP 或在调用方
+// 自行按需打印。
 func (s *Sender) Send(to, subject, body string) error {
 	if !s.IsConfigured() {
-		// 降级模式：不发送，仅记录日志。验证码会出现在日志里，便于开发/演示。
-		s.log.Warnf("[email degraded] SMTP not configured, skip sending. to=%s subject=%s\n%s", to, subject, body)
+		s.log.Warnf("[email degraded] SMTP not configured, skip sending. to=%s subject=%s", to, subject)
 		return nil
 	}
 	return s.sendSMTP(to, subject, body)

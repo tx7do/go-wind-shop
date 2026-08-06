@@ -82,3 +82,37 @@ func TestExtractAndStripNameKeyword_EmptyValueIgnored(t *testing.T) {
 		t.Fatalf("query should be preserved when name is blank")
 	}
 }
+
+// 非字符串 name 值不应被剥离，保留原样交 DSL 处理，避免污染剩余 query。
+func TestExtractAndStripNameKeyword_NonStringValuePreserved(t *testing.T) {
+	req := newQueryReq(t, map[string]any{"name": float64(123), "categoryId": float64(7)})
+	got := extractAndStripNameKeyword(req)
+	if got != "" {
+		t.Fatalf("expected empty keyword for non-string value, got %q", got)
+	}
+	// name(123) 不应被删除，query 应原样保留两个字段
+	var m map[string]any
+	if err := json.Unmarshal([]byte(req.GetQuery()), &m); err != nil {
+		t.Fatalf("unmarshal query: %v", err)
+	}
+	if _, ok := m["name"]; !ok {
+		t.Fatalf("non-string name should be preserved, not deleted; query=%s", req.GetQuery())
+	}
+	if m["categoryId"] != float64(7) {
+		t.Fatalf("categoryId should be preserved, query=%s", req.GetQuery())
+	}
+}
+
+// 多个候选 key 同时存在：最后一个（按 [name,keyword,q] 顺序即 q）胜出，
+// 三个 key 都应被剥离。
+func TestExtractAndStripNameKeyword_MultipleKeysLastWins(t *testing.T) {
+	req := newQueryReq(t, map[string]any{"name": "a", "keyword": "b", "q": "c"})
+	got := extractAndStripNameKeyword(req)
+	if got != "c" {
+		t.Fatalf("expected q value 'c' to win, got %q", got)
+	}
+	// 三个 key 都应被剥离 → query 为空 → FilteringType 置空
+	if req.FilteringType != nil {
+		t.Fatalf("expected FilteringType nil after stripping all keys, got %v", req.FilteringType)
+	}
+}

@@ -106,15 +106,23 @@ func (r *ProductRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 	// 商品名搜索：商品名落在关联翻译表 mall_product_translations，不在 products 表，
 	// 通用 DSL 会把 name 当作 products.name 列处理而报 SQL 错误。因此这里在交给
 	// 通用分页框架前，先把 name 关键字从 query JSON 里剥离出来，改用子查询
-	// products.id IN (SELECT product_id FROM translations WHERE name ILIKE %q%)
+	// products.id IN (SELECT product_id FROM translations WHERE name LIKE %kw%)
 	// 实现（跨任意语言命中）。剥离后剩余字段（categoryId/brandId 等）仍走 DSL。
+	//
+	// 安全/正确性：
+	//   - LIKE 通配符 % _ \ 需转义，否则搜索"100%"会误匹配"1000"、搜索"%"匹配全部，
+	//     且可作为公开端点的 DoS 放大器。用 ESCAPE '\\' 配合转义。
+	//   - 子查询带 deleted_at IS NULL，避免软删除的旧翻译行"复活"已改名/删除的商品。
 	if nameKeyword := extractAndStripNameKeyword(req); nameKeyword != "" {
-		like := "%" + strings.ToLower(nameKeyword) + "%"
+		// 转义 LIKE 特殊字符：\（转义符本身）、%（任意）、_（单字符）。
+		escaped := likeEscape.Replace(nameKeyword)
+		like := "%" + strings.ToLower(escaped) + "%"
 		builder.Modify(func(s *sql.Selector) {
 			s.Where(sql.ExprP(
 				"\""+product.FieldID+"\" IN (SELECT \""+productTranslation.FieldProductID+
 					"\" FROM \""+productTranslation.Table+
-					"\" WHERE LOWER(\""+productTranslation.FieldName+"\") LIKE ?)",
+					"\" WHERE LOWER(\""+productTranslation.FieldName+"\") LIKE ? ESCAPE '\\'" +
+					" AND \""+productTranslation.Table+"\".\"deleted_at\" IS NULL)",
 				like,
 			))
 		})
@@ -141,9 +149,17 @@ func (r *ProductRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 	}, nil
 }
 
+// likeEscape 转义 LIKE 模式中的特殊字符，配合 SQL 的 ESCAPE '\\' 使用。
+// 顺序：先转义反斜杠本身，再转义 % 与 _。
+var likeEscape = strings.NewReplacer(`\`, `\\`, `%`, `\%`, `_`, `\_`)
+
 // extractAndStripNameKeyword 从分页请求的 query JSON 中取出名称搜索关键字
 // （兼容 name / keyword / q 三个前端字段名），并将其从 query 中移除，
 // 避免通用 DSL 再以 products.name 列处理而报错。无 query 或不含这些字段时返回空串。
+//
+// 仅当某 key 的值是有效非空字符串时才提取并从 query 删除该 key；
+// 非字符串值（如 {name:123}）不提取、不删除，保留原样交调用方/DSL 处理，
+// 避免静默吞掉过滤条件污染剩余 query。
 func extractAndStripNameKeyword(req *paginationV1.PagingRequest) string {
 	if req == nil || req.GetQuery() == "" {
 		return ""
@@ -156,9 +172,14 @@ func extractAndStripNameKeyword(req *paginationV1.PagingRequest) string {
 	var keyword string
 	for _, key := range []string{"name", "keyword", "q"} {
 		if v, ok := m[key]; ok {
-			if s, ok2 := v.(string); ok2 && strings.TrimSpace(s) != "" {
-				keyword = strings.TrimSpace(s)
+			s, ok2 := v.(string)
+			if !ok2 {
+				continue // 非字符串值，不处理，保留原样
 			}
+			if strings.TrimSpace(s) == "" {
+				continue // 空值跳过
+			}
+			keyword = strings.TrimSpace(s)
 			delete(m, key)
 		}
 	}
