@@ -17,7 +17,7 @@ const isLogin = computed(() => {
   return !!token?.value && !accessStore.loginExpired
 })
 
-const { data: me, isLoading, error } = useGetMe({ enabled: isLogin })
+const { data: me, isPending, isError, refetch } = useGetMe({ enabled: isLogin })
 
 const userInfo = computed(() => me.value || userStore.user)
 
@@ -54,7 +54,7 @@ const unreadMessageCount = computed(() => {
         </div>
 
         <!-- Loading -->
-        <div v-else-if="isLoading" class="rounded-2xl border border-border bg-card p-8">
+        <div v-else-if="isPending" class="rounded-2xl border border-border bg-card p-8">
           <div class="flex items-center gap-6">
             <UiSkeleton class="h-20 w-20 rounded-full" />
             <div class="space-y-2">
@@ -63,6 +63,17 @@ const unreadMessageCount = computed(() => {
             </div>
           </div>
         </div>
+
+        <UiAppEmpty
+          v-else-if="isError"
+          variant="error"
+        >
+          <template #action>
+            <UiButton variant="outline" size="sm" @click="refetch()">
+              {{ t('ui.button.retry') }}
+            </UiButton>
+          </template>
+        </UiAppEmpty>
 
         <!-- User Info -->
         <div v-else-if="userInfo" class="rounded-2xl border border-border bg-card p-8">

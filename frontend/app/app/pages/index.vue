@@ -51,6 +51,7 @@ const categories = computed<CategoryEntity[]>(() => {
   return (items as CategoryEntity[]) ?? [];
 });
 const categoriesLoading = computed(() => categoriesQuery.isLoading.value);
+const categoriesError = computed(() => categoriesQuery.isError.value);
 
 const featuredQuery = useListProducts(
   new PaginationQuery({
@@ -63,6 +64,7 @@ const featured = computed<ProductEntity[]>(() => {
   return (items as ProductEntity[]) ?? [];
 });
 const featuredLoading = computed(() => featuredQuery.isLoading.value);
+const featuredError = computed(() => featuredQuery.isError.value);
 </script>
 
 <template>
@@ -92,6 +94,17 @@ const featuredLoading = computed(() => featuredQuery.isLoading.value);
     <div v-if="featuredLoading" class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
       <UiPostCardSkeleton v-for="_, i in 8" :key="i" />
     </div>
+
+    <UiAppEmpty
+      v-else-if="featuredError"
+      variant="error"
+    >
+      <template #action>
+        <UiButton variant="outline" size="sm" @click="featuredQuery.refetch()">
+          {{ t('ui.button.retry') }}
+        </UiButton>
+      </template>
+    </UiAppEmpty>
 
     <div
       v-else-if="featured.length > 0"
