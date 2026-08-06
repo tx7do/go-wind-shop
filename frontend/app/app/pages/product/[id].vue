@@ -595,6 +595,13 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
       </div>
     </div>
 
+    <div
+      v-else
+      class="rounded-2xl border border-border bg-card p-12 text-center text-muted-foreground"
+    >
+      {{ t('mall.product.notFound') }}
+    </div>
+
     <!-- 商品详情描述（通栏居中，限宽 max-w-4xl，增加内边距提升阅读呼吸感） -->
     <div
       v-if="productTranslation?.longDescription"
@@ -612,13 +619,6 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
           <UiSkeleton class="h-64 w-full" />
         </template>
       </ClientOnly>
-    </div>
-
-    <div
-      v-else
-      class="rounded-2xl border border-border bg-card p-12 text-center text-muted-foreground"
-    >
-      {{ t('mall.product.notFound') }}
     </div>
   </LayoutSectionContainer>
 </template>
