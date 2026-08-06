@@ -222,11 +222,15 @@ If this was not you, please ignore this email — your password will not be chan
 
 // listUsersByEmailRequest 构造按 email 过滤用户的分页请求。
 // user 表有 email 列，通用 DSL 走 raw column 即可命中；仅需 1 条用于取 username。
+//
+// 租户范围：app 前台登录不传 tenantCode（平台/单租户模式），后端 Login 据此将
+// 凭证查询限定在 tenantId=0。找回密码必须与之一致，故 query 固定带 tenantId=0，
+// 避免 (tenant_id,email) 复合唯一索引下跨租户命中同名 email 的其它用户。
 func listUsersByEmailRequest(emailAddr string) *paginationV1.PagingRequest {
-	queryJSON := fmt.Sprintf(`{"email":%q}`, emailAddr)
+	queryJSON := fmt.Sprintf(`{"email":%q,"tenantId":0}`, emailAddr)
 	return &paginationV1.PagingRequest{
-		Page:           trans.Ptr(uint32(1)),
-		PageSize:       trans.Ptr(uint32(1)),
-		FilteringType:  &paginationV1.PagingRequest_Query{Query: queryJSON},
+		Page:          trans.Ptr(uint32(1)),
+		PageSize:      trans.Ptr(uint32(1)),
+		FilteringType: &paginationV1.PagingRequest_Query{Query: queryJSON},
 	}
 }
