@@ -32,7 +32,17 @@
     "non_responsibility": "免责条款",
     "privacy_agreement": "隐私协议",
     "terms_of_service": "服务条款",
-    "view_homepage": "查看主页"
+    "view_homepage": "查看主页",
+    "retry": "重试"
+  },
+  "error": {
+    "title": "加载失败",
+    "description": "数据加载失败，请稍后重试。"
+  },
+  "pagination": {
+    "page": "第 {current}/{total} 页",
+    "previous": "上一页",
+    "next": "下一页"
   },
   "text": {
     "rating": "评分",

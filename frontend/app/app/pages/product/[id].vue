@@ -98,7 +98,8 @@ const productQuery = useGetProduct(productId.value, {
 const product = computed<ProductEntity | undefined>(() => {
   return productQuery.data?.value as ProductEntity | undefined;
 });
-const productLoading = computed(() => productQuery.isLoading.value);
+const productLoading = computed(() => productQuery.isPending.value);
+const productError = computed(() => productQuery.isError.value);
 const productTranslation = computed(() => pickTranslation(product.value?.translations));
 
 useHead({ title: () => productTranslation.value?.name || '' });
@@ -111,6 +112,7 @@ const skusQuery = useListSkus(
     noPaging: false,
     query: JSON.stringify({ productId: productId.value }),
   })),
+  { enabled: computed(() => productId.value > 0) },
 );
 const skus = computed<SkuEntity[]>(() => {
   const items = (skusQuery.data?.value as any)?.items ?? [];
@@ -299,6 +301,8 @@ const displayPrice = computed(() => {
 // ---------- 当前用户的购物车（与 cart.vue 同样的按 userId 过滤逻辑） ----------
 type CartEntity = { id?: number; userId?: number };
 
+// 注：user_id 行级隔离由后端 UserPrivacy 策略强制（钉定为当前登录用户），
+// 前端 userId 值会被服务端忽略。enabled 守卫避免未登录/未 hydrate 发请求。
 const cartsQuery = useListCarts(
   computed(() => ({
     page: 1,
@@ -306,6 +310,7 @@ const cartsQuery = useListCarts(
     noPaging: false,
     query: JSON.stringify({ userId: currentUserId.value }),
   })),
+  { enabled: isLogin },
 );
 const cart = computed<CartEntity | undefined>(() => {
   const items = ((cartsQuery.data?.value as any)?.items ?? []) as CartEntity[];
@@ -440,6 +445,17 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
 
   <LayoutSectionContainer>
     <UiSkeleton v-if="productLoading" class="h-8 w-1/2" />
+
+    <UiAppEmpty
+      v-else-if="productError"
+      variant="error"
+    >
+      <template #action>
+        <UiButton variant="outline" size="sm" @click="productQuery.refetch()">
+          {{ t('ui.button.retry') }}
+        </UiButton>
+      </template>
+    </UiAppEmpty>
 
     <div v-else-if="productTranslation" class="grid gap-8 md:grid-cols-12">
       <!-- 左侧：商品图片（1:1 正方形） -->
@@ -599,7 +615,7 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
     </div>
 
     <div
-      v-if="!productLoading && !productTranslation"
+      v-else
       class="rounded-2xl border border-border bg-card p-12 text-center text-muted-foreground"
     >
       {{ t('mall.product.notFound') }}

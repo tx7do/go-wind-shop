@@ -73,7 +73,8 @@ const orderQuery = useGetOrder(orderId, {
 const order = computed<OrderEntity | undefined>(() => {
   return orderQuery.data?.value as OrderEntity | undefined;
 });
-const orderLoading = computed(() => orderQuery.isLoading.value);
+const orderLoading = computed(() => orderQuery.isPending.value);
+const orderError = computed(() => orderQuery.isError.value);
 
 const orderItemsQuery = useListOrderItems(
   computed(() => ({
@@ -83,12 +84,14 @@ const orderItemsQuery = useListOrderItems(
     query:
       orderId.value > 0 ? JSON.stringify({ orderId: orderId.value }) : undefined,
   })),
+  { enabled: computed(() => isLogin.value && orderId.value > 0) },
 );
 const orderItems = computed<OrderItemEntity[]>(() => {
   const items = (orderItemsQuery.data?.value as any)?.items ?? [];
   return (items as OrderItemEntity[]) ?? [];
 });
-const itemsLoading = computed(() => orderItemsQuery.isLoading.value);
+const itemsLoading = computed(() => orderItemsQuery.isPending.value);
+const itemsError = computed(() => orderItemsQuery.isError.value);
 
 const STATUS_LABEL_KEY: Record<OrderStatus, string> = {
   STATUS_UNSPECIFIED: 'orderStatus.status_unspecified',
@@ -365,6 +368,18 @@ const hasAnyAction = computed(
       </div>
     </div>
 
+    <!-- 错误态：订单详情加载失败（网络/服务端），与"订单不存在"区分并提供重试 -->
+    <UiAppEmpty
+      v-else-if="orderError"
+      variant="error"
+    >
+      <template #action>
+        <UiButton variant="outline" size="sm" @click="orderQuery.refetch()">
+          {{ t('ui.button.retry') }}
+        </UiButton>
+      </template>
+    </UiAppEmpty>
+
     <div
       v-else-if="!order"
       class="rounded-2xl border border-border bg-card p-16 text-center text-muted-foreground"
@@ -448,6 +463,18 @@ const hasAnyAction = computed(
             </div>
           </div>
         </div>
+
+        <UiAppEmpty
+          v-else-if="itemsError"
+          variant="error"
+          in-container
+        >
+          <template #action>
+            <UiButton variant="outline" size="sm" @click="orderItemsQuery.refetch()">
+              {{ t('ui.button.retry') }}
+            </UiButton>
+          </template>
+        </UiAppEmpty>
 
         <div
           v-else-if="orderItems.length === 0"

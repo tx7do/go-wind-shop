@@ -103,12 +103,14 @@ const productsQuery = useListProducts(
       orderBy,
     });
   }),
+  { enabled: computed(() => categoryId.value > 0) },
 );
 const products = computed<ProductEntity[]>(() => {
   const items = (productsQuery.data?.value as any)?.items ?? [];
   return (items as ProductEntity[]) ?? [];
 });
 const productsLoading = computed(() => productsQuery.isLoading.value);
+const productsError = computed(() => productsQuery.isError.value);
 </script>
 
 <template>
@@ -146,6 +148,17 @@ const productsLoading = computed(() => productsQuery.isLoading.value);
         <UiPostCardSkeleton v-for="_, i in 6" :key="i" />
       </div>
 
+      <UiAppEmpty
+        v-else-if="productsError"
+        variant="error"
+      >
+        <template #action>
+          <UiButton variant="outline" size="sm" @click="productsQuery.refetch()">
+            {{ t('ui.button.retry') }}
+          </UiButton>
+        </template>
+      </UiAppEmpty>
+
       <div
         v-else-if="products.length > 0"
         class="grid grid-cols-2 gap-4 md:grid-cols-3"
@@ -175,16 +188,17 @@ const productsLoading = computed(() => productsQuery.isLoading.value);
         </NuxtLink>
       </div>
 
-      <div
+      <UiAppEmpty
         v-else
-        class="flex flex-col items-center gap-4 rounded-2xl border border-border bg-card p-12 text-center"
+        variant="noData"
+        :description="t('mall.category.empty')"
       >
-        <XIcon icon="carbon:document" :size="48" class="text-muted-foreground" />
-        <p class="text-sm text-muted-foreground">{{ t('mall.category.empty') }}</p>
-        <UiButton variant="outline" @click="navigateTo(localePath('/'))">
-          {{ t('cart.continueShopping') }}
-        </UiButton>
-      </div>
+        <template #action>
+          <UiButton variant="outline" @click="navigateTo(localePath('/'))">
+            {{ t('cart.continueShopping') }}
+          </UiButton>
+        </template>
+      </UiAppEmpty>
     </div>
   </LayoutSectionContainer>
 </template>

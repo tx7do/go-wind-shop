@@ -32,7 +32,17 @@
     "non_responsibility": "Disclaimer",
     "privacy_agreement": "Privacy Policy",
     "terms_of_service": "Terms of Service",
-    "view_homepage": "View Homepage"
+    "view_homepage": "View Homepage",
+    "retry": "Retry"
+  },
+  "error": {
+    "title": "Load failed",
+    "description": "Data failed to load. Please try again later."
+  },
+  "pagination": {
+    "page": "Page {current}/{total}",
+    "previous": "Previous",
+    "next": "Next"
   },
   "text": {
     "rating": "Rating",

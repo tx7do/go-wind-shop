@@ -31,20 +31,38 @@ type RefundEntity = {
   createdAt?: string;
 };
 
+// 退款单按 created_by 过滤（创建者即本人）。退款实体无 UserPrivacy 策略，
+// 故 created_by 是该接口唯一的用户行级隔离条件 —— 必须带且不可由客户端绕过。
+// enabled 守卫：未登录 / currentUserId 尚未 hydrate（=0）时不发请求，
+// 避免预 hydrate 窗口以 createdBy:0 发出无过滤请求拉到他人退款。
+const PAGE_SIZE = 10;
+const page = ref(1);
 const refundsQuery = useListPaymentRefunds(
   computed(() => ({
-    page: 1,
-    pageSize: 50,
+    page: page.value,
+    pageSize: PAGE_SIZE,
     noPaging: false,
     sorting: [{ field: 'id', direction: 'DESC' }],
     query: JSON.stringify({ createdBy: currentUserId.value }),
   })),
+  { enabled: computed(() => isLogin.value && currentUserId.value > 0) },
 );
 const refunds = computed<RefundEntity[]>(() => {
   const items = (refundsQuery.data?.value as any)?.items ?? [];
   return (items as RefundEntity[]) ?? [];
 });
-const refundsLoading = computed(() => refundsQuery.isLoading.value);
+const refundsLoading = computed(() => refundsQuery.isPending.value);
+const refundsError = computed(() => refundsQuery.isError.value);
+
+const totalCount = computed(() => (refundsQuery.data?.value as any)?.total ?? 0);
+const totalPages = computed(() => Math.max(1, Math.ceil(totalCount.value / PAGE_SIZE)));
+
+function goToPage(p: number) {
+  const clamped = Math.min(Math.max(1, p), totalPages.value);
+  if (clamped !== page.value) {
+    page.value = clamped;
+  }
+}
 
 const STATUS_LABEL_KEY: Record<RefundStatus, string> = {
   PENDING: 'refunds.status.pending',
@@ -117,19 +135,26 @@ function displayAmount(v: number | undefined, currency?: string): string {
       </div>
     </div>
 
+    <!-- 错误态：网络/服务端错误，与"空"区分开，并提供重试 -->
+    <UiAppEmpty
+      v-else-if="refundsError"
+      variant="error"
+    >
+      <template #action>
+        <UiButton variant="outline" size="sm" @click="refundsQuery.refetch()">
+          {{ t('ui.button.retry') }}
+        </UiButton>
+      </template>
+    </UiAppEmpty>
+
     <!-- 已加载：空 / 列表 -->
     <div v-else class="flex flex-col gap-4">
-      <!-- 空列表 -->
-      <div
+      <!-- 空态 -->
+      <UiAppEmpty
         v-if="refunds.length === 0"
-        class="rounded-2xl border border-border bg-card p-16 text-center"
-      >
-        <XIcon icon="carbon:rotate-ccw" :size="48" class="mx-auto mb-4 text-muted-foreground" />
-        <p class="text-lg text-muted-foreground">{{ t('refunds.empty') }}</p>
-        <UiButton variant="outline" class="mt-6" @click="navigateTo(localePath('/orders'))">
-          {{ t('mall.orders.title') }}
-        </UiButton>
-      </div>
+        variant="noData"
+        :description="t('refunds.empty')"
+      />
 
       <!-- 退款列表 -->
       <div v-else class="overflow-x-auto rounded-2xl border border-border bg-card">
@@ -172,6 +197,32 @@ function displayAmount(v: number | undefined, currency?: string): string {
             </div>
           </div>
         </div>
+      </div>
+
+      <!-- 分页：仅当超过一页时显示 -->
+      <div
+        v-if="totalPages > 1"
+        class="flex items-center justify-center gap-4 py-2"
+      >
+        <UiButton
+          variant="outline"
+          size="sm"
+          :disabled="page <= 1"
+          @click="goToPage(page - 1)"
+        >
+          {{ t('ui.pagination.previous') }}
+        </UiButton>
+        <span class="text-xs tabular-nums text-muted-foreground">
+          {{ t('ui.pagination.page', { current: page, total: totalPages }) }}
+        </span>
+        <UiButton
+          variant="outline"
+          size="sm"
+          :disabled="page >= totalPages"
+          @click="goToPage(page + 1)"
+        >
+          {{ t('ui.pagination.next') }}
+        </UiButton>
       </div>
     </div>
   </LayoutSectionContainer>

@@ -7,6 +7,8 @@ import UiPaginationLink from './PaginationLink.vue'
 const props = defineProps<{
   class?: HTMLAttributes['class']
 }>()
+
+const { t } = useI18n()
 </script>
 
 <template>
@@ -17,6 +19,6 @@ const props = defineProps<{
     v-bind="$attrs"
   >
     <XIcon icon="lucide:chevron-left" :size="16" />
-    <span>Previous</span>
+    <span>{{ t('ui.pagination.previous') }}</span>
   </UiPaginationLink>
 </template>

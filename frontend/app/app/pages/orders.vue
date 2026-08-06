@@ -3,7 +3,6 @@ import { computed, ref, watch } from 'vue';
 import { XIcon } from '@/plugins/xicon';
 import { useListOrders } from '@/api/composables';
 import { useAccessStore } from '@/stores/modules/core/access.state';
-import { useUserStore } from '@/stores/modules/core/user.state';
 
 const { t } = useI18n();
 const localePath = useLocalePath();
@@ -13,13 +12,11 @@ const router = useRouter();
 useHead({ title: t('mall.orders.title') });
 
 const accessStore = useAccessStore();
-const userStore = useUserStore();
 
 const isLogin = computed(() => {
   const token = accessStore.accessToken;
   return !!token?.value && !accessStore.loginExpired;
 });
-const currentUserId = computed(() => userStore.user?.id ?? 0);
 
 type OrderStatus =
   | 'STATUS_UNSPECIFIED'
@@ -37,20 +34,65 @@ type OrderEntity = {
   createdAt?: string;
 };
 
+// ---------- 状态筛选 Tab ----------
+// 注：订单按 user_id 过滤由后端 UserPrivacy 策略强制注入（钉定为当前登录用户），
+// 前端无需、也不应再带 userId。状态过滤走后端 DSL（order.status 可过滤，枚举值
+// 与前端串一致），故切换 Tab 会触发服务端重新分页请求。
+type FilterKey = 'all' | OrderStatus;
+const FILTER_TABS: FilterKey[] = [
+  'all',
+  'PENDING_PAYMENT',
+  'PAID',
+  'FULFILLED',
+  'CLOSED',
+  'CANCELLED',
+];
+const activeFilter = ref<FilterKey>('all');
+// 支持 URL ?status=xxx 预选筛选项（来自个人中心等入口的快捷跳转）。
+// 非法值回退到 'all'，避免恶意/错误参数。
+function normalizeFilter(v: unknown): FilterKey {
+  return (FILTER_TABS as string[]).includes(v as string) ? (v as FilterKey) : 'all';
+}
+const initialStatus = route.query.status;
+if (initialStatus) activeFilter.value = normalizeFilter(initialStatus);
+// 切换 Tab 时同步到 URL query（replace，不入历史栈），便于刷新保持与分享。
+watch(activeFilter, (v) => {
+  const query = { ...route.query };
+  if (v === 'all') delete query.status;
+  else query.status = v;
+  router.replace({ query });
+  page.value = 1;
+});
+
+const PAGE_SIZE = 10;
+const page = ref(1);
+// 查询参数随 activeFilter / page 响应式变化。
 const ordersQuery = useListOrders(
-  computed(() => ({
-    page: 1,
-    pageSize: 50,
-    noPaging: false,
-    sorting: [{ field: 'id', direction: 'DESC' }],
-    query: JSON.stringify({ userId: currentUserId.value }),
-  })),
+  computed(() => {
+    const base: Record<string, unknown> = {};
+    if (activeFilter.value !== 'all') {
+      base.status = activeFilter.value;
+    }
+    return {
+      page: page.value,
+      pageSize: PAGE_SIZE,
+      noPaging: false,
+      sorting: [{ field: 'id', direction: 'DESC' }],
+      query: JSON.stringify(base),
+    };
+  }),
+  { enabled: isLogin },
 );
 const orders = computed<OrderEntity[]>(() => {
   const items = (ordersQuery.data?.value as any)?.items ?? [];
   return (items as OrderEntity[]) ?? [];
 });
-const ordersLoading = computed(() => ordersQuery.isLoading.value);
+const ordersLoading = computed(() => ordersQuery.isPending.value);
+const ordersError = computed(() => ordersQuery.isError.value);
+
+// 总条数与总页数（取自后端响应的 total 字段）。
+const totalCount = computed(() => (ordersQuery.data?.value as any)?.total ?? 0);
+const totalPages = computed(() => Math.max(1, Math.ceil(totalCount.value / PAGE_SIZE)));
 
 const STATUS_LABEL_KEY: Record<OrderStatus, string> = {
   STATUS_UNSPECIFIED: 'orderStatus.status_unspecified',
@@ -92,43 +134,20 @@ function displayTotal(order: OrderEntity): string {
   return currency + (order.totalAmount ?? 0);
 }
 
-// ---------- 状态筛选 Tab ----------
-// 订单数据全量拉取当前用户的订单（pageSize 50），筛选项在前端过滤，
-// 既不依赖后端 query DSL 对 status 的支持，切换也即时无网络抖动。
-type FilterKey = 'all' | OrderStatus;
-const FILTER_TABS: FilterKey[] = [
-  'all',
-  'PENDING_PAYMENT',
-  'PAID',
-  'FULFILLED',
-  'CLOSED',
-  'CANCELLED',
-];
-const activeFilter = ref<FilterKey>('all');
-// 支持 URL ?status=xxx 预选筛选项（来自个人中心等入口的快捷跳转）。
-// 非法值回退到 'all'，避免恶意/错误参数。
-function normalizeFilter(v: unknown): FilterKey {
-  return (FILTER_TABS as string[]).includes(v as string) ? (v as FilterKey) : 'all';
-}
-const initialStatus = route.query.status;
-if (initialStatus) activeFilter.value = normalizeFilter(initialStatus);
-// 切换 Tab 时同步到 URL query（replace，不入历史栈），便于刷新保持与分享。
-watch(activeFilter, (v) => {
-  const query = { ...route.query };
-  if (v === 'all') delete query.status;
-  else query.status = v;
-  router.replace({ query });
-});
 function filterLabel(key: FilterKey): string {
   if (key === 'all') return t('orders.filter.all');
   // 复用 mall.orderStatus.* 的状态文案
   const statusKey = STATUS_LABEL_KEY[key as OrderStatus];
   return t('mall.' + statusKey);
 }
-const filteredOrders = computed<OrderEntity[]>(() => {
-  if (activeFilter.value === 'all') return orders.value;
-  return orders.value.filter((o) => o.status === activeFilter.value);
-});
+
+// 分页跳转：超出范围时夹紧到 [1, totalPages]，并触发服务端重新请求。
+function goToPage(p: number) {
+  const clamped = Math.min(Math.max(1, p), totalPages.value);
+  if (clamped !== page.value) {
+    page.value = clamped;
+  }
+}
 </script>
 
 <template>
@@ -168,11 +187,22 @@ const filteredOrders = computed<OrderEntity[]>(() => {
       </div>
     </div>
 
+    <!-- 错误态：网络/服务端错误，与"空"区分开，并提供重试 -->
+    <UiAppEmpty
+      v-else-if="ordersError"
+      variant="error"
+    >
+      <template #action>
+        <UiButton variant="outline" size="sm" @click="ordersQuery.refetch()">
+          {{ t('ui.button.retry') }}
+        </UiButton>
+      </template>
+    </UiAppEmpty>
+
     <!-- 已加载：Tab 条 + 内容 -->
     <div v-else class="flex flex-col gap-4">
-      <!-- 状态筛选 Tab（仅有订单时显示） -->
+      <!-- 状态筛选 Tab -->
       <div
-        v-if="orders.length > 0"
         class="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-card p-3"
       >
         <button
@@ -191,29 +221,12 @@ const filteredOrders = computed<OrderEntity[]>(() => {
         </button>
       </div>
 
-      <!-- 全空（一个订单都没有） -->
-      <div
+      <!-- 空态：当前过滤条件下无订单 -->
+      <UiAppEmpty
         v-if="orders.length === 0"
-        class="rounded-2xl border border-border bg-card p-16 text-center"
-      >
-        <XIcon icon="carbon:document" :size="48" class="mx-auto mb-4 text-muted-foreground" />
-        <p class="text-lg text-muted-foreground">{{ t('orders.empty') }}</p>
-        <UiButton variant="outline" class="mt-6" @click="navigateTo(localePath('/'))">
-          {{ t('cart.continueShopping') }}
-        </UiButton>
-      </div>
-
-      <!-- 筛选后无结果 -->
-      <div
-        v-else-if="filteredOrders.length === 0"
-        class="rounded-2xl border border-border bg-card p-16 text-center"
-      >
-        <XIcon icon="carbon:document" :size="48" class="mx-auto mb-4 text-muted-foreground" />
-        <p class="text-lg text-muted-foreground">{{ t('orders.emptyFiltered') }}</p>
-        <UiButton variant="outline" class="mt-6" @click="activeFilter = 'all'">
-          {{ t('orders.filter.all') }}
-        </UiButton>
-      </div>
+        variant="noData"
+        :description="activeFilter === 'all' ? t('orders.empty') : t('orders.emptyFiltered')"
+      />
 
       <!-- 订单列表 -->
       <div v-else class="overflow-x-auto rounded-2xl border border-border bg-card">
@@ -229,7 +242,7 @@ const filteredOrders = computed<OrderEntity[]>(() => {
         </div>
 
       <NuxtLink
-        v-for="order in filteredOrders"
+        v-for="order in orders"
         :key="order.id"
         :to="localePath('/orders/' + order.id)"
         class="block border-b border-border px-6 py-4 transition-colors last:border-b-0 hover:bg-muted/30"
@@ -259,6 +272,32 @@ const filteredOrders = computed<OrderEntity[]>(() => {
       </NuxtLink>
       </div>
     </div>
+
+      <!-- 分页：仅当超过一页时显示 -->
+      <div
+        v-if="totalPages > 1"
+        class="flex items-center justify-center gap-4 py-2"
+      >
+        <UiButton
+          variant="outline"
+          size="sm"
+          :disabled="page <= 1"
+          @click="goToPage(page - 1)"
+        >
+          {{ t('ui.pagination.previous') }}
+        </UiButton>
+        <span class="text-xs tabular-nums text-muted-foreground">
+          {{ t('ui.pagination.page', { current: page, total: totalPages }) }}
+        </span>
+        <UiButton
+          variant="outline"
+          size="sm"
+          :disabled="page >= totalPages"
+          @click="goToPage(page + 1)"
+        >
+          {{ t('ui.pagination.next') }}
+        </UiButton>
+      </div>
     </div>
   </LayoutSectionContainer>
 </template>

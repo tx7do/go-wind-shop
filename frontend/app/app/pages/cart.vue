@@ -43,6 +43,8 @@ type CartItemEntity = {
   quantity?: number;
 };
 
+// 注：user_id 行级隔离由后端 UserPrivacy 策略强制（钉定为当前登录用户），
+// 前端 userId 值会被服务端忽略，带与不带等效。enabled 守卫避免未登录/未 hydrate 发请求。
 const cartsQuery = useListCarts(
   computed(() => ({
     page: 1,
@@ -50,6 +52,7 @@ const cartsQuery = useListCarts(
     noPaging: false,
     query: JSON.stringify({ userId: currentUserId.value }),
   })),
+  { enabled: isLogin },
 );
 const cart = computed<CartEntity | undefined>(() => {
   const items = ((cartsQuery.data?.value as any)?.items ?? []) as CartEntity[];
@@ -64,12 +67,14 @@ const cartItemsQuery = useListCartItems(
     noPaging: false,
     query: cartId.value === undefined ? undefined : JSON.stringify({ cartId: cartId.value }),
   })),
+  { enabled: computed(() => isLogin.value && cartId.value !== undefined) },
 );
 const cartItems = computed<CartItemEntity[]>(() => {
   const items = (cartItemsQuery.data?.value as any)?.items ?? [];
   return (items as CartItemEntity[]) ?? [];
 });
-const itemsLoading = computed(() => cartItemsQuery.isLoading.value);
+const itemsLoading = computed(() => cartItemsQuery.isPending.value);
+const itemsError = computed(() => cartItemsQuery.isError.value);
 
 // ---------- 属性名 / 属性值 displayName 反查 map ----------
 const currentLocale = computed(() => getCurrentLocale());
@@ -435,17 +440,30 @@ function goCheckout() {
       </div>
     </div>
 
-    <!-- 空购物车 -->
-    <div
-      v-else-if="cartItems.length === 0"
-      class="flex flex-col items-center gap-4 rounded-2xl border border-border bg-card p-16 text-center"
+    <!-- 错误态 -->
+    <UiAppEmpty
+      v-else-if="itemsError"
+      variant="error"
     >
-      <XIcon icon="carbon:shopping-cart" :size="48" class="text-muted-foreground" />
-      <p class="text-lg text-muted-foreground">{{ t('cart.empty') }}</p>
-      <UiButton variant="outline" @click="navigateTo(localePath('/'))">
-        {{ t('cart.continueShopping') }}
-      </UiButton>
-    </div>
+      <template #action>
+        <UiButton variant="outline" size="sm" @click="cartItemsQuery.refetch()">
+          {{ t('ui.button.retry') }}
+        </UiButton>
+      </template>
+    </UiAppEmpty>
+
+    <!-- 空购物车 -->
+    <UiAppEmpty
+      v-else-if="cartItems.length === 0"
+      variant="noData"
+      :description="t('cart.empty')"
+    >
+      <template #action>
+        <UiButton variant="outline" @click="navigateTo(localePath('/'))">
+          {{ t('cart.continueShopping') }}
+        </UiButton>
+      </template>
+    </UiAppEmpty>
 
     <!-- 购物车列表 + 结算看板（左右分栏） -->
     <div v-else class="grid gap-6 md:grid-cols-12">

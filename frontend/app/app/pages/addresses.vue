@@ -35,6 +35,8 @@ type AddressEntity = {
 
 // 列表查询：后端 UserPrivacy 策略 + 网关注入 userId 做行级隔离，
 // 前端 query 无需带 userId，仅返回当前用户自己的地址。
+// 注：user_id 行级隔离由后端 UserPrivacy 策略 + 网关注入 recipientUserId 强制，
+// 前端无需带 userId。enabled 守卫：未登录时不发请求，避免预 hydrate 闪空。
 const addressesQuery = useListShippingAddresses(
   computed(() => ({
     page: 1,
@@ -42,12 +44,14 @@ const addressesQuery = useListShippingAddresses(
     noPaging: false,
     sorting: [{ field: 'id', direction: 'DESC' }],
   })),
+  { enabled: isLogin },
 );
 const addresses = computed<AddressEntity[]>(() => {
   const items = (addressesQuery.data?.value as any)?.items ?? [];
   return (items as AddressEntity[]) ?? [];
 });
-const loading = computed(() => addressesQuery.isLoading.value);
+const loading = computed(() => addressesQuery.isPending.value);
+const loadError = computed(() => addressesQuery.isError.value);
 
 // 默认地址置顶显示
 const sortedAddresses = computed(() => {
@@ -234,17 +238,30 @@ function maskPhone(phone: string | undefined): string {
         </div>
       </div>
 
-      <!-- 空列表 -->
-      <div
-        v-else-if="sortedAddresses.length === 0"
-        class="rounded-2xl border border-border bg-card p-16 text-center"
+      <!-- 错误态 -->
+      <UiAppEmpty
+        v-else-if="loadError"
+        variant="error"
       >
-        <XIcon icon="carbon:location" :size="48" class="mx-auto mb-4 text-muted-foreground" />
-        <p class="text-lg text-muted-foreground">{{ t('addresses.empty') }}</p>
-        <UiButton variant="outline" class="mt-6" @click="openCreate">
-          {{ t('addresses.add') }}
-        </UiButton>
-      </div>
+        <template #action>
+          <UiButton variant="outline" size="sm" @click="addressesQuery.refetch()">
+            {{ t('ui.button.retry') }}
+          </UiButton>
+        </template>
+      </UiAppEmpty>
+
+      <!-- 空列表 -->
+      <UiAppEmpty
+        v-else-if="sortedAddresses.length === 0"
+        variant="noData"
+        :description="t('addresses.empty')"
+      >
+        <template #action>
+          <UiButton variant="outline" @click="openCreate">
+            {{ t('addresses.add') }}
+          </UiButton>
+        </template>
+      </UiAppEmpty>
 
       <!-- 地址列表 -->
       <div v-else class="flex flex-col gap-3">

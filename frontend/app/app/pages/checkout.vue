@@ -50,6 +50,8 @@ const currentUserId = computed(() => userStore.user?.id ?? 0);
 type CartEntity = { id?: number; userId?: number; tenantId?: number };
 type CartItemEntity = { id?: number; skuId?: number; quantity?: number };
 
+// 注：user_id 行级隔离由后端 UserPrivacy 策略强制（钉定为当前登录用户），
+// 前端 userId 值会被服务端忽略。enabled 守卫避免未登录/未 hydrate 发请求。
 const cartsQuery = useListCarts(
   computed(() => ({
     page: 1,
@@ -57,6 +59,7 @@ const cartsQuery = useListCarts(
     noPaging: false,
     query: JSON.stringify({ userId: currentUserId.value }),
   })),
+  { enabled: isLogin },
 );
 const cart = computed<CartEntity | undefined>(() => {
   const items = ((cartsQuery.data?.value as any)?.items ?? []) as CartEntity[];
@@ -74,12 +77,14 @@ const cartItemsQuery = useListCartItems(
     noPaging: false,
     query: cartId.value === undefined ? undefined : JSON.stringify({ cartId: cartId.value }),
   })),
+  { enabled: computed(() => isLogin.value && cartId.value !== undefined) },
 );
 const cartItems = computed<CartItemEntity[]>(() => {
   const items = (cartItemsQuery.data?.value as any)?.items ?? [];
   return (items as CartItemEntity[]) ?? [];
 });
-const itemsLoading = computed(() => cartItemsQuery.isLoading.value);
+const itemsLoading = computed(() => cartItemsQuery.isPending.value);
+const itemsError = computed(() => cartItemsQuery.isError.value);
 
 // ---------- 属性名 / 属性值 displayName 反查 map ----------
 // 全量拉取属性与属性值，建立 id→name / id→displayName 映射，
@@ -532,7 +537,8 @@ async function placeOrder() {
         <h2 class="mb-1 text-xl font-bold text-foreground">{{ t('checkout.recipientTitle') }}</h2>
         <p class="mb-6 text-sm text-muted-foreground">{{ t('checkout.recipientDesc') }}</p>
 
-        <!-- 地址簿快捷选择：点击自动填充下方表单 -->
+        <!-- 地址簿快捷选择区：有地址则列按钮可点击填充；无地址则显示空态提示 -->
+        <h3 class="mb-3 text-sm font-semibold text-foreground">{{ t('checkout.useSavedAddress') }}</h3>
         <div v-if="sortedSavedAddresses.length > 0" class="mb-5 flex flex-wrap gap-2">
           <button
             v-for="addr in sortedSavedAddresses"
@@ -550,6 +556,11 @@ async function placeOrder() {
             <span>{{ addressLabel(addr) }}</span>
           </button>
         </div>
+        <UiAppEmpty
+          v-else
+          variant="noData"
+          :description="t('checkout.noSavedAddress')"
+        />
 
         <div class="flex flex-col gap-5">
           <div class="flex flex-col gap-2">
@@ -594,17 +605,29 @@ async function placeOrder() {
           </div>
         </div>
 
-        <template v-else>
-          <div
-            v-if="cartItems.length === 0"
-            class="flex flex-col items-center gap-3 py-10 text-center"
-          >
-            <XIcon icon="carbon:shopping-cart" :size="40" class="text-muted-foreground" />
-            <p class="text-sm text-muted-foreground">{{ t('cart.empty') }}</p>
-            <UiButton variant="outline" size="sm" @click="navigateTo(localePath('/'))">
-              {{ t('cart.continueShopping') }}
+        <UiAppEmpty
+          v-else-if="itemsError"
+          variant="error"
+        >
+          <template #action>
+            <UiButton variant="outline" size="sm" @click="cartItemsQuery.refetch()">
+              {{ t('ui.button.retry') }}
             </UiButton>
-          </div>
+          </template>
+        </UiAppEmpty>
+
+        <template v-else>
+          <UiAppEmpty
+            v-if="cartItems.length === 0"
+            variant="noData"
+            :description="t('cart.empty')"
+          >
+            <template #action>
+              <UiButton variant="outline" size="sm" @click="navigateTo(localePath('/'))">
+                {{ t('cart.continueShopping') }}
+              </UiButton>
+            </template>
+          </UiAppEmpty>
 
           <ul v-else class="flex flex-col gap-3">
             <li

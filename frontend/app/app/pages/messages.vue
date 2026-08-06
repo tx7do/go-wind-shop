@@ -34,6 +34,7 @@ type MessageEntity = {
 };
 
 // 收件箱列表：后端网关强制注入 recipientUserId，前端只传分页。
+// enabled 守卫：未登录时不发请求，避免预 hydrate 闪空。
 const inboxQuery = useListUserInbox(
   computed(() => ({
     page: 1,
@@ -41,12 +42,14 @@ const inboxQuery = useListUserInbox(
     noPaging: false,
     sorting: [{ field: 'id', direction: 'DESC' }],
   })),
+  { enabled: isLogin },
 );
 const messages = computed<MessageEntity[]>(() => {
   const items = (inboxQuery.data?.value as any)?.items ?? [];
   return (items as MessageEntity[]) ?? [];
 });
-const loading = computed(() => inboxQuery.isLoading.value);
+const loading = computed(() => inboxQuery.isPending.value);
+const loadError = computed(() => inboxQuery.isError.value);
 
 // 未读数（SENT/RECEIVED 视为未读）
 const unreadCount = computed(
@@ -151,14 +154,24 @@ const anyPending = computed(
       </div>
     </div>
 
-    <!-- 空列表 -->
-    <div
-      v-else-if="messages.length === 0"
-      class="rounded-2xl border border-border bg-card p-16 text-center"
+    <!-- 错误态 -->
+    <UiAppEmpty
+      v-else-if="loadError"
+      variant="error"
     >
-      <XIcon icon="carbon:message" :size="48" class="mx-auto mb-4 text-muted-foreground" />
-      <p class="text-lg text-muted-foreground">{{ t('messages.empty') }}</p>
-    </div>
+      <template #action>
+        <UiButton variant="outline" size="sm" @click="inboxQuery.refetch()">
+          {{ t('ui.button.retry') }}
+        </UiButton>
+      </template>
+    </UiAppEmpty>
+
+    <!-- 空列表 -->
+    <UiAppEmpty
+      v-else-if="messages.length === 0"
+      variant="noData"
+      :description="t('messages.empty')"
+    />
 
     <!-- 消息列表 -->
     <div v-else class="flex flex-col gap-3">

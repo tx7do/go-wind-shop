@@ -56,6 +56,7 @@ const productsQuery = useListProducts(
   { enabled: computed(() => !!keyword.value) },
 );
 const loading = computed(() => productsQuery.isLoading.value);
+const loadError = computed(() => productsQuery.isError.value);
 
 function productName(p: ProductEntity): string {
   return pickTranslation(p.translations)?.name ?? '';
@@ -101,6 +102,18 @@ function submitSearch() {
     <div v-if="loading" class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
       <UiPostCardSkeleton v-for="_, i in 8" :key="i" />
     </div>
+
+    <!-- 错误态：搜索请求失败（与"无结果"区分并提供重试） -->
+    <UiAppEmpty
+      v-else-if="loadError"
+      variant="error"
+    >
+      <template #action>
+        <UiButton variant="outline" size="sm" @click="productsQuery.refetch()">
+          {{ t('ui.button.retry') }}
+        </UiButton>
+      </template>
+    </UiAppEmpty>
 
     <!-- 无关键字 -->
     <div
