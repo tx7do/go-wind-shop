@@ -3,9 +3,10 @@
 // 设计要点：
 //   - 验证码 6 位数字，crypto/rand 生成，避免伪随机可预测。
 //   - 存 Redis，key 形如 gws:pwdreset:{email}，TTL 默认 10 分钟。
-//   - 校验采用 Lua 脚本原子"比对即删"，保证一次性（防重放）。
+//   - 校验与尝试计数全部在单条 Lua 脚本内原子完成（check + 比对 + INCR + 删除），
+//     消除"GET 检查"与"INCR"分离导致的 TOCTOU 竞态，确保并发下尝试次数严格受限。
 //   - 爆破防护：每个验证码最多 MaxAttempts 次错误尝试，超限则作废验证码，
-//     强制重新获取。尝试计数独立 Redis key，与验证码同生命周期。
+//     强制重新获取。
 //   - 邮箱在 key 里小写归一，避免大小写差异导致校验失败。
 package resetcode
 
@@ -21,21 +22,53 @@ import (
 )
 
 const (
-	keyPrefix  = "gws:pwdreset:"
+	keyPrefix    = "gws:pwdreset:"
 	attemptSuffix = ":attempts"
 	defaultTTL   = 10 * time.Minute
 	// MaxAttempts 单个验证码允许的最大错误尝试次数，超限作废验证码。
 	MaxAttempts = 5
 )
 
-// verifyScript 原子比对并删除：仅当 key 存在且值等于传入 code 时返回 1 并删除，
-// 否则返回 0（不删，允许剩余次数重试，但仍受 TTL 自然过期约束）。
+// verifyScript 原子地完成：尝试次数检查 + 验证码比对 + 失败累加 + 达限删除。
+//
+// KEYS[1] = codeKey, KEYS[2] = attemptsKey
+// ARGV[1] = 用户输入的验证码, ARGV[2] = MaxAttempts, ARGV[3] = TTL(秒)
+//
+// 返回值：
+//   "1"           验证码正确，已删除 codeKey 与 attemptsKey
+//   "0"           验证码错误，已 INCR attemptsKey（未达上限）
+//   "TOO_MANY"    尝试次数已达上限，codeKey 已删除
+//   "NO_CODE"     codeKey 不存在（已过期或从未生成）
+//
+// 所有读写在 Redis 单线程内原子执行，并发请求不会越过 MaxAttempts 上限。
 const verifyScript = `
-if redis.call("GET", KEYS[1]) == ARGV[1] then
-	return redis.call("DEL", KEYS[1])
-else
-	return 0
+local code = redis.call("GET", KEYS[1])
+if not code then
+	return "NO_CODE"
 end
+local attempts = tonumber(redis.call("GET", KEYS[2]) or "0")
+if attempts >= tonumber(ARGV[2]) then
+	-- 已超限，确保 codeKey 作废并返回 TOO_MANY
+	redis.call("DEL", KEYS[1])
+	return "TOO_MANY"
+end
+if code == ARGV[1] then
+	-- 校验通过：清理 codeKey 与 attemptsKey
+	redis.call("DEL", KEYS[1])
+	redis.call("DEL", KEYS[2])
+	return "1"
+end
+-- 校验失败：累加尝试次数。首次失败时设置与 codeKey 同 TTL，避免计数键永生。
+attempts = redis.call("INCR", KEYS[2])
+if attempts == 1 then
+	redis.call("EXPIRE", KEYS[2], ARGV[3])
+end
+if attempts >= tonumber(ARGV[2]) then
+	-- 达上限，作废验证码，切断后续尝试
+	redis.call("DEL", KEYS[1])
+	return "TOO_MANY"
+end
+return "0"
 `
 
 // ErrTooManyAttempts 错误尝试超限，验证码已作废，需重新获取。
@@ -76,51 +109,32 @@ func (s *Store) Generate(ctx context.Context, email string) (string, error) {
 	return code, nil
 }
 
-// Verify 校验验证码：
+// Verify 校验验证码（全部在单条 Lua 脚本内原子完成）：
 //   - 正确：删除验证码与尝试计数（一次性），返回 (true, nil)。
-//   - 错误：尝试计数 +1；达到 MaxAttempts 则作废验证码并返回 ErrTooManyAttempts。
+//   - 错误且未达上限：尝试计数 +1，返回 (false, nil)。
+//   - 错误且达上限：作废验证码，返回 (false, ErrTooManyAttempts)。
 //   - 验证码已过期/不存在：返回 (false, nil)。
 //
-// 调用方应将 ErrTooManyAttempts 与普通错误码区别对待（提示用户重新获取）。
+// 由于 check + incr + del 原子执行，并发请求无法越过 MaxAttempts 上限。
 func (s *Store) Verify(ctx context.Context, email, code string) (bool, error) {
-	// 先检查尝试次数是否已超限（防御快速并发爆破）。
-	attempts, err := s.rdb.Get(ctx, s.attemptsKey(email)).Int()
-	if err != nil && err != redis.Nil {
-		return false, fmt.Errorf("get attempts: %w", err)
-	}
-	if attempts >= MaxAttempts {
-		// 已超限，确保验证码作废。
-		s.rdb.Del(ctx, s.codeKey(email), s.attemptsKey(email))
-		return false, ErrTooManyAttempts
-	}
-
-	// 原子校验（比对即删）。
-	res, err := s.rdb.Eval(ctx, verifyScript, []string{s.codeKey(email)}, code).Int64()
+	res, err := s.rdb.Eval(ctx, verifyScript,
+		[]string{s.codeKey(email), s.attemptsKey(email)},
+		code, MaxAttempts, int(s.ttl.Seconds()),
+	).Text()
 	if err != nil {
 		return false, fmt.Errorf("verify reset code: %w", err)
 	}
-	if res == 1 {
-		// 校验通过，清理尝试计数。
-		s.rdb.Del(ctx, s.attemptsKey(email))
+	switch res {
+	case "1":
 		return true, nil
-	}
-
-	// 校验失败：累加尝试次数。首次失败时设置与验证码同 TTL。
-	attemptsKey := s.attemptsKey(email)
-	incr := s.rdb.Incr(ctx, attemptsKey)
-	if err := incr.Err(); err != nil {
-		return false, fmt.Errorf("incr attempts: %w", err)
-	}
-	// 仅在首次（值变为 1）时设置过期，避免每次重置 TTL 延长窗口。
-	if incr.Val() == 1 {
-		s.rdb.Expire(ctx, attemptsKey, s.ttl)
-	}
-	// 达到上限则作废验证码，切断后续尝试。
-	if int(incr.Val()) >= MaxAttempts {
-		s.rdb.Del(ctx, s.codeKey(email))
+	case "TOO_MANY":
 		return false, ErrTooManyAttempts
+	case "0", "NO_CODE":
+		return false, nil
+	default:
+		// 未知返回值，保守按失败处理。
+		return false, fmt.Errorf("verify reset code: unexpected script result %q", res)
 	}
-	return false, nil
 }
 
 // TTL 返回当前配置的有效期（供上层回传给前端做倒计时）。

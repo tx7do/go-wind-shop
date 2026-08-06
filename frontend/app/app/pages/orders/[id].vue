@@ -320,12 +320,17 @@ async function handleRequestRefund() {
 }
 
 // 各操作按钮是否可见（仅依据订单当前状态，终态不显示任何操作）。
-// canRefund 额外校验：若已存在未完结退款（PENDING/SUCCEEDED），则隐藏按钮，
-// 防止对同一笔支付流水重复发起退款造成多笔退款。
+// canRefund 额外校验：退款查询未完成时不显示按钮（避免 transactionsQuery 与
+// refundQuery 两次加载之间按钮短暂闪烁后消失）；若已存在未完结退款
+// （PENDING/SUCCEEDED）则隐藏，防止重复发起退款。
 const canPay = computed(() => order.value?.status === 'PENDING_PAYMENT');
 const canCancel = computed(() => order.value?.status === 'PENDING_PAYMENT');
 const canRefund = computed(
-  () => order.value?.status === 'PAID' && !!succeededTxn.value?.id && !hasActiveRefund.value,
+  () =>
+    order.value?.status === 'PAID' &&
+    !!succeededTxn.value?.id &&
+    !refundQuery.isLoading.value &&
+    !hasActiveRefund.value,
 );
 const canConfirm = computed(() => order.value?.status === 'FULFILLED');
 const hasAnyAction = computed(
