@@ -65,7 +65,9 @@ type OrderItemEntity = {
   subtotal?: number;
 };
 
-const orderQuery = useGetOrder(orderId.value, {
+// 传响应式 orderId（computed）：Nuxt 在 /orders/1 → /orders/2 间复用本组件，
+// 响应式 id 使 queryKey 自动变化并重新请求，避免显示上一个订单。
+const orderQuery = useGetOrder(orderId, {
   enabled: computed(() => isLogin.value && orderId.value > 0),
 });
 const order = computed<OrderEntity | undefined>(() => {

@@ -164,7 +164,7 @@ const anyPending = computed(
     <div v-else class="flex flex-col gap-3">
       <!-- 未读计数提示 -->
       <div v-if="unreadCount > 0" class="text-sm text-muted-foreground">
-        {{ t('messages.unread') }}：{{ unreadCount }}
+        {{ t('messages.unread', { count: unreadCount }) }}
       </div>
 
       <div

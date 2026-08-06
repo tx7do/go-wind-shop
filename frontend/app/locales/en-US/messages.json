@@ -5,7 +5,7 @@
   "markRead": "Mark as read",
   "delete": "Delete",
   "viewDetail": "View detail",
-  "unread": "Unread",
+  "unread": "Unread {count}",
   "status": {
     "sent": "Unread",
     "received": "Unread",

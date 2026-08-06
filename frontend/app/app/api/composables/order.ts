@@ -4,6 +4,7 @@ import {
   type UseMutationOptions,
   type UseQueryOptions,
 } from '@tanstack/vue-query';
+import { unref, type ComputedRef, type Ref } from 'vue';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { makeUpdateMask } from '@/core/transport/rest';
@@ -40,17 +41,22 @@ export async function fetchListOrdersStore(params: any) {
 
 // ==============================
 // 订单详情（Query）
+// id 支持响应式（Ref/Computed）或普通数值：传响应式源时，Nuxt 复用同一组件
+// 在 /orders/1 → /orders/2 间导航会触发 queryKey 变化自动重新请求，避免显示旧订单。
 // ==============================
 export async function fetchGetOrder(id: number) {
   return await apiClient.orderService.Get({ id } as any);
 }
+type OrderIdSource = number | Ref<number> | ComputedRef<number>;
 export function useGetOrder(
-  id: number,
+  id: OrderIdSource,
   options?: UseQueryOptions<Awaited<ReturnType<typeof fetchGetOrder>>, Error>,
 ) {
+  // queryKey 含响应式源（若传入 ref/computed），vue-query 会订阅其变化，
+  // 在 id 改变时自动失效旧查询并发起新请求。
   return useQuery({
     queryKey: ['getOrder', id, getCurrentLocale()],
-    queryFn: () => fetchGetOrder(id),
+    queryFn: () => fetchGetOrder(unref(id)),
     ...options,
   });
 }

@@ -5,7 +5,7 @@
   "markRead": "标记已读",
   "delete": "删除",
   "viewDetail": "查看详情",
-  "unread": "未读",
+  "unread": "未读 {count}",
   "status": {
     "sent": "未读",
     "received": "未读",

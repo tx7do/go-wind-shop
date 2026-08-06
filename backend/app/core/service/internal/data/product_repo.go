@@ -113,6 +113,12 @@ func (r *ProductRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 	//   - LIKE 通配符 % _ \ 需转义，否则搜索"100%"会误匹配"1000"、搜索"%"匹配全部，
 	//     且可作为公开端点的 DoS 放大器。用 ESCAPE '\\' 配合转义。
 	//   - 子查询带 deleted_at IS NULL，避免软删除的旧翻译行"复活"已改名/删除的商品。
+	//
+	// 性能：LOWER(name) LIKE '%kw%' 带前导通配符，普通 B-tree 索引无效，会全表扫描
+	// mall_product_translations。数据量增大时需 DBA 按实际数据库加专用索引：
+	//   PostgreSQL → CREATE EXTENSION pg_trgm; CREATE INDEX ... USING GIN (name gin_trgm_ops);
+	//   MySQL      → FULLTEXT 索引（注意中文需 ngram 分词）。
+	// 不在此处加普通 index.Fields("name")（对前导通配无效且徒增写入开销）。
 	if nameKeyword := extractAndStripNameKeyword(req); nameKeyword != "" {
 		// 转义 LIKE 特殊字符：\（转义符本身）、%（任意）、_（单字符）。
 		escaped := likeEscape.Replace(nameKeyword)

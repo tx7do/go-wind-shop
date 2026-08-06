@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue';
+import { computed, onUnmounted, reactive, ref } from 'vue';
 import { toast } from 'vue-sonner';
 import { useSendResetCode, useResetPassword } from '@/api/composables';
 
@@ -22,6 +22,14 @@ const confirmPassword = ref('');
 const emailPreview = ref('');
 const resendSeconds = ref(0);
 let resendTimer: ReturnType<typeof setInterval> | null = null;
+
+// 组件卸载时清理倒计时，避免离开页面后 interval 继续运行（资源泄漏）。
+onUnmounted(() => {
+  if (resendTimer) {
+    clearInterval(resendTimer);
+    resendTimer = null;
+  }
+});
 
 function startCountdown(seconds: number) {
   resendSeconds.value = seconds;
