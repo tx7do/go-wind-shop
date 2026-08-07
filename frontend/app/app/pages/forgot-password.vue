@@ -67,7 +67,12 @@ const resetMutation = useResetPassword({
   onError: (err: any) => {
     // 429：验证码尝试次数耗尽，后端已作废该验证码。
     // 引导用户回到步骤 1 重新获取验证码，而非停留在已失效的步骤 2。
-    if (err?.response?.status === 429) {
+    //
+    // 传输层 RequestClient.request 的 catch 会剥离 axios 包装，
+    // 仅抛出 error.response.data（kratos 错误体 {code, reason, message}），
+    // 其中 code 为 HTTP 状态码（见 errors.New(429, ...) 与 errors.pb.go）。
+    // 故此处判 err.code === 429，而非 err.response.status。
+    if (err?.code === 429) {
       toast.error(t('authentication.forgotPassword.tooManyAttempts'));
       step.value = 1;
       // 验证码已失效，清除已填写的验证码字段。
