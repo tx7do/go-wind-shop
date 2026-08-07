@@ -50,12 +50,19 @@ const categoryQuery = useGetCategory(computed(() => categoryId.value), {
 const category = computed<CategoryEntity | undefined>(() => {
   return categoryQuery.data?.value as CategoryEntity | undefined;
 });
-const categoryLoading = computed(() => categoryQuery.isLoading.value);
+const categoryLoading = computed(() => categoryQuery.isPending.value);
+const categoryError = computed(() => categoryQuery.isError.value);
 const categoryTranslation = computed(() =>
   pickTranslation(category.value?.translations),
 );
 
 useHead({ title: () => categoryTranslation.value?.name || t('mall.category.products') });
+
+// 路由 id 变化（同组件复用 /category/1→/category/2）滚回顶部，避免停留于
+// 前一类目页底的滚动位置。
+watch(categoryId, () => {
+  if (import.meta.client) scrollToTop();
+});
 
 // 同级分类列表（用于 FilterSidebar 分类切换）
 const categoriesQuery = useListCategories({
@@ -139,7 +146,10 @@ function goToPage(p: number) {
       </NuxtLink>
       <span>/</span>
       <span class="text-foreground">
-        {{ categoryTranslation?.name || t('mall.category.products') }}
+        <UiSkeleton v-if="categoryLoading" class="h-4 w-24" />
+        <template v-else>
+          {{ categoryTranslation?.name || t('mall.category.products') }}
+        </template>
       </span>
     </nav>
   </LayoutSectionContainer>
@@ -204,6 +214,18 @@ function goToPage(p: number) {
           </div>
         </NuxtLink>
       </div>
+
+      <UiAppEmpty
+        v-else-if="!category"
+        variant="noData"
+        :description="t('mall.category.notFound')"
+      >
+        <template #action>
+          <UiButton variant="outline" @click="navigateTo(localePath('/'))">
+            {{ t('cart.continueShopping') }}
+          </UiButton>
+        </template>
+      </UiAppEmpty>
 
       <UiAppEmpty
         v-else

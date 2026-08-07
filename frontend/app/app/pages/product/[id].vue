@@ -155,26 +155,33 @@ const valuesByAttribute = computed(() => {
 // 注意：reka-ui Select 使用字符串值，因此选择以字符串存储，匹配时转为数字。
 const selections = reactive<Record<number, string | undefined>>({});
 
-// ---------- 默认选中每个属性的第一个值 ----------
-// 当属性与属性值数据加载完成后，为每个尚无选中值的属性设默认选中其第一个值，
-// 使页面初始即有完整选中态，便于用户直观看到当前 SKU 与价格。
-watch(
-  [attributes, valuesByAttribute],
-  ([attrs, valsMap]) => {
-    if (!attrs || attrs.length === 0 || !valsMap || valsMap.size === 0) return;
-    for (const attr of attrs) {
-      if (attr.id === undefined) continue;
-      if (selections[attr.id] !== undefined) continue;
-      const vals = valsMap.get(attr.id);
-      if (!vals || vals.length === 0) continue;
-      const first = vals[0];
-      if (first?.id !== undefined) {
-        selections[attr.id] = String(first.id);
-      }
+function clearSelections() {
+  for (const k of Object.keys(selections)) {
+    delete selections[Number(k)];
+  }
+}
+
+// 为每个尚无选中值的属性设默认选中其第一个值，使页面初始即有完整选中态，
+// 便于用户直观看到当前 SKU 与价格。
+// 属性/属性值表为全局数据、与 productId 无关，故默认值与具体商品无关。
+function applyDefaultSelections() {
+  const attrs = attributes.value;
+  const valsMap = valuesByAttribute.value;
+  if (!attrs || attrs.length === 0 || !valsMap || valsMap.size === 0) return;
+  for (const attr of attrs) {
+    if (attr.id === undefined) continue;
+    if (selections[attr.id] !== undefined) continue;
+    const vals = valsMap.get(attr.id);
+    if (!vals || vals.length === 0) continue;
+    const first = vals[0];
+    if (first?.id !== undefined) {
+      selections[attr.id] = String(first.id);
     }
-  },
-  { immediate: true },
-);
+  }
+}
+
+// 属性/属性值数据加载完成后应用默认选中。
+watch([attributes, valuesByAttribute], applyDefaultSelections, { immediate: true });
 
 // ---------- 每个 SKU 的属性组合 & 价格（通过 fetch*Store 在 watch 中拉取） ----------
 const skuCombinationsMap = reactive<Record<number, Map<number, number>>>({});
@@ -359,6 +366,17 @@ function decrementQty() {
     quantity.value--;
   }
 }
+
+// 路由 id 变化（同组件复用 /product/1→/product/2）：清除上一商品的属性选择并
+// 重置数量，再按当前（全局）属性表重新应用默认选中，避免旧选择残留导致
+// matchedSku 误配、quantity 越过新 SKU 库存上限；同时滚回顶部，避免停留于
+// 前一商品页底的滚动位置。
+watch(productId, () => {
+  clearSelections();
+  applyDefaultSelections();
+  quantity.value = 1;
+  if (import.meta.client) scrollToTop();
+});
 
 // ---------- 添加购物车 ----------
 async function addToCartWithQty(qty: number) {

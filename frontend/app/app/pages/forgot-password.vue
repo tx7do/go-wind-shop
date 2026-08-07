@@ -75,8 +75,12 @@ const resetMutation = useResetPassword({
     if (err?.code === 429) {
       toast.error(t('authentication.forgotPassword.tooManyAttempts'));
       step.value = 1;
-      // 验证码已失效，清除已填写的验证码字段。
+      // 验证码已被后端作废，回到步骤 1 重新获取。此处的步骤 2 输入（验证码、
+      // 新密码、确认密码）全部失效，必须清空，避免在新一轮步骤 2 中残留并
+      // 被误用提交。
       code.value = '';
+      newPassword.value = '';
+      confirmPassword.value = '';
       return;
     }
     toast.error(err?.message || t('authentication.forgotPassword.resetFailed'));

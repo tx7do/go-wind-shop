@@ -144,7 +144,7 @@ function submitSearch() {
     <!-- 有结果 -->
     <div v-else-if="results.length > 0">
       <p class="mb-4 text-sm text-muted-foreground">
-        {{ t('search.resultCount', { count: results.length }) }}
+        {{ t('search.resultCount', { count: totalCount }) }}
       </p>
       <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         <NuxtLink
