@@ -93,7 +93,7 @@ const handleClickLogout = async () => {
           <XIcon icon="carbon:shopping-cart" width="18" height="18" />
           <span
             v-if="cartCount > 0"
-            class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-green-500 px-1 text-[9px] font-bold text-white dark:bg-green-400 dark:text-green-950"
+            class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground"
           >
             {{ cartCount > 99 ? '99+' : cartCount }}
           </span>

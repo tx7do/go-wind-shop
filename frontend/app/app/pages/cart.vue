@@ -382,7 +382,7 @@ function goCheckout() {
             :class="cn(
               'flex h-7 w-7 items-center justify-center rounded-full border text-xs font-bold transition-colors',
               idx === 0
-                ? 'border-primary bg-primary/10 text-primary dark:border-green-500 dark:bg-green-500/10 dark:text-green-400'
+                ? 'border-primary bg-primary/10 text-primary'
                 : 'border-border text-muted-foreground',
             )"
           >
@@ -392,7 +392,7 @@ function goCheckout() {
             :class="cn(
               'text-[10px] font-medium transition-colors',
               idx === 0
-                ? 'text-primary dark:text-green-400'
+                ? 'text-primary'
                 : 'text-muted-foreground',
             )"
           >
@@ -404,7 +404,7 @@ function goCheckout() {
           :class="cn(
             'h-px w-8 md:w-16 transition-colors',
             idx < 0
-              ? 'bg-primary dark:bg-green-500'
+              ? 'bg-primary'
               : 'bg-border',
           )"
         ></span>
@@ -578,9 +578,9 @@ function goCheckout() {
       <div class="md:col-span-4 rounded-2xl border border-border bg-card p-6 md:sticky md:top-24 md:self-start">
         <h2 class="mb-4 text-xl font-bold text-foreground">{{ t('cart.checkout') }}</h2>
 
-        <div class="rounded-xl border border-primary/40 bg-primary/5 p-5 dark:border-green-500/40 dark:bg-green-500/5">
+        <div class="rounded-xl border border-primary/40 bg-primary/5 p-5">
           <p class="text-xs text-muted-foreground">{{ t('cart.selectedAmount') }}</p>
-          <p class="mt-1 text-3xl font-extrabold text-primary dark:text-green-400">
+          <p class="mt-1 text-3xl font-extrabold text-primary">
             {{ selectedLabel }}
           </p>
           <p class="mt-1 text-[10px] text-muted-foreground">

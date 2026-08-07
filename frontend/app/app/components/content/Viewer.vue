@@ -419,7 +419,7 @@ watch([renderedContent, shikiReady], () => {
 
 /* Inline code */
 .content-viewer :deep(code.inline-code) {
-  background: rgba(150, 150, 150, 0.12);
+  background: hsl(var(--muted) / 0.6);
   padding: 3px 8px;
   border-radius: 5px;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', 'source-code-pro', monospace;
@@ -488,7 +488,8 @@ watch([renderedContent, shikiReady], () => {
   border: 1px solid hsl(var(--border));
   padding: 32px 24px 20px;
   margin: 32px 0;
-  background-color: #ffffff;
+  /* 走主题背景变量（浅色为白），暗色模式由下方 :global(.dark) 覆盖为 #0d1117 */
+  background-color: hsl(var(--background));
 }
 
 .content-viewer :deep(pre.shiki.code-block code) {
@@ -501,19 +502,12 @@ watch([renderedContent, shikiReady], () => {
 }
 
 .content-viewer :deep(pre.shiki.code-block::before) {
-  color: rgba(0, 0, 0, 0.35);
+  color: hsl(var(--muted-foreground) / 0.6);
 }
 
-/* Dark mode: Shiki dark theme */
-.content-viewer :deep(.dark pre.shiki.code-block),
-.content-viewer :deep(.dark pre.shiki.code-block span) {
-  color: var(--shiki-dark, inherit) !important;
-  background-color: var(--shiki-dark-bg, transparent) !important;
-  font-style: var(--shiki-dark-font-style, normal) !important;
-  font-weight: var(--shiki-dark-font-weight, normal) !important;
-  text-decoration: var(--shiki-dark-text-decoration, none) !important;
-}
-
+/* Dark mode: Shiki dark theme
+   注意：.dark 加在 <html> 上，并非 .content-viewer 的后代，因此必须用
+   :global(.dark) .content-viewer :deep(...) 形式穿透 scoped 作用域。 */
 :global(.dark) .content-viewer :deep(pre.shiki.code-block),
 :global(.dark) .content-viewer :deep(pre.shiki.code-block) :deep(span) {
   color: var(--shiki-dark, inherit) !important;
@@ -540,7 +534,7 @@ watch([renderedContent, shikiReady], () => {
 
 /* Plain text blocks */
 .content-viewer :deep(pre.plain-text-block) {
-  background: rgba(150, 150, 150, 0.1);
+  background: hsl(var(--muted) / 0.5);
   color: hsl(var(--foreground));
   padding: 1rem;
   border-radius: 8px;
@@ -694,7 +688,7 @@ watch([renderedContent, shikiReady], () => {
 }
 
 .content-viewer :deep(table.markdown-table tr:nth-child(even)) {
-  background: rgba(150, 150, 150, 0.05);
+  background: hsl(var(--muted) / 0.4);
 }
 
 .content-viewer :deep(table.markdown-table tr:hover) {
@@ -726,10 +720,10 @@ watch([renderedContent, shikiReady], () => {
 
 /* Error state */
 .content-viewer :deep(.content-error) {
-  color: #ff6b6b;
+  color: hsl(var(--destructive));
   padding: 1em;
-  background: rgba(255, 107, 107, 0.1);
-  border: 1px solid #ff6b6b;
+  background: hsl(var(--destructive) / 0.1);
+  border: 1px solid hsl(var(--destructive));
   border-radius: 8px;
   margin: 1.5em 0;
 }
@@ -740,7 +734,7 @@ watch([renderedContent, shikiReady], () => {
   justify-content: center;
   margin: 1.5em 0;
   padding: 1em;
-  background: rgba(150, 150, 150, 0.05);
+  background: hsl(var(--muted) / 0.4);
   border-radius: 8px;
   overflow-x: auto;
 }
@@ -751,8 +745,8 @@ watch([renderedContent, shikiReady], () => {
 }
 
 .content-viewer :deep(.math-error) {
-  color: #ff6b6b;
-  background: rgba(255, 107, 107, 0.1);
+  color: hsl(var(--destructive));
+  background: hsl(var(--destructive) / 0.1);
   padding: 0.25em 0.5em;
   border-radius: 4px;
 }
@@ -763,7 +757,7 @@ watch([renderedContent, shikiReady], () => {
   justify-content: center;
   margin: 1.5em 0;
   padding: 1em;
-  background: rgba(150, 150, 150, 0.05);
+  background: hsl(var(--muted) / 0.4);
   border-radius: 8px;
   border: 1px solid hsl(var(--border));
   overflow-x: auto;
@@ -775,9 +769,9 @@ watch([renderedContent, shikiReady], () => {
 }
 
 .content-viewer :deep(.mermaid-error) {
-  color: #ff6b6b;
-  background: rgba(255, 107, 107, 0.1);
-  border-color: #ff6b6b;
+  color: hsl(var(--destructive));
+  background: hsl(var(--destructive) / 0.1);
+  border-color: hsl(var(--destructive));
 }
 
 /* KaTeX */

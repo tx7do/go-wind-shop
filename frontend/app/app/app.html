@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html {{ HTML_ATTRS }}>
+<head {{ HEAD_ATTRS }}>
+    {{ HEAD }}
+    <script>
+        // FOUC 防闪脚本：在首帧绘制前同步根据用户偏好设置主题 class。
+        // 与 core/preferences 的存储格式保持一致：
+        //   key: gowind-shop:preferences-theme  value: {"data":"dark|light|auto","expiry":null}
+        //   key: gowind-shop:preferences         value: {"data":{theme:{mode:"dark|light|auto"}},...}
+        // 仅处理 light/dark/auto 三态；解析失败则交给 CSS @media 后备。
+        ;(function () {
+            try {
+                var PREFIX = 'gowind-shop';
+                var THEME_KEY = PREFIX + ':preferences-theme';
+                var PREFS_KEY = PREFIX + ':preferences';
+                function readMode() {
+                    // 优先读独立 theme key
+                    for (var i = 0; i < 2; i++) {
+                        var key = i === 0 ? THEME_KEY : PREFS_KEY;
+                        var raw = localStorage.getItem(key);
+                        if (!raw) continue;
+                        try {
+                            var parsed = JSON.parse(raw);
+                            // StorageManager 包了一层 { data, expiry }
+                            var data = parsed && typeof parsed === 'object' && 'data' in parsed ? parsed.data : parsed;
+                            if (key === THEME_KEY) {
+                                if (data === 'dark' || data === 'light' || data === 'auto') return data;
+                            } else {
+                                var mode = data && data.theme && data.theme.mode;
+                                if (mode === 'dark' || mode === 'light' || mode === 'auto') return mode;
+                            }
+                        } catch (e) { /* 脏数据忽略 */ }
+                    }
+                    return null;
+                }
+                var mode = readMode();
+                var root = document.documentElement;
+                root.classList.remove('dark', 'light');
+                if (mode === 'dark') {
+                    root.classList.add('dark');
+                } else if (mode === 'light') {
+                    root.classList.add('light');
+                }
+                // auto / null：不添加 class，交给 main.css 的 @media (prefers-color-scheme: dark) 后备
+            } catch (e) { /* localStorage 不可用等情况：静默，交给 CSS @media */ }
+        })();
+    </script>
+</head>
+<body {{ BODY_ATTRS }}>
+{{ APP }}
+</body>
+</html>

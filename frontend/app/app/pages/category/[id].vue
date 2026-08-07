@@ -207,7 +207,7 @@ function goToPage(p: number) {
             </h3>
             <div class="mt-3 flex items-center justify-between">
               <span class="text-xs text-muted-foreground">{{ t('mall.product.viewDetail') }}</span>
-              <span class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground dark:bg-green-500/20 dark:text-green-400 dark:group-hover:bg-green-500 dark:group-hover:text-green-950">
+              <span class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                 <XIcon icon="carbon:shopping-cart" :size="14" />
               </span>
             </div>

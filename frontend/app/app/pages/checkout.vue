@@ -487,7 +487,7 @@ async function placeOrder() {
             :class="cn(
               'flex h-7 w-7 items-center justify-center rounded-full border text-xs font-bold transition-colors',
               idx === 1
-                ? 'border-primary bg-primary/10 text-primary dark:border-green-500 dark:bg-green-500/10 dark:text-green-400'
+                ? 'border-primary bg-primary/10 text-primary'
                 : 'border-border text-muted-foreground',
             )"
           >
@@ -497,7 +497,7 @@ async function placeOrder() {
             :class="cn(
               'text-[10px] font-medium transition-colors',
               idx === 1
-                ? 'text-primary dark:text-green-400'
+                ? 'text-primary'
                 : 'text-muted-foreground',
             )"
           >
@@ -510,7 +510,7 @@ async function placeOrder() {
           :class="cn(
             'h-px w-8 md:w-16 transition-colors',
             idx < 1
-              ? 'bg-primary dark:bg-green-500'
+              ? 'bg-primary'
               : 'bg-border',
           )"
         ></span>

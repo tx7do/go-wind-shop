@@ -505,10 +505,10 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
         <!-- 价格区（高亮，无删除线，无原价） -->
         <div
           v-if="displayPrice !== null"
-          class="rounded-xl border border-primary/40 bg-primary/5 p-5 dark:border-green-500/40 dark:bg-green-500/5"
+          class="rounded-xl border border-primary/40 bg-primary/5 p-5"
         >
           <p class="text-xs text-muted-foreground">{{ t('mall.product.price') }}</p>
-          <p class="mt-1 text-3xl font-extrabold text-primary dark:text-green-400">
+          <p class="mt-1 text-3xl font-extrabold text-primary">
             {{ t('mall.product.currencyCny') }}{{ displayPrice }}
           </p>
         </div>
@@ -535,8 +535,8 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
                 :class="cn(
                   'rounded-lg border px-4 py-2 text-sm transition-colors',
                   selections[attr.id!] === String(val.id)
-                    ? 'border-primary bg-primary/10 text-primary dark:border-green-500 dark:bg-green-500/10 dark:text-green-400'
-                    : 'border-border text-foreground hover:border-primary/40 dark:text-zinc-400',
+                    ? 'border-primary bg-primary/10 text-primary'
+                    : 'border-border text-foreground hover:border-primary/40',
                 )"
                 @click="selections[attr.id!] = String(val.id)"
               >
