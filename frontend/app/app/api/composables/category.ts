@@ -1,4 +1,5 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
+import { toValue, type MaybeRefOrGetter } from 'vue';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
@@ -37,12 +38,12 @@ export async function fetchGetCategory(id: number) {
   } as any);
 }
 export function useGetCategory(
-  id: number,
+  id: MaybeRefOrGetter<number>,
   options?: UseQueryOptions<Awaited<ReturnType<typeof fetchGetCategory>>, Error>,
 ) {
   return useQuery({
     queryKey: ['getCategory', id, getCurrentLocale()],
-    queryFn: () => fetchGetCategory(id),
+    queryFn: () => fetchGetCategory(toValue(id)),
     ...options,
   });
 }

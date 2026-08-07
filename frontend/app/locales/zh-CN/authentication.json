@@ -103,6 +103,7 @@
     "passwordMismatch": "两次输入的密码不一致",
     "resetSuccess": "密码重置成功，请使用新密码登录。",
     "sendFailed": "发送验证码失败，请稍后重试。",
-    "resetFailed": "重置密码失败，请稍后重试。"
+    "resetFailed": "重置密码失败，请稍后重试。",
+    "tooManyAttempts": "验证码尝试次数过多，验证码已失效，请重新获取。"
   }
 }

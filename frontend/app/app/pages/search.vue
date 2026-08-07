@@ -44,11 +44,13 @@ function pickTranslation<T extends { languageCode?: string }>(
 // 后端 product_repo 会从 query 中剥离 name，对翻译表 mall_product_translations
 // 做子查询 ILIKE 匹配（跨任意语言命中），剩余字段仍走通用 DSL。
 // 仅当有关键字时才发起请求；切换关键字时 computed 自动重建请求。
+const PAGE_SIZE = 48;
+const page = ref(1);
 const productsQuery = useListProducts(
   computed(() => {
     const q = keyword.value;
     return new PaginationQuery({
-      paging: { page: 1, pageSize: 48 },
+      paging: { page: page.value, pageSize: PAGE_SIZE },
       orderBy: ['sort_order'],
       formValues: q ? { name: q } : undefined,
     });
@@ -57,6 +59,21 @@ const productsQuery = useListProducts(
 );
 const loading = computed(() => productsQuery.isLoading.value);
 const loadError = computed(() => productsQuery.isError.value);
+
+const totalCount = computed(() => (productsQuery.data?.value as any)?.total ?? 0);
+const totalPages = computed(() => Math.max(1, Math.ceil(totalCount.value / PAGE_SIZE)));
+
+// 关键字变化时回到第 1 页，避免停留在越界页码。
+watch(keyword, () => {
+  page.value = 1;
+});
+
+function goToPage(p: number) {
+  const clamped = Math.min(Math.max(1, p), totalPages.value);
+  if (clamped !== page.value) {
+    page.value = clamped;
+  }
+}
 
 function productName(p: ProductEntity): string {
   return pickTranslation(p.translations)?.name ?? '';
@@ -165,6 +182,31 @@ function submitSearch() {
       <p class="text-sm text-muted-foreground">{{ t('search.empty', { q: keyword }) }}</p>
       <UiButton variant="outline" @click="navigateTo(localePath('/'))">
         {{ t('cart.continueShopping') }}
+      </UiButton>
+    </div>
+
+    <div
+      v-if="totalPages > 1"
+      class="flex items-center justify-center gap-4 py-2"
+    >
+      <UiButton
+        variant="outline"
+        size="sm"
+        :disabled="page <= 1"
+        @click="goToPage(page - 1)"
+      >
+        {{ t('ui.pagination.previous') }}
+      </UiButton>
+      <span class="text-xs tabular-nums text-muted-foreground">
+        {{ t('ui.pagination.page', { current: page, total: totalPages }) }}
+      </span>
+      <UiButton
+        variant="outline"
+        size="sm"
+        :disabled="page >= totalPages"
+        @click="goToPage(page + 1)"
+      >
+        {{ t('ui.pagination.next') }}
       </UiButton>
     </div>
   </LayoutSectionContainer>

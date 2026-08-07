@@ -1,4 +1,5 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
+import { toValue, type MaybeRefOrGetter } from 'vue';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
@@ -37,12 +38,12 @@ export async function fetchGetProduct(id: number) {
   } as any);
 }
 export function useGetProduct(
-  id: number,
+  id: MaybeRefOrGetter<number>,
   options?: UseQueryOptions<Awaited<ReturnType<typeof fetchGetProduct>>, Error>,
 ) {
   return useQuery({
     queryKey: ['getProduct', id, getCurrentLocale()],
-    queryFn: () => fetchGetProduct(id),
+    queryFn: () => fetchGetProduct(toValue(id)),
     ...options,
   });
 }

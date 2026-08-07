@@ -92,8 +92,8 @@ function pickTranslation<T extends { languageCode?: string }>(
 const DISPLAY_CURRENCY = 'CNY';
 
 // ---------- 商品详情 ----------
-const productQuery = useGetProduct(productId.value, {
-  enabled: productId.value > 0,
+const productQuery = useGetProduct(computed(() => productId.value), {
+  enabled: computed(() => productId.value > 0),
 });
 const product = computed<ProductEntity | undefined>(() => {
   return productQuery.data?.value as ProductEntity | undefined;

@@ -64,7 +64,18 @@ const resetMutation = useResetPassword({
     toast.success(t('authentication.forgotPassword.resetSuccess'));
     navigateTo(localePath('/login'));
   },
-  onError: (err: any) => toast.error(err?.message || t('authentication.forgotPassword.resetFailed')),
+  onError: (err: any) => {
+    // 429：验证码尝试次数耗尽，后端已作废该验证码。
+    // 引导用户回到步骤 1 重新获取验证码，而非停留在已失效的步骤 2。
+    if (err?.response?.status === 429) {
+      toast.error(t('authentication.forgotPassword.tooManyAttempts'));
+      step.value = 1;
+      // 验证码已失效，清除已填写的验证码字段。
+      code.value = '';
+      return;
+    }
+    toast.error(err?.message || t('authentication.forgotPassword.resetFailed'));
+  },
 });
 
 function handleSendCode() {

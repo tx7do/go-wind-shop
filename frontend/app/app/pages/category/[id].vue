@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { useGetCategory, useListCategories, useListProducts, useListBrands } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { XIcon } from '@/plugins/xicon';
@@ -44,8 +44,8 @@ function pickTranslation<T extends { languageCode?: string }>(
 }
 
 // 类目详情（Get 注入 locale，返回匹配语言的翻译）
-const categoryQuery = useGetCategory(categoryId.value, {
-  enabled: categoryId.value > 0,
+const categoryQuery = useGetCategory(computed(() => categoryId.value), {
+  enabled: computed(() => categoryId.value > 0),
 });
 const category = computed<CategoryEntity | undefined>(() => {
   return categoryQuery.data?.value as CategoryEntity | undefined;
@@ -88,6 +88,8 @@ const selectedBrandId = ref<number | undefined>(undefined);
 // 排序走 orderBy 字符串数组（后端 ListWithPaging 的 orderByStringConverter 路径，
 // 非 sorting 结构化切片——后者被 generated 客户端按单对象序列化，与后端
 // []*Sorting 切片不匹配，排序参数会丢失）。
+const PAGE_SIZE = 48;
+const page = ref(1);
 const productsQuery = useListProducts(
   computed(() => {
     const q: Record<string, unknown> = { categoryId: categoryId.value };
@@ -98,7 +100,7 @@ const productsQuery = useListProducts(
     const orderBy =
       selectedSort.value === 'latest' ? ['-created_at'] : ['sort_order'];
     return new PaginationQuery({
-      paging: { page: 1, pageSize: 48 },
+      paging: { page: page.value, pageSize: PAGE_SIZE },
       formValues: q,
       orderBy,
     });
@@ -111,6 +113,21 @@ const products = computed<ProductEntity[]>(() => {
 });
 const productsLoading = computed(() => productsQuery.isLoading.value);
 const productsError = computed(() => productsQuery.isError.value);
+
+const totalCount = computed(() => (productsQuery.data?.value as any)?.total ?? 0);
+const totalPages = computed(() => Math.max(1, Math.ceil(totalCount.value / PAGE_SIZE)));
+
+// 切换分类/品牌/排序时回到第 1 页，避免停留在越界页码。
+watch([selectedSort, selectedBrandId, categoryId], () => {
+  page.value = 1;
+});
+
+function goToPage(p: number) {
+  const clamped = Math.min(Math.max(1, p), totalPages.value);
+  if (clamped !== page.value) {
+    page.value = clamped;
+  }
+}
 </script>
 
 <template>
@@ -199,6 +216,31 @@ const productsError = computed(() => productsQuery.isError.value);
           </UiButton>
         </template>
       </UiAppEmpty>
+
+      <div
+        v-if="totalPages > 1"
+        class="flex items-center justify-center gap-4 py-2"
+      >
+        <UiButton
+          variant="outline"
+          size="sm"
+          :disabled="page <= 1"
+          @click="goToPage(page - 1)"
+        >
+          {{ t('ui.pagination.previous') }}
+        </UiButton>
+        <span class="text-xs tabular-nums text-muted-foreground">
+          {{ t('ui.pagination.page', { current: page, total: totalPages }) }}
+        </span>
+        <UiButton
+          variant="outline"
+          size="sm"
+          :disabled="page >= totalPages"
+          @click="goToPage(page + 1)"
+        >
+          {{ t('ui.pagination.next') }}
+        </UiButton>
+      </div>
     </div>
   </LayoutSectionContainer>
 </template>

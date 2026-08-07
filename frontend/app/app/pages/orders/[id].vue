@@ -13,7 +13,6 @@ import {
 } from '@/api/composables';
 import { queryClient } from '@/plugins/vue-query';
 import { useAccessStore } from '@/stores/modules/core/access.state';
-import { useUserStore } from '@/stores/modules/core/user.state';
 import type {
   orderservicev1_Order_Status,
   paymentservicev1_PaymentTransaction,
@@ -28,7 +27,6 @@ const localePath = useLocalePath();
 useHead({ title: t('mall.orderDetail.title') });
 
 const accessStore = useAccessStore();
-const userStore = useUserStore();
 
 const isLogin = computed(() => {
   const token = accessStore.accessToken;

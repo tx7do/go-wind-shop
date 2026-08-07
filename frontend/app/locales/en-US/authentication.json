@@ -103,6 +103,7 @@
     "passwordMismatch": "Passwords do not match",
     "resetSuccess": "Password reset. Please log in with your new password.",
     "sendFailed": "Failed to send code. Try again later.",
-    "resetFailed": "Failed to reset password. Try again later."
+    "resetFailed": "Failed to reset password. Try again later.",
+    "tooManyAttempts": "Too many attempts. The code has been invalidated. Please request a new code."
   }
 }
