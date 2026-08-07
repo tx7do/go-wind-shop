@@ -57,7 +57,7 @@ const cartCount = computed(() => {
 })
 
 const handleClickLogo = () => navigateTo(localePath('/'))
-const handleClickSettings = () => navigateTo(localePath('/settings'))
+const handleClickSettings = () => navigateTo(localePath('/user'))
 const handleClickLogin = () => navigateTo(localePath('/login'))
 const handleClickRegister = () => navigateTo(localePath('/register'))
 const handleClickCart = () => navigateTo(localePath('/cart'))

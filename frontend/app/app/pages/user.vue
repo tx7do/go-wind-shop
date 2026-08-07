@@ -1,9 +1,12 @@
 <script setup lang="ts">
+definePageMeta({
+  layout: 'account',
+  middleware: 'auth',
+})
 import { XIcon } from '@/plugins/xicon'
 import { useUserStore } from '@/stores/modules/core/user.state'
 import { useAccessStore } from '@/stores/modules/core/access.state'
 import { useGetMe } from '@/api/composables/user-profile'
-import { useListUserInbox } from '@/api/composables'
 
 const { t } = useI18n()
 
@@ -20,18 +23,6 @@ const isLogin = computed(() => {
 const { data: me, isPending, isError, refetch } = useGetMe({ enabled: isLogin })
 
 const userInfo = computed(() => me.value || userStore.user)
-
-// 未读消息数（用于个人中心入口角标提示）
-const inboxQuery = useListUserInbox(
-  computed(() => ({ page: 1, pageSize: 50, noPaging: false })),
-  { enabled: isLogin },
-)
-const unreadMessageCount = computed(() => {
-  const items = (inboxQuery.data?.value as any)?.items ?? []
-  return items.filter(
-    (m: any) => m.status === 'SENT' || m.status === 'RECEIVED',
-  ).length
-})
 </script>
 
 <template>
@@ -85,70 +76,6 @@ const unreadMessageCount = computed(() => {
               <h2 class="text-xl font-bold text-foreground">{{ userInfo.realname || userInfo.nickname || userInfo.username }}</h2>
               <p class="text-sm text-muted-foreground">{{ userInfo.email || userInfo.username }}</p>
             </div>
-          </div>
-
-          <!-- 电商入口 -->
-          <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
-            <NuxtLink
-              :to="localePath('/orders')"
-              class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
-            >
-              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <XIcon icon="carbon:document" :size="22" />
-              </span>
-              <span class="text-xs font-medium text-foreground">{{ t('mall.orders.title') }}</span>
-            </NuxtLink>
-            <NuxtLink
-              :to="localePath('/messages')"
-              class="group relative flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
-            >
-              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <XIcon icon="carbon:message" :size="22" />
-              </span>
-              <span
-                v-if="unreadMessageCount > 0"
-                class="absolute right-3 top-3 flex h-5 min-w-5 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-bold text-destructive-foreground"
-              >
-                {{ unreadMessageCount > 99 ? '99+' : unreadMessageCount }}
-              </span>
-              <span class="text-xs font-medium text-foreground">{{ t('messages.title') }}</span>
-            </NuxtLink>
-            <NuxtLink
-              :to="localePath('/refunds')"
-              class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
-            >
-              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <XIcon icon="carbon:rotate-ccw" :size="22" />
-              </span>
-              <span class="text-xs font-medium text-foreground">{{ t('refunds.title') }}</span>
-            </NuxtLink>
-            <NuxtLink
-              :to="localePath('/cart')"
-              class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
-            >
-              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <XIcon icon="carbon:shopping-cart" :size="22" />
-              </span>
-              <span class="text-xs font-medium text-foreground">{{ t('mall.cart.title') }}</span>
-            </NuxtLink>
-            <NuxtLink
-              :to="localePath('/addresses')"
-              class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
-            >
-              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <XIcon icon="carbon:location" :size="22" />
-              </span>
-              <span class="text-xs font-medium text-foreground">{{ t('addresses.title') }}</span>
-            </NuxtLink>
-            <NuxtLink
-              :to="localePath('/settings')"
-              class="group flex flex-col items-center gap-3 rounded-xl border border-border bg-background/40 p-5 transition-colors hover:border-primary/60"
-            >
-              <span class="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <XIcon icon="carbon:settings" :size="22" />
-              </span>
-              <span class="text-xs font-medium text-foreground">{{ t('menu.my_account_security') }}</span>
-            </NuxtLink>
           </div>
 
           <!-- 我的订单：按状态快捷入口（带 ?status= 预选订单列表筛选项） -->

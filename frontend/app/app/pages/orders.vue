@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  layout: 'account',
+  middleware: 'auth',
+})
 import { computed, ref, watch } from 'vue';
 import { XIcon } from '@/plugins/xicon';
 import { useListOrders } from '@/api/composables';

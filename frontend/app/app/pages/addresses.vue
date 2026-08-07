@@ -1,4 +1,8 @@
 <script setup lang="ts">
+definePageMeta({
+  layout: 'account',
+  middleware: 'auth',
+})
 import { computed, reactive, ref } from 'vue';
 import { toast } from 'vue-sonner';
 import { XIcon } from '@/plugins/xicon';
