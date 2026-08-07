@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* 暗黑模式锁定为 class 策略（html.dark）。
+   Tailwind v4 默认是 media 策略，若未来有人写 dark: 工具类，会跟随系统
+   而非手动切换，与 Element Plus 的 html.dark 体系脱钩。
+   显式声明后 dark: 只在 .dark 下生效，与 update-css-variables.ts 的
+   root.classList.toggle('dark') 一致。 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ============================================
    主题变量 — 从 UnoCSS config 迁移
    ============================================ */

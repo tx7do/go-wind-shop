@@ -305,15 +305,15 @@ defineExpose({
   // 让表单项内容拉伸
   :deep(.el-form-item__content) {
     flex: 1;
-    min-width: 0;
     width: 100%;
+    min-width: 0;
   }
 
   // 按钮区域包装器 - 放在最后一格，靠右对齐
   :deep(.pro-search__actions-wrapper) {
     grid-column: -1;
-    justify-self: end;
     align-self: end;
+    justify-self: end;
   }
 }
 
@@ -332,8 +332,8 @@ defineExpose({
 
   // 表单项内容区域
   :deep(.el-form-item__content) {
-    min-width: 0;
     width: 100%;
+    min-width: 0;
   }
 
   // 输入框宽度自适应
@@ -348,15 +348,15 @@ defineExpose({
   // 按钮区域包装器 - 保持固定宽度靠右
   :deep(.pro-search__actions-wrapper) {
     flex: 0 0 auto !important;
-    margin-left: auto;
-    min-width: fit-content;
     width: auto;
+    min-width: fit-content;
+    margin-left: auto;
 
     // 当空间不足时，按钮区域换到下一行并占满整行
     @media (max-width: 768px) {
-      margin-left: 0;
       width: 100%;
       margin-top: 8px;
+      margin-left: 0;
     }
   }
 }
@@ -375,12 +375,12 @@ defineExpose({
 .pro-search__collapse-btn {
   display: inline-flex;
   align-items: center;
-  cursor: pointer;
-  color: var(--el-color-primary);
-  font-size: 13px;
-  user-select: none;
-  white-space: nowrap;
   margin-left: 12px;
+  font-size: 13px;
+  color: var(--el-color-primary);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
 
   &:hover {
     opacity: 0.85;
@@ -397,47 +397,48 @@ defineExpose({
 :deep(.pro-search__actions) {
   .el-button {
     height: 32px;
-    border-radius: 6px;
     padding: 0 16px;
     font-size: 14px;
     line-height: normal;
-    transition: all 0.2s ease;
     cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
 
     // 搜索按钮（primary）—— 标准 Element Plus 主色
     &.el-button--primary {
+      color: #fff;
       background-color: var(--el-color-primary);
       border-color: var(--el-color-primary);
-      color: #fff;
 
       &:hover,
       &:focus {
+        color: #fff;
         background-color: var(--el-color-primary-light-3);
         border-color: var(--el-color-primary-light-3);
-        color: #fff;
       }
 
       &:active {
+        color: #fff;
         background-color: var(--el-color-primary-dark-2);
         border-color: var(--el-color-primary-dark-2);
-        color: #fff;
       }
     }
 
     // 重置按钮（default）—— 中性灰
+    // 用 EP fill 语义变量，浅色为浅灰、暗色自动跟随，避免 rgba(0,0,0,0.04) 在深底不可见
     // stylelint-disable-next-line selector-max-universal
     &:not(.el-button--primary):not(.el-button--danger):not(.el-button--success):not(
         .el-button--warning
       ):not(.el-button--info) {
-      background-color: rgba(0, 0, 0, 0.04);
-      border-color: #dcdfe6;
       color: var(--el-text-color-regular);
+      background-color: var(--el-fill-color-light);
+      border-color: var(--el-border-color, #dcdfe6);
 
       &:hover,
       &:focus {
-        background-color: rgba(0, 0, 0, 0.08);
-        border-color: #c0c4cc;
         color: var(--el-text-color-primary);
+        background-color: var(--el-fill-color);
+        border-color: var(--el-border-color-light, #c0c4cc);
       }
     }
   }
@@ -445,10 +446,10 @@ defineExpose({
 
 // 表单项标签样式优化
 :deep(.el-form-item__label) {
-  white-space: nowrap;
+  max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 120px;
+  white-space: nowrap;
 }
 
 :deep(.el-input-number .el-input__inner) {

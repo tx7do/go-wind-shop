@@ -10,51 +10,59 @@
   $colors: (
     "primary": (
       // 现代蓝 — 高级感拉满
-      "base": #165DFF,
+      "base": #165dff,
     ),
     "success": (
-      "base": #00B42A,
+      "base": #00b42a,
     ),
     "warning": (
-      "base": #FF7D00,
+      "base": #ff7d00,
     ),
     "danger": (
-      "base": #F53F3F,
+      "base": #f53f3f,
     ),
     "info": (
-      "base": #86909C,
+      "base": #86909c,
     ),
   ),
   $bg-color: (
-    "page": #F7F8FA,
+    "page": #f7f8fa,
   ),
   // 圆角 — 现代大圆角
   $border-radius: (
-    "base": 8px,
-    "small": 6px,
-    "round": 20px,
-    "circle": 100%,
-  ),
+      "base": 8px,
+      "small": 6px,
+      "round": 20px,
+      "circle": 100%,
+    ),
   // 阴影更柔和
   $box-shadow: (
-    "": (0 4px 12px rgba(0, 0, 0, 0.08)),
-    "light": (0 2px 8px rgba(0, 0, 0, 0.06)),
-    "lighter": (0 1px 4px rgba(0, 0, 0, 0.04)),
-    "dark": (0 6px 16px rgba(0, 0, 0, 0.12)),
-  ),
+      "": (
+        0 4px 12px rgba(0, 0, 0, 0.08),
+      ),
+      "light": (
+        0 2px 8px rgba(0, 0, 0, 0.06),
+      ),
+      "lighter": (
+        0 1px 4px rgba(0, 0, 0, 0.04),
+      ),
+      "dark": (
+        0 6px 16px rgba(0, 0, 0, 0.12),
+      ),
+    ),
   // 表格更清爽
   $table: (
-    "header-font-color": #1D2129,
-    "header-bg-color": #F0F2F5,
-    "row-hover-bg-color": #F2F3F5,
-    "border-color": #E5E6EB,
-  ),
+      "header-font-color": #1d2129,
+      "header-bg-color": #f0f2f5,
+      "row-hover-bg-color": #f2f3f5,
+      "border-color": #e5e6eb,
+    ),
   // 填充色优化
   $fill-color: (
-    "light": #F2F3F5,
-    "lighter": #F7F8FA,
-    "extra-light": #FAFBFC,
-  ),
+      "light": #f2f3f5,
+      "lighter": #f7f8fa,
+      "extra-light": #fafbfc,
+    )
 );
 
 // ============================================
@@ -82,9 +90,9 @@ html.dark {
 
 /* ---------- el-dialog ---------- */
 .el-dialog {
+  overflow: hidden;
   border-radius: 12px;
   box-shadow: var(--el-box-shadow-dark);
-  overflow: hidden;
 
   .el-dialog__header {
     padding: 16px 20px;
@@ -119,9 +127,9 @@ html.dark {
     flex-shrink: 0; // 不被压缩
     padding: 16px 20px;
     margin: 0;
+    font-weight: 600;
     color: inherit;
     border-bottom: $border;
-    font-weight: 600;
   }
 
   .el-drawer__body {
@@ -134,8 +142,10 @@ html.dark {
   .el-drawer__footer {
     flex-shrink: 0; // 不被压缩
     padding: 16px 20px;
-    border-top: 1px solid #f1f5f9;
-    background: #ffffff;
+    background: var(--el-bg-color, #ffffff);
+    // 使用 EP 语义变量，浅色为白、暗色自动跟随 html.dark 的 --el-bg-color，
+    // 避免 #ffffff/#f1f5f9 在暗色模式下漏白底（此前靠 _dark-mode.scss !important 兜底）
+    border-top: 1px solid var(--el-border-color-lighter, #f1f5f9);
   }
 }
 
@@ -167,16 +177,15 @@ body,
 .vxe-cell,
 .vxe-header--column .vxe-cell,
 .vxe-body--column .vxe-cell {
-  font-family: "Noto Sans SC", "Noto Sans JP", "Noto Sans KR",
-    sans-serif !important;
+  font-family: "Noto Sans SC", "Noto Sans JP", "Noto Sans KR", sans-serif !important;
 }
 
 // --- 菜单：flex 居中，抛弃基线 ---
 .el-menu-item,
 .el-sub-menu__title {
   display: flex !important;
-  align-items: center !important;
   gap: 6px !important;
+  align-items: center !important;
   line-height: normal !important;
 }
 
@@ -215,8 +224,8 @@ body,
 .el-breadcrumb__inner,
 .el-breadcrumb__inner a {
   display: inline-flex !important;
-  align-items: center !important;
   gap: 4px;
+  align-items: center !important;
   line-height: normal !important;
 }
 
@@ -268,8 +277,8 @@ body,
 
 /* ---------- 按钮精致化 ---------- */
 .el-button {
-  border-radius: 8px;
   height: var(--el-button-height, 32px);
+  border-radius: 8px;
   transition: all 0.25s ease;
 
   &:hover {
@@ -279,8 +288,8 @@ body,
 
 /* ---------- 卡片精致化 ---------- */
 .el-card {
+  border: 1px solid var(--el-border-color-lighter, #ebedf0);
   border-radius: 12px;
-  border: 1px solid var(--el-border-color-lighter, #EBEDF0);
   box-shadow: var(--el-box-shadow-light);
   transition: box-shadow 0.25s ease;
 
@@ -292,19 +301,19 @@ body,
 /* ---------- 表格高级感 ---------- */
 .el-table {
   --el-table-border-color: #e5e6eb;
-  border-radius: 8px;
   overflow: hidden;
+  border-radius: 8px;
 
   // 表头紧凑 + 视觉分隔增强
   .el-table__header-wrapper th.el-table__cell {
-    font-weight: 600;
-    font-size: 13px;
     padding-top: 3px;
     padding-bottom: 3px;
+    font-size: 13px;
+    font-weight: 600;
     // 加深表头背景，和数据区形成对比
-    background-color: #F0F2F5 !important;
+    background-color: #f0f2f5 !important;
     // 底部加一条深灰色实线，明确切分标题和数据
-    border-bottom: 1px solid #D9DDE3 !important;
+    border-bottom: 1px solid #d9dde3 !important;
   }
 
   // 内容区紧凑
@@ -325,14 +334,14 @@ body,
   .el-table__empty-text {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 8px;
+    align-items: center;
     color: var(--el-text-color-placeholder);
 
     .el-icon {
+      margin-bottom: 8px;
       font-size: 48px;
       color: var(--el-text-color-placeholder);
-      margin-bottom: 8px;
     }
   }
 }
@@ -345,8 +354,9 @@ body,
 
     // 聚焦态外发光
     &.is-focus {
-      box-shadow: 0 0 0 1px var(--el-color-primary) inset,
-                  0 0 0 3px var(--el-color-primary-light-8);
+      box-shadow:
+        0 0 0 1px var(--el-color-primary) inset,
+        0 0 0 3px var(--el-color-primary-light-8);
     }
   }
 }
@@ -354,13 +364,15 @@ body,
 /* ---------- Select / Textarea 聚焦态外发光 ---------- */
 .el-select .el-input__wrapper.is-focus,
 .el-date-editor .el-input__wrapper.is-focus {
-  box-shadow: 0 0 0 1px var(--el-color-primary) inset,
-              0 0 0 3px var(--el-color-primary-light-8) !important;
+  box-shadow:
+    0 0 0 1px var(--el-color-primary) inset,
+    0 0 0 3px var(--el-color-primary-light-8) !important;
 }
 
 .el-textarea__inner:focus {
-  box-shadow: 0 0 0 1px var(--el-color-primary) inset,
-              0 0 0 3px var(--el-color-primary-light-8) !important;
+  box-shadow:
+    0 0 0 1px var(--el-color-primary) inset,
+    0 0 0 3px var(--el-color-primary-light-8) !important;
 }
 
 /* ---------- 下拉菜单精致化 ---------- */
@@ -375,10 +387,10 @@ body,
 .el-tag {
   height: 22px;
   padding: 0 8px;
-  border-radius: 4px; /* 比按钮的 6px 更方正 */
   font-size: 12px;
   font-weight: 500;
   cursor: default; /* 不可点击，和按钮区分 */
+  border-radius: 4px; /* 比按钮的 6px 更方正 */
 }
 
 /* ---------- 消息提示精致化 ---------- */
@@ -422,15 +434,15 @@ body,
 
 /* 表单 Label 亮色模式加深，增强可读性 */
 .el-form-item__label {
-  color: #475569 !important;
-  font-weight: 550 !important;
   font-size: 14px; // 表单标签字号
+  font-weight: 550 !important;
+  color: #475569 !important;
 }
 
 /* ---------- 消息弹窗精致化 ---------- */
 .el-message-box {
-  border-radius: 12px;
   overflow: hidden;
+  border-radius: 12px;
 }
 
 /* ---------- 字重巤底：表格/表头/输入框 ---------- */
@@ -444,11 +456,11 @@ body,
 }
 
 .el-table__header th {
-  font-weight: var(--el-font-weight-bold, 600) !important;
   font-size: 14px !important; // 表头字号
+  font-weight: var(--el-font-weight-bold, 600) !important;
 }
 
 .el-input__inner {
-  font-weight: var(--el-font-weight-primary);
   font-size: 14px; // 输入框字号
+  font-weight: var(--el-font-weight-primary);
 }

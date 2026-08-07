@@ -49,8 +49,8 @@ function isEmptyValue(val: any): boolean {
 </script>
 
 <style scoped lang="scss">
-// 空值单元格样式：浅灰色短横线
+// 空值单元格样式：用 EP 占位文字色，浅暗色自动跟随
 .pro-table__empty-cell {
-  color: #c0c4cc;
+  color: var(--el-text-color-placeholder);
 }
 </style>

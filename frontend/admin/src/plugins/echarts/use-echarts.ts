@@ -30,10 +30,8 @@ function useEcharts(chartRef: Ref<EchartsUIType>) {
   const resizeHandler: () => void = useDebounceFn(resize, 200);
 
   const getOptions = computed((): EChartsOption => {
-    if (!isDark.value) {
-      return {};
-    }
-
+    // 浅色与暗色都显式设透明背景：暗色下避免盖住卡片深底，浅色下避免默认
+    // 不透明背景与卡片融合度不佳。dark 主题由 echarts.init(el, "dark") 接管配色。
     return {
       backgroundColor: "transparent",
     };

@@ -108,9 +108,11 @@ class PreferenceManager {
     );
 
     // 监听系统主题偏好设置变化
+    // 仅在 auto 模式下跟随系统：手动选择 dark/light 后，系统主题变化不应覆盖用户选择
     window
       .matchMedia("(prefers-color-scheme: dark)")
       .addEventListener("change", ({ matches: isDark }) => {
+        if (this.state.theme.mode !== "auto") return;
         this.updatePreferences({
           theme: { mode: isDark ? "dark" : "light" },
         });

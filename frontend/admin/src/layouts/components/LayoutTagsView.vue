@@ -761,21 +761,21 @@ $chrome-radius: 7px;
   align-items: center;
   width: 100%;
   padding: 0 16px;
-  border-bottom: 1px solid var(--tabs-bar-border-color);
   background-color: var(--el-bg-color);
+  border-bottom: 1px solid var(--tabs-bar-border-color);
 
   // ==================== 滚动按钮 ====================
   &__scroll-btn {
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     width: 24px;
     height: 100%;
-    flex-shrink: 0;
-    cursor: pointer;
-    border-radius: 4px;
     color: var(--el-text-color-secondary);
+    cursor: pointer;
     background: transparent;
+    border-radius: 4px;
     transition: all 0.2s ease;
 
     &:hover {
@@ -785,17 +785,17 @@ $chrome-radius: 7px;
     }
 
     &.is-disabled {
-      opacity: 0.3;
       pointer-events: none;
+      opacity: 0.3;
     }
   }
 
   // ==================== 内容区域 ====================
   &__content {
+    position: relative;
     flex: 1;
     height: 100%;
     overflow: hidden;
-    position: relative;
 
     &--chrome {
       padding-top: 3px;
@@ -805,31 +805,31 @@ $chrome-radius: 7px;
   &__inner {
     display: flex;
     align-items: stretch;
-    height: 100%;
     width: max-content;
+    height: 100%;
     padding-right: 8px;
   }
 
   // ==================== 单个标签项 ====================
   &__item {
-    display: flex;
-    align-items: center;
     position: relative;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    height: 100%;
+    color: var(--el-text-color-regular);
     cursor: pointer;
     user-select: none;
     transition: all 0.2s ease;
-    flex-shrink: 0;
-    height: 100%;
-    color: #606266;
 
     &.is-active {
-      color: var(--el-color-primary);
       font-weight: 600;
+      color: var(--el-color-primary);
     }
 
-    // 亮/暗模式通用：hover 文字提亮
+    // 亮/暗模式通用：hover 文字提亮（语义变量自动跟随主题）
     &:not(.is-active):hover {
-      color: #1d2129;
+      color: var(--el-text-color-primary);
     }
 
     // ---- Plain 样式 ----
@@ -837,57 +837,57 @@ $chrome-radius: 7px;
       padding: 0 16px;
 
       &.is-active {
+        font-weight: 600;
         color: var(--el-color-primary);
         background-color: var(--tabs-bar-active-bg);
-        font-weight: 600;
         border-bottom: 2px solid var(--el-color-primary);
       }
 
       &:not(.is-active):hover {
-        background: var(--tabs-bar-hover-bg);
         color: var(--tabs-bar-hover-color);
+        background: var(--tabs-bar-hover-bg);
       }
     }
 
     // ---- Card 样式 ----
     &--card {
+      height: calc(100% - 6px);
       padding: 0 16px;
       margin: 3px 0 3px 4px;
-      height: calc(100% - 6px);
       border: 1px solid transparent;
       border-radius: 8px 8px 0 0;
 
       &.is-active {
+        font-weight: 600;
         color: var(--el-color-primary);
         background-color: var(--tabs-bar-active-bg);
-        font-weight: 600;
         border-bottom: 2px solid var(--el-color-primary);
         box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
       }
 
       &:not(.is-active):hover {
-        background: var(--tabs-bar-hover-bg);
         color: var(--tabs-bar-hover-color);
+        background: var(--tabs-bar-hover-bg);
       }
     }
 
     // ---- Brisk 样式 ----
     &--brisk {
-      padding: 0 16px;
       position: relative;
+      padding: 0 16px;
 
       // 底部指示线
       &::after {
-        content: "";
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
         height: 2px;
+        content: "";
         background-color: var(--el-color-primary);
         transform: scaleX(0);
-        transition: transform 0.3s ease;
         transform-origin: left;
+        transition: transform 0.3s ease;
       }
 
       &:hover::after {
@@ -895,9 +895,9 @@ $chrome-radius: 7px;
       }
 
       &.is-active {
+        font-weight: 600;
         color: var(--el-color-primary);
         background-color: var(--tabs-bar-active-bg);
-        font-weight: 600;
 
         &::after {
           transform: scaleX(1);
@@ -905,16 +905,16 @@ $chrome-radius: 7px;
       }
 
       &:not(.is-active):hover {
-        background: var(--tabs-bar-hover-bg);
         color: var(--tabs-bar-hover-color);
+        background: var(--tabs-bar-hover-bg);
       }
     }
 
     // ---- Chrome 样式 ----
     &--chrome {
-      margin-right: -$chrome-radius;
-      padding: 0 calc(#{$chrome-radius} * 2 + 2px);
       z-index: 1;
+      padding: 0 calc(#{$chrome-radius} * 2 + 2px);
+      margin-right: -$chrome-radius;
 
       &:hover {
         z-index: 2;
@@ -938,8 +938,8 @@ $chrome-radius: 7px;
         }
 
         .tabs-bar__chrome-bg__content {
-          background-color: var(--el-fill-color-light);
           margin: 0 2px;
+          background-color: var(--el-fill-color-light);
           border-radius: 4px;
         }
       }
@@ -955,13 +955,13 @@ $chrome-radius: 7px;
   // 分隔线
   &__divider {
     position: absolute;
-    left: $chrome-radius;
     top: 50%;
-    transform: translateY(-50%);
+    left: $chrome-radius;
+    z-index: 0;
     width: 1px;
     height: 14px;
     background-color: var(--el-border-color);
-    z-index: 0;
+    transform: translateY(-50%);
     transition: opacity 0.15s;
   }
 
@@ -1009,32 +1009,32 @@ $chrome-radius: 7px;
 
   // ==================== 标签内容 ====================
   &__item-main {
+    z-index: 2;
     display: flex;
-    align-items: center;
     gap: 8px;
+    align-items: center;
     height: 100%;
     padding-right: 4px;
-    z-index: 2;
     overflow: hidden;
   }
 
   &__icon {
-    flex-shrink: 0;
-    width: 14px;
-    height: 14px;
     display: flex;
+    flex-shrink: 0;
     align-items: center;
     justify-content: center;
+    width: 14px;
+    height: 14px;
   }
 
   &__title {
-    font-size: 13px; // 从 12px 增大到 13px
-    white-space: nowrap;
+    max-width: 120px;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 120px;
+    font-size: 13px; // 从 12px 增大到 13px
     // flex 父级 align-items:center 已负责垂直居中，这里用 normal 避免 span 行高异常
     line-height: normal;
+    white-space: nowrap;
   }
 
   // ==================== 关闭/固定按钮 ====================
@@ -1057,18 +1057,18 @@ $chrome-radius: 7px;
     transition: all 0.2s ease;
 
     .tabs-bar__item:hover & {
-      opacity: 1;
       color: #666e7d;
+      opacity: 1;
     }
 
     .tabs-bar__item.is-active & {
-      opacity: 1;
       color: var(--el-color-primary);
+      opacity: 1;
     }
 
     &:hover {
-      background-color: rgba(245, 63, 63, 0.1);
       color: #f53f3f;
+      background-color: rgba(245, 63, 63, 0.1);
     }
   }
 
@@ -1082,11 +1082,11 @@ $chrome-radius: 7px;
   // ==================== 工具按钮区域 ====================
   &__tools {
     display: flex;
-    align-items: center;
+    flex-shrink: 0;
     gap: 2px;
+    align-items: center;
     height: 100%;
     padding: 0 8px;
-    flex-shrink: 0;
     border-left: 1px solid var(--el-border-color-lighter);
   }
 
@@ -1096,10 +1096,10 @@ $chrome-radius: 7px;
     justify-content: center;
     width: 28px;
     height: 28px;
-    cursor: pointer;
-    border-radius: 6px;
     color: var(--el-text-color-secondary);
+    cursor: pointer;
     background: transparent;
+    border-radius: 6px;
     transition: all 0.2s ease;
 
     &:hover {
@@ -1124,8 +1124,8 @@ $chrome-radius: 7px;
 
     li {
       display: flex;
-      align-items: center;
       gap: 6px;
+      align-items: center;
       padding: 6px 16px;
       cursor: pointer;
       transition: background-color 0.15s;
@@ -1135,24 +1135,24 @@ $chrome-radius: 7px;
       }
 
       &.is-disabled {
-        opacity: 0.45;
-        cursor: not-allowed;
         pointer-events: none;
+        cursor: not-allowed;
+        opacity: 0.45;
       }
     }
 
     &-divider {
       height: 1px !important;
-      margin: 4px 0 !important;
-      padding: 0 !important;
-      background-color: var(--el-border-color-lighter) !important;
       min-height: 1px !important;
-      line-height: 0 !important;
-      font-size: 0 !important;
+      padding: 0 !important;
+      margin: 4px 0 !important;
       overflow: hidden;
-      cursor: default;
+      font-size: 0 !important;
+      line-height: 0 !important;
       pointer-events: none;
+      cursor: default;
       user-select: none;
+      background-color: var(--el-border-color-lighter) !important;
 
       &:hover {
         background-color: var(--el-border-color-lighter) !important;
@@ -1195,8 +1195,8 @@ html.dark .tabs-bar {
     transition: all 0.2s ease;
 
     &.is-active {
-      color: var(--el-color-primary);
       font-weight: 600;
+      color: var(--el-color-primary);
       background-color: rgba(255, 255, 255, 0.04);
       border-radius: 4px 4px 0 0;
     }
@@ -1209,9 +1209,9 @@ html.dark .tabs-bar {
 
   // Card 激活态：底部主色指示线 + 微亮背景
   .tabs-bar__item--card.is-active {
+    background-color: rgba(255, 255, 255, 0.04);
     border-color: transparent;
     border-bottom-color: var(--el-color-primary);
-    background-color: rgba(255, 255, 255, 0.04);
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
   }
 

@@ -10,6 +10,54 @@
       content="vue,element-plus,typescript,vue-element-admin,vue3-element-admin"
     />
     <title>%VITE_APP_TITLE%</title>
+    <script>
+      // FOUC 防闪脚本：在首帧绘制前同步根据用户偏好设置 html.dark class。
+      // 与 core/preferences 的存储保持一致：
+      //   key: <namespace>:preferences-theme  value: {"data":"dark|light|auto","expiry":null}
+      //   key: <namespace>:preferences        value: {"data":{theme:{mode:"..."}},...}
+      // namespace 含动态版本号（gowind-shop-admin-<version>-<env>），故扫描所有
+      // 以 :preferences-theme / :preferences 结尾的 key 取值。
+      // 默认偏好 mode='dark'，故无存储时也按暗色处理，避免首帧亮闪。
+      ;(function () {
+        try {
+          function unwrap(raw) {
+            if (!raw) return null;
+            try {
+              var p = JSON.parse(raw);
+              return p && typeof p === 'object' && 'data' in p ? p.data : p;
+            } catch (e) { return null; }
+          }
+          var mode = null;
+          // 1) 优先扫描独立 theme key（最新写入）
+          for (var i = 0, n = localStorage.length; i < n; i++) {
+            var k = localStorage.key(i);
+            if (!k || k.indexOf(':preferences-theme') < 0) continue;
+            var v = unwrap(localStorage.getItem(k));
+            if (v === 'dark' || v === 'light' || v === 'auto') { mode = v; break; }
+          }
+          // 2) 后备：扫描完整 preferences 对象
+          if (!mode) {
+            for (var j = 0, m = localStorage.length; j < m; j++) {
+              var kk = localStorage.key(j);
+              if (!kk || kk.indexOf(':preferences') < 0 || kk.indexOf('-theme') > 0) continue;
+              var d = unwrap(localStorage.getItem(kk));
+              var mm = d && d.theme && d.theme.mode;
+              if (mm === 'dark' || mm === 'light' || mm === 'auto') { mode = mm; break; }
+            }
+          }
+          // 3) 默认暗色（与 default.ts 一致）
+          if (!mode) mode = 'dark';
+          var root = document.documentElement;
+          if (mode === 'auto') {
+            mode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          root.classList.toggle('dark', mode === 'dark');
+        } catch (e) {
+          // 任何异常：默认暗色，与默认偏好一致
+          try { document.documentElement.classList.add('dark'); } catch (_) {}
+        }
+      })();
+    </script>
   </head>
 
   <body>

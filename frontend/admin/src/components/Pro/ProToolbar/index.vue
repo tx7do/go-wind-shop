@@ -259,49 +259,49 @@ defineExpose({
 .toolbar-left,
 .toolbar-right {
   :deep(.el-button) {
-    margin-right: 0 !important;
-    margin-left: 0 !important;
 
     // ======== 统一基础规范 ========
     height: 32px;
-    border-radius: 6px;
     padding: 0 16px;
+    margin-right: 0 !important;
+    margin-left: 0 !important;
     font-size: 15px; // 从 14px 增大到 15px
     line-height: normal;
-    transition: all 0.2s ease;
     cursor: pointer;
+    border-radius: 6px;
+    transition: all 0.2s ease;
 
     // ======== 主按钮（primary）—— 标准 Element Plus 主色 ========
     &.el-button--primary {
+      color: #fff;
       background-color: var(--el-color-primary);
       border-color: var(--el-color-primary);
-      color: #fff;
 
       &:hover,
       &:focus {
+        color: #fff;
         background-color: var(--el-color-primary-light-3);
         border-color: var(--el-color-primary-light-3);
-        color: #fff;
       }
 
       &:active {
+        color: #fff;
         background-color: var(--el-color-primary-dark-2);
         border-color: var(--el-color-primary-dark-2);
-        color: #fff;
       }
     }
 
     // ======== 危险按钮（danger）—— 柔和红色 ========
     &.el-button--danger {
+      color: #f53f3f;
       background-color: rgba(245, 63, 63, 0.1);
       border-color: rgba(245, 63, 63, 0.25);
-      color: #f53f3f;
 
       &:hover,
       &:focus {
+        color: #f53f3f;
         background-color: rgba(245, 63, 63, 0.18);
         border-color: rgba(245, 63, 63, 0.4);
-        color: #f53f3f;
       }
 
       &:active {
@@ -311,15 +311,15 @@ defineExpose({
 
     // ======== 成功按钮（success）—— 柔和绿色 ========
     &.el-button--success {
+      color: #52c41a;
       background-color: rgba(82, 196, 26, 0.1);
       border-color: rgba(82, 196, 26, 0.3);
-      color: #52c41a;
 
       &:hover,
       &:focus {
+        color: #52c41a;
         background-color: rgba(82, 196, 26, 0.18);
         border-color: rgba(82, 196, 26, 0.5);
-        color: #52c41a;
       }
 
       &:active {
@@ -328,19 +328,20 @@ defineExpose({
     }
 
     // ======== 普通按钮（default）—— 中性灰 ========
+    // 用 EP fill 语义变量，浅色为浅灰、暗色自动跟随，避免 rgba(0,0,0,0.04) 在深底不可见
     // stylelint-disable-next-line selector-max-universal
     &:not(.el-button--primary):not(.el-button--danger):not(.el-button--success):not(
         .el-button--warning
       ):not(.el-button--info):not(.is-circle) {
-      background-color: rgba(0, 0, 0, 0.04);
-      border-color: #dcdfe6;
       color: var(--el-text-color-regular);
+      background-color: var(--el-fill-color-light);
+      border-color: var(--el-border-color, #dcdfe6);
 
       &:hover,
       &:focus {
-        background-color: rgba(0, 0, 0, 0.08);
-        border-color: #c0c4cc;
         color: var(--el-text-color-primary);
+        background-color: var(--el-fill-color);
+        border-color: var(--el-border-color-light, #c0c4cc);
       }
     }
   }
@@ -355,12 +356,12 @@ defineExpose({
     width: 32px;
     height: 32px;
     padding: 0;
-    border-radius: 50%;
+    font-size: 16px;
+    color: #6b7280;
     background-color: transparent;
     border: none;
-    color: #6b7280;
+    border-radius: 50%;
     transition: all 0.2s ease;
-    font-size: 16px;
 
     // 增大图标尺寸
     .el-icon {
@@ -368,8 +369,8 @@ defineExpose({
     }
 
     &:hover {
-      background-color: var(--el-fill-color-light);
       color: var(--el-text-color-primary);
+      background-color: var(--el-fill-color-light);
     }
 
     &:active {
@@ -385,9 +386,9 @@ defineExpose({
     :deep(.el-button) {
       // 主按钮（暗色模式：柔和风格，与其他按钮统一）
       &.el-button--primary {
+        color: var(--el-color-primary-light-3);
         background-color: var(--el-color-primary-light-9);
         border-color: var(--el-color-primary-light-5);
-        color: var(--el-color-primary-light-3);
 
         &:hover,
         &:focus {
@@ -432,16 +433,16 @@ defineExpose({
         --el-button-hover-bg-color: rgba(255, 255, 255, 0.1);
         --el-button-hover-border-color: rgba(255, 255, 255, 0.25);
         --el-button-hover-text-color: var(--el-text-color-primary);
+        color: var(--el-text-color-regular) !important;
 
         background-color: rgba(255, 255, 255, 0.06) !important;
         border-color: rgba(255, 255, 255, 0.15) !important;
-        color: var(--el-text-color-regular) !important;
 
         &:hover,
         &:focus {
+          color: var(--el-text-color-primary) !important;
           background-color: rgba(255, 255, 255, 0.1) !important;
           border-color: rgba(255, 255, 255, 0.25) !important;
-          color: var(--el-text-color-primary) !important;
         }
       }
     }
@@ -452,8 +453,8 @@ defineExpose({
       color: var(--el-text-color-secondary);
 
       &:hover {
-        background-color: rgba(255, 255, 255, 0.08);
         color: var(--el-text-color-primary);
+        background-color: rgba(255, 255, 255, 0.08);
       }
 
       &:active {
