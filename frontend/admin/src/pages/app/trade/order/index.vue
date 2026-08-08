@@ -123,13 +123,6 @@ const pageConfig = computed<ProPageConfig>(() => ({
         buttons: [
           { name: "detail", label: $t("common.button.detail"), icon: "lucide:eye" },
           {
-            name: "fulfill",
-            label: $t("pages.mall.order.fulfill"),
-            icon: "lucide:truck",
-            attrs: { type: "warning" },
-            visible: (row: any) => row.status === "PAID",
-          },
-          {
             name: "close",
             label: $t("pages.mall.order.close"),
             icon: "lucide:octagon-x",
@@ -150,13 +143,9 @@ async function handleOperate(data: { name: string; row: any }) {
     return;
   }
 
-  if (name === "fulfill" || name === "close") {
-    const targetStatus = name === "fulfill" ? "FULFILLED" : "CLOSED";
-    const confirmText =
-      name === "fulfill" ? $t("pages.mall.order.fulfill") : $t("pages.mall.order.close");
-
+  if (name === "close") {
     try {
-      await ElMessageBox.confirm(confirmText, $t("common.notification.confirmTitle"), {
+      await ElMessageBox.confirm($t("pages.mall.order.close"), $t("common.notification.confirmTitle"), {
         type: "warning",
       });
     } catch {
@@ -164,7 +153,7 @@ async function handleOperate(data: { name: string; row: any }) {
     }
 
     try {
-      await updateOrder({ id: row.id, values: { status: targetStatus } });
+      await updateOrder({ id: row.id, values: { status: "CLOSED" } });
       ElMessage.success($t("common.notification.updateSuccess"));
       pageRef.value?.refresh();
     } catch {

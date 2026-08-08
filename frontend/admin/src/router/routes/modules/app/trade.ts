@@ -59,6 +59,17 @@ const trade: RouteRecordRaw[] = [
         },
         component: () => import("@/pages/app/trade/finance-overview/index.vue"),
       },
+      {
+        path: "shipment",
+        name: "TradeShipmentManagement",
+        meta: {
+          order: 5,
+          icon: "lucide:truck",
+          title: "routes.trade.shipment",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/shipment/index.vue"),
+      },
     ],
   },
 ];

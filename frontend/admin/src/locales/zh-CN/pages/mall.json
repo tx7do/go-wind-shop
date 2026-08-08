@@ -92,7 +92,6 @@
     "createdAt": "创建时间",
     "updatedAt": "更新时间",
     "statusTransition": "状态操作",
-    "fulfill": "发货",
     "close": "关闭订单",
     "orderItems": {
       "id": "订单项ID",
@@ -166,5 +165,36 @@
     "chartTrendDesc": "按日聚合的成功支付流水金额",
     "chartTxStatusTitle": "支付状态金额分布",
     "chartTxStatusDesc": "按支付流水状态聚合的金额占比"
+  },
+  "shipment": {
+    "moduleName": "物流管理",
+    "title": "物流单管理",
+    "id": "物流单ID",
+    "orderId": "关联订单",
+    "carrier": "承运商",
+    "trackingNumber": "运单号",
+    "status": "物流状态",
+    "createdAt": "创建时间",
+    "fulfill": "发货",
+    "deliver": "签收",
+    "create": {
+      "title": "创建物流单",
+      "orderId": "关联订单",
+      "orderIdPlaceholder": "请选择待发货订单",
+      "carrier": "承运商",
+      "carrierPlaceholder": "请输入承运商",
+      "trackingNumber": "运单号",
+      "trackingNumberPlaceholder": "请输入运单号"
+    },
+    "statusLabel": {
+      "STATUS_UNSPECIFIED": "未知",
+      "PENDING": "待发货",
+      "SHIPPED": "已发货",
+      "DELIVERED": "已签收"
+    },
+    "confirm": {
+      "fulfill": "确认对该物流单执行发货？发货后关联订单将标记为已发货。",
+      "deliver": "确认该物流单已签收？签收后物流流程结束。"
+    }
   }
 }

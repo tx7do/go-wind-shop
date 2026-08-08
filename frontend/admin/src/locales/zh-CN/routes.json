@@ -55,7 +55,8 @@
     "order": "订单管理",
     "paymentTransaction": "支付流水",
     "refund": "退款管理",
-    "financeOverview": "财务总览"
+    "financeOverview": "财务总览",
+    "shipment": "物流管理"
   },
   "tenant": {
     "moduleName": "租户管理",

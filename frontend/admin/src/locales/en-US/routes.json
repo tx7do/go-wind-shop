@@ -54,7 +54,8 @@
     "order": "Order Management",
     "paymentTransaction": "Payment Transaction",
     "refund": "Refund Management",
-    "financeOverview": "Finance Overview"
+    "financeOverview": "Finance Overview",
+    "shipment": "Shipment Management"
   },
   "tenant": {
     "moduleName": "Tenant Management",

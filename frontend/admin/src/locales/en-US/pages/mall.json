@@ -92,7 +92,6 @@
     "createdAt": "Created At",
     "updatedAt": "Updated At",
     "statusTransition": "Status Action",
-    "fulfill": "Fulfill",
     "close": "Close Order",
     "orderItems": {
       "id": "Order Item ID",
@@ -166,5 +165,36 @@
     "chartTrendDesc": "Daily aggregated succeeded payment amount",
     "chartTxStatusTitle": "Payment Status Volume Distribution",
     "chartTxStatusDesc": "Amount share by payment transaction status"
+  },
+  "shipment": {
+    "moduleName": "Shipment Management",
+    "title": "Shipment Management",
+    "id": "Shipment ID",
+    "orderId": "Related Order",
+    "carrier": "Carrier",
+    "trackingNumber": "Tracking Number",
+    "status": "Shipment Status",
+    "createdAt": "Created At",
+    "fulfill": "Ship",
+    "deliver": "Mark Delivered",
+    "create": {
+      "title": "Create Shipment",
+      "orderId": "Related Order",
+      "orderIdPlaceholder": "Select an order to ship",
+      "carrier": "Carrier",
+      "carrierPlaceholder": "Enter carrier",
+      "trackingNumber": "Tracking Number",
+      "trackingNumberPlaceholder": "Enter tracking number"
+    },
+    "statusLabel": {
+      "STATUS_UNSPECIFIED": "Unknown",
+      "PENDING": "Pending",
+      "SHIPPED": "Shipped",
+      "DELIVERED": "Delivered"
+    },
+    "confirm": {
+      "fulfill": "Confirm shipping this shipment? The related order will be marked as fulfilled.",
+      "deliver": "Confirm this shipment is delivered? The shipment flow will end."
+    }
   }
 }

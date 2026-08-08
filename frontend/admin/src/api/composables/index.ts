@@ -65,6 +65,7 @@ export * from "./order";
 export * from "./order-item";
 export * from "./payment-transaction";
 export * from "./payment-refund";
+export * from "./shipment";
 
 // 商城分析仪表盘 (Mall / Analytics)
 // 复用上述各实体的 fetchList* 实现，无新增 RPC。
