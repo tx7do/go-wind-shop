@@ -147,6 +147,233 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/mall/addresses:
+        get:
+            tags:
+                - ShippingAddressService
+            operationId: ShippingAddressService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/address.service.v1.ListShippingAddressResponse'
+        post:
+            tags:
+                - ShippingAddressService
+            operationId: ShippingAddressService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/address.service.v1.CreateShippingAddressRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - ShippingAddressService
+            operationId: ShippingAddressService_Delete
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/mall/addresses/count:
+        get:
+            tags:
+                - ShippingAddressService
+            operationId: ShippingAddressService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/address.service.v1.CountShippingAddressResponse'
+    /app/v1/mall/addresses/{id}:
+        get:
+            tags:
+                - ShippingAddressService
+            operationId: ShippingAddressService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/address.service.v1.ShippingAddress'
+        put:
+            tags:
+                - ShippingAddressService
+            operationId: ShippingAddressService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/address.service.v1.UpdateShippingAddressRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /app/v1/mall/brands:
         get:
             tags:
@@ -858,6 +1085,116 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/catalog.service.v1.Category'
+    /app/v1/mall/messages:
+        get:
+            tags:
+                - InternalMessageRecipientService
+            description: 获取当前用户的收件箱列表（通知类）
+            operationId: InternalMessageRecipientService_ListUserInbox
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/internal_message.service.v1.ListUserInboxResponse'
+    /app/v1/mall/messages/delete:
+        post:
+            tags:
+                - InternalMessageRecipientService
+            description: 删除收件箱中的通知记录
+            operationId: InternalMessageRecipientService_DeleteNotificationFromInbox
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/internal_message.service.v1.DeleteNotificationFromInboxRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/mall/messages/read:
+        put:
+            tags:
+                - InternalMessageRecipientService
+            description: 将收件箱中的通知标记为已读
+            operationId: InternalMessageRecipientService_MarkNotificationAsRead
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/internal_message.service.v1.MarkNotificationAsReadRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /app/v1/mall/order-items:
         get:
             tags:
@@ -2125,6 +2462,107 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/catalog.service.v1.Product'
+    /app/v1/mall/shipments:
+        get:
+            tags:
+                - ShipmentService
+            operationId: ShipmentService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shipping.service.v1.ListShipmentResponse'
+    /app/v1/mall/shipments/{id}:
+        get:
+            tags:
+                - ShipmentService
+            operationId: ShipmentService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shipping.service.v1.Shipment'
     /app/v1/mall/sku-attribute-combinations:
         get:
             tags:
@@ -2561,6 +2999,51 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/authentication.service.v1.LoginResponse'
+    /app/v1/reset-password:
+        post:
+            tags:
+                - AuthenticationService
+            description: |-
+                校验验证码并重置密码
+                 校验 Redis 中的验证码（校验即删，一次性），通过后按邮箱反查用户名，
+                 调用核心 ResetCredential 重置 USERNAME 凭证（注册时仅创建 USERNAME 凭证）。
+            operationId: AuthenticationService_ResetPassword
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/app.service.v1.ResetPasswordRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+            security:
+                - {}
+    /app/v1/send-reset-code:
+        post:
+            tags:
+                - AuthenticationService
+            description: |-
+                发送密码重置验证码到邮箱
+                 生成 6 位数字验证码，存 Redis（TTL），并通过 SMTP 发送。
+                 未配置 SMTP 时降级为日志输出（便于开发/演示），流程仍可端到端验证。
+            operationId: AuthenticationService_SendResetCode
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/app.service.v1.SendResetCodeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/app.service.v1.SendResetCodeResponse'
+            security:
+                - {}
 components:
     schemas:
         KratosStatus:
@@ -2580,6 +3063,137 @@ components:
                     type: object
                     description: 元数据
             description: Kratos错误返回
+        address.service.v1.CountShippingAddressResponse:
+            type: object
+            properties:
+                count:
+                    type: string
+        address.service.v1.CreateShippingAddressRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/address.service.v1.ShippingAddress'
+        address.service.v1.ListShippingAddressResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/address.service.v1.ShippingAddress'
+                total:
+                    type: string
+        address.service.v1.ShippingAddress:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 地址ID
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 所属用户ID
+                    format: uint32
+                recipientName:
+                    type: string
+                    description: 收件人姓名
+                recipientPhone:
+                    type: string
+                    description: 收件人电话
+                region:
+                    type: string
+                    description: 省/市/区（结构化文本）
+                detailAddress:
+                    type: string
+                    description: 详细地址
+                postalCode:
+                    type: string
+                    description: 邮政编码
+                tag:
+                    type: string
+                    description: 地址标签（如：家、公司、学校）
+                isDefault:
+                    type: boolean
+                    description: 是否默认地址
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 收货地址
+        address.service.v1.UpdateShippingAddressRequest:
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    description: 地址ID
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/address.service.v1.ShippingAddress'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 允许缺失则插入
+        app.service.v1.ResetPasswordRequest:
+            type: object
+            properties:
+                email:
+                    type: string
+                    description: 注册邮箱
+                code:
+                    type: string
+                    description: 邮箱收到的验证码
+                newPassword:
+                    type: string
+                    description: 新密码
+                needDecrypt:
+                    type: boolean
+                    description: 新密码是否需要 AES 解密
+            description: 重置密码 - 请求
+        app.service.v1.SendResetCodeRequest:
+            type: object
+            properties:
+                email:
+                    type: string
+                    description: 注册邮箱
+            description: 发送密码重置验证码 - 请求
+        app.service.v1.SendResetCodeResponse:
+            type: object
+            properties:
+                emailPreview:
+                    type: string
+                    description: 脱敏邮箱预览
+                expiresIn:
+                    type: integer
+                    description: 验证码有效期（秒）
+                    format: uint32
+            description: 发送密码重置验证码 - 回应
         authentication.service.v1.LoginRequest:
             required:
                 - grant_type
@@ -3838,6 +4452,112 @@ components:
                 verificationId:
                     type: string
                     description: 服务端生成的验证码会话ID（可选）
+        internal_message.service.v1.DeleteNotificationFromInboxRequest:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
+                recipientIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+                    description: 收件箱记录ID列表
+        internal_message.service.v1.InternalMessageRecipient:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 记录ID
+                    format: uint32
+                messageId:
+                    type: integer
+                    description: 站内信内容ID
+                    format: uint32
+                recipientUserId:
+                    type: integer
+                    description: 接收者用户ID
+                    format: uint32
+                status:
+                    enum:
+                        - SENT
+                        - RECEIVED
+                        - READ
+                        - REVOKED
+                        - DELETED
+                    type: string
+                    description: 消息状态
+                    format: enum
+                receivedAt:
+                    type: string
+                    description: 消息到达用户收件箱的时间
+                    format: date-time
+                readAt:
+                    type: string
+                    description: 用户阅读消息的时间
+                    format: date-time
+                title:
+                    type: string
+                    description: 消息标题
+                content:
+                    type: string
+                    description: 消息内容
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局角色
+                    format: uint32
+                tenantName:
+                    type: string
+                    description: 租户名称
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 站内信消息用户接收信息
+        internal_message.service.v1.ListUserInboxResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/internal_message.service.v1.InternalMessageRecipient'
+                total:
+                    type: string
+        internal_message.service.v1.MarkNotificationAsReadRequest:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
+                recipientIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+                    description: 收件箱记录ID列表
         order.service.v1.BatchCreateOrderItemsRequest:
             type: object
             properties:
@@ -4283,6 +5003,77 @@ components:
                 allowMissing:
                     type: boolean
                     description: 允许缺失则插入
+        shipping.service.v1.ListShipmentResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/shipping.service.v1.Shipment'
+                total:
+                    type: string
+        shipping.service.v1.Shipment:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 物流单ID
+                    format: uint32
+                orderId:
+                    type: integer
+                    description: 关联的订单ID
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 归属用户ID（与订单 user_id 一致，行级隔离用）
+                    format: uint32
+                carrier:
+                    type: string
+                    description: 承运商
+                trackingNumber:
+                    type: string
+                    description: 运单号
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - PENDING
+                        - SHIPPED
+                        - DELIVERED
+                    type: string
+                    description: 物流单状态
+                    format: enum
+                trackingEvents:
+                    type: string
+                    description: 物流轨迹事件列表（JSON 字符串）
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 物流单
         storage.service.v1.DownloadFileResponse:
             type: object
             properties:
@@ -4409,6 +5200,11 @@ tags:
       description: 商品类目前台服务
     - name: FileTransferService
       description: 文件传输服务
+    - name: InternalMessageRecipientService
+      description: |-
+        站内信收件箱前台服务（BFF 网关，REST）
+         仅暴露收件视角：查收件箱、标记已读、删除。所有操作的 user_id 由网关从登录态
+         强制注入，客户端无法读取/操作他人收件箱。
     - name: OrderItemService
       description: 订单项前台服务
     - name: OrderService
@@ -4423,6 +5219,14 @@ tags:
       description: 商品属性值前台服务
     - name: ProductService
       description: 商品前台服务
+    - name: ShipmentService
+      description: |-
+        物流单前台服务（app 侧，买家只读查询自己订单的物流轨迹）
+         仅暴露 List/Get，无 Create/Update/Delete。
+    - name: ShippingAddressService
+      description: |-
+        收货地址前台服务（BFF 网关，REST）
+         写操作由网关层强制注入当前登录用户的 user_id/tenant_id，客户端无法伪造。
     - name: SkuAttributeCombinationService
       description: SKU 属性组合前台服务
     - name: SkuPriceService

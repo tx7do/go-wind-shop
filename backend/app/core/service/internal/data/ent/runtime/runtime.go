@@ -50,6 +50,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-shop/app/core/service/internal/data/ent/schema"
+	"go-wind-shop/app/core/service/internal/data/ent/shipment"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingaddress"
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
@@ -1144,6 +1145,30 @@ func init() {
 	rolepermissionDescID := rolepermissionMixinFields0[0].Descriptor()
 	// rolepermission.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	rolepermission.IDValidator = rolepermissionDescID.Validators[0].(func(uint32) error)
+	shipmentMixin := schema.Shipment{}.Mixin()
+	shipment.Policy = privacy.NewPolicies(shipmentMixin[3], schema.Shipment{})
+	shipment.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := shipment.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	shipmentMixinFields0 := shipmentMixin[0].Fields()
+	_ = shipmentMixinFields0
+	shipmentMixinFields3 := shipmentMixin[3].Fields()
+	_ = shipmentMixinFields3
+	shipmentFields := schema.Shipment{}.Fields()
+	_ = shipmentFields
+	// shipmentDescTenantID is the schema descriptor for tenant_id field.
+	shipmentDescTenantID := shipmentMixinFields3[0].Descriptor()
+	// shipment.DefaultTenantID holds the default value on creation for the tenant_id field.
+	shipment.DefaultTenantID = shipmentDescTenantID.Default.(uint32)
+	// shipmentDescID is the schema descriptor for id field.
+	shipmentDescID := shipmentMixinFields0[0].Descriptor()
+	// shipment.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	shipment.IDValidator = shipmentDescID.Validators[0].(func(uint32) error)
 	shippingaddressMixin := schema.ShippingAddress{}.Mixin()
 	shippingaddress.Policy = privacy.NewPolicies(shippingaddressMixin[3], schema.ShippingAddress{})
 	shippingaddress.Hooks[0] = func(next ent.Mutator) ent.Mutator {

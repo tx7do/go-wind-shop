@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "shipping/service/v1/shipment.proto";
+
+// 物流单管理服务（admin 侧，卖家运营可读写）
+service ShipmentService {
+  rpc List (pagination.PagingRequest) returns (shipping.service.v1.ListShipmentResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/shipments"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (shipping.service.v1.CountShipmentResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/shipments/count"
+    };
+  }
+
+  rpc Get (shipping.service.v1.GetShipmentRequest) returns (shipping.service.v1.Shipment) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/shipments/{id}"
+    };
+  }
+
+  rpc Create (shipping.service.v1.CreateShipmentRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/shipments"
+      body: "*"
+    };
+  }
+
+  rpc Update (shipping.service.v1.UpdateShipmentRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/shipments/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (shipping.service.v1.DeleteShipmentRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/shipments"
+    };
+  }
+}

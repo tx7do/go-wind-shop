@@ -64,6 +64,9 @@ managed:
     - file_option: go_package
       path: address/service/v1
       value: go-wind-shop/api/gen/go/address/service/v1;addresspb
+    - file_option: go_package
+      path: shipping/service/v1
+      value: go-wind-shop/api/gen/go/shipping/service/v1;shippingpb
 
 plugins:
   # generate go code

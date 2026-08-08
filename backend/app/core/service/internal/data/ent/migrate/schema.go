@@ -2643,6 +2643,42 @@ var (
 			},
 		},
 	}
+	// MallShipmentsColumns holds the columns for the "mall_shipments" table.
+	MallShipmentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "order_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的订单ID"},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "归属用户ID（与订单 user_id 一致，用于行级隔离）"},
+		{Name: "carrier", Type: field.TypeString, Nullable: true, Comment: "承运商"},
+		{Name: "tracking_number", Type: field.TypeString, Nullable: true, Comment: "运单号"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "物流单状态", Enums: []string{"PENDING", "SHIPPED", "DELIVERED"}},
+		{Name: "tracking_events", Type: field.TypeString, Nullable: true, Comment: "物流轨迹事件列表（JSON 字符串，结构 [{timestamp,location,description}]）"},
+	}
+	// MallShipmentsTable holds the schema information for the "mall_shipments" table.
+	MallShipmentsTable = &schema.Table{
+		Name:       "mall_shipments",
+		Comment:    "物流单表",
+		Columns:    MallShipmentsColumns,
+		PrimaryKey: []*schema.Column{MallShipmentsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "shipment_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallShipmentsColumns[8]},
+			},
+			{
+				Name:    "shipment_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallShipmentsColumns[9]},
+			},
+		},
+	}
 	// UserShippingAddressesColumns holds the columns for the "user_shipping_addresses" table.
 	UserShippingAddressesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3379,6 +3415,7 @@ var (
 		SysRolesTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
+		MallShipmentsTable,
 		UserShippingAddressesTable,
 		MallSkusTable,
 		MallSkuAttributeCombinationsTable,
@@ -3615,6 +3652,11 @@ func init() {
 	}
 	SysRolePermissionsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_role_permissions",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallShipmentsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_shipments",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

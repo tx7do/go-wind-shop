@@ -14,6 +14,7 @@ import {
   useListPaymentTransactions,
   useCreatePaymentRefund,
   useListPaymentRefunds,
+  useListShipments,
 } from '@/api/composables';
 import { queryClient } from '@/plugins/vue-query';
 import { useAccessStore } from '@/stores/modules/core/access.state';
@@ -94,6 +95,45 @@ const orderItems = computed<OrderItemEntity[]>(() => {
 });
 const itemsLoading = computed(() => orderItemsQuery.isPending.value);
 const itemsError = computed(() => orderItemsQuery.isError.value);
+
+// ---------- 物流信息 ----------
+// 按 orderId 查询关联物流单（app 侧只读）。仅当订单已发货(FULFILLED/CLOSED)时展示。
+const shipmentQuery = useListShipments(
+  computed(() => ({
+    page: 1,
+    pageSize: 10,
+    noPaging: false,
+    query:
+      orderId.value > 0 ? JSON.stringify({ orderId: orderId.value }) : undefined,
+  })),
+  { enabled: computed(() => isLogin.value && orderId.value > 0) },
+);
+type ShipmentEntity = {
+  id?: number;
+  carrier?: string;
+  trackingNumber?: string;
+  trackingEvents?: string;
+};
+const shipment = computed<ShipmentEntity | undefined>(() => {
+  const items = (shipmentQuery.data?.value as any)?.items ?? [];
+  return (items as ShipmentEntity[])[0];
+});
+// 物流轨迹（trackingEvents 是 JSON 字符串，解析为时间线数组）
+type TrackingEvent = { timestamp?: string; location?: string; description?: string };
+const trackingEvents = computed<TrackingEvent[]>(() => {
+  const raw = shipment.value?.trackingEvents;
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? (parsed as TrackingEvent[]) : [];
+  } catch {
+    return [];
+  }
+});
+const showShipment = computed(() => {
+  const st = order.value?.status;
+  return (st === 'FULFILLED' || st === 'CLOSED') && shipment.value !== undefined;
+});
 
 const STATUS_LABEL_KEY: Record<OrderStatus, string> = {
   STATUS_UNSPECIFIED: 'orderStatus.status_unspecified',
@@ -441,6 +481,50 @@ const hasAnyAction = computed(
             <p class="mt-1 text-sm text-foreground">{{ maskAddress(order.shippingAddress) }}</p>
           </div>
         </div>
+      </div>
+
+      <!-- 物流信息（仅已发货/已关闭订单展示） -->
+      <div v-if="showShipment" class="rounded-2xl border border-border bg-card p-6">
+        <h2 class="mb-4 text-base font-bold text-foreground">{{ t('shipment.title') }}</h2>
+
+        <!-- 运单信息 -->
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div class="rounded-md border border-border bg-background/40 p-3">
+            <p class="text-[10px] uppercase tracking-wide text-muted-foreground">{{ t('shipment.carrier') }}</p>
+            <p class="mt-1 text-sm text-foreground">{{ shipment?.carrier || '—' }}</p>
+          </div>
+          <div class="rounded-md border border-border bg-background/40 p-3">
+            <p class="text-[10px] uppercase tracking-wide text-muted-foreground">{{ t('shipment.trackingNumber') }}</p>
+            <p class="mt-1 text-sm tabular-nums text-foreground">{{ shipment?.trackingNumber || '—' }}</p>
+          </div>
+        </div>
+
+        <!-- 物流轨迹时间线 -->
+        <h3 class="mb-3 mt-6 text-sm font-semibold text-foreground">{{ t('shipment.timeline.title') }}</h3>
+        <div v-if="trackingEvents.length > 0" class="flex flex-col">
+          <div
+            v-for="(ev, idx) in trackingEvents"
+            :key="idx"
+            class="flex gap-3"
+          >
+            <!-- 时间线节点 + 连接线 -->
+            <div class="flex flex-col items-center">
+              <span class="mt-1 h-2 w-2 rounded-full bg-border"></span>
+              <span v-if="idx < trackingEvents.length - 1" class="w-px flex-1 bg-border"></span>
+            </div>
+            <!-- 事件内容 -->
+            <div class="flex-1 pb-6">
+              <p class="text-xs text-muted-foreground">{{ ev.timestamp || '—' }}</p>
+              <p class="mt-1 text-sm text-foreground">{{ ev.location || '—' }}</p>
+              <p class="mt-1 text-xs text-muted-foreground">{{ ev.description || '—' }}</p>
+            </div>
+          </div>
+        </div>
+        <UiAppEmpty
+          v-else
+          variant="noData"
+          :description="t('shipment.noTrackingDesc')"
+        />
       </div>
 
       <!-- 订单项 -->

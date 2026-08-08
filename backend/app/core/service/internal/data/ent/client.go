@@ -55,6 +55,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/role"
 	"go-wind-shop/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-shop/app/core/service/internal/data/ent/shipment"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingaddress"
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
@@ -166,6 +167,8 @@ type Client struct {
 	RoleMetadata *RoleMetadataClient
 	// RolePermission is the client for interacting with the RolePermission builders.
 	RolePermission *RolePermissionClient
+	// Shipment is the client for interacting with the Shipment builders.
+	Shipment *ShipmentClient
 	// ShippingAddress is the client for interacting with the ShippingAddress builders.
 	ShippingAddress *ShippingAddressClient
 	// Sku is the client for interacting with the Sku builders.
@@ -243,6 +246,7 @@ func (c *Client) init() {
 	c.Role = NewRoleClient(c.config)
 	c.RoleMetadata = NewRoleMetadataClient(c.config)
 	c.RolePermission = NewRolePermissionClient(c.config)
+	c.Shipment = NewShipmentClient(c.config)
 	c.ShippingAddress = NewShippingAddressClient(c.config)
 	c.Sku = NewSkuClient(c.config)
 	c.SkuAttributeCombination = NewSkuAttributeCombinationClient(c.config)
@@ -390,6 +394,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Role:                             NewRoleClient(cfg),
 		RoleMetadata:                     NewRoleMetadataClient(cfg),
 		RolePermission:                   NewRolePermissionClient(cfg),
+		Shipment:                         NewShipmentClient(cfg),
 		ShippingAddress:                  NewShippingAddressClient(cfg),
 		Sku:                              NewSkuClient(cfg),
 		SkuAttributeCombination:          NewSkuAttributeCombinationClient(cfg),
@@ -464,6 +469,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Role:                             NewRoleClient(cfg),
 		RoleMetadata:                     NewRoleMetadataClient(cfg),
 		RolePermission:                   NewRolePermissionClient(cfg),
+		Shipment:                         NewShipmentClient(cfg),
 		ShippingAddress:                  NewShippingAddressClient(cfg),
 		Sku:                              NewSkuClient(cfg),
 		SkuAttributeCombination:          NewSkuAttributeCombinationClient(cfg),
@@ -514,7 +520,7 @@ func (c *Client) Use(hooks ...Hook) {
 		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Product,
 		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
 		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Role,
-		c.RoleMetadata, c.RolePermission, c.ShippingAddress, c.Sku,
+		c.RoleMetadata, c.RolePermission, c.Shipment, c.ShippingAddress, c.Sku,
 		c.SkuAttributeCombination, c.SkuPrice, c.Task, c.Tenant, c.User,
 		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
@@ -536,7 +542,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Product,
 		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
 		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Role,
-		c.RoleMetadata, c.RolePermission, c.ShippingAddress, c.Sku,
+		c.RoleMetadata, c.RolePermission, c.Shipment, c.ShippingAddress, c.Sku,
 		c.SkuAttributeCombination, c.SkuPrice, c.Task, c.Tenant, c.User,
 		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
 	} {
@@ -635,6 +641,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.RoleMetadata.mutate(ctx, m)
 	case *RolePermissionMutation:
 		return c.RolePermission.mutate(ctx, m)
+	case *ShipmentMutation:
+		return c.Shipment.mutate(ctx, m)
 	case *ShippingAddressMutation:
 		return c.ShippingAddress.mutate(ctx, m)
 	case *SkuMutation:
@@ -6668,6 +6676,140 @@ func (c *RolePermissionClient) mutate(ctx context.Context, m *RolePermissionMuta
 	}
 }
 
+// ShipmentClient is a client for the Shipment schema.
+type ShipmentClient struct {
+	config
+}
+
+// NewShipmentClient returns a client for the Shipment from the given config.
+func NewShipmentClient(c config) *ShipmentClient {
+	return &ShipmentClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `shipment.Hooks(f(g(h())))`.
+func (c *ShipmentClient) Use(hooks ...Hook) {
+	c.hooks.Shipment = append(c.hooks.Shipment, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `shipment.Intercept(f(g(h())))`.
+func (c *ShipmentClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Shipment = append(c.inters.Shipment, interceptors...)
+}
+
+// Create returns a builder for creating a Shipment entity.
+func (c *ShipmentClient) Create() *ShipmentCreate {
+	mutation := newShipmentMutation(c.config, OpCreate)
+	return &ShipmentCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Shipment entities.
+func (c *ShipmentClient) CreateBulk(builders ...*ShipmentCreate) *ShipmentCreateBulk {
+	return &ShipmentCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ShipmentClient) MapCreateBulk(slice any, setFunc func(*ShipmentCreate, int)) *ShipmentCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ShipmentCreateBulk{err: fmt.Errorf("calling to ShipmentClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ShipmentCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ShipmentCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Shipment.
+func (c *ShipmentClient) Update() *ShipmentUpdate {
+	mutation := newShipmentMutation(c.config, OpUpdate)
+	return &ShipmentUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ShipmentClient) UpdateOne(_m *Shipment) *ShipmentUpdateOne {
+	mutation := newShipmentMutation(c.config, OpUpdateOne, withShipment(_m))
+	return &ShipmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ShipmentClient) UpdateOneID(id uint32) *ShipmentUpdateOne {
+	mutation := newShipmentMutation(c.config, OpUpdateOne, withShipmentID(id))
+	return &ShipmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Shipment.
+func (c *ShipmentClient) Delete() *ShipmentDelete {
+	mutation := newShipmentMutation(c.config, OpDelete)
+	return &ShipmentDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ShipmentClient) DeleteOne(_m *Shipment) *ShipmentDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ShipmentClient) DeleteOneID(id uint32) *ShipmentDeleteOne {
+	builder := c.Delete().Where(shipment.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ShipmentDeleteOne{builder}
+}
+
+// Query returns a query builder for Shipment.
+func (c *ShipmentClient) Query() *ShipmentQuery {
+	return &ShipmentQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeShipment},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Shipment entity by its id.
+func (c *ShipmentClient) Get(ctx context.Context, id uint32) (*Shipment, error) {
+	return c.Query().Where(shipment.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ShipmentClient) GetX(ctx context.Context, id uint32) *Shipment {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ShipmentClient) Hooks() []Hook {
+	hooks := c.hooks.Shipment
+	return append(hooks[:len(hooks):len(hooks)], shipment.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *ShipmentClient) Interceptors() []Interceptor {
+	return c.inters.Shipment
+}
+
+func (c *ShipmentClient) mutate(ctx context.Context, m *ShipmentMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ShipmentCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ShipmentUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ShipmentUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ShipmentDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Shipment mutation op: %q", m.Op())
+	}
+}
+
 // ShippingAddressClient is a client for the ShippingAddress schema.
 type ShippingAddressClient struct {
 	config
@@ -8150,7 +8292,7 @@ type (
 		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
 		Position, Product, ProductAttribute, ProductAttributeTranslation,
 		ProductAttributeValue, ProductAttributeValueTranslation, ProductTranslation,
-		Role, RoleMetadata, RolePermission, ShippingAddress, Sku,
+		Role, RoleMetadata, RolePermission, Shipment, ShippingAddress, Sku,
 		SkuAttributeCombination, SkuPrice, Task, Tenant, User, UserCredential,
 		UserOrgUnit, UserPosition, UserRole []ent.Hook
 	}
@@ -8164,7 +8306,7 @@ type (
 		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
 		Position, Product, ProductAttribute, ProductAttributeTranslation,
 		ProductAttributeValue, ProductAttributeValueTranslation, ProductTranslation,
-		Role, RoleMetadata, RolePermission, ShippingAddress, Sku,
+		Role, RoleMetadata, RolePermission, Shipment, ShippingAddress, Sku,
 		SkuAttributeCombination, SkuPrice, Task, Tenant, User, UserCredential,
 		UserOrgUnit, UserPosition, UserRole []ent.Interceptor
 	}

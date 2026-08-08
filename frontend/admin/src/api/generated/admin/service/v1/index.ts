@@ -10544,6 +10544,383 @@ export type permissionservicev1_DeleteRoleRequest = {
   tenantId?: number;
 };
 
+// 物流单管理服务（admin 侧，卖家运营可读写）
+export interface ShipmentService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<shippingservicev1_ListShipmentResponse>;
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<shippingservicev1_CountShipmentResponse>;
+  Get(
+    request: shippingservicev1_GetShipmentRequest,
+  ): Promise<shippingservicev1_Shipment>;
+  Create(
+    request: shippingservicev1_CreateShipmentRequest,
+  ): Promise<wellKnownEmpty>;
+  Update(
+    request: shippingservicev1_UpdateShipmentRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: shippingservicev1_DeleteShipmentRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createShipmentServiceClient(
+  transport: ClientTransport,
+): ShipmentService {
+  return {
+    List(request) {
+      const path = `admin/v1/mall/shipments`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ShipmentService',
+        method: 'List',
+      }) as Promise<shippingservicev1_ListShipmentResponse>;
+    },
+    Count(request) {
+      const path = `admin/v1/mall/shipments/count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ShipmentService',
+        method: 'Count',
+      }) as Promise<shippingservicev1_CountShipmentResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/mall/shipments/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ShipmentService',
+        method: 'Get',
+      }) as Promise<shippingservicev1_Shipment>;
+    },
+    Create(request) {
+      const path = `admin/v1/mall/shipments`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ShipmentService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/mall/shipments/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'ShipmentService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      const path = `admin/v1/mall/shipments`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'DELETE', body, {
+        service: 'ShipmentService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type shippingservicev1_ListShipmentResponse = {
+  items: shippingservicev1_Shipment[] | undefined;
+  total: number | undefined;
+};
+
+// 物流单
+export type shippingservicev1_Shipment = {
+  carrier?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  orderId?: number;
+  status?: shippingservicev1_Shipment_Status;
+  tenantId?: number;
+  trackingEvents?: string;
+  trackingNumber?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  userId?: number;
+};
+
+// 物流单状态
+// 状态流转规则：
+// 初始：PENDING（待发货，卖家创建物流单时初始态）
+// 发货路径：PENDING → SHIPPED（卖家填运单号并发货，同步推进关联订单 PAID→FULFILLED）
+// 签收路径：SHIPPED → DELIVERED（终态）
+// 终态不可回退：DELIVERED
+export type shippingservicev1_Shipment_Status =
+  | 'DELIVERED'
+  | 'PENDING'
+  | 'SHIPPED'
+  | 'STATUS_UNSPECIFIED';
+export type shippingservicev1_CountShipmentResponse = {
+  count: number | undefined;
+};
+
+export type shippingservicev1_GetShipmentRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type shippingservicev1_CreateShipmentRequest = {
+  data: shippingservicev1_Shipment | undefined;
+};
+
+export type shippingservicev1_UpdateShipmentRequest = {
+  allowMissing?: boolean;
+  data: shippingservicev1_Shipment | undefined;
+  // 状态前置条件（乐观状态机）：仅当物流单当前 status ∈ expected_status 时更新才生效，
+  // 否则 affected_rows=0 返回 Conflict。留空表示不校验。
+  expectedStatus: shippingservicev1_Shipment_Status[] | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type shippingservicev1_DeleteShipmentRequest = {
+  id?: number;
+};
+
 // SKU 管理服务
 export interface SkuService {
   // 分页查询 SKU 列表
@@ -12982,6 +13359,7 @@ export class ApiClient {
   private _productAttributeValueService?: ProductAttributeValueService;
   private _productService?: ProductService;
   private _roleService?: RoleService;
+  private _shipmentService?: ShipmentService;
   private _skuAttributeCombinationService?: SkuAttributeCombinationService;
   private _skuPriceService?: SkuPriceService;
   private _skuService?: SkuService;
@@ -13125,6 +13503,10 @@ export class ApiClient {
 
   get roleService(): RoleService {
     return this._roleService ??= createRoleServiceClient(this._transport);
+  }
+
+  get shipmentService(): ShipmentService {
+    return this._shipmentService ??= createShipmentServiceClient(this._transport);
   }
 
   get skuAttributeCombinationService(): SkuAttributeCombinationService {

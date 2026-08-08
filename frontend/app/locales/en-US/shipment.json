@@ -1,0 +1,11 @@
+{
+  "title": "Logistics",
+  "subtitle": "View the delivery status and tracking history of your order",
+  "carrier": "Carrier",
+  "trackingNumber": "Tracking Number",
+  "noTracking": "No logistics information",
+  "noTrackingDesc": "No logistics record has been generated for this order yet, please check back later",
+  "timeline": {
+    "title": "Tracking History"
+  }
+}

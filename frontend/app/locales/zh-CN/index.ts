@@ -17,6 +17,7 @@ import search from './search.json'
 import refunds from './refunds.json'
 import addresses from './addresses.json'
 import messages from './messages.json'
+import shipment from './shipment.json'
 
 export default {
     app,
@@ -38,4 +39,5 @@ export default {
     refunds,
     addresses,
     messages,
+    shipment,
 }

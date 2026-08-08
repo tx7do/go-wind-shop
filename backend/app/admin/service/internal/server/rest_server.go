@@ -114,6 +114,7 @@ func NewRestServer(
 	orderItemService *service.OrderItemService,
 	paymentTransactionService *service.PaymentTransactionService,
 	paymentRefundService *service.PaymentRefundService,
+	shipmentService *service.ShipmentService,
 
 	fileSvc *service.FileService,
 	fileTransferService *service.FileTransferService,
@@ -170,6 +171,7 @@ func NewRestServer(
 	adminV1.RegisterOrderItemServiceHTTPServer(srv, orderItemService)
 	adminV1.RegisterPaymentTransactionServiceHTTPServer(srv, paymentTransactionService)
 	adminV1.RegisterPaymentRefundServiceHTTPServer(srv, paymentRefundService)
+	adminV1.RegisterShipmentServiceHTTPServer(srv, shipmentService)
 
 	adminV1.RegisterApiServiceHTTPServer(srv, apiService)
 	adminV1.RegisterMenuServiceHTTPServer(srv, menuSvc)

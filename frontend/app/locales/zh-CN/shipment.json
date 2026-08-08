@@ -1,0 +1,11 @@
+{
+  "title": "物流信息",
+  "subtitle": "查看订单的物流状态与配送轨迹",
+  "carrier": "承运商",
+  "trackingNumber": "运单号",
+  "noTracking": "暂无物流信息",
+  "noTrackingDesc": "该订单暂未生成物流记录，请稍后查看",
+  "timeline": {
+    "title": "物流轨迹"
+  }
+}

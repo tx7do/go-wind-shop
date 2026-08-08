@@ -4938,6 +4938,233 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/catalog.service.v1.ProductTranslationExistsResponse'
+    /admin/v1/mall/shipments:
+        get:
+            tags:
+                - ShipmentService
+            operationId: ShipmentService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shipping.service.v1.ListShipmentResponse'
+        post:
+            tags:
+                - ShipmentService
+            operationId: ShipmentService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/shipping.service.v1.CreateShipmentRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - ShipmentService
+            operationId: ShipmentService_Delete
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/mall/shipments/count:
+        get:
+            tags:
+                - ShipmentService
+            operationId: ShipmentService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shipping.service.v1.CountShipmentResponse'
+    /admin/v1/mall/shipments/{id}:
+        get:
+            tags:
+                - ShipmentService
+            operationId: ShipmentService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shipping.service.v1.Shipment'
+        put:
+            tags:
+                - ShipmentService
+            operationId: ShipmentService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/shipping.service.v1.UpdateShipmentRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/mall/sku-attribute-combinations:
         get:
             tags:
@@ -12458,6 +12685,115 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 更新角色 - 请求
+        shipping.service.v1.CountShipmentResponse:
+            type: object
+            properties:
+                count:
+                    type: string
+        shipping.service.v1.CreateShipmentRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/shipping.service.v1.Shipment'
+        shipping.service.v1.ListShipmentResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/shipping.service.v1.Shipment'
+                total:
+                    type: string
+        shipping.service.v1.Shipment:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 物流单ID
+                    format: uint32
+                orderId:
+                    type: integer
+                    description: 关联的订单ID
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 归属用户ID（与订单 user_id 一致，行级隔离用）
+                    format: uint32
+                carrier:
+                    type: string
+                    description: 承运商
+                trackingNumber:
+                    type: string
+                    description: 运单号
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - PENDING
+                        - SHIPPED
+                        - DELIVERED
+                    type: string
+                    description: 物流单状态
+                    format: enum
+                trackingEvents:
+                    type: string
+                    description: 物流轨迹事件列表（JSON 字符串）
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 物流单
+        shipping.service.v1.UpdateShipmentRequest:
+            type: object
+            properties:
+                id:
+                    readOnly: true
+                    type: integer
+                    description: 物流单ID
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/shipping.service.v1.Shipment'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 允许缺失则插入
+                expectedStatus:
+                    type: array
+                    items:
+                        enum:
+                            - STATUS_UNSPECIFIED
+                            - PENDING
+                            - SHIPPED
+                            - DELIVERED
+                        type: string
+                        format: enum
+                    description: 状态前置条件白名单，物流单当前状态须在其中更新才生效，否则返回 Conflict
         storage.service.v1.CreateFileRequest:
             type: object
             properties:
@@ -12923,6 +13259,8 @@ tags:
       description: 商品管理服务
     - name: RoleService
       description: 角色管理服务
+    - name: ShipmentService
+      description: 物流单管理服务（admin 侧，卖家运营可读写）
     - name: SkuAttributeCombinationService
       description: SKU 属性组合管理服务
     - name: SkuPriceService

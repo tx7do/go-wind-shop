@@ -1,0 +1,124 @@
+syntax = "proto3";
+
+package shipping.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 物流单服务（核心实现，gRPC）
+service ShipmentService {
+  rpc List (pagination.PagingRequest) returns (ListShipmentResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountShipmentResponse) {}
+  rpc Get (GetShipmentRequest) returns (Shipment) {}
+  rpc Create (CreateShipmentRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdateShipmentRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteShipmentRequest) returns (google.protobuf.Empty) {}
+}
+
+// 物流单
+message Shipment {
+  // 物流单状态
+  //
+  // 状态流转规则：
+  // 初始：PENDING（待发货，卖家创建物流单时初始态）
+  // 发货路径：PENDING → SHIPPED（卖家填运单号并发货，同步推进关联订单 PAID→FULFILLED）
+  // 签收路径：SHIPPED → DELIVERED（终态）
+  // 终态不可回退：DELIVERED
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+
+    PENDING = 1;    // 待发货
+    SHIPPED = 2;    // 已发货
+    DELIVERED = 3;  // 已签收（终态）
+  }
+
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "物流单ID"}];
+
+  optional uint32 order_id = 2 [
+    json_name = "orderId",
+    (gnostic.openapi.v3.property) = {description: "关联的订单ID"}
+  ];
+
+  optional uint32 user_id = 3 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {description: "归属用户ID（与订单 user_id 一致，行级隔离用）"}
+  ];
+
+  optional string carrier = 4 [
+    json_name = "carrier",
+    (gnostic.openapi.v3.property) = {description: "承运商"}
+  ];
+
+  optional string tracking_number = 5 [
+    json_name = "trackingNumber",
+    (gnostic.openapi.v3.property) = {description: "运单号"}
+  ];
+
+  optional Status status = 6 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "物流单状态"}
+  ];
+
+  optional string tracking_events = 7 [
+    json_name = "trackingEvents",
+    (gnostic.openapi.v3.property) = {description: "物流轨迹事件列表（JSON 字符串）"}
+  ];
+
+  optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+message ListShipmentResponse { repeated Shipment items = 1; uint64 total = 2; }
+message CountShipmentResponse { uint64 count = 1; }
+
+message GetShipmentRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "物流单ID", read_only: true}, json_name = "id"];
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}
+  ];
+}
+
+message CreateShipmentRequest { Shipment data = 1; }
+
+message UpdateShipmentRequest {
+  uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "物流单ID", read_only: true}, json_name = "id"];
+  Shipment data = 2;
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
+    json_name = "updateMask"
+  ];
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "允许缺失则插入"},
+    json_name = "allowMissing"
+  ];
+
+  // 状态前置条件（乐观状态机）：仅当物流单当前 status ∈ expected_status 时更新才生效，
+  // 否则 affected_rows=0 返回 Conflict。留空表示不校验。
+  repeated Shipment.Status expected_status = 5 [
+    json_name = "expectedStatus",
+    (gnostic.openapi.v3.property) = {description: "状态前置条件白名单，物流单当前状态须在其中更新才生效，否则返回 Conflict"}
+  ];
+}
+
+message DeleteShipmentRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "物流单ID", read_only: true}, json_name = "id"];
+  }
+}

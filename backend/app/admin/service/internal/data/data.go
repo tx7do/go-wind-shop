@@ -29,6 +29,7 @@ import (
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
 	storageV1 "go-wind-shop/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-shop/api/gen/go/task/service/v1"
+	shippingV1 "go-wind-shop/api/gen/go/shipping/service/v1"
 
 	"go-wind-shop/pkg/oss"
 	"go-wind-shop/pkg/serviceid"
@@ -442,5 +443,14 @@ func NewPaymentRefundServiceClient(ctx *bootstrap.Context, r registry.Discovery)
 	}
 
 	return paymentV1.NewPaymentRefundServiceClient(cli)
+}
+
+func NewShipmentServiceClient(ctx *bootstrap.Context, r registry.Discovery) shippingV1.ShipmentServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return shippingV1.NewShipmentServiceClient(cli)
 }
 
