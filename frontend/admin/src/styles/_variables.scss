@@ -21,6 +21,10 @@ $tags-view-height: 34px;
 // ============================================
 
 :root {
+  // 声明浅色配色：让浏览器原生控件（滚动条、日期选择器、autofill 背景等）
+  // 与页面浅色主题一致，避免暗色原生控件在浅色页面上突兀。
+  color-scheme: light;
+
   // 菜单
   --menu-background: #fff;
   --menu-text: #606266;
@@ -62,6 +66,10 @@ html.sidebar-color-blue {
 
 // 暗黑主题
 html.dark {
+  // 声明暗色配色：让浏览器原生控件（滚动条、日期选择器、autofill 背景等）
+  // 与页面暗色主题一致，避免亮色原生控件在暗色页面上突兀。
+  color-scheme: dark;
+
   --menu-background: #0D0F14;  // 与 Logo 区保持一致
   --menu-text: #d9d9d9;          // 未选中菜单项（亮灰色，清晰可读）
   --menu-active-text: var(--el-menu-active-color);

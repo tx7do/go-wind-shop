@@ -17,7 +17,7 @@
                 :content="typeof field.tips === 'string' ? field.tips : ''"
                 placement="top"
               >
-                <ElIcon class="text-gray-400"><QuestionFilled /></ElIcon>
+                <ElIcon class="text-secondary"><QuestionFilled /></ElIcon>
               </ElTooltip>
               <span v-if="colon" class="ml-0.5">:</span>
             </span>

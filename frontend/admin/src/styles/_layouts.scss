@@ -54,11 +54,13 @@
 }
 
 // 混合布局左侧菜单 hover 样式（与 LayoutSidebar 统一规范）
+// 用 EP fill/text 语义变量，浅色为浅灰、暗色自动跟随，避免 rgba(0,0,0,0.04)
+// 在深底不可见及 #1d2129 在混合主题下失配。
 .layout-mix .layout__sidebar--left .el-menu {
   .el-menu-item:hover,
   .el-sub-menu__title:hover {
-    background-color: rgba(0, 0, 0, 0.04) !important;
-    color: #1d2129 !important;
+    background-color: var(--el-fill-color-light) !important;
+    color: var(--el-text-color-primary) !important;
   }
 
   .el-menu-item.is-active {
