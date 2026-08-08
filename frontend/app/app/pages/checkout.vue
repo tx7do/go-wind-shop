@@ -305,11 +305,15 @@ const form = reactive({
 });
 
 const formValid = computed(() => {
-  return (
-    form.recipientName.trim().length > 0 &&
-    form.recipientPhone.trim().length > 0 &&
-    form.shippingAddress.trim().length > 0
-  );
+  const name = form.recipientName.trim();
+  const phone = form.recipientPhone.trim();
+  const addr = form.shippingAddress.trim();
+  // 基本非空 + 长度上限
+  if (name.length === 0 || name.length > 32) return false;
+  if (addr.length === 0 || addr.length > 200) return false;
+  // 中国大陆手机号：11 位、1 开头
+  if (!/^1[3-9]\d{9}$/.test(phone)) return false;
+  return true;
 });
 
 // ---------- 地址簿快捷填充 ----------

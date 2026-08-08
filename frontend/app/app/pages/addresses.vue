@@ -86,11 +86,22 @@ const formTitle = computed(() =>
 );
 
 const formValid = computed(() => {
-  return (
-    form.recipientName.trim().length > 0 &&
-    form.recipientPhone.trim().length > 0 &&
-    form.detailAddress.trim().length > 0
-  );
+  const name = form.recipientName.trim();
+  const phone = form.recipientPhone.trim();
+  const addr = form.detailAddress.trim();
+  const postal = form.postalCode.trim();
+
+  // 基本非空 + 长度上限（防超长写入）
+  if (name.length === 0 || name.length > 32) return false;
+  if (addr.length === 0 || addr.length > 200) return false;
+
+  // 中国大陆手机号：11 位、1 开头
+  if (!/^1[3-9]\d{9}$/.test(phone)) return false;
+
+  // 邮编可选；若填则必须 6 位数字
+  if (postal.length > 0 && !/^\d{6}$/.test(postal)) return false;
+
+  return true;
 });
 
 function openCreate() {
