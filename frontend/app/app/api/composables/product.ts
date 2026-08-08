@@ -16,14 +16,14 @@ export function useListProducts(
 ) {
   return useQuery({
     queryKey: ['listProducts', params, getCurrentLocale()],
-    queryFn: () => fetchListProducts(params),
+    queryFn: () => fetchListProducts(toValue(params)),
     ...options,
   });
 }
 export async function fetchListProductsStore(params: any) {
   return queryClient.fetchQuery({
     queryKey: ['listProducts', params, getCurrentLocale()],
-    queryFn: () => fetchListProducts(params),
+    queryFn: () => fetchListProducts(toValue(params)),
     retry: 0,
   });
 }

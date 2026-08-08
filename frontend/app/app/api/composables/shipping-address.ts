@@ -8,6 +8,7 @@ import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { makeUpdateMask } from '@/core/transport/rest';
 import { getCurrentLocale } from '@/utils/locale';
+import { unref } from 'vue';
 import type {
   addressservicev1_ShippingAddress,
   addressservicev1_CreateShippingAddressRequest,
@@ -25,14 +26,14 @@ export function useListShippingAddresses(
 ) {
   return useQuery({
     queryKey: ['listShippingAddresses', params, getCurrentLocale()],
-    queryFn: () => fetchListShippingAddresses(params),
+    queryFn: () => fetchListShippingAddresses(unref(params)),
     ...options,
   });
 }
 export async function fetchListShippingAddressesStore(params: any) {
   return queryClient.fetchQuery({
     queryKey: ['listShippingAddresses', params, getCurrentLocale()],
-    queryFn: () => fetchListShippingAddresses(params),
+    queryFn: () => fetchListShippingAddresses(unref(params)),
     retry: 0,
   });
 }

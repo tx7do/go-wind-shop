@@ -2,6 +2,7 @@ import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
+import { unref } from 'vue';
 
 // ==============================
 // 商品属性列表（Query）
@@ -15,14 +16,14 @@ export function useListProductAttributes(
 ) {
   return useQuery({
     queryKey: ['listProductAttributes', params, getCurrentLocale()],
-    queryFn: () => fetchListProductAttributes(params),
+    queryFn: () => fetchListProductAttributes(unref(params)),
     ...options,
   });
 }
 export async function fetchListProductAttributesStore(params: any) {
   return queryClient.fetchQuery({
     queryKey: ['listProductAttributes', params, getCurrentLocale()],
-    queryFn: () => fetchListProductAttributes(params),
+    queryFn: () => fetchListProductAttributes(unref(params)),
     retry: 0,
   });
 }

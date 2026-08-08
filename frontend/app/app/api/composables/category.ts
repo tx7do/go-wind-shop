@@ -16,14 +16,14 @@ export function useListCategories(
 ) {
   return useQuery({
     queryKey: ['listCategories', params, getCurrentLocale()],
-    queryFn: () => fetchListCategories(params),
+    queryFn: () => fetchListCategories(toValue(params)),
     ...options,
   });
 }
 export async function fetchListCategoriesStore(params: any) {
   return queryClient.fetchQuery({
     queryKey: ['listCategories', params, getCurrentLocale()],
-    queryFn: () => fetchListCategories(params),
+    queryFn: () => fetchListCategories(toValue(params)),
     retry: 0,
   });
 }

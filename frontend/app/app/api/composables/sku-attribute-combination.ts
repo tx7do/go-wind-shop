@@ -2,6 +2,7 @@ import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
+import { unref } from 'vue';
 
 // ==============================
 // SKU 属性组合列表（Query）
@@ -18,14 +19,14 @@ export function useListSkuAttributeCombinations(
 ) {
   return useQuery({
     queryKey: ['listSkuAttributeCombinations', params, getCurrentLocale()],
-    queryFn: () => fetchListSkuAttributeCombinations(params),
+    queryFn: () => fetchListSkuAttributeCombinations(unref(params)),
     ...options,
   });
 }
 export async function fetchListSkuAttributeCombinationsStore(params: any) {
   return queryClient.fetchQuery({
     queryKey: ['listSkuAttributeCombinations', params, getCurrentLocale()],
-    queryFn: () => fetchListSkuAttributeCombinations(params),
+    queryFn: () => fetchListSkuAttributeCombinations(unref(params)),
     retry: 0,
   });
 }

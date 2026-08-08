@@ -7,6 +7,7 @@ import {
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
+import { unref } from 'vue';
 import type {
   paymentservicev1_PaymentTransaction,
   paymentservicev1_CreatePaymentTransactionRequest,
@@ -47,14 +48,14 @@ export function useListPaymentTransactions(
 ) {
   return useQuery({
     queryKey: ['listPaymentTransactions', params, getCurrentLocale()],
-    queryFn: () => fetchListPaymentTransactions(params),
+    queryFn: () => fetchListPaymentTransactions(unref(params)),
     ...options,
   });
 }
 export async function fetchListPaymentTransactionsStore(params: any) {
   return queryClient.fetchQuery({
     queryKey: ['listPaymentTransactions', params, getCurrentLocale()],
-    queryFn: () => fetchListPaymentTransactions(params),
+    queryFn: () => fetchListPaymentTransactions(unref(params)),
     retry: 0,
   });
 }

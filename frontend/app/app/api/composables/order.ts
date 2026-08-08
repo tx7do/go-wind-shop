@@ -27,14 +27,14 @@ export function useListOrders(
 ) {
   return useQuery({
     queryKey: ['listOrders', params, getCurrentLocale()],
-    queryFn: () => fetchListOrders(params),
+    queryFn: () => fetchListOrders(unref(params)),
     ...options,
   });
 }
 export async function fetchListOrdersStore(params: any) {
   return queryClient.fetchQuery({
     queryKey: ['listOrders', params, getCurrentLocale()],
-    queryFn: () => fetchListOrders(params),
+    queryFn: () => fetchListOrders(unref(params)),
     retry: 0,
   });
 }
@@ -161,14 +161,14 @@ export function useListOrderItems(
 ) {
   return useQuery({
     queryKey: ['listOrderItems', params, getCurrentLocale()],
-    queryFn: () => fetchListOrderItems(params),
+    queryFn: () => fetchListOrderItems(unref(params)),
     ...options,
   });
 }
 export async function fetchListOrderItemsStore(params: any) {
   return queryClient.fetchQuery({
     queryKey: ['listOrderItems', params, getCurrentLocale()],
-    queryFn: () => fetchListOrderItems(params),
+    queryFn: () => fetchListOrderItems(unref(params)),
     retry: 0,
   });
 }

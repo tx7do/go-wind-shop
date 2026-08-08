@@ -2,6 +2,7 @@ import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
+import { unref } from 'vue';
 
 // ==============================
 // 品牌列表（Query）
@@ -15,14 +16,14 @@ export function useListBrands(
 ) {
   return useQuery({
     queryKey: ['listBrands', params, getCurrentLocale()],
-    queryFn: () => fetchListBrands(params),
+    queryFn: () => fetchListBrands(unref(params)),
     ...options,
   });
 }
 export async function fetchListBrandsStore(params: any) {
   return queryClient.fetchQuery({
     queryKey: ['listBrands', params, getCurrentLocale()],
-    queryFn: () => fetchListBrands(params),
+    queryFn: () => fetchListBrands(unref(params)),
     retry: 0,
   });
 }

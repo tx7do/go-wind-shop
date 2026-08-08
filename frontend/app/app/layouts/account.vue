@@ -11,8 +11,8 @@ const localePath = useLocalePath()
 const navItems = [
   { to: '/user', icon: 'carbon:user', labelKey: 'menu.my_profile' },
   { to: '/orders', icon: 'carbon:document', labelKey: 'mall.orders.title' },
-  { to: '/messages', icon: 'carbon:message', labelKey: 'messages.title' },
-  { to: '/refunds', icon: 'carbon:rotate-ccw', labelKey: 'refunds.title' },
+  { to: '/messages', icon: 'lucide:message-square', labelKey: 'messages.title' },
+  { to: '/refunds', icon: 'lucide:rotate-ccw', labelKey: 'refunds.title' },
   { to: '/addresses', icon: 'carbon:location', labelKey: 'addresses.title' },
   { to: '/settings', icon: 'carbon:settings', labelKey: 'menu.my_account_security' },
 ] as const
@@ -27,7 +27,7 @@ const isActive = (path: string) => {
   <div class="flex min-h-screen w-full flex-col">
     <LayoutNavigationProgress />
     <LayoutHeader />
-    <div :class="['flex w-full flex-1 flex-col bg-background pt-(--layout-header-height) min-h-screen max-md:flex-col']">
+    <div :class="['flex w-full flex-1 flex-row bg-background pt-(--layout-header-height) min-h-screen max-md:flex-col']">
       <aside class="w-60 shrink-0 border-r border-border max-md:hidden">
         <nav class="sticky top-(--layout-header-height) space-y-1 p-3">
           <NuxtLink

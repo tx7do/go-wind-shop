@@ -107,7 +107,7 @@ function displayAmount(v: number | undefined, currency?: string): string {
   <LayoutPageHero
     :title="t('refunds.title')"
     :description="t('refunds.subtitle')"
-    icon="carbon:rotate-ccw"
+    icon="lucide:rotate-ccw"
     size="sm"
   />
 

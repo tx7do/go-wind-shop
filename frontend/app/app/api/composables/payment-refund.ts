@@ -7,6 +7,7 @@ import {
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
+import { unref } from 'vue';
 import type {
   paymentservicev1_PaymentRefund,
   paymentservicev1_CreatePaymentRefundRequest,
@@ -41,14 +42,14 @@ export function useListPaymentRefunds(
 ) {
   return useQuery({
     queryKey: ['listPaymentRefunds', params, getCurrentLocale()],
-    queryFn: () => fetchListPaymentRefunds(params),
+    queryFn: () => fetchListPaymentRefunds(unref(params)),
     ...options,
   });
 }
 export async function fetchListPaymentRefundsStore(params: any) {
   return queryClient.fetchQuery({
     queryKey: ['listPaymentRefunds', params, getCurrentLocale()],
-    queryFn: () => fetchListPaymentRefunds(params),
+    queryFn: () => fetchListPaymentRefunds(unref(params)),
     retry: 0,
   });
 }

@@ -7,6 +7,7 @@ import {
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
+import { unref } from 'vue';
 
 // ==============================
 // 我的收件箱列表（Query）
@@ -22,7 +23,7 @@ export function useListUserInbox(
 ) {
   return useQuery({
     queryKey: ['listUserInbox', params, getCurrentLocale()],
-    queryFn: () => fetchListUserInbox(params),
+    queryFn: () => fetchListUserInbox(unref(params)),
     ...options,
   });
 }

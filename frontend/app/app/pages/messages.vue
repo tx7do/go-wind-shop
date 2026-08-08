@@ -131,7 +131,7 @@ const anyPending = computed(
   <LayoutPageHero
     :title="t('messages.title')"
     :description="t('messages.subtitle')"
-    icon="carbon:message"
+    icon="lucide:message-square"
     size="sm"
   />
 

@@ -2,6 +2,7 @@ import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
+import { unref } from 'vue';
 
 // ==============================
 // SKU 列表（Query）
@@ -15,14 +16,14 @@ export function useListSkus(
 ) {
   return useQuery({
     queryKey: ['listSkus', params, getCurrentLocale()],
-    queryFn: () => fetchListSkus(params),
+    queryFn: () => fetchListSkus(unref(params)),
     ...options,
   });
 }
 export async function fetchListSkusStore(params: any) {
   return queryClient.fetchQuery({
     queryKey: ['listSkus', params, getCurrentLocale()],
-    queryFn: () => fetchListSkus(params),
+    queryFn: () => fetchListSkus(unref(params)),
     retry: 0,
   });
 }

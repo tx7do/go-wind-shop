@@ -8,6 +8,7 @@ import { makeUpdateMask, omit } from '@/core/transport/rest';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
+import { unref } from 'vue';
 import type {
   cartservicev1_CartItem,
   cartservicev1_CreateCartItemRequest,
@@ -27,14 +28,14 @@ export function useListCartItems(
 ) {
   return useQuery({
     queryKey: ['listCartItems', params, getCurrentLocale()],
-    queryFn: () => fetchListCartItems(params),
+    queryFn: () => fetchListCartItems(unref(params)),
     ...options,
   });
 }
 export async function fetchListCartItemsStore(params: any) {
   return queryClient.fetchQuery({
     queryKey: ['listCartItems', params, getCurrentLocale()],
-    queryFn: () => fetchListCartItems(params),
+    queryFn: () => fetchListCartItems(unref(params)),
     retry: 0,
   });
 }

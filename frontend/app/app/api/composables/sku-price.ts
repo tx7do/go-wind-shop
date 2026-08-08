@@ -2,6 +2,7 @@ import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
 import { apiClient } from '@/api/client';
 import { queryClient } from '@/plugins/vue-query';
 import { getCurrentLocale } from '@/utils/locale';
+import { unref } from 'vue';
 
 // ==============================
 // SKU 价格列表（Query）
@@ -15,14 +16,14 @@ export function useListSkuPrices(
 ) {
   return useQuery({
     queryKey: ['listSkuPrices', params, getCurrentLocale()],
-    queryFn: () => fetchListSkuPrices(params),
+    queryFn: () => fetchListSkuPrices(unref(params)),
     ...options,
   });
 }
 export async function fetchListSkuPricesStore(params: any) {
   return queryClient.fetchQuery({
     queryKey: ['listSkuPrices', params, getCurrentLocale()],
-    queryFn: () => fetchListSkuPrices(params),
+    queryFn: () => fetchListSkuPrices(unref(params)),
     retry: 0,
   });
 }
