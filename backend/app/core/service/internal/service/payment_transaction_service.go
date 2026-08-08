@@ -55,6 +55,16 @@ func (s *PaymentTransactionService) Get(ctx context.Context, req *paymentV1.GetP
 	return s.repo.Get(ctx, req)
 }
 
+// RestoreOrderStockForRefund 转发到 OrderService.RestoreStockForRefund。
+//
+// 退款成功后需回补下单时扣减的库存。PaymentRefundService 已注入本 service，
+// 由本方法转发到 OrderService，避免 PaymentRefundService 直接依赖 OrderService
+// （OrderService 已被 PaymentTransactionService 依赖，本转发维持原依赖方向，
+// 不引入循环）。
+func (s *PaymentTransactionService) RestoreOrderStockForRefund(ctx context.Context, orderId uint32) error {
+	return s.orderService.RestoreStockForRefund(ctx, orderId)
+}
+
 // Create 创建支付流水。
 //
 // MVP 阶段支付网关为 STUB：创建即"成功"——流水状态直接置 SUCCEEDED，

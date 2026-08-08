@@ -568,6 +568,75 @@ func (s *OrderService) ExpireOrderByTimeout(ctx context.Context, req *orderV1.Ex
 	return &orderV1.ExpireOrderByTimeoutResponse{Expired: boolPtr(true)}, nil
 }
 
+// RestoreStockForRefund 退款成功后回补库存。
+//
+// 退款（PaymentRefundService.Update 翻 SUCCEEDED）应把下单时扣减的 SKU 库存加回，
+// 否则退款后 stock_qty 永久丢失。本方法在单事务内遍历关联订单的 OrderItem，
+// 按 quantity 调 AddStockQty 回补——与 ExpireOrderByTimeout 的释放模式一致，
+// 但不改订单状态（退款不改变订单状态，这是现有设计；仅恢复库存）。
+//
+// 调用方：PaymentRefundService.Update（经 PaymentTransactionService 转发）。
+// 入参 orderId 取自关联支付流水 payment_transaction.order_id。
+//
+// 注意：本方法专为退款回补设计，区别于超时取消（后者还推进 PENDING_PAYMENT→CANCELLED）。
+func (s *OrderService) RestoreStockForRefund(ctx context.Context, orderId uint32) error {
+	if orderId == 0 {
+		return fmt.Errorf("invalid order id for stock restore")
+	}
+
+	tx, err := s.entClient.Client().Tx(ctx)
+	if err != nil {
+		s.log.Errorf("begin stock-restore tx failed for order [%d]: %v", orderId, err)
+		return fmt.Errorf("begin stock-restore tx failed: %w", err)
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+
+	items, qErr := tx.OrderItem.Query().
+		Where(orderitem.OrderIDEQ(orderId)).
+		All(ctx)
+	if qErr != nil {
+		s.log.Errorf("list order [%d] items for stock restore failed: %v", orderId, qErr)
+		err = qErr
+		return fmt.Errorf("list order items failed: %w", qErr)
+	}
+
+	for _, it := range items {
+		skuId := it.SkuID
+		if skuId == nil || *skuId == 0 {
+			continue
+		}
+		qty := it.Quantity
+		if qty == nil || *qty <= 0 {
+			continue
+		}
+		// 回补库存（事务内）。
+		if rErr := tx.Sku.UpdateOneID(*skuId).
+			AddStockQty(*qty).
+			Exec(ctx); rErr != nil {
+			s.log.Errorf("restore stock for sku [%d] during refund of order [%d] failed: %v", *skuId, orderId, rErr)
+			err = rErr
+			return fmt.Errorf("restore stock for sku [%d] failed: %w", *skuId, rErr)
+		}
+	}
+
+	if cErr := tx.Commit(); cErr != nil {
+		s.log.Errorf("commit stock-restore tx failed for order [%d]: %v", orderId, cErr)
+		err = cErr
+		return fmt.Errorf("commit stock-restore tx failed: %w", cErr)
+	}
+	err = nil
+
+	s.log.Infow(
+		"msg", "stock restored for refund",
+		"order_id", orderId,
+	)
+	return nil
+}
+
 // HandleOrderTimeout asynq 任务处理器（薄委托）。
 // 由 server/asynq_server.go 注册，asynq worker 在 TTL 后触发。
 // 所有业务逻辑内聚在 ExpireOrderByTimeout RPC 中。

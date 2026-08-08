@@ -195,6 +195,32 @@ func (s *PaymentRefundService) Update(ctx context.Context, req *paymentV1.Update
 				}
 				return nil, uErr
 			}
+
+			// 库存回补：退款成功后，把下单时扣减的 SKU 库存加回。
+			// 取关联支付流水携带的 order_id，经 transactionService 转发到
+			// OrderService.RestoreStockForRefund（事务内遍历 OrderItem +
+			// AddStockQty，与超时取消同模式，不改订单状态）。
+			//
+			// 回补失败补偿：与流水翻 REFUNDED 失败同模式——退款记录已 SUCCEEDED
+			// 但库存未回补属持久不一致，回滚退款记录为 PENDING。orderId 为 0
+			// （流水无关联订单）时跳过回补。
+			orderId := tx.GetOrderId()
+			if orderId != 0 {
+				if rErr := s.transactionService.RestoreOrderStockForRefund(ctx, orderId); rErr != nil {
+					s.log.Errorf("restore stock for order [%d] during refund [%d] failed: %v", orderId, req.GetId(), rErr)
+					pendingStatus := paymentV1.PaymentRefund_PENDING
+					rollbackReq := &paymentV1.UpdatePaymentRefundRequest{
+						Id: req.GetId(),
+						Data: &paymentV1.PaymentRefund{
+							Status: &pendingStatus,
+						},
+					}
+					if rbErr := s.repo.Update(ctx, rollbackReq); rbErr != nil {
+						s.log.Errorf("compensating rollback refund [%d] to PENDING after stock-restore failure failed: %v", req.GetId(), rbErr)
+					}
+					return nil, rErr
+				}
+			}
 		}
 	}
 
