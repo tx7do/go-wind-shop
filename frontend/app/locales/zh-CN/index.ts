@@ -18,6 +18,7 @@ import refunds from './refunds.json'
 import addresses from './addresses.json'
 import messages from './messages.json'
 import shipment from './shipment.json'
+import legal from './legal.json'
 
 export default {
     app,
@@ -40,4 +41,5 @@ export default {
     addresses,
     messages,
     shipment,
+    legal,
 }

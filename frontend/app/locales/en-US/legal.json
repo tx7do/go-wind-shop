@@ -1,0 +1,32 @@
+{
+  "about": {
+    "title": "About Us",
+    "description": "Learn about the WindShop team and mission",
+    "item1": "This page is under construction. Please contact customer service if you have questions.",
+    "item2": "We will supplement the full About Us description soon."
+  },
+  "contact": {
+    "title": "Contact Us",
+    "description": "Get in touch with WindShop",
+    "item1": "This page is under construction. Please contact customer service if you have questions.",
+    "item2": "We will supplement the full contact information soon."
+  },
+  "disclaimer": {
+    "title": "Disclaimer",
+    "description": "WindShop disclaimer",
+    "item1": "This page is under construction. Please contact customer service if you have questions.",
+    "item2": "We will supplement the full disclaimer content soon."
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "description": "WindShop privacy protection policy",
+    "item1": "This page is under construction. Please contact customer service if you have questions.",
+    "item2": "We will supplement the full privacy policy content soon."
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "description": "WindShop terms of service",
+    "item1": "This page is under construction. Please contact customer service if you have questions.",
+    "item2": "We will supplement the full terms of service content soon."
+  }
+}
