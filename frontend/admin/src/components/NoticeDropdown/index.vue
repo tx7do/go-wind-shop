@@ -99,7 +99,7 @@
       </div>
 
       <div class="max-h-60vh pt-16px mb-24px overflow-y-auto border-t border-solid border-color">
-        <div v-html="detail.content"></div>
+        <div v-html="sanitizeHtml(detail.content)"></div>
       </div>
     </div>
   </el-dialog>
@@ -109,6 +109,7 @@
 import { Bell, UserFilled } from "@element-plus/icons-vue";
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import defaultAvatar from "@/assets/images/default-avatar.png";
+import { sanitizeHtml, sanitizeToPlainText } from "@/utils";
 import { useNotice } from "./useNotice";
 
 const { t } = useI18n();
@@ -116,11 +117,10 @@ const { list, unreadTotal, detail, dialogVisible, read, readAll, clearAll, goMor
 
 /**
  * 去除 HTML 标签，获取纯文本摘要
+ * 用 DOMPurify 清理后再取 textContent，避免 innerHTML 触发 <img onerror> 等事件。
  */
 function stripHtml(html: string): string {
-  const tmp = document.createElement("div");
-  tmp.innerHTML = html;
-  const text = tmp.textContent || tmp.innerText || "";
+  const text = sanitizeToPlainText(html);
   // 限制长度为 50 个字符
   return text.length > 50 ? text.substring(0, 50) + "..." : text;
 }

@@ -53,7 +53,7 @@
 
         <ElDivider />
 
-        <div class="message-detail__content" v-html="detail.content"></div>
+        <div class="message-detail__content" v-html="sanitizeHtml(detail.content)"></div>
       </div>
     </el-dialog>
   </div>
@@ -79,6 +79,7 @@ import {
 } from "@/api/composables";
 import { useAppUserStore } from "@/stores";
 import { PaginationQuery } from "@/core/transport/rest";
+import { sanitizeHtml } from "@/utils";
 import defaultAvatar from "@/assets/images/default-avatar.png";
 
 const { mutateAsync: markNotificationAsRead } = useMarkNotificationAsRead();

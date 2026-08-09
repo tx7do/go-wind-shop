@@ -23,5 +23,6 @@ export * from "./letter";
 export * from "./dom";
 export * from "./state-handler";
 export * from "./cn";
+export * from "./sanitize";
 
 export { default as cloneDeep } from "lodash.clonedeep";
