@@ -380,6 +380,7 @@ function toggleExpandOnHover() {
       // 宽度由内联 style 控制
       height: 100%;
       background-color: var(--menu-background);
+      border-right: 1px solid var(--sidebar-logo-border-color);
       transition: width 0.28s;
 
       &.layout__sidebar--collapsed {

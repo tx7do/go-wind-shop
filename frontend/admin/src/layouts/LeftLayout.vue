@@ -187,6 +187,7 @@ function toggleExpandOnHover() {
     z-index: 999;
     // 宽度由内联 style 控制（响应 preferences.sidebar.width）
     background-color: $menu-background;
+    border-right: 1px solid var(--sidebar-logo-border-color);
     transition: width 0.28s;
 
     .layout-sidebar {

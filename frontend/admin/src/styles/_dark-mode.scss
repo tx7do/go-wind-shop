@@ -26,9 +26,10 @@ html.dark {
   // 移除：与亮色模式不一致，且 letter-spacing 差异会导致宽度偏移
   // letter-spacing: 0.02em !important;
   
-  // 1. 核心对比度优化(先解决“看得见”的问题)
+  // 1. 核心对比度优化(先解决”看得见”的问题)
   --dark-bg-primary: #0C0E13;      // 页面主背景(微压暗基底,暗黑质感更高级)
-  --dark-bg-table: #14171C;         // 表格容器/输入框背景(比背景亮 2 个灰度层级,模块边界瞬间清晰)
+  --dark-bg-page: #14171C;          // 内容区画布底色(比侧边栏亮 2 个灰度层级，拉开视觉层次)
+  --dark-bg-table: #14171C;         // 表格容器/输入框背景(与画布底色一致，保持统一)
   --dark-bg-hover: #1A1E26;         // 悬浮态/展开态/表头/行 hover(hover 态微高亮,给用户明确的交互反馈)
   --dark-border: #2d3139;           // 输入框边框/分割线/表格边框(提亮一阶,静止态边界感更清晰)
     
@@ -64,7 +65,7 @@ html.dark {
 
   // 3. Element Plus 组件变量覆盖
   --el-bg-color: var(--dark-bg-primary);
-  --el-bg-color-page: var(--dark-bg-primary);
+  --el-bg-color-page: var(--dark-bg-page);
   --el-bg-color-overlay: var(--dark-bg-table);
   --el-fill-color-blank: var(--dark-bg-table);
   --el-border-color: var(--dark-border);

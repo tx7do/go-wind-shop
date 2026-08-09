@@ -27,11 +27,17 @@ async function bootstrap(namespace: string) {
   const app = createApp(App);
 
   // 抑制 Element Plus ElForm labelWidth="auto" ResizeObserver 的无害警告
-  // 该警告在布局过渡期（侧边栏宽度变化、布局切换等）时触发，属于正常现象
+  // 该警告在布局过渡期（侧边栏宽度变化、布局切换等）时触发，属于正常现象。
+  // 可能报告 width 0（容器未准备好）或 width NaN（中间态的无效计算值），两者均需过滤。
   const originalWarn = console.warn;
   console.warn = (...args: unknown[]) => {
     const msg = args[0];
-    if (msg && typeof msg === "object" && String(msg).includes("[ElForm] unexpected width 0")) {
+    if (
+      msg &&
+      typeof msg === "object" &&
+      (String(msg).includes("[ElForm] unexpected width 0") ||
+        String(msg).includes("[ElForm] unexpected width NaN"))
+    ) {
       return;
     }
     originalWarn.apply(console, args);
