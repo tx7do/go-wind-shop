@@ -28,42 +28,32 @@ var File_app_service_v1_i_order_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_order_proto_rawDesc = "" +
 	"\n" +
-	"\x1capp/service/v1/i_order.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1corder/service/v1/order.proto2\xff\x04\n" +
+	"\x1capp/service/v1/i_order.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1corder/service/v1/order.proto2\x9a\x04\n" +
 	"\fOrderService\x12c\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a#.order.service.v1.ListOrderResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/app/v1/mall/orders\x12k\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a$.order.service.v1.CountOrderResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/app/v1/mall/orders/count\x12c\n" +
 	"\x03Get\x12!.order.service.v1.GetOrderRequest\x1a\x17.order.service.v1.Order\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/app/v1/mall/orders/{id}\x12f\n" +
 	"\x06Create\x12$.order.service.v1.CreateOrderRequest\x1a\x16.google.protobuf.Empty\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/app/v1/mall/orders\x12k\n" +
-	"\x06Update\x12$.order.service.v1.UpdateOrderRequest\x1a\x16.google.protobuf.Empty\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\x1a\x18/app/v1/mall/orders/{id}\x12c\n" +
-	"\x06Delete\x12$.order.service.v1.DeleteOrderRequest\x1a\x16.google.protobuf.Empty\"\x1b\x82\xd3\xe4\x93\x02\x15*\x13/app/v1/mall/orders2\xc0\x06\n" +
+	"\x06Update\x12$.order.service.v1.UpdateOrderRequest\x1a\x16.google.protobuf.Empty\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\x1a\x18/app/v1/mall/orders/{id}2\xe8\x02\n" +
 	"\x10OrderItemService\x12l\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.order.service.v1.ListOrderItemResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/app/v1/mall/order-items\x12t\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.order.service.v1.CountOrderItemResponse\"&\x82\xd3\xe4\x93\x02 \x12\x1e/app/v1/mall/order-items/count\x12p\n" +
-	"\x03Get\x12%.order.service.v1.GetOrderItemRequest\x1a\x1b.order.service.v1.OrderItem\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/app/v1/mall/order-items/{id}\x12o\n" +
-	"\x06Create\x12(.order.service.v1.CreateOrderItemRequest\x1a\x16.google.protobuf.Empty\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/app/v1/mall/order-items\x12\x80\x01\n" +
-	"\vBatchCreate\x12..order.service.v1.BatchCreateOrderItemsRequest\x1a\x16.google.protobuf.Empty\")\x82\xd3\xe4\x93\x02#:\x01*\"\x1e/app/v1/mall/order-items/batch\x12t\n" +
-	"\x06Update\x12(.order.service.v1.UpdateOrderItemRequest\x1a\x16.google.protobuf.Empty\"(\x82\xd3\xe4\x93\x02\":\x01*\x1a\x1d/app/v1/mall/order-items/{id}\x12l\n" +
-	"\x06Delete\x12(.order.service.v1.DeleteOrderItemRequest\x1a\x16.google.protobuf.Empty\" \x82\xd3\xe4\x93\x02\x1a*\x18/app/v1/mall/order-itemsB\xad\x01\n" +
+	"\x03Get\x12%.order.service.v1.GetOrderItemRequest\x1a\x1b.order.service.v1.OrderItem\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/app/v1/mall/order-items/{id}B\xad\x01\n" +
 	"\x12com.app.service.v1B\vIOrderProtoP\x01Z0go-wind-shop/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_order_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),                 // 0: pagination.PagingRequest
-	(*v11.GetOrderRequest)(nil),              // 1: order.service.v1.GetOrderRequest
-	(*v11.CreateOrderRequest)(nil),           // 2: order.service.v1.CreateOrderRequest
-	(*v11.UpdateOrderRequest)(nil),           // 3: order.service.v1.UpdateOrderRequest
-	(*v11.DeleteOrderRequest)(nil),           // 4: order.service.v1.DeleteOrderRequest
-	(*v11.GetOrderItemRequest)(nil),          // 5: order.service.v1.GetOrderItemRequest
-	(*v11.CreateOrderItemRequest)(nil),       // 6: order.service.v1.CreateOrderItemRequest
-	(*v11.BatchCreateOrderItemsRequest)(nil), // 7: order.service.v1.BatchCreateOrderItemsRequest
-	(*v11.UpdateOrderItemRequest)(nil),       // 8: order.service.v1.UpdateOrderItemRequest
-	(*v11.DeleteOrderItemRequest)(nil),       // 9: order.service.v1.DeleteOrderItemRequest
-	(*v11.ListOrderResponse)(nil),            // 10: order.service.v1.ListOrderResponse
-	(*v11.CountOrderResponse)(nil),           // 11: order.service.v1.CountOrderResponse
-	(*v11.Order)(nil),                        // 12: order.service.v1.Order
-	(*emptypb.Empty)(nil),                    // 13: google.protobuf.Empty
-	(*v11.ListOrderItemResponse)(nil),        // 14: order.service.v1.ListOrderItemResponse
-	(*v11.CountOrderItemResponse)(nil),       // 15: order.service.v1.CountOrderItemResponse
-	(*v11.OrderItem)(nil),                    // 16: order.service.v1.OrderItem
+	(*v1.PagingRequest)(nil),           // 0: pagination.PagingRequest
+	(*v11.GetOrderRequest)(nil),        // 1: order.service.v1.GetOrderRequest
+	(*v11.CreateOrderRequest)(nil),     // 2: order.service.v1.CreateOrderRequest
+	(*v11.UpdateOrderRequest)(nil),     // 3: order.service.v1.UpdateOrderRequest
+	(*v11.GetOrderItemRequest)(nil),    // 4: order.service.v1.GetOrderItemRequest
+	(*v11.ListOrderResponse)(nil),      // 5: order.service.v1.ListOrderResponse
+	(*v11.CountOrderResponse)(nil),     // 6: order.service.v1.CountOrderResponse
+	(*v11.Order)(nil),                  // 7: order.service.v1.Order
+	(*emptypb.Empty)(nil),              // 8: google.protobuf.Empty
+	(*v11.ListOrderItemResponse)(nil),  // 9: order.service.v1.ListOrderItemResponse
+	(*v11.CountOrderItemResponse)(nil), // 10: order.service.v1.CountOrderItemResponse
+	(*v11.OrderItem)(nil),              // 11: order.service.v1.OrderItem
 }
 var file_app_service_v1_i_order_proto_depIdxs = []int32{
 	0,  // 0: app.service.v1.OrderService.List:input_type -> pagination.PagingRequest
@@ -71,29 +61,19 @@ var file_app_service_v1_i_order_proto_depIdxs = []int32{
 	1,  // 2: app.service.v1.OrderService.Get:input_type -> order.service.v1.GetOrderRequest
 	2,  // 3: app.service.v1.OrderService.Create:input_type -> order.service.v1.CreateOrderRequest
 	3,  // 4: app.service.v1.OrderService.Update:input_type -> order.service.v1.UpdateOrderRequest
-	4,  // 5: app.service.v1.OrderService.Delete:input_type -> order.service.v1.DeleteOrderRequest
-	0,  // 6: app.service.v1.OrderItemService.List:input_type -> pagination.PagingRequest
-	0,  // 7: app.service.v1.OrderItemService.Count:input_type -> pagination.PagingRequest
-	5,  // 8: app.service.v1.OrderItemService.Get:input_type -> order.service.v1.GetOrderItemRequest
-	6,  // 9: app.service.v1.OrderItemService.Create:input_type -> order.service.v1.CreateOrderItemRequest
-	7,  // 10: app.service.v1.OrderItemService.BatchCreate:input_type -> order.service.v1.BatchCreateOrderItemsRequest
-	8,  // 11: app.service.v1.OrderItemService.Update:input_type -> order.service.v1.UpdateOrderItemRequest
-	9,  // 12: app.service.v1.OrderItemService.Delete:input_type -> order.service.v1.DeleteOrderItemRequest
-	10, // 13: app.service.v1.OrderService.List:output_type -> order.service.v1.ListOrderResponse
-	11, // 14: app.service.v1.OrderService.Count:output_type -> order.service.v1.CountOrderResponse
-	12, // 15: app.service.v1.OrderService.Get:output_type -> order.service.v1.Order
-	13, // 16: app.service.v1.OrderService.Create:output_type -> google.protobuf.Empty
-	13, // 17: app.service.v1.OrderService.Update:output_type -> google.protobuf.Empty
-	13, // 18: app.service.v1.OrderService.Delete:output_type -> google.protobuf.Empty
-	14, // 19: app.service.v1.OrderItemService.List:output_type -> order.service.v1.ListOrderItemResponse
-	15, // 20: app.service.v1.OrderItemService.Count:output_type -> order.service.v1.CountOrderItemResponse
-	16, // 21: app.service.v1.OrderItemService.Get:output_type -> order.service.v1.OrderItem
-	13, // 22: app.service.v1.OrderItemService.Create:output_type -> google.protobuf.Empty
-	13, // 23: app.service.v1.OrderItemService.BatchCreate:output_type -> google.protobuf.Empty
-	13, // 24: app.service.v1.OrderItemService.Update:output_type -> google.protobuf.Empty
-	13, // 25: app.service.v1.OrderItemService.Delete:output_type -> google.protobuf.Empty
-	13, // [13:26] is the sub-list for method output_type
-	0,  // [0:13] is the sub-list for method input_type
+	0,  // 5: app.service.v1.OrderItemService.List:input_type -> pagination.PagingRequest
+	0,  // 6: app.service.v1.OrderItemService.Count:input_type -> pagination.PagingRequest
+	4,  // 7: app.service.v1.OrderItemService.Get:input_type -> order.service.v1.GetOrderItemRequest
+	5,  // 8: app.service.v1.OrderService.List:output_type -> order.service.v1.ListOrderResponse
+	6,  // 9: app.service.v1.OrderService.Count:output_type -> order.service.v1.CountOrderResponse
+	7,  // 10: app.service.v1.OrderService.Get:output_type -> order.service.v1.Order
+	8,  // 11: app.service.v1.OrderService.Create:output_type -> google.protobuf.Empty
+	8,  // 12: app.service.v1.OrderService.Update:output_type -> google.protobuf.Empty
+	9,  // 13: app.service.v1.OrderItemService.List:output_type -> order.service.v1.ListOrderItemResponse
+	10, // 14: app.service.v1.OrderItemService.Count:output_type -> order.service.v1.CountOrderItemResponse
+	11, // 15: app.service.v1.OrderItemService.Get:output_type -> order.service.v1.OrderItem
+	8,  // [8:16] is the sub-list for method output_type
+	0,  // [0:8] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

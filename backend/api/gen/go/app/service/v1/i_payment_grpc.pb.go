@@ -26,8 +26,6 @@ const (
 	PaymentTransactionService_Count_FullMethodName  = "/app.service.v1.PaymentTransactionService/Count"
 	PaymentTransactionService_Get_FullMethodName    = "/app.service.v1.PaymentTransactionService/Get"
 	PaymentTransactionService_Create_FullMethodName = "/app.service.v1.PaymentTransactionService/Create"
-	PaymentTransactionService_Update_FullMethodName = "/app.service.v1.PaymentTransactionService/Update"
-	PaymentTransactionService_Delete_FullMethodName = "/app.service.v1.PaymentTransactionService/Delete"
 )
 
 // PaymentTransactionServiceClient is the client API for PaymentTransactionService service.
@@ -40,8 +38,6 @@ type PaymentTransactionServiceClient interface {
 	Count(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.CountPaymentTransactionResponse, error)
 	Get(ctx context.Context, in *v11.GetPaymentTransactionRequest, opts ...grpc.CallOption) (*v11.PaymentTransaction, error)
 	Create(ctx context.Context, in *v11.CreatePaymentTransactionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Update(ctx context.Context, in *v11.UpdatePaymentTransactionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Delete(ctx context.Context, in *v11.DeletePaymentTransactionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type paymentTransactionServiceClient struct {
@@ -92,26 +88,6 @@ func (c *paymentTransactionServiceClient) Create(ctx context.Context, in *v11.Cr
 	return out, nil
 }
 
-func (c *paymentTransactionServiceClient) Update(ctx context.Context, in *v11.UpdatePaymentTransactionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, PaymentTransactionService_Update_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentTransactionServiceClient) Delete(ctx context.Context, in *v11.DeletePaymentTransactionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, PaymentTransactionService_Delete_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PaymentTransactionServiceServer is the server API for PaymentTransactionService service.
 // All implementations must embed UnimplementedPaymentTransactionServiceServer
 // for forward compatibility.
@@ -122,8 +98,6 @@ type PaymentTransactionServiceServer interface {
 	Count(context.Context, *v1.PagingRequest) (*v11.CountPaymentTransactionResponse, error)
 	Get(context.Context, *v11.GetPaymentTransactionRequest) (*v11.PaymentTransaction, error)
 	Create(context.Context, *v11.CreatePaymentTransactionRequest) (*emptypb.Empty, error)
-	Update(context.Context, *v11.UpdatePaymentTransactionRequest) (*emptypb.Empty, error)
-	Delete(context.Context, *v11.DeletePaymentTransactionRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPaymentTransactionServiceServer()
 }
 
@@ -145,12 +119,6 @@ func (UnimplementedPaymentTransactionServiceServer) Get(context.Context, *v11.Ge
 }
 func (UnimplementedPaymentTransactionServiceServer) Create(context.Context, *v11.CreatePaymentTransactionRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
-}
-func (UnimplementedPaymentTransactionServiceServer) Update(context.Context, *v11.UpdatePaymentTransactionRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
-}
-func (UnimplementedPaymentTransactionServiceServer) Delete(context.Context, *v11.DeletePaymentTransactionRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedPaymentTransactionServiceServer) mustEmbedUnimplementedPaymentTransactionServiceServer() {
 }
@@ -246,42 +214,6 @@ func _PaymentTransactionService_Create_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentTransactionService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.UpdatePaymentTransactionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentTransactionServiceServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentTransactionService_Update_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentTransactionServiceServer).Update(ctx, req.(*v11.UpdatePaymentTransactionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentTransactionService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.DeletePaymentTransactionRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentTransactionServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentTransactionService_Delete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentTransactionServiceServer).Delete(ctx, req.(*v11.DeletePaymentTransactionRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // PaymentTransactionService_ServiceDesc is the grpc.ServiceDesc for PaymentTransactionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -304,14 +236,6 @@ var PaymentTransactionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _PaymentTransactionService_Create_Handler,
-		},
-		{
-			MethodName: "Update",
-			Handler:    _PaymentTransactionService_Update_Handler,
-		},
-		{
-			MethodName: "Delete",
-			Handler:    _PaymentTransactionService_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

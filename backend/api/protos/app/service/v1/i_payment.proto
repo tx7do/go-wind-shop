@@ -34,19 +34,6 @@ service PaymentTransactionService {
       body: "*"
     };
   }
-
-  rpc Update (payment.service.v1.UpdatePaymentTransactionRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      put: "/app/v1/mall/payment-transactions/{id}"
-      body: "*"
-    };
-  }
-
-  rpc Delete (payment.service.v1.DeletePaymentTransactionRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete: "/app/v1/mall/payment-transactions"
-    };
-  }
 }
 
 // 支付退款前台服务

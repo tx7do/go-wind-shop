@@ -24,18 +24,14 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationPaymentTransactionServiceCount = "/app.service.v1.PaymentTransactionService/Count"
 const OperationPaymentTransactionServiceCreate = "/app.service.v1.PaymentTransactionService/Create"
-const OperationPaymentTransactionServiceDelete = "/app.service.v1.PaymentTransactionService/Delete"
 const OperationPaymentTransactionServiceGet = "/app.service.v1.PaymentTransactionService/Get"
 const OperationPaymentTransactionServiceList = "/app.service.v1.PaymentTransactionService/List"
-const OperationPaymentTransactionServiceUpdate = "/app.service.v1.PaymentTransactionService/Update"
 
 type PaymentTransactionServiceHTTPServer interface {
 	Count(context.Context, *v1.PagingRequest) (*v11.CountPaymentTransactionResponse, error)
 	Create(context.Context, *v11.CreatePaymentTransactionRequest) (*emptypb.Empty, error)
-	Delete(context.Context, *v11.DeletePaymentTransactionRequest) (*emptypb.Empty, error)
 	Get(context.Context, *v11.GetPaymentTransactionRequest) (*v11.PaymentTransaction, error)
 	List(context.Context, *v1.PagingRequest) (*v11.ListPaymentTransactionResponse, error)
-	Update(context.Context, *v11.UpdatePaymentTransactionRequest) (*emptypb.Empty, error)
 }
 
 func RegisterPaymentTransactionServiceHTTPServer(s *http.Server, srv PaymentTransactionServiceHTTPServer) {
@@ -43,9 +39,7 @@ func RegisterPaymentTransactionServiceHTTPServer(s *http.Server, srv PaymentTran
 	r.GET("/app/v1/mall/payment-transactions", _PaymentTransactionService_List6_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/payment-transactions/count", _PaymentTransactionService_Count4_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/payment-transactions/{id}", _PaymentTransactionService_Get6_HTTP_Handler(srv))
-	r.POST("/app/v1/mall/payment-transactions", _PaymentTransactionService_Create4_HTTP_Handler(srv))
-	r.PUT("/app/v1/mall/payment-transactions/{id}", _PaymentTransactionService_Update4_HTTP_Handler(srv))
-	r.DELETE("/app/v1/mall/payment-transactions", _PaymentTransactionService_Delete4_HTTP_Handler(srv))
+	r.POST("/app/v1/mall/payment-transactions", _PaymentTransactionService_Create3_HTTP_Handler(srv))
 }
 
 func _PaymentTransactionService_List6_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
@@ -108,7 +102,7 @@ func _PaymentTransactionService_Get6_HTTP_Handler(srv PaymentTransactionServiceH
 	}
 }
 
-func _PaymentTransactionService_Create4_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentTransactionService_Create3_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreatePaymentTransactionRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -130,57 +124,11 @@ func _PaymentTransactionService_Create4_HTTP_Handler(srv PaymentTransactionServi
 	}
 }
 
-func _PaymentTransactionService_Update4_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in v11.UpdatePaymentTransactionRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationPaymentTransactionServiceUpdate)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Update(ctx, req.(*v11.UpdatePaymentTransactionRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*emptypb.Empty)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _PaymentTransactionService_Delete4_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in v11.DeletePaymentTransactionRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationPaymentTransactionServiceDelete)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Delete(ctx, req.(*v11.DeletePaymentTransactionRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*emptypb.Empty)
-		return ctx.Result(200, reply)
-	}
-}
-
 type PaymentTransactionServiceHTTPClient interface {
 	Count(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.CountPaymentTransactionResponse, err error)
 	Create(ctx context.Context, req *v11.CreatePaymentTransactionRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	Delete(ctx context.Context, req *v11.DeletePaymentTransactionRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	Get(ctx context.Context, req *v11.GetPaymentTransactionRequest, opts ...http.CallOption) (rsp *v11.PaymentTransaction, err error)
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListPaymentTransactionResponse, err error)
-	Update(ctx context.Context, req *v11.UpdatePaymentTransactionRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
 type PaymentTransactionServiceHTTPClientImpl struct {
@@ -217,19 +165,6 @@ func (c *PaymentTransactionServiceHTTPClientImpl) Create(ctx context.Context, in
 	return &out, nil
 }
 
-func (c *PaymentTransactionServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.DeletePaymentTransactionRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
-	var out emptypb.Empty
-	pattern := "/app/v1/mall/payment-transactions"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationPaymentTransactionServiceDelete))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
 func (c *PaymentTransactionServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetPaymentTransactionRequest, opts ...http.CallOption) (*v11.PaymentTransaction, error) {
 	var out v11.PaymentTransaction
 	pattern := "/app/v1/mall/payment-transactions/{id}"
@@ -256,19 +191,6 @@ func (c *PaymentTransactionServiceHTTPClientImpl) List(ctx context.Context, in *
 	return &out, nil
 }
 
-func (c *PaymentTransactionServiceHTTPClientImpl) Update(ctx context.Context, in *v11.UpdatePaymentTransactionRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
-	var out emptypb.Empty
-	pattern := "/app/v1/mall/payment-transactions/{id}"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationPaymentTransactionServiceUpdate))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
 const OperationPaymentRefundServiceCount = "/app.service.v1.PaymentRefundService/Count"
 const OperationPaymentRefundServiceCreate = "/app.service.v1.PaymentRefundService/Create"
 const OperationPaymentRefundServiceGet = "/app.service.v1.PaymentRefundService/Get"
@@ -286,7 +208,7 @@ func RegisterPaymentRefundServiceHTTPServer(s *http.Server, srv PaymentRefundSer
 	r.GET("/app/v1/mall/payment-refunds", _PaymentRefundService_List7_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/payment-refunds/count", _PaymentRefundService_Count5_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/payment-refunds/{id}", _PaymentRefundService_Get7_HTTP_Handler(srv))
-	r.POST("/app/v1/mall/payment-refunds", _PaymentRefundService_Create5_HTTP_Handler(srv))
+	r.POST("/app/v1/mall/payment-refunds", _PaymentRefundService_Create4_HTTP_Handler(srv))
 }
 
 func _PaymentRefundService_List7_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
@@ -349,7 +271,7 @@ func _PaymentRefundService_Get7_HTTP_Handler(srv PaymentRefundServiceHTTPServer)
 	}
 }
 
-func _PaymentRefundService_Create5_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentRefundService_Create4_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreatePaymentRefundRequest
 		if err := ctx.Bind(&in); err != nil {

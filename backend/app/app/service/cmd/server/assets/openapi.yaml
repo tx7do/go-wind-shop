@@ -1272,49 +1272,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/order.service.v1.ListOrderItemResponse'
-        post:
-            tags:
-                - OrderItemService
-            operationId: OrderItemService_Create
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/order.service.v1.CreateOrderItemRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content: {}
-        delete:
-            tags:
-                - OrderItemService
-            operationId: OrderItemService_Delete
-            parameters:
-                - name: id
-                  in: query
-                  schema:
-                    type: integer
-                    format: uint32
-            responses:
-                "200":
-                    description: OK
-                    content: {}
-    /app/v1/mall/order-items/batch:
-        post:
-            tags:
-                - OrderItemService
-            operationId: OrderItemService_BatchCreate
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/order.service.v1.BatchCreateOrderItemsRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content: {}
     /app/v1/mall/order-items/count:
         get:
             tags:
@@ -1416,27 +1373,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/order.service.v1.OrderItem'
-        put:
-            tags:
-                - OrderItemService
-            operationId: OrderItemService_Update
-            parameters:
-                - name: id
-                  in: path
-                  required: true
-                  schema:
-                    type: integer
-                    format: uint32
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/order.service.v1.UpdateOrderItemRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content: {}
     /app/v1/mall/orders:
         get:
             tags:
@@ -1524,20 +1460,6 @@ paths:
                         schema:
                             $ref: '#/components/schemas/order.service.v1.CreateOrderRequest'
                 required: true
-            responses:
-                "200":
-                    description: OK
-                    content: {}
-        delete:
-            tags:
-                - OrderService
-            operationId: OrderService_Delete
-            parameters:
-                - name: id
-                  in: query
-                  schema:
-                    type: integer
-                    format: uint32
             responses:
                 "200":
                     description: OK
@@ -1957,20 +1879,6 @@ paths:
                 "200":
                     description: OK
                     content: {}
-        delete:
-            tags:
-                - PaymentTransactionService
-            operationId: PaymentTransactionService_Delete
-            parameters:
-                - name: id
-                  in: query
-                  schema:
-                    type: integer
-                    format: uint32
-            responses:
-                "200":
-                    description: OK
-                    content: {}
     /app/v1/mall/payment-transactions/count:
         get:
             tags:
@@ -2081,27 +1989,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/payment.service.v1.PaymentTransaction'
-        put:
-            tags:
-                - PaymentTransactionService
-            operationId: PaymentTransactionService_Update
-            parameters:
-                - name: id
-                  in: path
-                  required: true
-                  schema:
-                    type: integer
-                    format: uint32
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/payment.service.v1.UpdatePaymentTransactionRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content: {}
     /app/v1/mall/product-attribute-values:
         get:
             tags:
@@ -4523,13 +4410,6 @@ components:
                         type: integer
                         format: uint32
                     description: 收件箱记录ID列表
-        order.service.v1.BatchCreateOrderItemsRequest:
-            type: object
-            properties:
-                items:
-                    type: array
-                    items:
-                        $ref: '#/components/schemas/order.service.v1.OrderItem'
         order.service.v1.CountOrderItemResponse:
             type: object
             properties:
@@ -4540,11 +4420,6 @@ components:
             properties:
                 count:
                     type: string
-        order.service.v1.CreateOrderItemRequest:
-            type: object
-            properties:
-                data:
-                    $ref: '#/components/schemas/order.service.v1.OrderItem'
         order.service.v1.CreateOrderRequest:
             type: object
             properties:
@@ -4693,21 +4568,6 @@ components:
                     description: 删除时间
                     format: date-time
             description: 订单项
-        order.service.v1.UpdateOrderItemRequest:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: uint32
-                data:
-                    $ref: '#/components/schemas/order.service.v1.OrderItem'
-                updateMask:
-                    type: string
-                    description: 要更新的字段列表
-                    format: field-mask
-                allowMissing:
-                    type: boolean
-                    description: 允许缺失则插入
         order.service.v1.UpdateOrderRequest:
             type: object
             properties:
@@ -4942,21 +4802,6 @@ components:
                     description: 删除时间
                     format: date-time
             description: 支付流水
-        payment.service.v1.UpdatePaymentTransactionRequest:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: uint32
-                data:
-                    $ref: '#/components/schemas/payment.service.v1.PaymentTransaction'
-                updateMask:
-                    type: string
-                    description: 要更新的字段列表
-                    format: field-mask
-                allowMissing:
-                    type: boolean
-                    description: 允许缺失则插入
         shipping.service.v1.ListShipmentResponse:
             type: object
             properties:

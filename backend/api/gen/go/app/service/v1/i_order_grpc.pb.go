@@ -27,7 +27,6 @@ const (
 	OrderService_Get_FullMethodName    = "/app.service.v1.OrderService/Get"
 	OrderService_Create_FullMethodName = "/app.service.v1.OrderService/Create"
 	OrderService_Update_FullMethodName = "/app.service.v1.OrderService/Update"
-	OrderService_Delete_FullMethodName = "/app.service.v1.OrderService/Delete"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -41,7 +40,6 @@ type OrderServiceClient interface {
 	Get(ctx context.Context, in *v11.GetOrderRequest, opts ...grpc.CallOption) (*v11.Order, error)
 	Create(ctx context.Context, in *v11.CreateOrderRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Update(ctx context.Context, in *v11.UpdateOrderRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Delete(ctx context.Context, in *v11.DeleteOrderRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type orderServiceClient struct {
@@ -102,16 +100,6 @@ func (c *orderServiceClient) Update(ctx context.Context, in *v11.UpdateOrderRequ
 	return out, nil
 }
 
-func (c *orderServiceClient) Delete(ctx context.Context, in *v11.DeleteOrderRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, OrderService_Delete_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // OrderServiceServer is the server API for OrderService service.
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility.
@@ -123,7 +111,6 @@ type OrderServiceServer interface {
 	Get(context.Context, *v11.GetOrderRequest) (*v11.Order, error)
 	Create(context.Context, *v11.CreateOrderRequest) (*emptypb.Empty, error)
 	Update(context.Context, *v11.UpdateOrderRequest) (*emptypb.Empty, error)
-	Delete(context.Context, *v11.DeleteOrderRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -148,9 +135,6 @@ func (UnimplementedOrderServiceServer) Create(context.Context, *v11.CreateOrderR
 }
 func (UnimplementedOrderServiceServer) Update(context.Context, *v11.UpdateOrderRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
-}
-func (UnimplementedOrderServiceServer) Delete(context.Context, *v11.DeleteOrderRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
 func (UnimplementedOrderServiceServer) testEmbeddedByValue()                      {}
@@ -263,24 +247,6 @@ func _OrderService_Update_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OrderService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.DeleteOrderRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrderServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OrderService_Delete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServiceServer).Delete(ctx, req.(*v11.DeleteOrderRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // OrderService_ServiceDesc is the grpc.ServiceDesc for OrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -308,23 +274,15 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Update",
 			Handler:    _OrderService_Update_Handler,
 		},
-		{
-			MethodName: "Delete",
-			Handler:    _OrderService_Delete_Handler,
-		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "app/service/v1/i_order.proto",
 }
 
 const (
-	OrderItemService_List_FullMethodName        = "/app.service.v1.OrderItemService/List"
-	OrderItemService_Count_FullMethodName       = "/app.service.v1.OrderItemService/Count"
-	OrderItemService_Get_FullMethodName         = "/app.service.v1.OrderItemService/Get"
-	OrderItemService_Create_FullMethodName      = "/app.service.v1.OrderItemService/Create"
-	OrderItemService_BatchCreate_FullMethodName = "/app.service.v1.OrderItemService/BatchCreate"
-	OrderItemService_Update_FullMethodName      = "/app.service.v1.OrderItemService/Update"
-	OrderItemService_Delete_FullMethodName      = "/app.service.v1.OrderItemService/Delete"
+	OrderItemService_List_FullMethodName  = "/app.service.v1.OrderItemService/List"
+	OrderItemService_Count_FullMethodName = "/app.service.v1.OrderItemService/Count"
+	OrderItemService_Get_FullMethodName   = "/app.service.v1.OrderItemService/Get"
 )
 
 // OrderItemServiceClient is the client API for OrderItemService service.
@@ -336,10 +294,6 @@ type OrderItemServiceClient interface {
 	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListOrderItemResponse, error)
 	Count(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.CountOrderItemResponse, error)
 	Get(ctx context.Context, in *v11.GetOrderItemRequest, opts ...grpc.CallOption) (*v11.OrderItem, error)
-	Create(ctx context.Context, in *v11.CreateOrderItemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	BatchCreate(ctx context.Context, in *v11.BatchCreateOrderItemsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Update(ctx context.Context, in *v11.UpdateOrderItemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Delete(ctx context.Context, in *v11.DeleteOrderItemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type orderItemServiceClient struct {
@@ -380,46 +334,6 @@ func (c *orderItemServiceClient) Get(ctx context.Context, in *v11.GetOrderItemRe
 	return out, nil
 }
 
-func (c *orderItemServiceClient) Create(ctx context.Context, in *v11.CreateOrderItemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, OrderItemService_Create_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *orderItemServiceClient) BatchCreate(ctx context.Context, in *v11.BatchCreateOrderItemsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, OrderItemService_BatchCreate_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *orderItemServiceClient) Update(ctx context.Context, in *v11.UpdateOrderItemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, OrderItemService_Update_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *orderItemServiceClient) Delete(ctx context.Context, in *v11.DeleteOrderItemRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, OrderItemService_Delete_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // OrderItemServiceServer is the server API for OrderItemService service.
 // All implementations must embed UnimplementedOrderItemServiceServer
 // for forward compatibility.
@@ -429,10 +343,6 @@ type OrderItemServiceServer interface {
 	List(context.Context, *v1.PagingRequest) (*v11.ListOrderItemResponse, error)
 	Count(context.Context, *v1.PagingRequest) (*v11.CountOrderItemResponse, error)
 	Get(context.Context, *v11.GetOrderItemRequest) (*v11.OrderItem, error)
-	Create(context.Context, *v11.CreateOrderItemRequest) (*emptypb.Empty, error)
-	BatchCreate(context.Context, *v11.BatchCreateOrderItemsRequest) (*emptypb.Empty, error)
-	Update(context.Context, *v11.UpdateOrderItemRequest) (*emptypb.Empty, error)
-	Delete(context.Context, *v11.DeleteOrderItemRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOrderItemServiceServer()
 }
 
@@ -451,18 +361,6 @@ func (UnimplementedOrderItemServiceServer) Count(context.Context, *v1.PagingRequ
 }
 func (UnimplementedOrderItemServiceServer) Get(context.Context, *v11.GetOrderItemRequest) (*v11.OrderItem, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
-}
-func (UnimplementedOrderItemServiceServer) Create(context.Context, *v11.CreateOrderItemRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
-}
-func (UnimplementedOrderItemServiceServer) BatchCreate(context.Context, *v11.BatchCreateOrderItemsRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method BatchCreate not implemented")
-}
-func (UnimplementedOrderItemServiceServer) Update(context.Context, *v11.UpdateOrderItemRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
-}
-func (UnimplementedOrderItemServiceServer) Delete(context.Context, *v11.DeleteOrderItemRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedOrderItemServiceServer) mustEmbedUnimplementedOrderItemServiceServer() {}
 func (UnimplementedOrderItemServiceServer) testEmbeddedByValue()                          {}
@@ -539,78 +437,6 @@ func _OrderItemService_Get_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _OrderItemService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.CreateOrderItemRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrderItemServiceServer).Create(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OrderItemService_Create_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderItemServiceServer).Create(ctx, req.(*v11.CreateOrderItemRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OrderItemService_BatchCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.BatchCreateOrderItemsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrderItemServiceServer).BatchCreate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OrderItemService_BatchCreate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderItemServiceServer).BatchCreate(ctx, req.(*v11.BatchCreateOrderItemsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OrderItemService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.UpdateOrderItemRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrderItemServiceServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OrderItemService_Update_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderItemServiceServer).Update(ctx, req.(*v11.UpdateOrderItemRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _OrderItemService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.DeleteOrderItemRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OrderItemServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: OrderItemService_Delete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderItemServiceServer).Delete(ctx, req.(*v11.DeleteOrderItemRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // OrderItemService_ServiceDesc is the grpc.ServiceDesc for OrderItemService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -629,22 +455,6 @@ var OrderItemService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Get",
 			Handler:    _OrderItemService_Get_Handler,
-		},
-		{
-			MethodName: "Create",
-			Handler:    _OrderItemService_Create_Handler,
-		},
-		{
-			MethodName: "BatchCreate",
-			Handler:    _OrderItemService_BatchCreate_Handler,
-		},
-		{
-			MethodName: "Update",
-			Handler:    _OrderItemService_Update_Handler,
-		},
-		{
-			MethodName: "Delete",
-			Handler:    _OrderItemService_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -43,9 +43,9 @@ func RegisterShippingAddressServiceHTTPServer(s *http.Server, srv ShippingAddres
 	r.GET("/app/v1/mall/addresses", _ShippingAddressService_List12_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/addresses/count", _ShippingAddressService_Count6_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/addresses/{id}", _ShippingAddressService_Get12_HTTP_Handler(srv))
-	r.POST("/app/v1/mall/addresses", _ShippingAddressService_Create6_HTTP_Handler(srv))
-	r.PUT("/app/v1/mall/addresses/{id}", _ShippingAddressService_Update5_HTTP_Handler(srv))
-	r.DELETE("/app/v1/mall/addresses", _ShippingAddressService_Delete5_HTTP_Handler(srv))
+	r.POST("/app/v1/mall/addresses", _ShippingAddressService_Create5_HTTP_Handler(srv))
+	r.PUT("/app/v1/mall/addresses/{id}", _ShippingAddressService_Update3_HTTP_Handler(srv))
+	r.DELETE("/app/v1/mall/addresses", _ShippingAddressService_Delete2_HTTP_Handler(srv))
 }
 
 func _ShippingAddressService_List12_HTTP_Handler(srv ShippingAddressServiceHTTPServer) func(ctx http.Context) error {
@@ -108,7 +108,7 @@ func _ShippingAddressService_Get12_HTTP_Handler(srv ShippingAddressServiceHTTPSe
 	}
 }
 
-func _ShippingAddressService_Create6_HTTP_Handler(srv ShippingAddressServiceHTTPServer) func(ctx http.Context) error {
+func _ShippingAddressService_Create5_HTTP_Handler(srv ShippingAddressServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateShippingAddressRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -130,7 +130,7 @@ func _ShippingAddressService_Create6_HTTP_Handler(srv ShippingAddressServiceHTTP
 	}
 }
 
-func _ShippingAddressService_Update5_HTTP_Handler(srv ShippingAddressServiceHTTPServer) func(ctx http.Context) error {
+func _ShippingAddressService_Update3_HTTP_Handler(srv ShippingAddressServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateShippingAddressRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -155,7 +155,7 @@ func _ShippingAddressService_Update5_HTTP_Handler(srv ShippingAddressServiceHTTP
 	}
 }
 
-func _ShippingAddressService_Delete5_HTTP_Handler(srv ShippingAddressServiceHTTPServer) func(ctx http.Context) error {
+func _ShippingAddressService_Delete2_HTTP_Handler(srv ShippingAddressServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteShippingAddressRequest
 		if err := ctx.BindQuery(&in); err != nil {

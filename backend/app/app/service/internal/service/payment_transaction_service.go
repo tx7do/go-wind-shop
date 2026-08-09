@@ -59,27 +59,3 @@ func (s *PaymentTransactionService) Create(ctx context.Context, req *paymentV1.C
 
 	return s.paymentTransactionServiceClient.Create(ctx, req)
 }
-
-func (s *PaymentTransactionService) Update(ctx context.Context, req *paymentV1.UpdatePaymentTransactionRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
-		return nil, appV1.ErrorBadRequest("invalid parameter")
-	}
-
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.Id = trans.Ptr(req.GetId())
-
-	req.Data.UpdatedBy = trans.Ptr(operator.GetUserId())
-	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
-	}
-
-	return s.paymentTransactionServiceClient.Update(ctx, req)
-}
-
-func (s *PaymentTransactionService) Delete(ctx context.Context, req *paymentV1.DeletePaymentTransactionRequest) (*emptypb.Empty, error) {
-	return s.paymentTransactionServiceClient.Delete(ctx, req)
-}

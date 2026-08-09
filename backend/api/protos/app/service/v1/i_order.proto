@@ -41,12 +41,6 @@ service OrderService {
       body: "*"
     };
   }
-
-  rpc Delete (order.service.v1.DeleteOrderRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete: "/app/v1/mall/orders"
-    };
-  }
 }
 
 // 订单项前台服务
@@ -66,33 +60,6 @@ service OrderItemService {
   rpc Get (order.service.v1.GetOrderItemRequest) returns (order.service.v1.OrderItem) {
     option (google.api.http) = {
       get: "/app/v1/mall/order-items/{id}"
-    };
-  }
-
-  rpc Create (order.service.v1.CreateOrderItemRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      post: "/app/v1/mall/order-items"
-      body: "*"
-    };
-  }
-
-  rpc BatchCreate (order.service.v1.BatchCreateOrderItemsRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      post: "/app/v1/mall/order-items/batch"
-      body: "*"
-    };
-  }
-
-  rpc Update (order.service.v1.UpdateOrderItemRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      put: "/app/v1/mall/order-items/{id}"
-      body: "*"
-    };
-  }
-
-  rpc Delete (order.service.v1.DeleteOrderItemRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete: "/app/v1/mall/order-items"
     };
   }
 }

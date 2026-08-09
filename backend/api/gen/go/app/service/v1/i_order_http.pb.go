@@ -24,7 +24,6 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationOrderServiceCount = "/app.service.v1.OrderService/Count"
 const OperationOrderServiceCreate = "/app.service.v1.OrderService/Create"
-const OperationOrderServiceDelete = "/app.service.v1.OrderService/Delete"
 const OperationOrderServiceGet = "/app.service.v1.OrderService/Get"
 const OperationOrderServiceList = "/app.service.v1.OrderService/List"
 const OperationOrderServiceUpdate = "/app.service.v1.OrderService/Update"
@@ -32,7 +31,6 @@ const OperationOrderServiceUpdate = "/app.service.v1.OrderService/Update"
 type OrderServiceHTTPServer interface {
 	Count(context.Context, *v1.PagingRequest) (*v11.CountOrderResponse, error)
 	Create(context.Context, *v11.CreateOrderRequest) (*emptypb.Empty, error)
-	Delete(context.Context, *v11.DeleteOrderRequest) (*emptypb.Empty, error)
 	Get(context.Context, *v11.GetOrderRequest) (*v11.Order, error)
 	List(context.Context, *v1.PagingRequest) (*v11.ListOrderResponse, error)
 	Update(context.Context, *v11.UpdateOrderRequest) (*emptypb.Empty, error)
@@ -45,7 +43,6 @@ func RegisterOrderServiceHTTPServer(s *http.Server, srv OrderServiceHTTPServer) 
 	r.GET("/app/v1/mall/orders/{id}", _OrderService_Get4_HTTP_Handler(srv))
 	r.POST("/app/v1/mall/orders", _OrderService_Create2_HTTP_Handler(srv))
 	r.PUT("/app/v1/mall/orders/{id}", _OrderService_Update2_HTTP_Handler(srv))
-	r.DELETE("/app/v1/mall/orders", _OrderService_Delete2_HTTP_Handler(srv))
 }
 
 func _OrderService_List4_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
@@ -155,29 +152,9 @@ func _OrderService_Update2_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx htt
 	}
 }
 
-func _OrderService_Delete2_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in v11.DeleteOrderRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationOrderServiceDelete)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Delete(ctx, req.(*v11.DeleteOrderRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*emptypb.Empty)
-		return ctx.Result(200, reply)
-	}
-}
-
 type OrderServiceHTTPClient interface {
 	Count(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.CountOrderResponse, err error)
 	Create(ctx context.Context, req *v11.CreateOrderRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	Delete(ctx context.Context, req *v11.DeleteOrderRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	Get(ctx context.Context, req *v11.GetOrderRequest, opts ...http.CallOption) (rsp *v11.Order, err error)
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListOrderResponse, err error)
 	Update(ctx context.Context, req *v11.UpdateOrderRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
@@ -211,19 +188,6 @@ func (c *OrderServiceHTTPClientImpl) Create(ctx context.Context, in *v11.CreateO
 	opts = append(opts, http.Operation(OperationOrderServiceCreate))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-func (c *OrderServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.DeleteOrderRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
-	var out emptypb.Empty
-	pattern := "/app/v1/mall/orders"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationOrderServiceDelete))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -269,22 +233,14 @@ func (c *OrderServiceHTTPClientImpl) Update(ctx context.Context, in *v11.UpdateO
 	return &out, nil
 }
 
-const OperationOrderItemServiceBatchCreate = "/app.service.v1.OrderItemService/BatchCreate"
 const OperationOrderItemServiceCount = "/app.service.v1.OrderItemService/Count"
-const OperationOrderItemServiceCreate = "/app.service.v1.OrderItemService/Create"
-const OperationOrderItemServiceDelete = "/app.service.v1.OrderItemService/Delete"
 const OperationOrderItemServiceGet = "/app.service.v1.OrderItemService/Get"
 const OperationOrderItemServiceList = "/app.service.v1.OrderItemService/List"
-const OperationOrderItemServiceUpdate = "/app.service.v1.OrderItemService/Update"
 
 type OrderItemServiceHTTPServer interface {
-	BatchCreate(context.Context, *v11.BatchCreateOrderItemsRequest) (*emptypb.Empty, error)
 	Count(context.Context, *v1.PagingRequest) (*v11.CountOrderItemResponse, error)
-	Create(context.Context, *v11.CreateOrderItemRequest) (*emptypb.Empty, error)
-	Delete(context.Context, *v11.DeleteOrderItemRequest) (*emptypb.Empty, error)
 	Get(context.Context, *v11.GetOrderItemRequest) (*v11.OrderItem, error)
 	List(context.Context, *v1.PagingRequest) (*v11.ListOrderItemResponse, error)
-	Update(context.Context, *v11.UpdateOrderItemRequest) (*emptypb.Empty, error)
 }
 
 func RegisterOrderItemServiceHTTPServer(s *http.Server, srv OrderItemServiceHTTPServer) {
@@ -292,10 +248,6 @@ func RegisterOrderItemServiceHTTPServer(s *http.Server, srv OrderItemServiceHTTP
 	r.GET("/app/v1/mall/order-items", _OrderItemService_List5_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/order-items/count", _OrderItemService_Count3_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/order-items/{id}", _OrderItemService_Get5_HTTP_Handler(srv))
-	r.POST("/app/v1/mall/order-items", _OrderItemService_Create3_HTTP_Handler(srv))
-	r.POST("/app/v1/mall/order-items/batch", _OrderItemService_BatchCreate2_HTTP_Handler(srv))
-	r.PUT("/app/v1/mall/order-items/{id}", _OrderItemService_Update3_HTTP_Handler(srv))
-	r.DELETE("/app/v1/mall/order-items", _OrderItemService_Delete3_HTTP_Handler(srv))
 }
 
 func _OrderItemService_List5_HTTP_Handler(srv OrderItemServiceHTTPServer) func(ctx http.Context) error {
@@ -358,102 +310,10 @@ func _OrderItemService_Get5_HTTP_Handler(srv OrderItemServiceHTTPServer) func(ct
 	}
 }
 
-func _OrderItemService_Create3_HTTP_Handler(srv OrderItemServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in v11.CreateOrderItemRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationOrderItemServiceCreate)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Create(ctx, req.(*v11.CreateOrderItemRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*emptypb.Empty)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _OrderItemService_BatchCreate2_HTTP_Handler(srv OrderItemServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in v11.BatchCreateOrderItemsRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationOrderItemServiceBatchCreate)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.BatchCreate(ctx, req.(*v11.BatchCreateOrderItemsRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*emptypb.Empty)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _OrderItemService_Update3_HTTP_Handler(srv OrderItemServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in v11.UpdateOrderItemRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationOrderItemServiceUpdate)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Update(ctx, req.(*v11.UpdateOrderItemRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*emptypb.Empty)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _OrderItemService_Delete3_HTTP_Handler(srv OrderItemServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in v11.DeleteOrderItemRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationOrderItemServiceDelete)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Delete(ctx, req.(*v11.DeleteOrderItemRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*emptypb.Empty)
-		return ctx.Result(200, reply)
-	}
-}
-
 type OrderItemServiceHTTPClient interface {
-	BatchCreate(ctx context.Context, req *v11.BatchCreateOrderItemsRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	Count(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.CountOrderItemResponse, err error)
-	Create(ctx context.Context, req *v11.CreateOrderItemRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	Delete(ctx context.Context, req *v11.DeleteOrderItemRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	Get(ctx context.Context, req *v11.GetOrderItemRequest, opts ...http.CallOption) (rsp *v11.OrderItem, err error)
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListOrderItemResponse, err error)
-	Update(ctx context.Context, req *v11.UpdateOrderItemRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
 type OrderItemServiceHTTPClientImpl struct {
@@ -464,19 +324,6 @@ func NewOrderItemServiceHTTPClient(client *http.Client) OrderItemServiceHTTPClie
 	return &OrderItemServiceHTTPClientImpl{client}
 }
 
-func (c *OrderItemServiceHTTPClientImpl) BatchCreate(ctx context.Context, in *v11.BatchCreateOrderItemsRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
-	var out emptypb.Empty
-	pattern := "/app/v1/mall/order-items/batch"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationOrderItemServiceBatchCreate))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
 func (c *OrderItemServiceHTTPClientImpl) Count(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.CountOrderItemResponse, error) {
 	var out v11.CountOrderItemResponse
 	pattern := "/app/v1/mall/order-items/count"
@@ -484,32 +331,6 @@ func (c *OrderItemServiceHTTPClientImpl) Count(ctx context.Context, in *v1.Pagin
 	opts = append(opts, http.Operation(OperationOrderItemServiceCount))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-func (c *OrderItemServiceHTTPClientImpl) Create(ctx context.Context, in *v11.CreateOrderItemRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
-	var out emptypb.Empty
-	pattern := "/app/v1/mall/order-items"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationOrderItemServiceCreate))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-func (c *OrderItemServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.DeleteOrderItemRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
-	var out emptypb.Empty
-	pattern := "/app/v1/mall/order-items"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationOrderItemServiceDelete))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -536,19 +357,6 @@ func (c *OrderItemServiceHTTPClientImpl) List(ctx context.Context, in *v1.Paging
 	opts = append(opts, http.Operation(OperationOrderItemServiceList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-func (c *OrderItemServiceHTTPClientImpl) Update(ctx context.Context, in *v11.UpdateOrderItemRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
-	var out emptypb.Empty
-	pattern := "/app/v1/mall/order-items/{id}"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationOrderItemServiceUpdate))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

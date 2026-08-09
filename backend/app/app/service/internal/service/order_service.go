@@ -83,7 +83,3 @@ func (s *OrderService) Update(ctx context.Context, req *orderV1.UpdateOrderReque
 
 	return s.orderServiceClient.Update(ctx, req)
 }
-
-func (s *OrderService) Delete(ctx context.Context, req *orderV1.DeleteOrderRequest) (*emptypb.Empty, error) {
-	return s.orderServiceClient.Delete(ctx, req)
-}
