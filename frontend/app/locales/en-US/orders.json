@@ -16,5 +16,7 @@
     "total": "Total",
     "createdAt": "Created",
     "action": "Action"
-  }
+  },
+  "title": "My Orders",
+  "subtitle": "View your complete order history"
 }

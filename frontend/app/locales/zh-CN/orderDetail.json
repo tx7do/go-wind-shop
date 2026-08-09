@@ -41,5 +41,6 @@
     "refundFailed": "申请退款失败，请稍后重试。",
     "payFailed": "支付失败，请稍后重试。",
     "noTransaction": "未找到支付流水，无法申请退款。"
-  }
+  },
+  "title": "订单详情"
 }

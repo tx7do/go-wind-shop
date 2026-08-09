@@ -62,10 +62,10 @@
 
 <script setup lang="ts">
 import { ref, type Component } from "vue";
-import { ElDrawer, ElButton } from "element-plus";
+import { ElDrawer, ElButton, ElMessage } from "element-plus";
 import { RefreshRight, Close, CopyDocument, SwitchButton } from "@element-plus/icons-vue";
 import { useI18n } from "@/core/i18n";
-import { resetPreferences } from "../../index";
+import { resetPreferences, preferencesManager } from "../../index";
 import { useAuth } from "@/composables/use-auth";
 import { DRAWER_WIDTH } from "@/constants";
 
@@ -111,9 +111,14 @@ function handleReset() {
   resetPreferences();
 }
 
-function handleCopy() {
-  // TODO: 实现复制偏好设置功能
-  console.log("复制偏好设置");
+async function handleCopy() {
+  try {
+    const prefs = preferencesManager.getPreferences();
+    await navigator.clipboard.writeText(JSON.stringify(prefs, null, 2));
+    ElMessage.success(t("preferences.actions.copySuccess"));
+  } catch {
+    ElMessage.error(t("preferences.actions.copyFailed"));
+  }
 }
 
 async function handleLogout() {

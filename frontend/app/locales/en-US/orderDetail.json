@@ -41,5 +41,6 @@
     "refundFailed": "Failed to request a refund. Please try again later.",
     "payFailed": "Payment failed. Please try again later.",
     "noTransaction": "No payment transaction found; refund cannot be requested."
-  }
+  },
+  "title": "Order Details"
 }

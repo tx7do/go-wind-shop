@@ -46,13 +46,6 @@
     "title": "Checkout",
     "subtitle": "Confirm shipping details and place your order"
   },
-  "orders": {
-    "title": "My Orders",
-    "subtitle": "View your complete order history"
-  },
-  "orderDetail": {
-    "title": "Order Details"
-  },
   "orderStatus": {
     "status_unspecified": "Unknown",
     "pending_payment": "Pending payment",

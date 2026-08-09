@@ -10,7 +10,9 @@
     "reset": "Reset Preferences",
     "close": "Close",
     "copySettings": "Copy Settings",
-    "clearCacheAndLogout": "Clear Cache & Logout"
+    "clearCacheAndLogout": "Clear Cache & Logout",
+    "copySuccess": "Preferences copied to clipboard",
+    "copyFailed": "Copy failed"
   },
   "tabs": {
     "appearance": "Appearance",

@@ -6,6 +6,7 @@ import {
   fetchListUserInbox,
   fetchGetInternalMessage,
   useMarkNotificationAsRead,
+  useDeleteNotificationFromInbox,
 } from "@/api/composables";
 import { useAppUserStore } from "@/stores";
 import { PaginationQuery } from "@/core/transport/rest";
@@ -21,6 +22,7 @@ const NOTICE_EVENT = "notification";
 
 export function useNotice() {
   const { mutateAsync: markNotificationAsRead } = useMarkNotificationAsRead();
+  const { mutateAsync: deleteNotifications } = useDeleteNotificationFromInbox();
   const userStore = useAppUserStore();
 
   // 状态
@@ -131,8 +133,7 @@ export function useNotice() {
     }
 
     try {
-      // TODO: 调用后端 API 删除消息
-      // await internalMessageStore.deleteMessages(userId, allIds);
+      await deleteNotifications({ userId, recipientIds: allIds });
       ElMessage.success("已清空所有消息");
     } catch {
       ElMessage.error("操作失败");

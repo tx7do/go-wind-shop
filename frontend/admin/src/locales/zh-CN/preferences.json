@@ -10,7 +10,9 @@
     "reset": "重置偏好",
     "close": "关闭",
     "copySettings": "复制设置",
-    "clearCacheAndLogout": "清除缓存并退出"
+    "clearCacheAndLogout": "清除缓存并退出",
+    "copySuccess": "偏好设置已复制到剪贴板",
+    "copyFailed": "复制失败"
   },
   "tabs": {
     "appearance": "外观",

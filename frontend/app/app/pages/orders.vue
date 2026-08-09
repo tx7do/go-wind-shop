@@ -13,7 +13,7 @@ const localePath = useLocalePath();
 const route = useRoute();
 const router = useRouter();
 
-useHead({ title: t('mall.orders.title') });
+useHead({ title: t('orders.title') });
 
 const accessStore = useAccessStore();
 
@@ -156,8 +156,8 @@ function goToPage(p: number) {
 
 <template>
   <LayoutPageHero
-    :title="t('mall.orders.title')"
-    :description="t('mall.orders.subtitle')"
+    :title="t('orders.title')"
+    :description="t('orders.subtitle')"
     icon="carbon:document"
     size="sm"
   />

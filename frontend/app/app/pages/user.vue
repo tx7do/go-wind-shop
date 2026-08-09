@@ -80,7 +80,7 @@ const userInfo = computed(() => me.value || userStore.user)
 
           <!-- 我的订单：按状态快捷入口（带 ?status= 预选订单列表筛选项） -->
           <div class="mt-4 flex flex-wrap items-center gap-2 rounded-xl border border-border bg-background/40 p-4">
-            <span class="text-xs font-medium text-muted-foreground">{{ t('mall.orders.title') }}：</span>
+            <span class="text-xs font-medium text-muted-foreground">{{ t('orders.title') }}：</span>
             <NuxtLink
               :to="localePath('/orders') + '?status=PENDING_PAYMENT'"
               class="rounded-full bg-muted px-3 py-1 text-[11px] text-foreground transition-colors hover:bg-primary hover:text-primary-foreground"

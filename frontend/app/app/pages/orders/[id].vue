@@ -29,7 +29,7 @@ const route = useRoute();
 const { t } = useI18n();
 const localePath = useLocalePath();
 
-useHead({ title: t('mall.orderDetail.title') });
+useHead({ title: t('orderDetail.title') });
 
 const accessStore = useAccessStore();
 
@@ -385,7 +385,7 @@ const hasAnyAction = computed(
 
 <template>
   <LayoutPageHero
-    :title="t('mall.orderDetail.title')"
+    :title="t('orderDetail.title')"
     icon="carbon:document"
     size="sm"
   />

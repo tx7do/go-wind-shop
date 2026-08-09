@@ -46,13 +46,6 @@
     "title": "结算",
     "subtitle": "确认收货信息并提交订单"
   },
-  "orders": {
-    "title": "我的订单",
-    "subtitle": "查看你的全部订单记录"
-  },
-  "orderDetail": {
-    "title": "订单详情"
-  },
   "orderStatus": {
     "status_unspecified": "未知",
     "pending_payment": "待支付",
