@@ -172,11 +172,15 @@ func (s *FileTransferService) directUploadFile(ctx context.Context, req *storage
 		req.GetFile(),
 		req.GetSourceFileName(),
 		info, downloadUrl); err != nil {
+		// 文件已上传至对象存储，但元数据落库失败。视为整体失败，不返回
+		// downloadUrl，避免客户端拿到无法被后续业务检索到的孤儿对象。
+		s.log.Errorf("Failed to create file record: %v", err)
+		return nil, storageV1.ErrorUploadFailed("file metadata recording failed")
 	}
 
 	return &storageV1.UploadFileResponse{
 		ObjectName: trans.Ptr(downloadUrl),
-	}, err
+	}, nil
 }
 
 // presignedUploadFile 预签名上传文件
