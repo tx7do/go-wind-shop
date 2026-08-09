@@ -22,9 +22,23 @@ import (
 // 适用实体：Order、Cart（购物车与订单按用户隔离，同租户内不可互看）。
 type UserPrivacy struct {
 	decision error
+	// ColumnName 指定行级隔离所用的列名。默认空串表示 "user_id"
+	// （覆盖 Order/Cart/PaymentTransaction/Shipment 等多数实体）。
+	// 列名不同（如 InternalMessageRecipient 的 recipient_user_id）的实体
+	// 在 Policy() 中显式传入，使 EvalQuery/EvalMutation 的 WHERE 注入
+	// 落到正确列。
+	ColumnName string
 }
 
-func (UserPrivacy) EvalQuery(ctx context.Context, query ent.Query) error {
+// userColumn 返回行级隔离所用的列名，空串回退到 "user_id"。
+func (u UserPrivacy) userColumn() string {
+	if u.ColumnName != "" {
+		return u.ColumnName
+	}
+	return "user_id"
+}
+
+func (u UserPrivacy) EvalQuery(ctx context.Context, query ent.Query) error {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist {
 		return fmt.Errorf("security: missing ViewerContext in context")
@@ -37,13 +51,13 @@ func (UserPrivacy) EvalQuery(ctx context.Context, query ent.Query) error {
 	if uid == 0 {
 		return fmt.Errorf("security: viewer has no user id")
 	}
-	if err := injectUserWhere(query, uid); err != nil {
+	if err := injectUserWhere(query, uid, u.userColumn()); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (UserPrivacy) EvalMutation(ctx context.Context, m ent.Mutation) error {
+func (u UserPrivacy) EvalMutation(ctx context.Context, m ent.Mutation) error {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist {
 		return fmt.Errorf("missing ViewerContext in context")
@@ -58,13 +72,18 @@ func (UserPrivacy) EvalMutation(ctx context.Context, m ent.Mutation) error {
 	}
 	op := m.Op()
 	if !op.Is(ent.OpCreate) {
-		// 非 Create 的 mutation（Update/Delete）同样按 user_id 过滤
-		if err := injectUserWhereMutation(m, uid); err != nil {
+		// 非 Create 的 mutation（Update/Delete）同样按归属列过滤
+		if err := injectUserWhereMutation(m, uid, u.userColumn()); err != nil {
 			return err
 		}
 		return nil
 	}
-	// Create：强制覆盖 user_id 为 viewer 的 uid，防伪造
+	// Create：仅对 user_id 列的实体强制覆盖归属（防伪造）。
+	// 列名不同的实体（如 InternalMessageRecipient 的 recipient_user_id）
+	// 不走客户端 Create（系统消息投递由系统视图在上方放行），此处直接返回。
+	if u.userColumn() != "user_id" {
+		return nil
+	}
 	if s, ok := m.(interface{ SetUserID(uint32) }); ok {
 		s.SetUserID(uint32(uid))
 		return nil
@@ -78,8 +97,8 @@ func (UserPrivacy) EvalMutation(ctx context.Context, m ent.Mutation) error {
 	return fmt.Errorf("unable to set user_id on mutation")
 }
 
-// injectUserWhere 在查询上注入 user_id = uid 过滤（通过反射调用 query.Where）。
-func injectUserWhere(query ent.Query, uid uint64) error {
+// injectUserWhere 在查询上注入 columnName = uid 过滤（通过反射调用 query.Where）。
+func injectUserWhere(query ent.Query, uid uint64, columnName string) error {
 	rv := reflect.ValueOf(query)
 	mf := rv.MethodByName("Where")
 	if !mf.IsValid() || mf.Kind() != reflect.Func {
@@ -95,7 +114,7 @@ func injectUserWhere(query ent.Query, uid uint64) error {
 		return nil
 	}
 	fn := func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C("user_id"), uid))
+		s.Where(sql.EQ(s.C(columnName), uid))
 	}
 	valFn := reflect.ValueOf(fn)
 	if valFn.Type() != elem {
@@ -113,8 +132,8 @@ func injectUserWhere(query ent.Query, uid uint64) error {
 	return nil
 }
 
-// injectUserWhereMutation 在 mutation（Update/Delete）上注入 user_id = uid 过滤。
-func injectUserWhereMutation(m ent.Mutation, uid uint64) error {
+// injectUserWhereMutation 在 mutation（Update/Delete）上注入 columnName = uid 过滤。
+func injectUserWhereMutation(m ent.Mutation, uid uint64, columnName string) error {
 	rv := reflect.ValueOf(m)
 	mf := rv.MethodByName("Where")
 	if !mf.IsValid() || mf.Kind() != reflect.Func {
@@ -130,7 +149,7 @@ func injectUserWhereMutation(m ent.Mutation, uid uint64) error {
 		return nil
 	}
 	fn := func(s *sql.Selector) {
-		s.Where(sql.EQ(s.C("user_id"), uid))
+		s.Where(sql.EQ(s.C(columnName), uid))
 	}
 	valFn := reflect.ValueOf(fn)
 	if valFn.Type() != elem {

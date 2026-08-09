@@ -38,6 +38,7 @@ func NewInternalMessageRecipientService(
 
 // ListUserInbox 强制把 recipientUserId=当前用户 注入到分页 query，确保只返回本人的收件箱。
 // 客户端可携带 status 等其它过滤字段，会与 recipientUserId 合并。
+// JSON 解析/序列化任一失败均 fail-closed 返回错误，避免保留客户端原 query 越权。
 func (s *InternalMessageRecipientService) ListUserInbox(ctx context.Context, req *paginationV1.PagingRequest) (*internalMessageV1.ListUserInboxResponse, error) {
 	operator, err := auth.FromContext(ctx)
 	if err != nil {
@@ -48,12 +49,16 @@ func (s *InternalMessageRecipientService) ListUserInbox(ctx context.Context, req
 	// 解析现有 query（可能含 status 等过滤），注入 recipientUserId 后写回。
 	queryMap := map[string]any{}
 	if raw := req.GetQuery(); raw != "" {
-		_ = json.Unmarshal([]byte(raw), &queryMap) // 解析失败则按空 map 处理，避免脏数据导致 500
+		if jErr := json.Unmarshal([]byte(raw), &queryMap); jErr != nil {
+			return nil, appV1.ErrorInternalServerError("internal error")
+		}
 	}
 	queryMap["recipientUserId"] = userId
-	if newJSON, err := json.Marshal(queryMap); err == nil {
-		req.FilteringType = &paginationV1.PagingRequest_Query{Query: string(newJSON)}
+	newJSON, mErr := json.Marshal(queryMap)
+	if mErr != nil {
+		return nil, appV1.ErrorInternalServerError("internal error")
 	}
+	req.FilteringType = &paginationV1.PagingRequest_Query{Query: string(newJSON)}
 
 	return s.internalMessageRecipientServiceClient.ListUserInbox(ctx, req)
 }

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -35,7 +36,29 @@ func NewInternalMessageRecipientService(
 }
 
 // ListUserInbox 获取用户的收件箱列表 (通知类)
+//
+// 行级隔离由 schema Policy（UserPrivacy，列名 recipient_user_id）兜底：
+// 普通 viewer 的查询自动注入 recipient_user_id = uid 的 WHERE。
+// 此处再补一层显式注入作为纵深防御——即使 BFF 注入被绕过或 core gRPC
+// 直连，仍强制按 recipientUserId 过滤。系统/平台视图放行。
 func (s *InternalMessageRecipientService) ListUserInbox(ctx context.Context, req *paginationV1.PagingRequest) (*internalMessageV1.ListUserInboxResponse, error) {
+	// 纵深防御：普通 viewer 强制注入 recipientUserId 到 query
+	if viewerUid, ok := viewerUserIDFromContext(ctx); ok {
+		queryMap := map[string]any{}
+		if raw := req.GetQuery(); raw != "" {
+			if jErr := json.Unmarshal([]byte(raw), &queryMap); jErr != nil {
+				// 解析失败 fail-closed，避免脏 query 越权
+				return nil, internalMessageV1.ErrorInternalServerError("internal error")
+			}
+		}
+		queryMap["recipientUserId"] = viewerUid
+		newJSON, mErr := json.Marshal(queryMap)
+		if mErr != nil {
+			return nil, internalMessageV1.ErrorInternalServerError("internal error")
+		}
+		req.FilteringType = &paginationV1.PagingRequest_Query{Query: string(newJSON)}
+	}
+
 	resp, err := s.internalMessageRecipientRepo.List(ctx, req)
 	if err != nil {
 		return nil, err

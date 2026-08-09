@@ -8,11 +8,20 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/tx7do/go-crud/entgo/mixin"
+
+	appPrivacy "go-wind-shop/pkg/entgo/privacy"
 )
 
 // InternalMessageRecipient holds the schema definition for the InternalMessageRecipient entity.
 type InternalMessageRecipient struct {
 	ent.Schema
+}
+
+// Policy 注入 UserPrivacy（列名 recipient_user_id）：普通用户只能查询/变更
+// recipient_user_id = 自身 userID 的收件箱记录。系统/平台视图放行。
+// 防同租户内越权读取/操作他人收件箱。
+func (InternalMessageRecipient) Policy() ent.Policy {
+	return appPrivacy.UserPrivacy{ColumnName: "recipient_user_id"}
 }
 
 func (InternalMessageRecipient) Annotations() []schema.Annotation {
