@@ -160,19 +160,12 @@ func (s *AuthenticationService) authorizeAndEnrichUserTokenPayloadUserTenantRela
 }
 
 // authorizeAndEnrichUserTokenPayload 授权并丰富用户令牌载荷
+//
+// 当前用户-租户关系固定为一对一（constants.DefaultUserTenantType），
+// 直接委托一对一实现。一对多实现保留在 repo 层作为预留，待启用时
+// 在此处分流。
 func (s *AuthenticationService) authorizeAndEnrichUserTokenPayload(ctx context.Context, userID, tenantID uint32, tokenPayload *authenticationV1.UserTokenPayload) error {
-	switch constants.DefaultUserTenantRelationType {
-	case constants.UserTenantRelationOneToOne:
-		return s.authorizeAndEnrichUserTokenPayloadUserTenantRelationOneToOne(ctx, userID, tenantID, tokenPayload)
-
-	case constants.UserTenantRelationOneToMany:
-		s.log.Errorf("user-tenant relation type one-to-many is not implemented yet")
-		return authenticationV1.ErrorServiceUnavailable("user-tenant relation type one-to-many is not implemented yet")
-
-	default:
-		s.log.Errorf("unsupported user-tenant relation type: %d", constants.DefaultUserTenantRelationType)
-		return authenticationV1.ErrorServiceUnavailable("unsupported user-tenant relation type")
-	}
+	return s.authorizeAndEnrichUserTokenPayloadUserTenantRelationOneToOne(ctx, userID, tenantID, tokenPayload)
 }
 
 // resolveUserAuthority 解析用户权限信息

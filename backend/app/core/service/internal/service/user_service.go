@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -308,18 +307,10 @@ func (s *UserService) queryUserIDsByRelationIDs(ctx context.Context, roleIDs []u
 		return nil, nil
 	}
 
-	switch constants.DefaultUserTenantRelationType {
-	default:
-		fallthrough
-	case constants.UserTenantRelationOneToOne:
-		return s.queryUserIDsByRelationIDsUserTenantRelationOneToOne(ctx, roleIDs, orgUnitIDs, positionIDs)
-	case constants.UserTenantRelationOneToMany:
-		return s.queryUserIDsByRelationIDsUserTenantRelationOneToMany(ctx, roleIDs, orgUnitIDs, positionIDs)
-	}
-}
-
-func (s *UserService) queryUserIDsByRelationIDsUserTenantRelationOneToMany(_ context.Context, _, _, _ []uint32) ([]uint32, error) {
-	return nil, fmt.Errorf("not implemented")
+	// 当前用户-租户关系固定为一对一（constants.DefaultUserTenantType），
+	// 直接委托一对一实现。一对多实现保留在 repo 层作为预留，待启用时
+	// 在此处分流。
+	return s.queryUserIDsByRelationIDsUserTenantRelationOneToOne(ctx, roleIDs, orgUnitIDs, positionIDs)
 }
 
 func (s *UserService) queryUserIDsByRelationIDsUserTenantRelationOneToOne(ctx context.Context, roleIDs, orgUnitIDs, positionIDs []uint32) ([]uint32, error) {
