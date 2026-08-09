@@ -323,8 +323,6 @@ const (
 	PaymentRefundService_Count_FullMethodName  = "/app.service.v1.PaymentRefundService/Count"
 	PaymentRefundService_Get_FullMethodName    = "/app.service.v1.PaymentRefundService/Get"
 	PaymentRefundService_Create_FullMethodName = "/app.service.v1.PaymentRefundService/Create"
-	PaymentRefundService_Update_FullMethodName = "/app.service.v1.PaymentRefundService/Update"
-	PaymentRefundService_Delete_FullMethodName = "/app.service.v1.PaymentRefundService/Delete"
 )
 
 // PaymentRefundServiceClient is the client API for PaymentRefundService service.
@@ -337,8 +335,6 @@ type PaymentRefundServiceClient interface {
 	Count(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.CountPaymentRefundResponse, error)
 	Get(ctx context.Context, in *v11.GetPaymentRefundRequest, opts ...grpc.CallOption) (*v11.PaymentRefund, error)
 	Create(ctx context.Context, in *v11.CreatePaymentRefundRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Update(ctx context.Context, in *v11.UpdatePaymentRefundRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Delete(ctx context.Context, in *v11.DeletePaymentRefundRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type paymentRefundServiceClient struct {
@@ -389,26 +385,6 @@ func (c *paymentRefundServiceClient) Create(ctx context.Context, in *v11.CreateP
 	return out, nil
 }
 
-func (c *paymentRefundServiceClient) Update(ctx context.Context, in *v11.UpdatePaymentRefundRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, PaymentRefundService_Update_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *paymentRefundServiceClient) Delete(ctx context.Context, in *v11.DeletePaymentRefundRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, PaymentRefundService_Delete_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PaymentRefundServiceServer is the server API for PaymentRefundService service.
 // All implementations must embed UnimplementedPaymentRefundServiceServer
 // for forward compatibility.
@@ -419,8 +395,6 @@ type PaymentRefundServiceServer interface {
 	Count(context.Context, *v1.PagingRequest) (*v11.CountPaymentRefundResponse, error)
 	Get(context.Context, *v11.GetPaymentRefundRequest) (*v11.PaymentRefund, error)
 	Create(context.Context, *v11.CreatePaymentRefundRequest) (*emptypb.Empty, error)
-	Update(context.Context, *v11.UpdatePaymentRefundRequest) (*emptypb.Empty, error)
-	Delete(context.Context, *v11.DeletePaymentRefundRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPaymentRefundServiceServer()
 }
 
@@ -442,12 +416,6 @@ func (UnimplementedPaymentRefundServiceServer) Get(context.Context, *v11.GetPaym
 }
 func (UnimplementedPaymentRefundServiceServer) Create(context.Context, *v11.CreatePaymentRefundRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
-}
-func (UnimplementedPaymentRefundServiceServer) Update(context.Context, *v11.UpdatePaymentRefundRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
-}
-func (UnimplementedPaymentRefundServiceServer) Delete(context.Context, *v11.DeletePaymentRefundRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedPaymentRefundServiceServer) mustEmbedUnimplementedPaymentRefundServiceServer() {}
 func (UnimplementedPaymentRefundServiceServer) testEmbeddedByValue()                              {}
@@ -542,42 +510,6 @@ func _PaymentRefundService_Create_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PaymentRefundService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.UpdatePaymentRefundRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentRefundServiceServer).Update(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentRefundService_Update_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentRefundServiceServer).Update(ctx, req.(*v11.UpdatePaymentRefundRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _PaymentRefundService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(v11.DeletePaymentRefundRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PaymentRefundServiceServer).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: PaymentRefundService_Delete_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PaymentRefundServiceServer).Delete(ctx, req.(*v11.DeletePaymentRefundRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // PaymentRefundService_ServiceDesc is the grpc.ServiceDesc for PaymentRefundService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -600,14 +532,6 @@ var PaymentRefundService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _PaymentRefundService_Create_Handler,
-		},
-		{
-			MethodName: "Update",
-			Handler:    _PaymentRefundService_Update_Handler,
-		},
-		{
-			MethodName: "Delete",
-			Handler:    _PaymentRefundService_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

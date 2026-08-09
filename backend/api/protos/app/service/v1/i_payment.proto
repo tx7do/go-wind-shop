@@ -75,17 +75,4 @@ service PaymentRefundService {
       body: "*"
     };
   }
-
-  rpc Update (payment.service.v1.UpdatePaymentRefundRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      put: "/app/v1/mall/payment-refunds/{id}"
-      body: "*"
-    };
-  }
-
-  rpc Delete (payment.service.v1.DeletePaymentRefundRequest) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete: "/app/v1/mall/payment-refunds"
-    };
-  }
 }

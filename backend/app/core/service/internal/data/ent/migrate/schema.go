@@ -1701,6 +1701,7 @@ var (
 		{Name: "business_ref_id", Type: field.TypeString, Nullable: true, Comment: "业务单号"},
 		{Name: "idempotency_key", Type: field.TypeString, Nullable: true, Comment: "幂等键"},
 		{Name: "transaction_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的支付流水ID"},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "用户ID"},
 		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "退款金额（最小货币单位，分）", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "退款状态", Enums: []string{"PENDING", "SUCCEEDED", "FAILED"}},
 	}

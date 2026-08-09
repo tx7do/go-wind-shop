@@ -186,6 +186,11 @@ message PaymentRefund {
     (gnostic.openapi.v3.property) = {description: "退款幂等键（租户内唯一）"}
   ];
 
+  optional uint32 user_id = 8 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {description: "用户ID"}
+  ];
+
   // ===== 以下是 infra mixin 注入字段（高编号） =====
 
   optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];

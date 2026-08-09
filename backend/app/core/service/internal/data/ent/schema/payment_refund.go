@@ -10,10 +10,17 @@ import (
 	"github.com/tx7do/go-crud/entgo/mixin"
 
 	appmixin "go-wind-shop/pkg/entgo/mixin"
+	appPrivacy "go-wind-shop/pkg/entgo/privacy"
 )
 
 type PaymentRefund struct {
 	ent.Schema
+}
+
+// Policy 注入 UserPrivacy：普通用户只能查询/变更 user_id = 自身 userID
+// 的退款记录。系统/平台视图放行。防同租户内越权看/改他人退款。
+func (PaymentRefund) Policy() ent.Policy {
+	return appPrivacy.UserPrivacy{}
 }
 
 func (PaymentRefund) Annotations() []schema.Annotation {
@@ -32,6 +39,11 @@ func (PaymentRefund) Fields() []ent.Field {
 	return []ent.Field{
 		field.Uint32("transaction_id").
 			Comment("关联的支付流水ID").
+			Optional().
+			Nillable(),
+
+		field.Uint32("user_id").
+			Comment("用户ID").
 			Optional().
 			Nillable(),
 

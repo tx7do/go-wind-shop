@@ -35,14 +35,12 @@ const file_app_service_v1_i_payment_proto_rawDesc = "" +
 	"\x03Get\x120.payment.service.v1.GetPaymentTransactionRequest\x1a&.payment.service.v1.PaymentTransaction\".\x82\xd3\xe4\x93\x02(\x12&/app/v1/mall/payment-transactions/{id}\x12\x83\x01\n" +
 	"\x06Create\x123.payment.service.v1.CreatePaymentTransactionRequest\x1a\x16.google.protobuf.Empty\",\x82\xd3\xe4\x93\x02&:\x01*\"!/app/v1/mall/payment-transactions\x12\x88\x01\n" +
 	"\x06Update\x123.payment.service.v1.UpdatePaymentTransactionRequest\x1a\x16.google.protobuf.Empty\"1\x82\xd3\xe4\x93\x02+:\x01*\x1a&/app/v1/mall/payment-transactions/{id}\x12\x80\x01\n" +
-	"\x06Delete\x123.payment.service.v1.DeletePaymentTransactionRequest\x1a\x16.google.protobuf.Empty\")\x82\xd3\xe4\x93\x02#*!/app/v1/mall/payment-transactions2\x84\x06\n" +
+	"\x06Delete\x123.payment.service.v1.DeletePaymentTransactionRequest\x1a\x16.google.protobuf.Empty\")\x82\xd3\xe4\x93\x02#*!/app/v1/mall/payment-transactions2\x8c\x04\n" +
 	"\x14PaymentRefundService\x12v\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a-.payment.service.v1.ListPaymentRefundResponse\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/app/v1/mall/payment-refunds\x12~\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a..payment.service.v1.CountPaymentRefundResponse\"*\x82\xd3\xe4\x93\x02$\x12\"/app/v1/mall/payment-refunds/count\x12\x80\x01\n" +
 	"\x03Get\x12+.payment.service.v1.GetPaymentRefundRequest\x1a!.payment.service.v1.PaymentRefund\")\x82\xd3\xe4\x93\x02#\x12!/app/v1/mall/payment-refunds/{id}\x12y\n" +
-	"\x06Create\x12..payment.service.v1.CreatePaymentRefundRequest\x1a\x16.google.protobuf.Empty\"'\x82\xd3\xe4\x93\x02!:\x01*\"\x1c/app/v1/mall/payment-refunds\x12~\n" +
-	"\x06Update\x12..payment.service.v1.UpdatePaymentRefundRequest\x1a\x16.google.protobuf.Empty\",\x82\xd3\xe4\x93\x02&:\x01*\x1a!/app/v1/mall/payment-refunds/{id}\x12v\n" +
-	"\x06Delete\x12..payment.service.v1.DeletePaymentRefundRequest\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e*\x1c/app/v1/mall/payment-refundsB\xaf\x01\n" +
+	"\x06Create\x12..payment.service.v1.CreatePaymentRefundRequest\x1a\x16.google.protobuf.Empty\"'\x82\xd3\xe4\x93\x02!:\x01*\"\x1c/app/v1/mall/payment-refundsB\xaf\x01\n" +
 	"\x12com.app.service.v1B\rIPaymentProtoP\x01Z0go-wind-shop/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_payment_proto_goTypes = []any{
@@ -53,15 +51,13 @@ var file_app_service_v1_i_payment_proto_goTypes = []any{
 	(*v11.DeletePaymentTransactionRequest)(nil), // 4: payment.service.v1.DeletePaymentTransactionRequest
 	(*v11.GetPaymentRefundRequest)(nil),         // 5: payment.service.v1.GetPaymentRefundRequest
 	(*v11.CreatePaymentRefundRequest)(nil),      // 6: payment.service.v1.CreatePaymentRefundRequest
-	(*v11.UpdatePaymentRefundRequest)(nil),      // 7: payment.service.v1.UpdatePaymentRefundRequest
-	(*v11.DeletePaymentRefundRequest)(nil),      // 8: payment.service.v1.DeletePaymentRefundRequest
-	(*v11.ListPaymentTransactionResponse)(nil),  // 9: payment.service.v1.ListPaymentTransactionResponse
-	(*v11.CountPaymentTransactionResponse)(nil), // 10: payment.service.v1.CountPaymentTransactionResponse
-	(*v11.PaymentTransaction)(nil),              // 11: payment.service.v1.PaymentTransaction
-	(*emptypb.Empty)(nil),                       // 12: google.protobuf.Empty
-	(*v11.ListPaymentRefundResponse)(nil),       // 13: payment.service.v1.ListPaymentRefundResponse
-	(*v11.CountPaymentRefundResponse)(nil),      // 14: payment.service.v1.CountPaymentRefundResponse
-	(*v11.PaymentRefund)(nil),                   // 15: payment.service.v1.PaymentRefund
+	(*v11.ListPaymentTransactionResponse)(nil),  // 7: payment.service.v1.ListPaymentTransactionResponse
+	(*v11.CountPaymentTransactionResponse)(nil), // 8: payment.service.v1.CountPaymentTransactionResponse
+	(*v11.PaymentTransaction)(nil),              // 9: payment.service.v1.PaymentTransaction
+	(*emptypb.Empty)(nil),                       // 10: google.protobuf.Empty
+	(*v11.ListPaymentRefundResponse)(nil),       // 11: payment.service.v1.ListPaymentRefundResponse
+	(*v11.CountPaymentRefundResponse)(nil),      // 12: payment.service.v1.CountPaymentRefundResponse
+	(*v11.PaymentRefund)(nil),                   // 13: payment.service.v1.PaymentRefund
 }
 var file_app_service_v1_i_payment_proto_depIdxs = []int32{
 	0,  // 0: app.service.v1.PaymentTransactionService.List:input_type -> pagination.PagingRequest
@@ -74,22 +70,18 @@ var file_app_service_v1_i_payment_proto_depIdxs = []int32{
 	0,  // 7: app.service.v1.PaymentRefundService.Count:input_type -> pagination.PagingRequest
 	5,  // 8: app.service.v1.PaymentRefundService.Get:input_type -> payment.service.v1.GetPaymentRefundRequest
 	6,  // 9: app.service.v1.PaymentRefundService.Create:input_type -> payment.service.v1.CreatePaymentRefundRequest
-	7,  // 10: app.service.v1.PaymentRefundService.Update:input_type -> payment.service.v1.UpdatePaymentRefundRequest
-	8,  // 11: app.service.v1.PaymentRefundService.Delete:input_type -> payment.service.v1.DeletePaymentRefundRequest
-	9,  // 12: app.service.v1.PaymentTransactionService.List:output_type -> payment.service.v1.ListPaymentTransactionResponse
-	10, // 13: app.service.v1.PaymentTransactionService.Count:output_type -> payment.service.v1.CountPaymentTransactionResponse
-	11, // 14: app.service.v1.PaymentTransactionService.Get:output_type -> payment.service.v1.PaymentTransaction
-	12, // 15: app.service.v1.PaymentTransactionService.Create:output_type -> google.protobuf.Empty
-	12, // 16: app.service.v1.PaymentTransactionService.Update:output_type -> google.protobuf.Empty
-	12, // 17: app.service.v1.PaymentTransactionService.Delete:output_type -> google.protobuf.Empty
-	13, // 18: app.service.v1.PaymentRefundService.List:output_type -> payment.service.v1.ListPaymentRefundResponse
-	14, // 19: app.service.v1.PaymentRefundService.Count:output_type -> payment.service.v1.CountPaymentRefundResponse
-	15, // 20: app.service.v1.PaymentRefundService.Get:output_type -> payment.service.v1.PaymentRefund
-	12, // 21: app.service.v1.PaymentRefundService.Create:output_type -> google.protobuf.Empty
-	12, // 22: app.service.v1.PaymentRefundService.Update:output_type -> google.protobuf.Empty
-	12, // 23: app.service.v1.PaymentRefundService.Delete:output_type -> google.protobuf.Empty
-	12, // [12:24] is the sub-list for method output_type
-	0,  // [0:12] is the sub-list for method input_type
+	7,  // 10: app.service.v1.PaymentTransactionService.List:output_type -> payment.service.v1.ListPaymentTransactionResponse
+	8,  // 11: app.service.v1.PaymentTransactionService.Count:output_type -> payment.service.v1.CountPaymentTransactionResponse
+	9,  // 12: app.service.v1.PaymentTransactionService.Get:output_type -> payment.service.v1.PaymentTransaction
+	10, // 13: app.service.v1.PaymentTransactionService.Create:output_type -> google.protobuf.Empty
+	10, // 14: app.service.v1.PaymentTransactionService.Update:output_type -> google.protobuf.Empty
+	10, // 15: app.service.v1.PaymentTransactionService.Delete:output_type -> google.protobuf.Empty
+	11, // 16: app.service.v1.PaymentRefundService.List:output_type -> payment.service.v1.ListPaymentRefundResponse
+	12, // 17: app.service.v1.PaymentRefundService.Count:output_type -> payment.service.v1.CountPaymentRefundResponse
+	13, // 18: app.service.v1.PaymentRefundService.Get:output_type -> payment.service.v1.PaymentRefund
+	10, // 19: app.service.v1.PaymentRefundService.Create:output_type -> google.protobuf.Empty
+	10, // [10:20] is the sub-list for method output_type
+	0,  // [0:10] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

@@ -739,7 +739,7 @@ func init() {
 	// paymentrefund.DefaultCurrency holds the default value on creation for the currency field.
 	paymentrefund.DefaultCurrency = paymentrefundDescCurrency.Default.(string)
 	// paymentrefundDescAmount is the schema descriptor for amount field.
-	paymentrefundDescAmount := paymentrefundFields[1].Descriptor()
+	paymentrefundDescAmount := paymentrefundFields[2].Descriptor()
 	// paymentrefund.DefaultAmount holds the default value on creation for the amount field.
 	paymentrefund.DefaultAmount = paymentrefundDescAmount.Default.(int64)
 	// paymentrefundDescID is the schema descriptor for id field.

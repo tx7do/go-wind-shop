@@ -11826,6 +11826,10 @@ components:
                 idempotencyKey:
                     type: string
                     description: 退款幂等键（租户内唯一）
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
                 tenantId:
                     type: integer
                     description: 租户ID

@@ -109,6 +109,11 @@ func TransactionID(v uint32) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldTransactionID, v))
 }
 
+// UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
+func UserID(v uint32) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldEQ(FieldUserID, v))
+}
+
 // Amount applies equality check predicate on the "amount" field. It's identical to AmountEQ.
 func Amount(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldAmount, v))
@@ -737,6 +742,56 @@ func TransactionIDIsNil() predicate.PaymentRefund {
 // TransactionIDNotNil applies the NotNil predicate on the "transaction_id" field.
 func TransactionIDNotNil() predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNotNull(FieldTransactionID))
+}
+
+// UserIDEQ applies the EQ predicate on the "user_id" field.
+func UserIDEQ(v uint32) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldEQ(FieldUserID, v))
+}
+
+// UserIDNEQ applies the NEQ predicate on the "user_id" field.
+func UserIDNEQ(v uint32) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldNEQ(FieldUserID, v))
+}
+
+// UserIDIn applies the In predicate on the "user_id" field.
+func UserIDIn(vs ...uint32) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldIn(FieldUserID, vs...))
+}
+
+// UserIDNotIn applies the NotIn predicate on the "user_id" field.
+func UserIDNotIn(vs ...uint32) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldNotIn(FieldUserID, vs...))
+}
+
+// UserIDGT applies the GT predicate on the "user_id" field.
+func UserIDGT(v uint32) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldGT(FieldUserID, v))
+}
+
+// UserIDGTE applies the GTE predicate on the "user_id" field.
+func UserIDGTE(v uint32) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldGTE(FieldUserID, v))
+}
+
+// UserIDLT applies the LT predicate on the "user_id" field.
+func UserIDLT(v uint32) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldLT(FieldUserID, v))
+}
+
+// UserIDLTE applies the LTE predicate on the "user_id" field.
+func UserIDLTE(v uint32) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldLTE(FieldUserID, v))
+}
+
+// UserIDIsNil applies the IsNil predicate on the "user_id" field.
+func UserIDIsNil() predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldIsNull(FieldUserID))
+}
+
+// UserIDNotNil applies the NotNil predicate on the "user_id" field.
+func UserIDNotNil() predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldNotNull(FieldUserID))
 }
 
 // AmountEQ applies the EQ predicate on the "amount" field.

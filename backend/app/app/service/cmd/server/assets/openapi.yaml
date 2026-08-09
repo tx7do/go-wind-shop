@@ -1765,20 +1765,6 @@ paths:
                 "200":
                     description: OK
                     content: {}
-        delete:
-            tags:
-                - PaymentRefundService
-            operationId: PaymentRefundService_Delete
-            parameters:
-                - name: id
-                  in: query
-                  schema:
-                    type: integer
-                    format: uint32
-            responses:
-                "200":
-                    description: OK
-                    content: {}
     /app/v1/mall/payment-refunds/count:
         get:
             tags:
@@ -1880,27 +1866,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/payment.service.v1.PaymentRefund'
-        put:
-            tags:
-                - PaymentRefundService
-            operationId: PaymentRefundService_Update
-            parameters:
-                - name: id
-                  in: path
-                  required: true
-                  schema:
-                    type: integer
-                    format: uint32
-            requestBody:
-                content:
-                    application/json:
-                        schema:
-                            $ref: '#/components/schemas/payment.service.v1.UpdatePaymentRefundRequest'
-                required: true
-            responses:
-                "200":
-                    description: OK
-                    content: {}
     /app/v1/mall/payment-transactions:
         get:
             tags:
@@ -4843,6 +4808,10 @@ components:
                 idempotencyKey:
                     type: string
                     description: 退款幂等键（租户内唯一）
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
                 tenantId:
                     type: integer
                     description: 租户ID
@@ -4973,21 +4942,6 @@ components:
                     description: 删除时间
                     format: date-time
             description: 支付流水
-        payment.service.v1.UpdatePaymentRefundRequest:
-            type: object
-            properties:
-                id:
-                    type: integer
-                    format: uint32
-                data:
-                    $ref: '#/components/schemas/payment.service.v1.PaymentRefund'
-                updateMask:
-                    type: string
-                    description: 要更新的字段列表
-                    format: field-mask
-                allowMissing:
-                    type: boolean
-                    description: 允许缺失则插入
         payment.service.v1.UpdatePaymentTransactionRequest:
             type: object
             properties:

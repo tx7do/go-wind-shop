@@ -342,6 +342,10 @@ func (m *PaymentRefund) validate(all bool) error {
 		// no validation rules for IdempotencyKey
 	}
 
+	if m.UserId != nil {
+		// no validation rules for UserId
+	}
+
 	if m.TenantId != nil {
 		// no validation rules for TenantId
 	}

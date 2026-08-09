@@ -59,27 +59,3 @@ func (s *PaymentRefundService) Create(ctx context.Context, req *paymentV1.Create
 
 	return s.paymentRefundServiceClient.Create(ctx, req)
 }
-
-func (s *PaymentRefundService) Update(ctx context.Context, req *paymentV1.UpdatePaymentRefundRequest) (*emptypb.Empty, error) {
-	if req.Data == nil {
-		return nil, appV1.ErrorBadRequest("invalid parameter")
-	}
-
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Data.Id = trans.Ptr(req.GetId())
-
-	req.Data.UpdatedBy = trans.Ptr(operator.GetUserId())
-	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
-	}
-
-	return s.paymentRefundServiceClient.Update(ctx, req)
-}
-
-func (s *PaymentRefundService) Delete(ctx context.Context, req *paymentV1.DeletePaymentRefundRequest) (*emptypb.Empty, error) {
-	return s.paymentRefundServiceClient.Delete(ctx, req)
-}

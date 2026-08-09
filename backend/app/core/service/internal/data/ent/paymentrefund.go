@@ -40,6 +40,8 @@ type PaymentRefund struct {
 	IdempotencyKey *string `json:"idempotency_key,omitempty"`
 	// 关联的支付流水ID
 	TransactionID *uint32 `json:"transaction_id,omitempty"`
+	// 用户ID
+	UserID *uint32 `json:"user_id,omitempty"`
 	// 退款金额（最小货币单位，分）
 	Amount *int64 `json:"amount,omitempty"`
 	// 退款状态
@@ -52,7 +54,7 @@ func (*PaymentRefund) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case paymentrefund.FieldID, paymentrefund.FieldCreatedBy, paymentrefund.FieldUpdatedBy, paymentrefund.FieldDeletedBy, paymentrefund.FieldTenantID, paymentrefund.FieldTransactionID, paymentrefund.FieldAmount:
+		case paymentrefund.FieldID, paymentrefund.FieldCreatedBy, paymentrefund.FieldUpdatedBy, paymentrefund.FieldDeletedBy, paymentrefund.FieldTenantID, paymentrefund.FieldTransactionID, paymentrefund.FieldUserID, paymentrefund.FieldAmount:
 			values[i] = new(sql.NullInt64)
 		case paymentrefund.FieldCurrency, paymentrefund.FieldBusinessRefID, paymentrefund.FieldIdempotencyKey, paymentrefund.FieldStatus:
 			values[i] = new(sql.NullString)
@@ -156,6 +158,13 @@ func (_m *PaymentRefund) assignValues(columns []string, values []any) error {
 				_m.TransactionID = new(uint32)
 				*_m.TransactionID = uint32(value.Int64)
 			}
+		case paymentrefund.FieldUserID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field user_id", values[i])
+			} else if value.Valid {
+				_m.UserID = new(uint32)
+				*_m.UserID = uint32(value.Int64)
+			}
 		case paymentrefund.FieldAmount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field amount", values[i])
@@ -258,6 +267,11 @@ func (_m *PaymentRefund) String() string {
 	builder.WriteString(", ")
 	if v := _m.TransactionID; v != nil {
 		builder.WriteString("transaction_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.UserID; v != nil {
+		builder.WriteString("user_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

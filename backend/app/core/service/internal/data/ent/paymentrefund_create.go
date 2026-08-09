@@ -176,6 +176,20 @@ func (_c *PaymentRefundCreate) SetNillableTransactionID(v *uint32) *PaymentRefun
 	return _c
 }
 
+// SetUserID sets the "user_id" field.
+func (_c *PaymentRefundCreate) SetUserID(v uint32) *PaymentRefundCreate {
+	_c.mutation.SetUserID(v)
+	return _c
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_c *PaymentRefundCreate) SetNillableUserID(v *uint32) *PaymentRefundCreate {
+	if v != nil {
+		_c.SetUserID(*v)
+	}
+	return _c
+}
+
 // SetAmount sets the "amount" field.
 func (_c *PaymentRefundCreate) SetAmount(v int64) *PaymentRefundCreate {
 	_c.mutation.SetAmount(v)
@@ -350,6 +364,10 @@ func (_c *PaymentRefundCreate) createSpec() (*PaymentRefund, *sqlgraph.CreateSpe
 	if value, ok := _c.mutation.TransactionID(); ok {
 		_spec.SetField(paymentrefund.FieldTransactionID, field.TypeUint32, value)
 		_node.TransactionID = &value
+	}
+	if value, ok := _c.mutation.UserID(); ok {
+		_spec.SetField(paymentrefund.FieldUserID, field.TypeUint32, value)
+		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.Amount(); ok {
 		_spec.SetField(paymentrefund.FieldAmount, field.TypeInt64, value)
@@ -594,6 +612,30 @@ func (u *PaymentRefundUpsert) AddTransactionID(v uint32) *PaymentRefundUpsert {
 // ClearTransactionID clears the value of the "transaction_id" field.
 func (u *PaymentRefundUpsert) ClearTransactionID() *PaymentRefundUpsert {
 	u.SetNull(paymentrefund.FieldTransactionID)
+	return u
+}
+
+// SetUserID sets the "user_id" field.
+func (u *PaymentRefundUpsert) SetUserID(v uint32) *PaymentRefundUpsert {
+	u.Set(paymentrefund.FieldUserID, v)
+	return u
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *PaymentRefundUpsert) UpdateUserID() *PaymentRefundUpsert {
+	u.SetExcluded(paymentrefund.FieldUserID)
+	return u
+}
+
+// AddUserID adds v to the "user_id" field.
+func (u *PaymentRefundUpsert) AddUserID(v uint32) *PaymentRefundUpsert {
+	u.Add(paymentrefund.FieldUserID, v)
+	return u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *PaymentRefundUpsert) ClearUserID() *PaymentRefundUpsert {
+	u.SetNull(paymentrefund.FieldUserID)
 	return u
 }
 
@@ -907,6 +949,34 @@ func (u *PaymentRefundUpsertOne) UpdateTransactionID() *PaymentRefundUpsertOne {
 func (u *PaymentRefundUpsertOne) ClearTransactionID() *PaymentRefundUpsertOne {
 	return u.Update(func(s *PaymentRefundUpsert) {
 		s.ClearTransactionID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *PaymentRefundUpsertOne) SetUserID(v uint32) *PaymentRefundUpsertOne {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// AddUserID adds v to the "user_id" field.
+func (u *PaymentRefundUpsertOne) AddUserID(v uint32) *PaymentRefundUpsertOne {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.AddUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *PaymentRefundUpsertOne) UpdateUserID() *PaymentRefundUpsertOne {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *PaymentRefundUpsertOne) ClearUserID() *PaymentRefundUpsertOne {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.ClearUserID()
 	})
 }
 
@@ -1393,6 +1463,34 @@ func (u *PaymentRefundUpsertBulk) UpdateTransactionID() *PaymentRefundUpsertBulk
 func (u *PaymentRefundUpsertBulk) ClearTransactionID() *PaymentRefundUpsertBulk {
 	return u.Update(func(s *PaymentRefundUpsert) {
 		s.ClearTransactionID()
+	})
+}
+
+// SetUserID sets the "user_id" field.
+func (u *PaymentRefundUpsertBulk) SetUserID(v uint32) *PaymentRefundUpsertBulk {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.SetUserID(v)
+	})
+}
+
+// AddUserID adds v to the "user_id" field.
+func (u *PaymentRefundUpsertBulk) AddUserID(v uint32) *PaymentRefundUpsertBulk {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.AddUserID(v)
+	})
+}
+
+// UpdateUserID sets the "user_id" field to the value that was provided on create.
+func (u *PaymentRefundUpsertBulk) UpdateUserID() *PaymentRefundUpsertBulk {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.UpdateUserID()
+	})
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (u *PaymentRefundUpsertBulk) ClearUserID() *PaymentRefundUpsertBulk {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.ClearUserID()
 	})
 }
 

@@ -271,18 +271,14 @@ func (c *PaymentTransactionServiceHTTPClientImpl) Update(ctx context.Context, in
 
 const OperationPaymentRefundServiceCount = "/app.service.v1.PaymentRefundService/Count"
 const OperationPaymentRefundServiceCreate = "/app.service.v1.PaymentRefundService/Create"
-const OperationPaymentRefundServiceDelete = "/app.service.v1.PaymentRefundService/Delete"
 const OperationPaymentRefundServiceGet = "/app.service.v1.PaymentRefundService/Get"
 const OperationPaymentRefundServiceList = "/app.service.v1.PaymentRefundService/List"
-const OperationPaymentRefundServiceUpdate = "/app.service.v1.PaymentRefundService/Update"
 
 type PaymentRefundServiceHTTPServer interface {
 	Count(context.Context, *v1.PagingRequest) (*v11.CountPaymentRefundResponse, error)
 	Create(context.Context, *v11.CreatePaymentRefundRequest) (*emptypb.Empty, error)
-	Delete(context.Context, *v11.DeletePaymentRefundRequest) (*emptypb.Empty, error)
 	Get(context.Context, *v11.GetPaymentRefundRequest) (*v11.PaymentRefund, error)
 	List(context.Context, *v1.PagingRequest) (*v11.ListPaymentRefundResponse, error)
-	Update(context.Context, *v11.UpdatePaymentRefundRequest) (*emptypb.Empty, error)
 }
 
 func RegisterPaymentRefundServiceHTTPServer(s *http.Server, srv PaymentRefundServiceHTTPServer) {
@@ -291,8 +287,6 @@ func RegisterPaymentRefundServiceHTTPServer(s *http.Server, srv PaymentRefundSer
 	r.GET("/app/v1/mall/payment-refunds/count", _PaymentRefundService_Count5_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/payment-refunds/{id}", _PaymentRefundService_Get7_HTTP_Handler(srv))
 	r.POST("/app/v1/mall/payment-refunds", _PaymentRefundService_Create5_HTTP_Handler(srv))
-	r.PUT("/app/v1/mall/payment-refunds/{id}", _PaymentRefundService_Update5_HTTP_Handler(srv))
-	r.DELETE("/app/v1/mall/payment-refunds", _PaymentRefundService_Delete5_HTTP_Handler(srv))
 }
 
 func _PaymentRefundService_List7_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
@@ -377,57 +371,11 @@ func _PaymentRefundService_Create5_HTTP_Handler(srv PaymentRefundServiceHTTPServ
 	}
 }
 
-func _PaymentRefundService_Update5_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in v11.UpdatePaymentRefundRequest
-		if err := ctx.Bind(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		if err := ctx.BindVars(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationPaymentRefundServiceUpdate)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Update(ctx, req.(*v11.UpdatePaymentRefundRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*emptypb.Empty)
-		return ctx.Result(200, reply)
-	}
-}
-
-func _PaymentRefundService_Delete5_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
-	return func(ctx http.Context) error {
-		var in v11.DeletePaymentRefundRequest
-		if err := ctx.BindQuery(&in); err != nil {
-			return err
-		}
-		http.SetOperation(ctx, OperationPaymentRefundServiceDelete)
-		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
-			return srv.Delete(ctx, req.(*v11.DeletePaymentRefundRequest))
-		})
-		out, err := h(ctx, &in)
-		if err != nil {
-			return err
-		}
-		reply := out.(*emptypb.Empty)
-		return ctx.Result(200, reply)
-	}
-}
-
 type PaymentRefundServiceHTTPClient interface {
 	Count(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.CountPaymentRefundResponse, err error)
 	Create(ctx context.Context, req *v11.CreatePaymentRefundRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
-	Delete(ctx context.Context, req *v11.DeletePaymentRefundRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	Get(ctx context.Context, req *v11.GetPaymentRefundRequest, opts ...http.CallOption) (rsp *v11.PaymentRefund, err error)
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListPaymentRefundResponse, err error)
-	Update(ctx context.Context, req *v11.UpdatePaymentRefundRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
 
 type PaymentRefundServiceHTTPClientImpl struct {
@@ -464,19 +412,6 @@ func (c *PaymentRefundServiceHTTPClientImpl) Create(ctx context.Context, in *v11
 	return &out, nil
 }
 
-func (c *PaymentRefundServiceHTTPClientImpl) Delete(ctx context.Context, in *v11.DeletePaymentRefundRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
-	var out emptypb.Empty
-	pattern := "/app/v1/mall/payment-refunds"
-	path := binding.EncodeURL(pattern, in, true)
-	opts = append(opts, http.Operation(OperationPaymentRefundServiceDelete))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "DELETE", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
 func (c *PaymentRefundServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetPaymentRefundRequest, opts ...http.CallOption) (*v11.PaymentRefund, error) {
 	var out v11.PaymentRefund
 	pattern := "/app/v1/mall/payment-refunds/{id}"
@@ -497,19 +432,6 @@ func (c *PaymentRefundServiceHTTPClientImpl) List(ctx context.Context, in *v1.Pa
 	opts = append(opts, http.Operation(OperationPaymentRefundServiceList))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return &out, nil
-}
-
-func (c *PaymentRefundServiceHTTPClientImpl) Update(ctx context.Context, in *v11.UpdatePaymentRefundRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
-	var out emptypb.Empty
-	pattern := "/app/v1/mall/payment-refunds/{id}"
-	path := binding.EncodeURL(pattern, in, false)
-	opts = append(opts, http.Operation(OperationPaymentRefundServiceUpdate))
-	opts = append(opts, http.PathTemplate(pattern))
-	err := c.cc.Invoke(ctx, "PUT", path, in, &out, opts...)
 	if err != nil {
 		return nil, err
 	}

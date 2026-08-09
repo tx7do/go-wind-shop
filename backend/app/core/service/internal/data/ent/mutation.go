@@ -40659,6 +40659,8 @@ type PaymentRefundMutation struct {
 	idempotency_key   *string
 	transaction_id    *uint32
 	addtransaction_id *int32
+	user_id           *uint32
+	adduser_id        *int32
 	amount            *int64
 	addamount         *int64
 	status            *paymentrefund.Status
@@ -41416,6 +41418,76 @@ func (m *PaymentRefundMutation) ResetTransactionID() {
 	delete(m.clearedFields, paymentrefund.FieldTransactionID)
 }
 
+// SetUserID sets the "user_id" field.
+func (m *PaymentRefundMutation) SetUserID(u uint32) {
+	m.user_id = &u
+	m.adduser_id = nil
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *PaymentRefundMutation) UserID() (r uint32, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the PaymentRefund entity.
+// If the PaymentRefund object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentRefundMutation) OldUserID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// AddUserID adds u to the "user_id" field.
+func (m *PaymentRefundMutation) AddUserID(u int32) {
+	if m.adduser_id != nil {
+		*m.adduser_id += u
+	} else {
+		m.adduser_id = &u
+	}
+}
+
+// AddedUserID returns the value that was added to the "user_id" field in this mutation.
+func (m *PaymentRefundMutation) AddedUserID() (r int32, exists bool) {
+	v := m.adduser_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *PaymentRefundMutation) ClearUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	m.clearedFields[paymentrefund.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *PaymentRefundMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[paymentrefund.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *PaymentRefundMutation) ResetUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	delete(m.clearedFields, paymentrefund.FieldUserID)
+}
+
 // SetAmount sets the "amount" field.
 func (m *PaymentRefundMutation) SetAmount(i int64) {
 	m.amount = &i
@@ -41569,7 +41641,7 @@ func (m *PaymentRefundMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PaymentRefundMutation) Fields() []string {
-	fields := make([]string, 0, 13)
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
 		fields = append(fields, paymentrefund.FieldCreatedAt)
 	}
@@ -41602,6 +41674,9 @@ func (m *PaymentRefundMutation) Fields() []string {
 	}
 	if m.transaction_id != nil {
 		fields = append(fields, paymentrefund.FieldTransactionID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, paymentrefund.FieldUserID)
 	}
 	if m.amount != nil {
 		fields = append(fields, paymentrefund.FieldAmount)
@@ -41639,6 +41714,8 @@ func (m *PaymentRefundMutation) Field(name string) (ent.Value, bool) {
 		return m.IdempotencyKey()
 	case paymentrefund.FieldTransactionID:
 		return m.TransactionID()
+	case paymentrefund.FieldUserID:
+		return m.UserID()
 	case paymentrefund.FieldAmount:
 		return m.Amount()
 	case paymentrefund.FieldStatus:
@@ -41674,6 +41751,8 @@ func (m *PaymentRefundMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldIdempotencyKey(ctx)
 	case paymentrefund.FieldTransactionID:
 		return m.OldTransactionID(ctx)
+	case paymentrefund.FieldUserID:
+		return m.OldUserID(ctx)
 	case paymentrefund.FieldAmount:
 		return m.OldAmount(ctx)
 	case paymentrefund.FieldStatus:
@@ -41764,6 +41843,13 @@ func (m *PaymentRefundMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTransactionID(v)
 		return nil
+	case paymentrefund.FieldUserID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
 	case paymentrefund.FieldAmount:
 		v, ok := value.(int64)
 		if !ok {
@@ -41801,6 +41887,9 @@ func (m *PaymentRefundMutation) AddedFields() []string {
 	if m.addtransaction_id != nil {
 		fields = append(fields, paymentrefund.FieldTransactionID)
 	}
+	if m.adduser_id != nil {
+		fields = append(fields, paymentrefund.FieldUserID)
+	}
 	if m.addamount != nil {
 		fields = append(fields, paymentrefund.FieldAmount)
 	}
@@ -41822,6 +41911,8 @@ func (m *PaymentRefundMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedTenantID()
 	case paymentrefund.FieldTransactionID:
 		return m.AddedTransactionID()
+	case paymentrefund.FieldUserID:
+		return m.AddedUserID()
 	case paymentrefund.FieldAmount:
 		return m.AddedAmount()
 	}
@@ -41867,6 +41958,13 @@ func (m *PaymentRefundMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddTransactionID(v)
+		return nil
+	case paymentrefund.FieldUserID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUserID(v)
 		return nil
 	case paymentrefund.FieldAmount:
 		v, ok := value.(int64)
@@ -41915,6 +42013,9 @@ func (m *PaymentRefundMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(paymentrefund.FieldTransactionID) {
 		fields = append(fields, paymentrefund.FieldTransactionID)
+	}
+	if m.FieldCleared(paymentrefund.FieldUserID) {
+		fields = append(fields, paymentrefund.FieldUserID)
 	}
 	if m.FieldCleared(paymentrefund.FieldAmount) {
 		fields = append(fields, paymentrefund.FieldAmount)
@@ -41969,6 +42070,9 @@ func (m *PaymentRefundMutation) ClearField(name string) error {
 	case paymentrefund.FieldTransactionID:
 		m.ClearTransactionID()
 		return nil
+	case paymentrefund.FieldUserID:
+		m.ClearUserID()
+		return nil
 	case paymentrefund.FieldAmount:
 		m.ClearAmount()
 		return nil
@@ -42015,6 +42119,9 @@ func (m *PaymentRefundMutation) ResetField(name string) error {
 		return nil
 	case paymentrefund.FieldTransactionID:
 		m.ResetTransactionID()
+		return nil
+	case paymentrefund.FieldUserID:
+		m.ResetUserID()
 		return nil
 	case paymentrefund.FieldAmount:
 		m.ResetAmount()

@@ -36,6 +36,8 @@ const (
 	FieldIdempotencyKey = "idempotency_key"
 	// FieldTransactionID holds the string denoting the transaction_id field in the database.
 	FieldTransactionID = "transaction_id"
+	// FieldUserID holds the string denoting the user_id field in the database.
+	FieldUserID = "user_id"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
 	// FieldStatus holds the string denoting the status field in the database.
@@ -58,6 +60,7 @@ var Columns = []string{
 	FieldBusinessRefID,
 	FieldIdempotencyKey,
 	FieldTransactionID,
+	FieldUserID,
 	FieldAmount,
 	FieldStatus,
 }
@@ -175,6 +178,11 @@ func ByIdempotencyKey(opts ...sql.OrderTermOption) OrderOption {
 // ByTransactionID orders the results by the transaction_id field.
 func ByTransactionID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTransactionID, opts...).ToFunc()
+}
+
+// ByUserID orders the results by the user_id field.
+func ByUserID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUserID, opts...).ToFunc()
 }
 
 // ByAmount orders the results by the amount field.

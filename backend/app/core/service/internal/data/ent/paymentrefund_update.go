@@ -237,6 +237,33 @@ func (_u *PaymentRefundUpdate) ClearTransactionID() *PaymentRefundUpdate {
 	return _u
 }
 
+// SetUserID sets the "user_id" field.
+func (_u *PaymentRefundUpdate) SetUserID(v uint32) *PaymentRefundUpdate {
+	_u.mutation.ResetUserID()
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *PaymentRefundUpdate) SetNillableUserID(v *uint32) *PaymentRefundUpdate {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// AddUserID adds value to the "user_id" field.
+func (_u *PaymentRefundUpdate) AddUserID(v int32) *PaymentRefundUpdate {
+	_u.mutation.AddUserID(v)
+	return _u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (_u *PaymentRefundUpdate) ClearUserID() *PaymentRefundUpdate {
+	_u.mutation.ClearUserID()
+	return _u
+}
+
 // SetAmount sets the "amount" field.
 func (_u *PaymentRefundUpdate) SetAmount(v int64) *PaymentRefundUpdate {
 	_u.mutation.ResetAmount()
@@ -415,6 +442,15 @@ func (_u *PaymentRefundUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	}
 	if _u.mutation.TransactionIDCleared() {
 		_spec.ClearField(paymentrefund.FieldTransactionID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.UserID(); ok {
+		_spec.SetField(paymentrefund.FieldUserID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedUserID(); ok {
+		_spec.AddField(paymentrefund.FieldUserID, field.TypeUint32, value)
+	}
+	if _u.mutation.UserIDCleared() {
+		_spec.ClearField(paymentrefund.FieldUserID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(paymentrefund.FieldAmount, field.TypeInt64, value)
@@ -661,6 +697,33 @@ func (_u *PaymentRefundUpdateOne) ClearTransactionID() *PaymentRefundUpdateOne {
 	return _u
 }
 
+// SetUserID sets the "user_id" field.
+func (_u *PaymentRefundUpdateOne) SetUserID(v uint32) *PaymentRefundUpdateOne {
+	_u.mutation.ResetUserID()
+	_u.mutation.SetUserID(v)
+	return _u
+}
+
+// SetNillableUserID sets the "user_id" field if the given value is not nil.
+func (_u *PaymentRefundUpdateOne) SetNillableUserID(v *uint32) *PaymentRefundUpdateOne {
+	if v != nil {
+		_u.SetUserID(*v)
+	}
+	return _u
+}
+
+// AddUserID adds value to the "user_id" field.
+func (_u *PaymentRefundUpdateOne) AddUserID(v int32) *PaymentRefundUpdateOne {
+	_u.mutation.AddUserID(v)
+	return _u
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (_u *PaymentRefundUpdateOne) ClearUserID() *PaymentRefundUpdateOne {
+	_u.mutation.ClearUserID()
+	return _u
+}
+
 // SetAmount sets the "amount" field.
 func (_u *PaymentRefundUpdateOne) SetAmount(v int64) *PaymentRefundUpdateOne {
 	_u.mutation.ResetAmount()
@@ -869,6 +932,15 @@ func (_u *PaymentRefundUpdateOne) sqlSave(ctx context.Context) (_node *PaymentRe
 	}
 	if _u.mutation.TransactionIDCleared() {
 		_spec.ClearField(paymentrefund.FieldTransactionID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.UserID(); ok {
+		_spec.SetField(paymentrefund.FieldUserID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedUserID(); ok {
+		_spec.AddField(paymentrefund.FieldUserID, field.TypeUint32, value)
+	}
+	if _u.mutation.UserIDCleared() {
+		_spec.ClearField(paymentrefund.FieldUserID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(paymentrefund.FieldAmount, field.TypeInt64, value)

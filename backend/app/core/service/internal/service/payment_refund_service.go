@@ -83,6 +83,12 @@ func (s *PaymentRefundService) Create(ctx context.Context, req *paymentV1.Create
 	txTenantId := tx.GetTenantId()
 	req.Data.TenantId = &txTenantId
 
+	// 退款记录的 user_id 强制取自关联支付流水的 user_id。退款归属到交易所属用户，
+	// 与调用方 token 的用户无关（平台 admin token user_id=0，若用 token 值会导致
+	// 退款记录归属错乱、且 UserPrivacy 会把运营侧的退款拒掉）。
+	txUserId := tx.GetUserId()
+	req.Data.UserId = &txUserId
+
 	// 重复退款保护：同一 transaction 已存在 SUCCEEDED 退款记录则拒绝。
 	// 通过 List refund 过滤 transaction_id=txId 检查（退款表的 transaction_id
 	// 仅有普通索引，需遍历结果过滤状态）。NoPaging=true 取全量匹配记录。
