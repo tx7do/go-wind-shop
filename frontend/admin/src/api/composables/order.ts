@@ -9,6 +9,7 @@ import type {
   orderservicev1_GetOrderRequest,
   orderservicev1_ListOrderResponse,
   orderservicev1_Order,
+  orderservicev1_Order_Status,
   orderservicev1_UpdateOrderRequest,
 } from "@/api/generated/admin/service/v1";
 import { makeUpdateMask, type PaginationQuery } from "@/core/transport/rest";
@@ -60,14 +61,23 @@ export async function fetchGetOrder(req: orderservicev1_GetOrderRequest) {
 }
 
 export function useUpdateOrder(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<
+    {},
+    Error,
+    {
+      id: number;
+      values: Record<string, any>;
+      expectedStatus: orderservicev1_Order_Status[];
+    }
+  >
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values, expectedStatus }) =>
       apiClient.orderService.Update({
         id,
         data: { ...values },
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
+        expectedStatus,
       } as orderservicev1_UpdateOrderRequest),
     ...options,
   });

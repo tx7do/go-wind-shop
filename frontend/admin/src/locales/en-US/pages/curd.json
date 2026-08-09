@@ -72,6 +72,7 @@
     "readFileFailed": "Failed to read file",
     "noModifyAction": "modifyAction not configured",
     "noExportAction": "exportAction not configured",
-    "operationSuccess": "Operation successful"
+    "operationSuccess": "Operation successful",
+    "deletePartialFailed": "Some records failed to delete, please refresh and retry"
   }
 }

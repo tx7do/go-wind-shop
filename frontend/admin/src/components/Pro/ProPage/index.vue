@@ -361,8 +361,8 @@ function handleOperate(data: { name: string; row: T; $index: number }) {
 
 // === 删除 ===
 async function handleBatchDelete() {
-  const ids = tableState.getSelectionIds().join(",");
-  if (!ids) {
+  const ids = tableState.getSelectionIds();
+  if (!ids || ids.length === 0) {
     ElMessage.warning(t("pages.curd.message.selectDeleteItems"));
     return;
   }
@@ -372,8 +372,16 @@ async function handleBatchDelete() {
     type: "warning",
     lockScroll: false,
   });
-  await props.config.table.deleteAction?.(ids);
-  ElMessage.success(t("pages.curd.message.deleteSuccess"));
+  // 逐个调用 deleteAction（保持单 id 签名），并发执行，聚合结果。
+  const results = await Promise.allSettled(
+    ids.map((id) => props.config.table.deleteAction?.(String(id)))
+  );
+  const hasFailure = results.some((r) => r.status === "rejected");
+  if (hasFailure) {
+    ElMessage.warning(t("pages.curd.message.deletePartialFailed"));
+  } else {
+    ElMessage.success(t("pages.curd.message.deleteSuccess"));
+  }
   tableState.fetch(searchParams, true);
 }
 

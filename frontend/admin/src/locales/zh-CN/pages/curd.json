@@ -72,6 +72,7 @@
     "readFileFailed": "读取文件失败",
     "noModifyAction": "未配置 modifyAction",
     "noExportAction": "未配置 exportAction",
-    "operationSuccess": "操作成功"
+    "operationSuccess": "操作成功",
+    "deletePartialFailed": "部分记录删除失败，请刷新后重试"
   }
 }

@@ -153,7 +153,11 @@ async function handleOperate(data: { name: string; row: any }) {
     }
 
     try {
-      await updateOrder({ id: row.id, values: { status: "CLOSED" } });
+      await updateOrder({
+        id: row.id,
+        values: { status: "CLOSED" },
+        expectedStatus: [row.status],
+      });
       ElMessage.success($t("common.notification.updateSuccess"));
       pageRef.value?.refresh();
     } catch {
