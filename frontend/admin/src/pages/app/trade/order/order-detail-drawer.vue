@@ -17,6 +17,12 @@
         <ElDescriptionsItem :label="$t('pages.mall.order.totalAmount')">
           {{ data?.totalAmount ?? "-" }}
         </ElDescriptionsItem>
+        <ElDescriptionsItem :label="$t('pages.mall.order.originalAmount')">
+          {{ data?.originalAmount ?? "-" }}
+        </ElDescriptionsItem>
+        <ElDescriptionsItem :label="$t('pages.mall.order.discountAmount')">
+          {{ data?.discountAmount ?? "-" }}
+        </ElDescriptionsItem>
         <ElDescriptionsItem :label="$t('pages.mall.order.currency')">
           {{ data?.currency || "-" }}
         </ElDescriptionsItem>

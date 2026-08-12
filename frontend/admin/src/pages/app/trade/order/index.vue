@@ -95,6 +95,22 @@ const pageConfig = computed<ProPageConfig>(() => ({
         pricePrefix: "",
       },
       {
+        prop: "originalAmount",
+        label: $t("pages.mall.order.originalAmount"),
+        minWidth: 100,
+        align: "right",
+        cellType: "price",
+        pricePrefix: "",
+      },
+      {
+        prop: "discountAmount",
+        label: $t("pages.mall.order.discountAmount"),
+        minWidth: 100,
+        align: "right",
+        cellType: "price",
+        pricePrefix: "",
+      },
+      {
         prop: "currency",
         label: $t("pages.mall.order.currency"),
         minWidth: 80,

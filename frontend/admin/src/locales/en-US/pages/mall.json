@@ -84,6 +84,8 @@
     "id": "Order ID",
     "userId": "User ID",
     "totalAmount": "Total Amount",
+    "originalAmount": "Original Amount",
+    "discountAmount": "Discount Amount",
     "currency": "Currency",
     "status": "Order Status",
     "recipientName": "Recipient Name",

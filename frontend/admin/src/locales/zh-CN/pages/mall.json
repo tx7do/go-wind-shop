@@ -84,6 +84,8 @@
     "id": "订单ID",
     "userId": "用户ID",
     "totalAmount": "订单金额",
+    "originalAmount": "原始金额",
+    "discountAmount": "优惠抵扣",
     "currency": "币种",
     "status": "订单状态",
     "recipientName": "收件人",
