@@ -100,6 +100,8 @@ ALTER TABLE sys_membership_roles AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 
 -- 调度任务（JSON字段直接保留字符串，MySQL5.7+支持）
 INSERT INTO sys_tasks(type, type_name, task_payload, cron_spec, enable, created_at)
 VALUES ('PERIODIC', 'backup', '{ "name": "test"}', '0 * * * *', true, NOW());
+INSERT INTO sys_tasks(type, type_name, task_payload, cron_spec, enable, created_at)
+VALUES ('PERIODIC', 'coupon_expire_sweep', '{ "name": "sweep"}', '0 */6 * * *', true, NOW());
 ALTER TABLE sys_tasks AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM sys_tasks);
 
 -- 登录策略

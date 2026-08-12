@@ -131,7 +131,8 @@ SELECT setval('sys_positions_id_seq', (SELECT COALESCE(MAX(id), 1) FROM sys_posi
 -- ----------------------------
 INSERT INTO public.sys_tasks(type, type_name, task_payload, cron_spec, enable, created_at)
 VALUES
-    ('PERIODIC', 'backup', '{ "name": "test"}', '0 * * * *', true, now())
+    ('PERIODIC', 'backup', '{ "name": "test"}', '0 * * * *', true, now()),
+    ('PERIODIC', 'coupon_expire_sweep', '{ "name": "sweep"}', '0 */6 * * *', true, now())
 ;
 SELECT setval('sys_tasks_id_seq', (SELECT MAX(id) FROM sys_tasks));
 
