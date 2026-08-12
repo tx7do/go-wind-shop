@@ -1,0 +1,249 @@
+syntax = "proto3";
+
+package coupon.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 优惠券模板服务
+service CouponTemplateService {
+  rpc List (pagination.PagingRequest) returns (ListCouponTemplateResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountCouponTemplateResponse) {}
+  rpc Get (GetCouponTemplateRequest) returns (CouponTemplate) {}
+  rpc Create (CreateCouponTemplateRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdateCouponTemplateRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteCouponTemplateRequest) returns (google.protobuf.Empty) {}
+}
+
+// 用户优惠券实例服务
+service UserCouponService {
+  rpc List (pagination.PagingRequest) returns (ListUserCouponResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountUserCouponResponse) {}
+  rpc Get (GetUserCouponRequest) returns (UserCoupon) {}
+  rpc Create (CreateUserCouponRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdateUserCouponRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteUserCouponRequest) returns (google.protobuf.Empty) {}
+
+  // 试算（报价预览）：给定券实例 ID，在当前登录用户的购物车快照上计算折前/折后金额，
+  // 不持锁、不落库。最终抵扣以下单时事务内校验为准。
+  rpc Quote (QuoteRequest) returns (QuoteResponse) {}
+}
+
+// 优惠券模板
+message CouponTemplate {
+  // 抵扣类型
+  enum DiscountType {
+    DISCOUNT_TYPE_UNSPECIFIED = 0;
+    FIXED_AMOUNT = 1;    // 固定金额减免
+    PERCENTAGE = 2;      // 百分比折扣
+  }
+
+  // 模板状态
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    ACTIVE = 1;          // 生效
+    INACTIVE = 2;        // 停用（运营 kill-switch）
+  }
+
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "模板ID"}];
+
+  optional DiscountType discount_type = 2 [
+    json_name = "discountType",
+    (gnostic.openapi.v3.property) = {description: "抵扣类型"}
+  ];
+
+  optional int64 discount_value = 3 [
+    json_name = "discountValue",
+    (gnostic.openapi.v3.property) = {description: "固定金额抵扣值（最小货币单位，分；FIXED_AMOUNT 时生效）"}
+  ];
+
+  optional int32 discount_percentage = 4 [
+    json_name = "discountPercentage",
+    (gnostic.openapi.v3.property) = {description: "百分比抵扣值（0-100；PERCENTAGE 时生效）"}
+  ];
+
+  optional google.protobuf.Timestamp valid_from = 5 [
+    json_name = "validFrom",
+    (gnostic.openapi.v3.property) = {description: "有效期起始时间"}
+  ];
+
+  optional google.protobuf.Timestamp valid_until = 6 [
+    json_name = "validUntil",
+    (gnostic.openapi.v3.property) = {description: "有效期截止时间"}
+  ];
+
+  optional int32 max_redemptions = 7 [
+    json_name = "maxRedemptions",
+    (gnostic.openapi.v3.property) = {description: "全局核销上限（0=不限量）"}
+  ];
+
+  optional int32 redeemed_count = 8 [
+    json_name = "redeemedCount",
+    (gnostic.openapi.v3.property) = {description: "已核销次数"}
+  ];
+
+  optional Status status = 9 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "模板状态"}
+  ];
+
+  // ===== 以下为 mixin 注入字段（低编号，业务字段区间） =====
+
+  optional string currency = 10 [
+    json_name = "currency",
+    (gnostic.openapi.v3.property) = {description: "币种（ISO 4217）"}
+  ];
+
+  // ===== 以下是 infra mixin 注入字段（高编号） =====
+
+  optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+// 用户优惠券实例
+message UserCoupon {
+  // 券实例状态
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    UNUSED = 1;    // 未使用
+    USED = 2;      // 已核销
+    EXPIRED = 3;   // 已过期
+  }
+
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "券实例ID"}];
+
+  optional uint32 user_id = 2 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {description: "归属用户ID（由隐私层强制）"}
+  ];
+
+  optional uint32 coupon_template_id = 3 [
+    json_name = "couponTemplateId",
+    (gnostic.openapi.v3.property) = {description: "关联的优惠券模板ID"}
+  ];
+
+  optional Status status = 4 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "券实例状态"}
+  ];
+
+  optional google.protobuf.Timestamp redeemed_at = 5 [
+    json_name = "redeemedAt",
+    (gnostic.openapi.v3.property) = {description: "核销时间（status=USED 时填写，返还时清空）"}
+  ];
+
+  optional uint32 redeemed_order_id = 6 [
+    json_name = "redeemedOrderId",
+    (gnostic.openapi.v3.property) = {description: "核销时关联的订单ID（UNUSED 时为空）"}
+  ];
+
+  optional int64 applied_discount_amount = 7 [
+    json_name = "appliedDiscountAmount",
+    (gnostic.openapi.v3.property) = {description: "实际抵扣额（最小货币单位，分；券侧审计，返还时清空）"}
+  ];
+
+  // ===== 以下是 infra mixin 注入字段（高编号） =====
+
+  optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+message ListCouponTemplateResponse { repeated CouponTemplate items = 1; uint64 total = 2; }
+message ListUserCouponResponse { repeated UserCoupon items = 1; uint64 total = 2; }
+
+message GetCouponTemplateRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}
+  ];
+}
+
+message GetUserCouponRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}
+  ];
+}
+
+message CreateCouponTemplateRequest { CouponTemplate data = 1; }
+message UpdateCouponTemplateRequest {
+  uint32 id = 1;
+  CouponTemplate data = 2;
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
+    json_name = "updateMask"
+  ];
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "允许缺失则插入"},
+    json_name = "allowMissing"
+  ];
+}
+message DeleteCouponTemplateRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+}
+message CountCouponTemplateResponse { uint64 count = 1; }
+
+message CreateUserCouponRequest { UserCoupon data = 1; }
+message UpdateUserCouponRequest {
+  uint32 id = 1;
+  UserCoupon data = 2;
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
+    json_name = "updateMask"
+  ];
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "允许缺失则插入"},
+    json_name = "allowMissing"
+  ];
+}
+message DeleteUserCouponRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+}
+message CountUserCouponResponse { uint64 count = 1; }
+
+// ===== 试算（报价预览） =====
+
+message QuoteRequest {
+  optional uint32 user_coupon_id = 1 [
+    json_name = "userCouponId",
+    (gnostic.openapi.v3.property) = {description: "要试算的券实例ID"}
+  ];
+}
+
+message QuoteResponse {
+  optional bool applicable = 1 [json_name = "applicable", (gnostic.openapi.v3.property) = {description: "该券是否适用于当前购物车"}];
+  optional int64 pre_discount_total = 2 [json_name = "preDiscountTotal", (gnostic.openapi.v3.property) = {description: "折前总额（最小货币单位，分）"}];
+  optional int64 discount = 3 [json_name = "discount", (gnostic.openapi.v3.property) = {description: "抵扣额（最小货币单位，分；不适用时为 0）"}];
+  optional int64 post_discount_total = 4 [json_name = "postDiscountTotal", (gnostic.openapi.v3.property) = {description: "折后应付额（最小货币单位，分；= max(0, pre_discount_total - discount)）"}];
+}

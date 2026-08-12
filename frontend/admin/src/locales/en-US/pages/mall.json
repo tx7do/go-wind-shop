@@ -196,5 +196,34 @@
       "fulfill": "Confirm shipping this shipment? The related order will be marked as fulfilled.",
       "deliver": "Confirm this shipment is delivered? The shipment flow will end."
     }
+  },
+  "couponTemplate": {
+    "moduleName": "Coupon Template",
+    "title": "Coupon Template Management",
+    "discountType": "Discount Type",
+    "discountValue": "Discount Value (cents)",
+    "discountPercentage": "Discount Percentage",
+    "validFrom": "Valid From",
+    "validUntil": "Valid Until",
+    "maxRedemptions": "Max Redemptions",
+    "redeemedCount": "Redeemed Count",
+    "status": "Status",
+    "currency": "Currency",
+    "createdAt": "Created At",
+    "button": {
+      "create": "Create Coupon Template",
+      "update": "Edit Coupon Template"
+    }
+  },
+  "userCoupon": {
+    "moduleName": "User Coupon",
+    "title": "User Coupon Issuance Management",
+    "userId": "User ID",
+    "couponTemplateId": "Template ID",
+    "status": "Status",
+    "createdAt": "Created At",
+    "button": {
+      "create": "Issue Coupon"
+    }
   }
 }

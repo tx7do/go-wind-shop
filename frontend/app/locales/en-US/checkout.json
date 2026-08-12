@@ -25,5 +25,10 @@
     "done": "Complete"
   },
   "useSavedAddress": "Choose from address book",
-  "noSavedAddress": "No saved address yet. Add one in My Profile - Shipping addresses."
+  "noSavedAddress": "No saved address yet. Add one in My Profile - Shipping addresses.",
+  "couponLabel": "Coupon",
+  "couponPlaceholder": "Select a coupon",
+  "couponNone": "No coupon",
+  "couponItem": "Coupon #{{id}}",
+  "discount": "Discount"
 }

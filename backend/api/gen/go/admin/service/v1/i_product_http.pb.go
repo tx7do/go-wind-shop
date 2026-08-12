@@ -64,13 +64,13 @@ type ProductServiceHTTPServer interface {
 
 func RegisterProductServiceHTTPServer(s *http.Server, srv ProductServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/products", _ProductService_List24_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/products/count", _ProductService_Count8_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/products/{id}", _ProductService_Get24_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/products", _ProductService_Create17_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/products", _ProductService_List26_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/products/count", _ProductService_Count10_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/products/{id}", _ProductService_Get26_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/products", _ProductService_Create19_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/products/batch", _ProductService_BatchCreate6_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/products/{id}", _ProductService_Update18_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/products", _ProductService_Delete18_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/products/{id}", _ProductService_Update19_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/products", _ProductService_Delete20_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/products/{product_id}/translations/{language_code}", _ProductService_TranslationExists2_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/products/{id}/translations", _ProductService_GetTranslation2_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/products/translations", _ProductService_CreateTranslation2_HTTP_Handler(srv))
@@ -78,7 +78,7 @@ func RegisterProductServiceHTTPServer(s *http.Server, srv ProductServiceHTTPServ
 	r.DELETE("/admin/v1/mall/products/{id}/translations", _ProductService_DeleteTranslation2_HTTP_Handler(srv))
 }
 
-func _ProductService_List24_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+func _ProductService_List26_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -97,7 +97,7 @@ func _ProductService_List24_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx 
 	}
 }
 
-func _ProductService_Count8_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+func _ProductService_Count10_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -116,7 +116,7 @@ func _ProductService_Count8_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx 
 	}
 }
 
-func _ProductService_Get24_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+func _ProductService_Get26_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetProductRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -138,7 +138,7 @@ func _ProductService_Get24_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx h
 	}
 }
 
-func _ProductService_Create17_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+func _ProductService_Create19_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateProductRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -182,7 +182,7 @@ func _ProductService_BatchCreate6_HTTP_Handler(srv ProductServiceHTTPServer) fun
 	}
 }
 
-func _ProductService_Update18_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+func _ProductService_Update19_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateProductRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -207,7 +207,7 @@ func _ProductService_Update18_HTTP_Handler(srv ProductServiceHTTPServer) func(ct
 	}
 }
 
-func _ProductService_Delete18_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+func _ProductService_Delete20_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteProductRequest
 		if err := ctx.BindQuery(&in); err != nil {

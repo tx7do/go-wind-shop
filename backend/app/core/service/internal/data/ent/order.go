@@ -40,8 +40,12 @@ type Order struct {
 	IdempotencyKey *string `json:"idempotency_key,omitempty"`
 	// 下单用户ID
 	UserID *uint32 `json:"user_id,omitempty"`
-	// 订单总金额（最小货币单位，分）
+	// 订单应付金额（最小货币单位，分；折后价，即原价扣除优惠券抵扣后的实付额，支付与退款取此值）
 	TotalAmount *int64 `json:"total_amount,omitempty"`
+	// 订单折前总额（最小货币单位，分；各订单项 subtotal 之和，未扣抵扣；审计/对账用）
+	OriginalAmount *int64 `json:"original_amount,omitempty"`
+	// 优惠券抵扣额（最小货币单位，分；未用券为 0；审计/对账用）
+	DiscountAmount *int64 `json:"discount_amount,omitempty"`
 	// 订单状态
 	Status *order.Status `json:"status,omitempty"`
 	// 收件人姓名
@@ -58,7 +62,7 @@ func (*Order) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case order.FieldID, order.FieldCreatedBy, order.FieldUpdatedBy, order.FieldDeletedBy, order.FieldTenantID, order.FieldUserID, order.FieldTotalAmount:
+		case order.FieldID, order.FieldCreatedBy, order.FieldUpdatedBy, order.FieldDeletedBy, order.FieldTenantID, order.FieldUserID, order.FieldTotalAmount, order.FieldOriginalAmount, order.FieldDiscountAmount:
 			values[i] = new(sql.NullInt64)
 		case order.FieldCurrency, order.FieldBusinessRefID, order.FieldIdempotencyKey, order.FieldStatus, order.FieldRecipientName, order.FieldRecipientPhone, order.FieldShippingAddress:
 			values[i] = new(sql.NullString)
@@ -168,6 +172,20 @@ func (_m *Order) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.TotalAmount = new(int64)
 				*_m.TotalAmount = value.Int64
+			}
+		case order.FieldOriginalAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field original_amount", values[i])
+			} else if value.Valid {
+				_m.OriginalAmount = new(int64)
+				*_m.OriginalAmount = value.Int64
+			}
+		case order.FieldDiscountAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field discount_amount", values[i])
+			} else if value.Valid {
+				_m.DiscountAmount = new(int64)
+				*_m.DiscountAmount = value.Int64
 			}
 		case order.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -290,6 +308,16 @@ func (_m *Order) String() string {
 	builder.WriteString(", ")
 	if v := _m.TotalAmount; v != nil {
 		builder.WriteString("total_amount=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.OriginalAmount; v != nil {
+		builder.WriteString("original_amount=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.DiscountAmount; v != nil {
+		builder.WriteString("discount_amount=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

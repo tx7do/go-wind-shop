@@ -21,6 +21,7 @@ import (
 	authenticationV1 "go-wind-shop/api/gen/go/authentication/service/v1"
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 	cartV1 "go-wind-shop/api/gen/go/cart/service/v1"
+	couponV1 "go-wind-shop/api/gen/go/coupon/service/v1"
 	dictV1 "go-wind-shop/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
@@ -452,5 +453,23 @@ func NewShipmentServiceClient(ctx *bootstrap.Context, r registry.Discovery) ship
 	}
 
 	return shippingV1.NewShipmentServiceClient(cli)
+}
+
+func NewCouponTemplateServiceClient(ctx *bootstrap.Context, r registry.Discovery) couponV1.CouponTemplateServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return couponV1.NewCouponTemplateServiceClient(cli)
+}
+
+func NewUserCouponServiceClient(ctx *bootstrap.Context, r registry.Discovery) couponV1.UserCouponServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return couponV1.NewUserCouponServiceClient(cli)
 }
 

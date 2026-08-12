@@ -61,4 +61,7 @@ var ProviderSet = wire.NewSet(
 	service.NewPaymentRefundService,
 	service.NewShippingAddressService,
 	service.NewShipmentService,
+
+	service.NewCouponTemplateService,
+	service.NewUserCouponService,
 )

@@ -43,7 +43,19 @@ func (Order) Fields() []ent.Field {
 			Nillable(),
 
 		field.Int64("total_amount").
-			Comment("订单总金额（最小货币单位，分）").
+			Comment("订单应付金额（最小货币单位，分；折后价，即原价扣除优惠券抵扣后的实付额，支付与退款取此值）").
+			Default(0).
+			Optional().
+			Nillable(),
+
+		field.Int64("original_amount").
+			Comment("订单折前总额（最小货币单位，分；各订单项 subtotal 之和，未扣抵扣；审计/对账用）").
+			Default(0).
+			Optional().
+			Nillable(),
+
+		field.Int64("discount_amount").
+			Comment("优惠券抵扣额（最小货币单位，分；未用券为 0；审计/对账用）").
 			Default(0).
 			Optional().
 			Nillable(),

@@ -67,6 +67,10 @@ export * from "./payment-transaction";
 export * from "./payment-refund";
 export * from "./shipment";
 
+// 优惠券管理 (Mall / Coupon)
+export * from "./coupon-template";
+export * from "./user-coupon";
+
 // 商城分析仪表盘 (Mall / Analytics)
 // 复用上述各实体的 fetchList* 实现，无新增 RPC。
 export * from "./analytics";

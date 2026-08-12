@@ -264,6 +264,60 @@ func (_u *OrderUpdate) ClearTotalAmount() *OrderUpdate {
 	return _u
 }
 
+// SetOriginalAmount sets the "original_amount" field.
+func (_u *OrderUpdate) SetOriginalAmount(v int64) *OrderUpdate {
+	_u.mutation.ResetOriginalAmount()
+	_u.mutation.SetOriginalAmount(v)
+	return _u
+}
+
+// SetNillableOriginalAmount sets the "original_amount" field if the given value is not nil.
+func (_u *OrderUpdate) SetNillableOriginalAmount(v *int64) *OrderUpdate {
+	if v != nil {
+		_u.SetOriginalAmount(*v)
+	}
+	return _u
+}
+
+// AddOriginalAmount adds value to the "original_amount" field.
+func (_u *OrderUpdate) AddOriginalAmount(v int64) *OrderUpdate {
+	_u.mutation.AddOriginalAmount(v)
+	return _u
+}
+
+// ClearOriginalAmount clears the value of the "original_amount" field.
+func (_u *OrderUpdate) ClearOriginalAmount() *OrderUpdate {
+	_u.mutation.ClearOriginalAmount()
+	return _u
+}
+
+// SetDiscountAmount sets the "discount_amount" field.
+func (_u *OrderUpdate) SetDiscountAmount(v int64) *OrderUpdate {
+	_u.mutation.ResetDiscountAmount()
+	_u.mutation.SetDiscountAmount(v)
+	return _u
+}
+
+// SetNillableDiscountAmount sets the "discount_amount" field if the given value is not nil.
+func (_u *OrderUpdate) SetNillableDiscountAmount(v *int64) *OrderUpdate {
+	if v != nil {
+		_u.SetDiscountAmount(*v)
+	}
+	return _u
+}
+
+// AddDiscountAmount adds value to the "discount_amount" field.
+func (_u *OrderUpdate) AddDiscountAmount(v int64) *OrderUpdate {
+	_u.mutation.AddDiscountAmount(v)
+	return _u
+}
+
+// ClearDiscountAmount clears the value of the "discount_amount" field.
+func (_u *OrderUpdate) ClearDiscountAmount() *OrderUpdate {
+	_u.mutation.ClearDiscountAmount()
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *OrderUpdate) SetStatus(v order.Status) *OrderUpdate {
 	_u.mutation.SetStatus(v)
@@ -484,6 +538,24 @@ func (_u *OrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.TotalAmountCleared() {
 		_spec.ClearField(order.FieldTotalAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.OriginalAmount(); ok {
+		_spec.SetField(order.FieldOriginalAmount, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedOriginalAmount(); ok {
+		_spec.AddField(order.FieldOriginalAmount, field.TypeInt64, value)
+	}
+	if _u.mutation.OriginalAmountCleared() {
+		_spec.ClearField(order.FieldOriginalAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.DiscountAmount(); ok {
+		_spec.SetField(order.FieldDiscountAmount, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedDiscountAmount(); ok {
+		_spec.AddField(order.FieldDiscountAmount, field.TypeInt64, value)
+	}
+	if _u.mutation.DiscountAmountCleared() {
+		_spec.ClearField(order.FieldDiscountAmount, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeEnum, value)
@@ -766,6 +838,60 @@ func (_u *OrderUpdateOne) ClearTotalAmount() *OrderUpdateOne {
 	return _u
 }
 
+// SetOriginalAmount sets the "original_amount" field.
+func (_u *OrderUpdateOne) SetOriginalAmount(v int64) *OrderUpdateOne {
+	_u.mutation.ResetOriginalAmount()
+	_u.mutation.SetOriginalAmount(v)
+	return _u
+}
+
+// SetNillableOriginalAmount sets the "original_amount" field if the given value is not nil.
+func (_u *OrderUpdateOne) SetNillableOriginalAmount(v *int64) *OrderUpdateOne {
+	if v != nil {
+		_u.SetOriginalAmount(*v)
+	}
+	return _u
+}
+
+// AddOriginalAmount adds value to the "original_amount" field.
+func (_u *OrderUpdateOne) AddOriginalAmount(v int64) *OrderUpdateOne {
+	_u.mutation.AddOriginalAmount(v)
+	return _u
+}
+
+// ClearOriginalAmount clears the value of the "original_amount" field.
+func (_u *OrderUpdateOne) ClearOriginalAmount() *OrderUpdateOne {
+	_u.mutation.ClearOriginalAmount()
+	return _u
+}
+
+// SetDiscountAmount sets the "discount_amount" field.
+func (_u *OrderUpdateOne) SetDiscountAmount(v int64) *OrderUpdateOne {
+	_u.mutation.ResetDiscountAmount()
+	_u.mutation.SetDiscountAmount(v)
+	return _u
+}
+
+// SetNillableDiscountAmount sets the "discount_amount" field if the given value is not nil.
+func (_u *OrderUpdateOne) SetNillableDiscountAmount(v *int64) *OrderUpdateOne {
+	if v != nil {
+		_u.SetDiscountAmount(*v)
+	}
+	return _u
+}
+
+// AddDiscountAmount adds value to the "discount_amount" field.
+func (_u *OrderUpdateOne) AddDiscountAmount(v int64) *OrderUpdateOne {
+	_u.mutation.AddDiscountAmount(v)
+	return _u
+}
+
+// ClearDiscountAmount clears the value of the "discount_amount" field.
+func (_u *OrderUpdateOne) ClearDiscountAmount() *OrderUpdateOne {
+	_u.mutation.ClearDiscountAmount()
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *OrderUpdateOne) SetStatus(v order.Status) *OrderUpdateOne {
 	_u.mutation.SetStatus(v)
@@ -1016,6 +1142,24 @@ func (_u *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error)
 	}
 	if _u.mutation.TotalAmountCleared() {
 		_spec.ClearField(order.FieldTotalAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.OriginalAmount(); ok {
+		_spec.SetField(order.FieldOriginalAmount, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedOriginalAmount(); ok {
+		_spec.AddField(order.FieldOriginalAmount, field.TypeInt64, value)
+	}
+	if _u.mutation.OriginalAmountCleared() {
+		_spec.ClearField(order.FieldOriginalAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.DiscountAmount(); ok {
+		_spec.SetField(order.FieldDiscountAmount, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedDiscountAmount(); ok {
+		_spec.AddField(order.FieldDiscountAmount, field.TypeInt64, value)
+	}
+	if _u.mutation.DiscountAmountCleared() {
+		_spec.ClearField(order.FieldDiscountAmount, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeEnum, value)

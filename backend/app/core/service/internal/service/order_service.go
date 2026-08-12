@@ -17,11 +17,13 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/cart"
 	"go-wind-shop/app/core/service/internal/data/ent/cartitem"
+	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/order"
 	"go-wind-shop/app/core/service/internal/data/ent/orderitem"
 	"go-wind-shop/app/core/service/internal/data/ent/paymenttransaction"
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
+	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
 
@@ -369,11 +371,45 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 		return nil, err
 	}
 
-	// 回写订单总金额（事务内）。
+	// ===== 优惠券核销（事务内）=====
+	//
+	// 至此 totalAmount 为折前总额（各 subtotal 之和）。若下单请求携带 coupon_id，
+	// 在同一事务内 ForUpdate 锁定 user_coupon 与 coupon_template 行，校验：
+	//   - 券归属（UserPrivacy 按 caller user_id 自动注入 WHERE，跨用户查不到→NotFound→回滚）
+	//   - 券状态 UNUSED（手动前置条件，仿库存扣减模式）
+	//   - 模板状态 ACTIVE、币种一致、有效窗口、未超 max_redemptions
+	// 任一校验失败 → err 非空 → defer tx.Rollback() → 不下单不核销（fail-closed）。
+	//
+	// 核销成功后：
+	//   - 模板 redeemed_count++（行锁内）
+	//   - user_coupon 翻 USED + 写 redeemed_at/redeemed_order_id/applied_discount_amount
+	//   - discount = computeDiscount(...)（与 Quote 共用，单一真相源）
+	//
+	// 无券时 discount=0。最终：
+	//   - order.original_amount = 折前总额（审计）
+	//   - order.discount_amount = discount（审计）
+	//   - order.total_amount = max(0, 折前总额 - discount)（折后应付额，支付/退款取此值）
+	originalAmount := totalAmount
+	var discount int64 = 0
+	couponId := req.GetCouponId()
+	if couponId != 0 {
+		discount, err = s.redeemCouponInTx(ctx, tx, couponId, orderId, originalAmount, req.Data.GetCurrency())
+		if err != nil {
+			return nil, err
+		}
+	}
+	finalTotal := originalAmount - discount
+	if finalTotal < 0 {
+		finalTotal = 0
+	}
+
+	// 回写订单金额（事务内）：折后应付额、折前总额、抵扣额。
 	if uErr := tx.Order.UpdateOneID(orderId).
-		SetTotalAmount(totalAmount).
+		SetTotalAmount(finalTotal).
+		SetOriginalAmount(originalAmount).
+		SetDiscountAmount(discount).
 		Exec(ctx); uErr != nil {
-		s.log.Errorf("update order total amount failed: %v", uErr)
+		s.log.Errorf("update order amount failed: %v", uErr)
 		err = orderV1.ErrorInternalServerError("create order failed")
 		return nil, err
 	}
@@ -552,6 +588,12 @@ func (s *OrderService) ExpireOrderByTimeout(ctx context.Context, req *orderV1.Ex
 		return nil, fmt.Errorf("cleanup orphan payments for order [%d] failed: %w", orderId, cErr)
 	}
 
+	// 优惠券返还：若该订单核销过券，在同一事务内把关联 user_coupon 翻回 UNUSED、
+	// 模板 redeemed_count--。与库存释放同事务同原子性，避免"券已用但订单已取消"
+	// 的不一致。系统 viewer 上下文（本函数由 SystemViewer 调用）绕过 privacy，
+	// 可跨用户反查 redeemed_order_id。
+	s.restoreCouponInTx(ctx, tx, orderId)
+
 	if cErr := tx.Commit(); cErr != nil {
 		s.log.Errorf("commit expire tx failed for order [%d]: %v", orderId, cErr)
 		return nil, fmt.Errorf("commit expire tx failed: %w", cErr)
@@ -623,6 +665,12 @@ func (s *OrderService) RestoreStockForRefund(ctx context.Context, orderId uint32
 		}
 	}
 
+	// 优惠券返还：若该订单核销过券，在同一事务内把关联 user_coupon 翻回 UNUSED、
+	// 模板 redeemed_count--。与库存回补同事务同原子性，避免"券已用但已退款"
+	// 的不一致。本函数由 admin 平台 viewer（tid=0）调用，绕过 privacy，
+	// 可跨用户反查 redeemed_order_id。
+	s.restoreCouponInTx(ctx, tx, orderId)
+
 	if cErr := tx.Commit(); cErr != nil {
 		s.log.Errorf("commit stock-restore tx failed for order [%d]: %v", orderId, cErr)
 		err = cErr
@@ -665,3 +713,161 @@ func (s *OrderService) HandleOrderTimeout(taskType string, taskData *task.OrderT
 }
 
 func boolPtr(v bool) *bool { return &v }
+
+// redeemCouponInTx 在下单事务内核销优惠券。
+//
+// 该函数在 OrderService.Create 的事务内调用，与库存扣减同事务，保证"下单 + 核销"
+// 原子性。任一步失败 → 返回 error → 调用方 defer tx.Rollback() → 不下单不核销（fail-closed）。
+//
+// 步骤：
+//  1. ForUpdate 锁定 user_coupon 行。UserPrivacy 按 caller user_id 自动注入 WHERE，
+//     跨用户 coupon_id 查不到 → NotFound → 返回 error → 整事务回滚。
+//  2. 校验券状态 == UNUSED（手动前置条件，仿库存扣减模式）。
+//  3. ForUpdate 锁定 coupon_template 行（TenantPrivacy 按 caller tenant_id 自动注入 WHERE）。
+//  4. 校验模板状态 ACTIVE、币种一致、有效窗口、未超 max_redemptions。
+//  5. discount = computeDiscount(originalAmount, discountParamsFromEntity(tmpl))。
+//  6. 模板 redeemed_count++（行锁内）。
+//  7. user_coupon 翻 USED + 写 redeemed_at/redeemed_order_id/applied_discount_amount。
+//
+// 返回 discount（≥0）。调用方据此算 finalTotal = max(0, originalAmount - discount)。
+func (s *OrderService) redeemCouponInTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	couponId uint32,
+	orderId uint32,
+	originalAmount int64,
+	currency string,
+) (int64, error) {
+	// 1. ForUpdate 锁定 user_coupon 行。
+	//    UserPrivacy 按 caller user_id 自动注入 WHERE——跨用户查不到会返回 NotFound。
+	uc, qErr := tx.UserCoupon.Query().
+		Where(usercoupon.IDEQ(couponId)).
+		ForUpdate().
+		Only(ctx)
+	if qErr != nil || uc == nil {
+		s.log.Warnf("coupon [%d] not found or not owned by caller: %v", couponId, qErr)
+		return 0, orderV1.ErrorBadRequest("coupon not found or not owned by caller")
+	}
+
+	// 2. 校验券状态 == UNUSED。
+	if uc.Status == nil || *uc.Status != usercoupon.StatusUserCouponStatusUnused {
+		s.log.Warnf("coupon [%d] not in UNUSED state", couponId)
+		return 0, orderV1.ErrorBadRequest("coupon is not available")
+	}
+
+	// 3. ForUpdate 锁定 coupon_template 行。
+	tmplId := uc.CouponTemplateID
+	if tmplId == nil || *tmplId == 0 {
+		return 0, orderV1.ErrorBadRequest("coupon has no associated template")
+	}
+	tmpl, tErr := tx.CouponTemplate.Query().
+		Where(coupontemplate.IDEQ(*tmplId)).
+		ForUpdate().
+		Only(ctx)
+	if tErr != nil || tmpl == nil {
+		s.log.Warnf("coupon template [%d] not found: %v", *tmplId, tErr)
+		return 0, orderV1.ErrorBadRequest("coupon template not found")
+	}
+
+	// 4. 校验模板。
+	if tmpl.Status == nil || *tmpl.Status != coupontemplate.StatusCouponTemplateStatusActive {
+		return 0, orderV1.ErrorBadRequest("coupon template is inactive")
+	}
+	// 币种一致：模板 currency 须与订单结算币一致。
+	if tmpl.Currency == nil || *tmpl.Currency != currency {
+		return 0, orderV1.ErrorBadRequest("coupon currency mismatch")
+	}
+	// 有效窗口。
+	if !couponApplicableNowEntity(tmpl, time.Now()) {
+		return 0, orderV1.ErrorBadRequest("coupon is not within its valid window")
+	}
+	// 限量校验。
+	if tmpl.MaxRedemptions != nil && *tmpl.MaxRedemptions > 0 {
+		if tmpl.RedeemedCount == nil || *tmpl.RedeemedCount >= *tmpl.MaxRedemptions {
+			return 0, orderV1.ErrorBadRequest("coupon redemption limit reached")
+		}
+	}
+
+	// 5. 计算抵扣。
+	params := discountParamsFromEntity(tmpl)
+	discount, applicable := computeDiscount(originalAmount, params)
+	if !applicable || discount <= 0 {
+		return 0, orderV1.ErrorBadRequest("coupon produces no discount")
+	}
+
+	// 6. 模板 redeemed_count++（行锁内）。
+	if uErr := tx.CouponTemplate.UpdateOneID(*tmplId).
+		AddRedeemedCount(1).
+		Exec(ctx); uErr != nil {
+		s.log.Errorf("increment template [%d] redeemed_count failed: %v", *tmplId, uErr)
+		return 0, orderV1.ErrorInternalServerError("coupon redemption failed")
+	}
+
+	// 7. user_coupon 翻 USED + 写审计字段。
+	usedStatus := usercoupon.StatusUserCouponStatusUsed
+	now := time.Now()
+	if uErr := tx.UserCoupon.UpdateOneID(couponId).
+		SetStatus(usedStatus).
+		SetRedeemedAt(now).
+		SetRedeemedOrderID(orderId).
+		SetAppliedDiscountAmount(discount).
+		Exec(ctx); uErr != nil {
+		s.log.Errorf("mark coupon [%d] as USED failed: %v", couponId, uErr)
+		return 0, orderV1.ErrorInternalServerError("coupon redemption failed")
+	}
+
+	s.log.Infof("coupon [%d] redeemed for order [%d], discount=%d", couponId, orderId, discount)
+	return discount, nil
+}
+
+// restoreCouponInTx 在订单取消/退款事务内返还优惠券。
+//
+// 与库存回补同事务、同原子性。按 redeemed_order_id=orderId 反查关联的 user_coupon
+// （SystemViewer/平台 viewer 绕过 UserPrivacy/TenantPrivacy，可跨用户/租户反查）。
+// 若命中且 status==USED → 翻 UNUSED、清审计字段、模板 redeemed_count--。
+// 无关联券或券非 USED 时静默跳过（幂等）。
+//
+// 调用点：
+//   - ExpireOrderByTimeout（超时取消，SystemViewer 上下文）
+//   - RestoreStockForRefund（退款回补，平台 admin viewer 上下文）
+func (s *OrderService) restoreCouponInTx(
+	ctx context.Context,
+	tx *ent.Tx,
+	orderId uint32,
+) {
+	// 反查关联券。返还钩子在 system/platform viewer 下运行，privacy 放行。
+	ucs, qErr := tx.UserCoupon.Query().
+		Where(usercoupon.RedeemedOrderIDEQ(orderId)).
+		All(ctx)
+	if qErr != nil {
+		s.log.Errorf("query coupons for order [%d] restore failed: %v", orderId, qErr)
+		return
+	}
+	for _, uc := range ucs {
+		if uc.Status == nil || *uc.Status != usercoupon.StatusUserCouponStatusUsed {
+			continue
+		}
+		// 翻 UNUSED + 清审计字段。
+		unusedStatus := usercoupon.StatusUserCouponStatusUnused
+		if uErr := tx.UserCoupon.UpdateOneID(uc.ID).
+			SetStatus(unusedStatus).
+			ClearRedeemedAt().
+			ClearRedeemedOrderID().
+			ClearAppliedDiscountAmount().
+			Exec(ctx); uErr != nil {
+			s.log.Errorf("restore coupon [%d] to UNUSED failed: %v", uc.ID, uErr)
+			continue
+		}
+		// 模板 redeemed_count--。
+		tmplId := uc.CouponTemplateID
+		if tmplId != nil && *tmplId != 0 {
+			if uErr := tx.CouponTemplate.UpdateOneID(*tmplId).
+				AddRedeemedCount(-1).
+				Exec(ctx); uErr != nil {
+				s.log.Errorf("decrement template [%d] redeemed_count during restore failed: %v", *tmplId, uErr)
+			}
+		}
+		s.log.Infof("coupon [%d] restored to UNUSED for order [%d]", uc.ID, orderId)
+	}
+}
+

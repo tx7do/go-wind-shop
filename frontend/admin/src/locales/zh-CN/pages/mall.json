@@ -196,5 +196,34 @@
       "fulfill": "确认对该物流单执行发货？发货后关联订单将标记为已发货。",
       "deliver": "确认该物流单已签收？签收后物流流程结束。"
     }
+  },
+  "couponTemplate": {
+    "moduleName": "优惠券模板",
+    "title": "优惠券模板管理",
+    "discountType": "抵扣类型",
+    "discountValue": "抵扣面额（分）",
+    "discountPercentage": "抵扣百分比",
+    "validFrom": "有效期起",
+    "validUntil": "有效期止",
+    "maxRedemptions": "核销上限",
+    "redeemedCount": "已核销次数",
+    "status": "状态",
+    "currency": "币种",
+    "createdAt": "创建时间",
+    "button": {
+      "create": "新建优惠券模板",
+      "update": "编辑优惠券模板"
+    }
+  },
+  "userCoupon": {
+    "moduleName": "用户优惠券",
+    "title": "用户优惠券发放管理",
+    "userId": "用户ID",
+    "couponTemplateId": "模板ID",
+    "status": "状态",
+    "createdAt": "创建时间",
+    "button": {
+      "create": "发放优惠券"
+    }
   }
 }

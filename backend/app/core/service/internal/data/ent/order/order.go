@@ -38,6 +38,10 @@ const (
 	FieldUserID = "user_id"
 	// FieldTotalAmount holds the string denoting the total_amount field in the database.
 	FieldTotalAmount = "total_amount"
+	// FieldOriginalAmount holds the string denoting the original_amount field in the database.
+	FieldOriginalAmount = "original_amount"
+	// FieldDiscountAmount holds the string denoting the discount_amount field in the database.
+	FieldDiscountAmount = "discount_amount"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldRecipientName holds the string denoting the recipient_name field in the database.
@@ -65,6 +69,8 @@ var Columns = []string{
 	FieldIdempotencyKey,
 	FieldUserID,
 	FieldTotalAmount,
+	FieldOriginalAmount,
+	FieldDiscountAmount,
 	FieldStatus,
 	FieldRecipientName,
 	FieldRecipientPhone,
@@ -95,6 +101,10 @@ var (
 	DefaultCurrency string
 	// DefaultTotalAmount holds the default value on creation for the "total_amount" field.
 	DefaultTotalAmount int64
+	// DefaultOriginalAmount holds the default value on creation for the "original_amount" field.
+	DefaultOriginalAmount int64
+	// DefaultDiscountAmount holds the default value on creation for the "discount_amount" field.
+	DefaultDiscountAmount int64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -191,6 +201,16 @@ func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 // ByTotalAmount orders the results by the total_amount field.
 func ByTotalAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTotalAmount, opts...).ToFunc()
+}
+
+// ByOriginalAmount orders the results by the original_amount field.
+func ByOriginalAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOriginalAmount, opts...).ToFunc()
+}
+
+// ByDiscountAmount orders the results by the discount_amount field.
+func ByDiscountAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDiscountAmount, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.

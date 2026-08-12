@@ -31,3 +31,6 @@ export * from './payment-refund';
 export * from './shipping-address';
 export * from './shipment';
 export * from './message';
+
+// 优惠券（仅本人 List/Get + Quote 试算）
+export * from './user-coupon';

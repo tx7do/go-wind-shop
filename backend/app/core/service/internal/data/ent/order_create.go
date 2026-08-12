@@ -190,6 +190,34 @@ func (_c *OrderCreate) SetNillableTotalAmount(v *int64) *OrderCreate {
 	return _c
 }
 
+// SetOriginalAmount sets the "original_amount" field.
+func (_c *OrderCreate) SetOriginalAmount(v int64) *OrderCreate {
+	_c.mutation.SetOriginalAmount(v)
+	return _c
+}
+
+// SetNillableOriginalAmount sets the "original_amount" field if the given value is not nil.
+func (_c *OrderCreate) SetNillableOriginalAmount(v *int64) *OrderCreate {
+	if v != nil {
+		_c.SetOriginalAmount(*v)
+	}
+	return _c
+}
+
+// SetDiscountAmount sets the "discount_amount" field.
+func (_c *OrderCreate) SetDiscountAmount(v int64) *OrderCreate {
+	_c.mutation.SetDiscountAmount(v)
+	return _c
+}
+
+// SetNillableDiscountAmount sets the "discount_amount" field if the given value is not nil.
+func (_c *OrderCreate) SetNillableDiscountAmount(v *int64) *OrderCreate {
+	if v != nil {
+		_c.SetDiscountAmount(*v)
+	}
+	return _c
+}
+
 // SetStatus sets the "status" field.
 func (_c *OrderCreate) SetStatus(v order.Status) *OrderCreate {
 	_c.mutation.SetStatus(v)
@@ -301,6 +329,14 @@ func (_c *OrderCreate) defaults() error {
 		v := order.DefaultTotalAmount
 		_c.mutation.SetTotalAmount(v)
 	}
+	if _, ok := _c.mutation.OriginalAmount(); !ok {
+		v := order.DefaultOriginalAmount
+		_c.mutation.SetOriginalAmount(v)
+	}
+	if _, ok := _c.mutation.DiscountAmount(); !ok {
+		v := order.DefaultDiscountAmount
+		_c.mutation.SetDiscountAmount(v)
+	}
 	return nil
 }
 
@@ -396,6 +432,14 @@ func (_c *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.TotalAmount(); ok {
 		_spec.SetField(order.FieldTotalAmount, field.TypeInt64, value)
 		_node.TotalAmount = &value
+	}
+	if value, ok := _c.mutation.OriginalAmount(); ok {
+		_spec.SetField(order.FieldOriginalAmount, field.TypeInt64, value)
+		_node.OriginalAmount = &value
+	}
+	if value, ok := _c.mutation.DiscountAmount(); ok {
+		_spec.SetField(order.FieldDiscountAmount, field.TypeInt64, value)
+		_node.DiscountAmount = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeEnum, value)
@@ -672,6 +716,54 @@ func (u *OrderUpsert) AddTotalAmount(v int64) *OrderUpsert {
 // ClearTotalAmount clears the value of the "total_amount" field.
 func (u *OrderUpsert) ClearTotalAmount() *OrderUpsert {
 	u.SetNull(order.FieldTotalAmount)
+	return u
+}
+
+// SetOriginalAmount sets the "original_amount" field.
+func (u *OrderUpsert) SetOriginalAmount(v int64) *OrderUpsert {
+	u.Set(order.FieldOriginalAmount, v)
+	return u
+}
+
+// UpdateOriginalAmount sets the "original_amount" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateOriginalAmount() *OrderUpsert {
+	u.SetExcluded(order.FieldOriginalAmount)
+	return u
+}
+
+// AddOriginalAmount adds v to the "original_amount" field.
+func (u *OrderUpsert) AddOriginalAmount(v int64) *OrderUpsert {
+	u.Add(order.FieldOriginalAmount, v)
+	return u
+}
+
+// ClearOriginalAmount clears the value of the "original_amount" field.
+func (u *OrderUpsert) ClearOriginalAmount() *OrderUpsert {
+	u.SetNull(order.FieldOriginalAmount)
+	return u
+}
+
+// SetDiscountAmount sets the "discount_amount" field.
+func (u *OrderUpsert) SetDiscountAmount(v int64) *OrderUpsert {
+	u.Set(order.FieldDiscountAmount, v)
+	return u
+}
+
+// UpdateDiscountAmount sets the "discount_amount" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateDiscountAmount() *OrderUpsert {
+	u.SetExcluded(order.FieldDiscountAmount)
+	return u
+}
+
+// AddDiscountAmount adds v to the "discount_amount" field.
+func (u *OrderUpsert) AddDiscountAmount(v int64) *OrderUpsert {
+	u.Add(order.FieldDiscountAmount, v)
+	return u
+}
+
+// ClearDiscountAmount clears the value of the "discount_amount" field.
+func (u *OrderUpsert) ClearDiscountAmount() *OrderUpsert {
+	u.SetNull(order.FieldDiscountAmount)
 	return u
 }
 
@@ -1043,6 +1135,62 @@ func (u *OrderUpsertOne) UpdateTotalAmount() *OrderUpsertOne {
 func (u *OrderUpsertOne) ClearTotalAmount() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearTotalAmount()
+	})
+}
+
+// SetOriginalAmount sets the "original_amount" field.
+func (u *OrderUpsertOne) SetOriginalAmount(v int64) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetOriginalAmount(v)
+	})
+}
+
+// AddOriginalAmount adds v to the "original_amount" field.
+func (u *OrderUpsertOne) AddOriginalAmount(v int64) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.AddOriginalAmount(v)
+	})
+}
+
+// UpdateOriginalAmount sets the "original_amount" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateOriginalAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateOriginalAmount()
+	})
+}
+
+// ClearOriginalAmount clears the value of the "original_amount" field.
+func (u *OrderUpsertOne) ClearOriginalAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearOriginalAmount()
+	})
+}
+
+// SetDiscountAmount sets the "discount_amount" field.
+func (u *OrderUpsertOne) SetDiscountAmount(v int64) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetDiscountAmount(v)
+	})
+}
+
+// AddDiscountAmount adds v to the "discount_amount" field.
+func (u *OrderUpsertOne) AddDiscountAmount(v int64) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.AddDiscountAmount(v)
+	})
+}
+
+// UpdateDiscountAmount sets the "discount_amount" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateDiscountAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateDiscountAmount()
+	})
+}
+
+// ClearDiscountAmount clears the value of the "discount_amount" field.
+func (u *OrderUpsertOne) ClearDiscountAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearDiscountAmount()
 	})
 }
 
@@ -1592,6 +1740,62 @@ func (u *OrderUpsertBulk) UpdateTotalAmount() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearTotalAmount() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearTotalAmount()
+	})
+}
+
+// SetOriginalAmount sets the "original_amount" field.
+func (u *OrderUpsertBulk) SetOriginalAmount(v int64) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetOriginalAmount(v)
+	})
+}
+
+// AddOriginalAmount adds v to the "original_amount" field.
+func (u *OrderUpsertBulk) AddOriginalAmount(v int64) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.AddOriginalAmount(v)
+	})
+}
+
+// UpdateOriginalAmount sets the "original_amount" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateOriginalAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateOriginalAmount()
+	})
+}
+
+// ClearOriginalAmount clears the value of the "original_amount" field.
+func (u *OrderUpsertBulk) ClearOriginalAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearOriginalAmount()
+	})
+}
+
+// SetDiscountAmount sets the "discount_amount" field.
+func (u *OrderUpsertBulk) SetDiscountAmount(v int64) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetDiscountAmount(v)
+	})
+}
+
+// AddDiscountAmount adds v to the "discount_amount" field.
+func (u *OrderUpsertBulk) AddDiscountAmount(v int64) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.AddDiscountAmount(v)
+	})
+}
+
+// UpdateDiscountAmount sets the "discount_amount" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateDiscountAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateDiscountAmount()
+	})
+}
+
+// ClearDiscountAmount clears the value of the "discount_amount" field.
+func (u *OrderUpsertBulk) ClearDiscountAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearDiscountAmount()
 	})
 }
 

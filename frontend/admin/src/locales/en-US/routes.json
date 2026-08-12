@@ -55,7 +55,9 @@
     "paymentTransaction": "Payment Transaction",
     "refund": "Refund Management",
     "financeOverview": "Finance Overview",
-    "shipment": "Shipment Management"
+    "shipment": "Shipment Management",
+    "couponTemplate": "Coupon Template",
+    "userCoupon": "User Coupon"
   },
   "tenant": {
     "moduleName": "Tenant Management",

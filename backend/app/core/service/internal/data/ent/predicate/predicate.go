@@ -30,6 +30,9 @@ type Category func(*sql.Selector)
 // CategoryTranslation is the predicate function for categorytranslation builders.
 type CategoryTranslation func(*sql.Selector)
 
+// CouponTemplate is the predicate function for coupontemplate builders.
+type CouponTemplate func(*sql.Selector)
+
 // DataAccessAuditLog is the predicate function for dataaccessauditlog builders.
 type DataAccessAuditLog func(*sql.Selector)
 
@@ -161,6 +164,9 @@ type Tenant func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
+
+// UserCoupon is the predicate function for usercoupon builders.
+type UserCoupon func(*sql.Selector)
 
 // UserCredential is the predicate function for usercredential builders.
 type UserCredential func(*sql.Selector)

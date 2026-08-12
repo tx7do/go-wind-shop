@@ -58,4 +58,5 @@ var ProviderSet = wire.NewSet(
 	data.NewShippingAddressServiceClient,
 	data.NewShipmentServiceClient,
 	data.NewInternalMessageRecipientServiceClient,
+	data.NewUserCouponServiceClient,
 )

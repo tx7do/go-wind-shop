@@ -14,6 +14,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/cartitem"
 	"go-wind-shop/app/core/service/internal/data/ent/category"
 	"go-wind-shop/app/core/service/internal/data/ent/categorytranslation"
+	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
@@ -58,6 +59,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/task"
 	"go-wind-shop/app/core/service/internal/data/ent/tenant"
 	"go-wind-shop/app/core/service/internal/data/ent/user"
+	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
 	"go-wind-shop/app/core/service/internal/data/ent/usercredential"
 	"go-wind-shop/app/core/service/internal/data/ent/userorgunit"
 	"go-wind-shop/app/core/service/internal/data/ent/userposition"
@@ -136,6 +138,7 @@ func checkColumn(t, c string) error {
 			cartitem.Table:                         cartitem.ValidColumn,
 			category.Table:                         category.ValidColumn,
 			categorytranslation.Table:              categorytranslation.ValidColumn,
+			coupontemplate.Table:                   coupontemplate.ValidColumn,
 			dataaccessauditlog.Table:               dataaccessauditlog.ValidColumn,
 			file.Table:                             file.ValidColumn,
 			internalmessage.Table:                  internalmessage.ValidColumn,
@@ -180,6 +183,7 @@ func checkColumn(t, c string) error {
 			task.Table:                             task.ValidColumn,
 			tenant.Table:                           tenant.ValidColumn,
 			user.Table:                             user.ValidColumn,
+			usercoupon.Table:                       usercoupon.ValidColumn,
 			usercredential.Table:                   usercredential.ValidColumn,
 			userorgunit.Table:                      userorgunit.ValidColumn,
 			userposition.Table:                     userposition.ValidColumn,

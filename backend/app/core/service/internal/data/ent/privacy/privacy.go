@@ -303,6 +303,30 @@ func (f CategoryTranslationMutationRuleFunc) EvalMutation(ctx context.Context, m
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CategoryTranslationMutation", m)
 }
 
+// The CouponTemplateQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CouponTemplateQueryRuleFunc func(context.Context, *ent.CouponTemplateQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CouponTemplateQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CouponTemplateQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CouponTemplateQuery", q)
+}
+
+// The CouponTemplateMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CouponTemplateMutationRuleFunc func(context.Context, *ent.CouponTemplateMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CouponTemplateMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CouponTemplateMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CouponTemplateMutation", m)
+}
+
 // The DataAccessAuditLogQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type DataAccessAuditLogQueryRuleFunc func(context.Context, *ent.DataAccessAuditLogQuery) error
@@ -1359,6 +1383,30 @@ func (f UserMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) 
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserMutation", m)
 }
 
+// The UserCouponQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type UserCouponQueryRuleFunc func(context.Context, *ent.UserCouponQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f UserCouponQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.UserCouponQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.UserCouponQuery", q)
+}
+
+// The UserCouponMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type UserCouponMutationRuleFunc func(context.Context, *ent.UserCouponMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f UserCouponMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.UserCouponMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserCouponMutation", m)
+}
+
 // The UserCredentialQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UserCredentialQueryRuleFunc func(context.Context, *ent.UserCredentialQuery) error
@@ -1506,6 +1554,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.CategoryTranslationQuery:
 		return q.Filter(), nil
+	case *ent.CouponTemplateQuery:
+		return q.Filter(), nil
 	case *ent.DataAccessAuditLogQuery:
 		return q.Filter(), nil
 	case *ent.FileQuery:
@@ -1594,6 +1644,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.UserQuery:
 		return q.Filter(), nil
+	case *ent.UserCouponQuery:
+		return q.Filter(), nil
 	case *ent.UserCredentialQuery:
 		return q.Filter(), nil
 	case *ent.UserOrgUnitQuery:
@@ -1624,6 +1676,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.CategoryMutation:
 		return m.Filter(), nil
 	case *ent.CategoryTranslationMutation:
+		return m.Filter(), nil
+	case *ent.CouponTemplateMutation:
 		return m.Filter(), nil
 	case *ent.DataAccessAuditLogMutation:
 		return m.Filter(), nil
@@ -1712,6 +1766,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.TenantMutation:
 		return m.Filter(), nil
 	case *ent.UserMutation:
+		return m.Filter(), nil
+	case *ent.UserCouponMutation:
 		return m.Filter(), nil
 	case *ent.UserCredentialMutation:
 		return m.Filter(), nil

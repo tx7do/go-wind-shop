@@ -15,6 +15,7 @@ import (
 	authenticationV1 "go-wind-shop/api/gen/go/authentication/service/v1"
 	cartV1 "go-wind-shop/api/gen/go/cart/service/v1"
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
+	couponV1 "go-wind-shop/api/gen/go/coupon/service/v1"
 	dictV1 "go-wind-shop/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
@@ -86,11 +87,14 @@ func NewGrpcServer(
 	cartItemService *service.CartItemService,
 	orderService *service.OrderService,
 	orderItemService *service.OrderItemService,
-	paymentTransactionService *service.PaymentTransactionService,
+		paymentTransactionService *service.PaymentTransactionService,
 		paymentRefundService *service.PaymentRefundService,
 		shippingAddressService *service.ShippingAddressService,
 		shipmentService *service.ShipmentService,
-) (*grpc.Server, error) {
+
+		couponTemplateService *service.CouponTemplateService,
+		userCouponService *service.UserCouponService,
+	) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Grpc == nil {
@@ -154,6 +158,9 @@ func NewGrpcServer(
 	addressV1.RegisterShippingAddressServiceServer(srv, shippingAddressService)
 
 	shippingV1.RegisterShipmentServiceServer(srv, shipmentService)
+
+	couponV1.RegisterCouponTemplateServiceServer(srv, couponTemplateService)
+	couponV1.RegisterUserCouponServiceServer(srv, userCouponService)
 
 	return srv, nil
 }

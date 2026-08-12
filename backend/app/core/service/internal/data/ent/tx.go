@@ -28,6 +28,8 @@ type Tx struct {
 	Category *CategoryClient
 	// CategoryTranslation is the client for interacting with the CategoryTranslation builders.
 	CategoryTranslation *CategoryTranslationClient
+	// CouponTemplate is the client for interacting with the CouponTemplate builders.
+	CouponTemplate *CouponTemplateClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
 	// File is the client for interacting with the File builders.
@@ -116,6 +118,8 @@ type Tx struct {
 	Tenant *TenantClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserCoupon is the client for interacting with the UserCoupon builders.
+	UserCoupon *UserCouponClient
 	// UserCredential is the client for interacting with the UserCredential builders.
 	UserCredential *UserCredentialClient
 	// UserOrgUnit is the client for interacting with the UserOrgUnit builders.
@@ -263,6 +267,7 @@ func (tx *Tx) init() {
 	tx.CartItem = NewCartItemClient(tx.config)
 	tx.Category = NewCategoryClient(tx.config)
 	tx.CategoryTranslation = NewCategoryTranslationClient(tx.config)
+	tx.CouponTemplate = NewCouponTemplateClient(tx.config)
 	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)
 	tx.File = NewFileClient(tx.config)
 	tx.InternalMessage = NewInternalMessageClient(tx.config)
@@ -307,6 +312,7 @@ func (tx *Tx) init() {
 	tx.Task = NewTaskClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.UserCoupon = NewUserCouponClient(tx.config)
 	tx.UserCredential = NewUserCredentialClient(tx.config)
 	tx.UserOrgUnit = NewUserOrgUnitClient(tx.config)
 	tx.UserPosition = NewUserPositionClient(tx.config)

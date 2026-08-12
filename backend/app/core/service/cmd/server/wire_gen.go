@@ -133,7 +133,11 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	shippingAddressService := service.NewShippingAddressService(context, shippingAddressRepo)
 	shipmentRepo := data.NewShipmentRepo(context, entClient)
 	shipmentService := service.NewShipmentService(context, shipmentRepo, entClient)
-	grpcServer, err := server.NewGrpcServer(context, v, authenticationService, loginPolicyService, userCredentialService, taskService, fileService, languageService, tenantService, userService, roleService, positionService, orgUnitService, menuService, apiService, permissionService, permissionGroupService, permissionAuditLogService, policyEvaluationLogService, loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, categoryService, brandService, productService, productAttributeService, productAttributeValueService, skuService, skuPriceService, skuAttributeCombinationService, cartService, cartItemService, orderService, orderItemService, paymentTransactionService, paymentRefundService, shippingAddressService, shipmentService)
+	couponTemplateRepo := data.NewCouponTemplateRepo(context, entClient)
+	couponTemplateService := service.NewCouponTemplateService(context, couponTemplateRepo)
+	userCouponRepo := data.NewUserCouponRepo(context, entClient)
+	userCouponService := service.NewUserCouponService(context, userCouponRepo, couponTemplateRepo, entClient)
+	grpcServer, err := server.NewGrpcServer(context, v, authenticationService, loginPolicyService, userCredentialService, taskService, fileService, languageService, tenantService, userService, roleService, positionService, orgUnitService, menuService, apiService, permissionService, permissionGroupService, permissionAuditLogService, policyEvaluationLogService, loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, categoryService, brandService, productService, productAttributeService, productAttributeValueService, skuService, skuPriceService, skuAttributeCombinationService, cartService, cartItemService, orderService, orderItemService, paymentTransactionService, paymentRefundService, shippingAddressService, shipmentService, couponTemplateService, userCouponService)
 	if err != nil {
 		cleanup2()
 		cleanup()

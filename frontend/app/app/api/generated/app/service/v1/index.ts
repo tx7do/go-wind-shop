@@ -1993,9 +1993,6 @@ export interface OrderService {
   Update(
     request: orderservicev1_UpdateOrderRequest,
   ): Promise<wellKnownEmpty>;
-  Delete(
-    request: orderservicev1_DeleteOrderRequest,
-  ): Promise<wellKnownEmpty>;
 }
 
 export function createOrderServiceClient(
@@ -2282,24 +2279,6 @@ export function createOrderServiceClient(
         method: 'Update',
       }) as Promise<wellKnownEmpty>;
     },
-    Delete(request) {
-      const path = `app/v1/mall/orders`;
-      const body = null;
-      const queryParams: string[] = [];
-      if (request.id) {
-        queryParams.push(
-          `id=${encodeURIComponent(request.id.toString())}`,
-        );
-      }
-      let uri = path;
-      if (queryParams.length > 0) {
-        uri += `?${queryParams.join('&')}`;
-      }
-      return transport.unary(uri, 'DELETE', body, {
-        service: 'OrderService',
-        method: 'Delete',
-      }) as Promise<wellKnownEmpty>;
-    },
   };
 }
 export type orderservicev1_ListOrderResponse = {
@@ -2315,8 +2294,10 @@ export type orderservicev1_Order = {
   currency?: string;
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
+  discountAmount?: number;
   id?: number;
   idempotencyKey?: string;
+  originalAmount?: number;
   recipientName?: string;
   recipientPhone?: string;
   shippingAddress?: string;
@@ -2354,6 +2335,11 @@ export type orderservicev1_GetOrderRequest = {
 };
 
 export type orderservicev1_CreateOrderRequest = {
+  // 优惠券核销指令：下单时携带的 user_coupon_id。
+  // 非订单持久属性——券↔订单关联以 user_coupon.redeemed_order_id 为唯一来源。
+  // 服务端在 Create 事务内 ForUpdate 锁定该券实例并校验归属/状态/窗口/额度，
+  // 任一校验失败整事务回滚（fail-closed）。留空表示不使用优惠券。
+  couponId?: number;
   data: orderservicev1_Order | undefined;
 };
 
@@ -2368,10 +2354,6 @@ export type orderservicev1_UpdateOrderRequest = {
   updateMask: undefined | wellKnownFieldMask;
 };
 
-export type orderservicev1_DeleteOrderRequest = {
-  id?: number;
-};
-
 // 订单项前台服务
 export interface OrderItemService {
   List(
@@ -2383,18 +2365,6 @@ export interface OrderItemService {
   Get(
     request: orderservicev1_GetOrderItemRequest,
   ): Promise<orderservicev1_OrderItem>;
-  Create(
-    request: orderservicev1_CreateOrderItemRequest,
-  ): Promise<wellKnownEmpty>;
-  BatchCreate(
-    request: orderservicev1_BatchCreateOrderItemsRequest,
-  ): Promise<wellKnownEmpty>;
-  Update(
-    request: orderservicev1_UpdateOrderItemRequest,
-  ): Promise<wellKnownEmpty>;
-  Delete(
-    request: orderservicev1_DeleteOrderItemRequest,
-  ): Promise<wellKnownEmpty>;
 }
 
 export function createOrderItemServiceClient(
@@ -2652,51 +2622,6 @@ export function createOrderItemServiceClient(
         method: 'Get',
       }) as Promise<orderservicev1_OrderItem>;
     },
-    Create(request) {
-      const path = `app/v1/mall/order-items`;
-      const body = JSON.stringify(request);
-      return transport.unary(path, 'POST', body, {
-        service: 'OrderItemService',
-        method: 'Create',
-      }) as Promise<wellKnownEmpty>;
-    },
-    BatchCreate(request) {
-      const path = `app/v1/mall/order-items/batch`;
-      const body = JSON.stringify(request);
-      return transport.unary(path, 'POST', body, {
-        service: 'OrderItemService',
-        method: 'BatchCreate',
-      }) as Promise<wellKnownEmpty>;
-    },
-    Update(request) {
-      if (request.id === undefined || request.id === null) {
-        throw new Error('missing required field request.id');
-      }
-      const path = `app/v1/mall/order-items/${request.id}`;
-      const body = JSON.stringify(request);
-      return transport.unary(path, 'PUT', body, {
-        service: 'OrderItemService',
-        method: 'Update',
-      }) as Promise<wellKnownEmpty>;
-    },
-    Delete(request) {
-      const path = `app/v1/mall/order-items`;
-      const body = null;
-      const queryParams: string[] = [];
-      if (request.id) {
-        queryParams.push(
-          `id=${encodeURIComponent(request.id.toString())}`,
-        );
-      }
-      let uri = path;
-      if (queryParams.length > 0) {
-        uri += `?${queryParams.join('&')}`;
-      }
-      return transport.unary(uri, 'DELETE', body, {
-        service: 'OrderItemService',
-        method: 'Delete',
-      }) as Promise<wellKnownEmpty>;
-    },
   };
 }
 export type orderservicev1_ListOrderItemResponse = {
@@ -2730,25 +2655,6 @@ export type orderservicev1_GetOrderItemRequest = {
   viewMask?: wellKnownFieldMask;
 };
 
-export type orderservicev1_CreateOrderItemRequest = {
-  data: orderservicev1_OrderItem | undefined;
-};
-
-export type orderservicev1_BatchCreateOrderItemsRequest = {
-  items: orderservicev1_OrderItem[] | undefined;
-};
-
-export type orderservicev1_UpdateOrderItemRequest = {
-  allowMissing?: boolean;
-  data: orderservicev1_OrderItem | undefined;
-  id: number | undefined;
-  updateMask: undefined | wellKnownFieldMask;
-};
-
-export type orderservicev1_DeleteOrderItemRequest = {
-  id?: number;
-};
-
 // 支付流水前台服务
 export interface PaymentTransactionService {
   List(
@@ -2762,12 +2668,6 @@ export interface PaymentTransactionService {
   ): Promise<paymentservicev1_PaymentTransaction>;
   Create(
     request: paymentservicev1_CreatePaymentTransactionRequest,
-  ): Promise<wellKnownEmpty>;
-  Update(
-    request: paymentservicev1_UpdatePaymentTransactionRequest,
-  ): Promise<wellKnownEmpty>;
-  Delete(
-    request: paymentservicev1_DeletePaymentTransactionRequest,
   ): Promise<wellKnownEmpty>;
 }
 
@@ -3044,35 +2944,6 @@ export function createPaymentTransactionServiceClient(
         method: 'Create',
       }) as Promise<wellKnownEmpty>;
     },
-    Update(request) {
-      if (request.id === undefined || request.id === null) {
-        throw new Error('missing required field request.id');
-      }
-      const path = `app/v1/mall/payment-transactions/${request.id}`;
-      const body = JSON.stringify(request);
-      return transport.unary(path, 'PUT', body, {
-        service: 'PaymentTransactionService',
-        method: 'Update',
-      }) as Promise<wellKnownEmpty>;
-    },
-    Delete(request) {
-      const path = `app/v1/mall/payment-transactions`;
-      const body = null;
-      const queryParams: string[] = [];
-      if (request.id) {
-        queryParams.push(
-          `id=${encodeURIComponent(request.id.toString())}`,
-        );
-      }
-      let uri = path;
-      if (queryParams.length > 0) {
-        uri += `?${queryParams.join('&')}`;
-      }
-      return transport.unary(uri, 'DELETE', body, {
-        service: 'PaymentTransactionService',
-        method: 'Delete',
-      }) as Promise<wellKnownEmpty>;
-    },
   };
 }
 export type paymentservicev1_ListPaymentTransactionResponse = {
@@ -3156,17 +3027,6 @@ export type paymentservicev1_CreatePaymentTransactionRequest = {
   data: paymentservicev1_PaymentTransaction | undefined;
 };
 
-export type paymentservicev1_UpdatePaymentTransactionRequest = {
-  allowMissing?: boolean;
-  data: paymentservicev1_PaymentTransaction | undefined;
-  id: number | undefined;
-  updateMask: undefined | wellKnownFieldMask;
-};
-
-export type paymentservicev1_DeletePaymentTransactionRequest = {
-  id?: number;
-};
-
 // 支付退款前台服务
 export interface PaymentRefundService {
   List(
@@ -3180,12 +3040,6 @@ export interface PaymentRefundService {
   ): Promise<paymentservicev1_PaymentRefund>;
   Create(
     request: paymentservicev1_CreatePaymentRefundRequest,
-  ): Promise<wellKnownEmpty>;
-  Update(
-    request: paymentservicev1_UpdatePaymentRefundRequest,
-  ): Promise<wellKnownEmpty>;
-  Delete(
-    request: paymentservicev1_DeletePaymentRefundRequest,
   ): Promise<wellKnownEmpty>;
 }
 
@@ -3452,35 +3306,6 @@ export function createPaymentRefundServiceClient(
         method: 'Create',
       }) as Promise<wellKnownEmpty>;
     },
-    Update(request) {
-      if (request.id === undefined || request.id === null) {
-        throw new Error('missing required field request.id');
-      }
-      const path = `app/v1/mall/payment-refunds/${request.id}`;
-      const body = JSON.stringify(request);
-      return transport.unary(path, 'PUT', body, {
-        service: 'PaymentRefundService',
-        method: 'Update',
-      }) as Promise<wellKnownEmpty>;
-    },
-    Delete(request) {
-      const path = `app/v1/mall/payment-refunds`;
-      const body = null;
-      const queryParams: string[] = [];
-      if (request.id) {
-        queryParams.push(
-          `id=${encodeURIComponent(request.id.toString())}`,
-        );
-      }
-      let uri = path;
-      if (queryParams.length > 0) {
-        uri += `?${queryParams.join('&')}`;
-      }
-      return transport.unary(uri, 'DELETE', body, {
-        service: 'PaymentRefundService',
-        method: 'Delete',
-      }) as Promise<wellKnownEmpty>;
-    },
   };
 }
 export type paymentservicev1_ListPaymentRefundResponse = {
@@ -3504,6 +3329,7 @@ export type paymentservicev1_PaymentRefund = {
   transactionId?: number;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
+  userId?: number;
 };
 
 // 退款状态
@@ -3523,17 +3349,6 @@ export type paymentservicev1_GetPaymentRefundRequest = {
 
 export type paymentservicev1_CreatePaymentRefundRequest = {
   data: paymentservicev1_PaymentRefund | undefined;
-};
-
-export type paymentservicev1_UpdatePaymentRefundRequest = {
-  allowMissing?: boolean;
-  data: paymentservicev1_PaymentRefund | undefined;
-  id: number | undefined;
-  updateMask: undefined | wellKnownFieldMask;
-};
-
-export type paymentservicev1_DeletePaymentRefundRequest = {
-  id?: number;
 };
 
 // 商品前台服务
@@ -5243,6 +5058,216 @@ export type catalogservicev1_GetSkuAttributeCombinationRequest = {
   viewMask?: wellKnownFieldMask;
 };
 
+// 用户优惠券前台服务（裁剪写 RPC：仅 List/Get/Quote，无 Create/Update/Delete）。
+// 用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+// Quote 试算不持锁不落库，最终抵扣以下单时事务内校验为准。
+export interface UserCouponService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<couponservicev1_ListUserCouponResponse>;
+  Get(
+    request: couponservicev1_GetUserCouponRequest,
+  ): Promise<couponservicev1_UserCoupon>;
+  Quote(
+    request: couponservicev1_QuoteRequest,
+  ): Promise<couponservicev1_QuoteResponse>;
+}
+
+export function createUserCouponServiceClient(
+  transport: ClientTransport,
+): UserCouponService {
+  return {
+    List(request) {
+      const path = `app/v1/mall/user-coupons`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'UserCouponService',
+        method: 'List',
+      }) as Promise<couponservicev1_ListUserCouponResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `app/v1/mall/user-coupons/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'UserCouponService',
+        method: 'Get',
+      }) as Promise<couponservicev1_UserCoupon>;
+    },
+    Quote(request) {
+      const path = `app/v1/mall/user-coupons/quote`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'UserCouponService',
+        method: 'Quote',
+      }) as Promise<couponservicev1_QuoteResponse>;
+    },
+  };
+}
+export type couponservicev1_ListUserCouponResponse = {
+  items: couponservicev1_UserCoupon[] | undefined;
+  total: number | undefined;
+};
+
+// 用户优惠券实例
+export type couponservicev1_UserCoupon = {
+  appliedDiscountAmount?: number;
+  couponTemplateId?: number;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  redeemedAt?: wellKnownTimestamp;
+  redeemedOrderId?: number;
+  status?: couponservicev1_UserCoupon_Status;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  userId?: number;
+};
+
+// 券实例状态
+export type couponservicev1_UserCoupon_Status =
+  | 'EXPIRED'
+  | 'STATUS_UNSPECIFIED'
+  | 'UNUSED'
+  | 'USED';
+export type couponservicev1_GetUserCouponRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type couponservicev1_QuoteRequest = {
+  userCouponId?: number;
+};
+
+export type couponservicev1_QuoteResponse = {
+  applicable?: boolean;
+  discount?: number;
+  postDiscountTotal?: number;
+  preDiscountTotal?: number;
+};
+
 // 用户个人资料服务
 export interface UserProfileService {
   // 获取用户资料
@@ -5481,6 +5506,7 @@ export class ApiClient {
   private _skuPriceService?: SkuPriceService;
   private _skuService?: SkuService;
   private readonly _transport: ClientTransport;
+  private _userCouponService?: UserCouponService;
   private _userProfileService?: UserProfileService;
 
   constructor(transport: ClientTransport) {
@@ -5561,6 +5587,10 @@ export class ApiClient {
 
   get skuService(): SkuService {
     return this._skuService ??= createSkuServiceClient(this._transport);
+  }
+
+  get userCouponService(): UserCouponService {
+    return this._userCouponService ??= createUserCouponServiceClient(this._transport);
   }
 
   get userProfileService(): UserProfileService {

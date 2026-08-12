@@ -19,6 +19,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/cartitem"
 	"go-wind-shop/app/core/service/internal/data/ent/category"
 	"go-wind-shop/app/core/service/internal/data/ent/categorytranslation"
+	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
@@ -63,6 +64,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/task"
 	"go-wind-shop/app/core/service/internal/data/ent/tenant"
 	"go-wind-shop/app/core/service/internal/data/ent/user"
+	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
 	"go-wind-shop/app/core/service/internal/data/ent/usercredential"
 	"go-wind-shop/app/core/service/internal/data/ent/userorgunit"
 	"go-wind-shop/app/core/service/internal/data/ent/userposition"
@@ -95,6 +97,8 @@ type Client struct {
 	Category *CategoryClient
 	// CategoryTranslation is the client for interacting with the CategoryTranslation builders.
 	CategoryTranslation *CategoryTranslationClient
+	// CouponTemplate is the client for interacting with the CouponTemplate builders.
+	CouponTemplate *CouponTemplateClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
 	// File is the client for interacting with the File builders.
@@ -183,6 +187,8 @@ type Client struct {
 	Tenant *TenantClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// UserCoupon is the client for interacting with the UserCoupon builders.
+	UserCoupon *UserCouponClient
 	// UserCredential is the client for interacting with the UserCredential builders.
 	UserCredential *UserCredentialClient
 	// UserOrgUnit is the client for interacting with the UserOrgUnit builders.
@@ -210,6 +216,7 @@ func (c *Client) init() {
 	c.CartItem = NewCartItemClient(c.config)
 	c.Category = NewCategoryClient(c.config)
 	c.CategoryTranslation = NewCategoryTranslationClient(c.config)
+	c.CouponTemplate = NewCouponTemplateClient(c.config)
 	c.DataAccessAuditLog = NewDataAccessAuditLogClient(c.config)
 	c.File = NewFileClient(c.config)
 	c.InternalMessage = NewInternalMessageClient(c.config)
@@ -254,6 +261,7 @@ func (c *Client) init() {
 	c.Task = NewTaskClient(c.config)
 	c.Tenant = NewTenantClient(c.config)
 	c.User = NewUserClient(c.config)
+	c.UserCoupon = NewUserCouponClient(c.config)
 	c.UserCredential = NewUserCredentialClient(c.config)
 	c.UserOrgUnit = NewUserOrgUnitClient(c.config)
 	c.UserPosition = NewUserPositionClient(c.config)
@@ -358,6 +366,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CartItem:                         NewCartItemClient(cfg),
 		Category:                         NewCategoryClient(cfg),
 		CategoryTranslation:              NewCategoryTranslationClient(cfg),
+		CouponTemplate:                   NewCouponTemplateClient(cfg),
 		DataAccessAuditLog:               NewDataAccessAuditLogClient(cfg),
 		File:                             NewFileClient(cfg),
 		InternalMessage:                  NewInternalMessageClient(cfg),
@@ -402,6 +411,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Task:                             NewTaskClient(cfg),
 		Tenant:                           NewTenantClient(cfg),
 		User:                             NewUserClient(cfg),
+		UserCoupon:                       NewUserCouponClient(cfg),
 		UserCredential:                   NewUserCredentialClient(cfg),
 		UserOrgUnit:                      NewUserOrgUnitClient(cfg),
 		UserPosition:                     NewUserPositionClient(cfg),
@@ -433,6 +443,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CartItem:                         NewCartItemClient(cfg),
 		Category:                         NewCategoryClient(cfg),
 		CategoryTranslation:              NewCategoryTranslationClient(cfg),
+		CouponTemplate:                   NewCouponTemplateClient(cfg),
 		DataAccessAuditLog:               NewDataAccessAuditLogClient(cfg),
 		File:                             NewFileClient(cfg),
 		InternalMessage:                  NewInternalMessageClient(cfg),
@@ -477,6 +488,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Task:                             NewTaskClient(cfg),
 		Tenant:                           NewTenantClient(cfg),
 		User:                             NewUserClient(cfg),
+		UserCoupon:                       NewUserCouponClient(cfg),
 		UserCredential:                   NewUserCredentialClient(cfg),
 		UserOrgUnit:                      NewUserOrgUnitClient(cfg),
 		UserPosition:                     NewUserPositionClient(cfg),
@@ -511,18 +523,19 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Api, c.ApiAuditLog, c.Brand, c.BrandTranslation, c.Cart, c.CartItem,
-		c.Category, c.CategoryTranslation, c.DataAccessAuditLog, c.File,
-		c.InternalMessage, c.InternalMessageCategory, c.InternalMessageRecipient,
-		c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.Order,
-		c.OrderItem, c.OrgUnit, c.PaymentRefund, c.PaymentTransaction, c.Permission,
-		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Product,
-		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
-		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Shipment, c.ShippingAddress, c.Sku,
-		c.SkuAttributeCombination, c.SkuPrice, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Category, c.CategoryTranslation, c.CouponTemplate, c.DataAccessAuditLog,
+		c.File, c.InternalMessage, c.InternalMessageCategory,
+		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
+		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
+		c.Menu, c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit, c.PaymentRefund,
+		c.PaymentTransaction, c.Permission, c.PermissionApi, c.PermissionAuditLog,
+		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
+		c.Position, c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
+		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
+		c.ProductTranslation, c.Role, c.RoleMetadata, c.RolePermission, c.Shipment,
+		c.ShippingAddress, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.Task,
+		c.Tenant, c.User, c.UserCoupon, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -533,18 +546,19 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Api, c.ApiAuditLog, c.Brand, c.BrandTranslation, c.Cart, c.CartItem,
-		c.Category, c.CategoryTranslation, c.DataAccessAuditLog, c.File,
-		c.InternalMessage, c.InternalMessageCategory, c.InternalMessageRecipient,
-		c.Language, c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.Order,
-		c.OrderItem, c.OrgUnit, c.PaymentRefund, c.PaymentTransaction, c.Permission,
-		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Product,
-		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
-		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Shipment, c.ShippingAddress, c.Sku,
-		c.SkuAttributeCombination, c.SkuPrice, c.Task, c.Tenant, c.User,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Category, c.CategoryTranslation, c.CouponTemplate, c.DataAccessAuditLog,
+		c.File, c.InternalMessage, c.InternalMessageCategory,
+		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
+		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
+		c.Menu, c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit, c.PaymentRefund,
+		c.PaymentTransaction, c.Permission, c.PermissionApi, c.PermissionAuditLog,
+		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
+		c.Position, c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
+		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
+		c.ProductTranslation, c.Role, c.RoleMetadata, c.RolePermission, c.Shipment,
+		c.ShippingAddress, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.Task,
+		c.Tenant, c.User, c.UserCoupon, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -569,6 +583,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Category.mutate(ctx, m)
 	case *CategoryTranslationMutation:
 		return c.CategoryTranslation.mutate(ctx, m)
+	case *CouponTemplateMutation:
+		return c.CouponTemplate.mutate(ctx, m)
 	case *DataAccessAuditLogMutation:
 		return c.DataAccessAuditLog.mutate(ctx, m)
 	case *FileMutation:
@@ -657,6 +673,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Tenant.mutate(ctx, m)
 	case *UserMutation:
 		return c.User.mutate(ctx, m)
+	case *UserCouponMutation:
+		return c.UserCoupon.mutate(ctx, m)
 	case *UserCredentialMutation:
 		return c.UserCredential.mutate(ctx, m)
 	case *UserOrgUnitMutation:
@@ -1766,6 +1784,140 @@ func (c *CategoryTranslationClient) mutate(ctx context.Context, m *CategoryTrans
 		return (&CategoryTranslationDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown CategoryTranslation mutation op: %q", m.Op())
+	}
+}
+
+// CouponTemplateClient is a client for the CouponTemplate schema.
+type CouponTemplateClient struct {
+	config
+}
+
+// NewCouponTemplateClient returns a client for the CouponTemplate from the given config.
+func NewCouponTemplateClient(c config) *CouponTemplateClient {
+	return &CouponTemplateClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `coupontemplate.Hooks(f(g(h())))`.
+func (c *CouponTemplateClient) Use(hooks ...Hook) {
+	c.hooks.CouponTemplate = append(c.hooks.CouponTemplate, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `coupontemplate.Intercept(f(g(h())))`.
+func (c *CouponTemplateClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CouponTemplate = append(c.inters.CouponTemplate, interceptors...)
+}
+
+// Create returns a builder for creating a CouponTemplate entity.
+func (c *CouponTemplateClient) Create() *CouponTemplateCreate {
+	mutation := newCouponTemplateMutation(c.config, OpCreate)
+	return &CouponTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CouponTemplate entities.
+func (c *CouponTemplateClient) CreateBulk(builders ...*CouponTemplateCreate) *CouponTemplateCreateBulk {
+	return &CouponTemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CouponTemplateClient) MapCreateBulk(slice any, setFunc func(*CouponTemplateCreate, int)) *CouponTemplateCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CouponTemplateCreateBulk{err: fmt.Errorf("calling to CouponTemplateClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CouponTemplateCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CouponTemplateCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CouponTemplate.
+func (c *CouponTemplateClient) Update() *CouponTemplateUpdate {
+	mutation := newCouponTemplateMutation(c.config, OpUpdate)
+	return &CouponTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CouponTemplateClient) UpdateOne(_m *CouponTemplate) *CouponTemplateUpdateOne {
+	mutation := newCouponTemplateMutation(c.config, OpUpdateOne, withCouponTemplate(_m))
+	return &CouponTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CouponTemplateClient) UpdateOneID(id uint32) *CouponTemplateUpdateOne {
+	mutation := newCouponTemplateMutation(c.config, OpUpdateOne, withCouponTemplateID(id))
+	return &CouponTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CouponTemplate.
+func (c *CouponTemplateClient) Delete() *CouponTemplateDelete {
+	mutation := newCouponTemplateMutation(c.config, OpDelete)
+	return &CouponTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CouponTemplateClient) DeleteOne(_m *CouponTemplate) *CouponTemplateDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CouponTemplateClient) DeleteOneID(id uint32) *CouponTemplateDeleteOne {
+	builder := c.Delete().Where(coupontemplate.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CouponTemplateDeleteOne{builder}
+}
+
+// Query returns a query builder for CouponTemplate.
+func (c *CouponTemplateClient) Query() *CouponTemplateQuery {
+	return &CouponTemplateQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCouponTemplate},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CouponTemplate entity by its id.
+func (c *CouponTemplateClient) Get(ctx context.Context, id uint32) (*CouponTemplate, error) {
+	return c.Query().Where(coupontemplate.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CouponTemplateClient) GetX(ctx context.Context, id uint32) *CouponTemplate {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CouponTemplateClient) Hooks() []Hook {
+	hooks := c.hooks.CouponTemplate
+	return append(hooks[:len(hooks):len(hooks)], coupontemplate.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *CouponTemplateClient) Interceptors() []Interceptor {
+	return c.inters.CouponTemplate
+}
+
+func (c *CouponTemplateClient) mutate(ctx context.Context, m *CouponTemplateMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CouponTemplateCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CouponTemplateUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CouponTemplateUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CouponTemplateDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown CouponTemplate mutation op: %q", m.Op())
 	}
 }
 
@@ -7744,6 +7896,140 @@ func (c *UserClient) mutate(ctx context.Context, m *UserMutation) (Value, error)
 	}
 }
 
+// UserCouponClient is a client for the UserCoupon schema.
+type UserCouponClient struct {
+	config
+}
+
+// NewUserCouponClient returns a client for the UserCoupon from the given config.
+func NewUserCouponClient(c config) *UserCouponClient {
+	return &UserCouponClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `usercoupon.Hooks(f(g(h())))`.
+func (c *UserCouponClient) Use(hooks ...Hook) {
+	c.hooks.UserCoupon = append(c.hooks.UserCoupon, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `usercoupon.Intercept(f(g(h())))`.
+func (c *UserCouponClient) Intercept(interceptors ...Interceptor) {
+	c.inters.UserCoupon = append(c.inters.UserCoupon, interceptors...)
+}
+
+// Create returns a builder for creating a UserCoupon entity.
+func (c *UserCouponClient) Create() *UserCouponCreate {
+	mutation := newUserCouponMutation(c.config, OpCreate)
+	return &UserCouponCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of UserCoupon entities.
+func (c *UserCouponClient) CreateBulk(builders ...*UserCouponCreate) *UserCouponCreateBulk {
+	return &UserCouponCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *UserCouponClient) MapCreateBulk(slice any, setFunc func(*UserCouponCreate, int)) *UserCouponCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &UserCouponCreateBulk{err: fmt.Errorf("calling to UserCouponClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*UserCouponCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &UserCouponCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for UserCoupon.
+func (c *UserCouponClient) Update() *UserCouponUpdate {
+	mutation := newUserCouponMutation(c.config, OpUpdate)
+	return &UserCouponUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *UserCouponClient) UpdateOne(_m *UserCoupon) *UserCouponUpdateOne {
+	mutation := newUserCouponMutation(c.config, OpUpdateOne, withUserCoupon(_m))
+	return &UserCouponUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *UserCouponClient) UpdateOneID(id uint32) *UserCouponUpdateOne {
+	mutation := newUserCouponMutation(c.config, OpUpdateOne, withUserCouponID(id))
+	return &UserCouponUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for UserCoupon.
+func (c *UserCouponClient) Delete() *UserCouponDelete {
+	mutation := newUserCouponMutation(c.config, OpDelete)
+	return &UserCouponDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *UserCouponClient) DeleteOne(_m *UserCoupon) *UserCouponDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *UserCouponClient) DeleteOneID(id uint32) *UserCouponDeleteOne {
+	builder := c.Delete().Where(usercoupon.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &UserCouponDeleteOne{builder}
+}
+
+// Query returns a query builder for UserCoupon.
+func (c *UserCouponClient) Query() *UserCouponQuery {
+	return &UserCouponQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeUserCoupon},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a UserCoupon entity by its id.
+func (c *UserCouponClient) Get(ctx context.Context, id uint32) (*UserCoupon, error) {
+	return c.Query().Where(usercoupon.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *UserCouponClient) GetX(ctx context.Context, id uint32) *UserCoupon {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *UserCouponClient) Hooks() []Hook {
+	hooks := c.hooks.UserCoupon
+	return append(hooks[:len(hooks):len(hooks)], usercoupon.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *UserCouponClient) Interceptors() []Interceptor {
+	return c.inters.UserCoupon
+}
+
+func (c *UserCouponClient) mutate(ctx context.Context, m *UserCouponMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&UserCouponCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&UserCouponUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&UserCouponUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&UserCouponDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown UserCoupon mutation op: %q", m.Op())
+	}
+}
+
 // UserCredentialClient is a client for the UserCredential schema.
 type UserCredentialClient struct {
 	config
@@ -8284,7 +8570,7 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 type (
 	hooks struct {
 		Api, ApiAuditLog, Brand, BrandTranslation, Cart, CartItem, Category,
-		CategoryTranslation, DataAccessAuditLog, File, InternalMessage,
+		CategoryTranslation, CouponTemplate, DataAccessAuditLog, File, InternalMessage,
 		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
 		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
 		Menu, OperationAuditLog, Order, OrderItem, OrgUnit, PaymentRefund,
@@ -8293,12 +8579,12 @@ type (
 		Position, Product, ProductAttribute, ProductAttributeTranslation,
 		ProductAttributeValue, ProductAttributeValueTranslation, ProductTranslation,
 		Role, RoleMetadata, RolePermission, Shipment, ShippingAddress, Sku,
-		SkuAttributeCombination, SkuPrice, Task, Tenant, User, UserCredential,
-		UserOrgUnit, UserPosition, UserRole []ent.Hook
+		SkuAttributeCombination, SkuPrice, Task, Tenant, User, UserCoupon,
+		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
 		Api, ApiAuditLog, Brand, BrandTranslation, Cart, CartItem, Category,
-		CategoryTranslation, DataAccessAuditLog, File, InternalMessage,
+		CategoryTranslation, CouponTemplate, DataAccessAuditLog, File, InternalMessage,
 		InternalMessageCategory, InternalMessageRecipient, Language, LoginAuditLog,
 		LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition, MembershipRole,
 		Menu, OperationAuditLog, Order, OrderItem, OrgUnit, PaymentRefund,
@@ -8307,7 +8593,7 @@ type (
 		Position, Product, ProductAttribute, ProductAttributeTranslation,
 		ProductAttributeValue, ProductAttributeValueTranslation, ProductTranslation,
 		Role, RoleMetadata, RolePermission, Shipment, ShippingAddress, Sku,
-		SkuAttributeCombination, SkuPrice, Task, Tenant, User, UserCredential,
-		UserOrgUnit, UserPosition, UserRole []ent.Interceptor
+		SkuAttributeCombination, SkuPrice, Task, Tenant, User, UserCoupon,
+		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Interceptor
 	}
 )

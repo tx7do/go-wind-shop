@@ -2874,6 +2874,233 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/mall/coupon-templates:
+        get:
+            tags:
+                - CouponTemplateService
+            operationId: CouponTemplateService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/coupon.service.v1.ListCouponTemplateResponse'
+        post:
+            tags:
+                - CouponTemplateService
+            operationId: CouponTemplateService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/coupon.service.v1.CreateCouponTemplateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - CouponTemplateService
+            operationId: CouponTemplateService_Delete
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/mall/coupon-templates/count:
+        get:
+            tags:
+                - CouponTemplateService
+            operationId: CouponTemplateService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/coupon.service.v1.CountCouponTemplateResponse'
+    /admin/v1/mall/coupon-templates/{id}:
+        get:
+            tags:
+                - CouponTemplateService
+            operationId: CouponTemplateService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/coupon.service.v1.CouponTemplate'
+        put:
+            tags:
+                - CouponTemplateService
+            operationId: CouponTemplateService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/coupon.service.v1.UpdateCouponTemplateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/mall/order-items:
         get:
             tags:
@@ -5916,6 +6143,212 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/mall/user-coupons:
+        get:
+            tags:
+                - UserCouponService
+            operationId: UserCouponService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/coupon.service.v1.ListUserCouponResponse'
+        post:
+            tags:
+                - UserCouponService
+            operationId: UserCouponService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/coupon.service.v1.CreateUserCouponRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - UserCouponService
+            operationId: UserCouponService_Delete
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/mall/user-coupons/count:
+        get:
+            tags:
+                - UserCouponService
+            operationId: UserCouponService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/coupon.service.v1.CountUserCouponResponse'
+    /admin/v1/mall/user-coupons/{id}:
+        get:
+            tags:
+                - UserCouponService
+            operationId: UserCouponService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/coupon.service.v1.UserCoupon'
     /admin/v1/me:
         get:
             tags:
@@ -10279,6 +10712,201 @@ components:
                 allowMissing:
                     type: boolean
                     description: 允许缺失则插入
+        coupon.service.v1.CountCouponTemplateResponse:
+            type: object
+            properties:
+                count:
+                    type: string
+        coupon.service.v1.CountUserCouponResponse:
+            type: object
+            properties:
+                count:
+                    type: string
+        coupon.service.v1.CouponTemplate:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 模板ID
+                    format: uint32
+                discountType:
+                    enum:
+                        - DISCOUNT_TYPE_UNSPECIFIED
+                        - FIXED_AMOUNT
+                        - PERCENTAGE
+                    type: string
+                    description: 抵扣类型
+                    format: enum
+                discountValue:
+                    type: string
+                    description: 固定金额抵扣值（最小货币单位，分；FIXED_AMOUNT 时生效）
+                discountPercentage:
+                    type: integer
+                    description: 百分比抵扣值（0-100；PERCENTAGE 时生效）
+                    format: int32
+                validFrom:
+                    type: string
+                    description: 有效期起始时间
+                    format: date-time
+                validUntil:
+                    type: string
+                    description: 有效期截止时间
+                    format: date-time
+                maxRedemptions:
+                    type: integer
+                    description: 全局核销上限（0=不限量）
+                    format: int32
+                redeemedCount:
+                    type: integer
+                    description: 已核销次数
+                    format: int32
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - ACTIVE
+                        - INACTIVE
+                    type: string
+                    description: 模板状态
+                    format: enum
+                currency:
+                    type: string
+                    description: 币种（ISO 4217）
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 优惠券模板
+        coupon.service.v1.CreateCouponTemplateRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/coupon.service.v1.CouponTemplate'
+        coupon.service.v1.CreateUserCouponRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/coupon.service.v1.UserCoupon'
+        coupon.service.v1.ListCouponTemplateResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/coupon.service.v1.CouponTemplate'
+                total:
+                    type: string
+        coupon.service.v1.ListUserCouponResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/coupon.service.v1.UserCoupon'
+                total:
+                    type: string
+        coupon.service.v1.UpdateCouponTemplateRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/coupon.service.v1.CouponTemplate'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 允许缺失则插入
+        coupon.service.v1.UserCoupon:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 券实例ID
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 归属用户ID（由隐私层强制）
+                    format: uint32
+                couponTemplateId:
+                    type: integer
+                    description: 关联的优惠券模板ID
+                    format: uint32
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - UNUSED
+                        - USED
+                        - EXPIRED
+                    type: string
+                    description: 券实例状态
+                    format: enum
+                redeemedAt:
+                    type: string
+                    description: 核销时间（status=USED 时填写，返还时清空）
+                    format: date-time
+                redeemedOrderId:
+                    type: integer
+                    description: 核销时关联的订单ID（UNUSED 时为空）
+                    format: uint32
+                appliedDiscountAmount:
+                    type: string
+                    description: 实际抵扣额（最小货币单位，分；券侧审计，返还时清空）
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 用户优惠券实例
         dict.service.v1.BatchCreateLanguagesRequest:
             type: object
             properties:
@@ -11629,6 +12257,12 @@ components:
                 shippingAddress:
                     type: string
                     description: 收货地址（结构化文本）
+                originalAmount:
+                    type: string
+                    description: 订单折前总额（最小货币单位，分；各订单项 subtotal 之和，未扣抵扣；审计/对账用）
+                discountAmount:
+                    type: string
+                    description: 优惠券抵扣额（最小货币单位，分；未用券为 0；审计/对账用）
                 tenantId:
                     type: integer
                     description: 租户ID
@@ -13213,6 +13847,8 @@ tags:
       description: 购物车管理服务（后台审计/排查用，只读为主）
     - name: CategoryService
       description: 商品类目管理服务
+    - name: CouponTemplateService
+      description: 优惠券模板管理服务（admin 全 CRUD）
     - name: DataAccessAuditLogService
       description: 数据访问审计日志管理服务
     - name: FileService
@@ -13275,6 +13911,8 @@ tags:
       description: 调度任务管理服务
     - name: TenantService
       description: 租户管理服务
+    - name: UserCouponService
+      description: 用户优惠券发放管理服务（admin：发放/查询/删除，无 Update、无 Quote）
     - name: UserProfileService
       description: 用户个人资料服务
     - name: UserService

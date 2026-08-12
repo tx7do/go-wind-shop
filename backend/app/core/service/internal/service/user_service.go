@@ -38,6 +38,16 @@ func viewerUserIDFromContext(ctx context.Context) (uint32, bool) {
 	return uint32(uid), true
 }
 
+// tenantIDFromContext 从 viewer context 提取操作人的租户 ID。
+// 系统/平台上下文（tid=0）返回 0，调用方须据此判断是否为有效租户视图。
+func tenantIDFromContext(ctx context.Context) uint32 {
+	vc, exist := viewer.FromContext(ctx)
+	if !exist || vc == nil {
+		return 0
+	}
+	return uint32(vc.TenantID())
+}
+
 type UserService struct {
 	identityV1.UnimplementedUserServiceServer
 

@@ -116,6 +116,9 @@ func NewRestServer(
 	paymentRefundService *service.PaymentRefundService,
 	shipmentService *service.ShipmentService,
 
+	couponTemplateService *service.CouponTemplateService,
+	userCouponService *service.UserCouponService,
+
 	fileSvc *service.FileService,
 	fileTransferService *service.FileTransferService,
 
@@ -172,6 +175,9 @@ func NewRestServer(
 	adminV1.RegisterPaymentTransactionServiceHTTPServer(srv, paymentTransactionService)
 	adminV1.RegisterPaymentRefundServiceHTTPServer(srv, paymentRefundService)
 	adminV1.RegisterShipmentServiceHTTPServer(srv, shipmentService)
+
+	adminV1.RegisterCouponTemplateServiceHTTPServer(srv, couponTemplateService)
+	adminV1.RegisterUserCouponServiceHTTPServer(srv, userCouponService)
 
 	adminV1.RegisterApiServiceHTTPServer(srv, apiService)
 	adminV1.RegisterMenuServiceHTTPServer(srv, menuSvc)

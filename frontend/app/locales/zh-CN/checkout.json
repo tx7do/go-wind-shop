@@ -25,5 +25,10 @@
     "done": "完成"
   },
   "useSavedAddress": "从地址簿选择",
-  "noSavedAddress": "还没有地址，可在「我的-收货地址」添加"
+  "noSavedAddress": "还没有地址，可在「我的-收货地址」添加",
+  "couponLabel": "优惠券",
+  "couponPlaceholder": "选择优惠券",
+  "couponNone": "不使用优惠券",
+  "couponItem": "优惠券 #{{id}}",
+  "discount": "优惠抵扣"
 }

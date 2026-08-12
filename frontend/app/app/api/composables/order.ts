@@ -83,16 +83,20 @@ export async function fetchGetOrderByIdempotencyKey(
 
 // ==============================
 // 创建订单 / 结算（Mutation）
+// couponId 为可选的优惠券核销指令，留空表示不使用优惠券。
 // ==============================
-export async function createOrder(data: orderservicev1_Order) {
+export async function createOrder(data: orderservicev1_Order, couponId?: number) {
   const request: orderservicev1_CreateOrderRequest = { data };
+  if (couponId !== undefined) {
+    request.couponId = couponId;
+  }
   return await apiClient.orderService.Create(request);
 }
 export function useCreateOrder(
-  options?: UseMutationOptions<{}, Error, orderservicev1_Order>,
+  options?: UseMutationOptions<{}, Error, { data: orderservicev1_Order; couponId?: number }>,
 ) {
   return useMutation({
-    mutationFn: (data) => createOrder(data),
+    mutationFn: ({ data, couponId }) => createOrder(data, couponId),
     ...options,
   });
 }

@@ -105,6 +105,8 @@ type Order struct {
 	RecipientName   *string                `protobuf:"bytes,8,opt,name=recipient_name,json=recipientName,proto3,oneof" json:"recipient_name,omitempty"`
 	RecipientPhone  *string                `protobuf:"bytes,9,opt,name=recipient_phone,json=recipientPhone,proto3,oneof" json:"recipient_phone,omitempty"`
 	ShippingAddress *string                `protobuf:"bytes,10,opt,name=shipping_address,json=shippingAddress,proto3,oneof" json:"shipping_address,omitempty"`
+	OriginalAmount  *int64                 `protobuf:"varint,11,opt,name=original_amount,json=originalAmount,proto3,oneof" json:"original_amount,omitempty"`
+	DiscountAmount  *int64                 `protobuf:"varint,12,opt,name=discount_amount,json=discountAmount,proto3,oneof" json:"discount_amount,omitempty"`
 	TenantId        *uint32                `protobuf:"varint,90,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
 	CreatedBy       *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
 	UpdatedBy       *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
@@ -214,6 +216,20 @@ func (x *Order) GetShippingAddress() string {
 		return *x.ShippingAddress
 	}
 	return ""
+}
+
+func (x *Order) GetOriginalAmount() int64 {
+	if x != nil && x.OriginalAmount != nil {
+		return *x.OriginalAmount
+	}
+	return 0
+}
+
+func (x *Order) GetDiscountAmount() int64 {
+	if x != nil && x.DiscountAmount != nil {
+		return *x.DiscountAmount
+	}
+	return 0
 }
 
 func (x *Order) GetTenantId() uint32 {
@@ -684,8 +700,13 @@ type GetOrderItemRequest_Id struct {
 func (*GetOrderItemRequest_Id) isGetOrderItemRequest_QueryBy() {}
 
 type CreateOrderRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Data          *Order                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Data  *Order                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	// 优惠券核销指令：下单时携带的 user_coupon_id。
+	// 非订单持久属性——券↔订单关联以 user_coupon.redeemed_order_id 为唯一来源。
+	// 服务端在 Create 事务内 ForUpdate 锁定该券实例并校验归属/状态/窗口/额度，
+	// 任一校验失败整事务回滚（fail-closed）。留空表示不使用优惠券。
+	CouponId      *uint32 `protobuf:"varint,2,opt,name=coupon_id,json=couponId,proto3,oneof" json:"coupon_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -725,6 +746,13 @@ func (x *CreateOrderRequest) GetData() *Order {
 		return x.Data
 	}
 	return nil
+}
+
+func (x *CreateOrderRequest) GetCouponId() uint32 {
+	if x != nil && x.CouponId != nil {
+		return *x.CouponId
+	}
+	return 0
 }
 
 type UpdateOrderRequest struct {
@@ -1424,7 +1452,7 @@ var File_order_service_v1_order_proto protoreflect.FileDescriptor
 
 const file_order_service_v1_order_proto_rawDesc = "" +
 	"\n" +
-	"\x1corder/service/v1/order.proto\x12\x10order.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xf8\f\n" +
+	"\x1corder/service/v1/order.proto\x12\x10order.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xd3\x0f\n" +
 	"\x05Order\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b订单IDH\x00R\x02id\x88\x01\x01\x122\n" +
 	"\auser_id\x18\x02 \x01(\rB\x14\xbaG\x11\x92\x02\x0e下单用户IDH\x01R\x06userId\x88\x01\x01\x12[\n" +
@@ -1436,21 +1464,23 @@ const file_order_service_v1_order_proto_rawDesc = "" +
 	"\x0erecipient_name\x18\b \x01(\tB\x15\xbaG\x12\x92\x02\x0f收件人姓名H\aR\rrecipientName\x88\x01\x01\x12C\n" +
 	"\x0frecipient_phone\x18\t \x01(\tB\x15\xbaG\x12\x92\x02\x0f收件人电话H\bR\x0erecipientPhone\x88\x01\x01\x12W\n" +
 	"\x10shipping_address\x18\n" +
-	" \x01(\tB'\xbaG$\x92\x02!收货地址（结构化文本）H\tR\x0fshippingAddress\x88\x01\x01\x120\n" +
-	"\ttenant_id\x18Z \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\n" +
-	"R\btenantId\x88\x01\x01\x12;\n" +
+	" \x01(\tB'\xbaG$\x92\x02!收货地址（结构化文本）H\tR\x0fshippingAddress\x88\x01\x01\x12\xa5\x01\n" +
+	"\x0foriginal_amount\x18\v \x01(\x03Bw\xbaGt\x92\x02q订单折前总额（最小货币单位，分；各订单项 subtotal 之和，未扣抵扣；审计/对账用）H\n" +
+	"R\x0eoriginalAmount\x88\x01\x01\x12\x88\x01\n" +
+	"\x0fdiscount_amount\x18\f \x01(\x03BZ\xbaGW\x92\x02T优惠券抵扣额（最小货币单位，分；未用券为 0；审计/对账用）H\vR\x0ediscountAmount\x88\x01\x01\x120\n" +
+	"\ttenant_id\x18Z \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\fR\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\vR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\rR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\fR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x0eR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\rR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0fR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0eR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x10R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0fR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x11R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x10R\tdeletedAt\x88\x01\x01\"i\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x12R\tdeletedAt\x88\x01\x01\"i\n" +
 	"\x06Status\x12\x16\n" +
 	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fPENDING_PAYMENT\x10\x01\x12\b\n" +
@@ -1469,7 +1499,9 @@ const file_order_service_v1_order_proto_rawDesc = "" +
 	"\x10_idempotency_keyB\x11\n" +
 	"\x0f_recipient_nameB\x12\n" +
 	"\x10_recipient_phoneB\x13\n" +
-	"\x11_shipping_addressB\f\n" +
+	"\x11_shipping_addressB\x12\n" +
+	"\x10_original_amountB\x12\n" +
+	"\x10_discount_amountB\f\n" +
 	"\n" +
 	"_tenant_idB\r\n" +
 	"\v_created_byB\r\n" +
@@ -1537,9 +1569,12 @@ const file_order_service_v1_order_proto_rawDesc = "" +
 	"\n" +
 	"\bquery_byB\f\n" +
 	"\n" +
-	"_view_mask\"A\n" +
+	"_view_mask\"\xb4\x01\n" +
 	"\x12CreateOrderRequest\x12+\n" +
-	"\x04data\x18\x01 \x01(\v2\x17.order.service.v1.OrderR\x04data\"\xce\x03\n" +
+	"\x04data\x18\x01 \x01(\v2\x17.order.service.v1.OrderR\x04data\x12c\n" +
+	"\tcoupon_id\x18\x02 \x01(\rBA\xbaG>\x92\x02;优惠券实例ID（核销指令，留空表示不使用）H\x00R\bcouponId\x88\x01\x01B\f\n" +
+	"\n" +
+	"_coupon_id\"\xce\x03\n" +
 	"\x12UpdateOrderRequest\x12 \n" +
 	"\x02id\x18\x01 \x01(\rB\x10\xbaG\r\x18\x01\x92\x02\b订单IDR\x02id\x12+\n" +
 	"\x04data\x18\x02 \x01(\v2\x17.order.service.v1.OrderR\x04data\x12[\n" +
@@ -1722,6 +1757,7 @@ func file_order_service_v1_order_proto_init() {
 	file_order_service_v1_order_proto_msgTypes[5].OneofWrappers = []any{
 		(*GetOrderItemRequest_Id)(nil),
 	}
+	file_order_service_v1_order_proto_msgTypes[6].OneofWrappers = []any{}
 	file_order_service_v1_order_proto_msgTypes[7].OneofWrappers = []any{}
 	file_order_service_v1_order_proto_msgTypes[8].OneofWrappers = []any{
 		(*DeleteOrderRequest_Id)(nil),

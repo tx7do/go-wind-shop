@@ -96,6 +96,14 @@ func (m *Order) validate(all bool) error {
 		// no validation rules for ShippingAddress
 	}
 
+	if m.OriginalAmount != nil {
+		// no validation rules for OriginalAmount
+	}
+
+	if m.DiscountAmount != nil {
+		// no validation rules for DiscountAmount
+	}
+
 	if m.TenantId != nil {
 		// no validation rules for TenantId
 	}
@@ -1169,6 +1177,10 @@ func (m *CreateOrderRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.CouponId != nil {
+		// no validation rules for CouponId
 	}
 
 	if len(errors) > 0 {

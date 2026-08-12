@@ -56,7 +56,9 @@
     "paymentTransaction": "支付流水",
     "refund": "退款管理",
     "financeOverview": "财务总览",
-    "shipment": "物流管理"
+    "shipment": "物流管理",
+    "couponTemplate": "优惠券模板",
+    "userCoupon": "用户优惠券"
   },
   "tenant": {
     "moduleName": "租户管理",

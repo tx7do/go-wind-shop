@@ -2976,6 +2976,730 @@ export type catalogservicev1_CategoryTranslationIdentifier = {
   languageCode: string | undefined;
 };
 
+// 优惠券模板管理服务（admin 全 CRUD）
+export interface CouponTemplateService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<couponservicev1_ListCouponTemplateResponse>;
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<couponservicev1_CountCouponTemplateResponse>;
+  Get(
+    request: couponservicev1_GetCouponTemplateRequest,
+  ): Promise<couponservicev1_CouponTemplate>;
+  Create(
+    request: couponservicev1_CreateCouponTemplateRequest,
+  ): Promise<wellKnownEmpty>;
+  Update(
+    request: couponservicev1_UpdateCouponTemplateRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: couponservicev1_DeleteCouponTemplateRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createCouponTemplateServiceClient(
+  transport: ClientTransport,
+): CouponTemplateService {
+  return {
+    List(request) {
+      const path = `admin/v1/mall/coupon-templates`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CouponTemplateService',
+        method: 'List',
+      }) as Promise<couponservicev1_ListCouponTemplateResponse>;
+    },
+    Count(request) {
+      const path = `admin/v1/mall/coupon-templates/count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CouponTemplateService',
+        method: 'Count',
+      }) as Promise<couponservicev1_CountCouponTemplateResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/mall/coupon-templates/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CouponTemplateService',
+        method: 'Get',
+      }) as Promise<couponservicev1_CouponTemplate>;
+    },
+    Create(request) {
+      const path = `admin/v1/mall/coupon-templates`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'CouponTemplateService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/mall/coupon-templates/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'CouponTemplateService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      const path = `admin/v1/mall/coupon-templates`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'DELETE', body, {
+        service: 'CouponTemplateService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type couponservicev1_ListCouponTemplateResponse = {
+  items: couponservicev1_CouponTemplate[] | undefined;
+  total: number | undefined;
+};
+
+// 优惠券模板
+export type couponservicev1_CouponTemplate = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  currency?: string;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  discountPercentage?: number;
+  discountType?: couponservicev1_CouponTemplate_DiscountType;
+  discountValue?: number;
+  id?: number;
+  maxRedemptions?: number;
+  redeemedCount?: number;
+  status?: couponservicev1_CouponTemplate_Status;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  validFrom?: wellKnownTimestamp;
+  validUntil?: wellKnownTimestamp;
+};
+
+// 抵扣类型
+export type couponservicev1_CouponTemplate_DiscountType =
+  | 'DISCOUNT_TYPE_UNSPECIFIED'
+  | 'FIXED_AMOUNT'
+  | 'PERCENTAGE';
+// 模板状态
+export type couponservicev1_CouponTemplate_Status =
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'STATUS_UNSPECIFIED';
+export type couponservicev1_CountCouponTemplateResponse = {
+  count: number | undefined;
+};
+
+export type couponservicev1_GetCouponTemplateRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type couponservicev1_CreateCouponTemplateRequest = {
+  data: couponservicev1_CouponTemplate | undefined;
+};
+
+export type couponservicev1_UpdateCouponTemplateRequest = {
+  allowMissing?: boolean;
+  data: couponservicev1_CouponTemplate | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type couponservicev1_DeleteCouponTemplateRequest = {
+  id?: number;
+};
+
+// 用户优惠券发放管理服务（admin：发放/查询/删除，无 Update、无 Quote）
+export interface UserCouponService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<couponservicev1_ListUserCouponResponse>;
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<couponservicev1_CountUserCouponResponse>;
+  Get(
+    request: couponservicev1_GetUserCouponRequest,
+  ): Promise<couponservicev1_UserCoupon>;
+  Create(
+    request: couponservicev1_CreateUserCouponRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: couponservicev1_DeleteUserCouponRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createUserCouponServiceClient(
+  transport: ClientTransport,
+): UserCouponService {
+  return {
+    List(request) {
+      const path = `admin/v1/mall/user-coupons`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'UserCouponService',
+        method: 'List',
+      }) as Promise<couponservicev1_ListUserCouponResponse>;
+    },
+    Count(request) {
+      const path = `admin/v1/mall/user-coupons/count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'UserCouponService',
+        method: 'Count',
+      }) as Promise<couponservicev1_CountUserCouponResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/mall/user-coupons/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'UserCouponService',
+        method: 'Get',
+      }) as Promise<couponservicev1_UserCoupon>;
+    },
+    Create(request) {
+      const path = `admin/v1/mall/user-coupons`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'UserCouponService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      const path = `admin/v1/mall/user-coupons`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'DELETE', body, {
+        service: 'UserCouponService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type couponservicev1_ListUserCouponResponse = {
+  items: couponservicev1_UserCoupon[] | undefined;
+  total: number | undefined;
+};
+
+// 用户优惠券实例
+export type couponservicev1_UserCoupon = {
+  appliedDiscountAmount?: number;
+  couponTemplateId?: number;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  redeemedAt?: wellKnownTimestamp;
+  redeemedOrderId?: number;
+  status?: couponservicev1_UserCoupon_Status;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  userId?: number;
+};
+
+// 券实例状态
+export type couponservicev1_UserCoupon_Status =
+  | 'EXPIRED'
+  | 'STATUS_UNSPECIFIED'
+  | 'UNUSED'
+  | 'USED';
+export type couponservicev1_CountUserCouponResponse = {
+  count: number | undefined;
+};
+
+export type couponservicev1_GetUserCouponRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type couponservicev1_CreateUserCouponRequest = {
+  data: couponservicev1_UserCoupon | undefined;
+};
+
+export type couponservicev1_DeleteUserCouponRequest = {
+  id?: number;
+};
+
 // 数据访问审计日志管理服务
 export interface DataAccessAuditLogService {
   // 查询数据访问审计日志列表
@@ -5920,8 +6644,10 @@ export type orderservicev1_Order = {
   currency?: string;
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
+  discountAmount?: number;
   id?: number;
   idempotencyKey?: string;
+  originalAmount?: number;
   recipientName?: string;
   recipientPhone?: string;
   shippingAddress?: string;
@@ -7391,6 +8117,7 @@ export type paymentservicev1_PaymentRefund = {
   transactionId?: number;
   updatedAt?: wellKnownTimestamp;
   updatedBy?: number;
+  userId?: number;
 };
 
 // 退款状态
@@ -13334,6 +14061,7 @@ export class ApiClient {
   private _cartItemService?: CartItemService;
   private _cartService?: CartService;
   private _categoryService?: CategoryService;
+  private _couponTemplateService?: CouponTemplateService;
   private _dataAccessAuditLogService?: DataAccessAuditLogService;
   private _fileService?: FileService;
   private _fileTransferService?: FileTransferService;
@@ -13366,6 +14094,7 @@ export class ApiClient {
   private _taskService?: TaskService;
   private _tenantService?: TenantService;
   private readonly _transport: ClientTransport;
+  private _userCouponService?: UserCouponService;
   private _userProfileService?: UserProfileService;
   private _userService?: UserService;
 
@@ -13403,6 +14132,10 @@ export class ApiClient {
 
   get categoryService(): CategoryService {
     return this._categoryService ??= createCategoryServiceClient(this._transport);
+  }
+
+  get couponTemplateService(): CouponTemplateService {
+    return this._couponTemplateService ??= createCouponTemplateServiceClient(this._transport);
   }
 
   get dataAccessAuditLogService(): DataAccessAuditLogService {
@@ -13527,6 +14260,10 @@ export class ApiClient {
 
   get tenantService(): TenantService {
     return this._tenantService ??= createTenantServiceClient(this._transport);
+  }
+
+  get userCouponService(): UserCouponService {
+    return this._userCouponService ??= createUserCouponServiceClient(this._transport);
   }
 
   get userProfileService(): UserProfileService {

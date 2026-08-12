@@ -104,6 +104,18 @@ func (f CategoryTranslationFunc) Mutate(ctx context.Context, m ent.Mutation) (en
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CategoryTranslationMutation", m)
 }
 
+// The CouponTemplateFunc type is an adapter to allow the use of ordinary
+// function as CouponTemplate mutator.
+type CouponTemplateFunc func(context.Context, *ent.CouponTemplateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f CouponTemplateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.CouponTemplateMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.CouponTemplateMutation", m)
+}
+
 // The DataAccessAuditLogFunc type is an adapter to allow the use of ordinary
 // function as DataAccessAuditLog mutator.
 type DataAccessAuditLogFunc func(context.Context, *ent.DataAccessAuditLogMutation) (ent.Value, error)
@@ -630,6 +642,18 @@ func (f UserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMutation", m)
+}
+
+// The UserCouponFunc type is an adapter to allow the use of ordinary
+// function as UserCoupon mutator.
+type UserCouponFunc func(context.Context, *ent.UserCouponMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserCouponFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.UserCouponMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserCouponMutation", m)
 }
 
 // The UserCredentialFunc type is an adapter to allow the use of ordinary

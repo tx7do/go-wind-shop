@@ -13,6 +13,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/cartitem"
 	"go-wind-shop/app/core/service/internal/data/ent/category"
 	"go-wind-shop/app/core/service/internal/data/ent/categorytranslation"
+	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
@@ -58,6 +59,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/task"
 	"go-wind-shop/app/core/service/internal/data/ent/tenant"
 	"go-wind-shop/app/core/service/internal/data/ent/user"
+	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
 	"go-wind-shop/app/core/service/internal/data/ent/usercredential"
 	"go-wind-shop/app/core/service/internal/data/ent/userorgunit"
 	"go-wind-shop/app/core/service/internal/data/ent/userposition"
@@ -216,6 +218,52 @@ func init() {
 	categorytranslationDescID := categorytranslationMixinFields0[0].Descriptor()
 	// categorytranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	categorytranslation.IDValidator = categorytranslationDescID.Validators[0].(func(uint32) error)
+	coupontemplateMixin := schema.CouponTemplate{}.Mixin()
+	coupontemplate.Policy = privacy.NewPolicies(coupontemplateMixin[3], schema.CouponTemplate{})
+	coupontemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := coupontemplate.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	coupontemplateMixinFields0 := coupontemplateMixin[0].Fields()
+	_ = coupontemplateMixinFields0
+	coupontemplateMixinFields3 := coupontemplateMixin[3].Fields()
+	_ = coupontemplateMixinFields3
+	coupontemplateMixinFields4 := coupontemplateMixin[4].Fields()
+	_ = coupontemplateMixinFields4
+	coupontemplateFields := schema.CouponTemplate{}.Fields()
+	_ = coupontemplateFields
+	// coupontemplateDescTenantID is the schema descriptor for tenant_id field.
+	coupontemplateDescTenantID := coupontemplateMixinFields3[0].Descriptor()
+	// coupontemplate.DefaultTenantID holds the default value on creation for the tenant_id field.
+	coupontemplate.DefaultTenantID = coupontemplateDescTenantID.Default.(uint32)
+	// coupontemplateDescCurrency is the schema descriptor for currency field.
+	coupontemplateDescCurrency := coupontemplateMixinFields4[0].Descriptor()
+	// coupontemplate.DefaultCurrency holds the default value on creation for the currency field.
+	coupontemplate.DefaultCurrency = coupontemplateDescCurrency.Default.(string)
+	// coupontemplateDescDiscountValue is the schema descriptor for discount_value field.
+	coupontemplateDescDiscountValue := coupontemplateFields[1].Descriptor()
+	// coupontemplate.DefaultDiscountValue holds the default value on creation for the discount_value field.
+	coupontemplate.DefaultDiscountValue = coupontemplateDescDiscountValue.Default.(int64)
+	// coupontemplateDescDiscountPercentage is the schema descriptor for discount_percentage field.
+	coupontemplateDescDiscountPercentage := coupontemplateFields[2].Descriptor()
+	// coupontemplate.DefaultDiscountPercentage holds the default value on creation for the discount_percentage field.
+	coupontemplate.DefaultDiscountPercentage = coupontemplateDescDiscountPercentage.Default.(int32)
+	// coupontemplateDescMaxRedemptions is the schema descriptor for max_redemptions field.
+	coupontemplateDescMaxRedemptions := coupontemplateFields[5].Descriptor()
+	// coupontemplate.DefaultMaxRedemptions holds the default value on creation for the max_redemptions field.
+	coupontemplate.DefaultMaxRedemptions = coupontemplateDescMaxRedemptions.Default.(int32)
+	// coupontemplateDescRedeemedCount is the schema descriptor for redeemed_count field.
+	coupontemplateDescRedeemedCount := coupontemplateFields[6].Descriptor()
+	// coupontemplate.DefaultRedeemedCount holds the default value on creation for the redeemed_count field.
+	coupontemplate.DefaultRedeemedCount = coupontemplateDescRedeemedCount.Default.(int32)
+	// coupontemplateDescID is the schema descriptor for id field.
+	coupontemplateDescID := coupontemplateMixinFields0[0].Descriptor()
+	// coupontemplate.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	coupontemplate.IDValidator = coupontemplateDescID.Validators[0].(func(uint32) error)
 	dataaccessauditlogMixin := schema.DataAccessAuditLog{}.Mixin()
 	dataaccessauditlog.Policy = privacy.NewPolicies(dataaccessauditlogMixin[2], schema.DataAccessAuditLog{})
 	dataaccessauditlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -626,6 +674,14 @@ func init() {
 	orderDescTotalAmount := orderFields[1].Descriptor()
 	// order.DefaultTotalAmount holds the default value on creation for the total_amount field.
 	order.DefaultTotalAmount = orderDescTotalAmount.Default.(int64)
+	// orderDescOriginalAmount is the schema descriptor for original_amount field.
+	orderDescOriginalAmount := orderFields[2].Descriptor()
+	// order.DefaultOriginalAmount holds the default value on creation for the original_amount field.
+	order.DefaultOriginalAmount = orderDescOriginalAmount.Default.(int64)
+	// orderDescDiscountAmount is the schema descriptor for discount_amount field.
+	orderDescDiscountAmount := orderFields[3].Descriptor()
+	// order.DefaultDiscountAmount holds the default value on creation for the discount_amount field.
+	order.DefaultDiscountAmount = orderDescDiscountAmount.Default.(int64)
 	// orderDescID is the schema descriptor for id field.
 	orderDescID := orderMixinFields0[0].Descriptor()
 	// order.IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -1335,6 +1391,34 @@ func init() {
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	user.IDValidator = userDescID.Validators[0].(func(uint32) error)
+	usercouponMixin := schema.UserCoupon{}.Mixin()
+	usercoupon.Policy = privacy.NewPolicies(usercouponMixin[3], schema.UserCoupon{})
+	usercoupon.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := usercoupon.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	usercouponMixinFields0 := usercouponMixin[0].Fields()
+	_ = usercouponMixinFields0
+	usercouponMixinFields3 := usercouponMixin[3].Fields()
+	_ = usercouponMixinFields3
+	usercouponFields := schema.UserCoupon{}.Fields()
+	_ = usercouponFields
+	// usercouponDescTenantID is the schema descriptor for tenant_id field.
+	usercouponDescTenantID := usercouponMixinFields3[0].Descriptor()
+	// usercoupon.DefaultTenantID holds the default value on creation for the tenant_id field.
+	usercoupon.DefaultTenantID = usercouponDescTenantID.Default.(uint32)
+	// usercouponDescAppliedDiscountAmount is the schema descriptor for applied_discount_amount field.
+	usercouponDescAppliedDiscountAmount := usercouponFields[5].Descriptor()
+	// usercoupon.DefaultAppliedDiscountAmount holds the default value on creation for the applied_discount_amount field.
+	usercoupon.DefaultAppliedDiscountAmount = usercouponDescAppliedDiscountAmount.Default.(int64)
+	// usercouponDescID is the schema descriptor for id field.
+	usercouponDescID := usercouponMixinFields0[0].Descriptor()
+	// usercoupon.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	usercoupon.IDValidator = usercouponDescID.Validators[0].(func(uint32) error)
 	usercredentialMixin := schema.UserCredential{}.Mixin()
 	usercredential.Policy = privacy.NewPolicies(usercredentialMixin[2], schema.UserCredential{})
 	usercredential.Hooks[0] = func(next ent.Mutator) ent.Mutator {

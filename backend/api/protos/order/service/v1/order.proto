@@ -100,6 +100,16 @@ message Order {
     (gnostic.openapi.v3.property) = {description: "收货地址（结构化文本）"}
   ];
 
+  optional int64 original_amount = 11 [
+    json_name = "originalAmount",
+    (gnostic.openapi.v3.property) = {description: "订单折前总额（最小货币单位，分；各订单项 subtotal 之和，未扣抵扣；审计/对账用）"}
+  ];
+
+  optional int64 discount_amount = 12 [
+    json_name = "discountAmount",
+    (gnostic.openapi.v3.property) = {description: "优惠券抵扣额（最小货币单位，分；未用券为 0；审计/对账用）"}
+  ];
+
   optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
 
   optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
@@ -183,7 +193,18 @@ message GetOrderItemRequest {
   ];
 }
 
-message CreateOrderRequest { Order data = 1; }
+message CreateOrderRequest {
+  Order data = 1;
+
+  // 优惠券核销指令：下单时携带的 user_coupon_id。
+  // 非订单持久属性——券↔订单关联以 user_coupon.redeemed_order_id 为唯一来源。
+  // 服务端在 Create 事务内 ForUpdate 锁定该券实例并校验归属/状态/窗口/额度，
+  // 任一校验失败整事务回滚（fail-closed）。留空表示不使用优惠券。
+  optional uint32 coupon_id = 2 [
+    json_name = "couponId",
+    (gnostic.openapi.v3.property) = {description: "优惠券实例ID（核销指令，留空表示不使用）"}
+  ];
+}
 message UpdateOrderRequest {
   uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "订单ID", read_only: true}, json_name = "id"];
   Order data = 2;

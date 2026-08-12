@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
 import { cn } from '@/lib/utils';
 import { XIcon } from '@/plugins/xicon';
@@ -16,6 +16,8 @@ import {
   fetchGetSkuStore,
   fetchGetProductStore,
   useListShippingAddresses,
+  useListUserCoupons,
+  useQuoteUserCoupon,
 } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { useAccessStore } from '@/stores/modules/core/access.state';
@@ -297,6 +299,56 @@ const totalAmount = computed(() => {
 });
 const totalLabel = computed(() => `${t('mall.product.currencyCny')}${totalAmount.value}`);
 
+// ---------- 优惠券选择与试算 ----------
+// 用户可选择一张本人 UNUSED 券，选中后调 Quote 试算预览折后金额。
+// 预览非预留，最终抵扣以下单时事务内校验为准。
+const selectedCouponId = ref<number | undefined>(undefined);
+const quoteDiscount = ref(0); // 试算返回的抵扣额（元，展示用）
+const quoteApplicable = ref(false);
+
+// 折后金额预览 = max(0, 折前总额 - 抵扣额)
+const discountedTotal = computed(() => {
+  const before = parseFloat(totalAmount.value) || 0;
+  const after = Math.max(0, before - quoteDiscount.value);
+  return after.toFixed(2);
+});
+const discountedTotalLabel = computed(() => `${t('mall.product.currencyCny')}${discountedTotal.value}`);
+
+// 用户优惠券列表（仅本人，BFF fail-closed 注入 userId）。
+const userCouponsQuery = useListUserCoupons({} as any);
+
+// 可选券 = 当前 UNUSED 的券实例。
+const availableCoupons = computed(() => {
+  const list = userCouponsQuery.data?.value?.items ?? [];
+  return list.filter((c: any) => c.status === 'UNUSED');
+});
+
+// Quote 试算 mutation。
+const quoteMutation = useQuoteUserCoupon();
+
+// 当券选择变化时，调 Quote 预览抵扣。未选或试算不适用时清零。
+watch(selectedCouponId, async (newId) => {
+  if (newId === undefined) {
+    quoteDiscount.value = 0;
+    quoteApplicable.value = false;
+    return;
+  }
+  try {
+    const resp = await quoteMutation.mutateAsync({ userCouponId: newId } as any);
+    if (resp?.applicable) {
+      // 后端返回分为单位的整数，展示时 /100 转为元。
+      quoteDiscount.value = (Number(resp.discount) || 0) / 100;
+      quoteApplicable.value = true;
+    } else {
+      quoteDiscount.value = 0;
+      quoteApplicable.value = false;
+    }
+  } catch {
+    quoteDiscount.value = 0;
+    quoteApplicable.value = false;
+  }
+});
+
 // ---------- 收货表单 ----------
 const form = reactive({
   recipientName: '',
@@ -416,7 +468,7 @@ async function placeOrder() {
   } as orderservicev1_Order;
 
   try {
-    await orderMutation.mutateAsync(orderData);
+    await orderMutation.mutateAsync({ data: orderData, couponId: selectedCouponId.value });
   } catch {
     return;
   }
@@ -668,9 +720,35 @@ async function placeOrder() {
 
         <UiSeparator class="my-5" />
 
+        <!-- 优惠券选择 -->
+        <div class="mb-4">
+          <label class="mb-1.5 block text-xs text-muted-foreground">{{ t('checkout.couponLabel') }}</label>
+          <UiSelect v-model="selectedCouponId">
+            <UiSelectTrigger class="w-full">
+              <UiSelectValue :placeholder="t('checkout.couponPlaceholder')" />
+            </UiSelectTrigger>
+            <UiSelectContent>
+              <UiSelectItem :value="undefined as any">{{ t('checkout.couponNone') }}</UiSelectItem>
+              <UiSelectItem
+                v-for="c in availableCoupons"
+                :key="c.id"
+                :value="c.id"
+              >
+                {{ t('checkout.couponItem', { id: c.id }) }}
+              </UiSelectItem>
+            </UiSelectContent>
+          </UiSelect>
+        </div>
+
+        <!-- 折扣行（仅当试算适用时显示） -->
+        <div v-if="quoteApplicable" class="flex items-center justify-between">
+          <span class="text-sm text-muted-foreground">{{ t('checkout.discount') }}</span>
+          <span class="text-sm tabular-nums text-red-500">-{{ t('mall.product.currencyCny') }}{{ quoteDiscount.toFixed(2) }}</span>
+        </div>
+
         <div class="flex items-center justify-between">
           <span class="text-sm text-muted-foreground">{{ t('cart.total') }}</span>
-          <span class="text-xl font-bold text-primary">{{ totalLabel }}</span>
+          <span class="text-xl font-bold text-primary">{{ quoteApplicable ? discountedTotalLabel : totalLabel }}</span>
         </div>
         <p class="mt-1 text-[10px] text-muted-foreground">{{ t('cart.totalNote') }}</p>
 

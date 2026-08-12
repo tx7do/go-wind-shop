@@ -114,6 +114,16 @@ func TotalAmount(v int64) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldTotalAmount, v))
 }
 
+// OriginalAmount applies equality check predicate on the "original_amount" field. It's identical to OriginalAmountEQ.
+func OriginalAmount(v int64) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldOriginalAmount, v))
+}
+
+// DiscountAmount applies equality check predicate on the "discount_amount" field. It's identical to DiscountAmountEQ.
+func DiscountAmount(v int64) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldDiscountAmount, v))
+}
+
 // RecipientName applies equality check predicate on the "recipient_name" field. It's identical to RecipientNameEQ.
 func RecipientName(v string) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldRecipientName, v))
@@ -802,6 +812,106 @@ func TotalAmountIsNil() predicate.Order {
 // TotalAmountNotNil applies the NotNil predicate on the "total_amount" field.
 func TotalAmountNotNil() predicate.Order {
 	return predicate.Order(sql.FieldNotNull(FieldTotalAmount))
+}
+
+// OriginalAmountEQ applies the EQ predicate on the "original_amount" field.
+func OriginalAmountEQ(v int64) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldOriginalAmount, v))
+}
+
+// OriginalAmountNEQ applies the NEQ predicate on the "original_amount" field.
+func OriginalAmountNEQ(v int64) predicate.Order {
+	return predicate.Order(sql.FieldNEQ(FieldOriginalAmount, v))
+}
+
+// OriginalAmountIn applies the In predicate on the "original_amount" field.
+func OriginalAmountIn(vs ...int64) predicate.Order {
+	return predicate.Order(sql.FieldIn(FieldOriginalAmount, vs...))
+}
+
+// OriginalAmountNotIn applies the NotIn predicate on the "original_amount" field.
+func OriginalAmountNotIn(vs ...int64) predicate.Order {
+	return predicate.Order(sql.FieldNotIn(FieldOriginalAmount, vs...))
+}
+
+// OriginalAmountGT applies the GT predicate on the "original_amount" field.
+func OriginalAmountGT(v int64) predicate.Order {
+	return predicate.Order(sql.FieldGT(FieldOriginalAmount, v))
+}
+
+// OriginalAmountGTE applies the GTE predicate on the "original_amount" field.
+func OriginalAmountGTE(v int64) predicate.Order {
+	return predicate.Order(sql.FieldGTE(FieldOriginalAmount, v))
+}
+
+// OriginalAmountLT applies the LT predicate on the "original_amount" field.
+func OriginalAmountLT(v int64) predicate.Order {
+	return predicate.Order(sql.FieldLT(FieldOriginalAmount, v))
+}
+
+// OriginalAmountLTE applies the LTE predicate on the "original_amount" field.
+func OriginalAmountLTE(v int64) predicate.Order {
+	return predicate.Order(sql.FieldLTE(FieldOriginalAmount, v))
+}
+
+// OriginalAmountIsNil applies the IsNil predicate on the "original_amount" field.
+func OriginalAmountIsNil() predicate.Order {
+	return predicate.Order(sql.FieldIsNull(FieldOriginalAmount))
+}
+
+// OriginalAmountNotNil applies the NotNil predicate on the "original_amount" field.
+func OriginalAmountNotNil() predicate.Order {
+	return predicate.Order(sql.FieldNotNull(FieldOriginalAmount))
+}
+
+// DiscountAmountEQ applies the EQ predicate on the "discount_amount" field.
+func DiscountAmountEQ(v int64) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldDiscountAmount, v))
+}
+
+// DiscountAmountNEQ applies the NEQ predicate on the "discount_amount" field.
+func DiscountAmountNEQ(v int64) predicate.Order {
+	return predicate.Order(sql.FieldNEQ(FieldDiscountAmount, v))
+}
+
+// DiscountAmountIn applies the In predicate on the "discount_amount" field.
+func DiscountAmountIn(vs ...int64) predicate.Order {
+	return predicate.Order(sql.FieldIn(FieldDiscountAmount, vs...))
+}
+
+// DiscountAmountNotIn applies the NotIn predicate on the "discount_amount" field.
+func DiscountAmountNotIn(vs ...int64) predicate.Order {
+	return predicate.Order(sql.FieldNotIn(FieldDiscountAmount, vs...))
+}
+
+// DiscountAmountGT applies the GT predicate on the "discount_amount" field.
+func DiscountAmountGT(v int64) predicate.Order {
+	return predicate.Order(sql.FieldGT(FieldDiscountAmount, v))
+}
+
+// DiscountAmountGTE applies the GTE predicate on the "discount_amount" field.
+func DiscountAmountGTE(v int64) predicate.Order {
+	return predicate.Order(sql.FieldGTE(FieldDiscountAmount, v))
+}
+
+// DiscountAmountLT applies the LT predicate on the "discount_amount" field.
+func DiscountAmountLT(v int64) predicate.Order {
+	return predicate.Order(sql.FieldLT(FieldDiscountAmount, v))
+}
+
+// DiscountAmountLTE applies the LTE predicate on the "discount_amount" field.
+func DiscountAmountLTE(v int64) predicate.Order {
+	return predicate.Order(sql.FieldLTE(FieldDiscountAmount, v))
+}
+
+// DiscountAmountIsNil applies the IsNil predicate on the "discount_amount" field.
+func DiscountAmountIsNil() predicate.Order {
+	return predicate.Order(sql.FieldIsNull(FieldDiscountAmount))
+}
+
+// DiscountAmountNotNil applies the NotNil predicate on the "discount_amount" field.
+func DiscountAmountNotNil() predicate.Order {
+	return predicate.Order(sql.FieldNotNull(FieldDiscountAmount))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.

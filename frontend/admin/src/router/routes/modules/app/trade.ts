@@ -70,6 +70,28 @@ const trade: RouteRecordRaw[] = [
         },
         component: () => import("@/pages/app/trade/shipment/index.vue"),
       },
+      {
+        path: "coupon-templates",
+        name: "TradeCouponTemplateManagement",
+        meta: {
+          order: 6,
+          icon: "lucide:ticket",
+          title: "routes.trade.couponTemplate",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/coupon-template/index.vue"),
+      },
+      {
+        path: "user-coupons",
+        name: "TradeUserCouponManagement",
+        meta: {
+          order: 7,
+          icon: "lucide:ticket-percent",
+          title: "routes.trade.userCoupon",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/user-coupon/index.vue"),
+      },
     ],
   },
 ];

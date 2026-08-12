@@ -159,6 +159,8 @@ func (r *OrderRepo) Create(ctx context.Context, req *orderV1.CreateOrderRequest)
 	builder := r.entClient.Client().Order.Create().
 		SetNillableUserID(req.Data.UserId).
 		SetNillableTotalAmount(req.Data.TotalAmount).
+		SetNillableOriginalAmount(req.Data.OriginalAmount).
+		SetNillableDiscountAmount(req.Data.DiscountAmount).
 		SetNillableCurrency(req.Data.Currency).
 		SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
 		SetNillableBusinessRefID(req.Data.BusinessRefId).
@@ -221,6 +223,8 @@ func (r *OrderRepo) Update(ctx context.Context, req *orderV1.UpdateOrderRequest)
 			builder.
 				SetNillableUserID(req.Data.UserId).
 				SetNillableTotalAmount(req.Data.TotalAmount).
+				SetNillableOriginalAmount(req.Data.OriginalAmount).
+				SetNillableDiscountAmount(req.Data.DiscountAmount).
 				SetNillableCurrency(req.Data.Currency).
 				SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
 				SetNillableBusinessRefID(req.Data.BusinessRefId).

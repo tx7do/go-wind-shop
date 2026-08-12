@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "coupon/service/v1/coupon.proto";
+
+// 优惠券模板管理服务（admin 全 CRUD）
+service CouponTemplateService {
+  rpc List (pagination.PagingRequest) returns (coupon.service.v1.ListCouponTemplateResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/coupon-templates"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (coupon.service.v1.CountCouponTemplateResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/coupon-templates/count"
+    };
+  }
+
+  rpc Get (coupon.service.v1.GetCouponTemplateRequest) returns (coupon.service.v1.CouponTemplate) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/coupon-templates/{id}"
+    };
+  }
+
+  rpc Create (coupon.service.v1.CreateCouponTemplateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/coupon-templates"
+      body: "*"
+    };
+  }
+
+  rpc Update (coupon.service.v1.UpdateCouponTemplateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/coupon-templates/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (coupon.service.v1.DeleteCouponTemplateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/coupon-templates"
+    };
+  }
+}
+
+// 用户优惠券发放管理服务（admin：发放/查询/删除，无 Update、无 Quote）
+service UserCouponService {
+  rpc List (pagination.PagingRequest) returns (coupon.service.v1.ListUserCouponResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/user-coupons"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (coupon.service.v1.CountUserCouponResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/user-coupons/count"
+    };
+  }
+
+  rpc Get (coupon.service.v1.GetUserCouponRequest) returns (coupon.service.v1.UserCoupon) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/user-coupons/{id}"
+    };
+  }
+
+  rpc Create (coupon.service.v1.CreateUserCouponRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/user-coupons"
+      body: "*"
+    };
+  }
+
+  rpc Delete (coupon.service.v1.DeleteUserCouponRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/user-coupons"
+    };
+  }
+}
