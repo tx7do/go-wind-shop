@@ -371,6 +371,7 @@ var (
 		{Name: "valid_from", Type: field.TypeTime, Nullable: true, Comment: "有效期起始时间"},
 		{Name: "valid_until", Type: field.TypeTime, Nullable: true, Comment: "有效期截止时间"},
 		{Name: "max_redemptions", Type: field.TypeInt32, Nullable: true, Comment: "全局核销上限（0=不限量；>0 为该模板累计可核销次数）", Default: 0},
+		{Name: "max_redemptions_per_user", Type: field.TypeInt32, Nullable: true, Comment: "每人核销上限（0=不限量；>0 为该模板下每用户累计可核销次数）", Default: 0},
 		{Name: "redeemed_count", Type: field.TypeInt32, Nullable: true, Comment: "已核销次数（核销自增、返还自减，行锁保护）", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "模板状态", Enums: []string{"ACTIVE", "INACTIVE"}},
 	}
@@ -3094,6 +3095,11 @@ var (
 				Name:    "usercoupon_redeemed_order_id",
 				Unique:  false,
 				Columns: []*schema.Column{MallUserCouponsColumns[12]},
+			},
+			{
+				Name:    "usercoupon_user_id_coupon_template_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{MallUserCouponsColumns[8], MallUserCouponsColumns[9], MallUserCouponsColumns[10]},
 			},
 		},
 	}

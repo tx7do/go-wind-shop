@@ -218,6 +218,20 @@ func (_c *CouponTemplateCreate) SetNillableMaxRedemptions(v *int32) *CouponTempl
 	return _c
 }
 
+// SetMaxRedemptionsPerUser sets the "max_redemptions_per_user" field.
+func (_c *CouponTemplateCreate) SetMaxRedemptionsPerUser(v int32) *CouponTemplateCreate {
+	_c.mutation.SetMaxRedemptionsPerUser(v)
+	return _c
+}
+
+// SetNillableMaxRedemptionsPerUser sets the "max_redemptions_per_user" field if the given value is not nil.
+func (_c *CouponTemplateCreate) SetNillableMaxRedemptionsPerUser(v *int32) *CouponTemplateCreate {
+	if v != nil {
+		_c.SetMaxRedemptionsPerUser(*v)
+	}
+	return _c
+}
+
 // SetRedeemedCount sets the "redeemed_count" field.
 func (_c *CouponTemplateCreate) SetRedeemedCount(v int32) *CouponTemplateCreate {
 	_c.mutation.SetRedeemedCount(v)
@@ -308,6 +322,10 @@ func (_c *CouponTemplateCreate) defaults() error {
 	if _, ok := _c.mutation.MaxRedemptions(); !ok {
 		v := coupontemplate.DefaultMaxRedemptions
 		_c.mutation.SetMaxRedemptions(v)
+	}
+	if _, ok := _c.mutation.MaxRedemptionsPerUser(); !ok {
+		v := coupontemplate.DefaultMaxRedemptionsPerUser
+		_c.mutation.SetMaxRedemptionsPerUser(v)
 	}
 	if _, ok := _c.mutation.RedeemedCount(); !ok {
 		v := coupontemplate.DefaultRedeemedCount
@@ -421,6 +439,10 @@ func (_c *CouponTemplateCreate) createSpec() (*CouponTemplate, *sqlgraph.CreateS
 	if value, ok := _c.mutation.MaxRedemptions(); ok {
 		_spec.SetField(coupontemplate.FieldMaxRedemptions, field.TypeInt32, value)
 		_node.MaxRedemptions = &value
+	}
+	if value, ok := _c.mutation.MaxRedemptionsPerUser(); ok {
+		_spec.SetField(coupontemplate.FieldMaxRedemptionsPerUser, field.TypeInt32, value)
+		_node.MaxRedemptionsPerUser = &value
 	}
 	if value, ok := _c.mutation.RedeemedCount(); ok {
 		_spec.SetField(coupontemplate.FieldRedeemedCount, field.TypeInt32, value)
@@ -731,6 +753,30 @@ func (u *CouponTemplateUpsert) AddMaxRedemptions(v int32) *CouponTemplateUpsert 
 // ClearMaxRedemptions clears the value of the "max_redemptions" field.
 func (u *CouponTemplateUpsert) ClearMaxRedemptions() *CouponTemplateUpsert {
 	u.SetNull(coupontemplate.FieldMaxRedemptions)
+	return u
+}
+
+// SetMaxRedemptionsPerUser sets the "max_redemptions_per_user" field.
+func (u *CouponTemplateUpsert) SetMaxRedemptionsPerUser(v int32) *CouponTemplateUpsert {
+	u.Set(coupontemplate.FieldMaxRedemptionsPerUser, v)
+	return u
+}
+
+// UpdateMaxRedemptionsPerUser sets the "max_redemptions_per_user" field to the value that was provided on create.
+func (u *CouponTemplateUpsert) UpdateMaxRedemptionsPerUser() *CouponTemplateUpsert {
+	u.SetExcluded(coupontemplate.FieldMaxRedemptionsPerUser)
+	return u
+}
+
+// AddMaxRedemptionsPerUser adds v to the "max_redemptions_per_user" field.
+func (u *CouponTemplateUpsert) AddMaxRedemptionsPerUser(v int32) *CouponTemplateUpsert {
+	u.Add(coupontemplate.FieldMaxRedemptionsPerUser, v)
+	return u
+}
+
+// ClearMaxRedemptionsPerUser clears the value of the "max_redemptions_per_user" field.
+func (u *CouponTemplateUpsert) ClearMaxRedemptionsPerUser() *CouponTemplateUpsert {
+	u.SetNull(coupontemplate.FieldMaxRedemptionsPerUser)
 	return u
 }
 
@@ -1121,6 +1167,34 @@ func (u *CouponTemplateUpsertOne) UpdateMaxRedemptions() *CouponTemplateUpsertOn
 func (u *CouponTemplateUpsertOne) ClearMaxRedemptions() *CouponTemplateUpsertOne {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.ClearMaxRedemptions()
+	})
+}
+
+// SetMaxRedemptionsPerUser sets the "max_redemptions_per_user" field.
+func (u *CouponTemplateUpsertOne) SetMaxRedemptionsPerUser(v int32) *CouponTemplateUpsertOne {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.SetMaxRedemptionsPerUser(v)
+	})
+}
+
+// AddMaxRedemptionsPerUser adds v to the "max_redemptions_per_user" field.
+func (u *CouponTemplateUpsertOne) AddMaxRedemptionsPerUser(v int32) *CouponTemplateUpsertOne {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.AddMaxRedemptionsPerUser(v)
+	})
+}
+
+// UpdateMaxRedemptionsPerUser sets the "max_redemptions_per_user" field to the value that was provided on create.
+func (u *CouponTemplateUpsertOne) UpdateMaxRedemptionsPerUser() *CouponTemplateUpsertOne {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.UpdateMaxRedemptionsPerUser()
+	})
+}
+
+// ClearMaxRedemptionsPerUser clears the value of the "max_redemptions_per_user" field.
+func (u *CouponTemplateUpsertOne) ClearMaxRedemptionsPerUser() *CouponTemplateUpsertOne {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.ClearMaxRedemptionsPerUser()
 	})
 }
 
@@ -1684,6 +1758,34 @@ func (u *CouponTemplateUpsertBulk) UpdateMaxRedemptions() *CouponTemplateUpsertB
 func (u *CouponTemplateUpsertBulk) ClearMaxRedemptions() *CouponTemplateUpsertBulk {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.ClearMaxRedemptions()
+	})
+}
+
+// SetMaxRedemptionsPerUser sets the "max_redemptions_per_user" field.
+func (u *CouponTemplateUpsertBulk) SetMaxRedemptionsPerUser(v int32) *CouponTemplateUpsertBulk {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.SetMaxRedemptionsPerUser(v)
+	})
+}
+
+// AddMaxRedemptionsPerUser adds v to the "max_redemptions_per_user" field.
+func (u *CouponTemplateUpsertBulk) AddMaxRedemptionsPerUser(v int32) *CouponTemplateUpsertBulk {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.AddMaxRedemptionsPerUser(v)
+	})
+}
+
+// UpdateMaxRedemptionsPerUser sets the "max_redemptions_per_user" field to the value that was provided on create.
+func (u *CouponTemplateUpsertBulk) UpdateMaxRedemptionsPerUser() *CouponTemplateUpsertBulk {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.UpdateMaxRedemptionsPerUser()
+	})
+}
+
+// ClearMaxRedemptionsPerUser clears the value of the "max_redemptions_per_user" field.
+func (u *CouponTemplateUpsertBulk) ClearMaxRedemptionsPerUser() *CouponTemplateUpsertBulk {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.ClearMaxRedemptionsPerUser()
 	})
 }
 

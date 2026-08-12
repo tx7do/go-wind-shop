@@ -42,6 +42,8 @@ const (
 	FieldValidUntil = "valid_until"
 	// FieldMaxRedemptions holds the string denoting the max_redemptions field in the database.
 	FieldMaxRedemptions = "max_redemptions"
+	// FieldMaxRedemptionsPerUser holds the string denoting the max_redemptions_per_user field in the database.
+	FieldMaxRedemptionsPerUser = "max_redemptions_per_user"
 	// FieldRedeemedCount holds the string denoting the redeemed_count field in the database.
 	FieldRedeemedCount = "redeemed_count"
 	// FieldStatus holds the string denoting the status field in the database.
@@ -67,6 +69,7 @@ var Columns = []string{
 	FieldValidFrom,
 	FieldValidUntil,
 	FieldMaxRedemptions,
+	FieldMaxRedemptionsPerUser,
 	FieldRedeemedCount,
 	FieldStatus,
 }
@@ -99,6 +102,8 @@ var (
 	DefaultDiscountPercentage int32
 	// DefaultMaxRedemptions holds the default value on creation for the "max_redemptions" field.
 	DefaultMaxRedemptions int32
+	// DefaultMaxRedemptionsPerUser holds the default value on creation for the "max_redemptions_per_user" field.
+	DefaultMaxRedemptionsPerUser int32
 	// DefaultRedeemedCount holds the default value on creation for the "redeemed_count" field.
 	DefaultRedeemedCount int32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -227,6 +232,11 @@ func ByValidUntil(opts ...sql.OrderTermOption) OrderOption {
 // ByMaxRedemptions orders the results by the max_redemptions field.
 func ByMaxRedemptions(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMaxRedemptions, opts...).ToFunc()
+}
+
+// ByMaxRedemptionsPerUser orders the results by the max_redemptions_per_user field.
+func ByMaxRedemptionsPerUser(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldMaxRedemptionsPerUser, opts...).ToFunc()
 }
 
 // ByRedeemedCount orders the results by the redeemed_count field.

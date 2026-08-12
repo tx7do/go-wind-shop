@@ -143,6 +143,10 @@ func (m *CouponTemplate) validate(all bool) error {
 		// no validation rules for MaxRedemptions
 	}
 
+	if m.MaxRedemptionsPerUser != nil {
+		// no validation rules for MaxRedemptionsPerUser
+	}
+
 	if m.RedeemedCount != nil {
 		// no validation rules for RedeemedCount
 	}

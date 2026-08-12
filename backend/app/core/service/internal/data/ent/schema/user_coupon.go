@@ -89,5 +89,10 @@ func (UserCoupon) Indexes() []ent.Index {
 		index.Fields("user_id"),
 		index.Fields("coupon_template_id"),
 		index.Fields("redeemed_order_id"),
+		// 复合索引：支撑 per-user 限用 count 查询
+		// (user_id, coupon_template_id, status)。
+		// 用于 redeemCouponInTx 事务内的行锁 count（防 TOCTOU）与
+		// Quote 的只读预览 count，使 count 走 index range scan 而非全表扫描。
+		index.Fields("user_id", "coupon_template_id", "status"),
 	}
 }

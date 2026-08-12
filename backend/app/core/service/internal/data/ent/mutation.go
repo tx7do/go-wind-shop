@@ -11243,37 +11243,39 @@ func (m *CategoryTranslationMutation) ResetEdge(name string) error {
 // CouponTemplateMutation represents an operation that mutates the CouponTemplate nodes in the graph.
 type CouponTemplateMutation struct {
 	config
-	op                     Op
-	typ                    string
-	id                     *uint32
-	created_at             *time.Time
-	updated_at             *time.Time
-	deleted_at             *time.Time
-	created_by             *uint32
-	addcreated_by          *int32
-	updated_by             *uint32
-	addupdated_by          *int32
-	deleted_by             *uint32
-	adddeleted_by          *int32
-	tenant_id              *uint32
-	addtenant_id           *int32
-	currency               *string
-	discount_type          *coupontemplate.DiscountType
-	discount_value         *int64
-	adddiscount_value      *int64
-	discount_percentage    *int32
-	adddiscount_percentage *int32
-	valid_from             *time.Time
-	valid_until            *time.Time
-	max_redemptions        *int32
-	addmax_redemptions     *int32
-	redeemed_count         *int32
-	addredeemed_count      *int32
-	status                 *coupontemplate.Status
-	clearedFields          map[string]struct{}
-	done                   bool
-	oldValue               func(context.Context) (*CouponTemplate, error)
-	predicates             []predicate.CouponTemplate
+	op                          Op
+	typ                         string
+	id                          *uint32
+	created_at                  *time.Time
+	updated_at                  *time.Time
+	deleted_at                  *time.Time
+	created_by                  *uint32
+	addcreated_by               *int32
+	updated_by                  *uint32
+	addupdated_by               *int32
+	deleted_by                  *uint32
+	adddeleted_by               *int32
+	tenant_id                   *uint32
+	addtenant_id                *int32
+	currency                    *string
+	discount_type               *coupontemplate.DiscountType
+	discount_value              *int64
+	adddiscount_value           *int64
+	discount_percentage         *int32
+	adddiscount_percentage      *int32
+	valid_from                  *time.Time
+	valid_until                 *time.Time
+	max_redemptions             *int32
+	addmax_redemptions          *int32
+	max_redemptions_per_user    *int32
+	addmax_redemptions_per_user *int32
+	redeemed_count              *int32
+	addredeemed_count           *int32
+	status                      *coupontemplate.Status
+	clearedFields               map[string]struct{}
+	done                        bool
+	oldValue                    func(context.Context) (*CouponTemplate, error)
+	predicates                  []predicate.CouponTemplate
 }
 
 var _ ent.Mutation = (*CouponTemplateMutation)(nil)
@@ -12213,6 +12215,76 @@ func (m *CouponTemplateMutation) ResetMaxRedemptions() {
 	delete(m.clearedFields, coupontemplate.FieldMaxRedemptions)
 }
 
+// SetMaxRedemptionsPerUser sets the "max_redemptions_per_user" field.
+func (m *CouponTemplateMutation) SetMaxRedemptionsPerUser(i int32) {
+	m.max_redemptions_per_user = &i
+	m.addmax_redemptions_per_user = nil
+}
+
+// MaxRedemptionsPerUser returns the value of the "max_redemptions_per_user" field in the mutation.
+func (m *CouponTemplateMutation) MaxRedemptionsPerUser() (r int32, exists bool) {
+	v := m.max_redemptions_per_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMaxRedemptionsPerUser returns the old "max_redemptions_per_user" field's value of the CouponTemplate entity.
+// If the CouponTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponTemplateMutation) OldMaxRedemptionsPerUser(ctx context.Context) (v *int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMaxRedemptionsPerUser is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMaxRedemptionsPerUser requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMaxRedemptionsPerUser: %w", err)
+	}
+	return oldValue.MaxRedemptionsPerUser, nil
+}
+
+// AddMaxRedemptionsPerUser adds i to the "max_redemptions_per_user" field.
+func (m *CouponTemplateMutation) AddMaxRedemptionsPerUser(i int32) {
+	if m.addmax_redemptions_per_user != nil {
+		*m.addmax_redemptions_per_user += i
+	} else {
+		m.addmax_redemptions_per_user = &i
+	}
+}
+
+// AddedMaxRedemptionsPerUser returns the value that was added to the "max_redemptions_per_user" field in this mutation.
+func (m *CouponTemplateMutation) AddedMaxRedemptionsPerUser() (r int32, exists bool) {
+	v := m.addmax_redemptions_per_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearMaxRedemptionsPerUser clears the value of the "max_redemptions_per_user" field.
+func (m *CouponTemplateMutation) ClearMaxRedemptionsPerUser() {
+	m.max_redemptions_per_user = nil
+	m.addmax_redemptions_per_user = nil
+	m.clearedFields[coupontemplate.FieldMaxRedemptionsPerUser] = struct{}{}
+}
+
+// MaxRedemptionsPerUserCleared returns if the "max_redemptions_per_user" field was cleared in this mutation.
+func (m *CouponTemplateMutation) MaxRedemptionsPerUserCleared() bool {
+	_, ok := m.clearedFields[coupontemplate.FieldMaxRedemptionsPerUser]
+	return ok
+}
+
+// ResetMaxRedemptionsPerUser resets all changes to the "max_redemptions_per_user" field.
+func (m *CouponTemplateMutation) ResetMaxRedemptionsPerUser() {
+	m.max_redemptions_per_user = nil
+	m.addmax_redemptions_per_user = nil
+	delete(m.clearedFields, coupontemplate.FieldMaxRedemptionsPerUser)
+}
+
 // SetRedeemedCount sets the "redeemed_count" field.
 func (m *CouponTemplateMutation) SetRedeemedCount(i int32) {
 	m.redeemed_count = &i
@@ -12366,7 +12438,7 @@ func (m *CouponTemplateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponTemplateMutation) Fields() []string {
-	fields := make([]string, 0, 16)
+	fields := make([]string, 0, 17)
 	if m.created_at != nil {
 		fields = append(fields, coupontemplate.FieldCreatedAt)
 	}
@@ -12408,6 +12480,9 @@ func (m *CouponTemplateMutation) Fields() []string {
 	}
 	if m.max_redemptions != nil {
 		fields = append(fields, coupontemplate.FieldMaxRedemptions)
+	}
+	if m.max_redemptions_per_user != nil {
+		fields = append(fields, coupontemplate.FieldMaxRedemptionsPerUser)
 	}
 	if m.redeemed_count != nil {
 		fields = append(fields, coupontemplate.FieldRedeemedCount)
@@ -12451,6 +12526,8 @@ func (m *CouponTemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.ValidUntil()
 	case coupontemplate.FieldMaxRedemptions:
 		return m.MaxRedemptions()
+	case coupontemplate.FieldMaxRedemptionsPerUser:
+		return m.MaxRedemptionsPerUser()
 	case coupontemplate.FieldRedeemedCount:
 		return m.RedeemedCount()
 	case coupontemplate.FieldStatus:
@@ -12492,6 +12569,8 @@ func (m *CouponTemplateMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldValidUntil(ctx)
 	case coupontemplate.FieldMaxRedemptions:
 		return m.OldMaxRedemptions(ctx)
+	case coupontemplate.FieldMaxRedemptionsPerUser:
+		return m.OldMaxRedemptionsPerUser(ctx)
 	case coupontemplate.FieldRedeemedCount:
 		return m.OldRedeemedCount(ctx)
 	case coupontemplate.FieldStatus:
@@ -12603,6 +12682,13 @@ func (m *CouponTemplateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetMaxRedemptions(v)
 		return nil
+	case coupontemplate.FieldMaxRedemptionsPerUser:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMaxRedemptionsPerUser(v)
+		return nil
 	case coupontemplate.FieldRedeemedCount:
 		v, ok := value.(int32)
 		if !ok {
@@ -12646,6 +12732,9 @@ func (m *CouponTemplateMutation) AddedFields() []string {
 	if m.addmax_redemptions != nil {
 		fields = append(fields, coupontemplate.FieldMaxRedemptions)
 	}
+	if m.addmax_redemptions_per_user != nil {
+		fields = append(fields, coupontemplate.FieldMaxRedemptionsPerUser)
+	}
 	if m.addredeemed_count != nil {
 		fields = append(fields, coupontemplate.FieldRedeemedCount)
 	}
@@ -12671,6 +12760,8 @@ func (m *CouponTemplateMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedDiscountPercentage()
 	case coupontemplate.FieldMaxRedemptions:
 		return m.AddedMaxRedemptions()
+	case coupontemplate.FieldMaxRedemptionsPerUser:
+		return m.AddedMaxRedemptionsPerUser()
 	case coupontemplate.FieldRedeemedCount:
 		return m.AddedRedeemedCount()
 	}
@@ -12731,6 +12822,13 @@ func (m *CouponTemplateMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddMaxRedemptions(v)
 		return nil
+	case coupontemplate.FieldMaxRedemptionsPerUser:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMaxRedemptionsPerUser(v)
+		return nil
 	case coupontemplate.FieldRedeemedCount:
 		v, ok := value.(int32)
 		if !ok {
@@ -12787,6 +12885,9 @@ func (m *CouponTemplateMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(coupontemplate.FieldMaxRedemptions) {
 		fields = append(fields, coupontemplate.FieldMaxRedemptions)
+	}
+	if m.FieldCleared(coupontemplate.FieldMaxRedemptionsPerUser) {
+		fields = append(fields, coupontemplate.FieldMaxRedemptionsPerUser)
 	}
 	if m.FieldCleared(coupontemplate.FieldRedeemedCount) {
 		fields = append(fields, coupontemplate.FieldRedeemedCount)
@@ -12850,6 +12951,9 @@ func (m *CouponTemplateMutation) ClearField(name string) error {
 	case coupontemplate.FieldMaxRedemptions:
 		m.ClearMaxRedemptions()
 		return nil
+	case coupontemplate.FieldMaxRedemptionsPerUser:
+		m.ClearMaxRedemptionsPerUser()
+		return nil
 	case coupontemplate.FieldRedeemedCount:
 		m.ClearRedeemedCount()
 		return nil
@@ -12905,6 +13009,9 @@ func (m *CouponTemplateMutation) ResetField(name string) error {
 		return nil
 	case coupontemplate.FieldMaxRedemptions:
 		m.ResetMaxRedemptions()
+		return nil
+	case coupontemplate.FieldMaxRedemptionsPerUser:
+		m.ResetMaxRedemptionsPerUser()
 		return nil
 	case coupontemplate.FieldRedeemedCount:
 		m.ResetRedeemedCount()

@@ -256,8 +256,12 @@ func init() {
 	coupontemplateDescMaxRedemptions := coupontemplateFields[5].Descriptor()
 	// coupontemplate.DefaultMaxRedemptions holds the default value on creation for the max_redemptions field.
 	coupontemplate.DefaultMaxRedemptions = coupontemplateDescMaxRedemptions.Default.(int32)
+	// coupontemplateDescMaxRedemptionsPerUser is the schema descriptor for max_redemptions_per_user field.
+	coupontemplateDescMaxRedemptionsPerUser := coupontemplateFields[6].Descriptor()
+	// coupontemplate.DefaultMaxRedemptionsPerUser holds the default value on creation for the max_redemptions_per_user field.
+	coupontemplate.DefaultMaxRedemptionsPerUser = coupontemplateDescMaxRedemptionsPerUser.Default.(int32)
 	// coupontemplateDescRedeemedCount is the schema descriptor for redeemed_count field.
-	coupontemplateDescRedeemedCount := coupontemplateFields[6].Descriptor()
+	coupontemplateDescRedeemedCount := coupontemplateFields[7].Descriptor()
 	// coupontemplate.DefaultRedeemedCount holds the default value on creation for the redeemed_count field.
 	coupontemplate.DefaultRedeemedCount = coupontemplateDescRedeemedCount.Default.(int32)
 	// coupontemplateDescID is the schema descriptor for id field.

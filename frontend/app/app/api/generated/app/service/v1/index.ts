@@ -2310,6 +2310,7 @@ export type orderservicev1_Order = {
 };
 
 // 订单状态
+// 
 // 订单状态流转规则：
 // 初始：PENDING_PAYMENT
 // 成功路径：PENDING_PAYMENT → PAID → FULFILLED → CLOSED

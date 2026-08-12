@@ -143,7 +143,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 		cleanup()
 		return nil, nil, err
 	}
-	asynqServer := server.NewAsynqServer(context, taskService, orderService)
+	asynqServer := server.NewAsynqServer(context, taskService, orderService, userCouponService)
 	app := newApp(context, grpcServer, asynqServer)
 	return app, func() {
 		cleanup2()

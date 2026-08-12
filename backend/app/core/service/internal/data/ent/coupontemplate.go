@@ -46,6 +46,8 @@ type CouponTemplate struct {
 	ValidUntil *time.Time `json:"valid_until,omitempty"`
 	// 全局核销上限（0=不限量；>0 为该模板累计可核销次数）
 	MaxRedemptions *int32 `json:"max_redemptions,omitempty"`
+	// 每人核销上限（0=不限量；>0 为该模板下每用户累计可核销次数）
+	MaxRedemptionsPerUser *int32 `json:"max_redemptions_per_user,omitempty"`
 	// 已核销次数（核销自增、返还自减，行锁保护）
 	RedeemedCount *int32 `json:"redeemed_count,omitempty"`
 	// 模板状态
@@ -58,7 +60,7 @@ func (*CouponTemplate) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case coupontemplate.FieldID, coupontemplate.FieldCreatedBy, coupontemplate.FieldUpdatedBy, coupontemplate.FieldDeletedBy, coupontemplate.FieldTenantID, coupontemplate.FieldDiscountValue, coupontemplate.FieldDiscountPercentage, coupontemplate.FieldMaxRedemptions, coupontemplate.FieldRedeemedCount:
+		case coupontemplate.FieldID, coupontemplate.FieldCreatedBy, coupontemplate.FieldUpdatedBy, coupontemplate.FieldDeletedBy, coupontemplate.FieldTenantID, coupontemplate.FieldDiscountValue, coupontemplate.FieldDiscountPercentage, coupontemplate.FieldMaxRedemptions, coupontemplate.FieldMaxRedemptionsPerUser, coupontemplate.FieldRedeemedCount:
 			values[i] = new(sql.NullInt64)
 		case coupontemplate.FieldCurrency, coupontemplate.FieldDiscountType, coupontemplate.FieldStatus:
 			values[i] = new(sql.NullString)
@@ -183,6 +185,13 @@ func (_m *CouponTemplate) assignValues(columns []string, values []any) error {
 				_m.MaxRedemptions = new(int32)
 				*_m.MaxRedemptions = int32(value.Int64)
 			}
+		case coupontemplate.FieldMaxRedemptionsPerUser:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field max_redemptions_per_user", values[i])
+			} else if value.Valid {
+				_m.MaxRedemptionsPerUser = new(int32)
+				*_m.MaxRedemptionsPerUser = int32(value.Int64)
+			}
 		case coupontemplate.FieldRedeemedCount:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field redeemed_count", values[i])
@@ -300,6 +309,11 @@ func (_m *CouponTemplate) String() string {
 	builder.WriteString(", ")
 	if v := _m.MaxRedemptions; v != nil {
 		builder.WriteString("max_redemptions=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.MaxRedemptionsPerUser; v != nil {
+		builder.WriteString("max_redemptions_per_user=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

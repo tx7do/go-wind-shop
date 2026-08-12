@@ -311,6 +311,33 @@ func (_u *CouponTemplateUpdate) ClearMaxRedemptions() *CouponTemplateUpdate {
 	return _u
 }
 
+// SetMaxRedemptionsPerUser sets the "max_redemptions_per_user" field.
+func (_u *CouponTemplateUpdate) SetMaxRedemptionsPerUser(v int32) *CouponTemplateUpdate {
+	_u.mutation.ResetMaxRedemptionsPerUser()
+	_u.mutation.SetMaxRedemptionsPerUser(v)
+	return _u
+}
+
+// SetNillableMaxRedemptionsPerUser sets the "max_redemptions_per_user" field if the given value is not nil.
+func (_u *CouponTemplateUpdate) SetNillableMaxRedemptionsPerUser(v *int32) *CouponTemplateUpdate {
+	if v != nil {
+		_u.SetMaxRedemptionsPerUser(*v)
+	}
+	return _u
+}
+
+// AddMaxRedemptionsPerUser adds value to the "max_redemptions_per_user" field.
+func (_u *CouponTemplateUpdate) AddMaxRedemptionsPerUser(v int32) *CouponTemplateUpdate {
+	_u.mutation.AddMaxRedemptionsPerUser(v)
+	return _u
+}
+
+// ClearMaxRedemptionsPerUser clears the value of the "max_redemptions_per_user" field.
+func (_u *CouponTemplateUpdate) ClearMaxRedemptionsPerUser() *CouponTemplateUpdate {
+	_u.mutation.ClearMaxRedemptionsPerUser()
+	return _u
+}
+
 // SetRedeemedCount sets the "redeemed_count" field.
 func (_u *CouponTemplateUpdate) SetRedeemedCount(v int32) *CouponTemplateUpdate {
 	_u.mutation.ResetRedeemedCount()
@@ -518,6 +545,15 @@ func (_u *CouponTemplateUpdate) sqlSave(ctx context.Context) (_node int, err err
 	}
 	if _u.mutation.MaxRedemptionsCleared() {
 		_spec.ClearField(coupontemplate.FieldMaxRedemptions, field.TypeInt32)
+	}
+	if value, ok := _u.mutation.MaxRedemptionsPerUser(); ok {
+		_spec.SetField(coupontemplate.FieldMaxRedemptionsPerUser, field.TypeInt32, value)
+	}
+	if value, ok := _u.mutation.AddedMaxRedemptionsPerUser(); ok {
+		_spec.AddField(coupontemplate.FieldMaxRedemptionsPerUser, field.TypeInt32, value)
+	}
+	if _u.mutation.MaxRedemptionsPerUserCleared() {
+		_spec.ClearField(coupontemplate.FieldMaxRedemptionsPerUser, field.TypeInt32)
 	}
 	if value, ok := _u.mutation.RedeemedCount(); ok {
 		_spec.SetField(coupontemplate.FieldRedeemedCount, field.TypeInt32, value)
@@ -838,6 +874,33 @@ func (_u *CouponTemplateUpdateOne) ClearMaxRedemptions() *CouponTemplateUpdateOn
 	return _u
 }
 
+// SetMaxRedemptionsPerUser sets the "max_redemptions_per_user" field.
+func (_u *CouponTemplateUpdateOne) SetMaxRedemptionsPerUser(v int32) *CouponTemplateUpdateOne {
+	_u.mutation.ResetMaxRedemptionsPerUser()
+	_u.mutation.SetMaxRedemptionsPerUser(v)
+	return _u
+}
+
+// SetNillableMaxRedemptionsPerUser sets the "max_redemptions_per_user" field if the given value is not nil.
+func (_u *CouponTemplateUpdateOne) SetNillableMaxRedemptionsPerUser(v *int32) *CouponTemplateUpdateOne {
+	if v != nil {
+		_u.SetMaxRedemptionsPerUser(*v)
+	}
+	return _u
+}
+
+// AddMaxRedemptionsPerUser adds value to the "max_redemptions_per_user" field.
+func (_u *CouponTemplateUpdateOne) AddMaxRedemptionsPerUser(v int32) *CouponTemplateUpdateOne {
+	_u.mutation.AddMaxRedemptionsPerUser(v)
+	return _u
+}
+
+// ClearMaxRedemptionsPerUser clears the value of the "max_redemptions_per_user" field.
+func (_u *CouponTemplateUpdateOne) ClearMaxRedemptionsPerUser() *CouponTemplateUpdateOne {
+	_u.mutation.ClearMaxRedemptionsPerUser()
+	return _u
+}
+
 // SetRedeemedCount sets the "redeemed_count" field.
 func (_u *CouponTemplateUpdateOne) SetRedeemedCount(v int32) *CouponTemplateUpdateOne {
 	_u.mutation.ResetRedeemedCount()
@@ -1075,6 +1138,15 @@ func (_u *CouponTemplateUpdateOne) sqlSave(ctx context.Context) (_node *CouponTe
 	}
 	if _u.mutation.MaxRedemptionsCleared() {
 		_spec.ClearField(coupontemplate.FieldMaxRedemptions, field.TypeInt32)
+	}
+	if value, ok := _u.mutation.MaxRedemptionsPerUser(); ok {
+		_spec.SetField(coupontemplate.FieldMaxRedemptionsPerUser, field.TypeInt32, value)
+	}
+	if value, ok := _u.mutation.AddedMaxRedemptionsPerUser(); ok {
+		_spec.AddField(coupontemplate.FieldMaxRedemptionsPerUser, field.TypeInt32, value)
+	}
+	if _u.mutation.MaxRedemptionsPerUserCleared() {
+		_spec.ClearField(coupontemplate.FieldMaxRedemptionsPerUser, field.TypeInt32)
 	}
 	if value, ok := _u.mutation.RedeemedCount(); ok {
 		_spec.SetField(coupontemplate.FieldRedeemedCount, field.TypeInt32, value)

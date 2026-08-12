@@ -84,6 +84,11 @@ message CouponTemplate {
     (gnostic.openapi.v3.property) = {description: "全局核销上限（0=不限量）"}
   ];
 
+  optional int32 max_redemptions_per_user = 11 [
+    json_name = "maxRedemptionsPerUser",
+    (gnostic.openapi.v3.property) = {description: "每人核销上限（0=不限量；>0 为该模板下每用户累计可核销次数）"}
+  ];
+
   optional int32 redeemed_count = 8 [
     json_name = "redeemedCount",
     (gnostic.openapi.v3.property) = {description: "已核销次数"}

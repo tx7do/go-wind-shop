@@ -788,6 +788,33 @@ func (s *OrderService) redeemCouponInTx(
 		}
 	}
 
+	// per-user 限用校验：该用户该模板已 USED 的券数 >= max_redemptions_per_user 则拒。
+	// 在 ForUpdate 锁定的模板行内读取 MaxRedemptionsPerUser（防 admin 并发改上限）。
+	// Count 查询在事务内，UserPrivacy 按 caller user_id 自动注入 WHERE（双重保护）。
+	// uc.UserID 取自 ForUpdate 锁定的券行（非请求参数，防伪造归属）。
+	if tmpl.MaxRedemptionsPerUser != nil && *tmpl.MaxRedemptionsPerUser > 0 {
+		if uc.UserID == nil {
+			return 0, orderV1.ErrorBadRequest("coupon has no owner")
+		}
+		usedCount, cErr := tx.UserCoupon.Query().
+			Where(
+				usercoupon.And(
+					usercoupon.UserIDEQ(*uc.UserID),
+					usercoupon.CouponTemplateIDEQ(*tmplId),
+					usercoupon.StatusEQ(usercoupon.StatusUserCouponStatusUsed),
+				),
+			).
+			Count(ctx)
+		if cErr != nil {
+			s.log.Errorf("per-user usage count failed for user [%d] template [%d]: %v", *uc.UserID, *tmplId, cErr)
+			return 0, orderV1.ErrorInternalServerError("per-user usage check failed")
+		}
+		if usedCount >= int(*tmpl.MaxRedemptionsPerUser) {
+			s.log.Warnf("per-user usage limit reached for user [%d] template [%d]: %d >= %d", *uc.UserID, *tmplId, usedCount, *tmpl.MaxRedemptionsPerUser)
+			return 0, orderV1.ErrorBadRequest("coupon per-user usage limit reached")
+		}
+	}
+
 	// 5. 计算抵扣。
 	params := discountParamsFromEntity(tmpl)
 	discount, applicable := computeDiscount(originalAmount, params)

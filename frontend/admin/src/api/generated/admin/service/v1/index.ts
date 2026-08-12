@@ -3309,6 +3309,7 @@ export type couponservicev1_CouponTemplate = {
   discountValue?: number;
   id?: number;
   maxRedemptions?: number;
+  maxRedemptionsPerUser?: number;
   redeemedCount?: number;
   status?: couponservicev1_CouponTemplate_Status;
   tenantId?: number;
@@ -6660,6 +6661,7 @@ export type orderservicev1_Order = {
 };
 
 // 订单状态
+// 
 // 订单状态流转规则：
 // 初始：PENDING_PAYMENT
 // 成功路径：PENDING_PAYMENT → PAID → FULFILLED → CLOSED

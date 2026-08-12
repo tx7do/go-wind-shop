@@ -71,6 +71,12 @@ func (CouponTemplate) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.Int32("max_redemptions_per_user").
+			Comment("每人核销上限（0=不限量；>0 为该模板下每用户累计可核销次数）").
+			Default(0).
+			Optional().
+			Nillable(),
+
 		field.Int32("redeemed_count").
 			Comment("已核销次数（核销自增、返还自减，行锁保护）").
 			Default(0).

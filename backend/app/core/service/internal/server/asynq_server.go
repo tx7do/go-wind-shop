@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, orderService *service.OrderService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, orderService *service.OrderService, userCouponService *service.UserCouponService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -39,6 +39,11 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, or
 	}
 	// 注册订单超时延时任务处理器（N 分钟后触发 ExpireOrderByTimeout，含幂等校验与库存释放）
 	if err = asynq.RegisterSubscriber(srv, task.OrderTimeoutTaskType, orderService.HandleOrderTimeout); err != nil {
+		log.Error(err)
+	}
+	// 注册优惠券过期清扫周期任务处理器（按 cron 周期触发 SweepExpiredCoupons，
+	// 扫描全库过期券批量翻 EXPIRED）。仿 BackupTask 的 periodic 模式。
+	if err = asynq.RegisterSubscriber(srv, task.CouponExpireSweepTaskType, userCouponService.HandleCouponSweep); err != nil {
 		log.Error(err)
 	}
 

@@ -155,6 +155,7 @@ func (r *CouponTemplateRepo) Create(ctx context.Context, req *couponV1.CreateCou
 		SetNillableValidFrom(timeutil.TimestamppbToTime(req.Data.ValidFrom)).
 		SetNillableValidUntil(timeutil.TimestamppbToTime(req.Data.ValidUntil)).
 		SetNillableMaxRedemptions(req.Data.MaxRedemptions).
+		SetNillableMaxRedemptionsPerUser(req.Data.MaxRedemptionsPerUser).
 		SetNillableRedeemedCount(req.Data.RedeemedCount).
 		SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
 		SetNillableCurrency(req.Data.Currency).
@@ -207,6 +208,7 @@ func (r *CouponTemplateRepo) Update(ctx context.Context, req *couponV1.UpdateCou
 				SetNillableValidFrom(timeutil.TimestamppbToTime(req.Data.ValidFrom)).
 				SetNillableValidUntil(timeutil.TimestamppbToTime(req.Data.ValidUntil)).
 				SetNillableMaxRedemptions(req.Data.MaxRedemptions).
+				SetNillableMaxRedemptionsPerUser(req.Data.MaxRedemptionsPerUser).
 				SetNillableRedeemedCount(req.Data.RedeemedCount).
 				SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
 				SetNillableCurrency(req.Data.Currency).

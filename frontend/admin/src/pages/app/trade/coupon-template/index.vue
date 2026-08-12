@@ -95,6 +95,12 @@ const pageConfig = computed<ProPageConfig>(() => ({
         align: "left",
       },
       {
+        prop: "maxRedemptionsPerUser",
+        label: $t("pages.mall.couponTemplate.maxRedemptionsPerUser"),
+        minWidth: 120,
+        align: "left",
+      },
+      {
         prop: "redeemedCount",
         label: $t("pages.mall.couponTemplate.redeemedCount"),
         minWidth: 120,

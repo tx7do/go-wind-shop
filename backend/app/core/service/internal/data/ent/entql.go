@@ -289,22 +289,23 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "CouponTemplate",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			coupontemplate.FieldCreatedAt:          {Type: field.TypeTime, Column: coupontemplate.FieldCreatedAt},
-			coupontemplate.FieldUpdatedAt:          {Type: field.TypeTime, Column: coupontemplate.FieldUpdatedAt},
-			coupontemplate.FieldDeletedAt:          {Type: field.TypeTime, Column: coupontemplate.FieldDeletedAt},
-			coupontemplate.FieldCreatedBy:          {Type: field.TypeUint32, Column: coupontemplate.FieldCreatedBy},
-			coupontemplate.FieldUpdatedBy:          {Type: field.TypeUint32, Column: coupontemplate.FieldUpdatedBy},
-			coupontemplate.FieldDeletedBy:          {Type: field.TypeUint32, Column: coupontemplate.FieldDeletedBy},
-			coupontemplate.FieldTenantID:           {Type: field.TypeUint32, Column: coupontemplate.FieldTenantID},
-			coupontemplate.FieldCurrency:           {Type: field.TypeString, Column: coupontemplate.FieldCurrency},
-			coupontemplate.FieldDiscountType:       {Type: field.TypeEnum, Column: coupontemplate.FieldDiscountType},
-			coupontemplate.FieldDiscountValue:      {Type: field.TypeInt64, Column: coupontemplate.FieldDiscountValue},
-			coupontemplate.FieldDiscountPercentage: {Type: field.TypeInt32, Column: coupontemplate.FieldDiscountPercentage},
-			coupontemplate.FieldValidFrom:          {Type: field.TypeTime, Column: coupontemplate.FieldValidFrom},
-			coupontemplate.FieldValidUntil:         {Type: field.TypeTime, Column: coupontemplate.FieldValidUntil},
-			coupontemplate.FieldMaxRedemptions:     {Type: field.TypeInt32, Column: coupontemplate.FieldMaxRedemptions},
-			coupontemplate.FieldRedeemedCount:      {Type: field.TypeInt32, Column: coupontemplate.FieldRedeemedCount},
-			coupontemplate.FieldStatus:             {Type: field.TypeEnum, Column: coupontemplate.FieldStatus},
+			coupontemplate.FieldCreatedAt:             {Type: field.TypeTime, Column: coupontemplate.FieldCreatedAt},
+			coupontemplate.FieldUpdatedAt:             {Type: field.TypeTime, Column: coupontemplate.FieldUpdatedAt},
+			coupontemplate.FieldDeletedAt:             {Type: field.TypeTime, Column: coupontemplate.FieldDeletedAt},
+			coupontemplate.FieldCreatedBy:             {Type: field.TypeUint32, Column: coupontemplate.FieldCreatedBy},
+			coupontemplate.FieldUpdatedBy:             {Type: field.TypeUint32, Column: coupontemplate.FieldUpdatedBy},
+			coupontemplate.FieldDeletedBy:             {Type: field.TypeUint32, Column: coupontemplate.FieldDeletedBy},
+			coupontemplate.FieldTenantID:              {Type: field.TypeUint32, Column: coupontemplate.FieldTenantID},
+			coupontemplate.FieldCurrency:              {Type: field.TypeString, Column: coupontemplate.FieldCurrency},
+			coupontemplate.FieldDiscountType:          {Type: field.TypeEnum, Column: coupontemplate.FieldDiscountType},
+			coupontemplate.FieldDiscountValue:         {Type: field.TypeInt64, Column: coupontemplate.FieldDiscountValue},
+			coupontemplate.FieldDiscountPercentage:    {Type: field.TypeInt32, Column: coupontemplate.FieldDiscountPercentage},
+			coupontemplate.FieldValidFrom:             {Type: field.TypeTime, Column: coupontemplate.FieldValidFrom},
+			coupontemplate.FieldValidUntil:            {Type: field.TypeTime, Column: coupontemplate.FieldValidUntil},
+			coupontemplate.FieldMaxRedemptions:        {Type: field.TypeInt32, Column: coupontemplate.FieldMaxRedemptions},
+			coupontemplate.FieldMaxRedemptionsPerUser: {Type: field.TypeInt32, Column: coupontemplate.FieldMaxRedemptionsPerUser},
+			coupontemplate.FieldRedeemedCount:         {Type: field.TypeInt32, Column: coupontemplate.FieldRedeemedCount},
+			coupontemplate.FieldStatus:                {Type: field.TypeEnum, Column: coupontemplate.FieldStatus},
 		},
 	}
 	graph.Nodes[9] = &sqlgraph.Node{
@@ -2735,6 +2736,11 @@ func (f *CouponTemplateFilter) WhereValidUntil(p entql.TimeP) {
 // WhereMaxRedemptions applies the entql int32 predicate on the max_redemptions field.
 func (f *CouponTemplateFilter) WhereMaxRedemptions(p entql.Int32P) {
 	f.Where(p.Field(coupontemplate.FieldMaxRedemptions))
+}
+
+// WhereMaxRedemptionsPerUser applies the entql int32 predicate on the max_redemptions_per_user field.
+func (f *CouponTemplateFilter) WhereMaxRedemptionsPerUser(p entql.Int32P) {
+	f.Where(p.Field(coupontemplate.FieldMaxRedemptionsPerUser))
 }
 
 // WhereRedeemedCount applies the entql int32 predicate on the redeemed_count field.

@@ -182,26 +182,27 @@ func (UserCoupon_Status) EnumDescriptor() ([]byte, []int) {
 
 // 优惠券模板
 type CouponTemplate struct {
-	state              protoimpl.MessageState       `protogen:"open.v1"`
-	Id                 *uint32                      `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
-	DiscountType       *CouponTemplate_DiscountType `protobuf:"varint,2,opt,name=discount_type,json=discountType,proto3,enum=coupon.service.v1.CouponTemplate_DiscountType,oneof" json:"discount_type,omitempty"`
-	DiscountValue      *int64                       `protobuf:"varint,3,opt,name=discount_value,json=discountValue,proto3,oneof" json:"discount_value,omitempty"`
-	DiscountPercentage *int32                       `protobuf:"varint,4,opt,name=discount_percentage,json=discountPercentage,proto3,oneof" json:"discount_percentage,omitempty"`
-	ValidFrom          *timestamppb.Timestamp       `protobuf:"bytes,5,opt,name=valid_from,json=validFrom,proto3,oneof" json:"valid_from,omitempty"`
-	ValidUntil         *timestamppb.Timestamp       `protobuf:"bytes,6,opt,name=valid_until,json=validUntil,proto3,oneof" json:"valid_until,omitempty"`
-	MaxRedemptions     *int32                       `protobuf:"varint,7,opt,name=max_redemptions,json=maxRedemptions,proto3,oneof" json:"max_redemptions,omitempty"`
-	RedeemedCount      *int32                       `protobuf:"varint,8,opt,name=redeemed_count,json=redeemedCount,proto3,oneof" json:"redeemed_count,omitempty"`
-	Status             *CouponTemplate_Status       `protobuf:"varint,9,opt,name=status,proto3,enum=coupon.service.v1.CouponTemplate_Status,oneof" json:"status,omitempty"`
-	Currency           *string                      `protobuf:"bytes,10,opt,name=currency,proto3,oneof" json:"currency,omitempty"`
-	TenantId           *uint32                      `protobuf:"varint,90,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
-	CreatedBy          *uint32                      `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
-	UpdatedBy          *uint32                      `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
-	DeletedBy          *uint32                      `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`
-	CreatedAt          *timestamppb.Timestamp       `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt          *timestamppb.Timestamp       `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt          *timestamppb.Timestamp       `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	unknownFields      protoimpl.UnknownFields
-	sizeCache          protoimpl.SizeCache
+	state                 protoimpl.MessageState       `protogen:"open.v1"`
+	Id                    *uint32                      `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
+	DiscountType          *CouponTemplate_DiscountType `protobuf:"varint,2,opt,name=discount_type,json=discountType,proto3,enum=coupon.service.v1.CouponTemplate_DiscountType,oneof" json:"discount_type,omitempty"`
+	DiscountValue         *int64                       `protobuf:"varint,3,opt,name=discount_value,json=discountValue,proto3,oneof" json:"discount_value,omitempty"`
+	DiscountPercentage    *int32                       `protobuf:"varint,4,opt,name=discount_percentage,json=discountPercentage,proto3,oneof" json:"discount_percentage,omitempty"`
+	ValidFrom             *timestamppb.Timestamp       `protobuf:"bytes,5,opt,name=valid_from,json=validFrom,proto3,oneof" json:"valid_from,omitempty"`
+	ValidUntil            *timestamppb.Timestamp       `protobuf:"bytes,6,opt,name=valid_until,json=validUntil,proto3,oneof" json:"valid_until,omitempty"`
+	MaxRedemptions        *int32                       `protobuf:"varint,7,opt,name=max_redemptions,json=maxRedemptions,proto3,oneof" json:"max_redemptions,omitempty"`
+	MaxRedemptionsPerUser *int32                       `protobuf:"varint,11,opt,name=max_redemptions_per_user,json=maxRedemptionsPerUser,proto3,oneof" json:"max_redemptions_per_user,omitempty"`
+	RedeemedCount         *int32                       `protobuf:"varint,8,opt,name=redeemed_count,json=redeemedCount,proto3,oneof" json:"redeemed_count,omitempty"`
+	Status                *CouponTemplate_Status       `protobuf:"varint,9,opt,name=status,proto3,enum=coupon.service.v1.CouponTemplate_Status,oneof" json:"status,omitempty"`
+	Currency              *string                      `protobuf:"bytes,10,opt,name=currency,proto3,oneof" json:"currency,omitempty"`
+	TenantId              *uint32                      `protobuf:"varint,90,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
+	CreatedBy             *uint32                      `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
+	UpdatedBy             *uint32                      `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
+	DeletedBy             *uint32                      `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`
+	CreatedAt             *timestamppb.Timestamp       `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt             *timestamppb.Timestamp       `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt             *timestamppb.Timestamp       `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
 }
 
 func (x *CouponTemplate) Reset() {
@@ -279,6 +280,13 @@ func (x *CouponTemplate) GetValidUntil() *timestamppb.Timestamp {
 func (x *CouponTemplate) GetMaxRedemptions() int32 {
 	if x != nil && x.MaxRedemptions != nil {
 		return *x.MaxRedemptions
+	}
+	return 0
+}
+
+func (x *CouponTemplate) GetMaxRedemptionsPerUser() int32 {
+	if x != nil && x.MaxRedemptionsPerUser != nil {
+		return *x.MaxRedemptionsPerUser
 	}
 	return 0
 }
@@ -1314,7 +1322,7 @@ var File_coupon_service_v1_coupon_proto protoreflect.FileDescriptor
 
 const file_coupon_service_v1_coupon_proto_rawDesc = "" +
 	"\n" +
-	"\x1ecoupon/service/v1/coupon.proto\x12\x11coupon.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x84\x0e\n" +
+	"\x1ecoupon/service/v1/coupon.proto\x12\x11coupon.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xbe\x0f\n" +
 	"\x0eCouponTemplate\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b模板IDH\x00R\x02id\x88\x01\x01\x12l\n" +
 	"\rdiscount_type\x18\x02 \x01(\x0e2..coupon.service.v1.CouponTemplate.DiscountTypeB\x12\xbaG\x0f\x92\x02\f抵扣类型H\x01R\fdiscountType\x88\x01\x01\x12~\n" +
@@ -1324,25 +1332,26 @@ const file_coupon_service_v1_coupon_proto_rawDesc = "" +
 	"valid_from\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampB\x1b\xbaG\x18\x92\x02\x15有效期起始时间H\x04R\tvalidFrom\x88\x01\x01\x12]\n" +
 	"\vvalid_until\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampB\x1b\xbaG\x18\x92\x02\x15有效期截止时间H\x05R\n" +
 	"validUntil\x88\x01\x01\x12W\n" +
-	"\x0fmax_redemptions\x18\a \x01(\x05B)\xbaG&\x92\x02#全局核销上限（0=不限量）H\x06R\x0emaxRedemptions\x88\x01\x01\x12A\n" +
-	"\x0eredeemed_count\x18\b \x01(\x05B\x15\xbaG\x12\x92\x02\x0f已核销次数H\aR\rredeemedCount\x88\x01\x01\x12Y\n" +
-	"\x06status\x18\t \x01(\x0e2(.coupon.service.v1.CouponTemplate.StatusB\x12\xbaG\x0f\x92\x02\f模板状态H\bR\x06status\x88\x01\x01\x12;\n" +
+	"\x0fmax_redemptions\x18\a \x01(\x05B)\xbaG&\x92\x02#全局核销上限（0=不限量）H\x06R\x0emaxRedemptions\x88\x01\x01\x12\x9a\x01\n" +
+	"\x18max_redemptions_per_user\x18\v \x01(\x05B\\\xbaGY\x92\x02V每人核销上限（0=不限量；>0 为该模板下每用户累计可核销次数）H\aR\x15maxRedemptionsPerUser\x88\x01\x01\x12A\n" +
+	"\x0eredeemed_count\x18\b \x01(\x05B\x15\xbaG\x12\x92\x02\x0f已核销次数H\bR\rredeemedCount\x88\x01\x01\x12Y\n" +
+	"\x06status\x18\t \x01(\x0e2(.coupon.service.v1.CouponTemplate.StatusB\x12\xbaG\x0f\x92\x02\f模板状态H\tR\x06status\x88\x01\x01\x12;\n" +
 	"\bcurrency\x18\n" +
-	" \x01(\tB\x1a\xbaG\x17\x92\x02\x14币种（ISO 4217）H\tR\bcurrency\x88\x01\x01\x120\n" +
-	"\ttenant_id\x18Z \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\n" +
-	"R\btenantId\x88\x01\x01\x12;\n" +
+	" \x01(\tB\x1a\xbaG\x17\x92\x02\x14币种（ISO 4217）H\n" +
+	"R\bcurrency\x88\x01\x01\x120\n" +
+	"\ttenant_id\x18Z \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\vR\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\vR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\fR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\fR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\rR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\rR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0eR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0eR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0fR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0fR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x10R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x10R\tdeletedAt\x88\x01\x01\"O\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x11R\tdeletedAt\x88\x01\x01\"O\n" +
 	"\fDiscountType\x12\x1d\n" +
 	"\x19DISCOUNT_TYPE_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fFIXED_AMOUNT\x10\x01\x12\x0e\n" +
@@ -1359,7 +1368,8 @@ const file_coupon_service_v1_coupon_proto_rawDesc = "" +
 	"\x14_discount_percentageB\r\n" +
 	"\v_valid_fromB\x0e\n" +
 	"\f_valid_untilB\x12\n" +
-	"\x10_max_redemptionsB\x11\n" +
+	"\x10_max_redemptionsB\x1b\n" +
+	"\x19_max_redemptions_per_userB\x11\n" +
 	"\x0f_redeemed_countB\t\n" +
 	"\a_statusB\v\n" +
 	"\t_currencyB\f\n" +

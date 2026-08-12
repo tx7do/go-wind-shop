@@ -77,6 +77,16 @@
         />
       </ElFormItem>
 
+      <ElFormItem :label="$t('pages.mall.couponTemplate.maxRedemptionsPerUser')" prop="maxRedemptionsPerUser">
+        <ElInputNumber
+          v-model="formData.maxRedemptionsPerUser"
+          :min="0"
+          controls-position="right"
+          :placeholder="$t('common.placeholder.input')"
+          style="width: 100%"
+        />
+      </ElFormItem>
+
       <ElFormItem :label="$t('pages.mall.couponTemplate.status')" prop="status">
         <ElSelect v-model="formData.status" :placeholder="$t('common.placeholder.select')">
           <ElOption label="生效" value="ACTIVE" />
@@ -129,6 +139,7 @@ const formData = reactive<{
   validFrom: any;
   validUntil: any;
   maxRedemptions: number;
+  maxRedemptionsPerUser: number;
   status: string;
   currency: string;
 }>({
@@ -138,6 +149,7 @@ const formData = reactive<{
   validFrom: null,
   validUntil: null,
   maxRedemptions: 0,
+  maxRedemptionsPerUser: 0,
   status: "ACTIVE",
   currency: "CNY",
 });
@@ -184,6 +196,7 @@ function resetForm() {
   formData.validFrom = null;
   formData.validUntil = null;
   formData.maxRedemptions = 0;
+  formData.maxRedemptionsPerUser = 0;
   formData.status = "ACTIVE";
   formData.currency = "CNY";
   formRef.value?.clearValidate();

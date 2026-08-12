@@ -206,6 +206,7 @@
     "validFrom": "有效期起",
     "validUntil": "有效期止",
     "maxRedemptions": "核销上限",
+    "maxRedemptionsPerUser": "每人核销上限",
     "redeemedCount": "已核销次数",
     "status": "状态",
     "currency": "币种",

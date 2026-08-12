@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -15,8 +16,12 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/cart"
 	"go-wind-shop/app/core/service/internal/data/ent/cartitem"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
+	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
+
+	appViewer "go-wind-shop/pkg/entgo/viewer"
+	"go-wind-shop/pkg/task"
 
 	couponV1 "go-wind-shop/api/gen/go/coupon/service/v1"
 )
@@ -69,6 +74,38 @@ func (s *UserCouponService) Get(ctx context.Context, req *couponV1.GetUserCoupon
 func (s *UserCouponService) Create(ctx context.Context, req *couponV1.CreateUserCouponRequest) (*emptypb.Empty, error) {
 	if req.Data == nil {
 		return nil, couponV1.ErrorBadRequest("invalid parameter")
+	}
+
+	// per-user 限领校验：该用户该模板已领张数（含所有状态，防止领→用→退→再领绕限）
+	// >= max_redemptions_per_user 则拒。
+	// 注意：此校验无事务包裹，存在 TOCTOU 竞态。但发放是 admin 低频操作，
+	// 且核销侧 redeemCouponInTx 的事务内行锁 count 会兜底——竞态最多导致
+	// "多领了几张但用不出去"，可接受。
+	tmplId := req.Data.GetCouponTemplateId()
+	uid := req.Data.GetUserId()
+	if tmplId != 0 && uid != 0 {
+		tmpl, gErr := s.couponTemplateRepo.Get(ctx, &couponV1.GetCouponTemplateRequest{
+			QueryBy: &couponV1.GetCouponTemplateRequest_Id{Id: tmplId},
+		})
+		if gErr != nil || tmpl == nil {
+			return nil, couponV1.ErrorBadRequest("coupon template not found")
+		}
+		if tmpl.GetMaxRedemptionsPerUser() > 0 {
+			issuedCount, cErr := s.entClient.Client().UserCoupon.Query().
+				Where(
+					usercoupon.And(
+						usercoupon.UserIDEQ(uid),
+						usercoupon.CouponTemplateIDEQ(tmplId),
+					),
+				).
+				Count(ctx)
+			if cErr != nil {
+				return nil, couponV1.ErrorInternalServerError("per-user issuance check failed")
+			}
+			if issuedCount >= int(tmpl.GetMaxRedemptionsPerUser()) {
+				return nil, couponV1.ErrorBadRequest("coupon per-user issuance limit reached")
+			}
+		}
 	}
 
 	if err := s.repo.Create(ctx, req); err != nil {
@@ -146,6 +183,28 @@ func (s *UserCouponService) Quote(ctx context.Context, req *couponV1.QuoteReques
 	}
 	if tmpl.GetMaxRedemptions() > 0 && tmpl.GetRedeemedCount() >= tmpl.GetMaxRedemptions() {
 		return resp, nil
+	}
+
+	// per-user 限用预览校验：与 redeemCouponInTx 对称——该用户该模板已 USED 的券数
+	// >= max_redemptions_per_user 则不适用。Quote 是只读快照不持锁，高并发下可能
+	// 脱节，但 redeemCouponInTx 的事务内行锁 count 会兜底。
+	if tmpl.GetMaxRedemptionsPerUser() > 0 {
+		uid, ok := viewerUserIDFromContext(ctx)
+		if !ok {
+			return resp, nil
+		}
+		usedCount, cErr := s.entClient.Client().UserCoupon.Query().
+			Where(
+				usercoupon.And(
+					usercoupon.UserIDEQ(uid),
+					usercoupon.CouponTemplateIDEQ(uc.GetCouponTemplateId()),
+					usercoupon.StatusEQ(usercoupon.StatusUserCouponStatusUsed),
+				),
+			).
+			Count(ctx)
+		if cErr != nil || usedCount >= int(tmpl.GetMaxRedemptionsPerUser()) {
+			return resp, nil
+		}
 	}
 
 	// 3. 读当前 viewer 的购物车（只读，无锁无扣减），算折前总额。
@@ -245,6 +304,106 @@ func (s *UserCouponService) computeCartPreDiscountTotal(ctx context.Context) (in
 	}
 
 	return total, nil
+}
+
+// HandleCouponSweep asynq 周期性任务处理器（薄委托）。
+// 由 server/asynq_server.go 注册，asynq worker 按 cron 周期触发。
+// 注入 SystemViewer context 以通过 ent privacy 的 viewer 校验（跨租户/用户扫描），
+// 与 HandleOrderTimeout 使用同一 SystemViewer 注入模式。
+func (s *UserCouponService) HandleCouponSweep(taskType string, taskData *task.CouponExpireSweepTaskData) error {
+	s.log.Infow(
+		"msg", "HandleCouponSweep started",
+		"task_type", taskType,
+	)
+	ctx := appViewer.NewSystemViewerContext(context.Background())
+	return s.SweepExpiredCoupons(ctx)
+}
+
+// SweepExpiredCoupons 扫描全库 user_coupon，将关联模板已过期（valid_until < now）
+// 且当前状态为 UNUSED 的券实例批量翻为 EXPIRED。
+//
+// 单事务内：查所有 coupon_template → 筛出 valid_until < now 的模板 ID 集合 →
+// 对每个过期模板，batch update user_coupon Where(coupon_template_id, status=UNUSED) →
+// SetStatus(EXPIRED)。与 ExpireOrderByTimeout 的批量更新模式一致。
+//
+// SystemViewer 上下文（由 HandleCouponSweep 注入）绕过 UserPrivacy/TenantPrivacy，
+// 可跨用户/租户扫描。任一步失败整事务回滚。
+func (s *UserCouponService) SweepExpiredCoupons(ctx context.Context) error {
+	now := time.Now()
+
+	tx, err := s.entClient.Client().Tx(ctx)
+	if err != nil {
+		s.log.Errorf("begin coupon sweep tx failed: %v", err)
+		return fmt.Errorf("begin coupon sweep tx failed: %w", err)
+	}
+	defer func() {
+		if err != nil {
+			_ = tx.Rollback()
+		}
+	}()
+
+	// 1. 查所有模板（SystemViewer 放行，跨租户）。
+	tmpls, qErr := tx.CouponTemplate.Query().All(ctx)
+	if qErr != nil {
+		s.log.Errorf("query coupon templates for sweep failed: %v", qErr)
+		err = qErr
+		return fmt.Errorf("query coupon templates for sweep failed: %w", qErr)
+	}
+
+	// 2. 筛出已过期模板（valid_until < now）。
+	var expiredTmplIds []uint32
+	for _, tmpl := range tmpls {
+		if tmpl.ValidUntil != nil && tmpl.ValidUntil.Before(now) {
+			expiredTmplIds = append(expiredTmplIds, tmpl.ID)
+		}
+	}
+
+	if len(expiredTmplIds) == 0 {
+		// 无过期模板，直接提交空事务。
+		if cErr := tx.Commit(); cErr != nil {
+			s.log.Errorf("commit coupon sweep tx (no-op) failed: %v", cErr)
+			err = cErr
+			return fmt.Errorf("commit coupon sweep tx failed: %w", cErr)
+		}
+		s.log.Infow("msg", "coupon sweep completed: no expired templates", "expired_templates", 0)
+		return nil
+	}
+
+	// 3. 对每个过期模板，batch update 关联的 UNUSED 券为 EXPIRED。
+	//    按 tmplId 逐个更新（避免 IN 大列表；过期模板数量通常很少）。
+	expiredStatus := usercoupon.StatusUserCouponStatusExpired
+	unusedStatus := usercoupon.StatusUserCouponStatusUnused
+	totalSwept := 0
+	for _, tmplId := range expiredTmplIds {
+		affected, uErr := tx.UserCoupon.Update().
+			Where(
+				usercoupon.CouponTemplateIDEQ(tmplId),
+				usercoupon.StatusEQ(unusedStatus),
+			).
+			SetStatus(expiredStatus).
+			Save(ctx)
+		if uErr != nil {
+			s.log.Errorf("sweep user_coupons for template [%d] failed: %v", tmplId, uErr)
+			err = uErr
+			return fmt.Errorf("sweep user_coupons for template [%d] failed: %w", tmplId, uErr)
+		}
+		totalSwept += affected
+	}
+
+	// 4. 提交事务。
+	if cErr := tx.Commit(); cErr != nil {
+		s.log.Errorf("commit coupon sweep tx failed: %v", cErr)
+		err = cErr
+		return fmt.Errorf("commit coupon sweep tx failed: %w", cErr)
+	}
+	err = nil
+
+	s.log.Infow(
+		"msg", "coupon sweep completed",
+		"expired_templates", len(expiredTmplIds),
+		"swept_coupons", totalSwept,
+	)
+	return nil
 }
 
 func int64Ptr(v int64) *int64 { return &v }

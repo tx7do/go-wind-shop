@@ -206,6 +206,7 @@
     "validFrom": "Valid From",
     "validUntil": "Valid Until",
     "maxRedemptions": "Max Redemptions",
+    "maxRedemptionsPerUser": "Max Redemptions Per User",
     "redeemedCount": "Redeemed Count",
     "status": "Status",
     "currency": "Currency",

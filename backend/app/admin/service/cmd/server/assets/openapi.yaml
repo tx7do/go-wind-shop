@@ -10756,6 +10756,10 @@ components:
                     type: integer
                     description: 全局核销上限（0=不限量）
                     format: int32
+                maxRedemptionsPerUser:
+                    type: integer
+                    description: 每人核销上限（0=不限量；>0 为该模板下每用户累计可核销次数）
+                    format: int32
                 redeemedCount:
                     type: integer
                     description: 已核销次数

@@ -119,6 +119,11 @@ func MaxRedemptions(v int32) predicate.CouponTemplate {
 	return predicate.CouponTemplate(sql.FieldEQ(FieldMaxRedemptions, v))
 }
 
+// MaxRedemptionsPerUser applies equality check predicate on the "max_redemptions_per_user" field. It's identical to MaxRedemptionsPerUserEQ.
+func MaxRedemptionsPerUser(v int32) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldEQ(FieldMaxRedemptionsPerUser, v))
+}
+
 // RedeemedCount applies equality check predicate on the "redeemed_count" field. It's identical to RedeemedCountEQ.
 func RedeemedCount(v int32) predicate.CouponTemplate {
 	return predicate.CouponTemplate(sql.FieldEQ(FieldRedeemedCount, v))
@@ -827,6 +832,56 @@ func MaxRedemptionsIsNil() predicate.CouponTemplate {
 // MaxRedemptionsNotNil applies the NotNil predicate on the "max_redemptions" field.
 func MaxRedemptionsNotNil() predicate.CouponTemplate {
 	return predicate.CouponTemplate(sql.FieldNotNull(FieldMaxRedemptions))
+}
+
+// MaxRedemptionsPerUserEQ applies the EQ predicate on the "max_redemptions_per_user" field.
+func MaxRedemptionsPerUserEQ(v int32) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldEQ(FieldMaxRedemptionsPerUser, v))
+}
+
+// MaxRedemptionsPerUserNEQ applies the NEQ predicate on the "max_redemptions_per_user" field.
+func MaxRedemptionsPerUserNEQ(v int32) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldNEQ(FieldMaxRedemptionsPerUser, v))
+}
+
+// MaxRedemptionsPerUserIn applies the In predicate on the "max_redemptions_per_user" field.
+func MaxRedemptionsPerUserIn(vs ...int32) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldIn(FieldMaxRedemptionsPerUser, vs...))
+}
+
+// MaxRedemptionsPerUserNotIn applies the NotIn predicate on the "max_redemptions_per_user" field.
+func MaxRedemptionsPerUserNotIn(vs ...int32) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldNotIn(FieldMaxRedemptionsPerUser, vs...))
+}
+
+// MaxRedemptionsPerUserGT applies the GT predicate on the "max_redemptions_per_user" field.
+func MaxRedemptionsPerUserGT(v int32) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldGT(FieldMaxRedemptionsPerUser, v))
+}
+
+// MaxRedemptionsPerUserGTE applies the GTE predicate on the "max_redemptions_per_user" field.
+func MaxRedemptionsPerUserGTE(v int32) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldGTE(FieldMaxRedemptionsPerUser, v))
+}
+
+// MaxRedemptionsPerUserLT applies the LT predicate on the "max_redemptions_per_user" field.
+func MaxRedemptionsPerUserLT(v int32) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldLT(FieldMaxRedemptionsPerUser, v))
+}
+
+// MaxRedemptionsPerUserLTE applies the LTE predicate on the "max_redemptions_per_user" field.
+func MaxRedemptionsPerUserLTE(v int32) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldLTE(FieldMaxRedemptionsPerUser, v))
+}
+
+// MaxRedemptionsPerUserIsNil applies the IsNil predicate on the "max_redemptions_per_user" field.
+func MaxRedemptionsPerUserIsNil() predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldIsNull(FieldMaxRedemptionsPerUser))
+}
+
+// MaxRedemptionsPerUserNotNil applies the NotNil predicate on the "max_redemptions_per_user" field.
+func MaxRedemptionsPerUserNotNil() predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldNotNull(FieldMaxRedemptionsPerUser))
 }
 
 // RedeemedCountEQ applies the EQ predicate on the "redeemed_count" field.
