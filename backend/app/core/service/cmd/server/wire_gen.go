@@ -104,7 +104,15 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	brandService := service.NewBrandService(context, brandRepo)
 	productTranslationRepo := data.NewProductTranslationRepo(context, entClient)
 	productRepo := data.NewProductRepo(context, entClient, productTranslationRepo)
-	productService := service.NewProductService(context, productRepo)
+	elasticsearchClient, cleanup3, err := data.NewElasticSearchClient(context)
+	if err != nil {
+		cleanup2()
+		cleanup()
+		return nil, nil, err
+	}
+	productSearchRepo := data.NewProductSearchRepo(context, elasticsearchClient)
+	productSearchService := service.NewProductSearchService(context, productSearchRepo, productRepo)
+	productService := service.NewProductService(context, productRepo, productSearchService, taskService)
 	productAttributeTranslationRepo := data.NewProductAttributeTranslationRepo(context, entClient)
 	productAttributeRepo := data.NewProductAttributeRepo(context, entClient, productAttributeTranslationRepo)
 	productAttributeService := service.NewProductAttributeService(context, productAttributeRepo)
@@ -150,14 +158,16 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	invoiceService := service.NewInvoiceService(context, invoiceRepo)
 	grpcServer, err := server.NewGrpcServer(context, v, authenticationService, loginPolicyService, userCredentialService, taskService, fileService, languageService, tenantService, userService, roleService, positionService, orgUnitService, menuService, apiService, permissionService, permissionGroupService, permissionAuditLogService, policyEvaluationLogService, loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, categoryService, brandService, productService, productAttributeService, productAttributeValueService, skuService, skuPriceService, skuAttributeCombinationService, cartService, cartItemService, orderService, orderItemService, paymentTransactionService, paymentRefundService, shippingAddressService, shipmentService, couponTemplateService, userCouponService, shippingRateService, taxRateService, commentService, interactionService, interactionAdminService, invoiceService)
 	if err != nil {
+		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
 	stockAlertService := service.NewStockAlertService(context, skuRepo, internalMessageService)
-	asynqServer := server.NewAsynqServer(context, taskService, orderService, userCouponService, stockAlertService)
+	asynqServer := server.NewAsynqServer(context, taskService, orderService, userCouponService, stockAlertService, productSearchService)
 	app := newApp(context, grpcServer, asynqServer)
 	return app, func() {
+		cleanup3()
 		cleanup2()
 		cleanup()
 	}, nil

@@ -21,8 +21,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProductService_List_FullMethodName = "/app.service.v1.ProductService/List"
-	ProductService_Get_FullMethodName  = "/app.service.v1.ProductService/Get"
+	ProductService_List_FullMethodName           = "/app.service.v1.ProductService/List"
+	ProductService_Get_FullMethodName            = "/app.service.v1.ProductService/Get"
+	ProductService_SearchProducts_FullMethodName = "/app.service.v1.ProductService/SearchProducts"
 )
 
 // ProductServiceClient is the client API for ProductService service.
@@ -35,6 +36,8 @@ type ProductServiceClient interface {
 	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListProductResponse, error)
 	// 查询商品详情
 	Get(ctx context.Context, in *v11.GetProductRequest, opts ...grpc.CallOption) (*v11.Product, error)
+	// 搜索商品（Elasticsearch 全文检索）
+	SearchProducts(ctx context.Context, in *v11.SearchProductsRequest, opts ...grpc.CallOption) (*v11.SearchProductsResponse, error)
 }
 
 type productServiceClient struct {
@@ -65,6 +68,16 @@ func (c *productServiceClient) Get(ctx context.Context, in *v11.GetProductReques
 	return out, nil
 }
 
+func (c *productServiceClient) SearchProducts(ctx context.Context, in *v11.SearchProductsRequest, opts ...grpc.CallOption) (*v11.SearchProductsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.SearchProductsResponse)
+	err := c.cc.Invoke(ctx, ProductService_SearchProducts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility.
@@ -75,6 +88,8 @@ type ProductServiceServer interface {
 	List(context.Context, *v1.PagingRequest) (*v11.ListProductResponse, error)
 	// 查询商品详情
 	Get(context.Context, *v11.GetProductRequest) (*v11.Product, error)
+	// 搜索商品（Elasticsearch 全文检索）
+	SearchProducts(context.Context, *v11.SearchProductsRequest) (*v11.SearchProductsResponse, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -90,6 +105,9 @@ func (UnimplementedProductServiceServer) List(context.Context, *v1.PagingRequest
 }
 func (UnimplementedProductServiceServer) Get(context.Context, *v11.GetProductRequest) (*v11.Product, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedProductServiceServer) SearchProducts(context.Context, *v11.SearchProductsRequest) (*v11.SearchProductsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SearchProducts not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 func (UnimplementedProductServiceServer) testEmbeddedByValue()                        {}
@@ -148,6 +166,24 @@ func _ProductService_Get_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductService_SearchProducts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.SearchProductsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).SearchProducts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_SearchProducts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).SearchProducts(ctx, req.(*v11.SearchProductsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -162,6 +198,10 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Get",
 			Handler:    _ProductService_Get_Handler,
+		},
+		{
+			MethodName: "SearchProducts",
+			Handler:    _ProductService_SearchProducts_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -51,6 +51,15 @@ func (s *ProductService) Get(ctx context.Context, req *catalogV1.GetProductReque
 	return resp, nil
 }
 
+// SearchProducts 商品全文搜索（Elasticsearch）。
+//
+// 透传到 core ProductSearchService.Search，该 service 硬编码 status=ACTIVE，
+// 客户端无法覆盖。商品无租户隔离（mall_products 无 TenantID mixin），故无
+// tenant_id 过滤。结果只回传 product_id/language/name（最小字段集）。
+func (s *ProductService) SearchProducts(ctx context.Context, req *catalogV1.SearchProductsRequest) (*catalogV1.SearchProductsResponse, error) {
+	return s.productServiceClient.SearchProducts(ctx, req)
+}
+
 // injectStatusFilter 将 status 过滤条件合并进现有 query JSON 字符串。
 // 始终覆盖 status 字段为给定值。空输入则新建只含 status 的对象。
 func injectStatusFilter(existing, status string) string {

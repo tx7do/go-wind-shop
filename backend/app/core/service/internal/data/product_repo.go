@@ -517,3 +517,114 @@ func (r *ProductRepo) DeleteTranslation(ctx context.Context, req *catalogV1.Dele
 func (r *ProductRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, productID uint32) error {
 	return r.productTranslationRepo.CleanTranslations(ctx, tx, productID)
 }
+
+// ============================================================================
+// Elasticsearch 重索引辅助方法
+//
+// 仅供 ProductSearchService.ReindexProduct 调用。该方法的 ctx 由
+// ProductSearchService 注入 SystemViewer（跨状态读 DB 的特权上下文）。
+//
+// 与 go-wind-cms 的差异：商品是全局共享目录（无 TenantID mixin），故
+// ProductReindexDocument 无 tenant_id 字段，ES 文档也无 tenant_id。
+// ============================================================================
+
+// ProductReindexDocument 是 ProductRepo 返回给 ProductSearchService 的单条
+// ES 文档数据。无 tenant_id（商品全局共享）。
+type ProductReindexDocument struct {
+	ProductID        uint32
+	Language         string
+	Status           string
+	Name             string
+	ShortDescription string
+	LongDescription  string
+	ImageURL         string
+}
+
+// GetReindexDocuments 取指定商品及其所有翻译，组装成 ES 文档数据。
+//
+// 安全：
+//   - 跳过非 ACTIVE 状态的商品（不入索引）
+//   - 跳过 name 和 descriptions 均空的翻译（避免索引无意义文档）
+//   - 调用方须以 SystemViewer ctx 调用，方能跨状态读取
+func (r *ProductRepo) GetReindexDocuments(ctx context.Context, productID uint32) ([]ProductReindexDocument, error) {
+	if productID == 0 {
+		return nil, catalogV1.ErrorBadRequest("invalid product id")
+	}
+
+	// 用 Get 加载商品 DTO（含全部翻译，locale=""）
+	req := &catalogV1.GetProductRequest{
+		QueryBy: &catalogV1.GetProductRequest_Id{Id: productID},
+		Locale:  nil,
+	}
+	dto, err := r.Get(ctx, req)
+	if err != nil {
+		if catalogV1.IsNotFound(err) {
+			return nil, nil
+		}
+		r.log.Errorf("query product for reindex failed: %s", err.Error())
+		return nil, catalogV1.ErrorInternalServerError("query product for reindex failed")
+	}
+
+	// 仅索引 ACTIVE 状态
+	if dto.GetStatus() != catalogV1.Product_PRODUCT_STATUS_ACTIVE {
+		return nil, nil
+	}
+
+	// 取所有翻译
+	translations := dto.GetTranslations()
+	if len(translations) == 0 {
+		return nil, nil
+	}
+
+	docs := make([]ProductReindexDocument, 0, len(translations))
+	for _, tr := range translations {
+		if tr == nil {
+			continue
+		}
+		// 跳过 name 和 descriptions 均空的翻译
+		if tr.GetName() == "" && tr.GetShortDescription() == "" && tr.GetLongDescription() == "" {
+			continue
+		}
+		docs = append(docs, ProductReindexDocument{
+			ProductID:        productID,
+			Language:         tr.GetLanguageCode(),
+			Status:           "PRODUCT_STATUS_ACTIVE",
+			Name:             tr.GetName(),
+			ShortDescription: tr.GetShortDescription(),
+			LongDescription:  tr.GetLongDescription(),
+			ImageURL:         dto.GetImageUrl(),
+		})
+	}
+
+	return docs, nil
+}
+
+// ListActiveProductIDs 列出所有 ACTIVE 状态商品的 ID。
+// 供 ProductSearchService.ReindexAll 周期全量重索引使用。
+func (r *ProductRepo) ListActiveProductIDs(ctx context.Context) ([]uint32, error) {
+	entities, err := r.entClient.Client().Product.Query().
+		Select(product.FieldID).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("list product ids for reindex failed: %s", err.Error())
+		return nil, catalogV1.ErrorInternalServerError("list product ids for reindex failed")
+	}
+
+	ids := make([]uint32, 0, len(entities))
+	for _, e := range entities {
+		if e == nil {
+			continue
+		}
+		// 检查状态是否为 ACTIVE
+		if e.Status != nil && string(*e.Status) == "PRODUCT_STATUS_ACTIVE" {
+			ids = append(ids, e.ID)
+		}
+	}
+	return ids, nil
+}
+
+// GetAvailableLanguages 返回指定商品在 DB 中实际存在的翻译语言列表。
+// 供 ProductSearchService.ReindexProduct 的 delete 操作枚举删除使用。
+func (r *ProductRepo) GetAvailableLanguages(ctx context.Context, productID uint32) ([]string, error) {
+	return r.productTranslationRepo.ListAvailedLanguages(ctx, productID)
+}

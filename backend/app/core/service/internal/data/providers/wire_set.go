@@ -33,6 +33,7 @@ var ProviderSet = wire.NewSet(
 	data.NewPasswordCrypto,
 
 	data.NewMinIoClient,
+	data.NewElasticSearchClient,
 
 	data.NewLanguageRepo,
 
@@ -110,4 +111,5 @@ var ProviderSet = wire.NewSet(
 	data.NewCommentRepo,
 	data.NewInteractionRepo,
 	data.NewInvoiceRepo,
+	data.NewProductSearchRepo,
 )

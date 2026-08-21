@@ -3963,6 +3963,10 @@ export interface ProductService {
   Get(
     request: catalogservicev1_GetProductRequest,
   ): Promise<catalogservicev1_Product>;
+  // 搜索商品（Elasticsearch 全文检索）
+  SearchProducts(
+    request: catalogservicev1_SearchProductsRequest,
+  ): Promise<catalogservicev1_SearchProductsResponse>;
 }
 
 export function createProductServiceClient(
@@ -4115,6 +4119,39 @@ export function createProductServiceClient(
         method: 'Get',
       }) as Promise<catalogservicev1_Product>;
     },
+    SearchProducts(request) {
+      const path = `app/v1/mall/products/search`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.language) {
+        queryParams.push(
+          `language=${encodeURIComponent(request.language.toString())}`,
+        );
+      }
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ProductService',
+        method: 'SearchProducts',
+      }) as Promise<catalogservicev1_SearchProductsResponse>;
+    },
   };
 }
 // 商品列表 - 答复
@@ -4170,6 +4207,25 @@ export type catalogservicev1_GetProductRequest = {
   id?: number;
   locale?: string;
   viewMask?: wellKnownFieldMask;
+};
+
+export type catalogservicev1_SearchProductsRequest = {
+  language: string | undefined;
+  page: number | undefined;
+  pageSize: number | undefined;
+  query: string | undefined;
+};
+
+export type catalogservicev1_SearchProductsResponse = {
+  items: catalogservicev1_SearchProductHit[] | undefined;
+  total: number | undefined;
+};
+
+export type catalogservicev1_SearchProductHit = {
+  imageUrl: string | undefined;
+  language: string | undefined;
+  name: string | undefined;
+  productId: number | undefined;
 };
 
 // 商品属性前台服务

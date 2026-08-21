@@ -29,6 +29,24 @@ export async function fetchListProductsStore(params: any) {
 }
 
 // ==============================
+// 商品搜索（Elasticsearch 全文检索，Query）
+// language 由 getCurrentLocale() 强制注入，服务端硬编码 status=ACTIVE。
+// ==============================
+export async function fetchSearchProducts(params: any) {
+  return await apiClient.productService.SearchProducts(params);
+}
+export function useSearchProducts(
+  params: any,
+  options?: UseQueryOptions<Awaited<ReturnType<typeof fetchSearchProducts>>, Error>,
+) {
+  return useQuery({
+    queryKey: ['searchProducts', params, getCurrentLocale()],
+    queryFn: () => fetchSearchProducts(toValue(params)),
+    ...options,
+  });
+}
+
+// ==============================
 // 商品详情（Query，注入 locale）
 // ==============================
 export async function fetchGetProduct(id: number) {

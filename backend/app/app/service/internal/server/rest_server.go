@@ -48,6 +48,7 @@ func NewRestMiddleware(
 		appV1.OperationBrandServiceGet,
 		appV1.OperationProductServiceList,
 		appV1.OperationProductServiceGet,
+		appV1.OperationProductServiceSearchProducts,
 		appV1.OperationProductAttributeServiceList,
 		appV1.OperationProductAttributeServiceGet,
 		appV1.OperationProductAttributeValueServiceList,

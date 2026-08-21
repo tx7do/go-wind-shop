@@ -11,6 +11,8 @@ import (
 	"go-wind-shop/app/core/service/internal/data"
 
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
+
+	"go-wind-shop/pkg/task"
 )
 
 type ProductService struct {
@@ -18,13 +20,22 @@ type ProductService struct {
 
 	log *log.Helper
 
-	repo *data.ProductRepo
+	repo                 *data.ProductRepo
+	productSearchService *ProductSearchService
+	taskService          *TaskService
 }
 
-func NewProductService(ctx *bootstrap.Context, repo *data.ProductRepo) *ProductService {
+func NewProductService(
+	ctx *bootstrap.Context,
+	repo *data.ProductRepo,
+	productSearchService *ProductSearchService,
+	taskService *TaskService,
+) *ProductService {
 	return &ProductService{
-		log:  ctx.NewLoggerHelper("product/service/core-service"),
-		repo: repo,
+		log:                  ctx.NewLoggerHelper("product/service/core-service"),
+		repo:                repo,
+		productSearchService: productSearchService,
+		taskService:          taskService,
 	}
 }
 
@@ -41,9 +52,13 @@ func (s *ProductService) Create(ctx context.Context, req *catalogV1.CreateProduc
 		return nil, catalogV1.ErrorBadRequest("invalid parameter")
 	}
 
-	if _, err := s.repo.Create(ctx, req); err != nil {
+	dto, err := s.repo.Create(ctx, req)
+	if err != nil {
 		return nil, err
 	}
+
+	// 双写钩子：商品创建后入队 reindex（best-effort，失败仅日志）
+	s.enqueueProductReindex(ctx, dto.GetId(), "index")
 
 	return &emptypb.Empty{}, nil
 }
@@ -53,9 +68,13 @@ func (s *ProductService) Update(ctx context.Context, req *catalogV1.UpdateProduc
 		return nil, catalogV1.ErrorBadRequest("invalid parameter")
 	}
 
-	if _, err := s.repo.Update(ctx, req); err != nil {
+	dto, err := s.repo.Update(ctx, req)
+	if err != nil {
 		return nil, err
 	}
+
+	// 双写钩子：商品更新后入队 reindex（best-effort，失败仅日志）
+	s.enqueueProductReindex(ctx, dto.GetId(), "index")
 
 	return &emptypb.Empty{}, nil
 }
@@ -64,6 +83,10 @@ func (s *ProductService) Delete(ctx context.Context, req *catalogV1.DeleteProduc
 	if err := s.repo.Delete(ctx, req); err != nil {
 		return nil, err
 	}
+
+	// 双写钩子：商品删除后入队 reindex（delete op，清理 ES 文档）
+	s.enqueueProductReindex(ctx, req.GetId(), "delete")
+
 	return &emptypb.Empty{}, nil
 }
 
@@ -83,11 +106,32 @@ func (s *ProductService) GetTranslation(ctx context.Context, req *catalogV1.GetP
 }
 
 func (s *ProductService) CreateTranslation(ctx context.Context, req *catalogV1.CreateProductTranslationRequest) (*catalogV1.ProductTranslation, error) {
-	return s.repo.CreateTranslation(ctx, req)
+	dto, err := s.repo.CreateTranslation(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// 双写钩子：翻译创建后入队所属商品的 reindex（index op）
+	// dto 是新建的翻译记录，其 ProductId 指向所属商品
+	if dto != nil {
+		s.enqueueProductReindex(ctx, dto.GetProductId(), "index")
+	}
+
+	return dto, nil
 }
 
 func (s *ProductService) UpdateTranslation(ctx context.Context, req *catalogV1.UpdateProductTranslationRequest) (*catalogV1.ProductTranslation, error) {
-	return s.repo.UpdateTranslation(ctx, req)
+	dto, err := s.repo.UpdateTranslation(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+
+	// 双写钩子：翻译更新后入队所属商品的 reindex（index op）
+	if dto != nil {
+		s.enqueueProductReindex(ctx, dto.GetProductId(), "index")
+	}
+
+	return dto, nil
 }
 
 func (s *ProductService) DeleteTranslation(ctx context.Context, req *catalogV1.DeleteProductTranslationRequest) (*emptypb.Empty, error) {
@@ -95,5 +139,31 @@ func (s *ProductService) DeleteTranslation(ctx context.Context, req *catalogV1.D
 	if err != nil {
 		return nil, err
 	}
+
+	// 双写钩子：翻译删除后入队所属商品的 reindex（index op，worker 从 DB 取最新状态
+	// 决定是更新还是删除 ES 文档）。仅在用 Identifier 分支时可提取 product_id；
+	// Id 分支无 product_id，跳过（ES 文档由周期 ReindexAll 最终修复）。
+	if identifier := req.GetIdentifier(); identifier != nil {
+		s.enqueueProductReindex(ctx, identifier.GetProductId(), "index")
+	}
+
 	return &emptypb.Empty{}, nil
+}
+
+// enqueueProductReindex 是双写钩子的统一入口。
+// 商品/翻译的 Create/Update/Delete 在 DB 事务提交后调用，入队 search.reindex 任务。
+// best-effort：入队失败仅日志，不阻塞主流程。失败由 asynq 自动重试或周期
+// ReindexAll 修复。
+func (s *ProductService) enqueueProductReindex(ctx context.Context, productID uint32, op string) {
+	if productID == 0 {
+		return
+	}
+	payload := &task.SearchReindexPayload{
+		Entity: "product",
+		ID:     productID,
+		Op:     op,
+	}
+	if err := s.taskService.EnqueueSearchReindex(payload); err != nil {
+		s.log.Errorf("enqueue product reindex failed (product_id=%d op=%s): %v", productID, op, err)
+	}
 }

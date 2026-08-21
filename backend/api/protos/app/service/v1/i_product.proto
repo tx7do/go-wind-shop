@@ -22,4 +22,11 @@ service ProductService {
       get: "/app/v1/mall/products/{id}"
     };
   }
+
+  // 搜索商品（Elasticsearch 全文检索）
+  rpc SearchProducts (catalog.service.v1.SearchProductsRequest) returns (catalog.service.v1.SearchProductsResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/products/search"
+    };
+  }
 }

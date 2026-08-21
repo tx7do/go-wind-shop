@@ -44,6 +44,9 @@ service ProductService {
   rpc UpdateTranslation (UpdateProductTranslationRequest) returns (ProductTranslation) {}
   // 删除翻译
   rpc DeleteTranslation (DeleteProductTranslationRequest) returns (google.protobuf.Empty) {}
+
+  // 搜索商品（Elasticsearch 全文检索）
+  rpc SearchProducts (SearchProductsRequest) returns (SearchProductsResponse) {}
 }
 
 // 商品
@@ -290,4 +293,31 @@ message DeleteProductTranslationRequest {
 message ProductTranslationIdentifier {
   uint32 product_id = 1 [json_name = "productId", (gnostic.openapi.v3.property) = {description: "商品ID"}];
   string language_code = 2 [json_name = "languageCode", (gnostic.openapi.v3.property) = {description: "语言代码"}];
+}
+
+// ============================================================================
+// 商品搜索（Elasticsearch 全文检索）
+//
+// status 由服务端硬编码为 PRODUCT_STATUS_ACTIVE，客户端不可覆盖。
+// 商品无租户隔离（mall_products 无 TenantID mixin），故无 tenant_id 过滤。
+// 仅返回最小字段集：product_id / language / name。
+// ============================================================================
+
+message SearchProductsRequest {
+  string query = 1 [json_name = "query", (gnostic.openapi.v3.property) = {description: "搜索查询词"}];
+  string language = 2 [json_name = "language", (gnostic.openapi.v3.property) = {description: "语言代码（必填，仅返回该语言的翻译命中）"}];
+  int32 page = 3 [json_name = "page", (gnostic.openapi.v3.property) = {description: "页码（0-based）"}];
+  int32 page_size = 4 [json_name = "pageSize", (gnostic.openapi.v3.property) = {description: "每页条数（服务端封顶 50）"}];
+}
+
+message SearchProductsResponse {
+  repeated SearchProductHit items = 1 [json_name = "items"];
+  int32 total = 2 [json_name = "total"];
+}
+
+message SearchProductHit {
+  uint32 product_id = 1 [json_name = "productId", (gnostic.openapi.v3.property) = {description: "商品ID（用于后续 GetProduct 详情查询）"}];
+  string language = 2 [json_name = "language", (gnostic.openapi.v3.property) = {description: "语言代码"}];
+  string name = 3 [json_name = "name", (gnostic.openapi.v3.property) = {description: "商品名称（来自翻译，用于搜索结果展示）"}];
+  string image_url = 4 [json_name = "imageUrl", (gnostic.openapi.v3.property) = {description: "商品主图URL（locale无关，用于搜索结果展示）"}];
 }
