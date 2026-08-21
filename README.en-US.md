@@ -167,7 +167,9 @@ cd frontend/app && pnpm dev
 | SKU & Pricing | Management of SKUs, attribute combinations, and prices. |
 | Shopping Cart | Shopping cart and cart item management. |
 | Order Management | Order and order detail management. |
-| Payment & Refund | Payment transaction and refund record management. |
+| Payment & Refund | Payment transaction and refund record management (note: the payment gateway is currently a simulated stub; real gateway integration is pending). |
+| Logistics & Shipment | Order fulfillment and shipment management, including shipment state machine and order-status linkage. |
+| Coupon System | Coupon template and user-coupon management, including a pricing discount engine with redemption at checkout and restoration on refund. |
 | File Transfer | Upload and transfer of product images and resources. |
 
 ### Platform & System
@@ -186,6 +188,8 @@ cd frontend/app && pnpm dev
 | File Management | File upload and object storage management. |
 | Internal Message | In-app message and message category management. |
 | Audit Logs | Login, operation, permission, and data access audit logs. |
+| Forgot Password | Email verification code based password recovery flow. |
+| Login Policy | Login policy configuration and management. |
 
 ---
 
