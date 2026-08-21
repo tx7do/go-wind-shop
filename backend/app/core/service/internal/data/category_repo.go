@@ -9,6 +9,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-crud/pagination"
 	entCrud "github.com/tx7do/go-crud/entgo"
 
 	"github.com/tx7do/go-utils/copierutil"
@@ -108,6 +109,15 @@ func (r *CategoryRepo) List(ctx context.Context, req *paginationV1.PagingRequest
 			return nil, err
 		}
 	}
+
+	// 构建树形结构。category 的 parent_id / children 字段已在 proto 中声明，
+	// 与 menu / org_unit / permission_group 一致地由服务端组装，避免前端递归建树。
+	ret.Items = pagination.BuildTree(
+		ret.Items,
+		func(node *catalogV1.Category) *uint32 { return node.Id },
+		func(node *catalogV1.Category) *uint32 { return node.ParentId },
+		func(node *catalogV1.Category) *[]*catalogV1.Category { return &node.Children },
+	)
 
 	return &catalogV1.ListCategoryResponse{
 		Total: ret.Total,

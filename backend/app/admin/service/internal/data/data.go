@@ -31,6 +31,7 @@ import (
 	storageV1 "go-wind-shop/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-shop/api/gen/go/task/service/v1"
 	shippingV1 "go-wind-shop/api/gen/go/shipping/service/v1"
+	taxV1 "go-wind-shop/api/gen/go/tax/service/v1"
 
 	"go-wind-shop/pkg/oss"
 	"go-wind-shop/pkg/serviceid"
@@ -471,5 +472,23 @@ func NewUserCouponServiceClient(ctx *bootstrap.Context, r registry.Discovery) co
 	}
 
 	return couponV1.NewUserCouponServiceClient(cli)
+}
+
+func NewShippingRateServiceClient(ctx *bootstrap.Context, r registry.Discovery) shippingV1.ShippingRateServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return shippingV1.NewShippingRateServiceClient(cli)
+}
+
+func NewTaxRateServiceClient(ctx *bootstrap.Context, r registry.Discovery) taxV1.TaxRateServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return taxV1.NewTaxRateServiceClient(cli)
 }
 

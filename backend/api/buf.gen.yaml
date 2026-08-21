@@ -67,6 +67,9 @@ managed:
     - file_option: go_package
       path: shipping/service/v1
       value: go-wind-shop/api/gen/go/shipping/service/v1;shippingpb
+    - file_option: go_package
+      path: tax/service/v1
+      value: go-wind-shop/api/gen/go/tax/service/v1;taxpb
 
 plugins:
   # generate go code

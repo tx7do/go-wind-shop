@@ -67,6 +67,10 @@ export * from "./payment-transaction";
 export * from "./payment-refund";
 export * from "./shipment";
 
+// 运费模板与税率规则管理 (Mall / Shipping Rate & Tax Rate)
+export * from "./shipping-rate";
+export * from "./tax-rate";
+
 // 优惠券管理 (Mall / Coupon)
 export * from "./coupon-template";
 export * from "./user-coupon";

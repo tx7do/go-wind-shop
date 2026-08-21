@@ -1528,6 +1528,9 @@ var (
 		{Name: "total_amount", Type: field.TypeInt64, Nullable: true, Comment: "订单应付金额（最小货币单位，分；折后价，即原价扣除优惠券抵扣后的实付额，支付与退款取此值）", Default: 0},
 		{Name: "original_amount", Type: field.TypeInt64, Nullable: true, Comment: "订单折前总额（最小货币单位，分；各订单项 subtotal 之和，未扣抵扣；审计/对账用）", Default: 0},
 		{Name: "discount_amount", Type: field.TypeInt64, Nullable: true, Comment: "优惠券抵扣额（最小货币单位，分；未用券为 0；审计/对账用）", Default: 0},
+		{Name: "shipping_fee", Type: field.TypeInt64, Nullable: true, Comment: "运费（最小货币单位，分；无运费规则时为 0；审计/对账用）", Default: 0},
+		{Name: "tax_amount", Type: field.TypeInt64, Nullable: true, Comment: "税费（最小货币单位，分；无税率规则时为 0；审计/对账用）", Default: 0},
+		{Name: "shipping_region", Type: field.TypeString, Nullable: true, Comment: "收货地区代码（ISO 3166；运费/税率计算输入；审计/对账用）"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "订单状态", Enums: []string{"PENDING_PAYMENT", "PAID", "CANCELLED", "FULFILLED", "CLOSED"}},
 		{Name: "recipient_name", Type: field.TypeString, Nullable: true, Comment: "收件人姓名"},
 		{Name: "recipient_phone", Type: field.TypeString, Nullable: true, Comment: "收件人电话"},
@@ -1553,7 +1556,7 @@ var (
 			{
 				Name:    "order_status",
 				Unique:  false,
-				Columns: []*schema.Column{MallOrdersColumns[15]},
+				Columns: []*schema.Column{MallOrdersColumns[18]},
 			},
 		},
 	}
@@ -2750,6 +2753,36 @@ var (
 			},
 		},
 	}
+	// MallShippingRatesColumns holds the columns for the "mall_shipping_rates" table.
+	MallShippingRatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "currency", Type: field.TypeString, Nullable: true, Comment: "币种（ISO 4217，当前仅支持CNY）", Default: "CNY"},
+		{Name: "region", Type: field.TypeString, Nullable: true, Comment: "目的地区域（ISO 3166 国家代码）"},
+		{Name: "base_fee", Type: field.TypeInt64, Nullable: true, Comment: "基础运费（最小货币单位，分）", Default: 0},
+		{Name: "per_unit_fee", Type: field.TypeInt64, Nullable: true, Comment: "按订单项数加收的运费（最小货币单位，分/件）", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "模板状态", Enums: []string{"ACTIVE", "INACTIVE"}},
+	}
+	// MallShippingRatesTable holds the schema information for the "mall_shipping_rates" table.
+	MallShippingRatesTable = &schema.Table{
+		Name:       "mall_shipping_rates",
+		Comment:    "运费模板表（按地区+币种配置）",
+		Columns:    MallShippingRatesColumns,
+		PrimaryKey: []*schema.Column{MallShippingRatesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "shippingrate_tenant_id_region_currency",
+				Unique:  true,
+				Columns: []*schema.Column{MallShippingRatesColumns[7], MallShippingRatesColumns[9], MallShippingRatesColumns[8]},
+			},
+		},
+	}
 	// MallSkusColumns holds the columns for the "mall_skus" table.
 	MallSkusColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2900,6 +2933,35 @@ var (
 				Name:    "idx_sys_task_tenant_created_at",
 				Unique:  false,
 				Columns: []*schema.Column{SysTasksColumns[8], SysTasksColumns[1]},
+			},
+		},
+	}
+	// MallTaxRatesColumns holds the columns for the "mall_tax_rates" table.
+	MallTaxRatesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "currency", Type: field.TypeString, Nullable: true, Comment: "币种（ISO 4217，当前仅支持CNY）", Default: "CNY"},
+		{Name: "region", Type: field.TypeString, Nullable: true, Comment: "目的地区域（ISO 3166 国家代码）"},
+		{Name: "tax_rate", Type: field.TypeInt32, Nullable: true, Comment: "税率百分比（0-100，如 20 表示 20% VAT）", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "规则状态", Enums: []string{"ACTIVE", "INACTIVE"}},
+	}
+	// MallTaxRatesTable holds the schema information for the "mall_tax_rates" table.
+	MallTaxRatesTable = &schema.Table{
+		Name:       "mall_tax_rates",
+		Comment:    "税率规则表（按地区+币种配置）",
+		Columns:    MallTaxRatesColumns,
+		PrimaryKey: []*schema.Column{MallTaxRatesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "taxrate_tenant_id_region_currency",
+				Unique:  true,
+				Columns: []*schema.Column{MallTaxRatesColumns[7], MallTaxRatesColumns[9], MallTaxRatesColumns[8]},
 			},
 		},
 	}
@@ -3502,10 +3564,12 @@ var (
 		SysRolePermissionsTable,
 		MallShipmentsTable,
 		UserShippingAddressesTable,
+		MallShippingRatesTable,
 		MallSkusTable,
 		MallSkuAttributeCombinationsTable,
 		MallSkuPricesTable,
 		SysTasksTable,
+		MallTaxRatesTable,
 		SysTenantsTable,
 		SysUsersTable,
 		MallUserCouponsTable,
@@ -3756,6 +3820,11 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	MallShippingRatesTable.Annotation = &entsql.Annotation{
+		Table:     "mall_shipping_rates",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	MallSkusTable.Annotation = &entsql.Annotation{
 		Table:     "mall_skus",
 		Charset:   "utf8mb4",
@@ -3773,6 +3842,11 @@ func init() {
 	}
 	SysTasksTable.Annotation = &entsql.Annotation{
 		Table:     "sys_tasks",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallTaxRatesTable.Annotation = &entsql.Annotation{
+		Table:     "mall_tax_rates",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

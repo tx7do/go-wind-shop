@@ -22,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	AuthenticationService_Login_FullMethodName         = "/app.service.v1.AuthenticationService/Login"
+	AuthenticationService_Register_FullMethodName      = "/app.service.v1.AuthenticationService/Register"
 	AuthenticationService_Logout_FullMethodName        = "/app.service.v1.AuthenticationService/Logout"
 	AuthenticationService_RefreshToken_FullMethodName  = "/app.service.v1.AuthenticationService/RefreshToken"
 	AuthenticationService_SendResetCode_FullMethodName = "/app.service.v1.AuthenticationService/SendResetCode"
@@ -36,6 +37,8 @@ const (
 type AuthenticationServiceClient interface {
 	// 登录
 	Login(ctx context.Context, in *v1.LoginRequest, opts ...grpc.CallOption) (*v1.LoginResponse, error)
+	// 注册
+	Register(ctx context.Context, in *v1.RegisterUserRequest, opts ...grpc.CallOption) (*v1.RegisterUserResponse, error)
 	// 登出
 	Logout(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 刷新认证令牌
@@ -62,6 +65,16 @@ func (c *authenticationServiceClient) Login(ctx context.Context, in *v1.LoginReq
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v1.LoginResponse)
 	err := c.cc.Invoke(ctx, AuthenticationService_Login_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authenticationServiceClient) Register(ctx context.Context, in *v1.RegisterUserRequest, opts ...grpc.CallOption) (*v1.RegisterUserResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.RegisterUserResponse)
+	err := c.cc.Invoke(ctx, AuthenticationService_Register_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -116,6 +129,8 @@ func (c *authenticationServiceClient) ResetPassword(ctx context.Context, in *Res
 type AuthenticationServiceServer interface {
 	// 登录
 	Login(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
+	// 注册
+	Register(context.Context, *v1.RegisterUserRequest) (*v1.RegisterUserResponse, error)
 	// 登出
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// 刷新认证令牌
@@ -140,6 +155,9 @@ type UnimplementedAuthenticationServiceServer struct{}
 
 func (UnimplementedAuthenticationServiceServer) Login(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Login not implemented")
+}
+func (UnimplementedAuthenticationServiceServer) Register(context.Context, *v1.RegisterUserRequest) (*v1.RegisterUserResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Register not implemented")
 }
 func (UnimplementedAuthenticationServiceServer) Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Logout not implemented")
@@ -188,6 +206,24 @@ func _AuthenticationService_Login_Handler(srv interface{}, ctx context.Context, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthenticationServiceServer).Login(ctx, req.(*v1.LoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthenticationService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.RegisterUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthenticationServiceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AuthenticationService_Register_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthenticationServiceServer).Register(ctx, req.(*v1.RegisterUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -274,6 +310,10 @@ var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Login",
 			Handler:    _AuthenticationService_Login_Handler,
+		},
+		{
+			MethodName: "Register",
+			Handler:    _AuthenticationService_Register_Handler,
 		},
 		{
 			MethodName: "Logout",

@@ -76,7 +76,8 @@
     "fill_required": "Please fill in all required fields",
     "password_mismatch": "Passwords do not match",
     "registering": "Registering...",
-    "back_home": "Back to Home"
+    "back_home": "Back to Home",
+    "success": "Registration successful. Redirecting to login..."
   },
   "forgotPassword": {
     "title": "Forgot Password",

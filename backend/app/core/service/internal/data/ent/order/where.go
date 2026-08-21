@@ -124,6 +124,21 @@ func DiscountAmount(v int64) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldDiscountAmount, v))
 }
 
+// ShippingFee applies equality check predicate on the "shipping_fee" field. It's identical to ShippingFeeEQ.
+func ShippingFee(v int64) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldShippingFee, v))
+}
+
+// TaxAmount applies equality check predicate on the "tax_amount" field. It's identical to TaxAmountEQ.
+func TaxAmount(v int64) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldTaxAmount, v))
+}
+
+// ShippingRegion applies equality check predicate on the "shipping_region" field. It's identical to ShippingRegionEQ.
+func ShippingRegion(v string) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldShippingRegion, v))
+}
+
 // RecipientName applies equality check predicate on the "recipient_name" field. It's identical to RecipientNameEQ.
 func RecipientName(v string) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldRecipientName, v))
@@ -912,6 +927,181 @@ func DiscountAmountIsNil() predicate.Order {
 // DiscountAmountNotNil applies the NotNil predicate on the "discount_amount" field.
 func DiscountAmountNotNil() predicate.Order {
 	return predicate.Order(sql.FieldNotNull(FieldDiscountAmount))
+}
+
+// ShippingFeeEQ applies the EQ predicate on the "shipping_fee" field.
+func ShippingFeeEQ(v int64) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldShippingFee, v))
+}
+
+// ShippingFeeNEQ applies the NEQ predicate on the "shipping_fee" field.
+func ShippingFeeNEQ(v int64) predicate.Order {
+	return predicate.Order(sql.FieldNEQ(FieldShippingFee, v))
+}
+
+// ShippingFeeIn applies the In predicate on the "shipping_fee" field.
+func ShippingFeeIn(vs ...int64) predicate.Order {
+	return predicate.Order(sql.FieldIn(FieldShippingFee, vs...))
+}
+
+// ShippingFeeNotIn applies the NotIn predicate on the "shipping_fee" field.
+func ShippingFeeNotIn(vs ...int64) predicate.Order {
+	return predicate.Order(sql.FieldNotIn(FieldShippingFee, vs...))
+}
+
+// ShippingFeeGT applies the GT predicate on the "shipping_fee" field.
+func ShippingFeeGT(v int64) predicate.Order {
+	return predicate.Order(sql.FieldGT(FieldShippingFee, v))
+}
+
+// ShippingFeeGTE applies the GTE predicate on the "shipping_fee" field.
+func ShippingFeeGTE(v int64) predicate.Order {
+	return predicate.Order(sql.FieldGTE(FieldShippingFee, v))
+}
+
+// ShippingFeeLT applies the LT predicate on the "shipping_fee" field.
+func ShippingFeeLT(v int64) predicate.Order {
+	return predicate.Order(sql.FieldLT(FieldShippingFee, v))
+}
+
+// ShippingFeeLTE applies the LTE predicate on the "shipping_fee" field.
+func ShippingFeeLTE(v int64) predicate.Order {
+	return predicate.Order(sql.FieldLTE(FieldShippingFee, v))
+}
+
+// ShippingFeeIsNil applies the IsNil predicate on the "shipping_fee" field.
+func ShippingFeeIsNil() predicate.Order {
+	return predicate.Order(sql.FieldIsNull(FieldShippingFee))
+}
+
+// ShippingFeeNotNil applies the NotNil predicate on the "shipping_fee" field.
+func ShippingFeeNotNil() predicate.Order {
+	return predicate.Order(sql.FieldNotNull(FieldShippingFee))
+}
+
+// TaxAmountEQ applies the EQ predicate on the "tax_amount" field.
+func TaxAmountEQ(v int64) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldTaxAmount, v))
+}
+
+// TaxAmountNEQ applies the NEQ predicate on the "tax_amount" field.
+func TaxAmountNEQ(v int64) predicate.Order {
+	return predicate.Order(sql.FieldNEQ(FieldTaxAmount, v))
+}
+
+// TaxAmountIn applies the In predicate on the "tax_amount" field.
+func TaxAmountIn(vs ...int64) predicate.Order {
+	return predicate.Order(sql.FieldIn(FieldTaxAmount, vs...))
+}
+
+// TaxAmountNotIn applies the NotIn predicate on the "tax_amount" field.
+func TaxAmountNotIn(vs ...int64) predicate.Order {
+	return predicate.Order(sql.FieldNotIn(FieldTaxAmount, vs...))
+}
+
+// TaxAmountGT applies the GT predicate on the "tax_amount" field.
+func TaxAmountGT(v int64) predicate.Order {
+	return predicate.Order(sql.FieldGT(FieldTaxAmount, v))
+}
+
+// TaxAmountGTE applies the GTE predicate on the "tax_amount" field.
+func TaxAmountGTE(v int64) predicate.Order {
+	return predicate.Order(sql.FieldGTE(FieldTaxAmount, v))
+}
+
+// TaxAmountLT applies the LT predicate on the "tax_amount" field.
+func TaxAmountLT(v int64) predicate.Order {
+	return predicate.Order(sql.FieldLT(FieldTaxAmount, v))
+}
+
+// TaxAmountLTE applies the LTE predicate on the "tax_amount" field.
+func TaxAmountLTE(v int64) predicate.Order {
+	return predicate.Order(sql.FieldLTE(FieldTaxAmount, v))
+}
+
+// TaxAmountIsNil applies the IsNil predicate on the "tax_amount" field.
+func TaxAmountIsNil() predicate.Order {
+	return predicate.Order(sql.FieldIsNull(FieldTaxAmount))
+}
+
+// TaxAmountNotNil applies the NotNil predicate on the "tax_amount" field.
+func TaxAmountNotNil() predicate.Order {
+	return predicate.Order(sql.FieldNotNull(FieldTaxAmount))
+}
+
+// ShippingRegionEQ applies the EQ predicate on the "shipping_region" field.
+func ShippingRegionEQ(v string) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldShippingRegion, v))
+}
+
+// ShippingRegionNEQ applies the NEQ predicate on the "shipping_region" field.
+func ShippingRegionNEQ(v string) predicate.Order {
+	return predicate.Order(sql.FieldNEQ(FieldShippingRegion, v))
+}
+
+// ShippingRegionIn applies the In predicate on the "shipping_region" field.
+func ShippingRegionIn(vs ...string) predicate.Order {
+	return predicate.Order(sql.FieldIn(FieldShippingRegion, vs...))
+}
+
+// ShippingRegionNotIn applies the NotIn predicate on the "shipping_region" field.
+func ShippingRegionNotIn(vs ...string) predicate.Order {
+	return predicate.Order(sql.FieldNotIn(FieldShippingRegion, vs...))
+}
+
+// ShippingRegionGT applies the GT predicate on the "shipping_region" field.
+func ShippingRegionGT(v string) predicate.Order {
+	return predicate.Order(sql.FieldGT(FieldShippingRegion, v))
+}
+
+// ShippingRegionGTE applies the GTE predicate on the "shipping_region" field.
+func ShippingRegionGTE(v string) predicate.Order {
+	return predicate.Order(sql.FieldGTE(FieldShippingRegion, v))
+}
+
+// ShippingRegionLT applies the LT predicate on the "shipping_region" field.
+func ShippingRegionLT(v string) predicate.Order {
+	return predicate.Order(sql.FieldLT(FieldShippingRegion, v))
+}
+
+// ShippingRegionLTE applies the LTE predicate on the "shipping_region" field.
+func ShippingRegionLTE(v string) predicate.Order {
+	return predicate.Order(sql.FieldLTE(FieldShippingRegion, v))
+}
+
+// ShippingRegionContains applies the Contains predicate on the "shipping_region" field.
+func ShippingRegionContains(v string) predicate.Order {
+	return predicate.Order(sql.FieldContains(FieldShippingRegion, v))
+}
+
+// ShippingRegionHasPrefix applies the HasPrefix predicate on the "shipping_region" field.
+func ShippingRegionHasPrefix(v string) predicate.Order {
+	return predicate.Order(sql.FieldHasPrefix(FieldShippingRegion, v))
+}
+
+// ShippingRegionHasSuffix applies the HasSuffix predicate on the "shipping_region" field.
+func ShippingRegionHasSuffix(v string) predicate.Order {
+	return predicate.Order(sql.FieldHasSuffix(FieldShippingRegion, v))
+}
+
+// ShippingRegionIsNil applies the IsNil predicate on the "shipping_region" field.
+func ShippingRegionIsNil() predicate.Order {
+	return predicate.Order(sql.FieldIsNull(FieldShippingRegion))
+}
+
+// ShippingRegionNotNil applies the NotNil predicate on the "shipping_region" field.
+func ShippingRegionNotNil() predicate.Order {
+	return predicate.Order(sql.FieldNotNull(FieldShippingRegion))
+}
+
+// ShippingRegionEqualFold applies the EqualFold predicate on the "shipping_region" field.
+func ShippingRegionEqualFold(v string) predicate.Order {
+	return predicate.Order(sql.FieldEqualFold(FieldShippingRegion, v))
+}
+
+// ShippingRegionContainsFold applies the ContainsFold predicate on the "shipping_region" field.
+func ShippingRegionContainsFold(v string) predicate.Order {
+	return predicate.Order(sql.FieldContainsFold(FieldShippingRegion, v))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.

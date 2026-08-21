@@ -153,6 +153,10 @@ export interface AuthenticationService {
   Login(
     request: authenticationservicev1_LoginRequest,
   ): Promise<authenticationservicev1_LoginResponse>;
+  // 注册
+  Register(
+    request: authenticationservicev1_RegisterUserRequest,
+  ): Promise<authenticationservicev1_RegisterUserResponse>;
   // 登出
   Logout(
     request: wellKnownEmpty,
@@ -186,6 +190,14 @@ export function createAuthenticationServiceClient(
         service: 'AuthenticationService',
         method: 'Login',
       }) as Promise<authenticationservicev1_LoginResponse>;
+    },
+    Register(request) {
+      const path = `app/v1/register`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AuthenticationService',
+        method: 'Register',
+      }) as Promise<authenticationservicev1_RegisterUserResponse>;
     },
     Logout(request) {
       const path = `app/v1/logout`;
@@ -269,6 +281,18 @@ export type authenticationservicev1_LoginResponse = {
 export type authenticationservicev1_TokenType =
   | 'bearer'
   | 'mac';
+export type authenticationservicev1_RegisterUserRequest = {
+  client_type?: authenticationservicev1_ClientType;
+  email?: string;
+  password: string | undefined;
+  tenantCode: string | undefined;
+  username: string | undefined;
+};
+
+export type authenticationservicev1_RegisterUserResponse = {
+  userId: number | undefined;
+};
+
 // An empty JSON object
 type wellKnownEmpty = Record<never, never>;
 
@@ -2301,7 +2325,10 @@ export type orderservicev1_Order = {
   recipientName?: string;
   recipientPhone?: string;
   shippingAddress?: string;
+  shippingFee?: number;
+  shippingRegion?: string;
   status?: orderservicev1_Order_Status;
+  taxAmount?: number;
   tenantId?: number;
   totalAmount?: number;
   updatedAt?: wellKnownTimestamp;

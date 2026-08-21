@@ -24,6 +24,7 @@ const _ = http.SupportPackageIsVersion1
 const OperationAuthenticationServiceLogin = "/app.service.v1.AuthenticationService/Login"
 const OperationAuthenticationServiceLogout = "/app.service.v1.AuthenticationService/Logout"
 const OperationAuthenticationServiceRefreshToken = "/app.service.v1.AuthenticationService/RefreshToken"
+const OperationAuthenticationServiceRegister = "/app.service.v1.AuthenticationService/Register"
 const OperationAuthenticationServiceResetPassword = "/app.service.v1.AuthenticationService/ResetPassword"
 const OperationAuthenticationServiceSendResetCode = "/app.service.v1.AuthenticationService/SendResetCode"
 
@@ -34,6 +35,8 @@ type AuthenticationServiceHTTPServer interface {
 	Logout(context.Context, *emptypb.Empty) (*emptypb.Empty, error)
 	// RefreshToken 刷新认证令牌
 	RefreshToken(context.Context, *v1.LoginRequest) (*v1.LoginResponse, error)
+	// Register 注册
+	Register(context.Context, *v1.RegisterUserRequest) (*v1.RegisterUserResponse, error)
 	// ResetPassword 校验验证码并重置密码
 	// 校验 Redis 中的验证码（校验即删，一次性），通过后按邮箱反查用户名，
 	// 调用核心 ResetCredential 重置 USERNAME 凭证（注册时仅创建 USERNAME 凭证）。
@@ -47,6 +50,7 @@ type AuthenticationServiceHTTPServer interface {
 func RegisterAuthenticationServiceHTTPServer(s *http.Server, srv AuthenticationServiceHTTPServer) {
 	r := s.Route("/")
 	r.POST("/app/v1/login", _AuthenticationService_Login0_HTTP_Handler(srv))
+	r.POST("/app/v1/register", _AuthenticationService_Register0_HTTP_Handler(srv))
 	r.POST("/app/v1/logout", _AuthenticationService_Logout0_HTTP_Handler(srv))
 	r.POST("/app/v1/refresh-token", _AuthenticationService_RefreshToken0_HTTP_Handler(srv))
 	r.POST("/app/v1/send-reset-code", _AuthenticationService_SendResetCode0_HTTP_Handler(srv))
@@ -71,6 +75,28 @@ func _AuthenticationService_Login0_HTTP_Handler(srv AuthenticationServiceHTTPSer
 			return err
 		}
 		reply := out.(*v1.LoginResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _AuthenticationService_Register0_HTTP_Handler(srv AuthenticationServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.RegisterUserRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAuthenticationServiceRegister)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Register(ctx, req.(*v1.RegisterUserRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.RegisterUserResponse)
 		return ctx.Result(200, reply)
 	}
 }
@@ -170,6 +196,8 @@ type AuthenticationServiceHTTPClient interface {
 	Logout(ctx context.Context, req *emptypb.Empty, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// RefreshToken 刷新认证令牌
 	RefreshToken(ctx context.Context, req *v1.LoginRequest, opts ...http.CallOption) (rsp *v1.LoginResponse, err error)
+	// Register 注册
+	Register(ctx context.Context, req *v1.RegisterUserRequest, opts ...http.CallOption) (rsp *v1.RegisterUserResponse, err error)
 	// ResetPassword 校验验证码并重置密码
 	// 校验 Redis 中的验证码（校验即删，一次性），通过后按邮箱反查用户名，
 	// 调用核心 ResetCredential 重置 USERNAME 凭证（注册时仅创建 USERNAME 凭证）。
@@ -222,6 +250,20 @@ func (c *AuthenticationServiceHTTPClientImpl) RefreshToken(ctx context.Context, 
 	pattern := "/app/v1/refresh-token"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAuthenticationServiceRefreshToken))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Register 注册
+func (c *AuthenticationServiceHTTPClientImpl) Register(ctx context.Context, in *v1.RegisterUserRequest, opts ...http.CallOption) (*v1.RegisterUserResponse, error) {
+	var out v1.RegisterUserResponse
+	pattern := "/app/v1/register"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAuthenticationServiceRegister))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

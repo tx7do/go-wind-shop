@@ -26,6 +26,7 @@ import (
 	taskV1 "go-wind-shop/api/gen/go/task/service/v1"
 
 	shippingV1 "go-wind-shop/api/gen/go/shipping/service/v1"
+	taxV1 "go-wind-shop/api/gen/go/tax/service/v1"
 
 	"go-wind-shop/pkg/middleware/ent"
 )
@@ -94,6 +95,9 @@ func NewGrpcServer(
 
 		couponTemplateService *service.CouponTemplateService,
 		userCouponService *service.UserCouponService,
+
+		shippingRateService *service.ShippingRateService,
+		taxRateService *service.TaxRateService,
 	) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
 
@@ -161,6 +165,9 @@ func NewGrpcServer(
 
 	couponV1.RegisterCouponTemplateServiceServer(srv, couponTemplateService)
 	couponV1.RegisterUserCouponServiceServer(srv, userCouponService)
+
+	shippingV1.RegisterShippingRateServiceServer(srv, shippingRateService)
+	taxV1.RegisterTaxRateServiceServer(srv, taxRateService)
 
 	return srv, nil
 }

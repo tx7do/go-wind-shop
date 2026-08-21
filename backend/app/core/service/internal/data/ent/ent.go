@@ -53,10 +53,12 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-shop/app/core/service/internal/data/ent/shipment"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingaddress"
+	"go-wind-shop/app/core/service/internal/data/ent/shippingrate"
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 	"go-wind-shop/app/core/service/internal/data/ent/task"
+	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
 	"go-wind-shop/app/core/service/internal/data/ent/tenant"
 	"go-wind-shop/app/core/service/internal/data/ent/user"
 	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
@@ -177,10 +179,12 @@ func checkColumn(t, c string) error {
 			rolepermission.Table:                   rolepermission.ValidColumn,
 			shipment.Table:                         shipment.ValidColumn,
 			shippingaddress.Table:                  shippingaddress.ValidColumn,
+			shippingrate.Table:                     shippingrate.ValidColumn,
 			sku.Table:                              sku.ValidColumn,
 			skuattributecombination.Table:          skuattributecombination.ValidColumn,
 			skuprice.Table:                         skuprice.ValidColumn,
 			task.Table:                             task.ValidColumn,
+			taxrate.Table:                          taxrate.ValidColumn,
 			tenant.Table:                           tenant.ValidColumn,
 			user.Table:                             user.ValidColumn,
 			usercoupon.Table:                       usercoupon.ValidColumn,

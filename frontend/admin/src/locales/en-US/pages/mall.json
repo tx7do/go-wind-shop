@@ -218,6 +218,33 @@
       "update": "Edit Coupon Template"
     }
   },
+  "shippingRate": {
+    "moduleName": "Shipping Rate",
+    "title": "Shipping Rate Template Management",
+    "region": "Destination Region",
+    "baseFee": "Base Fee (cents)",
+    "perUnitFee": "Per-Unit Fee (cents)",
+    "status": "Status",
+    "currency": "Currency",
+    "createdAt": "Created At",
+    "button": {
+      "create": "Create Shipping Rate",
+      "update": "Edit Shipping Rate"
+    }
+  },
+  "taxRate": {
+    "moduleName": "Tax Rate",
+    "title": "Tax Rate Rule Management",
+    "region": "Destination Region",
+    "taxRate": "Tax Rate (%)",
+    "status": "Status",
+    "currency": "Currency",
+    "createdAt": "Created At",
+    "button": {
+      "create": "Create Tax Rate",
+      "update": "Edit Tax Rate"
+    }
+  },
   "userCoupon": {
     "moduleName": "User Coupon",
     "title": "User Coupon Issuance Management",

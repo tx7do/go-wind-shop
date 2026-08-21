@@ -318,6 +318,80 @@ func (_u *OrderUpdate) ClearDiscountAmount() *OrderUpdate {
 	return _u
 }
 
+// SetShippingFee sets the "shipping_fee" field.
+func (_u *OrderUpdate) SetShippingFee(v int64) *OrderUpdate {
+	_u.mutation.ResetShippingFee()
+	_u.mutation.SetShippingFee(v)
+	return _u
+}
+
+// SetNillableShippingFee sets the "shipping_fee" field if the given value is not nil.
+func (_u *OrderUpdate) SetNillableShippingFee(v *int64) *OrderUpdate {
+	if v != nil {
+		_u.SetShippingFee(*v)
+	}
+	return _u
+}
+
+// AddShippingFee adds value to the "shipping_fee" field.
+func (_u *OrderUpdate) AddShippingFee(v int64) *OrderUpdate {
+	_u.mutation.AddShippingFee(v)
+	return _u
+}
+
+// ClearShippingFee clears the value of the "shipping_fee" field.
+func (_u *OrderUpdate) ClearShippingFee() *OrderUpdate {
+	_u.mutation.ClearShippingFee()
+	return _u
+}
+
+// SetTaxAmount sets the "tax_amount" field.
+func (_u *OrderUpdate) SetTaxAmount(v int64) *OrderUpdate {
+	_u.mutation.ResetTaxAmount()
+	_u.mutation.SetTaxAmount(v)
+	return _u
+}
+
+// SetNillableTaxAmount sets the "tax_amount" field if the given value is not nil.
+func (_u *OrderUpdate) SetNillableTaxAmount(v *int64) *OrderUpdate {
+	if v != nil {
+		_u.SetTaxAmount(*v)
+	}
+	return _u
+}
+
+// AddTaxAmount adds value to the "tax_amount" field.
+func (_u *OrderUpdate) AddTaxAmount(v int64) *OrderUpdate {
+	_u.mutation.AddTaxAmount(v)
+	return _u
+}
+
+// ClearTaxAmount clears the value of the "tax_amount" field.
+func (_u *OrderUpdate) ClearTaxAmount() *OrderUpdate {
+	_u.mutation.ClearTaxAmount()
+	return _u
+}
+
+// SetShippingRegion sets the "shipping_region" field.
+func (_u *OrderUpdate) SetShippingRegion(v string) *OrderUpdate {
+	_u.mutation.SetShippingRegion(v)
+	return _u
+}
+
+// SetNillableShippingRegion sets the "shipping_region" field if the given value is not nil.
+func (_u *OrderUpdate) SetNillableShippingRegion(v *string) *OrderUpdate {
+	if v != nil {
+		_u.SetShippingRegion(*v)
+	}
+	return _u
+}
+
+// ClearShippingRegion clears the value of the "shipping_region" field.
+func (_u *OrderUpdate) ClearShippingRegion() *OrderUpdate {
+	_u.mutation.ClearShippingRegion()
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *OrderUpdate) SetStatus(v order.Status) *OrderUpdate {
 	_u.mutation.SetStatus(v)
@@ -556,6 +630,30 @@ func (_u *OrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.DiscountAmountCleared() {
 		_spec.ClearField(order.FieldDiscountAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.ShippingFee(); ok {
+		_spec.SetField(order.FieldShippingFee, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedShippingFee(); ok {
+		_spec.AddField(order.FieldShippingFee, field.TypeInt64, value)
+	}
+	if _u.mutation.ShippingFeeCleared() {
+		_spec.ClearField(order.FieldShippingFee, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.TaxAmount(); ok {
+		_spec.SetField(order.FieldTaxAmount, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedTaxAmount(); ok {
+		_spec.AddField(order.FieldTaxAmount, field.TypeInt64, value)
+	}
+	if _u.mutation.TaxAmountCleared() {
+		_spec.ClearField(order.FieldTaxAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.ShippingRegion(); ok {
+		_spec.SetField(order.FieldShippingRegion, field.TypeString, value)
+	}
+	if _u.mutation.ShippingRegionCleared() {
+		_spec.ClearField(order.FieldShippingRegion, field.TypeString)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeEnum, value)
@@ -892,6 +990,80 @@ func (_u *OrderUpdateOne) ClearDiscountAmount() *OrderUpdateOne {
 	return _u
 }
 
+// SetShippingFee sets the "shipping_fee" field.
+func (_u *OrderUpdateOne) SetShippingFee(v int64) *OrderUpdateOne {
+	_u.mutation.ResetShippingFee()
+	_u.mutation.SetShippingFee(v)
+	return _u
+}
+
+// SetNillableShippingFee sets the "shipping_fee" field if the given value is not nil.
+func (_u *OrderUpdateOne) SetNillableShippingFee(v *int64) *OrderUpdateOne {
+	if v != nil {
+		_u.SetShippingFee(*v)
+	}
+	return _u
+}
+
+// AddShippingFee adds value to the "shipping_fee" field.
+func (_u *OrderUpdateOne) AddShippingFee(v int64) *OrderUpdateOne {
+	_u.mutation.AddShippingFee(v)
+	return _u
+}
+
+// ClearShippingFee clears the value of the "shipping_fee" field.
+func (_u *OrderUpdateOne) ClearShippingFee() *OrderUpdateOne {
+	_u.mutation.ClearShippingFee()
+	return _u
+}
+
+// SetTaxAmount sets the "tax_amount" field.
+func (_u *OrderUpdateOne) SetTaxAmount(v int64) *OrderUpdateOne {
+	_u.mutation.ResetTaxAmount()
+	_u.mutation.SetTaxAmount(v)
+	return _u
+}
+
+// SetNillableTaxAmount sets the "tax_amount" field if the given value is not nil.
+func (_u *OrderUpdateOne) SetNillableTaxAmount(v *int64) *OrderUpdateOne {
+	if v != nil {
+		_u.SetTaxAmount(*v)
+	}
+	return _u
+}
+
+// AddTaxAmount adds value to the "tax_amount" field.
+func (_u *OrderUpdateOne) AddTaxAmount(v int64) *OrderUpdateOne {
+	_u.mutation.AddTaxAmount(v)
+	return _u
+}
+
+// ClearTaxAmount clears the value of the "tax_amount" field.
+func (_u *OrderUpdateOne) ClearTaxAmount() *OrderUpdateOne {
+	_u.mutation.ClearTaxAmount()
+	return _u
+}
+
+// SetShippingRegion sets the "shipping_region" field.
+func (_u *OrderUpdateOne) SetShippingRegion(v string) *OrderUpdateOne {
+	_u.mutation.SetShippingRegion(v)
+	return _u
+}
+
+// SetNillableShippingRegion sets the "shipping_region" field if the given value is not nil.
+func (_u *OrderUpdateOne) SetNillableShippingRegion(v *string) *OrderUpdateOne {
+	if v != nil {
+		_u.SetShippingRegion(*v)
+	}
+	return _u
+}
+
+// ClearShippingRegion clears the value of the "shipping_region" field.
+func (_u *OrderUpdateOne) ClearShippingRegion() *OrderUpdateOne {
+	_u.mutation.ClearShippingRegion()
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *OrderUpdateOne) SetStatus(v order.Status) *OrderUpdateOne {
 	_u.mutation.SetStatus(v)
@@ -1160,6 +1332,30 @@ func (_u *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error)
 	}
 	if _u.mutation.DiscountAmountCleared() {
 		_spec.ClearField(order.FieldDiscountAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.ShippingFee(); ok {
+		_spec.SetField(order.FieldShippingFee, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedShippingFee(); ok {
+		_spec.AddField(order.FieldShippingFee, field.TypeInt64, value)
+	}
+	if _u.mutation.ShippingFeeCleared() {
+		_spec.ClearField(order.FieldShippingFee, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.TaxAmount(); ok {
+		_spec.SetField(order.FieldTaxAmount, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedTaxAmount(); ok {
+		_spec.AddField(order.FieldTaxAmount, field.TypeInt64, value)
+	}
+	if _u.mutation.TaxAmountCleared() {
+		_spec.ClearField(order.FieldTaxAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.ShippingRegion(); ok {
+		_spec.SetField(order.FieldShippingRegion, field.TypeString, value)
+	}
+	if _u.mutation.ShippingRegionCleared() {
+		_spec.ClearField(order.FieldShippingRegion, field.TypeString)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeEnum, value)

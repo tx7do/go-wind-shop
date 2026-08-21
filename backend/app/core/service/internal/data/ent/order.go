@@ -46,6 +46,12 @@ type Order struct {
 	OriginalAmount *int64 `json:"original_amount,omitempty"`
 	// 优惠券抵扣额（最小货币单位，分；未用券为 0；审计/对账用）
 	DiscountAmount *int64 `json:"discount_amount,omitempty"`
+	// 运费（最小货币单位，分；无运费规则时为 0；审计/对账用）
+	ShippingFee *int64 `json:"shipping_fee,omitempty"`
+	// 税费（最小货币单位，分；无税率规则时为 0；审计/对账用）
+	TaxAmount *int64 `json:"tax_amount,omitempty"`
+	// 收货地区代码（ISO 3166；运费/税率计算输入；审计/对账用）
+	ShippingRegion *string `json:"shipping_region,omitempty"`
 	// 订单状态
 	Status *order.Status `json:"status,omitempty"`
 	// 收件人姓名
@@ -62,9 +68,9 @@ func (*Order) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case order.FieldID, order.FieldCreatedBy, order.FieldUpdatedBy, order.FieldDeletedBy, order.FieldTenantID, order.FieldUserID, order.FieldTotalAmount, order.FieldOriginalAmount, order.FieldDiscountAmount:
+		case order.FieldID, order.FieldCreatedBy, order.FieldUpdatedBy, order.FieldDeletedBy, order.FieldTenantID, order.FieldUserID, order.FieldTotalAmount, order.FieldOriginalAmount, order.FieldDiscountAmount, order.FieldShippingFee, order.FieldTaxAmount:
 			values[i] = new(sql.NullInt64)
-		case order.FieldCurrency, order.FieldBusinessRefID, order.FieldIdempotencyKey, order.FieldStatus, order.FieldRecipientName, order.FieldRecipientPhone, order.FieldShippingAddress:
+		case order.FieldCurrency, order.FieldBusinessRefID, order.FieldIdempotencyKey, order.FieldShippingRegion, order.FieldStatus, order.FieldRecipientName, order.FieldRecipientPhone, order.FieldShippingAddress:
 			values[i] = new(sql.NullString)
 		case order.FieldCreatedAt, order.FieldUpdatedAt, order.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -186,6 +192,27 @@ func (_m *Order) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				_m.DiscountAmount = new(int64)
 				*_m.DiscountAmount = value.Int64
+			}
+		case order.FieldShippingFee:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field shipping_fee", values[i])
+			} else if value.Valid {
+				_m.ShippingFee = new(int64)
+				*_m.ShippingFee = value.Int64
+			}
+		case order.FieldTaxAmount:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field tax_amount", values[i])
+			} else if value.Valid {
+				_m.TaxAmount = new(int64)
+				*_m.TaxAmount = value.Int64
+			}
+		case order.FieldShippingRegion:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field shipping_region", values[i])
+			} else if value.Valid {
+				_m.ShippingRegion = new(string)
+				*_m.ShippingRegion = value.String
 			}
 		case order.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -319,6 +346,21 @@ func (_m *Order) String() string {
 	if v := _m.DiscountAmount; v != nil {
 		builder.WriteString("discount_amount=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.ShippingFee; v != nil {
+		builder.WriteString("shipping_fee=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.TaxAmount; v != nil {
+		builder.WriteString("tax_amount=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.ShippingRegion; v != nil {
+		builder.WriteString("shipping_region=")
+		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
 	if v := _m.Status; v != nil {

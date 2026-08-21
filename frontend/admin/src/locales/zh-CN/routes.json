@@ -57,6 +57,8 @@
     "refund": "退款管理",
     "financeOverview": "财务总览",
     "shipment": "物流管理",
+    "shippingRate": "运费模板",
+    "taxRate": "税率规则",
     "couponTemplate": "优惠券模板",
     "userCoupon": "用户优惠券"
   },

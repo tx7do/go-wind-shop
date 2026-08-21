@@ -211,9 +211,10 @@ const file_app_service_v1_i_authentication_proto_rawDesc = "" +
 	"\x05email\x18\x01 \x01(\tB\x12\xbaG\x0f\x92\x02\f注册邮箱R\x05email\x122\n" +
 	"\x04code\x18\x02 \x01(\tB\x1e\xbaG\x1b\x92\x02\x18邮箱收到的验证码R\x04code\x122\n" +
 	"\fnew_password\x18\x03 \x01(\tB\x0f\xbaG\f\x92\x02\t新密码R\vnewPassword\x12I\n" +
-	"\fneed_decrypt\x18\x04 \x01(\bB&\xbaG#\x92\x02 新密码是否需要 AES 解密R\vneedDecrypt2\xec\x04\n" +
+	"\fneed_decrypt\x18\x04 \x01(\bB&\xbaG#\x92\x02 新密码是否需要 AES 解密R\vneedDecrypt2\xfc\x05\n" +
 	"\x15AuthenticationService\x12y\n" +
-	"\x05Login\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\"\x1d\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/app/v1/login\x12S\n" +
+	"\x05Login\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\"\x1d\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x12:\x01*\"\r/app/v1/login\x12\x8d\x01\n" +
+	"\bRegister\x12..authentication.service.v1.RegisterUserRequest\x1a/.authentication.service.v1.RegisterUserResponse\" \xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/app/v1/register\x12S\n" +
 	"\x06Logout\x12\x16.google.protobuf.Empty\x1a\x16.google.protobuf.Empty\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/app/v1/logout\x12\x83\x01\n" +
 	"\fRefreshToken\x12'.authentication.service.v1.LoginRequest\x1a(.authentication.service.v1.LoginResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/app/v1/refresh-token\x12\x85\x01\n" +
 	"\rSendResetCode\x12$.app.service.v1.SendResetCodeRequest\x1a%.app.service.v1.SendResetCodeResponse\"'\xbaG\x02Z\x00\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/app/v1/send-reset-code\x12u\n" +
@@ -234,26 +235,30 @@ func file_app_service_v1_i_authentication_proto_rawDescGZIP() []byte {
 
 var file_app_service_v1_i_authentication_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_app_service_v1_i_authentication_proto_goTypes = []any{
-	(*SendResetCodeRequest)(nil),  // 0: app.service.v1.SendResetCodeRequest
-	(*SendResetCodeResponse)(nil), // 1: app.service.v1.SendResetCodeResponse
-	(*ResetPasswordRequest)(nil),  // 2: app.service.v1.ResetPasswordRequest
-	(*v1.LoginRequest)(nil),       // 3: authentication.service.v1.LoginRequest
-	(*emptypb.Empty)(nil),         // 4: google.protobuf.Empty
-	(*v1.LoginResponse)(nil),      // 5: authentication.service.v1.LoginResponse
+	(*SendResetCodeRequest)(nil),    // 0: app.service.v1.SendResetCodeRequest
+	(*SendResetCodeResponse)(nil),   // 1: app.service.v1.SendResetCodeResponse
+	(*ResetPasswordRequest)(nil),    // 2: app.service.v1.ResetPasswordRequest
+	(*v1.LoginRequest)(nil),         // 3: authentication.service.v1.LoginRequest
+	(*v1.RegisterUserRequest)(nil),  // 4: authentication.service.v1.RegisterUserRequest
+	(*emptypb.Empty)(nil),           // 5: google.protobuf.Empty
+	(*v1.LoginResponse)(nil),        // 6: authentication.service.v1.LoginResponse
+	(*v1.RegisterUserResponse)(nil), // 7: authentication.service.v1.RegisterUserResponse
 }
 var file_app_service_v1_i_authentication_proto_depIdxs = []int32{
 	3, // 0: app.service.v1.AuthenticationService.Login:input_type -> authentication.service.v1.LoginRequest
-	4, // 1: app.service.v1.AuthenticationService.Logout:input_type -> google.protobuf.Empty
-	3, // 2: app.service.v1.AuthenticationService.RefreshToken:input_type -> authentication.service.v1.LoginRequest
-	0, // 3: app.service.v1.AuthenticationService.SendResetCode:input_type -> app.service.v1.SendResetCodeRequest
-	2, // 4: app.service.v1.AuthenticationService.ResetPassword:input_type -> app.service.v1.ResetPasswordRequest
-	5, // 5: app.service.v1.AuthenticationService.Login:output_type -> authentication.service.v1.LoginResponse
-	4, // 6: app.service.v1.AuthenticationService.Logout:output_type -> google.protobuf.Empty
-	5, // 7: app.service.v1.AuthenticationService.RefreshToken:output_type -> authentication.service.v1.LoginResponse
-	1, // 8: app.service.v1.AuthenticationService.SendResetCode:output_type -> app.service.v1.SendResetCodeResponse
-	4, // 9: app.service.v1.AuthenticationService.ResetPassword:output_type -> google.protobuf.Empty
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
+	4, // 1: app.service.v1.AuthenticationService.Register:input_type -> authentication.service.v1.RegisterUserRequest
+	5, // 2: app.service.v1.AuthenticationService.Logout:input_type -> google.protobuf.Empty
+	3, // 3: app.service.v1.AuthenticationService.RefreshToken:input_type -> authentication.service.v1.LoginRequest
+	0, // 4: app.service.v1.AuthenticationService.SendResetCode:input_type -> app.service.v1.SendResetCodeRequest
+	2, // 5: app.service.v1.AuthenticationService.ResetPassword:input_type -> app.service.v1.ResetPasswordRequest
+	6, // 6: app.service.v1.AuthenticationService.Login:output_type -> authentication.service.v1.LoginResponse
+	7, // 7: app.service.v1.AuthenticationService.Register:output_type -> authentication.service.v1.RegisterUserResponse
+	5, // 8: app.service.v1.AuthenticationService.Logout:output_type -> google.protobuf.Empty
+	6, // 9: app.service.v1.AuthenticationService.RefreshToken:output_type -> authentication.service.v1.LoginResponse
+	1, // 10: app.service.v1.AuthenticationService.SendResetCode:output_type -> app.service.v1.SendResetCodeResponse
+	5, // 11: app.service.v1.AuthenticationService.ResetPassword:output_type -> google.protobuf.Empty
+	6, // [6:12] is the sub-list for method output_type
+	0, // [0:6] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

@@ -110,6 +110,21 @@ message Order {
     (gnostic.openapi.v3.property) = {description: "优惠券抵扣额（最小货币单位，分；未用券为 0；审计/对账用）"}
   ];
 
+  optional int64 shipping_fee = 13 [
+    json_name = "shippingFee",
+    (gnostic.openapi.v3.property) = {description: "运费（最小货币单位，分；无运费规则时为 0；审计/对账用）"}
+  ];
+
+  optional int64 tax_amount = 14 [
+    json_name = "taxAmount",
+    (gnostic.openapi.v3.property) = {description: "税费（最小货币单位，分；无税率规则时为 0；审计/对账用）"}
+  ];
+
+  optional string shipping_region = 15 [
+    json_name = "shippingRegion",
+    (gnostic.openapi.v3.property) = {description: "收货地区代码（ISO 3166；运费/税率计算输入；审计/对账用）"}
+  ];
+
   optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
 
   optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];

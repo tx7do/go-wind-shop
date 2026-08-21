@@ -71,6 +71,28 @@ const trade: RouteRecordRaw[] = [
         component: () => import("@/pages/app/trade/shipment/index.vue"),
       },
       {
+        path: "shipping-rates",
+        name: "TradeShippingRateManagement",
+        meta: {
+          order: 8,
+          icon: "lucide:package",
+          title: "routes.trade.shippingRate",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/shipping-rate/index.vue"),
+      },
+      {
+        path: "tax-rates",
+        name: "TradeTaxRateManagement",
+        meta: {
+          order: 9,
+          icon: "lucide:percent",
+          title: "routes.trade.taxRate",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/tax-rate/index.vue"),
+      },
+      {
         path: "coupon-templates",
         name: "TradeCouponTemplateManagement",
         meta: {

@@ -57,10 +57,12 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-shop/app/core/service/internal/data/ent/shipment"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingaddress"
+	"go-wind-shop/app/core/service/internal/data/ent/shippingrate"
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 	"go-wind-shop/app/core/service/internal/data/ent/task"
+	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
 	"go-wind-shop/app/core/service/internal/data/ent/tenant"
 	"go-wind-shop/app/core/service/internal/data/ent/user"
 	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
@@ -131,10 +133,12 @@ const (
 	TypeRolePermission                   = "RolePermission"
 	TypeShipment                         = "Shipment"
 	TypeShippingAddress                  = "ShippingAddress"
+	TypeShippingRate                     = "ShippingRate"
 	TypeSku                              = "Sku"
 	TypeSkuAttributeCombination          = "SkuAttributeCombination"
 	TypeSkuPrice                         = "SkuPrice"
 	TypeTask                             = "Task"
+	TypeTaxRate                          = "TaxRate"
 	TypeTenant                           = "Tenant"
 	TypeUser                             = "User"
 	TypeUserCoupon                       = "UserCoupon"
@@ -35976,6 +35980,11 @@ type OrderMutation struct {
 	addoriginal_amount *int64
 	discount_amount    *int64
 	adddiscount_amount *int64
+	shipping_fee       *int64
+	addshipping_fee    *int64
+	tax_amount         *int64
+	addtax_amount      *int64
+	shipping_region    *string
 	status             *order.Status
 	recipient_name     *string
 	recipient_phone    *string
@@ -36944,6 +36953,195 @@ func (m *OrderMutation) ResetDiscountAmount() {
 	delete(m.clearedFields, order.FieldDiscountAmount)
 }
 
+// SetShippingFee sets the "shipping_fee" field.
+func (m *OrderMutation) SetShippingFee(i int64) {
+	m.shipping_fee = &i
+	m.addshipping_fee = nil
+}
+
+// ShippingFee returns the value of the "shipping_fee" field in the mutation.
+func (m *OrderMutation) ShippingFee() (r int64, exists bool) {
+	v := m.shipping_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldShippingFee returns the old "shipping_fee" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldShippingFee(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldShippingFee is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldShippingFee requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldShippingFee: %w", err)
+	}
+	return oldValue.ShippingFee, nil
+}
+
+// AddShippingFee adds i to the "shipping_fee" field.
+func (m *OrderMutation) AddShippingFee(i int64) {
+	if m.addshipping_fee != nil {
+		*m.addshipping_fee += i
+	} else {
+		m.addshipping_fee = &i
+	}
+}
+
+// AddedShippingFee returns the value that was added to the "shipping_fee" field in this mutation.
+func (m *OrderMutation) AddedShippingFee() (r int64, exists bool) {
+	v := m.addshipping_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearShippingFee clears the value of the "shipping_fee" field.
+func (m *OrderMutation) ClearShippingFee() {
+	m.shipping_fee = nil
+	m.addshipping_fee = nil
+	m.clearedFields[order.FieldShippingFee] = struct{}{}
+}
+
+// ShippingFeeCleared returns if the "shipping_fee" field was cleared in this mutation.
+func (m *OrderMutation) ShippingFeeCleared() bool {
+	_, ok := m.clearedFields[order.FieldShippingFee]
+	return ok
+}
+
+// ResetShippingFee resets all changes to the "shipping_fee" field.
+func (m *OrderMutation) ResetShippingFee() {
+	m.shipping_fee = nil
+	m.addshipping_fee = nil
+	delete(m.clearedFields, order.FieldShippingFee)
+}
+
+// SetTaxAmount sets the "tax_amount" field.
+func (m *OrderMutation) SetTaxAmount(i int64) {
+	m.tax_amount = &i
+	m.addtax_amount = nil
+}
+
+// TaxAmount returns the value of the "tax_amount" field in the mutation.
+func (m *OrderMutation) TaxAmount() (r int64, exists bool) {
+	v := m.tax_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTaxAmount returns the old "tax_amount" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldTaxAmount(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTaxAmount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTaxAmount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTaxAmount: %w", err)
+	}
+	return oldValue.TaxAmount, nil
+}
+
+// AddTaxAmount adds i to the "tax_amount" field.
+func (m *OrderMutation) AddTaxAmount(i int64) {
+	if m.addtax_amount != nil {
+		*m.addtax_amount += i
+	} else {
+		m.addtax_amount = &i
+	}
+}
+
+// AddedTaxAmount returns the value that was added to the "tax_amount" field in this mutation.
+func (m *OrderMutation) AddedTaxAmount() (r int64, exists bool) {
+	v := m.addtax_amount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTaxAmount clears the value of the "tax_amount" field.
+func (m *OrderMutation) ClearTaxAmount() {
+	m.tax_amount = nil
+	m.addtax_amount = nil
+	m.clearedFields[order.FieldTaxAmount] = struct{}{}
+}
+
+// TaxAmountCleared returns if the "tax_amount" field was cleared in this mutation.
+func (m *OrderMutation) TaxAmountCleared() bool {
+	_, ok := m.clearedFields[order.FieldTaxAmount]
+	return ok
+}
+
+// ResetTaxAmount resets all changes to the "tax_amount" field.
+func (m *OrderMutation) ResetTaxAmount() {
+	m.tax_amount = nil
+	m.addtax_amount = nil
+	delete(m.clearedFields, order.FieldTaxAmount)
+}
+
+// SetShippingRegion sets the "shipping_region" field.
+func (m *OrderMutation) SetShippingRegion(s string) {
+	m.shipping_region = &s
+}
+
+// ShippingRegion returns the value of the "shipping_region" field in the mutation.
+func (m *OrderMutation) ShippingRegion() (r string, exists bool) {
+	v := m.shipping_region
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldShippingRegion returns the old "shipping_region" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldShippingRegion(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldShippingRegion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldShippingRegion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldShippingRegion: %w", err)
+	}
+	return oldValue.ShippingRegion, nil
+}
+
+// ClearShippingRegion clears the value of the "shipping_region" field.
+func (m *OrderMutation) ClearShippingRegion() {
+	m.shipping_region = nil
+	m.clearedFields[order.FieldShippingRegion] = struct{}{}
+}
+
+// ShippingRegionCleared returns if the "shipping_region" field was cleared in this mutation.
+func (m *OrderMutation) ShippingRegionCleared() bool {
+	_, ok := m.clearedFields[order.FieldShippingRegion]
+	return ok
+}
+
+// ResetShippingRegion resets all changes to the "shipping_region" field.
+func (m *OrderMutation) ResetShippingRegion() {
+	m.shipping_region = nil
+	delete(m.clearedFields, order.FieldShippingRegion)
+}
+
 // SetStatus sets the "status" field.
 func (m *OrderMutation) SetStatus(o order.Status) {
 	m.status = &o
@@ -37174,7 +37372,7 @@ func (m *OrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 21)
 	if m.created_at != nil {
 		fields = append(fields, order.FieldCreatedAt)
 	}
@@ -37216,6 +37414,15 @@ func (m *OrderMutation) Fields() []string {
 	}
 	if m.discount_amount != nil {
 		fields = append(fields, order.FieldDiscountAmount)
+	}
+	if m.shipping_fee != nil {
+		fields = append(fields, order.FieldShippingFee)
+	}
+	if m.tax_amount != nil {
+		fields = append(fields, order.FieldTaxAmount)
+	}
+	if m.shipping_region != nil {
+		fields = append(fields, order.FieldShippingRegion)
 	}
 	if m.status != nil {
 		fields = append(fields, order.FieldStatus)
@@ -37265,6 +37472,12 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 		return m.OriginalAmount()
 	case order.FieldDiscountAmount:
 		return m.DiscountAmount()
+	case order.FieldShippingFee:
+		return m.ShippingFee()
+	case order.FieldTaxAmount:
+		return m.TaxAmount()
+	case order.FieldShippingRegion:
+		return m.ShippingRegion()
 	case order.FieldStatus:
 		return m.Status()
 	case order.FieldRecipientName:
@@ -37310,6 +37523,12 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldOriginalAmount(ctx)
 	case order.FieldDiscountAmount:
 		return m.OldDiscountAmount(ctx)
+	case order.FieldShippingFee:
+		return m.OldShippingFee(ctx)
+	case order.FieldTaxAmount:
+		return m.OldTaxAmount(ctx)
+	case order.FieldShippingRegion:
+		return m.OldShippingRegion(ctx)
 	case order.FieldStatus:
 		return m.OldStatus(ctx)
 	case order.FieldRecipientName:
@@ -37425,6 +37644,27 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetDiscountAmount(v)
 		return nil
+	case order.FieldShippingFee:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetShippingFee(v)
+		return nil
+	case order.FieldTaxAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTaxAmount(v)
+		return nil
+	case order.FieldShippingRegion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetShippingRegion(v)
+		return nil
 	case order.FieldStatus:
 		v, ok := value.(order.Status)
 		if !ok {
@@ -37485,6 +37725,12 @@ func (m *OrderMutation) AddedFields() []string {
 	if m.adddiscount_amount != nil {
 		fields = append(fields, order.FieldDiscountAmount)
 	}
+	if m.addshipping_fee != nil {
+		fields = append(fields, order.FieldShippingFee)
+	}
+	if m.addtax_amount != nil {
+		fields = append(fields, order.FieldTaxAmount)
+	}
 	return fields
 }
 
@@ -37509,6 +37755,10 @@ func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedOriginalAmount()
 	case order.FieldDiscountAmount:
 		return m.AddedDiscountAmount()
+	case order.FieldShippingFee:
+		return m.AddedShippingFee()
+	case order.FieldTaxAmount:
+		return m.AddedTaxAmount()
 	}
 	return nil, false
 }
@@ -37574,6 +37824,20 @@ func (m *OrderMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddDiscountAmount(v)
 		return nil
+	case order.FieldShippingFee:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddShippingFee(v)
+		return nil
+	case order.FieldTaxAmount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTaxAmount(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Order numeric field %s", name)
 }
@@ -37623,6 +37887,15 @@ func (m *OrderMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(order.FieldDiscountAmount) {
 		fields = append(fields, order.FieldDiscountAmount)
+	}
+	if m.FieldCleared(order.FieldShippingFee) {
+		fields = append(fields, order.FieldShippingFee)
+	}
+	if m.FieldCleared(order.FieldTaxAmount) {
+		fields = append(fields, order.FieldTaxAmount)
+	}
+	if m.FieldCleared(order.FieldShippingRegion) {
+		fields = append(fields, order.FieldShippingRegion)
 	}
 	if m.FieldCleared(order.FieldStatus) {
 		fields = append(fields, order.FieldStatus)
@@ -37692,6 +37965,15 @@ func (m *OrderMutation) ClearField(name string) error {
 	case order.FieldDiscountAmount:
 		m.ClearDiscountAmount()
 		return nil
+	case order.FieldShippingFee:
+		m.ClearShippingFee()
+		return nil
+	case order.FieldTaxAmount:
+		m.ClearTaxAmount()
+		return nil
+	case order.FieldShippingRegion:
+		m.ClearShippingRegion()
+		return nil
 	case order.FieldStatus:
 		m.ClearStatus()
 		return nil
@@ -37753,6 +38035,15 @@ func (m *OrderMutation) ResetField(name string) error {
 		return nil
 	case order.FieldDiscountAmount:
 		m.ResetDiscountAmount()
+		return nil
+	case order.FieldShippingFee:
+		m.ResetShippingFee()
+		return nil
+	case order.FieldTaxAmount:
+		m.ResetTaxAmount()
+		return nil
+	case order.FieldShippingRegion:
+		m.ResetShippingRegion()
 		return nil
 	case order.FieldStatus:
 		m.ResetStatus()
@@ -71024,6 +71315,1370 @@ func (m *ShippingAddressMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown ShippingAddress edge %s", name)
 }
 
+// ShippingRateMutation represents an operation that mutates the ShippingRate nodes in the graph.
+type ShippingRateMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *uint32
+	created_at      *time.Time
+	updated_at      *time.Time
+	deleted_at      *time.Time
+	created_by      *uint32
+	addcreated_by   *int32
+	updated_by      *uint32
+	addupdated_by   *int32
+	deleted_by      *uint32
+	adddeleted_by   *int32
+	tenant_id       *uint32
+	addtenant_id    *int32
+	currency        *string
+	region          *string
+	base_fee        *int64
+	addbase_fee     *int64
+	per_unit_fee    *int64
+	addper_unit_fee *int64
+	status          *shippingrate.Status
+	clearedFields   map[string]struct{}
+	done            bool
+	oldValue        func(context.Context) (*ShippingRate, error)
+	predicates      []predicate.ShippingRate
+}
+
+var _ ent.Mutation = (*ShippingRateMutation)(nil)
+
+// shippingrateOption allows management of the mutation configuration using functional options.
+type shippingrateOption func(*ShippingRateMutation)
+
+// newShippingRateMutation creates new mutation for the ShippingRate entity.
+func newShippingRateMutation(c config, op Op, opts ...shippingrateOption) *ShippingRateMutation {
+	m := &ShippingRateMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeShippingRate,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withShippingRateID sets the ID field of the mutation.
+func withShippingRateID(id uint32) shippingrateOption {
+	return func(m *ShippingRateMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ShippingRate
+		)
+		m.oldValue = func(ctx context.Context) (*ShippingRate, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ShippingRate.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withShippingRate sets the old ShippingRate of the mutation.
+func withShippingRate(node *ShippingRate) shippingrateOption {
+	return func(m *ShippingRateMutation) {
+		m.oldValue = func(context.Context) (*ShippingRate, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ShippingRateMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ShippingRateMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ShippingRate entities.
+func (m *ShippingRateMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ShippingRateMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ShippingRateMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ShippingRate.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ShippingRateMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ShippingRateMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ShippingRate entity.
+// If the ShippingRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ShippingRateMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *ShippingRateMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[shippingrate.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *ShippingRateMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[shippingrate.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ShippingRateMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, shippingrate.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ShippingRateMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ShippingRateMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ShippingRate entity.
+// If the ShippingRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ShippingRateMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *ShippingRateMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[shippingrate.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *ShippingRateMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[shippingrate.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ShippingRateMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, shippingrate.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *ShippingRateMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *ShippingRateMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the ShippingRate entity.
+// If the ShippingRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ShippingRateMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *ShippingRateMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[shippingrate.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *ShippingRateMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[shippingrate.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *ShippingRateMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, shippingrate.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *ShippingRateMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *ShippingRateMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the ShippingRate entity.
+// If the ShippingRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ShippingRateMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *ShippingRateMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *ShippingRateMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *ShippingRateMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[shippingrate.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *ShippingRateMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[shippingrate.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *ShippingRateMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, shippingrate.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *ShippingRateMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *ShippingRateMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the ShippingRate entity.
+// If the ShippingRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ShippingRateMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *ShippingRateMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *ShippingRateMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *ShippingRateMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[shippingrate.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *ShippingRateMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[shippingrate.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *ShippingRateMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, shippingrate.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *ShippingRateMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *ShippingRateMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the ShippingRate entity.
+// If the ShippingRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ShippingRateMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *ShippingRateMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *ShippingRateMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *ShippingRateMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[shippingrate.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *ShippingRateMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[shippingrate.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *ShippingRateMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, shippingrate.FieldDeletedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *ShippingRateMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *ShippingRateMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the ShippingRate entity.
+// If the ShippingRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ShippingRateMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *ShippingRateMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *ShippingRateMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *ShippingRateMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[shippingrate.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *ShippingRateMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[shippingrate.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *ShippingRateMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, shippingrate.FieldTenantID)
+}
+
+// SetCurrency sets the "currency" field.
+func (m *ShippingRateMutation) SetCurrency(s string) {
+	m.currency = &s
+}
+
+// Currency returns the value of the "currency" field in the mutation.
+func (m *ShippingRateMutation) Currency() (r string, exists bool) {
+	v := m.currency
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrency returns the old "currency" field's value of the ShippingRate entity.
+// If the ShippingRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ShippingRateMutation) OldCurrency(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrency is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrency requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrency: %w", err)
+	}
+	return oldValue.Currency, nil
+}
+
+// ClearCurrency clears the value of the "currency" field.
+func (m *ShippingRateMutation) ClearCurrency() {
+	m.currency = nil
+	m.clearedFields[shippingrate.FieldCurrency] = struct{}{}
+}
+
+// CurrencyCleared returns if the "currency" field was cleared in this mutation.
+func (m *ShippingRateMutation) CurrencyCleared() bool {
+	_, ok := m.clearedFields[shippingrate.FieldCurrency]
+	return ok
+}
+
+// ResetCurrency resets all changes to the "currency" field.
+func (m *ShippingRateMutation) ResetCurrency() {
+	m.currency = nil
+	delete(m.clearedFields, shippingrate.FieldCurrency)
+}
+
+// SetRegion sets the "region" field.
+func (m *ShippingRateMutation) SetRegion(s string) {
+	m.region = &s
+}
+
+// Region returns the value of the "region" field in the mutation.
+func (m *ShippingRateMutation) Region() (r string, exists bool) {
+	v := m.region
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRegion returns the old "region" field's value of the ShippingRate entity.
+// If the ShippingRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ShippingRateMutation) OldRegion(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRegion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRegion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRegion: %w", err)
+	}
+	return oldValue.Region, nil
+}
+
+// ClearRegion clears the value of the "region" field.
+func (m *ShippingRateMutation) ClearRegion() {
+	m.region = nil
+	m.clearedFields[shippingrate.FieldRegion] = struct{}{}
+}
+
+// RegionCleared returns if the "region" field was cleared in this mutation.
+func (m *ShippingRateMutation) RegionCleared() bool {
+	_, ok := m.clearedFields[shippingrate.FieldRegion]
+	return ok
+}
+
+// ResetRegion resets all changes to the "region" field.
+func (m *ShippingRateMutation) ResetRegion() {
+	m.region = nil
+	delete(m.clearedFields, shippingrate.FieldRegion)
+}
+
+// SetBaseFee sets the "base_fee" field.
+func (m *ShippingRateMutation) SetBaseFee(i int64) {
+	m.base_fee = &i
+	m.addbase_fee = nil
+}
+
+// BaseFee returns the value of the "base_fee" field in the mutation.
+func (m *ShippingRateMutation) BaseFee() (r int64, exists bool) {
+	v := m.base_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBaseFee returns the old "base_fee" field's value of the ShippingRate entity.
+// If the ShippingRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ShippingRateMutation) OldBaseFee(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBaseFee is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBaseFee requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBaseFee: %w", err)
+	}
+	return oldValue.BaseFee, nil
+}
+
+// AddBaseFee adds i to the "base_fee" field.
+func (m *ShippingRateMutation) AddBaseFee(i int64) {
+	if m.addbase_fee != nil {
+		*m.addbase_fee += i
+	} else {
+		m.addbase_fee = &i
+	}
+}
+
+// AddedBaseFee returns the value that was added to the "base_fee" field in this mutation.
+func (m *ShippingRateMutation) AddedBaseFee() (r int64, exists bool) {
+	v := m.addbase_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearBaseFee clears the value of the "base_fee" field.
+func (m *ShippingRateMutation) ClearBaseFee() {
+	m.base_fee = nil
+	m.addbase_fee = nil
+	m.clearedFields[shippingrate.FieldBaseFee] = struct{}{}
+}
+
+// BaseFeeCleared returns if the "base_fee" field was cleared in this mutation.
+func (m *ShippingRateMutation) BaseFeeCleared() bool {
+	_, ok := m.clearedFields[shippingrate.FieldBaseFee]
+	return ok
+}
+
+// ResetBaseFee resets all changes to the "base_fee" field.
+func (m *ShippingRateMutation) ResetBaseFee() {
+	m.base_fee = nil
+	m.addbase_fee = nil
+	delete(m.clearedFields, shippingrate.FieldBaseFee)
+}
+
+// SetPerUnitFee sets the "per_unit_fee" field.
+func (m *ShippingRateMutation) SetPerUnitFee(i int64) {
+	m.per_unit_fee = &i
+	m.addper_unit_fee = nil
+}
+
+// PerUnitFee returns the value of the "per_unit_fee" field in the mutation.
+func (m *ShippingRateMutation) PerUnitFee() (r int64, exists bool) {
+	v := m.per_unit_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPerUnitFee returns the old "per_unit_fee" field's value of the ShippingRate entity.
+// If the ShippingRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ShippingRateMutation) OldPerUnitFee(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPerUnitFee is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPerUnitFee requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPerUnitFee: %w", err)
+	}
+	return oldValue.PerUnitFee, nil
+}
+
+// AddPerUnitFee adds i to the "per_unit_fee" field.
+func (m *ShippingRateMutation) AddPerUnitFee(i int64) {
+	if m.addper_unit_fee != nil {
+		*m.addper_unit_fee += i
+	} else {
+		m.addper_unit_fee = &i
+	}
+}
+
+// AddedPerUnitFee returns the value that was added to the "per_unit_fee" field in this mutation.
+func (m *ShippingRateMutation) AddedPerUnitFee() (r int64, exists bool) {
+	v := m.addper_unit_fee
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearPerUnitFee clears the value of the "per_unit_fee" field.
+func (m *ShippingRateMutation) ClearPerUnitFee() {
+	m.per_unit_fee = nil
+	m.addper_unit_fee = nil
+	m.clearedFields[shippingrate.FieldPerUnitFee] = struct{}{}
+}
+
+// PerUnitFeeCleared returns if the "per_unit_fee" field was cleared in this mutation.
+func (m *ShippingRateMutation) PerUnitFeeCleared() bool {
+	_, ok := m.clearedFields[shippingrate.FieldPerUnitFee]
+	return ok
+}
+
+// ResetPerUnitFee resets all changes to the "per_unit_fee" field.
+func (m *ShippingRateMutation) ResetPerUnitFee() {
+	m.per_unit_fee = nil
+	m.addper_unit_fee = nil
+	delete(m.clearedFields, shippingrate.FieldPerUnitFee)
+}
+
+// SetStatus sets the "status" field.
+func (m *ShippingRateMutation) SetStatus(s shippingrate.Status) {
+	m.status = &s
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *ShippingRateMutation) Status() (r shippingrate.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the ShippingRate entity.
+// If the ShippingRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ShippingRateMutation) OldStatus(ctx context.Context) (v *shippingrate.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *ShippingRateMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[shippingrate.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *ShippingRateMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[shippingrate.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *ShippingRateMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, shippingrate.FieldStatus)
+}
+
+// Where appends a list predicates to the ShippingRateMutation builder.
+func (m *ShippingRateMutation) Where(ps ...predicate.ShippingRate) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ShippingRateMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ShippingRateMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ShippingRate, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ShippingRateMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ShippingRateMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ShippingRate).
+func (m *ShippingRateMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ShippingRateMutation) Fields() []string {
+	fields := make([]string, 0, 12)
+	if m.created_at != nil {
+		fields = append(fields, shippingrate.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, shippingrate.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, shippingrate.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, shippingrate.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, shippingrate.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, shippingrate.FieldDeletedBy)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, shippingrate.FieldTenantID)
+	}
+	if m.currency != nil {
+		fields = append(fields, shippingrate.FieldCurrency)
+	}
+	if m.region != nil {
+		fields = append(fields, shippingrate.FieldRegion)
+	}
+	if m.base_fee != nil {
+		fields = append(fields, shippingrate.FieldBaseFee)
+	}
+	if m.per_unit_fee != nil {
+		fields = append(fields, shippingrate.FieldPerUnitFee)
+	}
+	if m.status != nil {
+		fields = append(fields, shippingrate.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ShippingRateMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case shippingrate.FieldCreatedAt:
+		return m.CreatedAt()
+	case shippingrate.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case shippingrate.FieldDeletedAt:
+		return m.DeletedAt()
+	case shippingrate.FieldCreatedBy:
+		return m.CreatedBy()
+	case shippingrate.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case shippingrate.FieldDeletedBy:
+		return m.DeletedBy()
+	case shippingrate.FieldTenantID:
+		return m.TenantID()
+	case shippingrate.FieldCurrency:
+		return m.Currency()
+	case shippingrate.FieldRegion:
+		return m.Region()
+	case shippingrate.FieldBaseFee:
+		return m.BaseFee()
+	case shippingrate.FieldPerUnitFee:
+		return m.PerUnitFee()
+	case shippingrate.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ShippingRateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case shippingrate.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case shippingrate.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case shippingrate.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case shippingrate.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case shippingrate.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case shippingrate.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case shippingrate.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case shippingrate.FieldCurrency:
+		return m.OldCurrency(ctx)
+	case shippingrate.FieldRegion:
+		return m.OldRegion(ctx)
+	case shippingrate.FieldBaseFee:
+		return m.OldBaseFee(ctx)
+	case shippingrate.FieldPerUnitFee:
+		return m.OldPerUnitFee(ctx)
+	case shippingrate.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown ShippingRate field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ShippingRateMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case shippingrate.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case shippingrate.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case shippingrate.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case shippingrate.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case shippingrate.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case shippingrate.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case shippingrate.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case shippingrate.FieldCurrency:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrency(v)
+		return nil
+	case shippingrate.FieldRegion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRegion(v)
+		return nil
+	case shippingrate.FieldBaseFee:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBaseFee(v)
+		return nil
+	case shippingrate.FieldPerUnitFee:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPerUnitFee(v)
+		return nil
+	case shippingrate.FieldStatus:
+		v, ok := value.(shippingrate.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ShippingRate field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ShippingRateMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, shippingrate.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, shippingrate.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, shippingrate.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, shippingrate.FieldTenantID)
+	}
+	if m.addbase_fee != nil {
+		fields = append(fields, shippingrate.FieldBaseFee)
+	}
+	if m.addper_unit_fee != nil {
+		fields = append(fields, shippingrate.FieldPerUnitFee)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ShippingRateMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case shippingrate.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case shippingrate.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case shippingrate.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case shippingrate.FieldTenantID:
+		return m.AddedTenantID()
+	case shippingrate.FieldBaseFee:
+		return m.AddedBaseFee()
+	case shippingrate.FieldPerUnitFee:
+		return m.AddedPerUnitFee()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ShippingRateMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case shippingrate.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case shippingrate.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case shippingrate.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case shippingrate.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case shippingrate.FieldBaseFee:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBaseFee(v)
+		return nil
+	case shippingrate.FieldPerUnitFee:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPerUnitFee(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ShippingRate numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ShippingRateMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(shippingrate.FieldCreatedAt) {
+		fields = append(fields, shippingrate.FieldCreatedAt)
+	}
+	if m.FieldCleared(shippingrate.FieldUpdatedAt) {
+		fields = append(fields, shippingrate.FieldUpdatedAt)
+	}
+	if m.FieldCleared(shippingrate.FieldDeletedAt) {
+		fields = append(fields, shippingrate.FieldDeletedAt)
+	}
+	if m.FieldCleared(shippingrate.FieldCreatedBy) {
+		fields = append(fields, shippingrate.FieldCreatedBy)
+	}
+	if m.FieldCleared(shippingrate.FieldUpdatedBy) {
+		fields = append(fields, shippingrate.FieldUpdatedBy)
+	}
+	if m.FieldCleared(shippingrate.FieldDeletedBy) {
+		fields = append(fields, shippingrate.FieldDeletedBy)
+	}
+	if m.FieldCleared(shippingrate.FieldTenantID) {
+		fields = append(fields, shippingrate.FieldTenantID)
+	}
+	if m.FieldCleared(shippingrate.FieldCurrency) {
+		fields = append(fields, shippingrate.FieldCurrency)
+	}
+	if m.FieldCleared(shippingrate.FieldRegion) {
+		fields = append(fields, shippingrate.FieldRegion)
+	}
+	if m.FieldCleared(shippingrate.FieldBaseFee) {
+		fields = append(fields, shippingrate.FieldBaseFee)
+	}
+	if m.FieldCleared(shippingrate.FieldPerUnitFee) {
+		fields = append(fields, shippingrate.FieldPerUnitFee)
+	}
+	if m.FieldCleared(shippingrate.FieldStatus) {
+		fields = append(fields, shippingrate.FieldStatus)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ShippingRateMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ShippingRateMutation) ClearField(name string) error {
+	switch name {
+	case shippingrate.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case shippingrate.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case shippingrate.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case shippingrate.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case shippingrate.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case shippingrate.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case shippingrate.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case shippingrate.FieldCurrency:
+		m.ClearCurrency()
+		return nil
+	case shippingrate.FieldRegion:
+		m.ClearRegion()
+		return nil
+	case shippingrate.FieldBaseFee:
+		m.ClearBaseFee()
+		return nil
+	case shippingrate.FieldPerUnitFee:
+		m.ClearPerUnitFee()
+		return nil
+	case shippingrate.FieldStatus:
+		m.ClearStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown ShippingRate nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ShippingRateMutation) ResetField(name string) error {
+	switch name {
+	case shippingrate.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case shippingrate.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case shippingrate.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case shippingrate.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case shippingrate.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case shippingrate.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case shippingrate.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case shippingrate.FieldCurrency:
+		m.ResetCurrency()
+		return nil
+	case shippingrate.FieldRegion:
+		m.ResetRegion()
+		return nil
+	case shippingrate.FieldBaseFee:
+		m.ResetBaseFee()
+		return nil
+	case shippingrate.FieldPerUnitFee:
+		m.ResetPerUnitFee()
+		return nil
+	case shippingrate.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown ShippingRate field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ShippingRateMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ShippingRateMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ShippingRateMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ShippingRateMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ShippingRateMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ShippingRateMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ShippingRateMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ShippingRate unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ShippingRateMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ShippingRate edge %s", name)
+}
+
 // SkuMutation represents an operation that mutates the Sku nodes in the graph.
 type SkuMutation struct {
 	config
@@ -75797,6 +77452,1263 @@ func (m *TaskMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *TaskMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Task edge %s", name)
+}
+
+// TaxRateMutation represents an operation that mutates the TaxRate nodes in the graph.
+type TaxRateMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	created_by    *uint32
+	addcreated_by *int32
+	updated_by    *uint32
+	addupdated_by *int32
+	deleted_by    *uint32
+	adddeleted_by *int32
+	tenant_id     *uint32
+	addtenant_id  *int32
+	currency      *string
+	region        *string
+	tax_rate      *int32
+	addtax_rate   *int32
+	status        *taxrate.Status
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*TaxRate, error)
+	predicates    []predicate.TaxRate
+}
+
+var _ ent.Mutation = (*TaxRateMutation)(nil)
+
+// taxrateOption allows management of the mutation configuration using functional options.
+type taxrateOption func(*TaxRateMutation)
+
+// newTaxRateMutation creates new mutation for the TaxRate entity.
+func newTaxRateMutation(c config, op Op, opts ...taxrateOption) *TaxRateMutation {
+	m := &TaxRateMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTaxRate,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withTaxRateID sets the ID field of the mutation.
+func withTaxRateID(id uint32) taxrateOption {
+	return func(m *TaxRateMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *TaxRate
+		)
+		m.oldValue = func(ctx context.Context) (*TaxRate, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().TaxRate.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTaxRate sets the old TaxRate of the mutation.
+func withTaxRate(node *TaxRate) taxrateOption {
+	return func(m *TaxRateMutation) {
+		m.oldValue = func(context.Context) (*TaxRate, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m TaxRateMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m TaxRateMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of TaxRate entities.
+func (m *TaxRateMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *TaxRateMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *TaxRateMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().TaxRate.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *TaxRateMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *TaxRateMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the TaxRate entity.
+// If the TaxRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaxRateMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *TaxRateMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[taxrate.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *TaxRateMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[taxrate.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *TaxRateMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, taxrate.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *TaxRateMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *TaxRateMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the TaxRate entity.
+// If the TaxRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaxRateMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *TaxRateMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[taxrate.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *TaxRateMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[taxrate.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *TaxRateMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, taxrate.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *TaxRateMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *TaxRateMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the TaxRate entity.
+// If the TaxRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaxRateMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *TaxRateMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[taxrate.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *TaxRateMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[taxrate.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *TaxRateMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, taxrate.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *TaxRateMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *TaxRateMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the TaxRate entity.
+// If the TaxRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaxRateMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *TaxRateMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *TaxRateMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *TaxRateMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[taxrate.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *TaxRateMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[taxrate.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *TaxRateMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, taxrate.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *TaxRateMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *TaxRateMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the TaxRate entity.
+// If the TaxRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaxRateMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *TaxRateMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *TaxRateMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *TaxRateMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[taxrate.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *TaxRateMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[taxrate.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *TaxRateMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, taxrate.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *TaxRateMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *TaxRateMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the TaxRate entity.
+// If the TaxRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaxRateMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *TaxRateMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *TaxRateMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *TaxRateMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[taxrate.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *TaxRateMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[taxrate.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *TaxRateMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, taxrate.FieldDeletedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *TaxRateMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *TaxRateMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the TaxRate entity.
+// If the TaxRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaxRateMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *TaxRateMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *TaxRateMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *TaxRateMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[taxrate.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *TaxRateMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[taxrate.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *TaxRateMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, taxrate.FieldTenantID)
+}
+
+// SetCurrency sets the "currency" field.
+func (m *TaxRateMutation) SetCurrency(s string) {
+	m.currency = &s
+}
+
+// Currency returns the value of the "currency" field in the mutation.
+func (m *TaxRateMutation) Currency() (r string, exists bool) {
+	v := m.currency
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrency returns the old "currency" field's value of the TaxRate entity.
+// If the TaxRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaxRateMutation) OldCurrency(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrency is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrency requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrency: %w", err)
+	}
+	return oldValue.Currency, nil
+}
+
+// ClearCurrency clears the value of the "currency" field.
+func (m *TaxRateMutation) ClearCurrency() {
+	m.currency = nil
+	m.clearedFields[taxrate.FieldCurrency] = struct{}{}
+}
+
+// CurrencyCleared returns if the "currency" field was cleared in this mutation.
+func (m *TaxRateMutation) CurrencyCleared() bool {
+	_, ok := m.clearedFields[taxrate.FieldCurrency]
+	return ok
+}
+
+// ResetCurrency resets all changes to the "currency" field.
+func (m *TaxRateMutation) ResetCurrency() {
+	m.currency = nil
+	delete(m.clearedFields, taxrate.FieldCurrency)
+}
+
+// SetRegion sets the "region" field.
+func (m *TaxRateMutation) SetRegion(s string) {
+	m.region = &s
+}
+
+// Region returns the value of the "region" field in the mutation.
+func (m *TaxRateMutation) Region() (r string, exists bool) {
+	v := m.region
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRegion returns the old "region" field's value of the TaxRate entity.
+// If the TaxRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaxRateMutation) OldRegion(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRegion is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRegion requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRegion: %w", err)
+	}
+	return oldValue.Region, nil
+}
+
+// ClearRegion clears the value of the "region" field.
+func (m *TaxRateMutation) ClearRegion() {
+	m.region = nil
+	m.clearedFields[taxrate.FieldRegion] = struct{}{}
+}
+
+// RegionCleared returns if the "region" field was cleared in this mutation.
+func (m *TaxRateMutation) RegionCleared() bool {
+	_, ok := m.clearedFields[taxrate.FieldRegion]
+	return ok
+}
+
+// ResetRegion resets all changes to the "region" field.
+func (m *TaxRateMutation) ResetRegion() {
+	m.region = nil
+	delete(m.clearedFields, taxrate.FieldRegion)
+}
+
+// SetTaxRate sets the "tax_rate" field.
+func (m *TaxRateMutation) SetTaxRate(i int32) {
+	m.tax_rate = &i
+	m.addtax_rate = nil
+}
+
+// TaxRate returns the value of the "tax_rate" field in the mutation.
+func (m *TaxRateMutation) TaxRate() (r int32, exists bool) {
+	v := m.tax_rate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTaxRate returns the old "tax_rate" field's value of the TaxRate entity.
+// If the TaxRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaxRateMutation) OldTaxRate(ctx context.Context) (v *int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTaxRate is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTaxRate requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTaxRate: %w", err)
+	}
+	return oldValue.TaxRate, nil
+}
+
+// AddTaxRate adds i to the "tax_rate" field.
+func (m *TaxRateMutation) AddTaxRate(i int32) {
+	if m.addtax_rate != nil {
+		*m.addtax_rate += i
+	} else {
+		m.addtax_rate = &i
+	}
+}
+
+// AddedTaxRate returns the value that was added to the "tax_rate" field in this mutation.
+func (m *TaxRateMutation) AddedTaxRate() (r int32, exists bool) {
+	v := m.addtax_rate
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTaxRate clears the value of the "tax_rate" field.
+func (m *TaxRateMutation) ClearTaxRate() {
+	m.tax_rate = nil
+	m.addtax_rate = nil
+	m.clearedFields[taxrate.FieldTaxRate] = struct{}{}
+}
+
+// TaxRateCleared returns if the "tax_rate" field was cleared in this mutation.
+func (m *TaxRateMutation) TaxRateCleared() bool {
+	_, ok := m.clearedFields[taxrate.FieldTaxRate]
+	return ok
+}
+
+// ResetTaxRate resets all changes to the "tax_rate" field.
+func (m *TaxRateMutation) ResetTaxRate() {
+	m.tax_rate = nil
+	m.addtax_rate = nil
+	delete(m.clearedFields, taxrate.FieldTaxRate)
+}
+
+// SetStatus sets the "status" field.
+func (m *TaxRateMutation) SetStatus(t taxrate.Status) {
+	m.status = &t
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *TaxRateMutation) Status() (r taxrate.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the TaxRate entity.
+// If the TaxRate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TaxRateMutation) OldStatus(ctx context.Context) (v *taxrate.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *TaxRateMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[taxrate.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *TaxRateMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[taxrate.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *TaxRateMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, taxrate.FieldStatus)
+}
+
+// Where appends a list predicates to the TaxRateMutation builder.
+func (m *TaxRateMutation) Where(ps ...predicate.TaxRate) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the TaxRateMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *TaxRateMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.TaxRate, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *TaxRateMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *TaxRateMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (TaxRate).
+func (m *TaxRateMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *TaxRateMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_at != nil {
+		fields = append(fields, taxrate.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, taxrate.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, taxrate.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, taxrate.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, taxrate.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, taxrate.FieldDeletedBy)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, taxrate.FieldTenantID)
+	}
+	if m.currency != nil {
+		fields = append(fields, taxrate.FieldCurrency)
+	}
+	if m.region != nil {
+		fields = append(fields, taxrate.FieldRegion)
+	}
+	if m.tax_rate != nil {
+		fields = append(fields, taxrate.FieldTaxRate)
+	}
+	if m.status != nil {
+		fields = append(fields, taxrate.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *TaxRateMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case taxrate.FieldCreatedAt:
+		return m.CreatedAt()
+	case taxrate.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case taxrate.FieldDeletedAt:
+		return m.DeletedAt()
+	case taxrate.FieldCreatedBy:
+		return m.CreatedBy()
+	case taxrate.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case taxrate.FieldDeletedBy:
+		return m.DeletedBy()
+	case taxrate.FieldTenantID:
+		return m.TenantID()
+	case taxrate.FieldCurrency:
+		return m.Currency()
+	case taxrate.FieldRegion:
+		return m.Region()
+	case taxrate.FieldTaxRate:
+		return m.TaxRate()
+	case taxrate.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *TaxRateMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case taxrate.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case taxrate.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case taxrate.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case taxrate.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case taxrate.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case taxrate.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case taxrate.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case taxrate.FieldCurrency:
+		return m.OldCurrency(ctx)
+	case taxrate.FieldRegion:
+		return m.OldRegion(ctx)
+	case taxrate.FieldTaxRate:
+		return m.OldTaxRate(ctx)
+	case taxrate.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown TaxRate field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TaxRateMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case taxrate.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case taxrate.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case taxrate.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case taxrate.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case taxrate.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case taxrate.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case taxrate.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case taxrate.FieldCurrency:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrency(v)
+		return nil
+	case taxrate.FieldRegion:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRegion(v)
+		return nil
+	case taxrate.FieldTaxRate:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTaxRate(v)
+		return nil
+	case taxrate.FieldStatus:
+		v, ok := value.(taxrate.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown TaxRate field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *TaxRateMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, taxrate.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, taxrate.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, taxrate.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, taxrate.FieldTenantID)
+	}
+	if m.addtax_rate != nil {
+		fields = append(fields, taxrate.FieldTaxRate)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *TaxRateMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case taxrate.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case taxrate.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case taxrate.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case taxrate.FieldTenantID:
+		return m.AddedTenantID()
+	case taxrate.FieldTaxRate:
+		return m.AddedTaxRate()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TaxRateMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case taxrate.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case taxrate.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case taxrate.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case taxrate.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case taxrate.FieldTaxRate:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTaxRate(v)
+		return nil
+	}
+	return fmt.Errorf("unknown TaxRate numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *TaxRateMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(taxrate.FieldCreatedAt) {
+		fields = append(fields, taxrate.FieldCreatedAt)
+	}
+	if m.FieldCleared(taxrate.FieldUpdatedAt) {
+		fields = append(fields, taxrate.FieldUpdatedAt)
+	}
+	if m.FieldCleared(taxrate.FieldDeletedAt) {
+		fields = append(fields, taxrate.FieldDeletedAt)
+	}
+	if m.FieldCleared(taxrate.FieldCreatedBy) {
+		fields = append(fields, taxrate.FieldCreatedBy)
+	}
+	if m.FieldCleared(taxrate.FieldUpdatedBy) {
+		fields = append(fields, taxrate.FieldUpdatedBy)
+	}
+	if m.FieldCleared(taxrate.FieldDeletedBy) {
+		fields = append(fields, taxrate.FieldDeletedBy)
+	}
+	if m.FieldCleared(taxrate.FieldTenantID) {
+		fields = append(fields, taxrate.FieldTenantID)
+	}
+	if m.FieldCleared(taxrate.FieldCurrency) {
+		fields = append(fields, taxrate.FieldCurrency)
+	}
+	if m.FieldCleared(taxrate.FieldRegion) {
+		fields = append(fields, taxrate.FieldRegion)
+	}
+	if m.FieldCleared(taxrate.FieldTaxRate) {
+		fields = append(fields, taxrate.FieldTaxRate)
+	}
+	if m.FieldCleared(taxrate.FieldStatus) {
+		fields = append(fields, taxrate.FieldStatus)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *TaxRateMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *TaxRateMutation) ClearField(name string) error {
+	switch name {
+	case taxrate.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case taxrate.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case taxrate.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case taxrate.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case taxrate.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case taxrate.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case taxrate.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case taxrate.FieldCurrency:
+		m.ClearCurrency()
+		return nil
+	case taxrate.FieldRegion:
+		m.ClearRegion()
+		return nil
+	case taxrate.FieldTaxRate:
+		m.ClearTaxRate()
+		return nil
+	case taxrate.FieldStatus:
+		m.ClearStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown TaxRate nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *TaxRateMutation) ResetField(name string) error {
+	switch name {
+	case taxrate.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case taxrate.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case taxrate.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case taxrate.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case taxrate.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case taxrate.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case taxrate.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case taxrate.FieldCurrency:
+		m.ResetCurrency()
+		return nil
+	case taxrate.FieldRegion:
+		m.ResetRegion()
+		return nil
+	case taxrate.FieldTaxRate:
+		m.ResetTaxRate()
+		return nil
+	case taxrate.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown TaxRate field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *TaxRateMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *TaxRateMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *TaxRateMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *TaxRateMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *TaxRateMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *TaxRateMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *TaxRateMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown TaxRate unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *TaxRateMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown TaxRate edge %s", name)
 }
 
 // TenantMutation represents an operation that mutates the Tenant nodes in the graph.

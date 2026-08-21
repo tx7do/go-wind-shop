@@ -354,6 +354,7 @@ const form = reactive({
   recipientName: '',
   recipientPhone: '',
   shippingAddress: '',
+  shippingRegion: '',
 });
 
 const formValid = computed(() => {
@@ -402,6 +403,7 @@ const sortedSavedAddresses = computed(() => {
 function useSavedAddress(addr: SavedAddress) {
   form.recipientName = addr.recipientName ?? '';
   form.recipientPhone = addr.recipientPhone ?? '';
+  form.shippingRegion = addr.region ?? '';
   // region + detailAddress 拼成结构化地址文本（与订单 shipping_address 字段一致）
   const parts = [addr.region, addr.detailAddress].filter((s) => s && s.trim()).map((s) => s!.trim());
   form.shippingAddress = parts.join(' ');
@@ -461,6 +463,7 @@ async function placeOrder() {
     recipientName: form.recipientName,
     recipientPhone: form.recipientPhone,
     shippingAddress: form.shippingAddress,
+    shippingRegion: form.shippingRegion,
     currency: 'CNY',
     totalAmount: 0,
     idempotencyKey: orderIdempotencyKey,

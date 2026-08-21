@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, orderService *service.OrderService, userCouponService *service.UserCouponService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, orderService *service.OrderService, userCouponService *service.UserCouponService, stockAlertService *service.StockAlertService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -44,6 +44,11 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, or
 	// 注册优惠券过期清扫周期任务处理器（按 cron 周期触发 SweepExpiredCoupons，
 	// 扫描全库过期券批量翻 EXPIRED）。仿 BackupTask 的 periodic 模式。
 	if err = asynq.RegisterSubscriber(srv, task.CouponExpireSweepTaskType, userCouponService.HandleCouponSweep); err != nil {
+		log.Error(err)
+	}
+	// 注册库存预警周期任务处理器（按 cron 周期触发 ScanLowStockAndNotify，
+	// 扫描 stock_qty <= 阈值的 SKU 并向运营全员发送站内预警）。
+	if err = asynq.RegisterSubscriber(srv, task.StockAlertTaskType, stockAlertService.HandleStockAlert); err != nil {
 		log.Error(err)
 	}
 

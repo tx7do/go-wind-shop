@@ -23,6 +23,18 @@ service AuthenticationService {
     };
   }
 
+  // 注册
+  rpc Register (authentication.service.v1.RegisterUserRequest) returns (authentication.service.v1.RegisterUserResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/register"
+      body: "*"
+    };
+
+    option(gnostic.openapi.v3.operation) = {
+      security: {}
+    };
+  }
+
   // 登出
   rpc Logout (google.protobuf.Empty) returns (google.protobuf.Empty) {
     option (google.api.http) = {

@@ -76,7 +76,8 @@
     "fill_required": "请填写所有必填项",
     "password_mismatch": "两次输入的密码不一致",
     "registering": "注册中...",
-    "back_home": "返回首页"
+    "back_home": "返回首页",
+    "success": "注册成功，正在跳转到登录页..."
   },
   "forgotPassword": {
     "title": "忘记密码",

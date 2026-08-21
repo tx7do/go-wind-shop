@@ -32,6 +32,8 @@ function handleSendCode() {
 
 function handleRegister() {
   if (!phone.value || !verificationCode.value) return
+  // TODO: 手机号+短信验证码注册。需后端 BFF 补 SMS 验证码下发/校验端点，
+  // 并接入短信网关。当前 app BFF 无对应端点。
   console.log('手机号注册/登录:', { phone: phone.value, verificationCode: verificationCode.value })
 }
 

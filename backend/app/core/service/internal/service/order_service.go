@@ -23,6 +23,8 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/paymenttransaction"
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
+	"go-wind-shop/app/core/service/internal/data/ent/shippingrate"
+	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
 	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -398,16 +400,78 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 			return nil, err
 		}
 	}
-	finalTotal := originalAmount - discount
+
+	// 运费计算：按 (viewer tenant_id, shipping_region, currency) 查询运费模板。
+	// shipping_region 由 BFF 从收货地址强制注入（core 不信任请求方传值）。
+	// 运费 = base_fee + per_unit_fee * item_count。无规则时 shipping_fee = 0，不阻塞下单。
+	shippingRegion := req.Data.GetShippingRegion()
+	currency := req.Data.GetCurrency()
+	var shippingFee int64 = 0
+	var itemCount int64 = 0
+	if shippingRegion != "" && tenantId != 0 {
+		rateEnt, rateErr := tx.ShippingRate.Query().
+			Where(
+				shippingrate.TenantIDEQ(tenantId),
+				shippingrate.RegionEQ(shippingRegion),
+				shippingrate.CurrencyEQ(currency),
+				shippingrate.StatusEQ(shippingrate.StatusShippingRateStatusActive),
+			).
+			Only(ctx)
+		if rateErr == nil && rateEnt != nil {
+			itemCount = int64(len(cartItems))
+			baseFee := int64(0)
+			perUnit := int64(0)
+			if rateEnt.BaseFee != nil {
+				baseFee = *rateEnt.BaseFee
+			}
+			if rateEnt.PerUnitFee != nil {
+				perUnit = *rateEnt.PerUnitFee
+			}
+			shippingFee = baseFee + perUnit*itemCount
+			if shippingFee < 0 {
+				shippingFee = 0
+			}
+		}
+	}
+
+	// 税费计算：按 (viewer tenant_id, shipping_region, currency) 查询税率规则。
+	// tax_amount = (originalAmount - discount) * tax_rate / 100（整数 floor）。
+	// 无规则时 tax_amount = 0，不阻塞下单。
+	var taxAmount int64 = 0
+	if shippingRegion != "" && tenantId != 0 {
+		taxEnt, taxErr := tx.TaxRate.Query().
+			Where(
+				taxrate.TenantIDEQ(tenantId),
+				taxrate.RegionEQ(shippingRegion),
+				taxrate.CurrencyEQ(currency),
+				taxrate.StatusEQ(taxrate.StatusTaxRateStatusActive),
+			).
+			Only(ctx)
+		if taxErr == nil && taxEnt != nil && taxEnt.TaxRate != nil {
+			tr := int64(*taxEnt.TaxRate)
+			if tr > 0 {
+				taxable := originalAmount - discount
+				if taxable > 0 {
+					taxAmount = (taxable * tr) / 100
+				}
+			}
+		}
+	}
+
+	// 折后应付额 = 折前总额 - 抵扣 + 运费 + 税费。
+	finalTotal := originalAmount - discount + shippingFee + taxAmount
 	if finalTotal < 0 {
 		finalTotal = 0
 	}
 
-	// 回写订单金额（事务内）：折后应付额、折前总额、抵扣额。
+	// 回写订单金额（事务内）：折后应付额、折前总额、抵扣额、运费、税费、收货区域。
 	if uErr := tx.Order.UpdateOneID(orderId).
 		SetTotalAmount(finalTotal).
 		SetOriginalAmount(originalAmount).
 		SetDiscountAmount(discount).
+		SetShippingFee(shippingFee).
+		SetTaxAmount(taxAmount).
+		SetShippingRegion(shippingRegion).
 		Exec(ctx); uErr != nil {
 		s.log.Errorf("update order amount failed: %v", uErr)
 		err = orderV1.ErrorInternalServerError("create order failed")

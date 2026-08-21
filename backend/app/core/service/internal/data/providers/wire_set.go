@@ -104,4 +104,7 @@ var ProviderSet = wire.NewSet(
 
 	data.NewCouponTemplateRepo,
 	data.NewUserCouponRepo,
+
+	data.NewShippingRateRepo,
+	data.NewTaxRateRepo,
 )

@@ -5,6 +5,8 @@ import {
 import type {
   authenticationservicev1_LoginRequest,
   authenticationservicev1_LoginResponse,
+  authenticationservicev1_RegisterUserRequest,
+  authenticationservicev1_RegisterUserResponse,
   SendResetCodeRequest,
   SendResetCodeResponse,
   ResetPasswordRequest,
@@ -21,6 +23,13 @@ import { queryClient } from '@/plugins/vue-query';
  */
 export async function login(request: authenticationservicev1_LoginRequest): Promise<authenticationservicev1_LoginResponse> {
   return apiClient.authenticationService.Login(request);
+}
+
+/**
+ * 注册
+ */
+export async function register(request: authenticationservicev1_RegisterUserRequest): Promise<authenticationservicev1_RegisterUserResponse> {
+  return apiClient.authenticationService.Register(request);
 }
 
 /**
@@ -52,6 +61,22 @@ export function useLogin(
 ) {
   return useMutation({
     mutationFn: (req) => login(req),
+    ...options,
+  });
+}
+
+/**
+ * 注册（Mutation）
+ */
+export function useRegister(
+  options?: UseMutationOptions<
+    authenticationservicev1_RegisterUserResponse,
+    Error,
+    authenticationservicev1_RegisterUserRequest
+  >,
+) {
+  return useMutation({
+    mutationFn: (req) => register(req),
     ...options,
   });
 }

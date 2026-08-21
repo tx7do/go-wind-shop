@@ -227,3 +227,31 @@ func (r *SkuRepo) AddStock(ctx context.Context, skuId uint32, delta int32) error
 	}
 	return nil
 }
+
+// LowStockItem 库存预警扫描结果的最小数据集。
+type LowStockItem struct {
+	SkuID    uint32
+	StockQty int32
+}
+
+// ListLowStock 查询 stock_qty <= threshold 的 SKU，返回 (skuID, stockQty) 列表。
+// 供库存预警周期任务调用，仅在 SystemViewer 上下文下跨租户扫描。
+func (r *SkuRepo) ListLowStock(ctx context.Context, threshold int32) ([]LowStockItem, error) {
+	entities, err := r.entClient.Client().Sku.Query().
+		Where(sku.StockQtyLTE(threshold)).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query low stock skus failed: %s", err.Error())
+		return nil, catalogV1.ErrorInternalServerError("query low stock failed")
+	}
+
+	items := make([]LowStockItem, 0, len(entities))
+	for _, e := range entities {
+		sq := int32(0)
+		if e.StockQty != nil {
+			sq = *e.StockQty
+		}
+		items = append(items, LowStockItem{SkuID: e.ID, StockQty: sq})
+	}
+	return items, nil
+}

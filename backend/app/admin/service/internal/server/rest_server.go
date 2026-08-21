@@ -35,6 +35,7 @@ func NewRestMiddleware(
 	authorizer authzEngine.Engine,
 	apiAuditLogServiceClient auditV1.ApiAuditLogServiceClient,
 	loginAuditLogServiceClient auditV1.LoginAuditLogServiceClient,
+	operationAuditLogServiceClient auditV1.OperationAuditLogServiceClient,
 ) []middleware.Middleware {
 	var ms []middleware.Middleware
 	ms = append(ms, logging.Server(ctx.GetLogger()))
@@ -57,6 +58,11 @@ func NewRestMiddleware(
 			// TODO 如果系统的负载比较小，可以同步写入数据库，否则，建议使用异步方式，即投递进队列。
 			ctx, _ = metadata.NewContext(ctx, metadata.NewUserOperator(0, 0, 0, identityV1.DataScope_ALL))
 			_, err := loginAuditLogServiceClient.Create(ctx, &auditV1.CreateLoginAuditLogRequest{Data: data})
+			return err
+		}),
+		applogging.WithWriteOperationLogFunc(func(ctx context.Context, data *auditV1.OperationAuditLog) error {
+			ctx, _ = metadata.NewContext(ctx, metadata.NewUserOperator(0, 0, 0, identityV1.DataScope_ALL))
+			_, err := operationAuditLogServiceClient.Create(ctx, &auditV1.CreateOperationAuditLogRequest{Data: data})
 			return err
 		}),
 	))
@@ -119,6 +125,9 @@ func NewRestServer(
 	couponTemplateService *service.CouponTemplateService,
 	userCouponService *service.UserCouponService,
 
+	shippingRateService *service.ShippingRateService,
+	taxRateService *service.TaxRateService,
+
 	fileSvc *service.FileService,
 	fileTransferService *service.FileTransferService,
 
@@ -178,6 +187,9 @@ func NewRestServer(
 
 	adminV1.RegisterCouponTemplateServiceHTTPServer(srv, couponTemplateService)
 	adminV1.RegisterUserCouponServiceHTTPServer(srv, userCouponService)
+
+	adminV1.RegisterShippingRateServiceHTTPServer(srv, shippingRateService)
+	adminV1.RegisterTaxRateServiceHTTPServer(srv, taxRateService)
 
 	adminV1.RegisterApiServiceHTTPServer(srv, apiService)
 	adminV1.RegisterMenuServiceHTTPServer(srv, menuSvc)

@@ -104,6 +104,18 @@ func (m *Order) validate(all bool) error {
 		// no validation rules for DiscountAmount
 	}
 
+	if m.ShippingFee != nil {
+		// no validation rules for ShippingFee
+	}
+
+	if m.TaxAmount != nil {
+		// no validation rules for TaxAmount
+	}
+
+	if m.ShippingRegion != nil {
+		// no validation rules for ShippingRegion
+	}
+
 	if m.TenantId != nil {
 		// no validation rules for TenantId
 	}

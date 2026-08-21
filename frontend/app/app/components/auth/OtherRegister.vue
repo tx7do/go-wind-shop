@@ -4,10 +4,12 @@ import { XIcon } from '@/plugins/xicon'
 const { t } = useI18n()
 
 const handleGoogleRegister = () => {
+  // TODO: Google OAuth 注册。需后端补 OAuth 回调端点 + 第三方身份映射。
   console.log('Google 注册')
 }
 
 const handleGithubRegister = () => {
+  // TODO: GitHub OAuth 注册。需后端补 OAuth 回调端点 + 第三方身份映射。
   console.log('GitHub 注册')
 }
 </script>

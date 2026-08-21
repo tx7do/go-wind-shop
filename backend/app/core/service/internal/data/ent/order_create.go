@@ -218,6 +218,48 @@ func (_c *OrderCreate) SetNillableDiscountAmount(v *int64) *OrderCreate {
 	return _c
 }
 
+// SetShippingFee sets the "shipping_fee" field.
+func (_c *OrderCreate) SetShippingFee(v int64) *OrderCreate {
+	_c.mutation.SetShippingFee(v)
+	return _c
+}
+
+// SetNillableShippingFee sets the "shipping_fee" field if the given value is not nil.
+func (_c *OrderCreate) SetNillableShippingFee(v *int64) *OrderCreate {
+	if v != nil {
+		_c.SetShippingFee(*v)
+	}
+	return _c
+}
+
+// SetTaxAmount sets the "tax_amount" field.
+func (_c *OrderCreate) SetTaxAmount(v int64) *OrderCreate {
+	_c.mutation.SetTaxAmount(v)
+	return _c
+}
+
+// SetNillableTaxAmount sets the "tax_amount" field if the given value is not nil.
+func (_c *OrderCreate) SetNillableTaxAmount(v *int64) *OrderCreate {
+	if v != nil {
+		_c.SetTaxAmount(*v)
+	}
+	return _c
+}
+
+// SetShippingRegion sets the "shipping_region" field.
+func (_c *OrderCreate) SetShippingRegion(v string) *OrderCreate {
+	_c.mutation.SetShippingRegion(v)
+	return _c
+}
+
+// SetNillableShippingRegion sets the "shipping_region" field if the given value is not nil.
+func (_c *OrderCreate) SetNillableShippingRegion(v *string) *OrderCreate {
+	if v != nil {
+		_c.SetShippingRegion(*v)
+	}
+	return _c
+}
+
 // SetStatus sets the "status" field.
 func (_c *OrderCreate) SetStatus(v order.Status) *OrderCreate {
 	_c.mutation.SetStatus(v)
@@ -337,6 +379,14 @@ func (_c *OrderCreate) defaults() error {
 		v := order.DefaultDiscountAmount
 		_c.mutation.SetDiscountAmount(v)
 	}
+	if _, ok := _c.mutation.ShippingFee(); !ok {
+		v := order.DefaultShippingFee
+		_c.mutation.SetShippingFee(v)
+	}
+	if _, ok := _c.mutation.TaxAmount(); !ok {
+		v := order.DefaultTaxAmount
+		_c.mutation.SetTaxAmount(v)
+	}
 	return nil
 }
 
@@ -440,6 +490,18 @@ func (_c *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.DiscountAmount(); ok {
 		_spec.SetField(order.FieldDiscountAmount, field.TypeInt64, value)
 		_node.DiscountAmount = &value
+	}
+	if value, ok := _c.mutation.ShippingFee(); ok {
+		_spec.SetField(order.FieldShippingFee, field.TypeInt64, value)
+		_node.ShippingFee = &value
+	}
+	if value, ok := _c.mutation.TaxAmount(); ok {
+		_spec.SetField(order.FieldTaxAmount, field.TypeInt64, value)
+		_node.TaxAmount = &value
+	}
+	if value, ok := _c.mutation.ShippingRegion(); ok {
+		_spec.SetField(order.FieldShippingRegion, field.TypeString, value)
+		_node.ShippingRegion = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeEnum, value)
@@ -764,6 +826,72 @@ func (u *OrderUpsert) AddDiscountAmount(v int64) *OrderUpsert {
 // ClearDiscountAmount clears the value of the "discount_amount" field.
 func (u *OrderUpsert) ClearDiscountAmount() *OrderUpsert {
 	u.SetNull(order.FieldDiscountAmount)
+	return u
+}
+
+// SetShippingFee sets the "shipping_fee" field.
+func (u *OrderUpsert) SetShippingFee(v int64) *OrderUpsert {
+	u.Set(order.FieldShippingFee, v)
+	return u
+}
+
+// UpdateShippingFee sets the "shipping_fee" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateShippingFee() *OrderUpsert {
+	u.SetExcluded(order.FieldShippingFee)
+	return u
+}
+
+// AddShippingFee adds v to the "shipping_fee" field.
+func (u *OrderUpsert) AddShippingFee(v int64) *OrderUpsert {
+	u.Add(order.FieldShippingFee, v)
+	return u
+}
+
+// ClearShippingFee clears the value of the "shipping_fee" field.
+func (u *OrderUpsert) ClearShippingFee() *OrderUpsert {
+	u.SetNull(order.FieldShippingFee)
+	return u
+}
+
+// SetTaxAmount sets the "tax_amount" field.
+func (u *OrderUpsert) SetTaxAmount(v int64) *OrderUpsert {
+	u.Set(order.FieldTaxAmount, v)
+	return u
+}
+
+// UpdateTaxAmount sets the "tax_amount" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateTaxAmount() *OrderUpsert {
+	u.SetExcluded(order.FieldTaxAmount)
+	return u
+}
+
+// AddTaxAmount adds v to the "tax_amount" field.
+func (u *OrderUpsert) AddTaxAmount(v int64) *OrderUpsert {
+	u.Add(order.FieldTaxAmount, v)
+	return u
+}
+
+// ClearTaxAmount clears the value of the "tax_amount" field.
+func (u *OrderUpsert) ClearTaxAmount() *OrderUpsert {
+	u.SetNull(order.FieldTaxAmount)
+	return u
+}
+
+// SetShippingRegion sets the "shipping_region" field.
+func (u *OrderUpsert) SetShippingRegion(v string) *OrderUpsert {
+	u.Set(order.FieldShippingRegion, v)
+	return u
+}
+
+// UpdateShippingRegion sets the "shipping_region" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateShippingRegion() *OrderUpsert {
+	u.SetExcluded(order.FieldShippingRegion)
+	return u
+}
+
+// ClearShippingRegion clears the value of the "shipping_region" field.
+func (u *OrderUpsert) ClearShippingRegion() *OrderUpsert {
+	u.SetNull(order.FieldShippingRegion)
 	return u
 }
 
@@ -1191,6 +1319,83 @@ func (u *OrderUpsertOne) UpdateDiscountAmount() *OrderUpsertOne {
 func (u *OrderUpsertOne) ClearDiscountAmount() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearDiscountAmount()
+	})
+}
+
+// SetShippingFee sets the "shipping_fee" field.
+func (u *OrderUpsertOne) SetShippingFee(v int64) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetShippingFee(v)
+	})
+}
+
+// AddShippingFee adds v to the "shipping_fee" field.
+func (u *OrderUpsertOne) AddShippingFee(v int64) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.AddShippingFee(v)
+	})
+}
+
+// UpdateShippingFee sets the "shipping_fee" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateShippingFee() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateShippingFee()
+	})
+}
+
+// ClearShippingFee clears the value of the "shipping_fee" field.
+func (u *OrderUpsertOne) ClearShippingFee() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearShippingFee()
+	})
+}
+
+// SetTaxAmount sets the "tax_amount" field.
+func (u *OrderUpsertOne) SetTaxAmount(v int64) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetTaxAmount(v)
+	})
+}
+
+// AddTaxAmount adds v to the "tax_amount" field.
+func (u *OrderUpsertOne) AddTaxAmount(v int64) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.AddTaxAmount(v)
+	})
+}
+
+// UpdateTaxAmount sets the "tax_amount" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateTaxAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateTaxAmount()
+	})
+}
+
+// ClearTaxAmount clears the value of the "tax_amount" field.
+func (u *OrderUpsertOne) ClearTaxAmount() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearTaxAmount()
+	})
+}
+
+// SetShippingRegion sets the "shipping_region" field.
+func (u *OrderUpsertOne) SetShippingRegion(v string) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetShippingRegion(v)
+	})
+}
+
+// UpdateShippingRegion sets the "shipping_region" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateShippingRegion() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateShippingRegion()
+	})
+}
+
+// ClearShippingRegion clears the value of the "shipping_region" field.
+func (u *OrderUpsertOne) ClearShippingRegion() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearShippingRegion()
 	})
 }
 
@@ -1796,6 +2001,83 @@ func (u *OrderUpsertBulk) UpdateDiscountAmount() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearDiscountAmount() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearDiscountAmount()
+	})
+}
+
+// SetShippingFee sets the "shipping_fee" field.
+func (u *OrderUpsertBulk) SetShippingFee(v int64) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetShippingFee(v)
+	})
+}
+
+// AddShippingFee adds v to the "shipping_fee" field.
+func (u *OrderUpsertBulk) AddShippingFee(v int64) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.AddShippingFee(v)
+	})
+}
+
+// UpdateShippingFee sets the "shipping_fee" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateShippingFee() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateShippingFee()
+	})
+}
+
+// ClearShippingFee clears the value of the "shipping_fee" field.
+func (u *OrderUpsertBulk) ClearShippingFee() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearShippingFee()
+	})
+}
+
+// SetTaxAmount sets the "tax_amount" field.
+func (u *OrderUpsertBulk) SetTaxAmount(v int64) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetTaxAmount(v)
+	})
+}
+
+// AddTaxAmount adds v to the "tax_amount" field.
+func (u *OrderUpsertBulk) AddTaxAmount(v int64) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.AddTaxAmount(v)
+	})
+}
+
+// UpdateTaxAmount sets the "tax_amount" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateTaxAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateTaxAmount()
+	})
+}
+
+// ClearTaxAmount clears the value of the "tax_amount" field.
+func (u *OrderUpsertBulk) ClearTaxAmount() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearTaxAmount()
+	})
+}
+
+// SetShippingRegion sets the "shipping_region" field.
+func (u *OrderUpsertBulk) SetShippingRegion(v string) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetShippingRegion(v)
+	})
+}
+
+// UpdateShippingRegion sets the "shipping_region" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateShippingRegion() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateShippingRegion()
+	})
+}
+
+// ClearShippingRegion clears the value of the "shipping_region" field.
+func (u *OrderUpsertBulk) ClearShippingRegion() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearShippingRegion()
 	})
 }
 

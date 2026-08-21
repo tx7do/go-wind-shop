@@ -572,6 +572,18 @@ func (f ShippingAddressFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Va
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ShippingAddressMutation", m)
 }
 
+// The ShippingRateFunc type is an adapter to allow the use of ordinary
+// function as ShippingRate mutator.
+type ShippingRateFunc func(context.Context, *ent.ShippingRateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ShippingRateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ShippingRateMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ShippingRateMutation", m)
+}
+
 // The SkuFunc type is an adapter to allow the use of ordinary
 // function as Sku mutator.
 type SkuFunc func(context.Context, *ent.SkuMutation) (ent.Value, error)
@@ -618,6 +630,18 @@ func (f TaskFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TaskMutation", m)
+}
+
+// The TaxRateFunc type is an adapter to allow the use of ordinary
+// function as TaxRate mutator.
+type TaxRateFunc func(context.Context, *ent.TaxRateMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TaxRateFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TaxRateMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TaxRateMutation", m)
 }
 
 // The TenantFunc type is an adapter to allow the use of ordinary

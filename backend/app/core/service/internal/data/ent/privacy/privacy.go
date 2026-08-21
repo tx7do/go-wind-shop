@@ -1239,6 +1239,30 @@ func (f ShippingAddressMutationRuleFunc) EvalMutation(ctx context.Context, m ent
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ShippingAddressMutation", m)
 }
 
+// The ShippingRateQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ShippingRateQueryRuleFunc func(context.Context, *ent.ShippingRateQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ShippingRateQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ShippingRateQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ShippingRateQuery", q)
+}
+
+// The ShippingRateMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ShippingRateMutationRuleFunc func(context.Context, *ent.ShippingRateMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ShippingRateMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ShippingRateMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ShippingRateMutation", m)
+}
+
 // The SkuQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type SkuQueryRuleFunc func(context.Context, *ent.SkuQuery) error
@@ -1333,6 +1357,30 @@ func (f TaskMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) 
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.TaskMutation", m)
+}
+
+// The TaxRateQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type TaxRateQueryRuleFunc func(context.Context, *ent.TaxRateQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f TaxRateQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.TaxRateQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.TaxRateQuery", q)
+}
+
+// The TaxRateMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type TaxRateMutationRuleFunc func(context.Context, *ent.TaxRateMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f TaxRateMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.TaxRateMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.TaxRateMutation", m)
 }
 
 // The TenantQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -1632,6 +1680,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.ShippingAddressQuery:
 		return q.Filter(), nil
+	case *ent.ShippingRateQuery:
+		return q.Filter(), nil
 	case *ent.SkuQuery:
 		return q.Filter(), nil
 	case *ent.SkuAttributeCombinationQuery:
@@ -1639,6 +1689,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 	case *ent.SkuPriceQuery:
 		return q.Filter(), nil
 	case *ent.TaskQuery:
+		return q.Filter(), nil
+	case *ent.TaxRateQuery:
 		return q.Filter(), nil
 	case *ent.TenantQuery:
 		return q.Filter(), nil
@@ -1755,6 +1807,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.ShippingAddressMutation:
 		return m.Filter(), nil
+	case *ent.ShippingRateMutation:
+		return m.Filter(), nil
 	case *ent.SkuMutation:
 		return m.Filter(), nil
 	case *ent.SkuAttributeCombinationMutation:
@@ -1762,6 +1816,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.SkuPriceMutation:
 		return m.Filter(), nil
 	case *ent.TaskMutation:
+		return m.Filter(), nil
+	case *ent.TaxRateMutation:
 		return m.Filter(), nil
 	case *ent.TenantMutation:
 		return m.Filter(), nil

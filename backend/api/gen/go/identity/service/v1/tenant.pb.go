@@ -1248,17 +1248,15 @@ const file_identity_service_v1_tenant_proto_rawDesc = "" +
 	"\x05count\x18\x01 \x01(\x04R\x05count\"p\n" +
 	"\x18AssignTenantAdminRequest\x12+\n" +
 	"\ttenant_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDR\btenantId\x12'\n" +
-	"\auser_id\x18\x02 \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDR\x06userId2\x8e\a\n" +
+	"\auser_id\x18\x02 \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDR\x06userId2\xbe\x05\n" +
 	"\rTenantService\x12L\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.identity.service.v1.ListTenantResponse\"\x00\x12N\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.identity.service.v1.CountTenantResponse\"\x00\x12K\n" +
-	"\x03Get\x12%.identity.service.v1.GetTenantRequest\x1a\x1b.identity.service.v1.Tenant\"\x00\x12p\n" +
-	"\vBatchCreate\x12..identity.service.v1.BatchCreateTenantsRequest\x1a/.identity.service.v1.BatchCreateTenantsResponse\"\x00\x12Q\n" +
+	"\x03Get\x12%.identity.service.v1.GetTenantRequest\x1a\x1b.identity.service.v1.Tenant\"\x00\x12Q\n" +
 	"\x06Create\x12(.identity.service.v1.CreateTenantRequest\x1a\x1b.identity.service.v1.Tenant\"\x00\x12L\n" +
 	"\x06Update\x12(.identity.service.v1.UpdateTenantRequest\x1a\x16.google.protobuf.Empty\"\x00\x12L\n" +
 	"\x06Delete\x12(.identity.service.v1.DeleteTenantRequest\x1a\x16.google.protobuf.Empty\"\x00\x12e\n" +
-	"\fTenantExists\x12(.identity.service.v1.TenantExistsRequest\x1a).identity.service.v1.TenantExistsResponse\"\x00\x12\\\n" +
-	"\x11AssignTenantAdmin\x12-.identity.service.v1.AssignTenantAdminRequest\x1a\x16.google.protobuf.Empty\"\x00\x12l\n" +
+	"\fTenantExists\x12(.identity.service.v1.TenantExistsRequest\x1a).identity.service.v1.TenantExistsResponse\"\x00\x12l\n" +
 	"\x19CreateTenantWithAdminUser\x125.identity.service.v1.CreateTenantWithAdminUserRequest\x1a\x16.google.protobuf.Empty\"\x00B\xcc\x01\n" +
 	"\x17com.identity.service.v1B\vTenantProtoP\x01Z6go-wind-shop/api/gen/go/identity/service/v1;identitypb\xa2\x02\x03ISX\xaa\x02\x13Identity.Service.V1\xca\x02\x13Identity\\Service\\V1\xe2\x02\x1fIdentity\\Service\\V1\\GPBMetadata\xea\x02\x15Identity::Service::V1b\x06proto3"
 
@@ -1320,25 +1318,21 @@ var file_identity_service_v1_tenant_proto_depIdxs = []int32{
 	19, // 17: identity.service.v1.TenantService.List:input_type -> pagination.PagingRequest
 	19, // 18: identity.service.v1.TenantService.Count:input_type -> pagination.PagingRequest
 	5,  // 19: identity.service.v1.TenantService.Get:input_type -> identity.service.v1.GetTenantRequest
-	9,  // 20: identity.service.v1.TenantService.BatchCreate:input_type -> identity.service.v1.BatchCreateTenantsRequest
-	6,  // 21: identity.service.v1.TenantService.Create:input_type -> identity.service.v1.CreateTenantRequest
-	7,  // 22: identity.service.v1.TenantService.Update:input_type -> identity.service.v1.UpdateTenantRequest
-	8,  // 23: identity.service.v1.TenantService.Delete:input_type -> identity.service.v1.DeleteTenantRequest
-	11, // 24: identity.service.v1.TenantService.TenantExists:input_type -> identity.service.v1.TenantExistsRequest
-	15, // 25: identity.service.v1.TenantService.AssignTenantAdmin:input_type -> identity.service.v1.AssignTenantAdminRequest
-	13, // 26: identity.service.v1.TenantService.CreateTenantWithAdminUser:input_type -> identity.service.v1.CreateTenantWithAdminUserRequest
-	4,  // 27: identity.service.v1.TenantService.List:output_type -> identity.service.v1.ListTenantResponse
-	14, // 28: identity.service.v1.TenantService.Count:output_type -> identity.service.v1.CountTenantResponse
-	3,  // 29: identity.service.v1.TenantService.Get:output_type -> identity.service.v1.Tenant
-	10, // 30: identity.service.v1.TenantService.BatchCreate:output_type -> identity.service.v1.BatchCreateTenantsResponse
-	3,  // 31: identity.service.v1.TenantService.Create:output_type -> identity.service.v1.Tenant
-	20, // 32: identity.service.v1.TenantService.Update:output_type -> google.protobuf.Empty
-	20, // 33: identity.service.v1.TenantService.Delete:output_type -> google.protobuf.Empty
-	12, // 34: identity.service.v1.TenantService.TenantExists:output_type -> identity.service.v1.TenantExistsResponse
-	20, // 35: identity.service.v1.TenantService.AssignTenantAdmin:output_type -> google.protobuf.Empty
-	20, // 36: identity.service.v1.TenantService.CreateTenantWithAdminUser:output_type -> google.protobuf.Empty
-	27, // [27:37] is the sub-list for method output_type
-	17, // [17:27] is the sub-list for method input_type
+	6,  // 20: identity.service.v1.TenantService.Create:input_type -> identity.service.v1.CreateTenantRequest
+	7,  // 21: identity.service.v1.TenantService.Update:input_type -> identity.service.v1.UpdateTenantRequest
+	8,  // 22: identity.service.v1.TenantService.Delete:input_type -> identity.service.v1.DeleteTenantRequest
+	11, // 23: identity.service.v1.TenantService.TenantExists:input_type -> identity.service.v1.TenantExistsRequest
+	13, // 24: identity.service.v1.TenantService.CreateTenantWithAdminUser:input_type -> identity.service.v1.CreateTenantWithAdminUserRequest
+	4,  // 25: identity.service.v1.TenantService.List:output_type -> identity.service.v1.ListTenantResponse
+	14, // 26: identity.service.v1.TenantService.Count:output_type -> identity.service.v1.CountTenantResponse
+	3,  // 27: identity.service.v1.TenantService.Get:output_type -> identity.service.v1.Tenant
+	3,  // 28: identity.service.v1.TenantService.Create:output_type -> identity.service.v1.Tenant
+	20, // 29: identity.service.v1.TenantService.Update:output_type -> google.protobuf.Empty
+	20, // 30: identity.service.v1.TenantService.Delete:output_type -> google.protobuf.Empty
+	12, // 31: identity.service.v1.TenantService.TenantExists:output_type -> identity.service.v1.TenantExistsResponse
+	20, // 32: identity.service.v1.TenantService.CreateTenantWithAdminUser:output_type -> google.protobuf.Empty
+	25, // [25:33] is the sub-list for method output_type
+	17, // [17:25] is the sub-list for method input_type
 	17, // [17:17] is the sub-list for extension type_name
 	17, // [17:17] is the sub-list for extension extendee
 	0,  // [0:17] is the sub-list for field type_name

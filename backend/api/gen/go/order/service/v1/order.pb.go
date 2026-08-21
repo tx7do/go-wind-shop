@@ -107,6 +107,9 @@ type Order struct {
 	ShippingAddress *string                `protobuf:"bytes,10,opt,name=shipping_address,json=shippingAddress,proto3,oneof" json:"shipping_address,omitempty"`
 	OriginalAmount  *int64                 `protobuf:"varint,11,opt,name=original_amount,json=originalAmount,proto3,oneof" json:"original_amount,omitempty"`
 	DiscountAmount  *int64                 `protobuf:"varint,12,opt,name=discount_amount,json=discountAmount,proto3,oneof" json:"discount_amount,omitempty"`
+	ShippingFee     *int64                 `protobuf:"varint,13,opt,name=shipping_fee,json=shippingFee,proto3,oneof" json:"shipping_fee,omitempty"`
+	TaxAmount       *int64                 `protobuf:"varint,14,opt,name=tax_amount,json=taxAmount,proto3,oneof" json:"tax_amount,omitempty"`
+	ShippingRegion  *string                `protobuf:"bytes,15,opt,name=shipping_region,json=shippingRegion,proto3,oneof" json:"shipping_region,omitempty"`
 	TenantId        *uint32                `protobuf:"varint,90,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
 	CreatedBy       *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
 	UpdatedBy       *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
@@ -230,6 +233,27 @@ func (x *Order) GetDiscountAmount() int64 {
 		return *x.DiscountAmount
 	}
 	return 0
+}
+
+func (x *Order) GetShippingFee() int64 {
+	if x != nil && x.ShippingFee != nil {
+		return *x.ShippingFee
+	}
+	return 0
+}
+
+func (x *Order) GetTaxAmount() int64 {
+	if x != nil && x.TaxAmount != nil {
+		return *x.TaxAmount
+	}
+	return 0
+}
+
+func (x *Order) GetShippingRegion() string {
+	if x != nil && x.ShippingRegion != nil {
+		return *x.ShippingRegion
+	}
+	return ""
 }
 
 func (x *Order) GetTenantId() uint32 {
@@ -1452,7 +1476,7 @@ var File_order_service_v1_order_proto protoreflect.FileDescriptor
 
 const file_order_service_v1_order_proto_rawDesc = "" +
 	"\n" +
-	"\x1corder/service/v1/order.proto\x12\x10order.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xd3\x0f\n" +
+	"\x1corder/service/v1/order.proto\x12\x10order.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x8b\x13\n" +
 	"\x05Order\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b订单IDH\x00R\x02id\x88\x01\x01\x122\n" +
 	"\auser_id\x18\x02 \x01(\rB\x14\xbaG\x11\x92\x02\x0e下单用户IDH\x01R\x06userId\x88\x01\x01\x12[\n" +
@@ -1467,20 +1491,24 @@ const file_order_service_v1_order_proto_rawDesc = "" +
 	" \x01(\tB'\xbaG$\x92\x02!收货地址（结构化文本）H\tR\x0fshippingAddress\x88\x01\x01\x12\xa5\x01\n" +
 	"\x0foriginal_amount\x18\v \x01(\x03Bw\xbaGt\x92\x02q订单折前总额（最小货币单位，分；各订单项 subtotal 之和，未扣抵扣；审计/对账用）H\n" +
 	"R\x0eoriginalAmount\x88\x01\x01\x12\x88\x01\n" +
-	"\x0fdiscount_amount\x18\f \x01(\x03BZ\xbaGW\x92\x02T优惠券抵扣额（最小货币单位，分；未用券为 0；审计/对账用）H\vR\x0ediscountAmount\x88\x01\x01\x120\n" +
-	"\ttenant_id\x18Z \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\fR\btenantId\x88\x01\x01\x12;\n" +
+	"\x0fdiscount_amount\x18\f \x01(\x03BZ\xbaGW\x92\x02T优惠券抵扣额（最小货币单位，分；未用券为 0；审计/对账用）H\vR\x0ediscountAmount\x88\x01\x01\x12\x7f\n" +
+	"\fshipping_fee\x18\r \x01(\x03BW\xbaGT\x92\x02Q运费（最小货币单位，分；无运费规则时为 0；审计/对账用）H\fR\vshippingFee\x88\x01\x01\x12{\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\rR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"tax_amount\x18\x0e \x01(\x03BW\xbaGT\x92\x02Q税费（最小货币单位，分；无税率规则时为 0；审计/对账用）H\rR\ttaxAmount\x88\x01\x01\x12\x83\x01\n" +
+	"\x0fshipping_region\x18\x0f \x01(\tBU\xbaGR\x92\x02O收货地区代码（ISO 3166；运费/税率计算输入；审计/对账用）H\x0eR\x0eshippingRegion\x88\x01\x01\x120\n" +
+	"\ttenant_id\x18Z \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\x0fR\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x0eR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x10R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0fR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x11R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x10R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x12R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x11R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x13R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x12R\tdeletedAt\x88\x01\x01\"i\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x14R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x15R\tdeletedAt\x88\x01\x01\"i\n" +
 	"\x06Status\x12\x16\n" +
 	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fPENDING_PAYMENT\x10\x01\x12\b\n" +
@@ -1501,7 +1529,10 @@ const file_order_service_v1_order_proto_rawDesc = "" +
 	"\x10_recipient_phoneB\x13\n" +
 	"\x11_shipping_addressB\x12\n" +
 	"\x10_original_amountB\x12\n" +
-	"\x10_discount_amountB\f\n" +
+	"\x10_discount_amountB\x0f\n" +
+	"\r_shipping_feeB\r\n" +
+	"\v_tax_amountB\x12\n" +
+	"\x10_shipping_regionB\f\n" +
 	"\n" +
 	"_tenant_idB\r\n" +
 	"\v_created_byB\r\n" +

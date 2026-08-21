@@ -38,6 +38,7 @@ func NewRestMiddleware(
 	// add white list for authentication.
 	rpc.AddWhiteList(
 		appV1.OperationAuthenticationServiceLogin,
+		appV1.OperationAuthenticationServiceRegister,
 		appV1.OperationAuthenticationServiceSendResetCode,
 		appV1.OperationAuthenticationServiceResetPassword,
 

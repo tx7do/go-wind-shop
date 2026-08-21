@@ -46,6 +46,9 @@ function handleResend() {
 
 function handleConfirm() {
   if (!isCodeComplete.value) return
+  // TODO: 邮箱验证码注册流程。后端 AuthenticationService.RegisterUser 目前不接受/校验
+  // 邮箱验证码（仅 username+password 创建账号），故邮箱验证注册链路尚未打通。
+  // 待后端补齐邮箱验证码校验能力后，此处改调 useRegister 并附带 email + 已校验的 code。
   console.log('确认注册')
 }
 </script>

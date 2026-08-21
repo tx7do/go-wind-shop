@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "shipping/service/v1/shipping_rate.proto";
+
+// 运费模板管理服务（admin 全 CRUD）
+service ShippingRateService {
+  rpc List (pagination.PagingRequest) returns (shipping.service.v1.ListShippingRateResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/shipping-rates"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (shipping.service.v1.CountShippingRateResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/shipping-rates/count"
+    };
+  }
+
+  rpc Get (shipping.service.v1.GetShippingRateRequest) returns (shipping.service.v1.ShippingRate) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/shipping-rates/{id}"
+    };
+  }
+
+  rpc Create (shipping.service.v1.CreateShippingRateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/shipping-rates"
+      body: "*"
+    };
+  }
+
+  rpc Update (shipping.service.v1.UpdateShippingRateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/shipping-rates/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (shipping.service.v1.DeleteShippingRateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/shipping-rates"
+    };
+  }
+}

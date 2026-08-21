@@ -21,8 +21,6 @@ service TenantService {
 
   // 查询租户详情
   rpc Get (GetTenantRequest) returns (Tenant) {}
-  // 批量创建租户
-  rpc BatchCreate (BatchCreateTenantsRequest) returns (BatchCreateTenantsResponse) {}
 
   // 创建租户
   rpc Create (CreateTenantRequest) returns (Tenant) {}
@@ -35,9 +33,6 @@ service TenantService {
 
   // 租户是否存在
   rpc TenantExists (TenantExistsRequest) returns (TenantExistsResponse) {}
-
-  // 分配租户管理员
-  rpc AssignTenantAdmin(AssignTenantAdminRequest) returns (google.protobuf.Empty) {}
 
   // 创建租户及管理员用户
   rpc CreateTenantWithAdminUser (CreateTenantWithAdminUserRequest) returns (google.protobuf.Empty) {}

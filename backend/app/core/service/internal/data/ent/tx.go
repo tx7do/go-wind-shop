@@ -106,6 +106,8 @@ type Tx struct {
 	Shipment *ShipmentClient
 	// ShippingAddress is the client for interacting with the ShippingAddress builders.
 	ShippingAddress *ShippingAddressClient
+	// ShippingRate is the client for interacting with the ShippingRate builders.
+	ShippingRate *ShippingRateClient
 	// Sku is the client for interacting with the Sku builders.
 	Sku *SkuClient
 	// SkuAttributeCombination is the client for interacting with the SkuAttributeCombination builders.
@@ -114,6 +116,8 @@ type Tx struct {
 	SkuPrice *SkuPriceClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
+	// TaxRate is the client for interacting with the TaxRate builders.
+	TaxRate *TaxRateClient
 	// Tenant is the client for interacting with the Tenant builders.
 	Tenant *TenantClient
 	// User is the client for interacting with the User builders.
@@ -306,10 +310,12 @@ func (tx *Tx) init() {
 	tx.RolePermission = NewRolePermissionClient(tx.config)
 	tx.Shipment = NewShipmentClient(tx.config)
 	tx.ShippingAddress = NewShippingAddressClient(tx.config)
+	tx.ShippingRate = NewShippingRateClient(tx.config)
 	tx.Sku = NewSkuClient(tx.config)
 	tx.SkuAttributeCombination = NewSkuAttributeCombinationClient(tx.config)
 	tx.SkuPrice = NewSkuPriceClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
+	tx.TaxRate = NewTaxRateClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.UserCoupon = NewUserCouponClient(tx.config)

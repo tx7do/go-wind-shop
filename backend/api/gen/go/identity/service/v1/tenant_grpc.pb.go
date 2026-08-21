@@ -24,12 +24,10 @@ const (
 	TenantService_List_FullMethodName                      = "/identity.service.v1.TenantService/List"
 	TenantService_Count_FullMethodName                     = "/identity.service.v1.TenantService/Count"
 	TenantService_Get_FullMethodName                       = "/identity.service.v1.TenantService/Get"
-	TenantService_BatchCreate_FullMethodName               = "/identity.service.v1.TenantService/BatchCreate"
 	TenantService_Create_FullMethodName                    = "/identity.service.v1.TenantService/Create"
 	TenantService_Update_FullMethodName                    = "/identity.service.v1.TenantService/Update"
 	TenantService_Delete_FullMethodName                    = "/identity.service.v1.TenantService/Delete"
 	TenantService_TenantExists_FullMethodName              = "/identity.service.v1.TenantService/TenantExists"
-	TenantService_AssignTenantAdmin_FullMethodName         = "/identity.service.v1.TenantService/AssignTenantAdmin"
 	TenantService_CreateTenantWithAdminUser_FullMethodName = "/identity.service.v1.TenantService/CreateTenantWithAdminUser"
 )
 
@@ -45,8 +43,6 @@ type TenantServiceClient interface {
 	Count(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*CountTenantResponse, error)
 	// 查询租户详情
 	Get(ctx context.Context, in *GetTenantRequest, opts ...grpc.CallOption) (*Tenant, error)
-	// 批量创建租户
-	BatchCreate(ctx context.Context, in *BatchCreateTenantsRequest, opts ...grpc.CallOption) (*BatchCreateTenantsResponse, error)
 	// 创建租户
 	Create(ctx context.Context, in *CreateTenantRequest, opts ...grpc.CallOption) (*Tenant, error)
 	// 更新租户
@@ -55,8 +51,6 @@ type TenantServiceClient interface {
 	Delete(ctx context.Context, in *DeleteTenantRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 租户是否存在
 	TenantExists(ctx context.Context, in *TenantExistsRequest, opts ...grpc.CallOption) (*TenantExistsResponse, error)
-	// 分配租户管理员
-	AssignTenantAdmin(ctx context.Context, in *AssignTenantAdminRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 创建租户及管理员用户
 	CreateTenantWithAdminUser(ctx context.Context, in *CreateTenantWithAdminUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -93,16 +87,6 @@ func (c *tenantServiceClient) Get(ctx context.Context, in *GetTenantRequest, opt
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Tenant)
 	err := c.cc.Invoke(ctx, TenantService_Get_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *tenantServiceClient) BatchCreate(ctx context.Context, in *BatchCreateTenantsRequest, opts ...grpc.CallOption) (*BatchCreateTenantsResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(BatchCreateTenantsResponse)
-	err := c.cc.Invoke(ctx, TenantService_BatchCreate_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -149,16 +133,6 @@ func (c *tenantServiceClient) TenantExists(ctx context.Context, in *TenantExists
 	return out, nil
 }
 
-func (c *tenantServiceClient) AssignTenantAdmin(ctx context.Context, in *AssignTenantAdminRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, TenantService_AssignTenantAdmin_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *tenantServiceClient) CreateTenantWithAdminUser(ctx context.Context, in *CreateTenantWithAdminUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
@@ -181,8 +155,6 @@ type TenantServiceServer interface {
 	Count(context.Context, *v1.PagingRequest) (*CountTenantResponse, error)
 	// 查询租户详情
 	Get(context.Context, *GetTenantRequest) (*Tenant, error)
-	// 批量创建租户
-	BatchCreate(context.Context, *BatchCreateTenantsRequest) (*BatchCreateTenantsResponse, error)
 	// 创建租户
 	Create(context.Context, *CreateTenantRequest) (*Tenant, error)
 	// 更新租户
@@ -191,8 +163,6 @@ type TenantServiceServer interface {
 	Delete(context.Context, *DeleteTenantRequest) (*emptypb.Empty, error)
 	// 租户是否存在
 	TenantExists(context.Context, *TenantExistsRequest) (*TenantExistsResponse, error)
-	// 分配租户管理员
-	AssignTenantAdmin(context.Context, *AssignTenantAdminRequest) (*emptypb.Empty, error)
 	// 创建租户及管理员用户
 	CreateTenantWithAdminUser(context.Context, *CreateTenantWithAdminUserRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedTenantServiceServer()
@@ -214,9 +184,6 @@ func (UnimplementedTenantServiceServer) Count(context.Context, *v1.PagingRequest
 func (UnimplementedTenantServiceServer) Get(context.Context, *GetTenantRequest) (*Tenant, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedTenantServiceServer) BatchCreate(context.Context, *BatchCreateTenantsRequest) (*BatchCreateTenantsResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method BatchCreate not implemented")
-}
 func (UnimplementedTenantServiceServer) Create(context.Context, *CreateTenantRequest) (*Tenant, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
 }
@@ -228,9 +195,6 @@ func (UnimplementedTenantServiceServer) Delete(context.Context, *DeleteTenantReq
 }
 func (UnimplementedTenantServiceServer) TenantExists(context.Context, *TenantExistsRequest) (*TenantExistsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method TenantExists not implemented")
-}
-func (UnimplementedTenantServiceServer) AssignTenantAdmin(context.Context, *AssignTenantAdminRequest) (*emptypb.Empty, error) {
-	return nil, status.Error(codes.Unimplemented, "method AssignTenantAdmin not implemented")
 }
 func (UnimplementedTenantServiceServer) CreateTenantWithAdminUser(context.Context, *CreateTenantWithAdminUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateTenantWithAdminUser not implemented")
@@ -310,24 +274,6 @@ func _TenantService_Get_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TenantService_BatchCreate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(BatchCreateTenantsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TenantServiceServer).BatchCreate(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: TenantService_BatchCreate_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TenantServiceServer).BatchCreate(ctx, req.(*BatchCreateTenantsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _TenantService_Create_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTenantRequest)
 	if err := dec(in); err != nil {
@@ -400,24 +346,6 @@ func _TenantService_TenantExists_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _TenantService_AssignTenantAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AssignTenantAdminRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(TenantServiceServer).AssignTenantAdmin(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: TenantService_AssignTenantAdmin_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TenantServiceServer).AssignTenantAdmin(ctx, req.(*AssignTenantAdminRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _TenantService_CreateTenantWithAdminUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateTenantWithAdminUserRequest)
 	if err := dec(in); err != nil {
@@ -456,10 +384,6 @@ var TenantService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _TenantService_Get_Handler,
 		},
 		{
-			MethodName: "BatchCreate",
-			Handler:    _TenantService_BatchCreate_Handler,
-		},
-		{
 			MethodName: "Create",
 			Handler:    _TenantService_Create_Handler,
 		},
@@ -474,10 +398,6 @@ var TenantService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TenantExists",
 			Handler:    _TenantService_TenantExists_Handler,
-		},
-		{
-			MethodName: "AssignTenantAdmin",
-			Handler:    _TenantService_AssignTenantAdmin_Handler,
 		},
 		{
 			MethodName: "CreateTenantWithAdminUser",

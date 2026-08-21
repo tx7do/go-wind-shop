@@ -76,6 +76,16 @@ func (s *AuthenticationService) Login(ctx context.Context, req *authenticationV1
 	return s.authenticationServiceClient.Login(ctx, req)
 }
 
+// Register 注册。薄转发到核心 AuthenticationService.RegisterUser。
+// 核心侧在单事务内创建 user（租户按 tenant_code 解析）+ USERNAME 密码哈希凭证，
+// 与登录/找回密码共用凭证体系。注册成功后用户可凭该凭证走 Login 流程。
+func (s *AuthenticationService) Register(ctx context.Context, req *authenticationV1.RegisterUserRequest) (*authenticationV1.RegisterUserResponse, error) {
+	if req == nil {
+		return nil, authenticationV1.ErrorBadRequest("invalid request")
+	}
+	return s.authenticationServiceClient.RegisterUser(ctx, req)
+}
+
 // Logout 登出
 func (s *AuthenticationService) Logout(ctx context.Context, _ *emptypb.Empty) (*emptypb.Empty, error) {
 	operator, err := auth.FromContext(ctx)

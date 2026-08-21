@@ -53,10 +53,12 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/schema"
 	"go-wind-shop/app/core/service/internal/data/ent/shipment"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingaddress"
+	"go-wind-shop/app/core/service/internal/data/ent/shippingrate"
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 	"go-wind-shop/app/core/service/internal/data/ent/task"
+	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
 	"go-wind-shop/app/core/service/internal/data/ent/tenant"
 	"go-wind-shop/app/core/service/internal/data/ent/user"
 	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
@@ -686,6 +688,14 @@ func init() {
 	orderDescDiscountAmount := orderFields[3].Descriptor()
 	// order.DefaultDiscountAmount holds the default value on creation for the discount_amount field.
 	order.DefaultDiscountAmount = orderDescDiscountAmount.Default.(int64)
+	// orderDescShippingFee is the schema descriptor for shipping_fee field.
+	orderDescShippingFee := orderFields[4].Descriptor()
+	// order.DefaultShippingFee holds the default value on creation for the shipping_fee field.
+	order.DefaultShippingFee = orderDescShippingFee.Default.(int64)
+	// orderDescTaxAmount is the schema descriptor for tax_amount field.
+	orderDescTaxAmount := orderFields[5].Descriptor()
+	// order.DefaultTaxAmount holds the default value on creation for the tax_amount field.
+	order.DefaultTaxAmount = orderDescTaxAmount.Default.(int64)
 	// orderDescID is the schema descriptor for id field.
 	orderDescID := orderMixinFields0[0].Descriptor()
 	// order.IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -1257,6 +1267,44 @@ func init() {
 	shippingaddressDescID := shippingaddressMixinFields0[0].Descriptor()
 	// shippingaddress.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	shippingaddress.IDValidator = shippingaddressDescID.Validators[0].(func(uint32) error)
+	shippingrateMixin := schema.ShippingRate{}.Mixin()
+	shippingrate.Policy = privacy.NewPolicies(shippingrateMixin[3], schema.ShippingRate{})
+	shippingrate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := shippingrate.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	shippingrateMixinFields0 := shippingrateMixin[0].Fields()
+	_ = shippingrateMixinFields0
+	shippingrateMixinFields3 := shippingrateMixin[3].Fields()
+	_ = shippingrateMixinFields3
+	shippingrateMixinFields4 := shippingrateMixin[4].Fields()
+	_ = shippingrateMixinFields4
+	shippingrateFields := schema.ShippingRate{}.Fields()
+	_ = shippingrateFields
+	// shippingrateDescTenantID is the schema descriptor for tenant_id field.
+	shippingrateDescTenantID := shippingrateMixinFields3[0].Descriptor()
+	// shippingrate.DefaultTenantID holds the default value on creation for the tenant_id field.
+	shippingrate.DefaultTenantID = shippingrateDescTenantID.Default.(uint32)
+	// shippingrateDescCurrency is the schema descriptor for currency field.
+	shippingrateDescCurrency := shippingrateMixinFields4[0].Descriptor()
+	// shippingrate.DefaultCurrency holds the default value on creation for the currency field.
+	shippingrate.DefaultCurrency = shippingrateDescCurrency.Default.(string)
+	// shippingrateDescBaseFee is the schema descriptor for base_fee field.
+	shippingrateDescBaseFee := shippingrateFields[1].Descriptor()
+	// shippingrate.DefaultBaseFee holds the default value on creation for the base_fee field.
+	shippingrate.DefaultBaseFee = shippingrateDescBaseFee.Default.(int64)
+	// shippingrateDescPerUnitFee is the schema descriptor for per_unit_fee field.
+	shippingrateDescPerUnitFee := shippingrateFields[2].Descriptor()
+	// shippingrate.DefaultPerUnitFee holds the default value on creation for the per_unit_fee field.
+	shippingrate.DefaultPerUnitFee = shippingrateDescPerUnitFee.Default.(int64)
+	// shippingrateDescID is the schema descriptor for id field.
+	shippingrateDescID := shippingrateMixinFields0[0].Descriptor()
+	// shippingrate.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	shippingrate.IDValidator = shippingrateDescID.Validators[0].(func(uint32) error)
 	skuMixin := schema.Sku{}.Mixin()
 	skuMixinFields0 := skuMixin[0].Fields()
 	_ = skuMixinFields0
@@ -1322,6 +1370,40 @@ func init() {
 	taskDescID := taskMixinFields0[0].Descriptor()
 	// task.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	task.IDValidator = taskDescID.Validators[0].(func(uint32) error)
+	taxrateMixin := schema.TaxRate{}.Mixin()
+	taxrate.Policy = privacy.NewPolicies(taxrateMixin[3], schema.TaxRate{})
+	taxrate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := taxrate.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	taxrateMixinFields0 := taxrateMixin[0].Fields()
+	_ = taxrateMixinFields0
+	taxrateMixinFields3 := taxrateMixin[3].Fields()
+	_ = taxrateMixinFields3
+	taxrateMixinFields4 := taxrateMixin[4].Fields()
+	_ = taxrateMixinFields4
+	taxrateFields := schema.TaxRate{}.Fields()
+	_ = taxrateFields
+	// taxrateDescTenantID is the schema descriptor for tenant_id field.
+	taxrateDescTenantID := taxrateMixinFields3[0].Descriptor()
+	// taxrate.DefaultTenantID holds the default value on creation for the tenant_id field.
+	taxrate.DefaultTenantID = taxrateDescTenantID.Default.(uint32)
+	// taxrateDescCurrency is the schema descriptor for currency field.
+	taxrateDescCurrency := taxrateMixinFields4[0].Descriptor()
+	// taxrate.DefaultCurrency holds the default value on creation for the currency field.
+	taxrate.DefaultCurrency = taxrateDescCurrency.Default.(string)
+	// taxrateDescTaxRate is the schema descriptor for tax_rate field.
+	taxrateDescTaxRate := taxrateFields[1].Descriptor()
+	// taxrate.DefaultTaxRate holds the default value on creation for the tax_rate field.
+	taxrate.DefaultTaxRate = taxrateDescTaxRate.Default.(int32)
+	// taxrateDescID is the schema descriptor for id field.
+	taxrateDescID := taxrateMixinFields0[0].Descriptor()
+	// taxrate.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	taxrate.IDValidator = taxrateDescID.Validators[0].(func(uint32) error)
 	tenantMixin := schema.Tenant{}.Mixin()
 	tenantMixinFields0 := tenantMixin[0].Fields()
 	_ = tenantMixinFields0

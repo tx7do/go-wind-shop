@@ -42,6 +42,12 @@ const (
 	FieldOriginalAmount = "original_amount"
 	// FieldDiscountAmount holds the string denoting the discount_amount field in the database.
 	FieldDiscountAmount = "discount_amount"
+	// FieldShippingFee holds the string denoting the shipping_fee field in the database.
+	FieldShippingFee = "shipping_fee"
+	// FieldTaxAmount holds the string denoting the tax_amount field in the database.
+	FieldTaxAmount = "tax_amount"
+	// FieldShippingRegion holds the string denoting the shipping_region field in the database.
+	FieldShippingRegion = "shipping_region"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldRecipientName holds the string denoting the recipient_name field in the database.
@@ -71,6 +77,9 @@ var Columns = []string{
 	FieldTotalAmount,
 	FieldOriginalAmount,
 	FieldDiscountAmount,
+	FieldShippingFee,
+	FieldTaxAmount,
+	FieldShippingRegion,
 	FieldStatus,
 	FieldRecipientName,
 	FieldRecipientPhone,
@@ -105,6 +114,10 @@ var (
 	DefaultOriginalAmount int64
 	// DefaultDiscountAmount holds the default value on creation for the "discount_amount" field.
 	DefaultDiscountAmount int64
+	// DefaultShippingFee holds the default value on creation for the "shipping_fee" field.
+	DefaultShippingFee int64
+	// DefaultTaxAmount holds the default value on creation for the "tax_amount" field.
+	DefaultTaxAmount int64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -211,6 +224,21 @@ func ByOriginalAmount(opts ...sql.OrderTermOption) OrderOption {
 // ByDiscountAmount orders the results by the discount_amount field.
 func ByDiscountAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldDiscountAmount, opts...).ToFunc()
+}
+
+// ByShippingFee orders the results by the shipping_fee field.
+func ByShippingFee(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldShippingFee, opts...).ToFunc()
+}
+
+// ByTaxAmount orders the results by the tax_amount field.
+func ByTaxAmount(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldTaxAmount, opts...).ToFunc()
+}
+
+// ByShippingRegion orders the results by the shipping_region field.
+func ByShippingRegion(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldShippingRegion, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.

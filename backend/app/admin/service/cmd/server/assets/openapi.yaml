@@ -5392,6 +5392,233 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/mall/shipping-rates:
+        get:
+            tags:
+                - ShippingRateService
+            operationId: ShippingRateService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shipping.service.v1.ListShippingRateResponse'
+        post:
+            tags:
+                - ShippingRateService
+            operationId: ShippingRateService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/shipping.service.v1.CreateShippingRateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - ShippingRateService
+            operationId: ShippingRateService_Delete
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/mall/shipping-rates/count:
+        get:
+            tags:
+                - ShippingRateService
+            operationId: ShippingRateService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shipping.service.v1.CountShippingRateResponse'
+    /admin/v1/mall/shipping-rates/{id}:
+        get:
+            tags:
+                - ShippingRateService
+            operationId: ShippingRateService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/shipping.service.v1.ShippingRate'
+        put:
+            tags:
+                - ShippingRateService
+            operationId: ShippingRateService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/shipping.service.v1.UpdateShippingRateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/mall/sku-attribute-combinations:
         get:
             tags:
@@ -6138,6 +6365,233 @@ paths:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/catalog.service.v1.UpdateSkuRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/mall/tax-rates:
+        get:
+            tags:
+                - TaxRateService
+            operationId: TaxRateService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/tax.service.v1.ListTaxRateResponse'
+        post:
+            tags:
+                - TaxRateService
+            operationId: TaxRateService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/tax.service.v1.CreateTaxRateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - TaxRateService
+            operationId: TaxRateService_Delete
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/mall/tax-rates/count:
+        get:
+            tags:
+                - TaxRateService
+            operationId: TaxRateService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/tax.service.v1.CountTaxRateResponse'
+    /admin/v1/mall/tax-rates/{id}:
+        get:
+            tags:
+                - TaxRateService
+            operationId: TaxRateService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/tax.service.v1.TaxRate'
+        put:
+            tags:
+                - TaxRateService
+            operationId: TaxRateService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/tax.service.v1.UpdateTaxRateRequest'
                 required: true
             responses:
                 "200":
@@ -12267,6 +12721,15 @@ components:
                 discountAmount:
                     type: string
                     description: 优惠券抵扣额（最小货币单位，分；未用券为 0；审计/对账用）
+                shippingFee:
+                    type: string
+                    description: 运费（最小货币单位，分；无运费规则时为 0；审计/对账用）
+                taxAmount:
+                    type: string
+                    description: 税费（最小货币单位，分；无税率规则时为 0；审计/对账用）
+                shippingRegion:
+                    type: string
+                    description: 收货地区代码（ISO 3166；运费/税率计算输入；审计/对账用）
                 tenantId:
                     type: integer
                     description: 租户ID
@@ -13332,11 +13795,21 @@ components:
             properties:
                 count:
                     type: string
+        shipping.service.v1.CountShippingRateResponse:
+            type: object
+            properties:
+                count:
+                    type: string
         shipping.service.v1.CreateShipmentRequest:
             type: object
             properties:
                 data:
                     $ref: '#/components/schemas/shipping.service.v1.Shipment'
+        shipping.service.v1.CreateShippingRateRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/shipping.service.v1.ShippingRate'
         shipping.service.v1.ListShipmentResponse:
             type: object
             properties:
@@ -13344,6 +13817,15 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/shipping.service.v1.Shipment'
+                total:
+                    type: string
+        shipping.service.v1.ListShippingRateResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/shipping.service.v1.ShippingRate'
                 total:
                     type: string
         shipping.service.v1.Shipment:
@@ -13408,6 +13890,62 @@ components:
                     description: 删除时间
                     format: date-time
             description: 物流单
+        shipping.service.v1.ShippingRate:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 模板ID
+                    format: uint32
+                region:
+                    type: string
+                    description: 目的地区域（ISO 3166 国家代码）
+                baseFee:
+                    type: string
+                    description: 基础运费（最小货币单位，分）
+                perUnitFee:
+                    type: string
+                    description: 按订单项数加收的运费（最小货币单位，分/件）
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - ACTIVE
+                        - INACTIVE
+                    type: string
+                    description: 模板状态
+                    format: enum
+                currency:
+                    type: string
+                    description: 币种（ISO 4217）
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 运费模板
         shipping.service.v1.UpdateShipmentRequest:
             type: object
             properties:
@@ -13436,6 +13974,21 @@ components:
                         type: string
                         format: enum
                     description: 状态前置条件白名单，物流单当前状态须在其中更新才生效，否则返回 Conflict
+        shipping.service.v1.UpdateShippingRateRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/shipping.service.v1.ShippingRate'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 允许缺失则插入
         storage.service.v1.CreateFileRequest:
             type: object
             properties:
@@ -13817,6 +14370,94 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 更新调度任务 - 请求
+        tax.service.v1.CountTaxRateResponse:
+            type: object
+            properties:
+                count:
+                    type: string
+        tax.service.v1.CreateTaxRateRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/tax.service.v1.TaxRate'
+        tax.service.v1.ListTaxRateResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/tax.service.v1.TaxRate'
+                total:
+                    type: string
+        tax.service.v1.TaxRate:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 规则ID
+                    format: uint32
+                region:
+                    type: string
+                    description: 目的地区域（ISO 3166 国家代码）
+                taxRate:
+                    type: integer
+                    description: 税率百分比（0-100，如 20 表示 20% VAT）
+                    format: int32
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - ACTIVE
+                        - INACTIVE
+                    type: string
+                    description: 规则状态
+                    format: enum
+                currency:
+                    type: string
+                    description: 币种（ISO 4217）
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 税率规则
+        tax.service.v1.UpdateTaxRateRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/tax.service.v1.TaxRate'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 允许缺失则插入
     responses:
         default:
             description: default kratos response
@@ -13905,6 +14546,8 @@ tags:
       description: 角色管理服务
     - name: ShipmentService
       description: 物流单管理服务（admin 侧，卖家运营可读写）
+    - name: ShippingRateService
+      description: 运费模板管理服务（admin 全 CRUD）
     - name: SkuAttributeCombinationService
       description: SKU 属性组合管理服务
     - name: SkuPriceService
@@ -13913,6 +14556,8 @@ tags:
       description: SKU 管理服务
     - name: TaskService
       description: 调度任务管理服务
+    - name: TaxRateService
+      description: 税率规则管理服务（admin 全 CRUD）
     - name: TenantService
       description: 租户管理服务
     - name: UserCouponService

@@ -60,6 +60,23 @@ func (Order) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.Int64("shipping_fee").
+			Comment("运费（最小货币单位，分；无运费规则时为 0；审计/对账用）").
+			Default(0).
+			Optional().
+			Nillable(),
+
+		field.Int64("tax_amount").
+			Comment("税费（最小货币单位，分；无税率规则时为 0；审计/对账用）").
+			Default(0).
+			Optional().
+			Nillable(),
+
+		field.String("shipping_region").
+			Comment("收货地区代码（ISO 3166；运费/税率计算输入；审计/对账用）").
+			Optional().
+			Nillable(),
+
 		field.Enum("status").
 			Comment("订单状态").
 			NamedValues(

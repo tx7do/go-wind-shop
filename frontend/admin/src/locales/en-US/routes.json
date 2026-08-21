@@ -56,6 +56,8 @@
     "refund": "Refund Management",
     "financeOverview": "Finance Overview",
     "shipment": "Shipment Management",
+    "shippingRate": "Shipping Rate",
+    "taxRate": "Tax Rate",
     "couponTemplate": "Coupon Template",
     "userCoupon": "User Coupon"
   },

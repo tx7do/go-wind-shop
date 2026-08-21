@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "tax/service/v1/tax_rate.proto";
+
+// 税率规则管理服务（admin 全 CRUD）
+service TaxRateService {
+  rpc List (pagination.PagingRequest) returns (tax.service.v1.ListTaxRateResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/tax-rates"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (tax.service.v1.CountTaxRateResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/tax-rates/count"
+    };
+  }
+
+  rpc Get (tax.service.v1.GetTaxRateRequest) returns (tax.service.v1.TaxRate) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/tax-rates/{id}"
+    };
+  }
+
+  rpc Create (tax.service.v1.CreateTaxRateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/tax-rates"
+      body: "*"
+    };
+  }
+
+  rpc Update (tax.service.v1.UpdateTaxRateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/tax-rates/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (tax.service.v1.DeleteTaxRateRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/tax-rates"
+    };
+  }
+}

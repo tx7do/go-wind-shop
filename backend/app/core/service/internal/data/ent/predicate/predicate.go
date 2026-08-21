@@ -147,6 +147,9 @@ type Shipment func(*sql.Selector)
 // ShippingAddress is the predicate function for shippingaddress builders.
 type ShippingAddress func(*sql.Selector)
 
+// ShippingRate is the predicate function for shippingrate builders.
+type ShippingRate func(*sql.Selector)
+
 // Sku is the predicate function for sku builders.
 type Sku func(*sql.Selector)
 
@@ -158,6 +161,9 @@ type SkuPrice func(*sql.Selector)
 
 // Task is the predicate function for task builders.
 type Task func(*sql.Selector)
+
+// TaxRate is the predicate function for taxrate builders.
+type TaxRate func(*sql.Selector)
 
 // Tenant is the predicate function for tenant builders.
 type Tenant func(*sql.Selector)

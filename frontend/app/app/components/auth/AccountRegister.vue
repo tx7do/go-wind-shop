@@ -1,9 +1,16 @@
 <script setup lang="ts">
+import { useRegister } from '@/api/composables/auth'
+
 const { t } = useI18n()
+const localePath = useLocalePath()
+const registerMutation = useRegister()
 
 const username = ref('')
 const password = ref('')
 const confirmPassword = ref('')
+const loading = ref(false)
+const errorMsg = ref('')
+const successMsg = ref('')
 
 const isValidUsername = computed(() => {
   if (!username.value) return false
@@ -20,9 +27,26 @@ const isFormValid = computed(() =>
   isValidUsername.value && isValidPassword.value && isPasswordMatch.value
 )
 
-function handleRegister() {
+async function handleRegister() {
+  errorMsg.value = ''
+  successMsg.value = ''
   if (!isFormValid.value) return
-  console.log('注册信息：', { username: username.value, password: password.value })
+
+  loading.value = true
+  try {
+    await registerMutation.mutateAsync({
+      username: username.value,
+      password: password.value,
+    })
+    successMsg.value = t('authentication.register.success')
+    setTimeout(() => {
+      navigateTo(localePath('/login'))
+    }, 1500)
+  } catch (e: any) {
+    errorMsg.value = e?.message || t('authentication.register.register_failed')
+  } finally {
+    loading.value = false
+  }
 }
 
 const inputBase = 'w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15'
@@ -30,6 +54,12 @@ const inputBase = 'w-full rounded-lg border border-border bg-background px-4 py-
 
 <template>
   <div class="space-y-4">
+    <div v-if="errorMsg" class="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+      {{ errorMsg }}
+    </div>
+    <div v-if="successMsg" class="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-primary">
+      {{ successMsg }}
+    </div>
     <!-- Username -->
     <div class="space-y-2">
       <label for="register-account-username" class="block text-sm font-medium text-foreground">
@@ -91,10 +121,10 @@ const inputBase = 'w-full rounded-lg border border-border bg-background px-4 py-
     <button
       type="button"
       class="w-full cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
-      :disabled="!isFormValid"
+      :disabled="!isFormValid || loading"
       @click="handleRegister"
     >
-      {{ t('authentication.register.register') }}
+      {{ loading ? t('authentication.register.registering') : t('authentication.register.register') }}
     </button>
   </div>
 </template>

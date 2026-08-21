@@ -218,6 +218,33 @@
       "update": "编辑优惠券模板"
     }
   },
+  "shippingRate": {
+    "moduleName": "运费模板",
+    "title": "运费模板管理",
+    "region": "目的地区域",
+    "baseFee": "基础运费（分）",
+    "perUnitFee": "按件加收（分）",
+    "status": "状态",
+    "currency": "币种",
+    "createdAt": "创建时间",
+    "button": {
+      "create": "新建运费模板",
+      "update": "编辑运费模板"
+    }
+  },
+  "taxRate": {
+    "moduleName": "税率规则",
+    "title": "税率规则管理",
+    "region": "目的地区域",
+    "taxRate": "税率（%）",
+    "status": "状态",
+    "currency": "币种",
+    "createdAt": "创建时间",
+    "button": {
+      "create": "新建税率规则",
+      "update": "编辑税率规则"
+    }
+  },
   "userCoupon": {
     "moduleName": "用户优惠券",
     "title": "用户优惠券发放管理",
