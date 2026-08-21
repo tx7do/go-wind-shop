@@ -14,6 +14,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/cartitem"
 	"go-wind-shop/app/core/service/internal/data/ent/category"
 	"go-wind-shop/app/core/service/internal/data/ent/categorytranslation"
+	"go-wind-shop/app/core/service/internal/data/ent/comment"
 	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
@@ -140,6 +141,7 @@ func checkColumn(t, c string) error {
 			cartitem.Table:                         cartitem.ValidColumn,
 			category.Table:                         category.ValidColumn,
 			categorytranslation.Table:              categorytranslation.ValidColumn,
+			comment.Table:                          comment.ValidColumn,
 			coupontemplate.Table:                   coupontemplate.ValidColumn,
 			dataaccessauditlog.Table:               dataaccessauditlog.ValidColumn,
 			file.Table:                             file.ValidColumn,

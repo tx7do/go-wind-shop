@@ -40,15 +40,15 @@ type CouponTemplateServiceHTTPServer interface {
 
 func RegisterCouponTemplateServiceHTTPServer(s *http.Server, srv CouponTemplateServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/coupon-templates", _CouponTemplateService_List6_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/coupon-templates/count", _CouponTemplateService_Count4_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/coupon-templates/{id}", _CouponTemplateService_Get6_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/coupon-templates", _CouponTemplateService_Create5_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/coupon-templates/{id}", _CouponTemplateService_Update5_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/coupon-templates", _CouponTemplateService_Delete5_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/coupon-templates", _CouponTemplateService_List7_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/coupon-templates/count", _CouponTemplateService_Count5_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/coupon-templates/{id}", _CouponTemplateService_Get7_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/coupon-templates", _CouponTemplateService_Create6_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/coupon-templates/{id}", _CouponTemplateService_Update6_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/coupon-templates", _CouponTemplateService_Delete6_HTTP_Handler(srv))
 }
 
-func _CouponTemplateService_List6_HTTP_Handler(srv CouponTemplateServiceHTTPServer) func(ctx http.Context) error {
+func _CouponTemplateService_List7_HTTP_Handler(srv CouponTemplateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -67,7 +67,7 @@ func _CouponTemplateService_List6_HTTP_Handler(srv CouponTemplateServiceHTTPServ
 	}
 }
 
-func _CouponTemplateService_Count4_HTTP_Handler(srv CouponTemplateServiceHTTPServer) func(ctx http.Context) error {
+func _CouponTemplateService_Count5_HTTP_Handler(srv CouponTemplateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -86,7 +86,7 @@ func _CouponTemplateService_Count4_HTTP_Handler(srv CouponTemplateServiceHTTPSer
 	}
 }
 
-func _CouponTemplateService_Get6_HTTP_Handler(srv CouponTemplateServiceHTTPServer) func(ctx http.Context) error {
+func _CouponTemplateService_Get7_HTTP_Handler(srv CouponTemplateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetCouponTemplateRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -108,7 +108,7 @@ func _CouponTemplateService_Get6_HTTP_Handler(srv CouponTemplateServiceHTTPServe
 	}
 }
 
-func _CouponTemplateService_Create5_HTTP_Handler(srv CouponTemplateServiceHTTPServer) func(ctx http.Context) error {
+func _CouponTemplateService_Create6_HTTP_Handler(srv CouponTemplateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateCouponTemplateRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -130,7 +130,7 @@ func _CouponTemplateService_Create5_HTTP_Handler(srv CouponTemplateServiceHTTPSe
 	}
 }
 
-func _CouponTemplateService_Update5_HTTP_Handler(srv CouponTemplateServiceHTTPServer) func(ctx http.Context) error {
+func _CouponTemplateService_Update6_HTTP_Handler(srv CouponTemplateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateCouponTemplateRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -155,7 +155,7 @@ func _CouponTemplateService_Update5_HTTP_Handler(srv CouponTemplateServiceHTTPSe
 	}
 }
 
-func _CouponTemplateService_Delete5_HTTP_Handler(srv CouponTemplateServiceHTTPServer) func(ctx http.Context) error {
+func _CouponTemplateService_Delete6_HTTP_Handler(srv CouponTemplateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteCouponTemplateRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -285,14 +285,14 @@ type UserCouponServiceHTTPServer interface {
 
 func RegisterUserCouponServiceHTTPServer(s *http.Server, srv UserCouponServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/user-coupons", _UserCouponService_List7_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/user-coupons/count", _UserCouponService_Count5_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/user-coupons/{id}", _UserCouponService_Get7_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/user-coupons", _UserCouponService_Create6_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/user-coupons", _UserCouponService_Delete6_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/user-coupons", _UserCouponService_List8_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/user-coupons/count", _UserCouponService_Count6_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/user-coupons/{id}", _UserCouponService_Get8_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/user-coupons", _UserCouponService_Create7_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/user-coupons", _UserCouponService_Delete7_HTTP_Handler(srv))
 }
 
-func _UserCouponService_List7_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
+func _UserCouponService_List8_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -311,7 +311,7 @@ func _UserCouponService_List7_HTTP_Handler(srv UserCouponServiceHTTPServer) func
 	}
 }
 
-func _UserCouponService_Count5_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
+func _UserCouponService_Count6_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -330,7 +330,7 @@ func _UserCouponService_Count5_HTTP_Handler(srv UserCouponServiceHTTPServer) fun
 	}
 }
 
-func _UserCouponService_Get7_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
+func _UserCouponService_Get8_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetUserCouponRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -352,7 +352,7 @@ func _UserCouponService_Get7_HTTP_Handler(srv UserCouponServiceHTTPServer) func(
 	}
 }
 
-func _UserCouponService_Create6_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
+func _UserCouponService_Create7_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateUserCouponRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -374,7 +374,7 @@ func _UserCouponService_Create6_HTTP_Handler(srv UserCouponServiceHTTPServer) fu
 	}
 }
 
-func _UserCouponService_Delete6_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
+func _UserCouponService_Delete7_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteUserCouponRequest
 		if err := ctx.BindQuery(&in); err != nil {

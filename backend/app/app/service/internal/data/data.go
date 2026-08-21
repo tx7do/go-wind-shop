@@ -22,6 +22,7 @@ import (
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 	cartV1 "go-wind-shop/api/gen/go/cart/service/v1"
+	commentV1 "go-wind-shop/api/gen/go/comment/service/v1"
 	couponV1 "go-wind-shop/api/gen/go/coupon/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
@@ -323,4 +324,13 @@ func NewPaymentRefundServiceClient(ctx *bootstrap.Context, r registry.Discovery)
 	}
 
 	return paymentV1.NewPaymentRefundServiceClient(cli)
+}
+
+func NewCommentServiceClient(ctx *bootstrap.Context, r registry.Discovery) commentV1.CommentServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return commentV1.NewCommentServiceClient(cli)
 }

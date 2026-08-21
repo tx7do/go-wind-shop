@@ -354,6 +354,54 @@ var (
 			},
 		},
 	}
+	// MallCommentsColumns holds the columns for the "mall_comments" table.
+	MallCommentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "content_type", Type: field.TypeEnum, Nullable: true, Comment: "内容类型（仅产品）", Enums: []string{"CONTENT_TYPE_PRODUCT"}},
+		{Name: "object_id", Type: field.TypeUint32, Nullable: true, Comment: "对象ID（商品ID）"},
+		{Name: "content", Type: field.TypeString, Nullable: true, Comment: "评论内容"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "评论状态", Enums: []string{"STATUS_PENDING", "STATUS_APPROVED", "STATUS_REJECTED", "STATUS_SPAM"}},
+		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
+	}
+	// MallCommentsTable holds the schema information for the "mall_comments" table.
+	MallCommentsTable = &schema.Table{
+		Name:       "mall_comments",
+		Comment:    "商品评论表",
+		Columns:    MallCommentsColumns,
+		PrimaryKey: []*schema.Column{MallCommentsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "mall_comments_mall_comments_children",
+				Columns:    []*schema.Column{MallCommentsColumns[12]},
+				RefColumns: []*schema.Column{MallCommentsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "comment_content_type_object_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallCommentsColumns[8], MallCommentsColumns[9]},
+			},
+			{
+				Name:    "comment_status",
+				Unique:  false,
+				Columns: []*schema.Column{MallCommentsColumns[11]},
+			},
+			{
+				Name:    "comment_parent_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallCommentsColumns[12]},
+			},
+		},
+	}
 	// MallCouponTemplatesColumns holds the columns for the "mall_coupon_templates" table.
 	MallCouponTemplatesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3525,6 +3573,7 @@ var (
 		MallCartItemsTable,
 		MallCategoriesTable,
 		MallCategoryTranslationsTable,
+		MallCommentsTable,
 		MallCouponTemplatesTable,
 		SysDataAccessAuditLogsTable,
 		FilesTable,
@@ -3619,6 +3668,12 @@ func init() {
 	}
 	MallCategoryTranslationsTable.Annotation = &entsql.Annotation{
 		Table:     "mall_category_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallCommentsTable.ForeignKeys[0].RefTable = MallCommentsTable
+	MallCommentsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_comments",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

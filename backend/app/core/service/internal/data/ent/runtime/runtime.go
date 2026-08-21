@@ -13,6 +13,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/cartitem"
 	"go-wind-shop/app/core/service/internal/data/ent/category"
 	"go-wind-shop/app/core/service/internal/data/ent/categorytranslation"
+	"go-wind-shop/app/core/service/internal/data/ent/comment"
 	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
@@ -220,6 +221,30 @@ func init() {
 	categorytranslationDescID := categorytranslationMixinFields0[0].Descriptor()
 	// categorytranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	categorytranslation.IDValidator = categorytranslationDescID.Validators[0].(func(uint32) error)
+	commentMixin := schema.Comment{}.Mixin()
+	comment.Policy = privacy.NewPolicies(commentMixin[3], schema.Comment{})
+	comment.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := comment.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	commentMixinFields0 := commentMixin[0].Fields()
+	_ = commentMixinFields0
+	commentMixinFields3 := commentMixin[3].Fields()
+	_ = commentMixinFields3
+	commentFields := schema.Comment{}.Fields()
+	_ = commentFields
+	// commentDescTenantID is the schema descriptor for tenant_id field.
+	commentDescTenantID := commentMixinFields3[0].Descriptor()
+	// comment.DefaultTenantID holds the default value on creation for the tenant_id field.
+	comment.DefaultTenantID = commentDescTenantID.Default.(uint32)
+	// commentDescID is the schema descriptor for id field.
+	commentDescID := commentMixinFields0[0].Descriptor()
+	// comment.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	comment.IDValidator = commentDescID.Validators[0].(func(uint32) error)
 	coupontemplateMixin := schema.CouponTemplate{}.Mixin()
 	coupontemplate.Policy = privacy.NewPolicies(coupontemplateMixin[3], schema.CouponTemplate{})
 	coupontemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -38,14 +38,14 @@ type OrderServiceHTTPServer interface {
 
 func RegisterOrderServiceHTTPServer(s *http.Server, srv OrderServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/mall/orders", _OrderService_List4_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/orders", _OrderService_List5_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/orders/count", _OrderService_Count2_HTTP_Handler(srv))
-	r.GET("/app/v1/mall/orders/{id}", _OrderService_Get4_HTTP_Handler(srv))
-	r.POST("/app/v1/mall/orders", _OrderService_Create2_HTTP_Handler(srv))
-	r.PUT("/app/v1/mall/orders/{id}", _OrderService_Update2_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/orders/{id}", _OrderService_Get5_HTTP_Handler(srv))
+	r.POST("/app/v1/mall/orders", _OrderService_Create3_HTTP_Handler(srv))
+	r.PUT("/app/v1/mall/orders/{id}", _OrderService_Update3_HTTP_Handler(srv))
 }
 
-func _OrderService_List4_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
+func _OrderService_List5_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -83,7 +83,7 @@ func _OrderService_Count2_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http
 	}
 }
 
-func _OrderService_Get4_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
+func _OrderService_Get5_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetOrderRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -105,7 +105,7 @@ func _OrderService_Get4_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.C
 	}
 }
 
-func _OrderService_Create2_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
+func _OrderService_Create3_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateOrderRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -127,7 +127,7 @@ func _OrderService_Create2_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx htt
 	}
 }
 
-func _OrderService_Update2_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
+func _OrderService_Update3_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateOrderRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -245,12 +245,12 @@ type OrderItemServiceHTTPServer interface {
 
 func RegisterOrderItemServiceHTTPServer(s *http.Server, srv OrderItemServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/mall/order-items", _OrderItemService_List5_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/order-items", _OrderItemService_List6_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/order-items/count", _OrderItemService_Count3_HTTP_Handler(srv))
-	r.GET("/app/v1/mall/order-items/{id}", _OrderItemService_Get5_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/order-items/{id}", _OrderItemService_Get6_HTTP_Handler(srv))
 }
 
-func _OrderItemService_List5_HTTP_Handler(srv OrderItemServiceHTTPServer) func(ctx http.Context) error {
+func _OrderItemService_List6_HTTP_Handler(srv OrderItemServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -288,7 +288,7 @@ func _OrderItemService_Count3_HTTP_Handler(srv OrderItemServiceHTTPServer) func(
 	}
 }
 
-func _OrderItemService_Get5_HTTP_Handler(srv OrderItemServiceHTTPServer) func(ctx http.Context) error {
+func _OrderItemService_Get6_HTTP_Handler(srv OrderItemServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetOrderItemRequest
 		if err := ctx.BindQuery(&in); err != nil {

@@ -1641,6 +1641,266 @@ export type catalogservicev1_GetCategoryRequest = {
   viewMask?: wellKnownFieldMask;
 };
 
+// 商品评论前台服务。
+// List/Get 在 BFF 层过滤 STATUS_APPROVED（未审核/拒绝/垃圾对前台不可见）；
+// Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）；
+// 用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+export interface CommentService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<commentservicev1_ListCommentResponse>;
+  Get(
+    request: commentservicev1_GetCommentRequest,
+  ): Promise<commentservicev1_Comment>;
+  Create(
+    request: commentservicev1_CreateCommentRequest,
+  ): Promise<wellKnownEmpty>;
+  Update(
+    request: commentservicev1_UpdateCommentRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: commentservicev1_DeleteCommentRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createCommentServiceClient(
+  transport: ClientTransport,
+): CommentService {
+  return {
+    List(request) {
+      const path = `app/v1/mall/comments`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CommentService',
+        method: 'List',
+      }) as Promise<commentservicev1_ListCommentResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `app/v1/mall/comments/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CommentService',
+        method: 'Get',
+      }) as Promise<commentservicev1_Comment>;
+    },
+    Create(request) {
+      const path = `app/v1/mall/comments`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'CommentService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `app/v1/mall/comments/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'CommentService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      const path = `app/v1/mall/comments`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'DELETE', body, {
+        service: 'CommentService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 回应 - 评论列表
+export type commentservicev1_ListCommentResponse = {
+  items: commentservicev1_Comment[] | undefined;
+  total: number | undefined;
+};
+
+// 商品评论
+export type commentservicev1_Comment = {
+  children: commentservicev1_Comment[] | undefined;
+  content?: string;
+  contentType?: commentservicev1_Comment_ContentType;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  objectId?: number;
+  parentId?: number;
+  status?: commentservicev1_Comment_Status;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 内容类型
+export type commentservicev1_Comment_ContentType =
+  | 'CONTENT_TYPE_PRODUCT'
+  | 'CONTENT_TYPE_UNSPECIFIED';
+// 评论状态
+export type commentservicev1_Comment_Status =
+  | 'STATUS_APPROVED'
+  | 'STATUS_PENDING'
+  | 'STATUS_REJECTED'
+  | 'STATUS_SPAM'
+  | 'STATUS_UNSPECIFIED';
+// 请求 - 评论数据
+export type commentservicev1_GetCommentRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 请求 - 创建评论
+export type commentservicev1_CreateCommentRequest = {
+  data: commentservicev1_Comment | undefined;
+};
+
+// 请求 - 更新评论
+export type commentservicev1_UpdateCommentRequest = {
+  allowMissing?: boolean;
+  data: commentservicev1_Comment | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 请求 - 删除评论
+export type commentservicev1_DeleteCommentRequest = {
+  id?: number;
+};
+
 // 文件传输服务
 export interface FileTransferService {
   // 下载文件
@@ -5519,6 +5779,7 @@ export class ApiClient {
   private _cartItemService?: CartItemService;
   private _cartService?: CartService;
   private _categoryService?: CategoryService;
+  private _commentService?: CommentService;
   private _fileTransferService?: FileTransferService;
   private _internalMessageRecipientService?: InternalMessageRecipientService;
   private _orderItemService?: OrderItemService;
@@ -5559,6 +5820,10 @@ export class ApiClient {
 
   get categoryService(): CategoryService {
     return this._categoryService ??= createCategoryServiceClient(this._transport);
+  }
+
+  get commentService(): CommentService {
+    return this._commentService ??= createCommentServiceClient(this._transport);
   }
 
   get fileTransferService(): FileTransferService {

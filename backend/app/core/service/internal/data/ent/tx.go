@@ -28,6 +28,8 @@ type Tx struct {
 	Category *CategoryClient
 	// CategoryTranslation is the client for interacting with the CategoryTranslation builders.
 	CategoryTranslation *CategoryTranslationClient
+	// Comment is the client for interacting with the Comment builders.
+	Comment *CommentClient
 	// CouponTemplate is the client for interacting with the CouponTemplate builders.
 	CouponTemplate *CouponTemplateClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
@@ -271,6 +273,7 @@ func (tx *Tx) init() {
 	tx.CartItem = NewCartItemClient(tx.config)
 	tx.Category = NewCategoryClient(tx.config)
 	tx.CategoryTranslation = NewCategoryTranslationClient(tx.config)
+	tx.Comment = NewCommentClient(tx.config)
 	tx.CouponTemplate = NewCouponTemplateClient(tx.config)
 	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)
 	tx.File = NewFileClient(tx.config)

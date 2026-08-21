@@ -40,15 +40,15 @@ type TaxRateServiceHTTPServer interface {
 
 func RegisterTaxRateServiceHTTPServer(s *http.Server, srv TaxRateServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/tax-rates", _TaxRateService_List36_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/tax-rates/count", _TaxRateService_Count18_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/tax-rates/{id}", _TaxRateService_Get37_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/tax-rates", _TaxRateService_Create29_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/tax-rates/{id}", _TaxRateService_Update29_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/tax-rates", _TaxRateService_Delete30_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/tax-rates", _TaxRateService_List37_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/tax-rates/count", _TaxRateService_Count19_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/tax-rates/{id}", _TaxRateService_Get38_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/tax-rates", _TaxRateService_Create30_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/tax-rates/{id}", _TaxRateService_Update30_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/tax-rates", _TaxRateService_Delete31_HTTP_Handler(srv))
 }
 
-func _TaxRateService_List36_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
+func _TaxRateService_List37_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -67,7 +67,7 @@ func _TaxRateService_List36_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx 
 	}
 }
 
-func _TaxRateService_Count18_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
+func _TaxRateService_Count19_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -86,7 +86,7 @@ func _TaxRateService_Count18_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx
 	}
 }
 
-func _TaxRateService_Get37_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
+func _TaxRateService_Get38_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetTaxRateRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -108,7 +108,7 @@ func _TaxRateService_Get37_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx h
 	}
 }
 
-func _TaxRateService_Create29_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
+func _TaxRateService_Create30_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateTaxRateRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -130,7 +130,7 @@ func _TaxRateService_Create29_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ct
 	}
 }
 
-func _TaxRateService_Update29_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
+func _TaxRateService_Update30_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateTaxRateRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -155,7 +155,7 @@ func _TaxRateService_Update29_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ct
 	}
 }
 
-func _TaxRateService_Delete30_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
+func _TaxRateService_Delete31_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteTaxRateRequest
 		if err := ctx.BindQuery(&in); err != nil {

@@ -1085,6 +1085,156 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/catalog.service.v1.Category'
+    /app/v1/mall/comments:
+        get:
+            tags:
+                - CommentService
+            operationId: CommentService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/comment.service.v1.ListCommentResponse'
+        post:
+            tags:
+                - CommentService
+            operationId: CommentService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/comment.service.v1.CreateCommentRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - CommentService
+            operationId: CommentService_Delete
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/mall/comments/{id}:
+        get:
+            tags:
+                - CommentService
+            operationId: CommentService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/comment.service.v1.Comment'
+        put:
+            tags:
+                - CommentService
+            operationId: CommentService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/comment.service.v1.UpdateCommentRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /app/v1/mall/messages:
         get:
             tags:
@@ -4194,6 +4344,107 @@ components:
                     type: string
                     description: 删除时间
                     format: date-time
+        comment.service.v1.Comment:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 评论ID
+                    format: uint32
+                contentType:
+                    enum:
+                        - CONTENT_TYPE_UNSPECIFIED
+                        - CONTENT_TYPE_PRODUCT
+                    type: string
+                    description: 内容类型
+                    format: enum
+                objectId:
+                    type: integer
+                    description: 对象ID
+                    format: uint32
+                content:
+                    type: string
+                    description: 评论内容
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - STATUS_PENDING
+                        - STATUS_APPROVED
+                        - STATUS_REJECTED
+                        - STATUS_SPAM
+                    type: string
+                    description: 评论状态
+                    format: enum
+                parentId:
+                    type: integer
+                    description: 父节点ID
+                    format: uint32
+                children:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/comment.service.v1.Comment'
+                    description: 子节点树
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 商品评论
+        comment.service.v1.CreateCommentRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/comment.service.v1.Comment'
+            description: 请求 - 创建评论
+        comment.service.v1.ListCommentResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/comment.service.v1.Comment'
+                total:
+                    type: string
+            description: 回应 - 评论列表
+        comment.service.v1.UpdateCommentRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/comment.service.v1.Comment'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 允许缺失则插入
+            description: 请求 - 更新评论
         coupon.service.v1.ListUserCouponResponse:
             type: object
             properties:
@@ -5280,6 +5531,12 @@ tags:
       description: 购物车前台服务
     - name: CategoryService
       description: 商品类目前台服务
+    - name: CommentService
+      description: |-
+        商品评论前台服务。
+         List/Get 在 BFF 层过滤 STATUS_APPROVED（未审核/拒绝/垃圾对前台不可见）；
+         Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）；
+         用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
     - name: FileTransferService
       description: 文件传输服务
     - name: InternalMessageRecipientService

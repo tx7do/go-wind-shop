@@ -70,6 +70,9 @@ managed:
     - file_option: go_package
       path: tax/service/v1
       value: go-wind-shop/api/gen/go/tax/service/v1;taxpb
+    - file_option: go_package
+      path: comment/service/v1
+      value: go-wind-shop/api/gen/go/comment/service/v1;commentpb
 
 plugins:
   # generate go code

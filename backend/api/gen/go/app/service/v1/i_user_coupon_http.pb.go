@@ -33,12 +33,12 @@ type UserCouponServiceHTTPServer interface {
 
 func RegisterUserCouponServiceHTTPServer(s *http.Server, srv UserCouponServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/mall/user-coupons", _UserCouponService_List16_HTTP_Handler(srv))
-	r.GET("/app/v1/mall/user-coupons/{id}", _UserCouponService_Get16_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/user-coupons", _UserCouponService_List17_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/user-coupons/{id}", _UserCouponService_Get17_HTTP_Handler(srv))
 	r.POST("/app/v1/mall/user-coupons/quote", _UserCouponService_Quote0_HTTP_Handler(srv))
 }
 
-func _UserCouponService_List16_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
+func _UserCouponService_List17_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -57,7 +57,7 @@ func _UserCouponService_List16_HTTP_Handler(srv UserCouponServiceHTTPServer) fun
 	}
 }
 
-func _UserCouponService_Get16_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
+func _UserCouponService_Get17_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetUserCouponRequest
 		if err := ctx.BindQuery(&in); err != nil {

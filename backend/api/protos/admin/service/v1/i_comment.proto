@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "comment/service/v1/comment.proto";
+
+// 商品评论管理服务（admin 全 CRUD，含审核）
+service CommentService {
+  rpc List (pagination.PagingRequest) returns (comment.service.v1.ListCommentResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/comments"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (comment.service.v1.CountCommentResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/comments/count"
+    };
+  }
+
+  rpc Get (comment.service.v1.GetCommentRequest) returns (comment.service.v1.Comment) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/comments/{id}"
+    };
+  }
+
+  rpc Create (comment.service.v1.CreateCommentRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/comments"
+      body: "*"
+    };
+  }
+
+  rpc Update (comment.service.v1.UpdateCommentRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/comments/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (comment.service.v1.DeleteCommentRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/comments"
+    };
+  }
+}

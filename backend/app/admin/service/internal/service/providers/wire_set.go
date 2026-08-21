@@ -64,6 +64,7 @@ var ProviderSet = wire.NewSet(
 
 	service.NewShippingRateService,
 	service.NewTaxRateService,
+	service.NewCommentService,
 
 	service.NewApiAuditLogService,
 	service.NewDataAccessAuditLogService,

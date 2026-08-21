@@ -33,11 +33,11 @@ type ProductAttributeServiceHTTPServer interface {
 
 func RegisterProductAttributeServiceHTTPServer(s *http.Server, srv ProductAttributeServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/mall/product-attributes", _ProductAttributeService_List9_HTTP_Handler(srv))
-	r.GET("/app/v1/mall/product-attributes/{id}", _ProductAttributeService_Get9_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/product-attributes", _ProductAttributeService_List10_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/product-attributes/{id}", _ProductAttributeService_Get10_HTTP_Handler(srv))
 }
 
-func _ProductAttributeService_List9_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeService_List10_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -56,7 +56,7 @@ func _ProductAttributeService_List9_HTTP_Handler(srv ProductAttributeServiceHTTP
 	}
 }
 
-func _ProductAttributeService_Get9_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeService_Get10_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetProductAttributeRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -133,11 +133,11 @@ type ProductAttributeValueServiceHTTPServer interface {
 
 func RegisterProductAttributeValueServiceHTTPServer(s *http.Server, srv ProductAttributeValueServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/mall/product-attribute-values", _ProductAttributeValueService_List10_HTTP_Handler(srv))
-	r.GET("/app/v1/mall/product-attribute-values/{id}", _ProductAttributeValueService_Get10_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/product-attribute-values", _ProductAttributeValueService_List11_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/product-attribute-values/{id}", _ProductAttributeValueService_Get11_HTTP_Handler(srv))
 }
 
-func _ProductAttributeValueService_List10_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeValueService_List11_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -156,7 +156,7 @@ func _ProductAttributeValueService_List10_HTTP_Handler(srv ProductAttributeValue
 	}
 }
 
-func _ProductAttributeValueService_Get10_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeValueService_Get11_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetProductAttributeValueRequest
 		if err := ctx.BindQuery(&in); err != nil {
