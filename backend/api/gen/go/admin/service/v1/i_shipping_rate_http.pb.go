@@ -40,15 +40,15 @@ type ShippingRateServiceHTTPServer interface {
 
 func RegisterShippingRateServiceHTTPServer(s *http.Server, srv ShippingRateServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/shipping-rates", _ShippingRateService_List32_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/shipping-rates/count", _ShippingRateService_Count15_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/shipping-rates/{id}", _ShippingRateService_Get32_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/shipping-rates", _ShippingRateService_Create25_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/shipping-rates/{id}", _ShippingRateService_Update25_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/shipping-rates", _ShippingRateService_Delete26_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/shipping-rates", _ShippingRateService_List33_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/shipping-rates/count", _ShippingRateService_Count16_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/shipping-rates/{id}", _ShippingRateService_Get33_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/shipping-rates", _ShippingRateService_Create26_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/shipping-rates/{id}", _ShippingRateService_Update26_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/shipping-rates", _ShippingRateService_Delete27_HTTP_Handler(srv))
 }
 
-func _ShippingRateService_List32_HTTP_Handler(srv ShippingRateServiceHTTPServer) func(ctx http.Context) error {
+func _ShippingRateService_List33_HTTP_Handler(srv ShippingRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -67,7 +67,7 @@ func _ShippingRateService_List32_HTTP_Handler(srv ShippingRateServiceHTTPServer)
 	}
 }
 
-func _ShippingRateService_Count15_HTTP_Handler(srv ShippingRateServiceHTTPServer) func(ctx http.Context) error {
+func _ShippingRateService_Count16_HTTP_Handler(srv ShippingRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -86,7 +86,7 @@ func _ShippingRateService_Count15_HTTP_Handler(srv ShippingRateServiceHTTPServer
 	}
 }
 
-func _ShippingRateService_Get32_HTTP_Handler(srv ShippingRateServiceHTTPServer) func(ctx http.Context) error {
+func _ShippingRateService_Get33_HTTP_Handler(srv ShippingRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetShippingRateRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -108,7 +108,7 @@ func _ShippingRateService_Get32_HTTP_Handler(srv ShippingRateServiceHTTPServer) 
 	}
 }
 
-func _ShippingRateService_Create25_HTTP_Handler(srv ShippingRateServiceHTTPServer) func(ctx http.Context) error {
+func _ShippingRateService_Create26_HTTP_Handler(srv ShippingRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateShippingRateRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -130,7 +130,7 @@ func _ShippingRateService_Create25_HTTP_Handler(srv ShippingRateServiceHTTPServe
 	}
 }
 
-func _ShippingRateService_Update25_HTTP_Handler(srv ShippingRateServiceHTTPServer) func(ctx http.Context) error {
+func _ShippingRateService_Update26_HTTP_Handler(srv ShippingRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateShippingRateRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -155,7 +155,7 @@ func _ShippingRateService_Update25_HTTP_Handler(srv ShippingRateServiceHTTPServe
 	}
 }
 
-func _ShippingRateService_Delete26_HTTP_Handler(srv ShippingRateServiceHTTPServer) func(ctx http.Context) error {
+func _ShippingRateService_Delete27_HTTP_Handler(srv ShippingRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteShippingRateRequest
 		if err := ctx.BindQuery(&in); err != nil {

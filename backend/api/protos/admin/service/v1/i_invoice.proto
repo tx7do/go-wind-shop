@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "invoice/service/v1/invoice.proto";
+
+// 发票管理服务（admin 全 CRUD）
+service InvoiceService {
+  rpc List (pagination.PagingRequest) returns (invoice.service.v1.ListInvoiceResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/invoices"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (invoice.service.v1.CountInvoiceResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/invoices/count"
+    };
+  }
+
+  rpc Get (invoice.service.v1.GetInvoiceRequest) returns (invoice.service.v1.Invoice) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/invoices/{id}"
+    };
+  }
+
+  rpc Create (invoice.service.v1.CreateInvoiceRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/invoices"
+      body: "*"
+    };
+  }
+
+  rpc Update (invoice.service.v1.UpdateInvoiceRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/invoices/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (invoice.service.v1.DeleteInvoiceRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/invoices"
+    };
+  }
+}

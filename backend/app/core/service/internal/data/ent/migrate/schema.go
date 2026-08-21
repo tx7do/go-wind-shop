@@ -832,6 +832,52 @@ var (
 			},
 		},
 	}
+	// MallInvoicesColumns holds the columns for the "mall_invoices" table.
+	MallInvoicesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "currency", Type: field.TypeString, Nullable: true, Comment: "币种（ISO 4217，当前仅支持CNY）", Default: "CNY"},
+		{Name: "order_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的订单ID"},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "归属用户ID（与订单 user_id 一致，用于行级隔离）"},
+		{Name: "invoice_number", Type: field.TypeString, Nullable: true, Comment: "发票号"},
+		{Name: "invoice_type", Type: field.TypeEnum, Nullable: true, Comment: "发票类型", Enums: []string{"VAT_GENERAL", "VAT_SPECIAL", "ELECTRONIC"}},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "开票状态", Enums: []string{"PENDING", "ISSUED", "CANCELLED"}},
+		{Name: "buyer_name", Type: field.TypeString, Nullable: true, Comment: "购方名称"},
+		{Name: "buyer_tax_id", Type: field.TypeString, Nullable: true, Comment: "购方税号"},
+		{Name: "buyer_address", Type: field.TypeString, Nullable: true, Comment: "购方地址"},
+		{Name: "buyer_phone", Type: field.TypeString, Nullable: true, Comment: "购方电话"},
+		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "开票金额（最小货币单位，分）", Default: 0},
+	}
+	// MallInvoicesTable holds the schema information for the "mall_invoices" table.
+	MallInvoicesTable = &schema.Table{
+		Name:       "mall_invoices",
+		Comment:    "发票表",
+		Columns:    MallInvoicesColumns,
+		PrimaryKey: []*schema.Column{MallInvoicesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "invoice_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallInvoicesColumns[7]},
+			},
+			{
+				Name:    "invoice_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallInvoicesColumns[9]},
+			},
+			{
+				Name:    "invoice_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallInvoicesColumns[10]},
+			},
+		},
+	}
 	// SysLanguagesColumns holds the columns for the "sys_languages" table.
 	SysLanguagesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3632,6 +3678,7 @@ var (
 		InternalMessagesTable,
 		InternalMessageCategoriesTable,
 		InternalMessageRecipientsTable,
+		MallInvoicesTable,
 		SysLanguagesTable,
 		SysLoginAuditLogsTable,
 		SysLoginPoliciesTable,
@@ -3766,6 +3813,11 @@ func init() {
 	}
 	InternalMessageRecipientsTable.Annotation = &entsql.Annotation{
 		Table:     "internal_message_recipients",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallInvoicesTable.Annotation = &entsql.Annotation{
+		Table:     "mall_invoices",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

@@ -60,7 +60,8 @@
     "taxRate": "Tax Rate",
     "couponTemplate": "Coupon Template",
     "userCoupon": "User Coupon",
-    "comment": "Comment Moderation"
+    "comment": "Comment Moderation",
+    "invoice": "Invoice"
   },
   "tenant": {
     "moduleName": "Tenant Management",

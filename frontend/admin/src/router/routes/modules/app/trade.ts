@@ -125,6 +125,17 @@ const trade: RouteRecordRaw[] = [
         },
         component: () => import("@/pages/app/trade/comment/index.vue"),
       },
+      {
+        path: "invoices",
+        name: "TradeInvoiceManagement",
+        meta: {
+          order: 11,
+          icon: "lucide:file-text",
+          title: "routes.trade.invoice",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/invoice/index.vue"),
+      },
     ],
   },
 ];

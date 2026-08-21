@@ -22,6 +22,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagerecipient"
+	"go-wind-shop/app/core/service/internal/data/ent/invoice"
 	"go-wind-shop/app/core/service/internal/data/ent/language"
 	"go-wind-shop/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/loginpolicy"
@@ -489,6 +490,40 @@ func init() {
 	internalmessagerecipientDescID := internalmessagerecipientMixinFields0[0].Descriptor()
 	// internalmessagerecipient.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	internalmessagerecipient.IDValidator = internalmessagerecipientDescID.Validators[0].(func(uint32) error)
+	invoiceMixin := schema.Invoice{}.Mixin()
+	invoice.Policy = privacy.NewPolicies(invoiceMixin[3], schema.Invoice{})
+	invoice.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := invoice.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	invoiceMixinFields0 := invoiceMixin[0].Fields()
+	_ = invoiceMixinFields0
+	invoiceMixinFields3 := invoiceMixin[3].Fields()
+	_ = invoiceMixinFields3
+	invoiceMixinFields4 := invoiceMixin[4].Fields()
+	_ = invoiceMixinFields4
+	invoiceFields := schema.Invoice{}.Fields()
+	_ = invoiceFields
+	// invoiceDescTenantID is the schema descriptor for tenant_id field.
+	invoiceDescTenantID := invoiceMixinFields3[0].Descriptor()
+	// invoice.DefaultTenantID holds the default value on creation for the tenant_id field.
+	invoice.DefaultTenantID = invoiceDescTenantID.Default.(uint32)
+	// invoiceDescCurrency is the schema descriptor for currency field.
+	invoiceDescCurrency := invoiceMixinFields4[0].Descriptor()
+	// invoice.DefaultCurrency holds the default value on creation for the currency field.
+	invoice.DefaultCurrency = invoiceDescCurrency.Default.(string)
+	// invoiceDescAmount is the schema descriptor for amount field.
+	invoiceDescAmount := invoiceFields[9].Descriptor()
+	// invoice.DefaultAmount holds the default value on creation for the amount field.
+	invoice.DefaultAmount = invoiceDescAmount.Default.(int64)
+	// invoiceDescID is the schema descriptor for id field.
+	invoiceDescID := invoiceMixinFields0[0].Descriptor()
+	// invoice.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	invoice.IDValidator = invoiceDescID.Validators[0].(func(uint32) error)
 	languageMixin := schema.Language{}.Mixin()
 	languageMixinFields0 := languageMixin[0].Fields()
 	_ = languageMixinFields0

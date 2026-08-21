@@ -78,6 +78,9 @@ export * from "./user-coupon";
 // 商品评论审核管理 (Mall / Comment)
 export * from "./comment";
 
+// 发票管理 (Mall / Invoice)
+export * from "./invoice";
+
 // 商城分析仪表盘 (Mall / Analytics)
 // 复用上述各实体的 fetchList* 实现，无新增 RPC。
 export * from "./analytics";

@@ -57,6 +57,9 @@ type InternalMessageCategory func(*sql.Selector)
 // InternalMessageRecipient is the predicate function for internalmessagerecipient builders.
 type InternalMessageRecipient func(*sql.Selector)
 
+// Invoice is the predicate function for invoice builders.
+type Invoice func(*sql.Selector)
+
 // Language is the predicate function for language builders.
 type Language func(*sql.Selector)
 

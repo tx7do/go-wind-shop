@@ -31,11 +31,11 @@ type ShipmentServiceHTTPServer interface {
 
 func RegisterShipmentServiceHTTPServer(s *http.Server, srv ShipmentServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/mall/shipments", _ShipmentService_List12_HTTP_Handler(srv))
-	r.GET("/app/v1/mall/shipments/{id}", _ShipmentService_Get12_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/shipments", _ShipmentService_List13_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/shipments/{id}", _ShipmentService_Get13_HTTP_Handler(srv))
 }
 
-func _ShipmentService_List12_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
+func _ShipmentService_List13_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -54,7 +54,7 @@ func _ShipmentService_List12_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ct
 	}
 }
 
-func _ShipmentService_Get12_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
+func _ShipmentService_Get13_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetShipmentRequest
 		if err := ctx.BindQuery(&in); err != nil {

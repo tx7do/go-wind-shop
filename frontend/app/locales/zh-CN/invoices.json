@@ -1,0 +1,18 @@
+{
+  "title": "我的发票",
+  "subtitle": "查看你订单的发票记录",
+  "empty": "你还没有任何发票记录。",
+  "table": {
+    "id": "发票号",
+    "invoiceNumber": "发票编号",
+    "invoiceType": "类型",
+    "amount": "金额",
+    "createdAt": "开具时间"
+  },
+  "invoiceType": {
+    "vat_general": "普通发票",
+    "vat_special": "专用发票",
+    "electronic": "电子发票",
+    "unspecified": "未知"
+  }
+}

@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+package invoice.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 发票服务
+service InvoiceService {
+  rpc List (pagination.PagingRequest) returns (ListInvoiceResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountInvoiceResponse) {}
+  rpc Get (GetInvoiceRequest) returns (Invoice) {}
+  rpc Create (CreateInvoiceRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdateInvoiceRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteInvoiceRequest) returns (google.protobuf.Empty) {}
+}
+
+// 发票
+message Invoice {
+  // 发票类型
+  enum InvoiceType {
+    INVOICE_TYPE_UNSPECIFIED = 0;
+    VAT_GENERAL = 1;    // 增值税普通发票
+    VAT_SPECIAL = 2;    // 增值税专用发票
+    ELECTRONIC = 3;     // 电子发票
+  }
+
+  // 开票状态
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    PENDING = 1;        // 待开
+    ISSUED = 2;         // 已开
+    CANCELLED = 3;      // 已作废
+  }
+
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "发票ID"}];
+
+  optional uint32 order_id = 2 [
+    json_name = "orderId",
+    (gnostic.openapi.v3.property) = {description: "关联的订单ID"}
+  ];
+
+  optional uint32 user_id = 3 [
+    json_name = "userId",
+    (gnostic.openapi.v3.property) = {description: "归属用户ID（由隐私层强制）"}
+  ];
+
+  optional string invoice_number = 4 [
+    json_name = "invoiceNumber",
+    (gnostic.openapi.v3.property) = {description: "发票号"}
+  ];
+
+  optional InvoiceType invoice_type = 5 [
+    json_name = "invoiceType",
+    (gnostic.openapi.v3.property) = {description: "发票类型"}
+  ];
+
+  optional Status status = 6 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "开票状态"}
+  ];
+
+  optional string buyer_name = 7 [
+    json_name = "buyerName",
+    (gnostic.openapi.v3.property) = {description: "购方名称"}
+  ];
+
+  optional string buyer_tax_id = 8 [
+    json_name = "buyerTaxId",
+    (gnostic.openapi.v3.property) = {description: "购方税号"}
+  ];
+
+  optional string buyer_address = 9 [
+    json_name = "buyerAddress",
+    (gnostic.openapi.v3.property) = {description: "购方地址"}
+  ];
+
+  optional string buyer_phone = 10 [
+    json_name = "buyerPhone",
+    (gnostic.openapi.v3.property) = {description: "购方电话"}
+  ];
+
+  optional int64 amount = 11 [
+    json_name = "amount",
+    (gnostic.openapi.v3.property) = {description: "开票金额（最小货币单位，分）"}
+  ];
+
+  // ===== mixin 注入字段 =====
+
+  optional string currency = 12 [
+    json_name = "currency",
+    (gnostic.openapi.v3.property) = {description: "币种（ISO 4217）"}
+  ];
+
+  // ===== 以下是 infra mixin 注入字段（高编号） =====
+
+  optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+message ListInvoiceResponse { repeated Invoice items = 1; uint64 total = 2; }
+
+message GetInvoiceRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}
+  ];
+}
+
+message CreateInvoiceRequest { Invoice data = 1; }
+message UpdateInvoiceRequest {
+  uint32 id = 1;
+  Invoice data = 2;
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
+    json_name = "updateMask"
+  ];
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "允许缺失则插入"},
+    json_name = "allowMissing"
+  ];
+}
+message DeleteInvoiceRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+}
+message CountInvoiceResponse { uint64 count = 1; }

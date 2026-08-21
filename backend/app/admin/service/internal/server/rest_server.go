@@ -129,8 +129,9 @@ func NewRestServer(
 		taxRateService *service.TaxRateService,
 		commentService *service.CommentService,
 		interactionAdminService *service.InteractionAdminService,
+		invoiceService *service.InvoiceService,
 
-	fileSvc *service.FileService,
+		fileSvc *service.FileService,
 	fileTransferService *service.FileTransferService,
 
 	internalMessageService *service.InternalMessageService,
@@ -194,6 +195,7 @@ func NewRestServer(
 	adminV1.RegisterTaxRateServiceHTTPServer(srv, taxRateService)
 	adminV1.RegisterCommentServiceHTTPServer(srv, commentService)
 	adminV1.RegisterInteractionAdminServiceHTTPServer(srv, interactionAdminService)
+	adminV1.RegisterInvoiceServiceHTTPServer(srv, invoiceService)
 
 	adminV1.RegisterApiServiceHTTPServer(srv, apiService)
 	adminV1.RegisterMenuServiceHTTPServer(srv, menuSvc)

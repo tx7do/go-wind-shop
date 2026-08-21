@@ -28,6 +28,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagerecipient"
+	"go-wind-shop/app/core/service/internal/data/ent/invoice"
 	"go-wind-shop/app/core/service/internal/data/ent/language"
 	"go-wind-shop/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/loginpolicy"
@@ -120,6 +121,8 @@ type Client struct {
 	InternalMessageCategory *InternalMessageCategoryClient
 	// InternalMessageRecipient is the client for interacting with the InternalMessageRecipient builders.
 	InternalMessageRecipient *InternalMessageRecipientClient
+	// Invoice is the client for interacting with the Invoice builders.
+	Invoice *InvoiceClient
 	// Language is the client for interacting with the Language builders.
 	Language *LanguageClient
 	// LoginAuditLog is the client for interacting with the LoginAuditLog builders.
@@ -240,6 +243,7 @@ func (c *Client) init() {
 	c.InternalMessage = NewInternalMessageClient(c.config)
 	c.InternalMessageCategory = NewInternalMessageCategoryClient(c.config)
 	c.InternalMessageRecipient = NewInternalMessageRecipientClient(c.config)
+	c.Invoice = NewInvoiceClient(c.config)
 	c.Language = NewLanguageClient(c.config)
 	c.LoginAuditLog = NewLoginAuditLogClient(c.config)
 	c.LoginPolicy = NewLoginPolicyClient(c.config)
@@ -395,6 +399,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		InternalMessage:                  NewInternalMessageClient(cfg),
 		InternalMessageCategory:          NewInternalMessageCategoryClient(cfg),
 		InternalMessageRecipient:         NewInternalMessageRecipientClient(cfg),
+		Invoice:                          NewInvoiceClient(cfg),
 		Language:                         NewLanguageClient(cfg),
 		LoginAuditLog:                    NewLoginAuditLogClient(cfg),
 		LoginPolicy:                      NewLoginPolicyClient(cfg),
@@ -477,6 +482,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		InternalMessage:                  NewInternalMessageClient(cfg),
 		InternalMessageCategory:          NewInternalMessageCategoryClient(cfg),
 		InternalMessageRecipient:         NewInternalMessageRecipientClient(cfg),
+		Invoice:                          NewInvoiceClient(cfg),
 		Language:                         NewLanguageClient(cfg),
 		LoginAuditLog:                    NewLoginAuditLogClient(cfg),
 		LoginPolicy:                      NewLoginPolicyClient(cfg),
@@ -555,7 +561,7 @@ func (c *Client) Use(hooks ...Hook) {
 		c.Api, c.ApiAuditLog, c.Brand, c.BrandTranslation, c.Cart, c.CartItem,
 		c.Category, c.CategoryTranslation, c.Comment, c.CommentLike, c.CouponTemplate,
 		c.DataAccessAuditLog, c.File, c.InteractionCounter, c.InternalMessage,
-		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Invoice, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.Order,
 		c.OrderItem, c.OrgUnit, c.PaymentRefund, c.PaymentTransaction, c.Permission,
@@ -579,7 +585,7 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.Api, c.ApiAuditLog, c.Brand, c.BrandTranslation, c.Cart, c.CartItem,
 		c.Category, c.CategoryTranslation, c.Comment, c.CommentLike, c.CouponTemplate,
 		c.DataAccessAuditLog, c.File, c.InteractionCounter, c.InternalMessage,
-		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Invoice, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
 		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.Order,
 		c.OrderItem, c.OrgUnit, c.PaymentRefund, c.PaymentTransaction, c.Permission,
@@ -633,6 +639,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.InternalMessageCategory.mutate(ctx, m)
 	case *InternalMessageRecipientMutation:
 		return c.InternalMessageRecipient.mutate(ctx, m)
+	case *InvoiceMutation:
+		return c.Invoice.mutate(ctx, m)
 	case *LanguageMutation:
 		return c.Language.mutate(ctx, m)
 	case *LoginAuditLogMutation:
@@ -3064,6 +3072,140 @@ func (c *InternalMessageRecipientClient) mutate(ctx context.Context, m *Internal
 		return (&InternalMessageRecipientDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown InternalMessageRecipient mutation op: %q", m.Op())
+	}
+}
+
+// InvoiceClient is a client for the Invoice schema.
+type InvoiceClient struct {
+	config
+}
+
+// NewInvoiceClient returns a client for the Invoice from the given config.
+func NewInvoiceClient(c config) *InvoiceClient {
+	return &InvoiceClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `invoice.Hooks(f(g(h())))`.
+func (c *InvoiceClient) Use(hooks ...Hook) {
+	c.hooks.Invoice = append(c.hooks.Invoice, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `invoice.Intercept(f(g(h())))`.
+func (c *InvoiceClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Invoice = append(c.inters.Invoice, interceptors...)
+}
+
+// Create returns a builder for creating a Invoice entity.
+func (c *InvoiceClient) Create() *InvoiceCreate {
+	mutation := newInvoiceMutation(c.config, OpCreate)
+	return &InvoiceCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Invoice entities.
+func (c *InvoiceClient) CreateBulk(builders ...*InvoiceCreate) *InvoiceCreateBulk {
+	return &InvoiceCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *InvoiceClient) MapCreateBulk(slice any, setFunc func(*InvoiceCreate, int)) *InvoiceCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &InvoiceCreateBulk{err: fmt.Errorf("calling to InvoiceClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*InvoiceCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &InvoiceCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Invoice.
+func (c *InvoiceClient) Update() *InvoiceUpdate {
+	mutation := newInvoiceMutation(c.config, OpUpdate)
+	return &InvoiceUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InvoiceClient) UpdateOne(_m *Invoice) *InvoiceUpdateOne {
+	mutation := newInvoiceMutation(c.config, OpUpdateOne, withInvoice(_m))
+	return &InvoiceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InvoiceClient) UpdateOneID(id uint32) *InvoiceUpdateOne {
+	mutation := newInvoiceMutation(c.config, OpUpdateOne, withInvoiceID(id))
+	return &InvoiceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Invoice.
+func (c *InvoiceClient) Delete() *InvoiceDelete {
+	mutation := newInvoiceMutation(c.config, OpDelete)
+	return &InvoiceDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InvoiceClient) DeleteOne(_m *Invoice) *InvoiceDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InvoiceClient) DeleteOneID(id uint32) *InvoiceDeleteOne {
+	builder := c.Delete().Where(invoice.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InvoiceDeleteOne{builder}
+}
+
+// Query returns a query builder for Invoice.
+func (c *InvoiceClient) Query() *InvoiceQuery {
+	return &InvoiceQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeInvoice},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Invoice entity by its id.
+func (c *InvoiceClient) Get(ctx context.Context, id uint32) (*Invoice, error) {
+	return c.Query().Where(invoice.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InvoiceClient) GetX(ctx context.Context, id uint32) *Invoice {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *InvoiceClient) Hooks() []Hook {
+	hooks := c.hooks.Invoice
+	return append(hooks[:len(hooks):len(hooks)], invoice.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *InvoiceClient) Interceptors() []Interceptor {
+	return c.inters.Invoice
+}
+
+func (c *InvoiceClient) mutate(ctx context.Context, m *InvoiceMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InvoiceCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InvoiceUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InvoiceUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InvoiceDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Invoice mutation op: %q", m.Op())
 	}
 }
 
@@ -9316,30 +9458,31 @@ type (
 		Api, ApiAuditLog, Brand, BrandTranslation, Cart, CartItem, Category,
 		CategoryTranslation, Comment, CommentLike, CouponTemplate, DataAccessAuditLog,
 		File, InteractionCounter, InternalMessage, InternalMessageCategory,
-		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, Membership,
-		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
-		Order, OrderItem, OrgUnit, PaymentRefund, PaymentTransaction, Permission,
-		PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
-		PermissionPolicy, PolicyEvaluationLog, Position, Product, ProductAttribute,
-		ProductAttributeTranslation, ProductAttributeValue,
-		ProductAttributeValueTranslation, ProductTranslation, Role, RoleMetadata,
-		RolePermission, Shipment, ShippingAddress, ShippingRate, Sku,
-		SkuAttributeCombination, SkuPrice, Task, TaxRate, Tenant, User, UserCoupon,
-		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
+		InternalMessageRecipient, Invoice, Language, LoginAuditLog, LoginPolicy,
+		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
+		OperationAuditLog, Order, OrderItem, OrgUnit, PaymentRefund,
+		PaymentTransaction, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
+		Position, Product, ProductAttribute, ProductAttributeTranslation,
+		ProductAttributeValue, ProductAttributeValueTranslation, ProductTranslation,
+		Role, RoleMetadata, RolePermission, Shipment, ShippingAddress, ShippingRate,
+		Sku, SkuAttributeCombination, SkuPrice, Task, TaxRate, Tenant, User,
+		UserCoupon, UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
 	}
 	inters struct {
 		Api, ApiAuditLog, Brand, BrandTranslation, Cart, CartItem, Category,
 		CategoryTranslation, Comment, CommentLike, CouponTemplate, DataAccessAuditLog,
 		File, InteractionCounter, InternalMessage, InternalMessageCategory,
-		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, Membership,
-		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
-		Order, OrderItem, OrgUnit, PaymentRefund, PaymentTransaction, Permission,
-		PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
-		PermissionPolicy, PolicyEvaluationLog, Position, Product, ProductAttribute,
-		ProductAttributeTranslation, ProductAttributeValue,
-		ProductAttributeValueTranslation, ProductTranslation, Role, RoleMetadata,
-		RolePermission, Shipment, ShippingAddress, ShippingRate, Sku,
-		SkuAttributeCombination, SkuPrice, Task, TaxRate, Tenant, User, UserCoupon,
-		UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Interceptor
+		InternalMessageRecipient, Invoice, Language, LoginAuditLog, LoginPolicy,
+		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
+		OperationAuditLog, Order, OrderItem, OrgUnit, PaymentRefund,
+		PaymentTransaction, Permission, PermissionApi, PermissionAuditLog,
+		PermissionGroup, PermissionMenu, PermissionPolicy, PolicyEvaluationLog,
+		Position, Product, ProductAttribute, ProductAttributeTranslation,
+		ProductAttributeValue, ProductAttributeValueTranslation, ProductTranslation,
+		Role, RoleMetadata, RolePermission, Shipment, ShippingAddress, ShippingRate,
+		Sku, SkuAttributeCombination, SkuPrice, Task, TaxRate, Tenant, User,
+		UserCoupon, UserCredential, UserOrgUnit, UserPosition,
+		UserRole []ent.Interceptor
 	}
 )

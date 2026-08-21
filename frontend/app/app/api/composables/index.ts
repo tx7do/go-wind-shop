@@ -38,3 +38,6 @@ export * from './user-coupon';
 // 商品评论 + 点赞/计数
 export * from './comment';
 export * from './interaction';
+
+// 发票查看（仅本人，只读）
+export * from './invoice';

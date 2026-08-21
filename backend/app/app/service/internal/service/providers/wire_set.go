@@ -43,4 +43,5 @@ var ProviderSet = wire.NewSet(
 	service.NewUserCouponService,
 	service.NewCommentService,
 	service.NewInteractionService,
+	service.NewInvoiceService,
 )

@@ -3396,6 +3396,233 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/mall/invoices:
+        get:
+            tags:
+                - InvoiceService
+            operationId: InvoiceService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/invoice.service.v1.ListInvoiceResponse'
+        post:
+            tags:
+                - InvoiceService
+            operationId: InvoiceService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/invoice.service.v1.CreateInvoiceRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - InvoiceService
+            operationId: InvoiceService_Delete
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/mall/invoices/count:
+        get:
+            tags:
+                - InvoiceService
+            operationId: InvoiceService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/invoice.service.v1.CountInvoiceResponse'
+    /admin/v1/mall/invoices/{id}:
+        get:
+            tags:
+                - InvoiceService
+            operationId: InvoiceService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/invoice.service.v1.Invoice'
+        put:
+            tags:
+                - InvoiceService
+            operationId: InvoiceService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/invoice.service.v1.UpdateInvoiceRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/mall/order-items:
         get:
             tags:
@@ -13068,6 +13295,123 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 更新站内信消息 - 请求
+        invoice.service.v1.CountInvoiceResponse:
+            type: object
+            properties:
+                count:
+                    type: string
+        invoice.service.v1.CreateInvoiceRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/invoice.service.v1.Invoice'
+        invoice.service.v1.Invoice:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 发票ID
+                    format: uint32
+                orderId:
+                    type: integer
+                    description: 关联的订单ID
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 归属用户ID（由隐私层强制）
+                    format: uint32
+                invoiceNumber:
+                    type: string
+                    description: 发票号
+                invoiceType:
+                    enum:
+                        - INVOICE_TYPE_UNSPECIFIED
+                        - VAT_GENERAL
+                        - VAT_SPECIAL
+                        - ELECTRONIC
+                    type: string
+                    description: 发票类型
+                    format: enum
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - PENDING
+                        - ISSUED
+                        - CANCELLED
+                    type: string
+                    description: 开票状态
+                    format: enum
+                buyerName:
+                    type: string
+                    description: 购方名称
+                buyerTaxId:
+                    type: string
+                    description: 购方税号
+                buyerAddress:
+                    type: string
+                    description: 购方地址
+                buyerPhone:
+                    type: string
+                    description: 购方电话
+                amount:
+                    type: string
+                    description: 开票金额（最小货币单位，分）
+                currency:
+                    type: string
+                    description: 币种（ISO 4217）
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 发票
+        invoice.service.v1.ListInvoiceResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/invoice.service.v1.Invoice'
+                total:
+                    type: string
+        invoice.service.v1.UpdateInvoiceRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/invoice.service.v1.Invoice'
+                updateMask:
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 允许缺失则插入
         order.service.v1.BatchCreateOrderItemsRequest:
             type: object
             properties:
@@ -14948,6 +15292,8 @@ tags:
       description: 站内信消息管理服务
     - name: InternalMessageService
       description: 站内信消息管理服务
+    - name: InvoiceService
+      description: 发票管理服务（admin 全 CRUD）
     - name: LanguageService
       description: 语言管理服务
     - name: LoginAuditLogService

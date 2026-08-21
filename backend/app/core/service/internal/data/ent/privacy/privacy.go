@@ -519,6 +519,30 @@ func (f InternalMessageRecipientMutationRuleFunc) EvalMutation(ctx context.Conte
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.InternalMessageRecipientMutation", m)
 }
 
+// The InvoiceQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type InvoiceQueryRuleFunc func(context.Context, *ent.InvoiceQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f InvoiceQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.InvoiceQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.InvoiceQuery", q)
+}
+
+// The InvoiceMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type InvoiceMutationRuleFunc func(context.Context, *ent.InvoiceMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f InvoiceMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.InvoiceMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.InvoiceMutation", m)
+}
+
 // The LanguageQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type LanguageQueryRuleFunc func(context.Context, *ent.LanguageQuery) error
@@ -1692,6 +1716,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.InternalMessageRecipientQuery:
 		return q.Filter(), nil
+	case *ent.InvoiceQuery:
+		return q.Filter(), nil
 	case *ent.LanguageQuery:
 		return q.Filter(), nil
 	case *ent.LoginAuditLogQuery:
@@ -1824,6 +1850,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.InternalMessageCategoryMutation:
 		return m.Filter(), nil
 	case *ent.InternalMessageRecipientMutation:
+		return m.Filter(), nil
+	case *ent.InvoiceMutation:
 		return m.Filter(), nil
 	case *ent.LanguageMutation:
 		return m.Filter(), nil

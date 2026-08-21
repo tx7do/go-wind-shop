@@ -46,6 +46,8 @@ type Tx struct {
 	InternalMessageCategory *InternalMessageCategoryClient
 	// InternalMessageRecipient is the client for interacting with the InternalMessageRecipient builders.
 	InternalMessageRecipient *InternalMessageRecipientClient
+	// Invoice is the client for interacting with the Invoice builders.
+	Invoice *InvoiceClient
 	// Language is the client for interacting with the Language builders.
 	Language *LanguageClient
 	// LoginAuditLog is the client for interacting with the LoginAuditLog builders.
@@ -286,6 +288,7 @@ func (tx *Tx) init() {
 	tx.InternalMessage = NewInternalMessageClient(tx.config)
 	tx.InternalMessageCategory = NewInternalMessageCategoryClient(tx.config)
 	tx.InternalMessageRecipient = NewInternalMessageRecipientClient(tx.config)
+	tx.Invoice = NewInvoiceClient(tx.config)
 	tx.Language = NewLanguageClient(tx.config)
 	tx.LoginAuditLog = NewLoginAuditLogClient(tx.config)
 	tx.LoginPolicy = NewLoginPolicyClient(tx.config)

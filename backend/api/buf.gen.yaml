@@ -76,6 +76,9 @@ managed:
     - file_option: go_package
       path: interaction/service/v1
       value: go-wind-shop/api/gen/go/interaction/service/v1;interactionpb
+    - file_option: go_package
+      path: invoice/service/v1
+      value: go-wind-shop/api/gen/go/invoice/service/v1;invoicepb
 
 plugins:
   # generate go code

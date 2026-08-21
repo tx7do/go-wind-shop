@@ -114,6 +114,7 @@ func NewRestServer(
 		userCouponService *service.UserCouponService,
 		commentService *service.CommentService,
 		interactionService *service.InteractionService,
+		invoiceService *service.InvoiceService,
 	) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -151,7 +152,7 @@ func NewRestServer(
 	appV1.RegisterUserCouponServiceHTTPServer(srv, userCouponService)
 	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
 	appV1.RegisterInteractionServiceHTTPServer(srv, interactionService)
-
+	appV1.RegisterInvoiceServiceHTTPServer(srv, invoiceService)
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(
 			srv,

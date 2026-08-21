@@ -1,0 +1,18 @@
+{
+  "title": "My Invoices",
+  "subtitle": "Review invoices issued for your orders",
+  "empty": "You have no invoice records.",
+  "table": {
+    "id": "Invoice ID",
+    "invoiceNumber": "Invoice Number",
+    "invoiceType": "Type",
+    "amount": "Amount",
+    "createdAt": "Issued"
+  },
+  "invoiceType": {
+    "vat_general": "General",
+    "vat_special": "Special",
+    "electronic": "Electronic",
+    "unspecified": "Unknown"
+  }
+}

@@ -268,5 +268,25 @@
     "button": {
       "update": "编辑评论"
     }
+  },
+  "invoice": {
+    "moduleName": "发票",
+    "title": "发票管理",
+    "orderId": "订单ID",
+    "userId": "用户ID",
+    "invoiceNumber": "发票号",
+    "invoiceType": "发票类型",
+    "status": "状态",
+    "buyerName": "购方名称",
+    "buyerTaxId": "购方税号",
+    "buyerAddress": "购方地址",
+    "buyerPhone": "购方电话",
+    "amount": "开票金额（分）",
+    "currency": "币种",
+    "createdAt": "创建时间",
+    "button": {
+      "create": "创建发票",
+      "update": "编辑发票"
+    }
   }
 }

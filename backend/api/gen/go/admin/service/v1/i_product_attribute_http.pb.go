@@ -64,13 +64,13 @@ type ProductAttributeServiceHTTPServer interface {
 
 func RegisterProductAttributeServiceHTTPServer(s *http.Server, srv ProductAttributeServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/product-attributes", _ProductAttributeService_List28_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/product-attributes/count", _ProductAttributeService_Count12_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/product-attributes/{id}", _ProductAttributeService_Get28_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/product-attributes", _ProductAttributeService_Create21_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/product-attributes", _ProductAttributeService_List29_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/product-attributes/count", _ProductAttributeService_Count13_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/product-attributes/{id}", _ProductAttributeService_Get29_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/product-attributes", _ProductAttributeService_Create22_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/product-attributes/batch", _ProductAttributeService_BatchCreate7_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/product-attributes/{id}", _ProductAttributeService_Update21_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/product-attributes", _ProductAttributeService_Delete22_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/product-attributes/{id}", _ProductAttributeService_Update22_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/product-attributes", _ProductAttributeService_Delete23_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/product-attributes/{attribute_id}/translations/{language_code}", _ProductAttributeService_TranslationExists3_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/product-attributes/{id}/translations", _ProductAttributeService_GetTranslation3_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/product-attributes/translations", _ProductAttributeService_CreateTranslation3_HTTP_Handler(srv))
@@ -78,7 +78,7 @@ func RegisterProductAttributeServiceHTTPServer(s *http.Server, srv ProductAttrib
 	r.DELETE("/admin/v1/mall/product-attributes/{id}/translations", _ProductAttributeService_DeleteTranslation3_HTTP_Handler(srv))
 }
 
-func _ProductAttributeService_List28_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeService_List29_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -97,7 +97,7 @@ func _ProductAttributeService_List28_HTTP_Handler(srv ProductAttributeServiceHTT
 	}
 }
 
-func _ProductAttributeService_Count12_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeService_Count13_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -116,7 +116,7 @@ func _ProductAttributeService_Count12_HTTP_Handler(srv ProductAttributeServiceHT
 	}
 }
 
-func _ProductAttributeService_Get28_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeService_Get29_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetProductAttributeRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -138,7 +138,7 @@ func _ProductAttributeService_Get28_HTTP_Handler(srv ProductAttributeServiceHTTP
 	}
 }
 
-func _ProductAttributeService_Create21_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeService_Create22_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateProductAttributeRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -182,7 +182,7 @@ func _ProductAttributeService_BatchCreate7_HTTP_Handler(srv ProductAttributeServ
 	}
 }
 
-func _ProductAttributeService_Update21_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeService_Update22_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateProductAttributeRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -207,7 +207,7 @@ func _ProductAttributeService_Update21_HTTP_Handler(srv ProductAttributeServiceH
 	}
 }
 
-func _ProductAttributeService_Delete22_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeService_Delete23_HTTP_Handler(srv ProductAttributeServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteProductAttributeRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -584,13 +584,13 @@ type ProductAttributeValueServiceHTTPServer interface {
 
 func RegisterProductAttributeValueServiceHTTPServer(s *http.Server, srv ProductAttributeValueServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/product-attribute-values", _ProductAttributeValueService_List29_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/product-attribute-values/count", _ProductAttributeValueService_Count13_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/product-attribute-values/{id}", _ProductAttributeValueService_Get29_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/product-attribute-values", _ProductAttributeValueService_Create22_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/product-attribute-values", _ProductAttributeValueService_List30_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/product-attribute-values/count", _ProductAttributeValueService_Count14_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/product-attribute-values/{id}", _ProductAttributeValueService_Get30_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/product-attribute-values", _ProductAttributeValueService_Create23_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/product-attribute-values/batch", _ProductAttributeValueService_BatchCreate8_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/product-attribute-values/{id}", _ProductAttributeValueService_Update22_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/product-attribute-values", _ProductAttributeValueService_Delete23_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/product-attribute-values/{id}", _ProductAttributeValueService_Update23_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/product-attribute-values", _ProductAttributeValueService_Delete24_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/product-attribute-values/{value_id}/translations/{language_code}", _ProductAttributeValueService_TranslationExists4_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/product-attribute-values/{id}/translations", _ProductAttributeValueService_GetTranslation4_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/product-attribute-values/translations", _ProductAttributeValueService_CreateTranslation4_HTTP_Handler(srv))
@@ -598,7 +598,7 @@ func RegisterProductAttributeValueServiceHTTPServer(s *http.Server, srv ProductA
 	r.DELETE("/admin/v1/mall/product-attribute-values/{id}/translations", _ProductAttributeValueService_DeleteTranslation4_HTTP_Handler(srv))
 }
 
-func _ProductAttributeValueService_List29_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeValueService_List30_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -617,7 +617,7 @@ func _ProductAttributeValueService_List29_HTTP_Handler(srv ProductAttributeValue
 	}
 }
 
-func _ProductAttributeValueService_Count13_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeValueService_Count14_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -636,7 +636,7 @@ func _ProductAttributeValueService_Count13_HTTP_Handler(srv ProductAttributeValu
 	}
 }
 
-func _ProductAttributeValueService_Get29_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeValueService_Get30_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetProductAttributeValueRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -658,7 +658,7 @@ func _ProductAttributeValueService_Get29_HTTP_Handler(srv ProductAttributeValueS
 	}
 }
 
-func _ProductAttributeValueService_Create22_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeValueService_Create23_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateProductAttributeValueRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -702,7 +702,7 @@ func _ProductAttributeValueService_BatchCreate8_HTTP_Handler(srv ProductAttribut
 	}
 }
 
-func _ProductAttributeValueService_Update22_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeValueService_Update23_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateProductAttributeValueRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -727,7 +727,7 @@ func _ProductAttributeValueService_Update22_HTTP_Handler(srv ProductAttributeVal
 	}
 }
 
-func _ProductAttributeValueService_Delete23_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
+func _ProductAttributeValueService_Delete24_HTTP_Handler(srv ProductAttributeValueServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteProductAttributeValueRequest
 		if err := ctx.BindQuery(&in); err != nil {

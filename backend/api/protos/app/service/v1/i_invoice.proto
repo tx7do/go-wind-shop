@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "invoice/service/v1/invoice.proto";
+
+// 发票前台服务（裁剪写 RPC：仅 List/Get，无 Create/Update/Delete）。
+// 用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+// 用户不能自己开发票，只能查看自己订单的发票。
+service InvoiceService {
+  rpc List (pagination.PagingRequest) returns (invoice.service.v1.ListInvoiceResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/invoices"
+    };
+  }
+
+  rpc Get (invoice.service.v1.GetInvoiceRequest) returns (invoice.service.v1.Invoice) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/invoices/{id}"
+    };
+  }
+}

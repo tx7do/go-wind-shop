@@ -26,6 +26,7 @@ import (
 	couponV1 "go-wind-shop/api/gen/go/coupon/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	interactionV1 "go-wind-shop/api/gen/go/interaction/service/v1"
+	invoiceV1 "go-wind-shop/api/gen/go/invoice/service/v1"
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
@@ -343,4 +344,13 @@ func NewInteractionServiceClient(ctx *bootstrap.Context, r registry.Discovery) i
 	}
 
 	return interactionV1.NewInteractionServiceClient(cli)
+}
+
+func NewInvoiceServiceClient(ctx *bootstrap.Context, r registry.Discovery) invoiceV1.InvoiceServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return invoiceV1.NewInvoiceServiceClient(cli)
 }

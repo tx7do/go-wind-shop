@@ -40,15 +40,15 @@ type ShipmentServiceHTTPServer interface {
 
 func RegisterShipmentServiceHTTPServer(s *http.Server, srv ShipmentServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/shipments", _ShipmentService_List31_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/shipments/count", _ShipmentService_Count14_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/shipments/{id}", _ShipmentService_Get31_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/shipments", _ShipmentService_Create24_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/shipments/{id}", _ShipmentService_Update24_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/shipments", _ShipmentService_Delete25_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/shipments", _ShipmentService_List32_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/shipments/count", _ShipmentService_Count15_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/shipments/{id}", _ShipmentService_Get32_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/shipments", _ShipmentService_Create25_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/shipments/{id}", _ShipmentService_Update25_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/shipments", _ShipmentService_Delete26_HTTP_Handler(srv))
 }
 
-func _ShipmentService_List31_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
+func _ShipmentService_List32_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -67,7 +67,7 @@ func _ShipmentService_List31_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ct
 	}
 }
 
-func _ShipmentService_Count14_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
+func _ShipmentService_Count15_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -86,7 +86,7 @@ func _ShipmentService_Count14_HTTP_Handler(srv ShipmentServiceHTTPServer) func(c
 	}
 }
 
-func _ShipmentService_Get31_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
+func _ShipmentService_Get32_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetShipmentRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -108,7 +108,7 @@ func _ShipmentService_Get31_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx
 	}
 }
 
-func _ShipmentService_Create24_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
+func _ShipmentService_Create25_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateShipmentRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -130,7 +130,7 @@ func _ShipmentService_Create24_HTTP_Handler(srv ShipmentServiceHTTPServer) func(
 	}
 }
 
-func _ShipmentService_Update24_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
+func _ShipmentService_Update25_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateShipmentRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -155,7 +155,7 @@ func _ShipmentService_Update24_HTTP_Handler(srv ShipmentServiceHTTPServer) func(
 	}
 }
 
-func _ShipmentService_Delete25_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
+func _ShipmentService_Delete26_HTTP_Handler(srv ShipmentServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteShipmentRequest
 		if err := ctx.BindQuery(&in); err != nil {

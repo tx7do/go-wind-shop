@@ -70,6 +70,7 @@ var ProviderSet = wire.NewSet(
 	service.NewCommentService,
 	service.NewInteractionService,
 	service.NewInteractionAdminService,
+	service.NewInvoiceService,
 
 	service.NewStockAlertService,
 )

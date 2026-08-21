@@ -21,6 +21,7 @@ import (
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	interactionV1 "go-wind-shop/api/gen/go/interaction/service/v1"
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
+	invoiceV1 "go-wind-shop/api/gen/go/invoice/service/v1"
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
@@ -104,6 +105,7 @@ func NewGrpcServer(
 
 		interactionService *service.InteractionService,
 		interactionAdminService *service.InteractionAdminService,
+		invoiceService *service.InvoiceService,
 	) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
 
@@ -179,6 +181,8 @@ func NewGrpcServer(
 
 	interactionV1.RegisterInteractionServiceServer(srv, interactionService)
 	interactionV1.RegisterInteractionAdminServiceServer(srv, interactionAdminService)
+
+	invoiceV1.RegisterInvoiceServiceServer(srv, invoiceService)
 
 	return srv, nil
 }

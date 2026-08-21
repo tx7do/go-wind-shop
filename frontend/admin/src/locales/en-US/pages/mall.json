@@ -268,5 +268,25 @@
     "button": {
       "update": "Edit Comment"
     }
+  },
+  "invoice": {
+    "moduleName": "Invoice",
+    "title": "Invoice Management",
+    "orderId": "Order ID",
+    "userId": "User ID",
+    "invoiceNumber": "Invoice Number",
+    "invoiceType": "Invoice Type",
+    "status": "Status",
+    "buyerName": "Buyer Name",
+    "buyerTaxId": "Buyer Tax ID",
+    "buyerAddress": "Buyer Address",
+    "buyerPhone": "Buyer Phone",
+    "amount": "Amount (cents)",
+    "currency": "Currency",
+    "createdAt": "Created At",
+    "button": {
+      "create": "Create Invoice",
+      "update": "Edit Invoice"
+    }
   }
 }

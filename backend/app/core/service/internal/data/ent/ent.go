@@ -23,6 +23,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagerecipient"
+	"go-wind-shop/app/core/service/internal/data/ent/invoice"
 	"go-wind-shop/app/core/service/internal/data/ent/language"
 	"go-wind-shop/app/core/service/internal/data/ent/loginauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/loginpolicy"
@@ -152,6 +153,7 @@ func checkColumn(t, c string) error {
 			internalmessage.Table:                  internalmessage.ValidColumn,
 			internalmessagecategory.Table:          internalmessagecategory.ValidColumn,
 			internalmessagerecipient.Table:         internalmessagerecipient.ValidColumn,
+			invoice.Table:                          invoice.ValidColumn,
 			language.Table:                         language.ValidColumn,
 			loginauditlog.Table:                    loginauditlog.ValidColumn,
 			loginpolicy.Table:                      loginpolicy.ValidColumn,
