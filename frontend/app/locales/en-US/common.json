@@ -25,6 +25,8 @@
   "loadExample": "Load Example",
   "currentType": "Current Type",
   "contentLength": "Content Length",
-  "characters": "Characters"
+  "characters": "Characters",
+  "submitting": "Submitting...",
+  "operationFailed": "Operation failed"
 }
 

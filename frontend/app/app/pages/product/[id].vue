@@ -639,4 +639,6 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
       </ClientOnly>
     </div>
   </LayoutSectionContainer>
+
+  <CommentSection :product-id="productId" />
 </template>

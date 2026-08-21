@@ -1,0 +1,11 @@
+{
+  "sectionTitle": "评论",
+  "empty": "暂无评论，快来抢沙发吧。",
+  "author": "用户",
+  "reply": "回复",
+  "replyPlaceholder": "写下你的回复...",
+  "postPlaceholder": "分享你对这件商品的看法...",
+  "submit": "发表",
+  "pendingApproval": "你的评论已提交，正在等待审核。",
+  "loginToPost": "请登录后发表评论。"
+}

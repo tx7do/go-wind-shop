@@ -25,7 +25,9 @@
   "loadExample": "加载示例",
   "currentType": "当前类型",
   "contentLength": "内容长度",
-  "characters": "字符"
+  "characters": "字符",
+  "submitting": "提交中...",
+  "operationFailed": "操作失败"
 }
 
 
