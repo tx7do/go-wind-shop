@@ -255,5 +255,18 @@
     "button": {
       "create": "Issue Coupon"
     }
+  },
+  "comment": {
+    "moduleName": "Comment",
+    "title": "Comment Moderation",
+    "objectId": "Object ID",
+    "contentType": "Content Type",
+    "status": "Status",
+    "content": "Content",
+    "createdBy": "Author ID",
+    "createdAt": "Created At",
+    "button": {
+      "update": "Edit Comment"
+    }
   }
 }

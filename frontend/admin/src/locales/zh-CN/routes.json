@@ -60,7 +60,8 @@
     "shippingRate": "运费模板",
     "taxRate": "税率规则",
     "couponTemplate": "优惠券模板",
-    "userCoupon": "用户优惠券"
+    "userCoupon": "用户优惠券",
+    "comment": "评论审核"
   },
   "tenant": {
     "moduleName": "租户管理",

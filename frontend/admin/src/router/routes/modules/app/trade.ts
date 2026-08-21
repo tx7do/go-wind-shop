@@ -114,6 +114,17 @@ const trade: RouteRecordRaw[] = [
         },
         component: () => import("@/pages/app/trade/user-coupon/index.vue"),
       },
+      {
+        path: "comments",
+        name: "TradeCommentManagement",
+        meta: {
+          order: 10,
+          icon: "lucide:message-square",
+          title: "routes.trade.comment",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/comment/index.vue"),
+      },
     ],
   },
 ];

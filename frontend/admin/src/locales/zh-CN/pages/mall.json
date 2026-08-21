@@ -255,5 +255,18 @@
     "button": {
       "create": "发放优惠券"
     }
+  },
+  "comment": {
+    "moduleName": "评论",
+    "title": "评论审核",
+    "objectId": "对象ID",
+    "contentType": "内容类型",
+    "status": "状态",
+    "content": "内容",
+    "createdBy": "作者ID",
+    "createdAt": "创建时间",
+    "button": {
+      "update": "编辑评论"
+    }
   }
 }
