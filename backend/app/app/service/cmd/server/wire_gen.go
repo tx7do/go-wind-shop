@@ -83,7 +83,9 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	userCouponService := service.NewUserCouponService(context, userCouponServiceClient)
 	commentServiceClient := data.NewCommentServiceClient(context, discovery)
 	commentService := service.NewCommentService(context, commentServiceClient)
-	httpServer := server.NewRestServer(context, v, authenticationService, fileTransferService, userProfileService, categoryService, brandService, productService, productAttributeService, productAttributeValueService, skuService, skuPriceService, skuAttributeCombinationService, cartService, cartItemService, orderService, orderItemService, paymentTransactionService, paymentRefundService, shippingAddressService, shipmentService, internalMessageRecipientService, userCouponService, commentService)
+	interactionServiceClient := data.NewInteractionServiceClient(context, discovery)
+	interactionService := service.NewInteractionService(context, interactionServiceClient)
+	httpServer := server.NewRestServer(context, v, authenticationService, fileTransferService, userProfileService, categoryService, brandService, productService, productAttributeService, productAttributeValueService, skuService, skuPriceService, skuAttributeCombinationService, cartService, cartItemService, orderService, orderItemService, paymentTransactionService, paymentRefundService, shippingAddressService, shipmentService, internalMessageRecipientService, userCouponService, commentService, interactionService)
 	grpcMiddlewares := server.NewGrpcMiddleware(context)
 	grpcServer, err := server.NewGrpcServer(context, grpcMiddlewares)
 	if err != nil {

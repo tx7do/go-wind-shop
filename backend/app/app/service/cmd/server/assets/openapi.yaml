@@ -112,6 +112,82 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/storage.service.v1.UploadFileResponse'
+    /app/v1/interactions/counts:list:
+        post:
+            tags:
+                - InteractionService
+            description: 批量查询计数
+            operationId: InteractionService_GetCounts
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/interaction.service.v1.GetCountsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.GetCountsResponse'
+    /app/v1/interactions/like:
+        post:
+            tags:
+                - InteractionService
+            description: 点赞
+            operationId: InteractionService_Like
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/interaction.service.v1.LikeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.LikeResponse'
+    /app/v1/interactions/status:
+        post:
+            tags:
+                - InteractionService
+            description: 批量查询交互状态
+            operationId: InteractionService_GetInteractionStatus
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/interaction.service.v1.GetInteractionStatusRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.GetInteractionStatusResponse'
+    /app/v1/interactions/unlike:
+        post:
+            tags:
+                - InteractionService
+            description: 取消点赞
+            operationId: InteractionService_Unlike
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/interaction.service.v1.LikeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/interaction.service.v1.LikeResponse'
     /app/v1/login:
         post:
             tags:
@@ -4819,6 +4895,106 @@ components:
                 verificationId:
                     type: string
                     description: 服务端生成的验证码会话ID（可选）
+        interaction.service.v1.CountMap:
+            type: object
+            properties:
+                counts:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/interaction.service.v1.MetricCount'
+            description: 单个目标下所有请求 metric 的计数集合。
+        interaction.service.v1.GetCountsRequest:
+            type: object
+            properties:
+                targetType:
+                    enum:
+                        - TARGET_TYPE_UNSPECIFIED
+                        - TARGET_TYPE_COMMENT
+                    type: string
+                    format: enum
+                targetIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+                metrics:
+                    type: array
+                    items:
+                        enum:
+                            - COUNTER_METRIC_UNSPECIFIED
+                            - COUNTER_METRIC_LIKE
+                        type: string
+                        format: enum
+        interaction.service.v1.GetCountsResponse:
+            type: object
+            properties:
+                counts:
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/interaction.service.v1.CountMap'
+            description: |-
+                target_id → 该目标下各 metric 的计数集合。
+                 未在 counter 表中记录的 (target, metric) 组合不出现在响应中，前端按 0 兜底。
+        interaction.service.v1.GetInteractionStatusRequest:
+            type: object
+            properties:
+                targetType:
+                    enum:
+                        - TARGET_TYPE_UNSPECIFIED
+                        - TARGET_TYPE_COMMENT
+                    type: string
+                    format: enum
+                targetIds:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+        interaction.service.v1.GetInteractionStatusResponse:
+            type: object
+            properties:
+                statuses:
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/interaction.service.v1.InteractionStatus'
+        interaction.service.v1.InteractionStatus:
+            type: object
+            properties:
+                liked:
+                    type: boolean
+        interaction.service.v1.LikeRequest:
+            type: object
+            properties:
+                targetType:
+                    enum:
+                        - TARGET_TYPE_UNSPECIFIED
+                        - TARGET_TYPE_COMMENT
+                    type: string
+                    format: enum
+                targetId:
+                    type: integer
+                    format: uint32
+        interaction.service.v1.LikeResponse:
+            type: object
+            properties:
+                liked:
+                    type: boolean
+                likeCount:
+                    type: integer
+                    format: int32
+        interaction.service.v1.MetricCount:
+            type: object
+            properties:
+                metric:
+                    enum:
+                        - COUNTER_METRIC_UNSPECIFIED
+                        - COUNTER_METRIC_LIKE
+                    type: string
+                    format: enum
+                count:
+                    type: string
+            description: |-
+                单个 (target, metric) 的计数条目。用于 GetCountsResponse 的内层结构。
+                 注意：proto3 不允许枚举类型作 map key，故内层用 repeated MetricCount 而非 map<CounterMetric,int64>。
         internal_message.service.v1.DeleteNotificationFromInboxRequest:
             type: object
             properties:
@@ -5539,6 +5715,11 @@ tags:
          用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
     - name: FileTransferService
       description: 文件传输服务
+    - name: InteractionService
+      description: |-
+        交互服务（评论点赞）。
+         Like/Unlike/GetInteractionStatus 需登录（rest_server 白名单刻意不登记，强制走鉴权中间件）。
+         仅 GetCounts（公开计数，按 tenant 隔离、不依赖 viewer 身份）登记为白名单。
     - name: InternalMessageRecipientService
       description: |-
         站内信收件箱前台服务（BFF 网关，REST）

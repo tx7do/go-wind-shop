@@ -15,9 +15,11 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/category"
 	"go-wind-shop/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-shop/app/core/service/internal/data/ent/comment"
+	"go-wind-shop/app/core/service/internal/data/ent/commentlike"
 	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
+	"go-wind-shop/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagerecipient"
@@ -142,9 +144,11 @@ func checkColumn(t, c string) error {
 			category.Table:                         category.ValidColumn,
 			categorytranslation.Table:              categorytranslation.ValidColumn,
 			comment.Table:                          comment.ValidColumn,
+			commentlike.Table:                      commentlike.ValidColumn,
 			coupontemplate.Table:                   coupontemplate.ValidColumn,
 			dataaccessauditlog.Table:               dataaccessauditlog.ValidColumn,
 			file.Table:                             file.ValidColumn,
+			interactioncounter.Table:               interactioncounter.ValidColumn,
 			internalmessage.Table:                  internalmessage.ValidColumn,
 			internalmessagecategory.Table:          internalmessagecategory.ValidColumn,
 			internalmessagerecipient.Table:         internalmessagerecipient.ValidColumn,

@@ -2063,6 +2063,121 @@ export type storageservicev1_UploadFileResponse = {
   presignedUrl?: string;
 };
 
+// 交互服务（评论点赞）。
+// Like/Unlike/GetInteractionStatus 需登录（rest_server 白名单刻意不登记，强制走鉴权中间件）。
+// 仅 GetCounts（公开计数，按 tenant 隔离、不依赖 viewer 身份）登记为白名单。
+export interface InteractionService {
+  // 点赞
+  Like(
+    request: interactionservicev1_LikeRequest,
+  ): Promise<interactionservicev1_LikeResponse>;
+  // 取消点赞
+  Unlike(
+    request: interactionservicev1_LikeRequest,
+  ): Promise<interactionservicev1_LikeResponse>;
+  // 批量查询交互状态
+  GetInteractionStatus(
+    request: interactionservicev1_GetInteractionStatusRequest,
+  ): Promise<interactionservicev1_GetInteractionStatusResponse>;
+  // 批量查询计数
+  GetCounts(
+    request: interactionservicev1_GetCountsRequest,
+  ): Promise<interactionservicev1_GetCountsResponse>;
+}
+
+export function createInteractionServiceClient(
+  transport: ClientTransport,
+): InteractionService {
+  return {
+    Like(request) {
+      const path = `app/v1/interactions/like`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InteractionService',
+        method: 'Like',
+      }) as Promise<interactionservicev1_LikeResponse>;
+    },
+    Unlike(request) {
+      const path = `app/v1/interactions/unlike`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InteractionService',
+        method: 'Unlike',
+      }) as Promise<interactionservicev1_LikeResponse>;
+    },
+    GetInteractionStatus(request) {
+      const path = `app/v1/interactions/status`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InteractionService',
+        method: 'GetInteractionStatus',
+      }) as Promise<interactionservicev1_GetInteractionStatusResponse>;
+    },
+    GetCounts(request) {
+      const path = `app/v1/interactions/counts:list`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'InteractionService',
+        method: 'GetCounts',
+      }) as Promise<interactionservicev1_GetCountsResponse>;
+    },
+  };
+}
+export type interactionservicev1_LikeRequest = {
+  targetId: number | undefined;
+  targetType: interactionservicev1_TargetType | undefined;
+};
+
+// 交互目标类型
+export type interactionservicev1_TargetType =
+  | 'TARGET_TYPE_COMMENT'
+  | 'TARGET_TYPE_UNSPECIFIED';
+export type interactionservicev1_LikeResponse = {
+  likeCount: number | undefined;
+  liked: boolean | undefined;
+};
+
+export type interactionservicev1_GetInteractionStatusRequest = {
+  targetIds: number[] | undefined;
+  targetType: interactionservicev1_TargetType | undefined;
+};
+
+export type interactionservicev1_GetInteractionStatusResponse = {
+  statuses: { [key: string]: interactionservicev1_InteractionStatus } | undefined;
+};
+
+export type interactionservicev1_InteractionStatus = {
+  liked: boolean | undefined;
+};
+
+export type interactionservicev1_GetCountsRequest = {
+  metrics: interactionservicev1_CounterMetric[] | undefined;
+  targetIds: number[] | undefined;
+  targetType: interactionservicev1_TargetType | undefined;
+};
+
+// 计数指标类型。与 interaction_counter 表的 metric 列对应。
+export type interactionservicev1_CounterMetric =
+  | 'COUNTER_METRIC_LIKE'
+  | 'COUNTER_METRIC_UNSPECIFIED';
+// target_id → 该目标下各 metric 的计数集合。
+// 未在 counter 表中记录的 (target, metric) 组合不出现在响应中，前端按 0 兜底。
+export type interactionservicev1_GetCountsResponse = {
+  counts: { [key: string]: interactionservicev1_CountMap } | undefined;
+};
+
+// 单个目标下所有请求 metric 的计数集合。
+export type interactionservicev1_CountMap = {
+  counts: interactionservicev1_MetricCount[] | undefined;
+};
+
+// 单个 (target, metric) 的计数条目。用于 GetCountsResponse 的内层结构。
+// 注意：proto3 不允许枚举类型作 map key，故内层用 repeated MetricCount 而非 map<CounterMetric,int64>。
+export type interactionservicev1_MetricCount = {
+  count: number | undefined;
+  metric: interactionservicev1_CounterMetric | undefined;
+};
+
 // 站内信收件箱前台服务（BFF 网关，REST）
 // 仅暴露收件视角：查收件箱、标记已读、删除。所有操作的 user_id 由网关从登录态
 // 强制注入，客户端无法读取/操作他人收件箱。
@@ -5781,6 +5896,7 @@ export class ApiClient {
   private _categoryService?: CategoryService;
   private _commentService?: CommentService;
   private _fileTransferService?: FileTransferService;
+  private _interactionService?: InteractionService;
   private _internalMessageRecipientService?: InternalMessageRecipientService;
   private _orderItemService?: OrderItemService;
   private _orderService?: OrderService;
@@ -5828,6 +5944,10 @@ export class ApiClient {
 
   get fileTransferService(): FileTransferService {
     return this._fileTransferService ??= createFileTransferServiceClient(this._transport);
+  }
+
+  get interactionService(): InteractionService {
+    return this._interactionService ??= createInteractionServiceClient(this._transport);
   }
 
   get internalMessageRecipientService(): InternalMessageRecipientService {

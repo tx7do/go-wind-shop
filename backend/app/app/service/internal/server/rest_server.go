@@ -58,6 +58,8 @@ func NewRestMiddleware(
 		appV1.OperationSkuPriceServiceGet,
 		appV1.OperationSkuAttributeCombinationServiceList,
 		appV1.OperationSkuAttributeCombinationServiceGet,
+
+		appV1.OperationInteractionServiceGetCounts,
 	)
 
 	ms = append(ms, applogging.Server(
@@ -111,6 +113,7 @@ func NewRestServer(
 	internalMessageRecipientService *service.InternalMessageRecipientService,
 		userCouponService *service.UserCouponService,
 		commentService *service.CommentService,
+		interactionService *service.InteractionService,
 	) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -147,6 +150,7 @@ func NewRestServer(
 	appV1.RegisterInternalMessageRecipientServiceHTTPServer(srv, internalMessageRecipientService)
 	appV1.RegisterUserCouponServiceHTTPServer(srv, userCouponService)
 	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
+	appV1.RegisterInteractionServiceHTTPServer(srv, interactionService)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

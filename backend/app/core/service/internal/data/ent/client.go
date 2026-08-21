@@ -20,9 +20,11 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/category"
 	"go-wind-shop/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-shop/app/core/service/internal/data/ent/comment"
+	"go-wind-shop/app/core/service/internal/data/ent/commentlike"
 	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
+	"go-wind-shop/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagerecipient"
@@ -102,12 +104,16 @@ type Client struct {
 	CategoryTranslation *CategoryTranslationClient
 	// Comment is the client for interacting with the Comment builders.
 	Comment *CommentClient
+	// CommentLike is the client for interacting with the CommentLike builders.
+	CommentLike *CommentLikeClient
 	// CouponTemplate is the client for interacting with the CouponTemplate builders.
 	CouponTemplate *CouponTemplateClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// InteractionCounter is the client for interacting with the InteractionCounter builders.
+	InteractionCounter *InteractionCounterClient
 	// InternalMessage is the client for interacting with the InternalMessage builders.
 	InternalMessage *InternalMessageClient
 	// InternalMessageCategory is the client for interacting with the InternalMessageCategory builders.
@@ -226,9 +232,11 @@ func (c *Client) init() {
 	c.Category = NewCategoryClient(c.config)
 	c.CategoryTranslation = NewCategoryTranslationClient(c.config)
 	c.Comment = NewCommentClient(c.config)
+	c.CommentLike = NewCommentLikeClient(c.config)
 	c.CouponTemplate = NewCouponTemplateClient(c.config)
 	c.DataAccessAuditLog = NewDataAccessAuditLogClient(c.config)
 	c.File = NewFileClient(c.config)
+	c.InteractionCounter = NewInteractionCounterClient(c.config)
 	c.InternalMessage = NewInternalMessageClient(c.config)
 	c.InternalMessageCategory = NewInternalMessageCategoryClient(c.config)
 	c.InternalMessageRecipient = NewInternalMessageRecipientClient(c.config)
@@ -379,9 +387,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Category:                         NewCategoryClient(cfg),
 		CategoryTranslation:              NewCategoryTranslationClient(cfg),
 		Comment:                          NewCommentClient(cfg),
+		CommentLike:                      NewCommentLikeClient(cfg),
 		CouponTemplate:                   NewCouponTemplateClient(cfg),
 		DataAccessAuditLog:               NewDataAccessAuditLogClient(cfg),
 		File:                             NewFileClient(cfg),
+		InteractionCounter:               NewInteractionCounterClient(cfg),
 		InternalMessage:                  NewInternalMessageClient(cfg),
 		InternalMessageCategory:          NewInternalMessageCategoryClient(cfg),
 		InternalMessageRecipient:         NewInternalMessageRecipientClient(cfg),
@@ -459,9 +469,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Category:                         NewCategoryClient(cfg),
 		CategoryTranslation:              NewCategoryTranslationClient(cfg),
 		Comment:                          NewCommentClient(cfg),
+		CommentLike:                      NewCommentLikeClient(cfg),
 		CouponTemplate:                   NewCouponTemplateClient(cfg),
 		DataAccessAuditLog:               NewDataAccessAuditLogClient(cfg),
 		File:                             NewFileClient(cfg),
+		InteractionCounter:               NewInteractionCounterClient(cfg),
 		InternalMessage:                  NewInternalMessageClient(cfg),
 		InternalMessageCategory:          NewInternalMessageCategoryClient(cfg),
 		InternalMessageRecipient:         NewInternalMessageRecipientClient(cfg),
@@ -541,19 +553,20 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.Api, c.ApiAuditLog, c.Brand, c.BrandTranslation, c.Cart, c.CartItem,
-		c.Category, c.CategoryTranslation, c.Comment, c.CouponTemplate,
-		c.DataAccessAuditLog, c.File, c.InternalMessage, c.InternalMessageCategory,
-		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
-		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
-		c.Menu, c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit, c.PaymentRefund,
-		c.PaymentTransaction, c.Permission, c.PermissionApi, c.PermissionAuditLog,
-		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
-		c.Position, c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
-		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
-		c.ProductTranslation, c.Role, c.RoleMetadata, c.RolePermission, c.Shipment,
-		c.ShippingAddress, c.ShippingRate, c.Sku, c.SkuAttributeCombination,
-		c.SkuPrice, c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Category, c.CategoryTranslation, c.Comment, c.CommentLike, c.CouponTemplate,
+		c.DataAccessAuditLog, c.File, c.InteractionCounter, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.Order,
+		c.OrderItem, c.OrgUnit, c.PaymentRefund, c.PaymentTransaction, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Product,
+		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
+		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Role,
+		c.RoleMetadata, c.RolePermission, c.Shipment, c.ShippingAddress,
+		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.Task,
+		c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Use(hooks...)
 	}
@@ -564,19 +577,20 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.Api, c.ApiAuditLog, c.Brand, c.BrandTranslation, c.Cart, c.CartItem,
-		c.Category, c.CategoryTranslation, c.Comment, c.CouponTemplate,
-		c.DataAccessAuditLog, c.File, c.InternalMessage, c.InternalMessageCategory,
-		c.InternalMessageRecipient, c.Language, c.LoginAuditLog, c.LoginPolicy,
-		c.Membership, c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole,
-		c.Menu, c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit, c.PaymentRefund,
-		c.PaymentTransaction, c.Permission, c.PermissionApi, c.PermissionAuditLog,
-		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.PolicyEvaluationLog,
-		c.Position, c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
-		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
-		c.ProductTranslation, c.Role, c.RoleMetadata, c.RolePermission, c.Shipment,
-		c.ShippingAddress, c.ShippingRate, c.Sku, c.SkuAttributeCombination,
-		c.SkuPrice, c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon,
-		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Category, c.CategoryTranslation, c.Comment, c.CommentLike, c.CouponTemplate,
+		c.DataAccessAuditLog, c.File, c.InteractionCounter, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.OperationAuditLog, c.Order,
+		c.OrderItem, c.OrgUnit, c.PaymentRefund, c.PaymentTransaction, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Product,
+		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
+		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Role,
+		c.RoleMetadata, c.RolePermission, c.Shipment, c.ShippingAddress,
+		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.Task,
+		c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential, c.UserOrgUnit,
+		c.UserPosition, c.UserRole,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -603,12 +617,16 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.CategoryTranslation.mutate(ctx, m)
 	case *CommentMutation:
 		return c.Comment.mutate(ctx, m)
+	case *CommentLikeMutation:
+		return c.CommentLike.mutate(ctx, m)
 	case *CouponTemplateMutation:
 		return c.CouponTemplate.mutate(ctx, m)
 	case *DataAccessAuditLogMutation:
 		return c.DataAccessAuditLog.mutate(ctx, m)
 	case *FileMutation:
 		return c.File.mutate(ctx, m)
+	case *InteractionCounterMutation:
+		return c.InteractionCounter.mutate(ctx, m)
 	case *InternalMessageMutation:
 		return c.InternalMessage.mutate(ctx, m)
 	case *InternalMessageCategoryMutation:
@@ -1977,6 +1995,140 @@ func (c *CommentClient) mutate(ctx context.Context, m *CommentMutation) (Value, 
 	}
 }
 
+// CommentLikeClient is a client for the CommentLike schema.
+type CommentLikeClient struct {
+	config
+}
+
+// NewCommentLikeClient returns a client for the CommentLike from the given config.
+func NewCommentLikeClient(c config) *CommentLikeClient {
+	return &CommentLikeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `commentlike.Hooks(f(g(h())))`.
+func (c *CommentLikeClient) Use(hooks ...Hook) {
+	c.hooks.CommentLike = append(c.hooks.CommentLike, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `commentlike.Intercept(f(g(h())))`.
+func (c *CommentLikeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.CommentLike = append(c.inters.CommentLike, interceptors...)
+}
+
+// Create returns a builder for creating a CommentLike entity.
+func (c *CommentLikeClient) Create() *CommentLikeCreate {
+	mutation := newCommentLikeMutation(c.config, OpCreate)
+	return &CommentLikeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of CommentLike entities.
+func (c *CommentLikeClient) CreateBulk(builders ...*CommentLikeCreate) *CommentLikeCreateBulk {
+	return &CommentLikeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *CommentLikeClient) MapCreateBulk(slice any, setFunc func(*CommentLikeCreate, int)) *CommentLikeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &CommentLikeCreateBulk{err: fmt.Errorf("calling to CommentLikeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*CommentLikeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &CommentLikeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for CommentLike.
+func (c *CommentLikeClient) Update() *CommentLikeUpdate {
+	mutation := newCommentLikeMutation(c.config, OpUpdate)
+	return &CommentLikeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *CommentLikeClient) UpdateOne(_m *CommentLike) *CommentLikeUpdateOne {
+	mutation := newCommentLikeMutation(c.config, OpUpdateOne, withCommentLike(_m))
+	return &CommentLikeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *CommentLikeClient) UpdateOneID(id uint32) *CommentLikeUpdateOne {
+	mutation := newCommentLikeMutation(c.config, OpUpdateOne, withCommentLikeID(id))
+	return &CommentLikeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for CommentLike.
+func (c *CommentLikeClient) Delete() *CommentLikeDelete {
+	mutation := newCommentLikeMutation(c.config, OpDelete)
+	return &CommentLikeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *CommentLikeClient) DeleteOne(_m *CommentLike) *CommentLikeDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *CommentLikeClient) DeleteOneID(id uint32) *CommentLikeDeleteOne {
+	builder := c.Delete().Where(commentlike.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &CommentLikeDeleteOne{builder}
+}
+
+// Query returns a query builder for CommentLike.
+func (c *CommentLikeClient) Query() *CommentLikeQuery {
+	return &CommentLikeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeCommentLike},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a CommentLike entity by its id.
+func (c *CommentLikeClient) Get(ctx context.Context, id uint32) (*CommentLike, error) {
+	return c.Query().Where(commentlike.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *CommentLikeClient) GetX(ctx context.Context, id uint32) *CommentLike {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *CommentLikeClient) Hooks() []Hook {
+	hooks := c.hooks.CommentLike
+	return append(hooks[:len(hooks):len(hooks)], commentlike.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *CommentLikeClient) Interceptors() []Interceptor {
+	return c.inters.CommentLike
+}
+
+func (c *CommentLikeClient) mutate(ctx context.Context, m *CommentLikeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&CommentLikeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&CommentLikeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&CommentLikeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&CommentLikeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown CommentLike mutation op: %q", m.Op())
+	}
+}
+
 // CouponTemplateClient is a client for the CouponTemplate schema.
 type CouponTemplateClient struct {
 	config
@@ -2376,6 +2528,140 @@ func (c *FileClient) mutate(ctx context.Context, m *FileMutation) (Value, error)
 		return (&FileDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown File mutation op: %q", m.Op())
+	}
+}
+
+// InteractionCounterClient is a client for the InteractionCounter schema.
+type InteractionCounterClient struct {
+	config
+}
+
+// NewInteractionCounterClient returns a client for the InteractionCounter from the given config.
+func NewInteractionCounterClient(c config) *InteractionCounterClient {
+	return &InteractionCounterClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `interactioncounter.Hooks(f(g(h())))`.
+func (c *InteractionCounterClient) Use(hooks ...Hook) {
+	c.hooks.InteractionCounter = append(c.hooks.InteractionCounter, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `interactioncounter.Intercept(f(g(h())))`.
+func (c *InteractionCounterClient) Intercept(interceptors ...Interceptor) {
+	c.inters.InteractionCounter = append(c.inters.InteractionCounter, interceptors...)
+}
+
+// Create returns a builder for creating a InteractionCounter entity.
+func (c *InteractionCounterClient) Create() *InteractionCounterCreate {
+	mutation := newInteractionCounterMutation(c.config, OpCreate)
+	return &InteractionCounterCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of InteractionCounter entities.
+func (c *InteractionCounterClient) CreateBulk(builders ...*InteractionCounterCreate) *InteractionCounterCreateBulk {
+	return &InteractionCounterCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *InteractionCounterClient) MapCreateBulk(slice any, setFunc func(*InteractionCounterCreate, int)) *InteractionCounterCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &InteractionCounterCreateBulk{err: fmt.Errorf("calling to InteractionCounterClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*InteractionCounterCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &InteractionCounterCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for InteractionCounter.
+func (c *InteractionCounterClient) Update() *InteractionCounterUpdate {
+	mutation := newInteractionCounterMutation(c.config, OpUpdate)
+	return &InteractionCounterUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *InteractionCounterClient) UpdateOne(_m *InteractionCounter) *InteractionCounterUpdateOne {
+	mutation := newInteractionCounterMutation(c.config, OpUpdateOne, withInteractionCounter(_m))
+	return &InteractionCounterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *InteractionCounterClient) UpdateOneID(id uint32) *InteractionCounterUpdateOne {
+	mutation := newInteractionCounterMutation(c.config, OpUpdateOne, withInteractionCounterID(id))
+	return &InteractionCounterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for InteractionCounter.
+func (c *InteractionCounterClient) Delete() *InteractionCounterDelete {
+	mutation := newInteractionCounterMutation(c.config, OpDelete)
+	return &InteractionCounterDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *InteractionCounterClient) DeleteOne(_m *InteractionCounter) *InteractionCounterDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *InteractionCounterClient) DeleteOneID(id uint32) *InteractionCounterDeleteOne {
+	builder := c.Delete().Where(interactioncounter.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &InteractionCounterDeleteOne{builder}
+}
+
+// Query returns a query builder for InteractionCounter.
+func (c *InteractionCounterClient) Query() *InteractionCounterQuery {
+	return &InteractionCounterQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeInteractionCounter},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a InteractionCounter entity by its id.
+func (c *InteractionCounterClient) Get(ctx context.Context, id uint32) (*InteractionCounter, error) {
+	return c.Query().Where(interactioncounter.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *InteractionCounterClient) GetX(ctx context.Context, id uint32) *InteractionCounter {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *InteractionCounterClient) Hooks() []Hook {
+	hooks := c.hooks.InteractionCounter
+	return append(hooks[:len(hooks):len(hooks)], interactioncounter.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *InteractionCounterClient) Interceptors() []Interceptor {
+	return c.inters.InteractionCounter
+}
+
+func (c *InteractionCounterClient) mutate(ctx context.Context, m *InteractionCounterMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&InteractionCounterCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&InteractionCounterUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&InteractionCounterUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&InteractionCounterDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown InteractionCounter mutation op: %q", m.Op())
 	}
 }
 
@@ -9028,13 +9314,13 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 type (
 	hooks struct {
 		Api, ApiAuditLog, Brand, BrandTranslation, Cart, CartItem, Category,
-		CategoryTranslation, Comment, CouponTemplate, DataAccessAuditLog, File,
-		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
-		LoginAuditLog, LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition,
-		MembershipRole, Menu, OperationAuditLog, Order, OrderItem, OrgUnit,
-		PaymentRefund, PaymentTransaction, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Product, ProductAttribute,
+		CategoryTranslation, Comment, CommentLike, CouponTemplate, DataAccessAuditLog,
+		File, InteractionCounter, InternalMessage, InternalMessageCategory,
+		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, Membership,
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
+		Order, OrderItem, OrgUnit, PaymentRefund, PaymentTransaction, Permission,
+		PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
+		PermissionPolicy, PolicyEvaluationLog, Position, Product, ProductAttribute,
 		ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Role, RoleMetadata,
 		RolePermission, Shipment, ShippingAddress, ShippingRate, Sku,
@@ -9043,13 +9329,13 @@ type (
 	}
 	inters struct {
 		Api, ApiAuditLog, Brand, BrandTranslation, Cart, CartItem, Category,
-		CategoryTranslation, Comment, CouponTemplate, DataAccessAuditLog, File,
-		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Language,
-		LoginAuditLog, LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition,
-		MembershipRole, Menu, OperationAuditLog, Order, OrderItem, OrgUnit,
-		PaymentRefund, PaymentTransaction, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
-		PolicyEvaluationLog, Position, Product, ProductAttribute,
+		CategoryTranslation, Comment, CommentLike, CouponTemplate, DataAccessAuditLog,
+		File, InteractionCounter, InternalMessage, InternalMessageCategory,
+		InternalMessageRecipient, Language, LoginAuditLog, LoginPolicy, Membership,
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, OperationAuditLog,
+		Order, OrderItem, OrgUnit, PaymentRefund, PaymentTransaction, Permission,
+		PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
+		PermissionPolicy, PolicyEvaluationLog, Position, Product, ProductAttribute,
 		ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Role, RoleMetadata,
 		RolePermission, Shipment, ShippingAddress, ShippingRate, Sku,

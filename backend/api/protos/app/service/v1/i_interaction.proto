@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+
+import "interaction/service/v1/interaction.proto";
+
+// 交互服务（评论点赞）。
+// Like/Unlike/GetInteractionStatus 需登录（rest_server 白名单刻意不登记，强制走鉴权中间件）。
+// 仅 GetCounts（公开计数，按 tenant 隔离、不依赖 viewer 身份）登记为白名单。
+service InteractionService {
+  // 点赞
+  rpc Like (interaction.service.v1.LikeRequest) returns (interaction.service.v1.LikeResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/interactions/like"
+      body: "*"
+    };
+  }
+
+  // 取消点赞
+  rpc Unlike (interaction.service.v1.LikeRequest) returns (interaction.service.v1.LikeResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/interactions/unlike"
+      body: "*"
+    };
+  }
+
+  // 批量查询交互状态
+  rpc GetInteractionStatus (interaction.service.v1.GetInteractionStatusRequest) returns (interaction.service.v1.GetInteractionStatusResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/interactions/status"
+      body: "*"
+    };
+  }
+
+  // 批量查询计数
+  rpc GetCounts (interaction.service.v1.GetCountsRequest) returns (interaction.service.v1.GetCountsResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/interactions/counts:list"
+      body: "*"
+    };
+  }
+}

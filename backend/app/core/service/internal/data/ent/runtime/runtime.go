@@ -14,9 +14,11 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/category"
 	"go-wind-shop/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-shop/app/core/service/internal/data/ent/comment"
+	"go-wind-shop/app/core/service/internal/data/ent/commentlike"
 	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
+	"go-wind-shop/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagerecipient"
@@ -245,6 +247,30 @@ func init() {
 	commentDescID := commentMixinFields0[0].Descriptor()
 	// comment.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	comment.IDValidator = commentDescID.Validators[0].(func(uint32) error)
+	commentlikeMixin := schema.CommentLike{}.Mixin()
+	commentlike.Policy = privacy.NewPolicies(commentlikeMixin[2], schema.CommentLike{})
+	commentlike.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := commentlike.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	commentlikeMixinFields0 := commentlikeMixin[0].Fields()
+	_ = commentlikeMixinFields0
+	commentlikeMixinFields2 := commentlikeMixin[2].Fields()
+	_ = commentlikeMixinFields2
+	commentlikeFields := schema.CommentLike{}.Fields()
+	_ = commentlikeFields
+	// commentlikeDescTenantID is the schema descriptor for tenant_id field.
+	commentlikeDescTenantID := commentlikeMixinFields2[0].Descriptor()
+	// commentlike.DefaultTenantID holds the default value on creation for the tenant_id field.
+	commentlike.DefaultTenantID = commentlikeDescTenantID.Default.(uint32)
+	// commentlikeDescID is the schema descriptor for id field.
+	commentlikeDescID := commentlikeMixinFields0[0].Descriptor()
+	// commentlike.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	commentlike.IDValidator = commentlikeDescID.Validators[0].(func(uint32) error)
 	coupontemplateMixin := schema.CouponTemplate{}.Mixin()
 	coupontemplate.Policy = privacy.NewPolicies(coupontemplateMixin[3], schema.CouponTemplate{})
 	coupontemplate.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -343,6 +369,34 @@ func init() {
 	fileDescID := fileMixinFields0[0].Descriptor()
 	// file.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	file.IDValidator = fileDescID.Validators[0].(func(uint32) error)
+	interactioncounterMixin := schema.InteractionCounter{}.Mixin()
+	interactioncounter.Policy = privacy.NewPolicies(interactioncounterMixin[2], schema.InteractionCounter{})
+	interactioncounter.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := interactioncounter.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	interactioncounterMixinFields0 := interactioncounterMixin[0].Fields()
+	_ = interactioncounterMixinFields0
+	interactioncounterMixinFields2 := interactioncounterMixin[2].Fields()
+	_ = interactioncounterMixinFields2
+	interactioncounterFields := schema.InteractionCounter{}.Fields()
+	_ = interactioncounterFields
+	// interactioncounterDescTenantID is the schema descriptor for tenant_id field.
+	interactioncounterDescTenantID := interactioncounterMixinFields2[0].Descriptor()
+	// interactioncounter.DefaultTenantID holds the default value on creation for the tenant_id field.
+	interactioncounter.DefaultTenantID = interactioncounterDescTenantID.Default.(uint32)
+	// interactioncounterDescCount is the schema descriptor for count field.
+	interactioncounterDescCount := interactioncounterFields[3].Descriptor()
+	// interactioncounter.DefaultCount holds the default value on creation for the count field.
+	interactioncounter.DefaultCount = interactioncounterDescCount.Default.(int64)
+	// interactioncounterDescID is the schema descriptor for id field.
+	interactioncounterDescID := interactioncounterMixinFields0[0].Descriptor()
+	// interactioncounter.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	interactioncounter.IDValidator = interactioncounterDescID.Validators[0].(func(uint32) error)
 	internalmessageMixin := schema.InternalMessage{}.Mixin()
 	internalmessage.Policy = privacy.NewPolicies(internalmessageMixin[3], schema.InternalMessage{})
 	internalmessage.Hooks[0] = func(next ent.Mutator) ent.Mutator {

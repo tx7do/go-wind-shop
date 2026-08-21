@@ -402,6 +402,30 @@ var (
 			},
 		},
 	}
+	// MallCommentLikesColumns holds the columns for the "mall_comment_likes" table.
+	MallCommentLikesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "点赞用户ID"},
+		{Name: "comment_id", Type: field.TypeUint32, Nullable: true, Comment: "被点赞评论ID"},
+	}
+	// MallCommentLikesTable holds the schema information for the "mall_comment_likes" table.
+	MallCommentLikesTable = &schema.Table{
+		Name:       "mall_comment_likes",
+		Comment:    "评论点赞 ledger 表",
+		Columns:    MallCommentLikesColumns,
+		PrimaryKey: []*schema.Column{MallCommentLikesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "commentlike_tenant_id_user_id_comment_id",
+				Unique:  true,
+				Columns: []*schema.Column{MallCommentLikesColumns[4], MallCommentLikesColumns[5], MallCommentLikesColumns[6]},
+			},
+		},
+	}
 	// MallCouponTemplatesColumns holds the columns for the "mall_coupon_templates" table.
 	MallCouponTemplatesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -625,6 +649,32 @@ var (
 				Name:    "idx_files_created_at",
 				Unique:  false,
 				Columns: []*schema.Column{FilesColumns[1]},
+			},
+		},
+	}
+	// InteractionCountersColumns holds the columns for the "interaction_counters" table.
+	InteractionCountersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "target_type", Type: field.TypeUint8, Nullable: true, Comment: "目标类型，对应 interaction.TargetType 枚举"},
+		{Name: "target_id", Type: field.TypeUint32, Nullable: true, Comment: "目标ID"},
+		{Name: "metric", Type: field.TypeUint8, Nullable: true, Comment: "计数指标，对应 interaction.CounterMetric 枚举"},
+		{Name: "count", Type: field.TypeInt64, Nullable: true, Comment: "累计计数", Default: 0},
+	}
+	// InteractionCountersTable holds the schema information for the "interaction_counters" table.
+	InteractionCountersTable = &schema.Table{
+		Name:       "interaction_counters",
+		Comment:    "交互计数内聚表",
+		Columns:    InteractionCountersColumns,
+		PrimaryKey: []*schema.Column{InteractionCountersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "interactioncounter_tenant_id_target_type_target_id_metric",
+				Unique:  true,
+				Columns: []*schema.Column{InteractionCountersColumns[4], InteractionCountersColumns[5], InteractionCountersColumns[6], InteractionCountersColumns[7]},
 			},
 		},
 	}
@@ -3574,9 +3624,11 @@ var (
 		MallCategoriesTable,
 		MallCategoryTranslationsTable,
 		MallCommentsTable,
+		MallCommentLikesTable,
 		MallCouponTemplatesTable,
 		SysDataAccessAuditLogsTable,
 		FilesTable,
+		InteractionCountersTable,
 		InternalMessagesTable,
 		InternalMessageCategoriesTable,
 		InternalMessageRecipientsTable,
@@ -3677,6 +3729,11 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	MallCommentLikesTable.Annotation = &entsql.Annotation{
+		Table:     "mall_comment_likes",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	MallCouponTemplatesTable.Annotation = &entsql.Annotation{
 		Table:     "mall_coupon_templates",
 		Charset:   "utf8mb4",
@@ -3689,6 +3746,11 @@ func init() {
 	}
 	FilesTable.Annotation = &entsql.Annotation{
 		Table:     "files",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	InteractionCountersTable.Annotation = &entsql.Annotation{
+		Table:     "interaction_counters",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

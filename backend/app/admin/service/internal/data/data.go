@@ -25,6 +25,7 @@ import (
 	couponV1 "go-wind-shop/api/gen/go/coupon/service/v1"
 	dictV1 "go-wind-shop/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
+	interactionV1 "go-wind-shop/api/gen/go/interaction/service/v1"
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
@@ -500,5 +501,14 @@ func NewCommentServiceClient(ctx *bootstrap.Context, r registry.Discovery) comme
 	}
 
 	return commentV1.NewCommentServiceClient(cli)
+}
+
+func NewInteractionAdminServiceClient(ctx *bootstrap.Context, r registry.Discovery) interactionV1.InteractionAdminServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return interactionV1.NewInteractionAdminServiceClient(cli)
 }
 

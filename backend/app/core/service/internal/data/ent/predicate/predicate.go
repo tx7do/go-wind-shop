@@ -33,6 +33,9 @@ type CategoryTranslation func(*sql.Selector)
 // Comment is the predicate function for comment builders.
 type Comment func(*sql.Selector)
 
+// CommentLike is the predicate function for commentlike builders.
+type CommentLike func(*sql.Selector)
+
 // CouponTemplate is the predicate function for coupontemplate builders.
 type CouponTemplate func(*sql.Selector)
 
@@ -41,6 +44,9 @@ type DataAccessAuditLog func(*sql.Selector)
 
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
+
+// InteractionCounter is the predicate function for interactioncounter builders.
+type InteractionCounter func(*sql.Selector)
 
 // InternalMessage is the predicate function for internalmessage builders.
 type InternalMessage func(*sql.Selector)

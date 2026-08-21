@@ -327,6 +327,30 @@ func (f CommentMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CommentMutation", m)
 }
 
+// The CommentLikeQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type CommentLikeQueryRuleFunc func(context.Context, *ent.CommentLikeQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f CommentLikeQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.CommentLikeQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.CommentLikeQuery", q)
+}
+
+// The CommentLikeMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type CommentLikeMutationRuleFunc func(context.Context, *ent.CommentLikeMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f CommentLikeMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.CommentLikeMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.CommentLikeMutation", m)
+}
+
 // The CouponTemplateQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type CouponTemplateQueryRuleFunc func(context.Context, *ent.CouponTemplateQuery) error
@@ -397,6 +421,30 @@ func (f FileMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) 
 		return f(ctx, m)
 	}
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.FileMutation", m)
+}
+
+// The InteractionCounterQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type InteractionCounterQueryRuleFunc func(context.Context, *ent.InteractionCounterQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f InteractionCounterQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.InteractionCounterQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.InteractionCounterQuery", q)
+}
+
+// The InteractionCounterMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type InteractionCounterMutationRuleFunc func(context.Context, *ent.InteractionCounterMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f InteractionCounterMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.InteractionCounterMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.InteractionCounterMutation", m)
 }
 
 // The InternalMessageQueryRuleFunc type is an adapter to allow the use of ordinary
@@ -1628,11 +1676,15 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.CommentQuery:
 		return q.Filter(), nil
+	case *ent.CommentLikeQuery:
+		return q.Filter(), nil
 	case *ent.CouponTemplateQuery:
 		return q.Filter(), nil
 	case *ent.DataAccessAuditLogQuery:
 		return q.Filter(), nil
 	case *ent.FileQuery:
+		return q.Filter(), nil
+	case *ent.InteractionCounterQuery:
 		return q.Filter(), nil
 	case *ent.InternalMessageQuery:
 		return q.Filter(), nil
@@ -1757,11 +1809,15 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.CommentMutation:
 		return m.Filter(), nil
+	case *ent.CommentLikeMutation:
+		return m.Filter(), nil
 	case *ent.CouponTemplateMutation:
 		return m.Filter(), nil
 	case *ent.DataAccessAuditLogMutation:
 		return m.Filter(), nil
 	case *ent.FileMutation:
+		return m.Filter(), nil
+	case *ent.InteractionCounterMutation:
 		return m.Filter(), nil
 	case *ent.InternalMessageMutation:
 		return m.Filter(), nil

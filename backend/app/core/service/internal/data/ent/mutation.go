@@ -18,9 +18,11 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/category"
 	"go-wind-shop/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-shop/app/core/service/internal/data/ent/comment"
+	"go-wind-shop/app/core/service/internal/data/ent/commentlike"
 	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/dataaccessauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
+	"go-wind-shop/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagecategory"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagerecipient"
@@ -96,9 +98,11 @@ const (
 	TypeCategory                         = "Category"
 	TypeCategoryTranslation              = "CategoryTranslation"
 	TypeComment                          = "Comment"
+	TypeCommentLike                      = "CommentLike"
 	TypeCouponTemplate                   = "CouponTemplate"
 	TypeDataAccessAuditLog               = "DataAccessAuditLog"
 	TypeFile                             = "File"
+	TypeInteractionCounter               = "InteractionCounter"
 	TypeInternalMessage                  = "InternalMessage"
 	TypeInternalMessageCategory          = "InternalMessageCategory"
 	TypeInternalMessageRecipient         = "InternalMessageRecipient"
@@ -12715,6 +12719,830 @@ func (m *CommentMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Comment edge %s", name)
 }
 
+// CommentLikeMutation represents an operation that mutates the CommentLike nodes in the graph.
+type CommentLikeMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *uint32
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted_at    *time.Time
+	tenant_id     *uint32
+	addtenant_id  *int32
+	user_id       *uint32
+	adduser_id    *int32
+	comment_id    *uint32
+	addcomment_id *int32
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*CommentLike, error)
+	predicates    []predicate.CommentLike
+}
+
+var _ ent.Mutation = (*CommentLikeMutation)(nil)
+
+// commentlikeOption allows management of the mutation configuration using functional options.
+type commentlikeOption func(*CommentLikeMutation)
+
+// newCommentLikeMutation creates new mutation for the CommentLike entity.
+func newCommentLikeMutation(c config, op Op, opts ...commentlikeOption) *CommentLikeMutation {
+	m := &CommentLikeMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeCommentLike,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withCommentLikeID sets the ID field of the mutation.
+func withCommentLikeID(id uint32) commentlikeOption {
+	return func(m *CommentLikeMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *CommentLike
+		)
+		m.oldValue = func(ctx context.Context) (*CommentLike, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().CommentLike.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withCommentLike sets the old CommentLike of the mutation.
+func withCommentLike(node *CommentLike) commentlikeOption {
+	return func(m *CommentLikeMutation) {
+		m.oldValue = func(context.Context) (*CommentLike, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m CommentLikeMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m CommentLikeMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of CommentLike entities.
+func (m *CommentLikeMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *CommentLikeMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *CommentLikeMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().CommentLike.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *CommentLikeMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *CommentLikeMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the CommentLike entity.
+// If the CommentLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentLikeMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *CommentLikeMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[commentlike.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *CommentLikeMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[commentlike.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *CommentLikeMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, commentlike.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *CommentLikeMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *CommentLikeMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the CommentLike entity.
+// If the CommentLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentLikeMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *CommentLikeMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[commentlike.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *CommentLikeMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[commentlike.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *CommentLikeMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, commentlike.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *CommentLikeMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *CommentLikeMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the CommentLike entity.
+// If the CommentLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentLikeMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *CommentLikeMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[commentlike.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *CommentLikeMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[commentlike.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *CommentLikeMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, commentlike.FieldDeletedAt)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *CommentLikeMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *CommentLikeMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the CommentLike entity.
+// If the CommentLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentLikeMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *CommentLikeMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *CommentLikeMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *CommentLikeMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[commentlike.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *CommentLikeMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[commentlike.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *CommentLikeMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, commentlike.FieldTenantID)
+}
+
+// SetUserID sets the "user_id" field.
+func (m *CommentLikeMutation) SetUserID(u uint32) {
+	m.user_id = &u
+	m.adduser_id = nil
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *CommentLikeMutation) UserID() (r uint32, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the CommentLike entity.
+// If the CommentLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentLikeMutation) OldUserID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// AddUserID adds u to the "user_id" field.
+func (m *CommentLikeMutation) AddUserID(u int32) {
+	if m.adduser_id != nil {
+		*m.adduser_id += u
+	} else {
+		m.adduser_id = &u
+	}
+}
+
+// AddedUserID returns the value that was added to the "user_id" field in this mutation.
+func (m *CommentLikeMutation) AddedUserID() (r int32, exists bool) {
+	v := m.adduser_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *CommentLikeMutation) ClearUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	m.clearedFields[commentlike.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *CommentLikeMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[commentlike.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *CommentLikeMutation) ResetUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	delete(m.clearedFields, commentlike.FieldUserID)
+}
+
+// SetCommentID sets the "comment_id" field.
+func (m *CommentLikeMutation) SetCommentID(u uint32) {
+	m.comment_id = &u
+	m.addcomment_id = nil
+}
+
+// CommentID returns the value of the "comment_id" field in the mutation.
+func (m *CommentLikeMutation) CommentID() (r uint32, exists bool) {
+	v := m.comment_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCommentID returns the old "comment_id" field's value of the CommentLike entity.
+// If the CommentLike object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CommentLikeMutation) OldCommentID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCommentID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCommentID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCommentID: %w", err)
+	}
+	return oldValue.CommentID, nil
+}
+
+// AddCommentID adds u to the "comment_id" field.
+func (m *CommentLikeMutation) AddCommentID(u int32) {
+	if m.addcomment_id != nil {
+		*m.addcomment_id += u
+	} else {
+		m.addcomment_id = &u
+	}
+}
+
+// AddedCommentID returns the value that was added to the "comment_id" field in this mutation.
+func (m *CommentLikeMutation) AddedCommentID() (r int32, exists bool) {
+	v := m.addcomment_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCommentID clears the value of the "comment_id" field.
+func (m *CommentLikeMutation) ClearCommentID() {
+	m.comment_id = nil
+	m.addcomment_id = nil
+	m.clearedFields[commentlike.FieldCommentID] = struct{}{}
+}
+
+// CommentIDCleared returns if the "comment_id" field was cleared in this mutation.
+func (m *CommentLikeMutation) CommentIDCleared() bool {
+	_, ok := m.clearedFields[commentlike.FieldCommentID]
+	return ok
+}
+
+// ResetCommentID resets all changes to the "comment_id" field.
+func (m *CommentLikeMutation) ResetCommentID() {
+	m.comment_id = nil
+	m.addcomment_id = nil
+	delete(m.clearedFields, commentlike.FieldCommentID)
+}
+
+// Where appends a list predicates to the CommentLikeMutation builder.
+func (m *CommentLikeMutation) Where(ps ...predicate.CommentLike) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the CommentLikeMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *CommentLikeMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.CommentLike, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *CommentLikeMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *CommentLikeMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (CommentLike).
+func (m *CommentLikeMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *CommentLikeMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.created_at != nil {
+		fields = append(fields, commentlike.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, commentlike.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, commentlike.FieldDeletedAt)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, commentlike.FieldTenantID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, commentlike.FieldUserID)
+	}
+	if m.comment_id != nil {
+		fields = append(fields, commentlike.FieldCommentID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *CommentLikeMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case commentlike.FieldCreatedAt:
+		return m.CreatedAt()
+	case commentlike.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case commentlike.FieldDeletedAt:
+		return m.DeletedAt()
+	case commentlike.FieldTenantID:
+		return m.TenantID()
+	case commentlike.FieldUserID:
+		return m.UserID()
+	case commentlike.FieldCommentID:
+		return m.CommentID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *CommentLikeMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case commentlike.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case commentlike.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case commentlike.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case commentlike.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case commentlike.FieldUserID:
+		return m.OldUserID(ctx)
+	case commentlike.FieldCommentID:
+		return m.OldCommentID(ctx)
+	}
+	return nil, fmt.Errorf("unknown CommentLike field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CommentLikeMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case commentlike.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case commentlike.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case commentlike.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case commentlike.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case commentlike.FieldUserID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case commentlike.FieldCommentID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCommentID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CommentLike field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *CommentLikeMutation) AddedFields() []string {
+	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, commentlike.FieldTenantID)
+	}
+	if m.adduser_id != nil {
+		fields = append(fields, commentlike.FieldUserID)
+	}
+	if m.addcomment_id != nil {
+		fields = append(fields, commentlike.FieldCommentID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *CommentLikeMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case commentlike.FieldTenantID:
+		return m.AddedTenantID()
+	case commentlike.FieldUserID:
+		return m.AddedUserID()
+	case commentlike.FieldCommentID:
+		return m.AddedCommentID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *CommentLikeMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case commentlike.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case commentlike.FieldUserID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUserID(v)
+		return nil
+	case commentlike.FieldCommentID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCommentID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown CommentLike numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *CommentLikeMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(commentlike.FieldCreatedAt) {
+		fields = append(fields, commentlike.FieldCreatedAt)
+	}
+	if m.FieldCleared(commentlike.FieldUpdatedAt) {
+		fields = append(fields, commentlike.FieldUpdatedAt)
+	}
+	if m.FieldCleared(commentlike.FieldDeletedAt) {
+		fields = append(fields, commentlike.FieldDeletedAt)
+	}
+	if m.FieldCleared(commentlike.FieldTenantID) {
+		fields = append(fields, commentlike.FieldTenantID)
+	}
+	if m.FieldCleared(commentlike.FieldUserID) {
+		fields = append(fields, commentlike.FieldUserID)
+	}
+	if m.FieldCleared(commentlike.FieldCommentID) {
+		fields = append(fields, commentlike.FieldCommentID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *CommentLikeMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *CommentLikeMutation) ClearField(name string) error {
+	switch name {
+	case commentlike.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case commentlike.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case commentlike.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case commentlike.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case commentlike.FieldUserID:
+		m.ClearUserID()
+		return nil
+	case commentlike.FieldCommentID:
+		m.ClearCommentID()
+		return nil
+	}
+	return fmt.Errorf("unknown CommentLike nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *CommentLikeMutation) ResetField(name string) error {
+	switch name {
+	case commentlike.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case commentlike.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case commentlike.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case commentlike.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case commentlike.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case commentlike.FieldCommentID:
+		m.ResetCommentID()
+		return nil
+	}
+	return fmt.Errorf("unknown CommentLike field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *CommentLikeMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *CommentLikeMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *CommentLikeMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *CommentLikeMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *CommentLikeMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *CommentLikeMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *CommentLikeMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown CommentLike unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *CommentLikeMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown CommentLike edge %s", name)
+}
+
 // CouponTemplateMutation represents an operation that mutates the CouponTemplate nodes in the graph.
 type CouponTemplateMutation struct {
 	config
@@ -18703,6 +19531,1044 @@ func (m *FileMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *FileMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown File edge %s", name)
+}
+
+// InteractionCounterMutation represents an operation that mutates the InteractionCounter nodes in the graph.
+type InteractionCounterMutation struct {
+	config
+	op             Op
+	typ            string
+	id             *uint32
+	created_at     *time.Time
+	updated_at     *time.Time
+	deleted_at     *time.Time
+	tenant_id      *uint32
+	addtenant_id   *int32
+	target_type    *uint8
+	addtarget_type *int8
+	target_id      *uint32
+	addtarget_id   *int32
+	metric         *uint8
+	addmetric      *int8
+	count          *int64
+	addcount       *int64
+	clearedFields  map[string]struct{}
+	done           bool
+	oldValue       func(context.Context) (*InteractionCounter, error)
+	predicates     []predicate.InteractionCounter
+}
+
+var _ ent.Mutation = (*InteractionCounterMutation)(nil)
+
+// interactioncounterOption allows management of the mutation configuration using functional options.
+type interactioncounterOption func(*InteractionCounterMutation)
+
+// newInteractionCounterMutation creates new mutation for the InteractionCounter entity.
+func newInteractionCounterMutation(c config, op Op, opts ...interactioncounterOption) *InteractionCounterMutation {
+	m := &InteractionCounterMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeInteractionCounter,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withInteractionCounterID sets the ID field of the mutation.
+func withInteractionCounterID(id uint32) interactioncounterOption {
+	return func(m *InteractionCounterMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *InteractionCounter
+		)
+		m.oldValue = func(ctx context.Context) (*InteractionCounter, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().InteractionCounter.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withInteractionCounter sets the old InteractionCounter of the mutation.
+func withInteractionCounter(node *InteractionCounter) interactioncounterOption {
+	return func(m *InteractionCounterMutation) {
+		m.oldValue = func(context.Context) (*InteractionCounter, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m InteractionCounterMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m InteractionCounterMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of InteractionCounter entities.
+func (m *InteractionCounterMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *InteractionCounterMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *InteractionCounterMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().InteractionCounter.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *InteractionCounterMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *InteractionCounterMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *InteractionCounterMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[interactioncounter.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *InteractionCounterMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *InteractionCounterMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, interactioncounter.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *InteractionCounterMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *InteractionCounterMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *InteractionCounterMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[interactioncounter.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *InteractionCounterMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *InteractionCounterMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, interactioncounter.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *InteractionCounterMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *InteractionCounterMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *InteractionCounterMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[interactioncounter.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *InteractionCounterMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *InteractionCounterMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, interactioncounter.FieldDeletedAt)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *InteractionCounterMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *InteractionCounterMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *InteractionCounterMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *InteractionCounterMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *InteractionCounterMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[interactioncounter.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *InteractionCounterMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *InteractionCounterMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, interactioncounter.FieldTenantID)
+}
+
+// SetTargetType sets the "target_type" field.
+func (m *InteractionCounterMutation) SetTargetType(u uint8) {
+	m.target_type = &u
+	m.addtarget_type = nil
+}
+
+// TargetType returns the value of the "target_type" field in the mutation.
+func (m *InteractionCounterMutation) TargetType() (r uint8, exists bool) {
+	v := m.target_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTargetType returns the old "target_type" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldTargetType(ctx context.Context) (v *uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTargetType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTargetType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTargetType: %w", err)
+	}
+	return oldValue.TargetType, nil
+}
+
+// AddTargetType adds u to the "target_type" field.
+func (m *InteractionCounterMutation) AddTargetType(u int8) {
+	if m.addtarget_type != nil {
+		*m.addtarget_type += u
+	} else {
+		m.addtarget_type = &u
+	}
+}
+
+// AddedTargetType returns the value that was added to the "target_type" field in this mutation.
+func (m *InteractionCounterMutation) AddedTargetType() (r int8, exists bool) {
+	v := m.addtarget_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTargetType clears the value of the "target_type" field.
+func (m *InteractionCounterMutation) ClearTargetType() {
+	m.target_type = nil
+	m.addtarget_type = nil
+	m.clearedFields[interactioncounter.FieldTargetType] = struct{}{}
+}
+
+// TargetTypeCleared returns if the "target_type" field was cleared in this mutation.
+func (m *InteractionCounterMutation) TargetTypeCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldTargetType]
+	return ok
+}
+
+// ResetTargetType resets all changes to the "target_type" field.
+func (m *InteractionCounterMutation) ResetTargetType() {
+	m.target_type = nil
+	m.addtarget_type = nil
+	delete(m.clearedFields, interactioncounter.FieldTargetType)
+}
+
+// SetTargetID sets the "target_id" field.
+func (m *InteractionCounterMutation) SetTargetID(u uint32) {
+	m.target_id = &u
+	m.addtarget_id = nil
+}
+
+// TargetID returns the value of the "target_id" field in the mutation.
+func (m *InteractionCounterMutation) TargetID() (r uint32, exists bool) {
+	v := m.target_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTargetID returns the old "target_id" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldTargetID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTargetID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTargetID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTargetID: %w", err)
+	}
+	return oldValue.TargetID, nil
+}
+
+// AddTargetID adds u to the "target_id" field.
+func (m *InteractionCounterMutation) AddTargetID(u int32) {
+	if m.addtarget_id != nil {
+		*m.addtarget_id += u
+	} else {
+		m.addtarget_id = &u
+	}
+}
+
+// AddedTargetID returns the value that was added to the "target_id" field in this mutation.
+func (m *InteractionCounterMutation) AddedTargetID() (r int32, exists bool) {
+	v := m.addtarget_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTargetID clears the value of the "target_id" field.
+func (m *InteractionCounterMutation) ClearTargetID() {
+	m.target_id = nil
+	m.addtarget_id = nil
+	m.clearedFields[interactioncounter.FieldTargetID] = struct{}{}
+}
+
+// TargetIDCleared returns if the "target_id" field was cleared in this mutation.
+func (m *InteractionCounterMutation) TargetIDCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldTargetID]
+	return ok
+}
+
+// ResetTargetID resets all changes to the "target_id" field.
+func (m *InteractionCounterMutation) ResetTargetID() {
+	m.target_id = nil
+	m.addtarget_id = nil
+	delete(m.clearedFields, interactioncounter.FieldTargetID)
+}
+
+// SetMetric sets the "metric" field.
+func (m *InteractionCounterMutation) SetMetric(u uint8) {
+	m.metric = &u
+	m.addmetric = nil
+}
+
+// Metric returns the value of the "metric" field in the mutation.
+func (m *InteractionCounterMutation) Metric() (r uint8, exists bool) {
+	v := m.metric
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMetric returns the old "metric" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldMetric(ctx context.Context) (v *uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMetric is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMetric requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMetric: %w", err)
+	}
+	return oldValue.Metric, nil
+}
+
+// AddMetric adds u to the "metric" field.
+func (m *InteractionCounterMutation) AddMetric(u int8) {
+	if m.addmetric != nil {
+		*m.addmetric += u
+	} else {
+		m.addmetric = &u
+	}
+}
+
+// AddedMetric returns the value that was added to the "metric" field in this mutation.
+func (m *InteractionCounterMutation) AddedMetric() (r int8, exists bool) {
+	v := m.addmetric
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearMetric clears the value of the "metric" field.
+func (m *InteractionCounterMutation) ClearMetric() {
+	m.metric = nil
+	m.addmetric = nil
+	m.clearedFields[interactioncounter.FieldMetric] = struct{}{}
+}
+
+// MetricCleared returns if the "metric" field was cleared in this mutation.
+func (m *InteractionCounterMutation) MetricCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldMetric]
+	return ok
+}
+
+// ResetMetric resets all changes to the "metric" field.
+func (m *InteractionCounterMutation) ResetMetric() {
+	m.metric = nil
+	m.addmetric = nil
+	delete(m.clearedFields, interactioncounter.FieldMetric)
+}
+
+// SetCount sets the "count" field.
+func (m *InteractionCounterMutation) SetCount(i int64) {
+	m.count = &i
+	m.addcount = nil
+}
+
+// Count returns the value of the "count" field in the mutation.
+func (m *InteractionCounterMutation) Count() (r int64, exists bool) {
+	v := m.count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCount returns the old "count" field's value of the InteractionCounter entity.
+// If the InteractionCounter object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *InteractionCounterMutation) OldCount(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCount: %w", err)
+	}
+	return oldValue.Count, nil
+}
+
+// AddCount adds i to the "count" field.
+func (m *InteractionCounterMutation) AddCount(i int64) {
+	if m.addcount != nil {
+		*m.addcount += i
+	} else {
+		m.addcount = &i
+	}
+}
+
+// AddedCount returns the value that was added to the "count" field in this mutation.
+func (m *InteractionCounterMutation) AddedCount() (r int64, exists bool) {
+	v := m.addcount
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCount clears the value of the "count" field.
+func (m *InteractionCounterMutation) ClearCount() {
+	m.count = nil
+	m.addcount = nil
+	m.clearedFields[interactioncounter.FieldCount] = struct{}{}
+}
+
+// CountCleared returns if the "count" field was cleared in this mutation.
+func (m *InteractionCounterMutation) CountCleared() bool {
+	_, ok := m.clearedFields[interactioncounter.FieldCount]
+	return ok
+}
+
+// ResetCount resets all changes to the "count" field.
+func (m *InteractionCounterMutation) ResetCount() {
+	m.count = nil
+	m.addcount = nil
+	delete(m.clearedFields, interactioncounter.FieldCount)
+}
+
+// Where appends a list predicates to the InteractionCounterMutation builder.
+func (m *InteractionCounterMutation) Where(ps ...predicate.InteractionCounter) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the InteractionCounterMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *InteractionCounterMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.InteractionCounter, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *InteractionCounterMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *InteractionCounterMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (InteractionCounter).
+func (m *InteractionCounterMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *InteractionCounterMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_at != nil {
+		fields = append(fields, interactioncounter.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, interactioncounter.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, interactioncounter.FieldDeletedAt)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, interactioncounter.FieldTenantID)
+	}
+	if m.target_type != nil {
+		fields = append(fields, interactioncounter.FieldTargetType)
+	}
+	if m.target_id != nil {
+		fields = append(fields, interactioncounter.FieldTargetID)
+	}
+	if m.metric != nil {
+		fields = append(fields, interactioncounter.FieldMetric)
+	}
+	if m.count != nil {
+		fields = append(fields, interactioncounter.FieldCount)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *InteractionCounterMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case interactioncounter.FieldCreatedAt:
+		return m.CreatedAt()
+	case interactioncounter.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case interactioncounter.FieldDeletedAt:
+		return m.DeletedAt()
+	case interactioncounter.FieldTenantID:
+		return m.TenantID()
+	case interactioncounter.FieldTargetType:
+		return m.TargetType()
+	case interactioncounter.FieldTargetID:
+		return m.TargetID()
+	case interactioncounter.FieldMetric:
+		return m.Metric()
+	case interactioncounter.FieldCount:
+		return m.Count()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *InteractionCounterMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case interactioncounter.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case interactioncounter.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case interactioncounter.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case interactioncounter.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case interactioncounter.FieldTargetType:
+		return m.OldTargetType(ctx)
+	case interactioncounter.FieldTargetID:
+		return m.OldTargetID(ctx)
+	case interactioncounter.FieldMetric:
+		return m.OldMetric(ctx)
+	case interactioncounter.FieldCount:
+		return m.OldCount(ctx)
+	}
+	return nil, fmt.Errorf("unknown InteractionCounter field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *InteractionCounterMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case interactioncounter.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case interactioncounter.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case interactioncounter.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case interactioncounter.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case interactioncounter.FieldTargetType:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTargetType(v)
+		return nil
+	case interactioncounter.FieldTargetID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTargetID(v)
+		return nil
+	case interactioncounter.FieldMetric:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMetric(v)
+		return nil
+	case interactioncounter.FieldCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown InteractionCounter field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *InteractionCounterMutation) AddedFields() []string {
+	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, interactioncounter.FieldTenantID)
+	}
+	if m.addtarget_type != nil {
+		fields = append(fields, interactioncounter.FieldTargetType)
+	}
+	if m.addtarget_id != nil {
+		fields = append(fields, interactioncounter.FieldTargetID)
+	}
+	if m.addmetric != nil {
+		fields = append(fields, interactioncounter.FieldMetric)
+	}
+	if m.addcount != nil {
+		fields = append(fields, interactioncounter.FieldCount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *InteractionCounterMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case interactioncounter.FieldTenantID:
+		return m.AddedTenantID()
+	case interactioncounter.FieldTargetType:
+		return m.AddedTargetType()
+	case interactioncounter.FieldTargetID:
+		return m.AddedTargetID()
+	case interactioncounter.FieldMetric:
+		return m.AddedMetric()
+	case interactioncounter.FieldCount:
+		return m.AddedCount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *InteractionCounterMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case interactioncounter.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case interactioncounter.FieldTargetType:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTargetType(v)
+		return nil
+	case interactioncounter.FieldTargetID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTargetID(v)
+		return nil
+	case interactioncounter.FieldMetric:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMetric(v)
+		return nil
+	case interactioncounter.FieldCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown InteractionCounter numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *InteractionCounterMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(interactioncounter.FieldCreatedAt) {
+		fields = append(fields, interactioncounter.FieldCreatedAt)
+	}
+	if m.FieldCleared(interactioncounter.FieldUpdatedAt) {
+		fields = append(fields, interactioncounter.FieldUpdatedAt)
+	}
+	if m.FieldCleared(interactioncounter.FieldDeletedAt) {
+		fields = append(fields, interactioncounter.FieldDeletedAt)
+	}
+	if m.FieldCleared(interactioncounter.FieldTenantID) {
+		fields = append(fields, interactioncounter.FieldTenantID)
+	}
+	if m.FieldCleared(interactioncounter.FieldTargetType) {
+		fields = append(fields, interactioncounter.FieldTargetType)
+	}
+	if m.FieldCleared(interactioncounter.FieldTargetID) {
+		fields = append(fields, interactioncounter.FieldTargetID)
+	}
+	if m.FieldCleared(interactioncounter.FieldMetric) {
+		fields = append(fields, interactioncounter.FieldMetric)
+	}
+	if m.FieldCleared(interactioncounter.FieldCount) {
+		fields = append(fields, interactioncounter.FieldCount)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *InteractionCounterMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *InteractionCounterMutation) ClearField(name string) error {
+	switch name {
+	case interactioncounter.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case interactioncounter.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case interactioncounter.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case interactioncounter.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case interactioncounter.FieldTargetType:
+		m.ClearTargetType()
+		return nil
+	case interactioncounter.FieldTargetID:
+		m.ClearTargetID()
+		return nil
+	case interactioncounter.FieldMetric:
+		m.ClearMetric()
+		return nil
+	case interactioncounter.FieldCount:
+		m.ClearCount()
+		return nil
+	}
+	return fmt.Errorf("unknown InteractionCounter nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *InteractionCounterMutation) ResetField(name string) error {
+	switch name {
+	case interactioncounter.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case interactioncounter.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case interactioncounter.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case interactioncounter.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case interactioncounter.FieldTargetType:
+		m.ResetTargetType()
+		return nil
+	case interactioncounter.FieldTargetID:
+		m.ResetTargetID()
+		return nil
+	case interactioncounter.FieldMetric:
+		m.ResetMetric()
+		return nil
+	case interactioncounter.FieldCount:
+		m.ResetCount()
+		return nil
+	}
+	return fmt.Errorf("unknown InteractionCounter field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *InteractionCounterMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *InteractionCounterMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *InteractionCounterMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *InteractionCounterMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *InteractionCounterMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *InteractionCounterMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *InteractionCounterMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown InteractionCounter unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *InteractionCounterMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown InteractionCounter edge %s", name)
 }
 
 // InternalMessageMutation represents an operation that mutates the InternalMessage nodes in the graph.
