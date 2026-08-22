@@ -18,8 +18,8 @@ import { fetchListPaymentRefunds } from "./payment-refund";
 //
 // 利用这一特性，对订单/支付流水按 status / payment_method 分别发起带
 // 过滤的 List 请求（pageSize=1，仅取 total），即可在无聚合端点的情况下
-// 拼出分布数据。每次调用都会真实命中数据库计数，结果由 TanStack Query
-// 缓存（staleTime 由调用方在 useQuery 中指定）。
+// 拼出分布数据。每次调用都会真实命中数据库计数，不缓存（全局
+// staleTime:0 / gcTime:0，每次渲染都重新请求）。
 
 /**
  * 订单状态枚举值（与 order.service.v1.Order.Status 的 JSON 名对应）。
@@ -186,4 +186,5 @@ export async function fetchRefundTotal(): Promise<number> {
 
 // 上述 fetch* 函数均通过 queryClient.fetchQuery 间接调用（见各
 // useList*/fetchList* 实现），此处直接复用，无需在此重复注册 queryKey。
-// 调用方在 useQuery 中包裹这些函数以获得响应式 + 缓存。
+// 调用方在 useQuery 中包裹这些函数以获得响应式（全局
+// staleTime:0 / gcTime:0，无缓存）。

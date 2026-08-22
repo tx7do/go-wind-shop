@@ -120,7 +120,6 @@ const txQuery = useQuery({
         orderBy: ["-created_at"],
       })
     ),
-  staleTime: 60_000,
 });
 const refundQuery = useQuery({
   queryKey: ["finance_refundSample"],
@@ -131,7 +130,6 @@ const refundQuery = useQuery({
         orderBy: ["-created_at"],
       })
     ),
-  staleTime: 60_000,
 });
 
 // ============================================================

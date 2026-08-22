@@ -243,22 +243,18 @@ const refundStatusTagTypeMap: Record<
 const ordersTotalQuery = useQuery({
   queryKey: ["analytics_orderTotal"],
   queryFn: () => fetchOrderTotal(),
-  staleTime: 60_000,
 });
 const paymentsTotalQuery = useQuery({
   queryKey: ["analytics_paymentTxTotal"],
   queryFn: () => fetchPaymentTransactionTotal(),
-  staleTime: 60_000,
 });
 const refundsTotalQuery = useQuery({
   queryKey: ["analytics_refundTotal"],
   queryFn: () => fetchRefundTotal(),
-  staleTime: 60_000,
 });
 const catalogTotalsQuery = useQuery({
   queryKey: ["analytics_catalogTotals"],
   queryFn: () => fetchCatalogTotals(),
-  staleTime: 60_000,
 });
 
 // ============================================================
@@ -267,17 +263,14 @@ const catalogTotalsQuery = useQuery({
 const orderStatusQuery = useQuery({
   queryKey: ["analytics_orderStatusCounts"],
   queryFn: () => fetchOrderStatusCounts(),
-  staleTime: 60_000,
 });
 const paymentMethodQuery = useQuery({
   queryKey: ["analytics_paymentMethodCounts"],
   queryFn: () => fetchPaymentMethodCounts(),
-  staleTime: 60_000,
 });
 const refundStatusQuery = useQuery({
   queryKey: ["analytics_refundStatusCounts"],
   queryFn: () => fetchRefundStatusCounts(),
-  staleTime: 60_000,
 });
 
 // 将 DistributionEntry[] 映射为图表所需 {name,value,semantic} 形态。
@@ -335,7 +328,6 @@ const paymentMethodLabelMap: Record<string, string> = {
 const recentOrdersQuery = useQuery({
   queryKey: ["analytics_recentOrders"],
   queryFn: () => fetchRecentOrders(20),
-  staleTime: 60_000,
 });
 const recentOrders = computed(() => recentOrdersQuery.data.value?.items ?? []);
 
