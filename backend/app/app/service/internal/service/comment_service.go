@@ -88,6 +88,15 @@ func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommen
 	// 强制注入作者为当前登录用户，防客户端伪造 CreatedBy。
 	req.Data.CreatedBy = trans.Ptr(operator.UserId)
 
+	// rating 范围校验：仅允许 1-5，其他值（含 0、越界）拒绝。
+	// nil 透传（回复评论不带评分）。
+	if req.Data.Rating != nil {
+		rv := *req.Data.Rating
+		if rv < 1 || rv > 5 {
+			return nil, appV1.ErrorBadRequest("rating must be between 1 and 5")
+		}
+	}
+
 	return s.commentClient.Create(ctx, req)
 }
 
@@ -127,6 +136,12 @@ func (s *CommentService) Delete(ctx context.Context, req *commentV1.DeleteCommen
 	}
 
 	return s.commentClient.Delete(ctx, req)
+}
+
+// GetProductRating 商品评分聚合（只读，匿名可读——白名单登记）。
+// 纯透传到 core，core 仅统计 STATUS_APPROVED 的评论。
+func (s *CommentService) GetProductRating(ctx context.Context, req *commentV1.GetProductRatingRequest) (*commentV1.ProductRatingSummary, error) {
+	return s.commentClient.GetProductRating(ctx, req)
 }
 
 // ensureCommentOwner 校验指定评论的 created_by 是否等于操作者 userID，不等返回 Forbidden。

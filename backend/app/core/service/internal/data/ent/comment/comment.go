@@ -39,6 +39,8 @@ const (
 	FieldContent = "content"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldRating holds the string denoting the rating field in the database.
+	FieldRating = "rating"
 	// EdgeParent holds the string denoting the parent edge name in mutations.
 	EdgeParent = "parent"
 	// EdgeChildren holds the string denoting the children edge name in mutations.
@@ -70,6 +72,7 @@ var Columns = []string{
 	FieldObjectID,
 	FieldContent,
 	FieldStatus,
+	FieldRating,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -209,6 +212,11 @@ func ByContent(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByRating orders the results by the rating field.
+func ByRating(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRating, opts...).ToFunc()
 }
 
 // ByParentField orders the results by parent field.

@@ -61,6 +61,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
+	"go-wind-shop/app/core/service/internal/data/ent/stockalert"
 	"go-wind-shop/app/core/service/internal/data/ent/task"
 	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
 	"go-wind-shop/app/core/service/internal/data/ent/tenant"
@@ -70,6 +71,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/userorgunit"
 	"go-wind-shop/app/core/service/internal/data/ent/userposition"
 	"go-wind-shop/app/core/service/internal/data/ent/userrole"
+	"go-wind-shop/app/core/service/internal/data/ent/wishlist"
 
 	"entgo.io/ent"
 	"entgo.io/ent/privacy"
@@ -318,6 +320,10 @@ func init() {
 	coupontemplateDescRedeemedCount := coupontemplateFields[7].Descriptor()
 	// coupontemplate.DefaultRedeemedCount holds the default value on creation for the redeemed_count field.
 	coupontemplate.DefaultRedeemedCount = coupontemplateDescRedeemedCount.Default.(int32)
+	// coupontemplateDescClaimable is the schema descriptor for claimable field.
+	coupontemplateDescClaimable := coupontemplateFields[9].Descriptor()
+	// coupontemplate.DefaultClaimable holds the default value on creation for the claimable field.
+	coupontemplate.DefaultClaimable = coupontemplateDescClaimable.Default.(bool)
 	// coupontemplateDescID is the schema descriptor for id field.
 	coupontemplateDescID := coupontemplateMixinFields0[0].Descriptor()
 	// coupontemplate.IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -1456,6 +1462,23 @@ func init() {
 	skupriceDescID := skupriceMixinFields0[0].Descriptor()
 	// skuprice.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	skuprice.IDValidator = skupriceDescID.Validators[0].(func(uint32) error)
+	stockalertMixin := schema.StockAlert{}.Mixin()
+	stockalertMixinFields0 := stockalertMixin[0].Fields()
+	_ = stockalertMixinFields0
+	stockalertFields := schema.StockAlert{}.Fields()
+	_ = stockalertFields
+	// stockalertDescStockQtyAtTrigger is the schema descriptor for stock_qty_at_trigger field.
+	stockalertDescStockQtyAtTrigger := stockalertFields[1].Descriptor()
+	// stockalert.DefaultStockQtyAtTrigger holds the default value on creation for the stock_qty_at_trigger field.
+	stockalert.DefaultStockQtyAtTrigger = stockalertDescStockQtyAtTrigger.Default.(int32)
+	// stockalertDescThreshold is the schema descriptor for threshold field.
+	stockalertDescThreshold := stockalertFields[2].Descriptor()
+	// stockalert.DefaultThreshold holds the default value on creation for the threshold field.
+	stockalert.DefaultThreshold = stockalertDescThreshold.Default.(int32)
+	// stockalertDescID is the schema descriptor for id field.
+	stockalertDescID := stockalertMixinFields0[0].Descriptor()
+	// stockalert.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	stockalert.IDValidator = stockalertDescID.Validators[0].(func(uint32) error)
 	taskMixin := schema.Task{}.Mixin()
 	task.Policy = privacy.NewPolicies(taskMixin[4], schema.Task{})
 	task.Hooks[0] = func(next ent.Mutator) ent.Mutator {
@@ -1747,6 +1770,30 @@ func init() {
 	userroleDescID := userroleMixinFields0[0].Descriptor()
 	// userrole.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	userrole.IDValidator = userroleDescID.Validators[0].(func(uint32) error)
+	wishlistMixin := schema.Wishlist{}.Mixin()
+	wishlist.Policy = privacy.NewPolicies(wishlistMixin[3], schema.Wishlist{})
+	wishlist.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := wishlist.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	wishlistMixinFields0 := wishlistMixin[0].Fields()
+	_ = wishlistMixinFields0
+	wishlistMixinFields3 := wishlistMixin[3].Fields()
+	_ = wishlistMixinFields3
+	wishlistFields := schema.Wishlist{}.Fields()
+	_ = wishlistFields
+	// wishlistDescTenantID is the schema descriptor for tenant_id field.
+	wishlistDescTenantID := wishlistMixinFields3[0].Descriptor()
+	// wishlist.DefaultTenantID holds the default value on creation for the tenant_id field.
+	wishlist.DefaultTenantID = wishlistDescTenantID.Default.(uint32)
+	// wishlistDescID is the schema descriptor for id field.
+	wishlistDescID := wishlistMixinFields0[0].Descriptor()
+	// wishlist.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	wishlist.IDValidator = wishlistDescID.Validators[0].(func(uint32) error)
 }
 
 const (

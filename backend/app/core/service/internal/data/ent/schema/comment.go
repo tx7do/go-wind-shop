@@ -8,14 +8,15 @@ import (
 	"entgo.io/ent/schema/index"
 
 	"github.com/tx7do/go-crud/entgo/mixin"
-
-	appPrivacy "go-wind-shop/pkg/entgo/privacy"
 )
 
 // Comment 商品评论表。
 //
-// Policy 注入 UserPrivacy：普通用户只能查询/变更 created_by = 自身 userID 的评论；
-// 系统/平台视图放行，以便 admin 审核全量评论。与 user_coupon/order 同模式。
+// 评论为公开内容：商品详情页展示所有人对该商品的已批准评论（非仅作者本人），
+// 故不挂 UserPrivacy——仅由 TenantID mixin 的 TenantPrivacy 做租户隔离
+// （与商品/类目等公开目录同模式）。
+// Update/Delete 的 IDOR 防护由 app BFF 的 ensureCommentOwner（显式 Get +
+// created_by==userID 对比）承担，不依赖 core policy。
 // content_type 仅 PRODUCT（shop 无文章/页面），object_id 为商品 ID。
 // 树形回复由 mixin.Tree 提供 parent_id/children，参照 org_unit。
 type Comment struct {
@@ -23,7 +24,7 @@ type Comment struct {
 }
 
 func (Comment) Policy() ent.Policy {
-	return appPrivacy.UserPrivacy{}
+	return nil
 }
 
 func (Comment) Annotations() []schema.Annotation {
@@ -66,6 +67,11 @@ func (Comment) Fields() []ent.Field {
 				"CommentStatusRejected", "STATUS_REJECTED",
 				"CommentStatusSpam", "STATUS_SPAM",
 			).
+			Optional().
+			Nillable(),
+
+		field.Uint8("rating").
+			Comment("评分1-5（仅顶级评论可携带，回复无意义）").
 			Optional().
 			Nillable(),
 	}

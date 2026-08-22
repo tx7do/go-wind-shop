@@ -385,6 +385,26 @@ func (_u *CouponTemplateUpdate) ClearStatus() *CouponTemplateUpdate {
 	return _u
 }
 
+// SetClaimable sets the "claimable" field.
+func (_u *CouponTemplateUpdate) SetClaimable(v bool) *CouponTemplateUpdate {
+	_u.mutation.SetClaimable(v)
+	return _u
+}
+
+// SetNillableClaimable sets the "claimable" field if the given value is not nil.
+func (_u *CouponTemplateUpdate) SetNillableClaimable(v *bool) *CouponTemplateUpdate {
+	if v != nil {
+		_u.SetClaimable(*v)
+	}
+	return _u
+}
+
+// ClearClaimable clears the value of the "claimable" field.
+func (_u *CouponTemplateUpdate) ClearClaimable() *CouponTemplateUpdate {
+	_u.mutation.ClearClaimable()
+	return _u
+}
+
 // Mutation returns the CouponTemplateMutation object of the builder.
 func (_u *CouponTemplateUpdate) Mutation() *CouponTemplateMutation {
 	return _u.mutation
@@ -569,6 +589,12 @@ func (_u *CouponTemplateUpdate) sqlSave(ctx context.Context) (_node int, err err
 	}
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(coupontemplate.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Claimable(); ok {
+		_spec.SetField(coupontemplate.FieldClaimable, field.TypeBool, value)
+	}
+	if _u.mutation.ClaimableCleared() {
+		_spec.ClearField(coupontemplate.FieldClaimable, field.TypeBool)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -948,6 +974,26 @@ func (_u *CouponTemplateUpdateOne) ClearStatus() *CouponTemplateUpdateOne {
 	return _u
 }
 
+// SetClaimable sets the "claimable" field.
+func (_u *CouponTemplateUpdateOne) SetClaimable(v bool) *CouponTemplateUpdateOne {
+	_u.mutation.SetClaimable(v)
+	return _u
+}
+
+// SetNillableClaimable sets the "claimable" field if the given value is not nil.
+func (_u *CouponTemplateUpdateOne) SetNillableClaimable(v *bool) *CouponTemplateUpdateOne {
+	if v != nil {
+		_u.SetClaimable(*v)
+	}
+	return _u
+}
+
+// ClearClaimable clears the value of the "claimable" field.
+func (_u *CouponTemplateUpdateOne) ClearClaimable() *CouponTemplateUpdateOne {
+	_u.mutation.ClearClaimable()
+	return _u
+}
+
 // Mutation returns the CouponTemplateMutation object of the builder.
 func (_u *CouponTemplateUpdateOne) Mutation() *CouponTemplateMutation {
 	return _u.mutation
@@ -1162,6 +1208,12 @@ func (_u *CouponTemplateUpdateOne) sqlSave(ctx context.Context) (_node *CouponTe
 	}
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(coupontemplate.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Claimable(); ok {
+		_spec.SetField(coupontemplate.FieldClaimable, field.TypeBool, value)
+	}
+	if _u.mutation.ClaimableCleared() {
+		_spec.ClearField(coupontemplate.FieldClaimable, field.TypeBool)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &CouponTemplate{config: _u.config}

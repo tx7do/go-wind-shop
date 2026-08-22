@@ -122,6 +122,8 @@ type Tx struct {
 	SkuAttributeCombination *SkuAttributeCombinationClient
 	// SkuPrice is the client for interacting with the SkuPrice builders.
 	SkuPrice *SkuPriceClient
+	// StockAlert is the client for interacting with the StockAlert builders.
+	StockAlert *StockAlertClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
 	// TaxRate is the client for interacting with the TaxRate builders.
@@ -140,6 +142,8 @@ type Tx struct {
 	UserPosition *UserPositionClient
 	// UserRole is the client for interacting with the UserRole builders.
 	UserRole *UserRoleClient
+	// Wishlist is the client for interacting with the Wishlist builders.
+	Wishlist *WishlistClient
 
 	// lazily loaded.
 	client     *Client
@@ -326,6 +330,7 @@ func (tx *Tx) init() {
 	tx.Sku = NewSkuClient(tx.config)
 	tx.SkuAttributeCombination = NewSkuAttributeCombinationClient(tx.config)
 	tx.SkuPrice = NewSkuPriceClient(tx.config)
+	tx.StockAlert = NewStockAlertClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
 	tx.TaxRate = NewTaxRateClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)
@@ -335,6 +340,7 @@ func (tx *Tx) init() {
 	tx.UserOrgUnit = NewUserOrgUnitClient(tx.config)
 	tx.UserPosition = NewUserPositionClient(tx.config)
 	tx.UserRole = NewUserRoleClient(tx.config)
+	tx.Wishlist = NewWishlistClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

@@ -105,6 +105,11 @@ func Content(v string) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldContent, v))
 }
 
+// Rating applies equality check predicate on the "rating" field. It's identical to RatingEQ.
+func Rating(v uint8) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldRating, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.Comment {
 	return predicate.Comment(sql.FieldEQ(FieldCreatedAt, v))
@@ -668,6 +673,56 @@ func StatusIsNil() predicate.Comment {
 // StatusNotNil applies the NotNil predicate on the "status" field.
 func StatusNotNil() predicate.Comment {
 	return predicate.Comment(sql.FieldNotNull(FieldStatus))
+}
+
+// RatingEQ applies the EQ predicate on the "rating" field.
+func RatingEQ(v uint8) predicate.Comment {
+	return predicate.Comment(sql.FieldEQ(FieldRating, v))
+}
+
+// RatingNEQ applies the NEQ predicate on the "rating" field.
+func RatingNEQ(v uint8) predicate.Comment {
+	return predicate.Comment(sql.FieldNEQ(FieldRating, v))
+}
+
+// RatingIn applies the In predicate on the "rating" field.
+func RatingIn(vs ...uint8) predicate.Comment {
+	return predicate.Comment(sql.FieldIn(FieldRating, vs...))
+}
+
+// RatingNotIn applies the NotIn predicate on the "rating" field.
+func RatingNotIn(vs ...uint8) predicate.Comment {
+	return predicate.Comment(sql.FieldNotIn(FieldRating, vs...))
+}
+
+// RatingGT applies the GT predicate on the "rating" field.
+func RatingGT(v uint8) predicate.Comment {
+	return predicate.Comment(sql.FieldGT(FieldRating, v))
+}
+
+// RatingGTE applies the GTE predicate on the "rating" field.
+func RatingGTE(v uint8) predicate.Comment {
+	return predicate.Comment(sql.FieldGTE(FieldRating, v))
+}
+
+// RatingLT applies the LT predicate on the "rating" field.
+func RatingLT(v uint8) predicate.Comment {
+	return predicate.Comment(sql.FieldLT(FieldRating, v))
+}
+
+// RatingLTE applies the LTE predicate on the "rating" field.
+func RatingLTE(v uint8) predicate.Comment {
+	return predicate.Comment(sql.FieldLTE(FieldRating, v))
+}
+
+// RatingIsNil applies the IsNil predicate on the "rating" field.
+func RatingIsNil() predicate.Comment {
+	return predicate.Comment(sql.FieldIsNull(FieldRating))
+}
+
+// RatingNotNil applies the NotNil predicate on the "rating" field.
+func RatingNotNil() predicate.Comment {
+	return predicate.Comment(sql.FieldNotNull(FieldRating))
 }
 
 // HasParent applies the HasEdge predicate on the "parent" edge.

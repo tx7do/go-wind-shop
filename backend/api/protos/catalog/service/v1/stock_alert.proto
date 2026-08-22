@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package catalog.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 库存预警记录服务（核心实现，gRPC）。
+// 裁剪版：仅 List/Get/Update（Update 唯一允许 OPEN→RESOLVED 转移）。
+// 告警由 StockAlertScannerService 周期任务落库，admin 在管理台查看并标记已解决。
+service StockAlertService {
+  rpc List (pagination.PagingRequest) returns (ListStockAlertResponse) {}
+  rpc Get (GetStockAlertRequest) returns (StockAlert) {}
+  rpc Update (UpdateStockAlertRequest) returns (google.protobuf.Empty) {}
+}
+
+// 库存预警记录
+message StockAlert {
+  // 告警状态
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    OPEN = 1;           // 待处理
+    RESOLVED = 2;       // 已解决
+  }
+
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "告警记录ID"}];
+
+  optional uint32 sku_id = 2 [
+    json_name = "skuId",
+    (gnostic.openapi.v3.property) = {description: "触发告警的SKU ID"}
+  ];
+
+  optional int32 stock_qty_at_trigger = 3 [
+    json_name = "stockQtyAtTrigger",
+    (gnostic.openapi.v3.property) = {description: "检测时的库存数量"}
+  ];
+
+  optional int32 threshold = 4 [
+    json_name = "threshold",
+    (gnostic.openapi.v3.property) = {description: "触发阈值"}
+  ];
+
+  optional Status status = 5 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "告警状态"}
+  ];
+
+  // ===== 以下是 infra mixin 注入字段（高编号） =====
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+}
+
+message ListStockAlertResponse { repeated StockAlert items = 1; uint64 total = 2; }
+
+message GetStockAlertRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}
+  ];
+}
+message UpdateStockAlertRequest {
+  uint32 id = 1;
+  StockAlert data = 2;
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
+    json_name = "updateMask"
+  ];
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "允许缺失则插入"},
+    json_name = "allowMissing"
+  ];
+}

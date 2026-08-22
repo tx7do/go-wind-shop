@@ -22,11 +22,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CommentService_List_FullMethodName   = "/app.service.v1.CommentService/List"
-	CommentService_Get_FullMethodName    = "/app.service.v1.CommentService/Get"
-	CommentService_Create_FullMethodName = "/app.service.v1.CommentService/Create"
-	CommentService_Update_FullMethodName = "/app.service.v1.CommentService/Update"
-	CommentService_Delete_FullMethodName = "/app.service.v1.CommentService/Delete"
+	CommentService_List_FullMethodName             = "/app.service.v1.CommentService/List"
+	CommentService_Get_FullMethodName              = "/app.service.v1.CommentService/Get"
+	CommentService_Create_FullMethodName           = "/app.service.v1.CommentService/Create"
+	CommentService_Update_FullMethodName           = "/app.service.v1.CommentService/Update"
+	CommentService_Delete_FullMethodName           = "/app.service.v1.CommentService/Delete"
+	CommentService_GetProductRating_FullMethodName = "/app.service.v1.CommentService/GetProductRating"
 )
 
 // CommentServiceClient is the client API for CommentService service.
@@ -35,14 +36,17 @@ const (
 //
 // 商品评论前台服务。
 // List/Get 在 BFF 层过滤 STATUS_APPROVED（未审核/拒绝/垃圾对前台不可见）；
-// Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）；
-// 用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+// Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）。
+// 评论为公开内容，仅由 TenantPrivacy 做租户隔离（同租户内可见），
+// 不挂 UserPrivacy（详见 core Comment schema 文档）。
 type CommentServiceClient interface {
 	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListCommentResponse, error)
 	Get(ctx context.Context, in *v11.GetCommentRequest, opts ...grpc.CallOption) (*v11.Comment, error)
 	Create(ctx context.Context, in *v11.CreateCommentRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Update(ctx context.Context, in *v11.UpdateCommentRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Delete(ctx context.Context, in *v11.DeleteCommentRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 商品评分聚合（只读，匿名可读——白名单登记）。
+	GetProductRating(ctx context.Context, in *v11.GetProductRatingRequest, opts ...grpc.CallOption) (*v11.ProductRatingSummary, error)
 }
 
 type commentServiceClient struct {
@@ -103,20 +107,33 @@ func (c *commentServiceClient) Delete(ctx context.Context, in *v11.DeleteComment
 	return out, nil
 }
 
+func (c *commentServiceClient) GetProductRating(ctx context.Context, in *v11.GetProductRatingRequest, opts ...grpc.CallOption) (*v11.ProductRatingSummary, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ProductRatingSummary)
+	err := c.cc.Invoke(ctx, CommentService_GetProductRating_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommentServiceServer is the server API for CommentService service.
 // All implementations must embed UnimplementedCommentServiceServer
 // for forward compatibility.
 //
 // 商品评论前台服务。
 // List/Get 在 BFF 层过滤 STATUS_APPROVED（未审核/拒绝/垃圾对前台不可见）；
-// Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）；
-// 用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+// Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）。
+// 评论为公开内容，仅由 TenantPrivacy 做租户隔离（同租户内可见），
+// 不挂 UserPrivacy（详见 core Comment schema 文档）。
 type CommentServiceServer interface {
 	List(context.Context, *v1.PagingRequest) (*v11.ListCommentResponse, error)
 	Get(context.Context, *v11.GetCommentRequest) (*v11.Comment, error)
 	Create(context.Context, *v11.CreateCommentRequest) (*emptypb.Empty, error)
 	Update(context.Context, *v11.UpdateCommentRequest) (*emptypb.Empty, error)
 	Delete(context.Context, *v11.DeleteCommentRequest) (*emptypb.Empty, error)
+	// 商品评分聚合（只读，匿名可读——白名单登记）。
+	GetProductRating(context.Context, *v11.GetProductRatingRequest) (*v11.ProductRatingSummary, error)
 	mustEmbedUnimplementedCommentServiceServer()
 }
 
@@ -141,6 +158,9 @@ func (UnimplementedCommentServiceServer) Update(context.Context, *v11.UpdateComm
 }
 func (UnimplementedCommentServiceServer) Delete(context.Context, *v11.DeleteCommentRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedCommentServiceServer) GetProductRating(context.Context, *v11.GetProductRatingRequest) (*v11.ProductRatingSummary, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetProductRating not implemented")
 }
 func (UnimplementedCommentServiceServer) mustEmbedUnimplementedCommentServiceServer() {}
 func (UnimplementedCommentServiceServer) testEmbeddedByValue()                        {}
@@ -253,6 +273,24 @@ func _CommentService_Delete_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CommentService_GetProductRating_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.GetProductRatingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommentServiceServer).GetProductRating(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CommentService_GetProductRating_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommentServiceServer).GetProductRating(ctx, req.(*v11.GetProductRatingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CommentService_ServiceDesc is the grpc.ServiceDesc for CommentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -279,6 +317,10 @@ var CommentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _CommentService_Delete_Handler,
+		},
+		{
+			MethodName: "GetProductRating",
+			Handler:    _CommentService_GetProductRating_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

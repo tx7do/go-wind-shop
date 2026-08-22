@@ -51,7 +51,9 @@ type CouponTemplate struct {
 	// 已核销次数（核销自增、返还自减，行锁保护）
 	RedeemedCount *int32 `json:"redeemed_count,omitempty"`
 	// 模板状态
-	Status       *coupontemplate.Status `json:"status,omitempty"`
+	Status *coupontemplate.Status `json:"status,omitempty"`
+	// 是否公开可领取（领券中心仅展示 true 的模板，默认 false）
+	Claimable    *bool `json:"claimable,omitempty"`
 	selectValues sql.SelectValues
 }
 
@@ -60,6 +62,8 @@ func (*CouponTemplate) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case coupontemplate.FieldClaimable:
+			values[i] = new(sql.NullBool)
 		case coupontemplate.FieldID, coupontemplate.FieldCreatedBy, coupontemplate.FieldUpdatedBy, coupontemplate.FieldDeletedBy, coupontemplate.FieldTenantID, coupontemplate.FieldDiscountValue, coupontemplate.FieldDiscountPercentage, coupontemplate.FieldMaxRedemptions, coupontemplate.FieldMaxRedemptionsPerUser, coupontemplate.FieldRedeemedCount:
 			values[i] = new(sql.NullInt64)
 		case coupontemplate.FieldCurrency, coupontemplate.FieldDiscountType, coupontemplate.FieldStatus:
@@ -206,6 +210,13 @@ func (_m *CouponTemplate) assignValues(columns []string, values []any) error {
 				_m.Status = new(coupontemplate.Status)
 				*_m.Status = coupontemplate.Status(value.String)
 			}
+		case coupontemplate.FieldClaimable:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field claimable", values[i])
+			} else if value.Valid {
+				_m.Claimable = new(bool)
+				*_m.Claimable = value.Bool
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -324,6 +335,11 @@ func (_m *CouponTemplate) String() string {
 	builder.WriteString(", ")
 	if v := _m.Status; v != nil {
 		builder.WriteString("status=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Claimable; v != nil {
+		builder.WriteString("claimable=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')

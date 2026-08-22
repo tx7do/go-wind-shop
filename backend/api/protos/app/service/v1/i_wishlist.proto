@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "wishlist/service/v1/wishlist.proto";
+
+// 收藏夹前台服务（裁剪版：仅 List/Create/Delete）。
+// user_id 由后端 UserPrivacy 隐私层强制，客户端不可伪造。
+service WishlistService {
+  rpc List (pagination.PagingRequest) returns (wishlist.service.v1.ListWishlistResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/wishlist"
+    };
+  }
+
+  rpc Create (wishlist.service.v1.CreateWishlistRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/wishlist"
+      body: "*"
+    };
+  }
+
+  rpc Delete (wishlist.service.v1.DeleteWishlistRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/app/v1/mall/wishlist"
+    };
+  }
+}

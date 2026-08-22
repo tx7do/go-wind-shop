@@ -76,6 +76,12 @@
       "update": "编辑SKU"
     }
   },
+  "lowStock": {
+    "moduleName": "低库存管理台",
+    "title": "低库存管理台",
+    "threshold": "库存阈值",
+    "alert": "此为低库存监控视图，展示库存量低于阈值的 SKU。该阈值与库存预警周期任务的扫描阈值一致，请据此定位并补货。"
+  },
   "order": {
     "moduleName": "订单管理",
     "title": "订单管理",
@@ -211,6 +217,7 @@
     "maxRedemptionsPerUser": "每人核销上限",
     "redeemedCount": "已核销次数",
     "status": "状态",
+    "claimable": "可领取",
     "currency": "币种",
     "createdAt": "创建时间",
     "button": {
@@ -230,6 +237,23 @@
     "button": {
       "create": "新建运费模板",
       "update": "编辑运费模板"
+    }
+  },
+  "stockAlert": {
+    "moduleName": "库存预警",
+    "title": "库存预警管理",
+    "skuId": "SKU ID",
+    "stockQtyAtTrigger": "触发时库存",
+    "threshold": "阈值",
+    "status": "状态",
+    "createdAt": "创建时间",
+    "alert": "此处展示库存预警周期任务落库的告警记录。仅可将告警标记为已解决，无法新建或删除。",
+    "statusLabel": {
+      "OPEN": "待处理",
+      "RESOLVED": "已解决"
+    },
+    "button": {
+      "update": "处置告警"
     }
   },
   "taxRate": {

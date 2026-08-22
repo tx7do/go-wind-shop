@@ -96,6 +96,7 @@ var ProviderSet = wire.NewSet(
 
 	data.NewCartRepo,
 	data.NewCartItemRepo,
+	data.NewWishlistRepo,
 	data.NewOrderRepo,
 	data.NewOrderItemRepo,
 	data.NewPaymentTransactionRepo,
@@ -107,6 +108,7 @@ var ProviderSet = wire.NewSet(
 	data.NewUserCouponRepo,
 
 	data.NewShippingRateRepo,
+	data.NewStockAlertRepo,
 	data.NewTaxRateRepo,
 	data.NewCommentRepo,
 	data.NewInteractionRepo,

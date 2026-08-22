@@ -486,6 +486,15 @@ func NewShippingRateServiceClient(ctx *bootstrap.Context, r registry.Discovery) 
 	return shippingV1.NewShippingRateServiceClient(cli)
 }
 
+func NewStockAlertServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.StockAlertServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return catalogV1.NewStockAlertServiceClient(cli)
+}
+
 func NewTaxRateServiceClient(ctx *bootstrap.Context, r registry.Discovery) taxV1.TaxRateServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

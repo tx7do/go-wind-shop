@@ -1431,6 +1431,30 @@ func (f SkuPriceMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.SkuPriceMutation", m)
 }
 
+// The StockAlertQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type StockAlertQueryRuleFunc func(context.Context, *ent.StockAlertQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f StockAlertQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.StockAlertQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.StockAlertQuery", q)
+}
+
+// The StockAlertMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type StockAlertMutationRuleFunc func(context.Context, *ent.StockAlertMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f StockAlertMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.StockAlertMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.StockAlertMutation", m)
+}
+
 // The TaskQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type TaskQueryRuleFunc func(context.Context, *ent.TaskQuery) error
@@ -1647,6 +1671,30 @@ func (f UserRoleMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutati
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserRoleMutation", m)
 }
 
+// The WishlistQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type WishlistQueryRuleFunc func(context.Context, *ent.WishlistQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f WishlistQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.WishlistQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.WishlistQuery", q)
+}
+
+// The WishlistMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type WishlistMutationRuleFunc func(context.Context, *ent.WishlistMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f WishlistMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.WishlistMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.WishlistMutation", m)
+}
+
 type (
 	// Filter is the interface that wraps the Where function
 	// for filtering nodes in queries and mutations.
@@ -1792,6 +1840,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.SkuPriceQuery:
 		return q.Filter(), nil
+	case *ent.StockAlertQuery:
+		return q.Filter(), nil
 	case *ent.TaskQuery:
 		return q.Filter(), nil
 	case *ent.TaxRateQuery:
@@ -1809,6 +1859,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 	case *ent.UserPositionQuery:
 		return q.Filter(), nil
 	case *ent.UserRoleQuery:
+		return q.Filter(), nil
+	case *ent.WishlistQuery:
 		return q.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected query type %T for query filter", q)
@@ -1927,6 +1979,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 		return m.Filter(), nil
 	case *ent.SkuPriceMutation:
 		return m.Filter(), nil
+	case *ent.StockAlertMutation:
+		return m.Filter(), nil
 	case *ent.TaskMutation:
 		return m.Filter(), nil
 	case *ent.TaxRateMutation:
@@ -1944,6 +1998,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.UserPositionMutation:
 		return m.Filter(), nil
 	case *ent.UserRoleMutation:
+		return m.Filter(), nil
+	case *ent.WishlistMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected mutation type %T for mutation filter", m)

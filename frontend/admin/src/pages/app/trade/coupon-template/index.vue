@@ -113,6 +113,13 @@ const pageConfig = computed<ProPageConfig>(() => ({
         align: "left",
       },
       {
+        prop: "claimable",
+        label: $t("pages.mall.couponTemplate.claimable"),
+        minWidth: 100,
+        align: "left",
+        cellType: "tag",
+      },
+      {
         prop: "createdAt",
         label: $t("pages.mall.couponTemplate.createdAt"),
         minWidth: 160,

@@ -14,6 +14,8 @@ const navItems = [
   { to: '/messages', icon: 'lucide:message-square', labelKey: 'messages.title' },
   { to: '/refunds', icon: 'lucide:rotate-ccw', labelKey: 'refunds.title' },
   { to: '/addresses', icon: 'carbon:location', labelKey: 'addresses.title' },
+  { to: '/wishlist', icon: 'lucide:heart', labelKey: 'mall.wishlist.title' },
+  { to: '/coupons', icon: 'lucide:ticket', labelKey: 'mall.coupons.title' },
   { to: '/settings', icon: 'carbon:settings', labelKey: 'menu.my_account_security' },
 ] as const
 

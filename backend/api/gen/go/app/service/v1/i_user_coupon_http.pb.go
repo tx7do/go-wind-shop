@@ -12,6 +12,7 @@ import (
 	binding "github.com/go-kratos/kratos/v2/transport/http/binding"
 	v1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	v11 "go-wind-shop/api/gen/go/coupon/service/v1"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -21,11 +22,14 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationUserCouponServiceClaim = "/app.service.v1.UserCouponService/Claim"
 const OperationUserCouponServiceGet = "/app.service.v1.UserCouponService/Get"
 const OperationUserCouponServiceList = "/app.service.v1.UserCouponService/List"
 const OperationUserCouponServiceQuote = "/app.service.v1.UserCouponService/Quote"
 
 type UserCouponServiceHTTPServer interface {
+	// Claim 领取公开可领模板。强制 auth（不入白名单）。
+	Claim(context.Context, *v11.ClaimCouponRequest) (*emptypb.Empty, error)
 	Get(context.Context, *v11.GetUserCouponRequest) (*v11.UserCoupon, error)
 	List(context.Context, *v1.PagingRequest) (*v11.ListUserCouponResponse, error)
 	Quote(context.Context, *v11.QuoteRequest) (*v11.QuoteResponse, error)
@@ -33,12 +37,13 @@ type UserCouponServiceHTTPServer interface {
 
 func RegisterUserCouponServiceHTTPServer(s *http.Server, srv UserCouponServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/mall/user-coupons", _UserCouponService_List18_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/user-coupons", _UserCouponService_List19_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/user-coupons/{id}", _UserCouponService_Get18_HTTP_Handler(srv))
 	r.POST("/app/v1/mall/user-coupons/quote", _UserCouponService_Quote0_HTTP_Handler(srv))
+	r.POST("/app/v1/mall/user-coupons/claim", _UserCouponService_Claim0_HTTP_Handler(srv))
 }
 
-func _UserCouponService_List18_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
+func _UserCouponService_List19_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -101,7 +106,31 @@ func _UserCouponService_Quote0_HTTP_Handler(srv UserCouponServiceHTTPServer) fun
 	}
 }
 
+func _UserCouponService_Claim0_HTTP_Handler(srv UserCouponServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ClaimCouponRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationUserCouponServiceClaim)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Claim(ctx, req.(*v11.ClaimCouponRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type UserCouponServiceHTTPClient interface {
+	// Claim 领取公开可领模板。强制 auth（不入白名单）。
+	Claim(ctx context.Context, req *v11.ClaimCouponRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	Get(ctx context.Context, req *v11.GetUserCouponRequest, opts ...http.CallOption) (rsp *v11.UserCoupon, err error)
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListUserCouponResponse, err error)
 	Quote(ctx context.Context, req *v11.QuoteRequest, opts ...http.CallOption) (rsp *v11.QuoteResponse, err error)
@@ -113,6 +142,20 @@ type UserCouponServiceHTTPClientImpl struct {
 
 func NewUserCouponServiceHTTPClient(client *http.Client) UserCouponServiceHTTPClient {
 	return &UserCouponServiceHTTPClientImpl{client}
+}
+
+// Claim 领取公开可领模板。强制 auth（不入白名单）。
+func (c *UserCouponServiceHTTPClientImpl) Claim(ctx context.Context, in *v11.ClaimCouponRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/app/v1/mall/user-coupons/claim"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationUserCouponServiceClaim))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 func (c *UserCouponServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetUserCouponRequest, opts ...http.CallOption) (*v11.UserCoupon, error) {

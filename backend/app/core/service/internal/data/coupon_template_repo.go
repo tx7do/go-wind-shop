@@ -110,6 +110,34 @@ func (r *CouponTemplateRepo) List(ctx context.Context, req *paginationV1.PagingR
 	}, nil
 }
 
+// ListClaimable 列出公开可领模板（claimable=true AND status=ACTIVE）。
+// 供 app-scope 领券中心调用。有效窗口由 service 层后过滤（时间判断非 ent 谓词）。
+// TenantPrivacy 按 viewer tenant_id 自动注入 WHERE。
+func (r *CouponTemplateRepo) ListClaimable(ctx context.Context, req *paginationV1.PagingRequest) (*couponV1.ListCouponTemplateResponse, error) {
+	if req == nil {
+		return nil, couponV1.ErrorBadRequest("invalid parameter")
+	}
+
+	builder := r.entClient.Client().CouponTemplate.Query().
+		Where(
+			coupontemplate.ClaimableEQ(true),
+			coupontemplate.StatusEQ(coupontemplate.StatusCouponTemplateStatusActive),
+		)
+
+	ret, err := r.repository.ListWithPaging(ctx, builder, builder.Clone(), req)
+	if err != nil {
+		return nil, err
+	}
+	if ret == nil {
+		return &couponV1.ListCouponTemplateResponse{Total: 0, Items: nil}, nil
+	}
+
+	return &couponV1.ListCouponTemplateResponse{
+		Total: ret.Total,
+		Items: ret.Items,
+	}, nil
+}
+
 func (r *CouponTemplateRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
 	exist, err := r.entClient.Client().CouponTemplate.Query().
 		Where(coupontemplate.IDEQ(id)).

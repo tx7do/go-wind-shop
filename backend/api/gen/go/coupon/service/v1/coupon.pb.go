@@ -194,6 +194,7 @@ type CouponTemplate struct {
 	RedeemedCount         *int32                       `protobuf:"varint,8,opt,name=redeemed_count,json=redeemedCount,proto3,oneof" json:"redeemed_count,omitempty"`
 	Status                *CouponTemplate_Status       `protobuf:"varint,9,opt,name=status,proto3,enum=coupon.service.v1.CouponTemplate_Status,oneof" json:"status,omitempty"`
 	Currency              *string                      `protobuf:"bytes,10,opt,name=currency,proto3,oneof" json:"currency,omitempty"`
+	Claimable             *bool                        `protobuf:"varint,12,opt,name=claimable,proto3,oneof" json:"claimable,omitempty"`
 	TenantId              *uint32                      `protobuf:"varint,90,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
 	CreatedBy             *uint32                      `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
 	UpdatedBy             *uint32                      `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
@@ -310,6 +311,13 @@ func (x *CouponTemplate) GetCurrency() string {
 		return *x.Currency
 	}
 	return ""
+}
+
+func (x *CouponTemplate) GetClaimable() bool {
+	if x != nil && x.Claimable != nil {
+		return *x.Claimable
+	}
+	return false
 }
 
 func (x *CouponTemplate) GetTenantId() uint32 {
@@ -1318,11 +1326,57 @@ func (x *QuoteResponse) GetPostDiscountTotal() int64 {
 	return 0
 }
 
+// 请求 - 领取优惠券（买家自助）
+// 仅带模板 ID；user_id 由 core 从 viewer 强制，客户端不可伪造。
+type ClaimCouponRequest struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	CouponTemplateId uint32                 `protobuf:"varint,1,opt,name=coupon_template_id,json=couponTemplateId,proto3" json:"coupon_template_id,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *ClaimCouponRequest) Reset() {
+	*x = ClaimCouponRequest{}
+	mi := &file_coupon_service_v1_coupon_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClaimCouponRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClaimCouponRequest) ProtoMessage() {}
+
+func (x *ClaimCouponRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_coupon_service_v1_coupon_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClaimCouponRequest.ProtoReflect.Descriptor instead.
+func (*ClaimCouponRequest) Descriptor() ([]byte, []int) {
+	return file_coupon_service_v1_coupon_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ClaimCouponRequest) GetCouponTemplateId() uint32 {
+	if x != nil {
+		return x.CouponTemplateId
+	}
+	return 0
+}
+
 var File_coupon_service_v1_coupon_proto protoreflect.FileDescriptor
 
 const file_coupon_service_v1_coupon_proto_rawDesc = "" +
 	"\n" +
-	"\x1ecoupon/service/v1/coupon.proto\x12\x11coupon.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xbe\x0f\n" +
+	"\x1ecoupon/service/v1/coupon.proto\x12\x11coupon.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xb6\x10\n" +
 	"\x0eCouponTemplate\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b模板IDH\x00R\x02id\x88\x01\x01\x12l\n" +
 	"\rdiscount_type\x18\x02 \x01(\x0e2..coupon.service.v1.CouponTemplate.DiscountTypeB\x12\xbaG\x0f\x92\x02\f抵扣类型H\x01R\fdiscountType\x88\x01\x01\x12~\n" +
@@ -1338,20 +1392,21 @@ const file_coupon_service_v1_coupon_proto_rawDesc = "" +
 	"\x06status\x18\t \x01(\x0e2(.coupon.service.v1.CouponTemplate.StatusB\x12\xbaG\x0f\x92\x02\f模板状态H\tR\x06status\x88\x01\x01\x12;\n" +
 	"\bcurrency\x18\n" +
 	" \x01(\tB\x1a\xbaG\x17\x92\x02\x14币种（ISO 4217）H\n" +
-	"R\bcurrency\x88\x01\x01\x120\n" +
-	"\ttenant_id\x18Z \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\vR\btenantId\x88\x01\x01\x12;\n" +
+	"R\bcurrency\x88\x01\x01\x12h\n" +
+	"\tclaimable\x18\f \x01(\bBE\xbaGB\x92\x02?是否公开可领取（领券中心仅展示 true 的模板）H\vR\tclaimable\x88\x01\x01\x120\n" +
+	"\ttenant_id\x18Z \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\fR\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\fR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\rR\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\rR\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x0eR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0eR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x0fR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x0fR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x10R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x10R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x11R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x11R\tdeletedAt\x88\x01\x01\"O\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x12R\tdeletedAt\x88\x01\x01\"O\n" +
 	"\fDiscountType\x12\x1d\n" +
 	"\x19DISCOUNT_TYPE_UNSPECIFIED\x10\x00\x12\x10\n" +
 	"\fFIXED_AMOUNT\x10\x01\x12\x0e\n" +
@@ -1373,6 +1428,8 @@ const file_coupon_service_v1_coupon_proto_rawDesc = "" +
 	"\x0f_redeemed_countB\t\n" +
 	"\a_statusB\v\n" +
 	"\t_currencyB\f\n" +
+	"\n" +
+	"_claimableB\f\n" +
 	"\n" +
 	"_tenant_idB\r\n" +
 	"\v_created_byB\r\n" +
@@ -1494,14 +1551,16 @@ const file_coupon_service_v1_coupon_proto_rawDesc = "" +
 	"\v_applicableB\x15\n" +
 	"\x13_pre_discount_totalB\v\n" +
 	"\t_discountB\x16\n" +
-	"\x14_post_discount_total2\x96\x04\n" +
+	"\x14_post_discount_total\"g\n" +
+	"\x12ClaimCouponRequest\x12Q\n" +
+	"\x12coupon_template_id\x18\x01 \x01(\rB#\xbaG \x92\x02\x1d要领取的优惠券模板IDR\x10couponTemplateId2\x96\x04\n" +
 	"\x15CouponTemplateService\x12R\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a-.coupon.service.v1.ListCouponTemplateResponse\"\x00\x12T\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a..coupon.service.v1.CountCouponTemplateResponse\"\x00\x12W\n" +
 	"\x03Get\x12+.coupon.service.v1.GetCouponTemplateRequest\x1a!.coupon.service.v1.CouponTemplate\"\x00\x12R\n" +
 	"\x06Create\x12..coupon.service.v1.CreateCouponTemplateRequest\x1a\x16.google.protobuf.Empty\"\x00\x12R\n" +
 	"\x06Update\x12..coupon.service.v1.UpdateCouponTemplateRequest\x1a\x16.google.protobuf.Empty\"\x00\x12R\n" +
-	"\x06Delete\x12..coupon.service.v1.DeleteCouponTemplateRequest\x1a\x16.google.protobuf.Empty\"\x002\xc4\x04\n" +
+	"\x06Delete\x12..coupon.service.v1.DeleteCouponTemplateRequest\x1a\x16.google.protobuf.Empty\"\x002\x8e\x05\n" +
 	"\x11UserCouponService\x12N\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a).coupon.service.v1.ListUserCouponResponse\"\x00\x12P\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a*.coupon.service.v1.CountUserCouponResponse\"\x00\x12O\n" +
@@ -1509,7 +1568,8 @@ const file_coupon_service_v1_coupon_proto_rawDesc = "" +
 	"\x06Create\x12*.coupon.service.v1.CreateUserCouponRequest\x1a\x16.google.protobuf.Empty\"\x00\x12N\n" +
 	"\x06Update\x12*.coupon.service.v1.UpdateUserCouponRequest\x1a\x16.google.protobuf.Empty\"\x00\x12N\n" +
 	"\x06Delete\x12*.coupon.service.v1.DeleteUserCouponRequest\x1a\x16.google.protobuf.Empty\"\x00\x12L\n" +
-	"\x05Quote\x12\x1f.coupon.service.v1.QuoteRequest\x1a .coupon.service.v1.QuoteResponse\"\x00B\xbf\x01\n" +
+	"\x05Quote\x12\x1f.coupon.service.v1.QuoteRequest\x1a .coupon.service.v1.QuoteResponse\"\x00\x12H\n" +
+	"\x05Claim\x12%.coupon.service.v1.ClaimCouponRequest\x1a\x16.google.protobuf.Empty\"\x00B\xbf\x01\n" +
 	"\x15com.coupon.service.v1B\vCouponProtoP\x01Z3go-wind-shop/api/gen/go/coupon/service/v1;servicev1\xa2\x02\x03CSX\xaa\x02\x11Coupon.Service.V1\xca\x02\x11Coupon\\Service\\V1\xe2\x02\x1dCoupon\\Service\\V1\\GPBMetadata\xea\x02\x13Coupon::Service::V1b\x06proto3"
 
 var (
@@ -1525,7 +1585,7 @@ func file_coupon_service_v1_coupon_proto_rawDescGZIP() []byte {
 }
 
 var file_coupon_service_v1_coupon_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_coupon_service_v1_coupon_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_coupon_service_v1_coupon_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_coupon_service_v1_coupon_proto_goTypes = []any{
 	(CouponTemplate_DiscountType)(0),    // 0: coupon.service.v1.CouponTemplate.DiscountType
 	(CouponTemplate_Status)(0),          // 1: coupon.service.v1.CouponTemplate.Status
@@ -1546,62 +1606,65 @@ var file_coupon_service_v1_coupon_proto_goTypes = []any{
 	(*CountUserCouponResponse)(nil),     // 16: coupon.service.v1.CountUserCouponResponse
 	(*QuoteRequest)(nil),                // 17: coupon.service.v1.QuoteRequest
 	(*QuoteResponse)(nil),               // 18: coupon.service.v1.QuoteResponse
-	(*timestamppb.Timestamp)(nil),       // 19: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),       // 20: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),            // 21: pagination.PagingRequest
-	(*emptypb.Empty)(nil),               // 22: google.protobuf.Empty
+	(*ClaimCouponRequest)(nil),          // 19: coupon.service.v1.ClaimCouponRequest
+	(*timestamppb.Timestamp)(nil),       // 20: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),       // 21: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),            // 22: pagination.PagingRequest
+	(*emptypb.Empty)(nil),               // 23: google.protobuf.Empty
 }
 var file_coupon_service_v1_coupon_proto_depIdxs = []int32{
 	0,  // 0: coupon.service.v1.CouponTemplate.discount_type:type_name -> coupon.service.v1.CouponTemplate.DiscountType
-	19, // 1: coupon.service.v1.CouponTemplate.valid_from:type_name -> google.protobuf.Timestamp
-	19, // 2: coupon.service.v1.CouponTemplate.valid_until:type_name -> google.protobuf.Timestamp
+	20, // 1: coupon.service.v1.CouponTemplate.valid_from:type_name -> google.protobuf.Timestamp
+	20, // 2: coupon.service.v1.CouponTemplate.valid_until:type_name -> google.protobuf.Timestamp
 	1,  // 3: coupon.service.v1.CouponTemplate.status:type_name -> coupon.service.v1.CouponTemplate.Status
-	19, // 4: coupon.service.v1.CouponTemplate.created_at:type_name -> google.protobuf.Timestamp
-	19, // 5: coupon.service.v1.CouponTemplate.updated_at:type_name -> google.protobuf.Timestamp
-	19, // 6: coupon.service.v1.CouponTemplate.deleted_at:type_name -> google.protobuf.Timestamp
+	20, // 4: coupon.service.v1.CouponTemplate.created_at:type_name -> google.protobuf.Timestamp
+	20, // 5: coupon.service.v1.CouponTemplate.updated_at:type_name -> google.protobuf.Timestamp
+	20, // 6: coupon.service.v1.CouponTemplate.deleted_at:type_name -> google.protobuf.Timestamp
 	2,  // 7: coupon.service.v1.UserCoupon.status:type_name -> coupon.service.v1.UserCoupon.Status
-	19, // 8: coupon.service.v1.UserCoupon.redeemed_at:type_name -> google.protobuf.Timestamp
-	19, // 9: coupon.service.v1.UserCoupon.created_at:type_name -> google.protobuf.Timestamp
-	19, // 10: coupon.service.v1.UserCoupon.updated_at:type_name -> google.protobuf.Timestamp
-	19, // 11: coupon.service.v1.UserCoupon.deleted_at:type_name -> google.protobuf.Timestamp
+	20, // 8: coupon.service.v1.UserCoupon.redeemed_at:type_name -> google.protobuf.Timestamp
+	20, // 9: coupon.service.v1.UserCoupon.created_at:type_name -> google.protobuf.Timestamp
+	20, // 10: coupon.service.v1.UserCoupon.updated_at:type_name -> google.protobuf.Timestamp
+	20, // 11: coupon.service.v1.UserCoupon.deleted_at:type_name -> google.protobuf.Timestamp
 	3,  // 12: coupon.service.v1.ListCouponTemplateResponse.items:type_name -> coupon.service.v1.CouponTemplate
 	4,  // 13: coupon.service.v1.ListUserCouponResponse.items:type_name -> coupon.service.v1.UserCoupon
-	20, // 14: coupon.service.v1.GetCouponTemplateRequest.view_mask:type_name -> google.protobuf.FieldMask
-	20, // 15: coupon.service.v1.GetUserCouponRequest.view_mask:type_name -> google.protobuf.FieldMask
+	21, // 14: coupon.service.v1.GetCouponTemplateRequest.view_mask:type_name -> google.protobuf.FieldMask
+	21, // 15: coupon.service.v1.GetUserCouponRequest.view_mask:type_name -> google.protobuf.FieldMask
 	3,  // 16: coupon.service.v1.CreateCouponTemplateRequest.data:type_name -> coupon.service.v1.CouponTemplate
 	3,  // 17: coupon.service.v1.UpdateCouponTemplateRequest.data:type_name -> coupon.service.v1.CouponTemplate
-	20, // 18: coupon.service.v1.UpdateCouponTemplateRequest.update_mask:type_name -> google.protobuf.FieldMask
+	21, // 18: coupon.service.v1.UpdateCouponTemplateRequest.update_mask:type_name -> google.protobuf.FieldMask
 	4,  // 19: coupon.service.v1.CreateUserCouponRequest.data:type_name -> coupon.service.v1.UserCoupon
 	4,  // 20: coupon.service.v1.UpdateUserCouponRequest.data:type_name -> coupon.service.v1.UserCoupon
-	20, // 21: coupon.service.v1.UpdateUserCouponRequest.update_mask:type_name -> google.protobuf.FieldMask
-	21, // 22: coupon.service.v1.CouponTemplateService.List:input_type -> pagination.PagingRequest
-	21, // 23: coupon.service.v1.CouponTemplateService.Count:input_type -> pagination.PagingRequest
+	21, // 21: coupon.service.v1.UpdateUserCouponRequest.update_mask:type_name -> google.protobuf.FieldMask
+	22, // 22: coupon.service.v1.CouponTemplateService.List:input_type -> pagination.PagingRequest
+	22, // 23: coupon.service.v1.CouponTemplateService.Count:input_type -> pagination.PagingRequest
 	7,  // 24: coupon.service.v1.CouponTemplateService.Get:input_type -> coupon.service.v1.GetCouponTemplateRequest
 	9,  // 25: coupon.service.v1.CouponTemplateService.Create:input_type -> coupon.service.v1.CreateCouponTemplateRequest
 	10, // 26: coupon.service.v1.CouponTemplateService.Update:input_type -> coupon.service.v1.UpdateCouponTemplateRequest
 	11, // 27: coupon.service.v1.CouponTemplateService.Delete:input_type -> coupon.service.v1.DeleteCouponTemplateRequest
-	21, // 28: coupon.service.v1.UserCouponService.List:input_type -> pagination.PagingRequest
-	21, // 29: coupon.service.v1.UserCouponService.Count:input_type -> pagination.PagingRequest
+	22, // 28: coupon.service.v1.UserCouponService.List:input_type -> pagination.PagingRequest
+	22, // 29: coupon.service.v1.UserCouponService.Count:input_type -> pagination.PagingRequest
 	8,  // 30: coupon.service.v1.UserCouponService.Get:input_type -> coupon.service.v1.GetUserCouponRequest
 	13, // 31: coupon.service.v1.UserCouponService.Create:input_type -> coupon.service.v1.CreateUserCouponRequest
 	14, // 32: coupon.service.v1.UserCouponService.Update:input_type -> coupon.service.v1.UpdateUserCouponRequest
 	15, // 33: coupon.service.v1.UserCouponService.Delete:input_type -> coupon.service.v1.DeleteUserCouponRequest
 	17, // 34: coupon.service.v1.UserCouponService.Quote:input_type -> coupon.service.v1.QuoteRequest
-	5,  // 35: coupon.service.v1.CouponTemplateService.List:output_type -> coupon.service.v1.ListCouponTemplateResponse
-	12, // 36: coupon.service.v1.CouponTemplateService.Count:output_type -> coupon.service.v1.CountCouponTemplateResponse
-	3,  // 37: coupon.service.v1.CouponTemplateService.Get:output_type -> coupon.service.v1.CouponTemplate
-	22, // 38: coupon.service.v1.CouponTemplateService.Create:output_type -> google.protobuf.Empty
-	22, // 39: coupon.service.v1.CouponTemplateService.Update:output_type -> google.protobuf.Empty
-	22, // 40: coupon.service.v1.CouponTemplateService.Delete:output_type -> google.protobuf.Empty
-	6,  // 41: coupon.service.v1.UserCouponService.List:output_type -> coupon.service.v1.ListUserCouponResponse
-	16, // 42: coupon.service.v1.UserCouponService.Count:output_type -> coupon.service.v1.CountUserCouponResponse
-	4,  // 43: coupon.service.v1.UserCouponService.Get:output_type -> coupon.service.v1.UserCoupon
-	22, // 44: coupon.service.v1.UserCouponService.Create:output_type -> google.protobuf.Empty
-	22, // 45: coupon.service.v1.UserCouponService.Update:output_type -> google.protobuf.Empty
-	22, // 46: coupon.service.v1.UserCouponService.Delete:output_type -> google.protobuf.Empty
-	18, // 47: coupon.service.v1.UserCouponService.Quote:output_type -> coupon.service.v1.QuoteResponse
-	35, // [35:48] is the sub-list for method output_type
-	22, // [22:35] is the sub-list for method input_type
+	19, // 35: coupon.service.v1.UserCouponService.Claim:input_type -> coupon.service.v1.ClaimCouponRequest
+	5,  // 36: coupon.service.v1.CouponTemplateService.List:output_type -> coupon.service.v1.ListCouponTemplateResponse
+	12, // 37: coupon.service.v1.CouponTemplateService.Count:output_type -> coupon.service.v1.CountCouponTemplateResponse
+	3,  // 38: coupon.service.v1.CouponTemplateService.Get:output_type -> coupon.service.v1.CouponTemplate
+	23, // 39: coupon.service.v1.CouponTemplateService.Create:output_type -> google.protobuf.Empty
+	23, // 40: coupon.service.v1.CouponTemplateService.Update:output_type -> google.protobuf.Empty
+	23, // 41: coupon.service.v1.CouponTemplateService.Delete:output_type -> google.protobuf.Empty
+	6,  // 42: coupon.service.v1.UserCouponService.List:output_type -> coupon.service.v1.ListUserCouponResponse
+	16, // 43: coupon.service.v1.UserCouponService.Count:output_type -> coupon.service.v1.CountUserCouponResponse
+	4,  // 44: coupon.service.v1.UserCouponService.Get:output_type -> coupon.service.v1.UserCoupon
+	23, // 45: coupon.service.v1.UserCouponService.Create:output_type -> google.protobuf.Empty
+	23, // 46: coupon.service.v1.UserCouponService.Update:output_type -> google.protobuf.Empty
+	23, // 47: coupon.service.v1.UserCouponService.Delete:output_type -> google.protobuf.Empty
+	18, // 48: coupon.service.v1.UserCouponService.Quote:output_type -> coupon.service.v1.QuoteResponse
+	23, // 49: coupon.service.v1.UserCouponService.Claim:output_type -> google.protobuf.Empty
+	36, // [36:50] is the sub-list for method output_type
+	22, // [22:36] is the sub-list for method input_type
 	22, // [22:22] is the sub-list for extension type_name
 	22, // [22:22] is the sub-list for extension extendee
 	0,  // [0:22] is the sub-list for field type_name
@@ -1636,7 +1699,7 @@ func file_coupon_service_v1_coupon_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_coupon_service_v1_coupon_proto_rawDesc), len(file_coupon_service_v1_coupon_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   16,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

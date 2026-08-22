@@ -51,6 +51,7 @@ var ProviderSet = wire.NewSet(
 
 	data.NewCartServiceClient,
 	data.NewCartItemServiceClient,
+	data.NewWishlistServiceClient,
 	data.NewOrderServiceClient,
 	data.NewOrderItemServiceClient,
 	data.NewPaymentTransactionServiceClient,
@@ -59,6 +60,7 @@ var ProviderSet = wire.NewSet(
 	data.NewShipmentServiceClient,
 	data.NewInternalMessageRecipientServiceClient,
 	data.NewUserCouponServiceClient,
+	data.NewCouponTemplateServiceClient,
 	data.NewCommentServiceClient,
 	data.NewInteractionServiceClient,
 	data.NewInvoiceServiceClient,

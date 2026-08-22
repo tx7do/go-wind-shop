@@ -61,6 +61,9 @@ func NewRestMiddleware(
 		appV1.OperationSkuAttributeCombinationServiceGet,
 
 		appV1.OperationInteractionServiceGetCounts,
+
+		appV1.OperationCommentServiceGetProductRating,
+		appV1.OperationCouponTemplateServiceList,
 	)
 
 	ms = append(ms, applogging.Server(
@@ -105,6 +108,7 @@ func NewRestServer(
 
 	cartService *service.CartService,
 	cartItemService *service.CartItemService,
+	wishlistService *service.WishlistService,
 	orderService *service.OrderService,
 	orderItemService *service.OrderItemService,
 	paymentTransactionService *service.PaymentTransactionService,
@@ -113,6 +117,7 @@ func NewRestServer(
 	shipmentService *service.ShipmentService,
 	internalMessageRecipientService *service.InternalMessageRecipientService,
 		userCouponService *service.UserCouponService,
+		couponTemplateService *service.CouponTemplateService,
 		commentService *service.CommentService,
 		interactionService *service.InteractionService,
 		invoiceService *service.InvoiceService,
@@ -143,6 +148,7 @@ func NewRestServer(
 
 	appV1.RegisterCartServiceHTTPServer(srv, cartService)
 	appV1.RegisterCartItemServiceHTTPServer(srv, cartItemService)
+	appV1.RegisterWishlistServiceHTTPServer(srv, wishlistService)
 	appV1.RegisterOrderServiceHTTPServer(srv, orderService)
 	appV1.RegisterOrderItemServiceHTTPServer(srv, orderItemService)
 	appV1.RegisterPaymentTransactionServiceHTTPServer(srv, paymentTransactionService)
@@ -151,6 +157,7 @@ func NewRestServer(
 	appV1.RegisterShipmentServiceHTTPServer(srv, shipmentService)
 	appV1.RegisterInternalMessageRecipientServiceHTTPServer(srv, internalMessageRecipientService)
 	appV1.RegisterUserCouponServiceHTTPServer(srv, userCouponService)
+	appV1.RegisterCouponTemplateServiceHTTPServer(srv, couponTemplateService)
 	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
 	appV1.RegisterInteractionServiceHTTPServer(srv, interactionService)
 	appV1.RegisterInvoiceServiceHTTPServer(srv, invoiceService)

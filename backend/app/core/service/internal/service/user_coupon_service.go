@@ -15,10 +15,12 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/cart"
 	"go-wind-shop/app/core/service/internal/data/ent/cartitem"
+	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
+	"github.com/tx7do/go-crud/viewer"
 
 	appViewer "go-wind-shop/pkg/entgo/viewer"
 	"go-wind-shop/pkg/task"
@@ -112,6 +114,118 @@ func (s *UserCouponService) Create(ctx context.Context, req *couponV1.CreateUser
 		return nil, err
 	}
 
+	return &emptypb.Empty{}, nil
+}
+
+// Claim 买家自助领取公开可领模板。
+//
+// 原子性：仿 order_service.redeemCouponInTx 的 ForUpdate + tx 范式。
+//   - user_id 从 viewer 强制（不从请求取，仿 interaction_admin_service L48-55）。
+//   - ForUpdate 锁模板行，锁内校验 claimable / status / 有效窗口 / 全局核销上限。
+//   - per-user 限领校验在 tx 内 Count（status 不过滤——含所有状态，防领→用→退→再领绕限）。
+//   - tx 内 Create user_coupon（status 强制 UNUSED）。UserPrivacy 的 Create 分支会强制 user_id=viewer，双重保护。
+//   - 不增 redeemed_count（那是核销计数，核销时才增）。
+//   - 任一校验失败 → return err → defer Rollback（fail-closed）。
+func (s *UserCouponService) Claim(ctx context.Context, req *couponV1.ClaimCouponRequest) (*emptypb.Empty, error) {
+	// 0. 从 viewer 取 user_id（不从请求取）。
+	vc, exist := viewer.FromContext(ctx)
+	if !exist {
+		return nil, couponV1.ErrorForbidden("missing viewer context")
+	}
+	uid := vc.UserID()
+	if uid == 0 {
+		return nil, couponV1.ErrorForbidden("viewer has no user id")
+	}
+	uidU32 := uint32(uid)
+	tmplId := req.GetCouponTemplateId()
+	if tmplId == 0 {
+		return nil, couponV1.ErrorBadRequest("invalid template id")
+	}
+
+	// 1. 开事务。
+	tx, err := s.entClient.Client().Tx(ctx)
+	if err != nil {
+		s.log.Errorf("claim coupon open tx failed: %v", err)
+		return nil, couponV1.ErrorInternalServerError("claim failed")
+	}
+	defer func() { _ = tx.Rollback() }()
+
+	// 2. ForUpdate 锁定模板行。
+	tmpl, tErr := tx.CouponTemplate.Query().
+		Where(coupontemplate.IDEQ(tmplId)).
+		ForUpdate().
+		Only(ctx)
+	if tErr != nil || tmpl == nil {
+		s.log.Warnf("claim: template [%d] not found: %v", tmplId, tErr)
+		return nil, couponV1.ErrorBadRequest("coupon template not found")
+	}
+
+	// 3. 锁内校验。
+	// 3a. claimable == true。
+	if tmpl.Claimable == nil || !*tmpl.Claimable {
+		return nil, couponV1.ErrorBadRequest("coupon template is not claimable")
+	}
+	// 3b. status == ACTIVE。
+	if tmpl.Status == nil || *tmpl.Status != coupontemplate.StatusCouponTemplateStatusActive {
+		return nil, couponV1.ErrorBadRequest("coupon template is inactive")
+	}
+	// 3c. 有效窗口。
+	if !couponApplicableNowEntity(tmpl, time.Now()) {
+		return nil, couponV1.ErrorBadRequest("coupon is not within its valid window")
+	}
+	// 3d. 全局核销上限（防领了用不出去）。
+	if tmpl.MaxRedemptions != nil && *tmpl.MaxRedemptions > 0 {
+		if tmpl.RedeemedCount == nil || *tmpl.RedeemedCount >= *tmpl.MaxRedemptions {
+			return nil, couponV1.ErrorBadRequest("coupon redemption limit reached")
+		}
+	}
+
+	// 4. per-user 限领校验（tx 内 Count，防 TOCTOU）。
+	//    status 不过滤——含所有状态（UNUSED/USED/EXPIRED），与 admin Create 路径一致：
+	//    防领→用→退→再领绕 per-user 限领。
+	//    UserPrivacy 按 caller user_id 自动注入 WHERE（双重保护）。
+	if tmpl.MaxRedemptionsPerUser != nil && *tmpl.MaxRedemptionsPerUser > 0 {
+		issuedCount, cErr := tx.UserCoupon.Query().
+			Where(
+				usercoupon.And(
+					usercoupon.UserIDEQ(uidU32),
+					usercoupon.CouponTemplateIDEQ(tmplId),
+				),
+			).
+			Count(ctx)
+		if cErr != nil {
+			s.log.Errorf("claim: per-user issuance count failed for user [%d] template [%d]: %v", uidU32, tmplId, cErr)
+			return nil, couponV1.ErrorInternalServerError("per-user issuance check failed")
+		}
+		if issuedCount >= int(*tmpl.MaxRedemptionsPerUser) {
+			s.log.Warnf("claim: per-user issuance limit reached for user [%d] template [%d]: %d >= %d", uidU32, tmplId, issuedCount, *tmpl.MaxRedemptionsPerUser)
+			return nil, couponV1.ErrorBadRequest("coupon per-user issuance limit reached")
+		}
+	}
+
+	// 5. tx 内 Create user_coupon（status 强制 UNUSED，user_id 强制 viewer）。
+	//    UserPrivacy 的 Create 分支会强制 user_id=viewer，此处显式设双重保护。
+	unusedStatus := usercoupon.StatusUserCouponStatusUnused
+	now := time.Now()
+	if cErr := tx.UserCoupon.Create().
+		SetNillableUserID(&uidU32).
+		SetNillableCouponTemplateID(&tmplId).
+		SetNillableStatus(&unusedStatus).
+		SetNillableTenantID(tmpl.TenantID).
+		SetNillableCreatedBy(&uidU32).
+		SetCreatedAt(now).
+		Exec(ctx); cErr != nil {
+		s.log.Errorf("claim: insert user_coupon failed for user [%d] template [%d]: %v", uidU32, tmplId, cErr)
+		return nil, couponV1.ErrorInternalServerError("claim failed")
+	}
+
+	// 6. 提交事务。
+	if cErr := tx.Commit(); cErr != nil {
+		s.log.Errorf("claim: commit tx failed: %v", cErr)
+		return nil, couponV1.ErrorInternalServerError("claim failed")
+	}
+
+	s.log.Infof("claim: user [%d] claimed template [%d]", uidU32, tmplId)
 	return &emptypb.Empty{}, nil
 }
 

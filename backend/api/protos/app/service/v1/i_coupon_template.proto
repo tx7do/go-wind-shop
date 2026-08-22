@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "pagination/v1/pagination.proto";
+
+import "coupon/service/v1/coupon.proto";
+
+// 优惠券模板前台服务（裁剪版：仅 List，无 Create/Update/Delete/Get/Count）。
+// 领券中心浏览公开可领模板。core 侧 ListClaimable 在 repo 层用
+// claimable=true AND status=ACTIVE 谓词过滤 + service 层后过滤有效窗口，
+// 故前端无需带过滤参数——返回的均为当前可领模板。
+// 匿名可读（rest_server 白名单登记），仿商品 List。
+service CouponTemplateService {
+  rpc List (pagination.PagingRequest) returns (coupon.service.v1.ListCouponTemplateResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/coupon-templates"
+    };
+  }
+}

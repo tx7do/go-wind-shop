@@ -11719,6 +11719,10 @@ components:
                     type: string
                     description: 评论状态
                     format: enum
+                rating:
+                    type: integer
+                    description: 评分1-5
+                    format: uint32
                 parentId:
                     type: integer
                     description: 父节点ID

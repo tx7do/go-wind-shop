@@ -33,6 +33,7 @@ var ProviderSet = wire.NewSet(
 
 	service.NewCartService,
 	service.NewCartItemService,
+	service.NewWishlistService,
 	service.NewOrderService,
 	service.NewOrderItemService,
 	service.NewPaymentTransactionService,
@@ -41,6 +42,7 @@ var ProviderSet = wire.NewSet(
 	service.NewShipmentService,
 	service.NewInternalMessageRecipientService,
 	service.NewUserCouponService,
+	service.NewCouponTemplateService,
 	service.NewCommentService,
 	service.NewInteractionService,
 	service.NewInvoiceService,

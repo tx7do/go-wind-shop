@@ -126,6 +126,7 @@ func NewRestServer(
 	userCouponService *service.UserCouponService,
 
 		shippingRateService *service.ShippingRateService,
+		stockAlertService *service.StockAlertService,
 		taxRateService *service.TaxRateService,
 		commentService *service.CommentService,
 		interactionAdminService *service.InteractionAdminService,
@@ -192,6 +193,7 @@ func NewRestServer(
 	adminV1.RegisterUserCouponServiceHTTPServer(srv, userCouponService)
 
 	adminV1.RegisterShippingRateServiceHTTPServer(srv, shippingRateService)
+	adminV1.RegisterStockAlertServiceHTTPServer(srv, stockAlertService)
 	adminV1.RegisterTaxRateServiceHTTPServer(srv, taxRateService)
 	adminV1.RegisterCommentServiceHTTPServer(srv, commentService)
 	adminV1.RegisterInteractionAdminServiceHTTPServer(srv, interactionAdminService)

@@ -91,6 +91,12 @@ func (CouponTemplate) Fields() []ent.Field {
 			).
 			Optional().
 			Nillable(),
+
+		field.Bool("claimable").
+			Comment("是否公开可领取（领券中心仅展示 true 的模板，默认 false）").
+			Optional().
+			Nillable().
+			Default(false),
 	}
 }
 

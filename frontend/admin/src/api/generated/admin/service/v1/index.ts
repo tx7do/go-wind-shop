@@ -3310,6 +3310,7 @@ export type commentservicev1_Comment = {
   id?: number;
   objectId?: number;
   parentId?: number;
+  rating?: number;
   status?: commentservicev1_Comment_Status;
   tenantId?: number;
   updatedAt?: wellKnownTimestamp;
@@ -3678,6 +3679,7 @@ export type couponservicev1_ListCouponTemplateResponse = {
 
 // 优惠券模板
 export type couponservicev1_CouponTemplate = {
+  claimable?: boolean;
   createdAt?: wellKnownTimestamp;
   createdBy?: number;
   currency?: string;
@@ -14012,6 +14014,207 @@ export type catalogservicev1_DeleteSkuAttributeCombinationRequest = {
   id?: number;
 };
 
+// 库存预警记录管理服务（admin 裁剪：仅 List/Get/Update，Update 唯一允许标记 RESOLVED）
+export interface StockAlertService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_ListStockAlertResponse>;
+  Get(
+    request: catalogservicev1_GetStockAlertRequest,
+  ): Promise<catalogservicev1_StockAlert>;
+  Update(
+    request: catalogservicev1_UpdateStockAlertRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createStockAlertServiceClient(
+  transport: ClientTransport,
+): StockAlertService {
+  return {
+    List(request) {
+      const path = `admin/v1/mall/stock-alerts`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'StockAlertService',
+        method: 'List',
+      }) as Promise<catalogservicev1_ListStockAlertResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/mall/stock-alerts/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'StockAlertService',
+        method: 'Get',
+      }) as Promise<catalogservicev1_StockAlert>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `admin/v1/mall/stock-alerts/${request.id}`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'PUT', body, {
+        service: 'StockAlertService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type catalogservicev1_ListStockAlertResponse = {
+  items: catalogservicev1_StockAlert[] | undefined;
+  total: number | undefined;
+};
+
+// 库存预警记录
+export type catalogservicev1_StockAlert = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  id?: number;
+  skuId?: number;
+  status?: catalogservicev1_StockAlert_Status;
+  stockQtyAtTrigger?: number;
+  threshold?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 告警状态
+export type catalogservicev1_StockAlert_Status =
+  | 'OPEN'
+  | 'RESOLVED'
+  | 'STATUS_UNSPECIFIED';
+export type catalogservicev1_GetStockAlertRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type catalogservicev1_UpdateStockAlertRequest = {
+  allowMissing?: boolean;
+  data: catalogservicev1_StockAlert | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
 // 调度任务管理服务
 export interface TaskService {
   // 查询调度任务列表
@@ -15683,6 +15886,7 @@ export class ApiClient {
   private _skuAttributeCombinationService?: SkuAttributeCombinationService;
   private _skuPriceService?: SkuPriceService;
   private _skuService?: SkuService;
+  private _stockAlertService?: StockAlertService;
   private _taskService?: TaskService;
   private _taxRateService?: TaxRateService;
   private _tenantService?: TenantService;
@@ -15861,6 +16065,10 @@ export class ApiClient {
 
   get skuService(): SkuService {
     return this._skuService ??= createSkuServiceClient(this._transport);
+  }
+
+  get stockAlertService(): StockAlertService {
+    return this._stockAlertService ??= createStockAlertServiceClient(this._transport);
   }
 
   get taskService(): TaskService {

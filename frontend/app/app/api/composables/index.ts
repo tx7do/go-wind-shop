@@ -25,6 +25,7 @@ export * from './sku-attribute-combination';
 // 交易（购物车 / 订单 / 支付 / 退款）
 export * from './cart';
 export * from './cart-item';
+export * from './wishlist';
 export * from './order';
 export * from './payment-transaction';
 export * from './payment-refund';
@@ -32,8 +33,9 @@ export * from './shipping-address';
 export * from './shipment';
 export * from './message';
 
-// 优惠券（仅本人 List/Get + Quote 试算）
+// 优惠券（仅本人 List/Get + Quote 试算；领券中心浏览可领模板 + Claim 领取）
 export * from './user-coupon';
+export * from './coupon-template';
 
 // 商品评论 + 点赞/计数
 export * from './comment';

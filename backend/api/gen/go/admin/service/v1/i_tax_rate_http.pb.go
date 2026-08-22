@@ -40,15 +40,15 @@ type TaxRateServiceHTTPServer interface {
 
 func RegisterTaxRateServiceHTTPServer(s *http.Server, srv TaxRateServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/tax-rates", _TaxRateService_List38_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/tax-rates", _TaxRateService_List39_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/tax-rates/count", _TaxRateService_Count20_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/tax-rates/{id}", _TaxRateService_Get39_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/tax-rates/{id}", _TaxRateService_Get40_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/tax-rates", _TaxRateService_Create31_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/tax-rates/{id}", _TaxRateService_Update31_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/tax-rates/{id}", _TaxRateService_Update32_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/mall/tax-rates", _TaxRateService_Delete32_HTTP_Handler(srv))
 }
 
-func _TaxRateService_List38_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
+func _TaxRateService_List39_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -86,7 +86,7 @@ func _TaxRateService_Count20_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx
 	}
 }
 
-func _TaxRateService_Get39_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
+func _TaxRateService_Get40_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetTaxRateRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -130,7 +130,7 @@ func _TaxRateService_Create31_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ct
 	}
 }
 
-func _TaxRateService_Update31_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
+func _TaxRateService_Update32_HTTP_Handler(srv TaxRateServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateTaxRateRequest
 		if err := ctx.Bind(&in); err != nil {

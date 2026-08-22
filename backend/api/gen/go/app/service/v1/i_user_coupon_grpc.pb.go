@@ -13,6 +13,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -24,19 +25,24 @@ const (
 	UserCouponService_List_FullMethodName  = "/app.service.v1.UserCouponService/List"
 	UserCouponService_Get_FullMethodName   = "/app.service.v1.UserCouponService/Get"
 	UserCouponService_Quote_FullMethodName = "/app.service.v1.UserCouponService/Quote"
+	UserCouponService_Claim_FullMethodName = "/app.service.v1.UserCouponService/Claim"
 )
 
 // UserCouponServiceClient is the client API for UserCouponService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 //
-// 用户优惠券前台服务（裁剪写 RPC：仅 List/Get/Quote，无 Create/Update/Delete）。
-// 用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+// 用户优惠券前台服务（裁剪版：仅 List/Get/Quote + Claim 领取）。
+// 无 Create/Update/Delete（admin 分配制不可对买家暴露）。
+// List 由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+// Claim 的 user_id 由 core 从 viewer 强制（BFF 只透传 template_id），事务内 ForUpdate 原子校验限领。
 // Quote 试算不持锁不落库，最终抵扣以下单时事务内校验为准。
 type UserCouponServiceClient interface {
 	List(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.ListUserCouponResponse, error)
 	Get(ctx context.Context, in *v11.GetUserCouponRequest, opts ...grpc.CallOption) (*v11.UserCoupon, error)
 	Quote(ctx context.Context, in *v11.QuoteRequest, opts ...grpc.CallOption) (*v11.QuoteResponse, error)
+	// 领取公开可领模板。强制 auth（不入白名单）。
+	Claim(ctx context.Context, in *v11.ClaimCouponRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type userCouponServiceClient struct {
@@ -77,17 +83,31 @@ func (c *userCouponServiceClient) Quote(ctx context.Context, in *v11.QuoteReques
 	return out, nil
 }
 
+func (c *userCouponServiceClient) Claim(ctx context.Context, in *v11.ClaimCouponRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, UserCouponService_Claim_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserCouponServiceServer is the server API for UserCouponService service.
 // All implementations must embed UnimplementedUserCouponServiceServer
 // for forward compatibility.
 //
-// 用户优惠券前台服务（裁剪写 RPC：仅 List/Get/Quote，无 Create/Update/Delete）。
-// 用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+// 用户优惠券前台服务（裁剪版：仅 List/Get/Quote + Claim 领取）。
+// 无 Create/Update/Delete（admin 分配制不可对买家暴露）。
+// List 由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+// Claim 的 user_id 由 core 从 viewer 强制（BFF 只透传 template_id），事务内 ForUpdate 原子校验限领。
 // Quote 试算不持锁不落库，最终抵扣以下单时事务内校验为准。
 type UserCouponServiceServer interface {
 	List(context.Context, *v1.PagingRequest) (*v11.ListUserCouponResponse, error)
 	Get(context.Context, *v11.GetUserCouponRequest) (*v11.UserCoupon, error)
 	Quote(context.Context, *v11.QuoteRequest) (*v11.QuoteResponse, error)
+	// 领取公开可领模板。强制 auth（不入白名单）。
+	Claim(context.Context, *v11.ClaimCouponRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedUserCouponServiceServer()
 }
 
@@ -106,6 +126,9 @@ func (UnimplementedUserCouponServiceServer) Get(context.Context, *v11.GetUserCou
 }
 func (UnimplementedUserCouponServiceServer) Quote(context.Context, *v11.QuoteRequest) (*v11.QuoteResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Quote not implemented")
+}
+func (UnimplementedUserCouponServiceServer) Claim(context.Context, *v11.ClaimCouponRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Claim not implemented")
 }
 func (UnimplementedUserCouponServiceServer) mustEmbedUnimplementedUserCouponServiceServer() {}
 func (UnimplementedUserCouponServiceServer) testEmbeddedByValue()                           {}
@@ -182,6 +205,24 @@ func _UserCouponService_Quote_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserCouponService_Claim_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ClaimCouponRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserCouponServiceServer).Claim(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserCouponService_Claim_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserCouponServiceServer).Claim(ctx, req.(*v11.ClaimCouponRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserCouponService_ServiceDesc is the grpc.ServiceDesc for UserCouponService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -200,6 +241,10 @@ var UserCouponService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Quote",
 			Handler:    _UserCouponService_Quote_Handler,
+		},
+		{
+			MethodName: "Claim",
+			Handler:    _UserCouponService_Claim_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

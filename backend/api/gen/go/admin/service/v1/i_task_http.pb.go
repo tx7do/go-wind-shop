@@ -58,11 +58,11 @@ type TaskServiceHTTPServer interface {
 
 func RegisterTaskServiceHTTPServer(s *http.Server, srv TaskServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/tasks", _TaskService_List37_HTTP_Handler(srv))
-	r.GET("/admin/v1/tasks/type-name/{type_name}", _TaskService_Get37_HTTP_Handler(srv))
-	r.GET("/admin/v1/tasks/{id}", _TaskService_Get38_HTTP_Handler(srv))
+	r.GET("/admin/v1/tasks", _TaskService_List38_HTTP_Handler(srv))
+	r.GET("/admin/v1/tasks/type-name/{type_name}", _TaskService_Get38_HTTP_Handler(srv))
+	r.GET("/admin/v1/tasks/{id}", _TaskService_Get39_HTTP_Handler(srv))
 	r.POST("/admin/v1/tasks", _TaskService_Create30_HTTP_Handler(srv))
-	r.PUT("/admin/v1/tasks/{id}", _TaskService_Update30_HTTP_Handler(srv))
+	r.PUT("/admin/v1/tasks/{id}", _TaskService_Update31_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/tasks/{id}", _TaskService_Delete31_HTTP_Handler(srv))
 	r.GET("/admin/v1/tasks:type-names", _TaskService_ListTaskTypeName0_HTTP_Handler(srv))
 	r.POST("/admin/v1/tasks:restart", _TaskService_RestartAllTask0_HTTP_Handler(srv))
@@ -71,7 +71,7 @@ func RegisterTaskServiceHTTPServer(s *http.Server, srv TaskServiceHTTPServer) {
 	r.POST("/admin/v1/tasks:control", _TaskService_ControlTask0_HTTP_Handler(srv))
 }
 
-func _TaskService_List37_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.Context) error {
+func _TaskService_List38_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -90,7 +90,7 @@ func _TaskService_List37_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.C
 	}
 }
 
-func _TaskService_Get37_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.Context) error {
+func _TaskService_Get38_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetTaskRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -112,7 +112,7 @@ func _TaskService_Get37_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.Co
 	}
 }
 
-func _TaskService_Get38_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.Context) error {
+func _TaskService_Get39_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetTaskRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -156,7 +156,7 @@ func _TaskService_Create30_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http
 	}
 }
 
-func _TaskService_Update30_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.Context) error {
+func _TaskService_Update31_HTTP_Handler(srv TaskServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateTaskRequest
 		if err := ctx.Bind(&in); err != nil {

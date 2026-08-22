@@ -129,6 +129,11 @@ func RedeemedCount(v int32) predicate.CouponTemplate {
 	return predicate.CouponTemplate(sql.FieldEQ(FieldRedeemedCount, v))
 }
 
+// Claimable applies equality check predicate on the "claimable" field. It's identical to ClaimableEQ.
+func Claimable(v bool) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldEQ(FieldClaimable, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.CouponTemplate {
 	return predicate.CouponTemplate(sql.FieldEQ(FieldCreatedAt, v))
@@ -962,6 +967,26 @@ func StatusIsNil() predicate.CouponTemplate {
 // StatusNotNil applies the NotNil predicate on the "status" field.
 func StatusNotNil() predicate.CouponTemplate {
 	return predicate.CouponTemplate(sql.FieldNotNull(FieldStatus))
+}
+
+// ClaimableEQ applies the EQ predicate on the "claimable" field.
+func ClaimableEQ(v bool) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldEQ(FieldClaimable, v))
+}
+
+// ClaimableNEQ applies the NEQ predicate on the "claimable" field.
+func ClaimableNEQ(v bool) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldNEQ(FieldClaimable, v))
+}
+
+// ClaimableIsNil applies the IsNil predicate on the "claimable" field.
+func ClaimableIsNil() predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldIsNull(FieldClaimable))
+}
+
+// ClaimableNotNil applies the NotNil predicate on the "claimable" field.
+func ClaimableNotNil() predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldNotNull(FieldClaimable))
 }
 
 // And groups predicates with the AND operator between them.

@@ -1311,6 +1311,107 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/mall/invoices:
+        get:
+            tags:
+                - InvoiceService
+            operationId: InvoiceService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/invoice.service.v1.ListInvoiceResponse'
+    /app/v1/mall/invoices/{id}:
+        get:
+            tags:
+                - InvoiceService
+            operationId: InvoiceService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/invoice.service.v1.Invoice'
     /app/v1/mall/messages:
         get:
             tags:
@@ -2507,6 +2608,38 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/catalog.service.v1.ListProductResponse'
+    /app/v1/mall/products/search:
+        get:
+            tags:
+                - ProductService
+            description: 搜索商品（Elasticsearch 全文检索）
+            operationId: ProductService_SearchProducts
+            parameters:
+                - name: query
+                  in: query
+                  schema:
+                    type: string
+                - name: language
+                  in: query
+                  schema:
+                    type: string
+                - name: page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.SearchProductsResponse'
     /app/v1/mall/products/{id}:
         get:
             tags:
@@ -2540,6 +2673,26 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/catalog.service.v1.Product'
+    /app/v1/mall/products/{productId}/rating:
+        get:
+            tags:
+                - CommentService
+            description: 商品评分聚合（只读，匿名可读——白名单登记）。
+            operationId: CommentService_GetProductRating
+            parameters:
+                - name: productId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/comment.service.v1.ProductRatingSummary'
     /app/v1/mall/shipments:
         get:
             tags:
@@ -3073,6 +3226,111 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/coupon.service.v1.UserCoupon'
+    /app/v1/mall/wishlist:
+        get:
+            tags:
+                - WishlistService
+            operationId: WishlistService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/wishlist.service.v1.ListWishlistResponse'
+        post:
+            tags:
+                - WishlistService
+            operationId: WishlistService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/wishlist.service.v1.CreateWishlistRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - WishlistService
+            operationId: WishlistService_Delete
+            parameters:
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /app/v1/me:
         get:
             tags:
@@ -4294,6 +4552,32 @@ components:
                     description: 删除时间
                     format: date-time
             description: 商品翻译
+        catalog.service.v1.SearchProductHit:
+            type: object
+            properties:
+                productId:
+                    type: integer
+                    description: 商品ID（用于后续 GetProduct 详情查询）
+                    format: uint32
+                language:
+                    type: string
+                    description: 语言代码
+                name:
+                    type: string
+                    description: 商品名称（来自翻译，用于搜索结果展示）
+                imageUrl:
+                    type: string
+                    description: 商品主图URL（locale无关，用于搜索结果展示）
+        catalog.service.v1.SearchProductsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.SearchProductHit'
+                total:
+                    type: integer
+                    format: int32
         catalog.service.v1.Sku:
             type: object
             properties:
@@ -4451,6 +4735,10 @@ components:
                     type: string
                     description: 评论状态
                     format: enum
+                rating:
+                    type: integer
+                    description: 评分1-5
+                    format: uint32
                 parentId:
                     type: integer
                     description: 父节点ID
@@ -4505,6 +4793,17 @@ components:
                 total:
                     type: string
             description: 回应 - 评论列表
+        comment.service.v1.ProductRatingSummary:
+            type: object
+            properties:
+                average:
+                    type: number
+                    description: 平均评分（0-5，无评分时为0）
+                    format: double
+                count:
+                    type: string
+                    description: 已批准评分数（含无评分的评论）
+            description: 响应 - 商品评分聚合（仅统计已批准评论）
         comment.service.v1.UpdateCommentRequest:
             type: object
             properties:
@@ -5101,6 +5400,98 @@ components:
                         type: integer
                         format: uint32
                     description: 收件箱记录ID列表
+        invoice.service.v1.Invoice:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 发票ID
+                    format: uint32
+                orderId:
+                    type: integer
+                    description: 关联的订单ID
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 归属用户ID（由隐私层强制）
+                    format: uint32
+                invoiceNumber:
+                    type: string
+                    description: 发票号
+                invoiceType:
+                    enum:
+                        - INVOICE_TYPE_UNSPECIFIED
+                        - VAT_GENERAL
+                        - VAT_SPECIAL
+                        - ELECTRONIC
+                    type: string
+                    description: 发票类型
+                    format: enum
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - PENDING
+                        - ISSUED
+                        - CANCELLED
+                    type: string
+                    description: 开票状态
+                    format: enum
+                buyerName:
+                    type: string
+                    description: 购方名称
+                buyerTaxId:
+                    type: string
+                    description: 购方税号
+                buyerAddress:
+                    type: string
+                    description: 购方地址
+                buyerPhone:
+                    type: string
+                    description: 购方电话
+                amount:
+                    type: string
+                    description: 开票金额（最小货币单位，分）
+                currency:
+                    type: string
+                    description: 币种（ISO 4217）
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 发票
+        invoice.service.v1.ListInvoiceResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/invoice.service.v1.Invoice'
+                total:
+                    type: string
         order.service.v1.CountOrderItemResponse:
             type: object
             properties:
@@ -5679,6 +6070,64 @@ components:
                 presignedUrl:
                     type: string
                     description: 预签名上传链接
+        wishlist.service.v1.CreateWishlistRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/wishlist.service.v1.Wishlist'
+        wishlist.service.v1.ListWishlistResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/wishlist.service.v1.Wishlist'
+                total:
+                    type: string
+        wishlist.service.v1.Wishlist:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 收藏项ID
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 用户ID（由隐私层强制，不可伪造）
+                    format: uint32
+                productId:
+                    type: integer
+                    description: 关联的商品ID
+                    format: uint32
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 收藏项
     responses:
         default:
             description: default kratos response
@@ -5711,8 +6160,9 @@ tags:
       description: |-
         商品评论前台服务。
          List/Get 在 BFF 层过滤 STATUS_APPROVED（未审核/拒绝/垃圾对前台不可见）；
-         Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）；
-         用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+         Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）。
+         评论为公开内容，仅由 TenantPrivacy 做租户隔离（同租户内可见），
+         不挂 UserPrivacy（详见 core Comment schema 文档）。
     - name: FileTransferService
       description: 文件传输服务
     - name: InteractionService
@@ -5725,6 +6175,11 @@ tags:
         站内信收件箱前台服务（BFF 网关，REST）
          仅暴露收件视角：查收件箱、标记已读、删除。所有操作的 user_id 由网关从登录态
          强制注入，客户端无法读取/操作他人收件箱。
+    - name: InvoiceService
+      description: |-
+        发票前台服务（裁剪写 RPC：仅 List/Get，无 Create/Update/Delete）。
+         用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+         用户不能自己开发票，只能查看自己订单的发票。
     - name: OrderItemService
       description: 订单项前台服务
     - name: OrderService
@@ -5757,3 +6212,7 @@ tags:
       description: "用户优惠券前台服务（裁剪写 RPC：仅 List/Get/Quote，无 Create/Update/Delete）。\r\n 用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。\r\n Quote 试算不持锁不落库，最终抵扣以下单时事务内校验为准。"
     - name: UserProfileService
       description: 用户个人资料服务
+    - name: WishlistService
+      description: |-
+        收藏夹前台服务（裁剪版：仅 List/Create/Delete）。
+         user_id 由后端 UserPrivacy 隐私层强制，客户端不可伪造。

@@ -102,6 +102,8 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	userCouponService := service.NewUserCouponService(context, userCouponServiceClient)
 	shippingRateServiceClient := data.NewShippingRateServiceClient(context, discovery)
 	shippingRateService := service.NewShippingRateService(context, shippingRateServiceClient)
+	stockAlertServiceClient := data.NewStockAlertServiceClient(context, discovery)
+	stockAlertService := service.NewStockAlertService(context, stockAlertServiceClient)
 	taxRateServiceClient := data.NewTaxRateServiceClient(context, discovery)
 	taxRateService := service.NewTaxRateService(context, taxRateServiceClient)
 	commentServiceClient := data.NewCommentServiceClient(context, discovery)
@@ -129,7 +131,7 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	operationAuditLogService := service.NewOperationAuditLogService(context, operationAuditLogServiceClient)
 	permissionAuditLogServiceClient := data.NewPermissionAuditLogServiceClient(context, discovery)
 	permissionAuditLogService := service.NewPermissionAuditLogService(context, permissionAuditLogServiceClient)
-	httpServer := server.NewRestServer(context, v, userService, userProfileService, roleService, tenantService, orgUnitService, positionService, menuService, apiService, permissionGroupService, permissionService, adminPortalService, taskService, authenticationService, loginPolicyService, languageService, categoryService, brandService, productService, productAttributeService, productAttributeValueService, skuService, skuPriceService, skuAttributeCombinationService, cartService, cartItemService, orderService, orderItemService, paymentTransactionService, paymentRefundService, shipmentService, couponTemplateService, userCouponService, shippingRateService, taxRateService, commentService, interactionAdminService, invoiceService, fileService, fileTransferService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService)
+	httpServer := server.NewRestServer(context, v, userService, userProfileService, roleService, tenantService, orgUnitService, positionService, menuService, apiService, permissionGroupService, permissionService, adminPortalService, taskService, authenticationService, loginPolicyService, languageService, categoryService, brandService, productService, productAttributeService, productAttributeValueService, skuService, skuPriceService, skuAttributeCombinationService, cartService, cartItemService, orderService, orderItemService, paymentTransactionService, paymentRefundService, shipmentService, couponTemplateService, userCouponService, shippingRateService, stockAlertService, taxRateService, commentService, interactionAdminService, invoiceService, fileService, fileTransferService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, apiAuditLogService, dataAccessAuditLogService, loginAuditLogService, policyEvaluationLogService, operationAuditLogService, permissionAuditLogService)
 	grpcMiddlewares := server.NewGrpcMiddleware(context)
 	grpcServer, err := server.NewGrpcServer(context, grpcMiddlewares)
 	if err != nil {

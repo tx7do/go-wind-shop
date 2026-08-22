@@ -31,11 +31,11 @@ type InvoiceServiceHTTPServer interface {
 
 func RegisterInvoiceServiceHTTPServer(s *http.Server, srv InvoiceServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/mall/invoices", _InvoiceService_List5_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/invoices", _InvoiceService_List6_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/invoices/{id}", _InvoiceService_Get5_HTTP_Handler(srv))
 }
 
-func _InvoiceService_List5_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx http.Context) error {
+func _InvoiceService_List6_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

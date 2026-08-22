@@ -190,6 +190,20 @@ func (_c *CommentCreate) SetNillableStatus(v *comment.Status) *CommentCreate {
 	return _c
 }
 
+// SetRating sets the "rating" field.
+func (_c *CommentCreate) SetRating(v uint8) *CommentCreate {
+	_c.mutation.SetRating(v)
+	return _c
+}
+
+// SetNillableRating sets the "rating" field if the given value is not nil.
+func (_c *CommentCreate) SetNillableRating(v *uint8) *CommentCreate {
+	if v != nil {
+		_c.SetRating(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *CommentCreate) SetID(v uint32) *CommentCreate {
 	_c.mutation.SetID(v)
@@ -353,6 +367,10 @@ func (_c *CommentCreate) createSpec() (*Comment, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(comment.FieldStatus, field.TypeEnum, value)
 		_node.Status = &value
+	}
+	if value, ok := _c.mutation.Rating(); ok {
+		_spec.SetField(comment.FieldRating, field.TypeUint8, value)
+		_node.Rating = &value
 	}
 	if nodes := _c.mutation.ParentIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -640,6 +658,30 @@ func (u *CommentUpsert) UpdateStatus() *CommentUpsert {
 // ClearStatus clears the value of the "status" field.
 func (u *CommentUpsert) ClearStatus() *CommentUpsert {
 	u.SetNull(comment.FieldStatus)
+	return u
+}
+
+// SetRating sets the "rating" field.
+func (u *CommentUpsert) SetRating(v uint8) *CommentUpsert {
+	u.Set(comment.FieldRating, v)
+	return u
+}
+
+// UpdateRating sets the "rating" field to the value that was provided on create.
+func (u *CommentUpsert) UpdateRating() *CommentUpsert {
+	u.SetExcluded(comment.FieldRating)
+	return u
+}
+
+// AddRating adds v to the "rating" field.
+func (u *CommentUpsert) AddRating(v uint8) *CommentUpsert {
+	u.Add(comment.FieldRating, v)
+	return u
+}
+
+// ClearRating clears the value of the "rating" field.
+func (u *CommentUpsert) ClearRating() *CommentUpsert {
+	u.SetNull(comment.FieldRating)
 	return u
 }
 
@@ -932,6 +974,34 @@ func (u *CommentUpsertOne) UpdateStatus() *CommentUpsertOne {
 func (u *CommentUpsertOne) ClearStatus() *CommentUpsertOne {
 	return u.Update(func(s *CommentUpsert) {
 		s.ClearStatus()
+	})
+}
+
+// SetRating sets the "rating" field.
+func (u *CommentUpsertOne) SetRating(v uint8) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetRating(v)
+	})
+}
+
+// AddRating adds v to the "rating" field.
+func (u *CommentUpsertOne) AddRating(v uint8) *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.AddRating(v)
+	})
+}
+
+// UpdateRating sets the "rating" field to the value that was provided on create.
+func (u *CommentUpsertOne) UpdateRating() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateRating()
+	})
+}
+
+// ClearRating clears the value of the "rating" field.
+func (u *CommentUpsertOne) ClearRating() *CommentUpsertOne {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearRating()
 	})
 }
 
@@ -1390,6 +1460,34 @@ func (u *CommentUpsertBulk) UpdateStatus() *CommentUpsertBulk {
 func (u *CommentUpsertBulk) ClearStatus() *CommentUpsertBulk {
 	return u.Update(func(s *CommentUpsert) {
 		s.ClearStatus()
+	})
+}
+
+// SetRating sets the "rating" field.
+func (u *CommentUpsertBulk) SetRating(v uint8) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.SetRating(v)
+	})
+}
+
+// AddRating adds v to the "rating" field.
+func (u *CommentUpsertBulk) AddRating(v uint8) *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.AddRating(v)
+	})
+}
+
+// UpdateRating sets the "rating" field to the value that was provided on create.
+func (u *CommentUpsertBulk) UpdateRating() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.UpdateRating()
+	})
+}
+
+// ClearRating clears the value of the "rating" field.
+func (u *CommentUpsertBulk) ClearRating() *CommentUpsertBulk {
+	return u.Update(func(s *CommentUpsert) {
+		s.ClearRating()
 	})
 }
 

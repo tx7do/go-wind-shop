@@ -324,6 +324,7 @@ const (
 	UserCouponService_Update_FullMethodName = "/coupon.service.v1.UserCouponService/Update"
 	UserCouponService_Delete_FullMethodName = "/coupon.service.v1.UserCouponService/Delete"
 	UserCouponService_Quote_FullMethodName  = "/coupon.service.v1.UserCouponService/Quote"
+	UserCouponService_Claim_FullMethodName  = "/coupon.service.v1.UserCouponService/Claim"
 )
 
 // UserCouponServiceClient is the client API for UserCouponService service.
@@ -341,6 +342,9 @@ type UserCouponServiceClient interface {
 	// 试算（报价预览）：给定券实例 ID，在当前登录用户的购物车快照上计算折前/折后金额，
 	// 不持锁、不落库。最终抵扣以下单时事务内校验为准。
 	Quote(ctx context.Context, in *QuoteRequest, opts ...grpc.CallOption) (*QuoteResponse, error)
+	// 领取：买家自助领取公开可领模板（claimable=true）。
+	// user_id 由 core 从 viewer 强制（不从请求取），事务内 ForUpdate 锁模板 + per-user 限领原子校验。
+	Claim(ctx context.Context, in *ClaimCouponRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type userCouponServiceClient struct {
@@ -421,6 +425,16 @@ func (c *userCouponServiceClient) Quote(ctx context.Context, in *QuoteRequest, o
 	return out, nil
 }
 
+func (c *userCouponServiceClient) Claim(ctx context.Context, in *ClaimCouponRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, UserCouponService_Claim_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserCouponServiceServer is the server API for UserCouponService service.
 // All implementations must embed UnimplementedUserCouponServiceServer
 // for forward compatibility.
@@ -436,6 +450,9 @@ type UserCouponServiceServer interface {
 	// 试算（报价预览）：给定券实例 ID，在当前登录用户的购物车快照上计算折前/折后金额，
 	// 不持锁、不落库。最终抵扣以下单时事务内校验为准。
 	Quote(context.Context, *QuoteRequest) (*QuoteResponse, error)
+	// 领取：买家自助领取公开可领模板（claimable=true）。
+	// user_id 由 core 从 viewer 强制（不从请求取），事务内 ForUpdate 锁模板 + per-user 限领原子校验。
+	Claim(context.Context, *ClaimCouponRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedUserCouponServiceServer()
 }
 
@@ -466,6 +483,9 @@ func (UnimplementedUserCouponServiceServer) Delete(context.Context, *DeleteUserC
 }
 func (UnimplementedUserCouponServiceServer) Quote(context.Context, *QuoteRequest) (*QuoteResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Quote not implemented")
+}
+func (UnimplementedUserCouponServiceServer) Claim(context.Context, *ClaimCouponRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method Claim not implemented")
 }
 func (UnimplementedUserCouponServiceServer) mustEmbedUnimplementedUserCouponServiceServer() {}
 func (UnimplementedUserCouponServiceServer) testEmbeddedByValue()                           {}
@@ -614,6 +634,24 @@ func _UserCouponService_Quote_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserCouponService_Claim_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClaimCouponRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserCouponServiceServer).Claim(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: UserCouponService_Claim_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserCouponServiceServer).Claim(ctx, req.(*ClaimCouponRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserCouponService_ServiceDesc is the grpc.ServiceDesc for UserCouponService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -648,6 +686,10 @@ var UserCouponService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Quote",
 			Handler:    _UserCouponService_Quote_Handler,
+		},
+		{
+			MethodName: "Claim",
+			Handler:    _UserCouponService_Claim_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

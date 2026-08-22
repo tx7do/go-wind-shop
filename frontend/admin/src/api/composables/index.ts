@@ -70,6 +70,7 @@ export * from "./shipment";
 // 运费模板与税率规则管理 (Mall / Shipping Rate & Tax Rate)
 export * from "./shipping-rate";
 export * from "./tax-rate";
+export * from "./stock-alert";
 
 // 优惠券管理 (Mall / Coupon)
 export * from "./coupon-template";

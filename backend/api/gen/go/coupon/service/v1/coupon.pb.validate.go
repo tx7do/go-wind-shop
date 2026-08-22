@@ -159,6 +159,10 @@ func (m *CouponTemplate) validate(all bool) error {
 		// no validation rules for Currency
 	}
 
+	if m.Claimable != nil {
+		// no validation rules for Claimable
+	}
+
 	if m.TenantId != nil {
 		// no validation rules for TenantId
 	}
@@ -2465,3 +2469,107 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = QuoteResponseValidationError{}
+
+// Validate checks the field values on ClaimCouponRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ClaimCouponRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ClaimCouponRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ClaimCouponRequestMultiError, or nil if none found.
+func (m *ClaimCouponRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ClaimCouponRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CouponTemplateId
+
+	if len(errors) > 0 {
+		return ClaimCouponRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ClaimCouponRequestMultiError is an error wrapping multiple validation errors
+// returned by ClaimCouponRequest.ValidateAll() if the designated constraints
+// aren't met.
+type ClaimCouponRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ClaimCouponRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ClaimCouponRequestMultiError) AllErrors() []error { return m }
+
+// ClaimCouponRequestValidationError is the validation error returned by
+// ClaimCouponRequest.Validate if the designated constraints aren't met.
+type ClaimCouponRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ClaimCouponRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ClaimCouponRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ClaimCouponRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ClaimCouponRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ClaimCouponRequestValidationError) ErrorName() string {
+	return "ClaimCouponRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ClaimCouponRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sClaimCouponRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ClaimCouponRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ClaimCouponRequestValidationError{}

@@ -21,12 +21,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CommentService_List_FullMethodName   = "/comment.service.v1.CommentService/List"
-	CommentService_Count_FullMethodName  = "/comment.service.v1.CommentService/Count"
-	CommentService_Get_FullMethodName    = "/comment.service.v1.CommentService/Get"
-	CommentService_Create_FullMethodName = "/comment.service.v1.CommentService/Create"
-	CommentService_Update_FullMethodName = "/comment.service.v1.CommentService/Update"
-	CommentService_Delete_FullMethodName = "/comment.service.v1.CommentService/Delete"
+	CommentService_List_FullMethodName             = "/comment.service.v1.CommentService/List"
+	CommentService_Count_FullMethodName            = "/comment.service.v1.CommentService/Count"
+	CommentService_Get_FullMethodName              = "/comment.service.v1.CommentService/Get"
+	CommentService_Create_FullMethodName           = "/comment.service.v1.CommentService/Create"
+	CommentService_Update_FullMethodName           = "/comment.service.v1.CommentService/Update"
+	CommentService_Delete_FullMethodName           = "/comment.service.v1.CommentService/Delete"
+	CommentService_GetProductRating_FullMethodName = "/comment.service.v1.CommentService/GetProductRating"
 )
 
 // CommentServiceClient is the client API for CommentService service.
@@ -47,6 +48,8 @@ type CommentServiceClient interface {
 	Update(ctx context.Context, in *UpdateCommentRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 删除评论
 	Delete(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取商品评分聚合（AVG + COUNT over 已批准评论）
+	GetProductRating(ctx context.Context, in *GetProductRatingRequest, opts ...grpc.CallOption) (*ProductRatingSummary, error)
 }
 
 type commentServiceClient struct {
@@ -117,6 +120,16 @@ func (c *commentServiceClient) Delete(ctx context.Context, in *DeleteCommentRequ
 	return out, nil
 }
 
+func (c *commentServiceClient) GetProductRating(ctx context.Context, in *GetProductRatingRequest, opts ...grpc.CallOption) (*ProductRatingSummary, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProductRatingSummary)
+	err := c.cc.Invoke(ctx, CommentService_GetProductRating_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommentServiceServer is the server API for CommentService service.
 // All implementations must embed UnimplementedCommentServiceServer
 // for forward compatibility.
@@ -135,6 +148,8 @@ type CommentServiceServer interface {
 	Update(context.Context, *UpdateCommentRequest) (*emptypb.Empty, error)
 	// 删除评论
 	Delete(context.Context, *DeleteCommentRequest) (*emptypb.Empty, error)
+	// 获取商品评分聚合（AVG + COUNT over 已批准评论）
+	GetProductRating(context.Context, *GetProductRatingRequest) (*ProductRatingSummary, error)
 	mustEmbedUnimplementedCommentServiceServer()
 }
 
@@ -162,6 +177,9 @@ func (UnimplementedCommentServiceServer) Update(context.Context, *UpdateCommentR
 }
 func (UnimplementedCommentServiceServer) Delete(context.Context, *DeleteCommentRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedCommentServiceServer) GetProductRating(context.Context, *GetProductRatingRequest) (*ProductRatingSummary, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetProductRating not implemented")
 }
 func (UnimplementedCommentServiceServer) mustEmbedUnimplementedCommentServiceServer() {}
 func (UnimplementedCommentServiceServer) testEmbeddedByValue()                        {}
@@ -292,6 +310,24 @@ func _CommentService_Delete_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CommentService_GetProductRating_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProductRatingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommentServiceServer).GetProductRating(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CommentService_GetProductRating_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommentServiceServer).GetProductRating(ctx, req.(*GetProductRatingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CommentService_ServiceDesc is the grpc.ServiceDesc for CommentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -322,6 +358,10 @@ var CommentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _CommentService_Delete_Handler,
+		},
+		{
+			MethodName: "GetProductRating",
+			Handler:    _CommentService_GetProductRating_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

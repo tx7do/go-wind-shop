@@ -10,8 +10,9 @@ import "comment/service/v1/comment.proto";
 
 // 商品评论前台服务。
 // List/Get 在 BFF 层过滤 STATUS_APPROVED（未审核/拒绝/垃圾对前台不可见）；
-// Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）；
-// 用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+// Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）。
+// 评论为公开内容，仅由 TenantPrivacy 做租户隔离（同租户内可见），
+// 不挂 UserPrivacy（详见 core Comment schema 文档）。
 service CommentService {
   rpc List (pagination.PagingRequest) returns (comment.service.v1.ListCommentResponse) {
     option (google.api.http) = {
@@ -42,6 +43,13 @@ service CommentService {
   rpc Delete (comment.service.v1.DeleteCommentRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/app/v1/mall/comments"
+    };
+  }
+
+  // 商品评分聚合（只读，匿名可读——白名单登记）。
+  rpc GetProductRating (comment.service.v1.GetProductRatingRequest) returns (comment.service.v1.ProductRatingSummary) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/products/{product_id}/rating"
     };
   }
 }

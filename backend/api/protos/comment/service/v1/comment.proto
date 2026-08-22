@@ -31,6 +31,9 @@ service CommentService {
 
   // 删除评论
   rpc Delete (DeleteCommentRequest) returns (google.protobuf.Empty) {}
+
+  // 获取商品评分聚合（AVG + COUNT over 已批准评论）
+  rpc GetProductRating (GetProductRatingRequest) returns (ProductRatingSummary) {}
 }
 
 // 商品评论
@@ -76,6 +79,11 @@ message Comment {
     json_name = "status",
     (gnostic.openapi.v3.property) = {description: "评论状态"}
   ]; // 评论状态
+
+  optional uint32 rating = 6 [
+    json_name = "rating",
+    (gnostic.openapi.v3.property) = {description: "评分1-5"}
+  ]; // 评分（1-5，仅顶级评论可携带，回复无意义）
 
   optional uint32 parent_id = 500 [json_name = "parentId", (gnostic.openapi.v3.property) = {description: "父节点ID"}];  // 父节点ID
   repeated Comment children = 501 [json_name = "children", (gnostic.openapi.v3.property) = {description: "子节点树"}];  // 子节点树
@@ -150,4 +158,15 @@ message DeleteCommentRequest {
 
 message CountCommentResponse {
   uint64 count = 1;
+}
+
+// 请求 - 商品评分聚合
+message GetProductRatingRequest {
+  uint32 product_id = 1 [json_name = "productId", (gnostic.openapi.v3.property) = {description: "商品ID"}];
+}
+
+// 响应 - 商品评分聚合（仅统计已批准评论）
+message ProductRatingSummary {
+  double average = 1 [json_name = "average", (gnostic.openapi.v3.property) = {description: "平均评分（0-5，无评分时为0）"}];
+  uint64 count = 2 [json_name = "count", (gnostic.openapi.v3.property) = {description: "已批准评分数（含无评分的评论）"}];
 }

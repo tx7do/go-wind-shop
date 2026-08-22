@@ -76,6 +76,12 @@
       "update": "Edit SKU"
     }
   },
+  "lowStock": {
+    "moduleName": "Low-Stock Management",
+    "title": "Low-Stock Management",
+    "threshold": "Stock Threshold",
+    "alert": "This is a low-stock monitoring view showing SKUs whose stock is below the threshold. The threshold matches the scan threshold of the stock-alert periodic task; use this view to locate items needing restock."
+  },
   "order": {
     "moduleName": "Order Management",
     "title": "Order Management",
@@ -211,6 +217,7 @@
     "maxRedemptionsPerUser": "Max Redemptions Per User",
     "redeemedCount": "Redeemed Count",
     "status": "Status",
+    "claimable": "Claimable",
     "currency": "Currency",
     "createdAt": "Created At",
     "button": {
@@ -230,6 +237,23 @@
     "button": {
       "create": "Create Shipping Rate",
       "update": "Edit Shipping Rate"
+    }
+  },
+  "stockAlert": {
+    "moduleName": "Stock Alert",
+    "title": "Stock Alert Management",
+    "skuId": "SKU ID",
+    "stockQtyAtTrigger": "Stock At Trigger",
+    "threshold": "Threshold",
+    "status": "Status",
+    "createdAt": "Created At",
+    "alert": "This view lists stock-alert records persisted by the periodic scan task. Alerts can only be marked resolved; they cannot be created or deleted.",
+    "statusLabel": {
+      "OPEN": "Open",
+      "RESOLVED": "Resolved"
+    },
+    "button": {
+      "update": "Resolve Alert"
     }
   },
   "taxRate": {

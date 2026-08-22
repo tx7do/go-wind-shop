@@ -77,3 +77,7 @@ func (s *CommentService) Delete(ctx context.Context, req *commentV1.DeleteCommen
 	}
 	return &emptypb.Empty{}, nil
 }
+
+func (s *CommentService) GetProductRating(ctx context.Context, req *commentV1.GetProductRatingRequest) (*commentV1.ProductRatingSummary, error) {
+	return s.repo.GetProductRating(ctx, req.GetProductId())
+}

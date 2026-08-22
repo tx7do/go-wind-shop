@@ -62,7 +62,9 @@
     "couponTemplate": "优惠券模板",
     "userCoupon": "用户优惠券",
     "comment": "评论审核",
-    "invoice": "发票"
+    "invoice": "发票",
+    "lowStock": "低库存管理台",
+    "stockAlert": "库存预警管理"
   },
   "tenant": {
     "moduleName": "租户管理",

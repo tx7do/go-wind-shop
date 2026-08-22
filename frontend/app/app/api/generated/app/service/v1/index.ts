@@ -1643,8 +1643,9 @@ export type catalogservicev1_GetCategoryRequest = {
 
 // 商品评论前台服务。
 // List/Get 在 BFF 层过滤 STATUS_APPROVED（未审核/拒绝/垃圾对前台不可见）；
-// Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）；
-// 用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+// Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）。
+// 评论为公开内容，仅由 TenantPrivacy 做租户隔离（同租户内可见），
+// 不挂 UserPrivacy（详见 core Comment schema 文档）。
 export interface CommentService {
   List(
     request: pagination_PagingRequest,
@@ -1661,6 +1662,10 @@ export interface CommentService {
   Delete(
     request: commentservicev1_DeleteCommentRequest,
   ): Promise<wellKnownEmpty>;
+  // 商品评分聚合（只读，匿名可读——白名单登记）。
+  GetProductRating(
+    request: commentservicev1_GetProductRatingRequest,
+  ): Promise<commentservicev1_ProductRatingSummary>;
 }
 
 export function createCommentServiceClient(
@@ -1840,6 +1845,17 @@ export function createCommentServiceClient(
         method: 'Delete',
       }) as Promise<wellKnownEmpty>;
     },
+    GetProductRating(request) {
+      if (request.productId === undefined || request.productId === null) {
+        throw new Error('missing required field request.product_id');
+      }
+      const path = `app/v1/mall/products/${request.productId}/rating`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'CommentService',
+        method: 'GetProductRating',
+      }) as Promise<commentservicev1_ProductRatingSummary>;
+    },
   };
 }
 // 回应 - 评论列表
@@ -1860,6 +1876,7 @@ export type commentservicev1_Comment = {
   id?: number;
   objectId?: number;
   parentId?: number;
+  rating?: number;
   status?: commentservicev1_Comment_Status;
   tenantId?: number;
   updatedAt?: wellKnownTimestamp;
@@ -1901,6 +1918,187 @@ export type commentservicev1_DeleteCommentRequest = {
   id?: number;
 };
 
+// 请求 - 商品评分聚合
+export type commentservicev1_GetProductRatingRequest = {
+  productId: number | undefined;
+};
+
+// 响应 - 商品评分聚合（仅统计已批准评论）
+export type commentservicev1_ProductRatingSummary = {
+  average: number | undefined;
+  count: number | undefined;
+};
+
+// 优惠券模板前台服务（裁剪版：仅 List，无 Create/Update/Delete/Get/Count）。
+// 领券中心浏览公开可领模板。core 侧 ListClaimable 在 repo 层用
+// claimable=true AND status=ACTIVE 谓词过滤 + service 层后过滤有效窗口，
+// 故前端无需带过滤参数——返回的均为当前可领模板。
+// 匿名可读（rest_server 白名单登记），仿商品 List。
+export interface CouponTemplateService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<couponservicev1_ListCouponTemplateResponse>;
+}
+
+export function createCouponTemplateServiceClient(
+  transport: ClientTransport,
+): CouponTemplateService {
+  return {
+    List(request) {
+      const path = `app/v1/mall/coupon-templates`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'CouponTemplateService',
+        method: 'List',
+      }) as Promise<couponservicev1_ListCouponTemplateResponse>;
+    },
+  };
+}
+export type couponservicev1_ListCouponTemplateResponse = {
+  items: couponservicev1_CouponTemplate[] | undefined;
+  total: number | undefined;
+};
+
+// 优惠券模板
+export type couponservicev1_CouponTemplate = {
+  claimable?: boolean;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  currency?: string;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  discountPercentage?: number;
+  discountType?: couponservicev1_CouponTemplate_DiscountType;
+  discountValue?: number;
+  id?: number;
+  maxRedemptions?: number;
+  maxRedemptionsPerUser?: number;
+  redeemedCount?: number;
+  status?: couponservicev1_CouponTemplate_Status;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  validFrom?: wellKnownTimestamp;
+  validUntil?: wellKnownTimestamp;
+};
+
+// 抵扣类型
+export type couponservicev1_CouponTemplate_DiscountType =
+  | 'DISCOUNT_TYPE_UNSPECIFIED'
+  | 'FIXED_AMOUNT'
+  | 'PERCENTAGE';
+// 模板状态
+export type couponservicev1_CouponTemplate_Status =
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'STATUS_UNSPECIFIED';
 // 文件传输服务
 export interface FileTransferService {
   // 下载文件
@@ -5716,8 +5914,10 @@ export type catalogservicev1_GetSkuAttributeCombinationRequest = {
   viewMask?: wellKnownFieldMask;
 };
 
-// 用户优惠券前台服务（裁剪写 RPC：仅 List/Get/Quote，无 Create/Update/Delete）。
-// 用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+// 用户优惠券前台服务（裁剪版：仅 List/Get/Quote + Claim 领取）。
+// 无 Create/Update/Delete（admin 分配制不可对买家暴露）。
+// List 由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
+// Claim 的 user_id 由 core 从 viewer 强制（BFF 只透传 template_id），事务内 ForUpdate 原子校验限领。
 // Quote 试算不持锁不落库，最终抵扣以下单时事务内校验为准。
 export interface UserCouponService {
   List(
@@ -5729,6 +5929,10 @@ export interface UserCouponService {
   Quote(
     request: couponservicev1_QuoteRequest,
   ): Promise<couponservicev1_QuoteResponse>;
+  // 领取公开可领模板。强制 auth（不入白名单）。
+  Claim(
+    request: couponservicev1_ClaimCouponRequest,
+  ): Promise<wellKnownEmpty>;
 }
 
 export function createUserCouponServiceClient(
@@ -5879,6 +6083,14 @@ export function createUserCouponServiceClient(
         method: 'Quote',
       }) as Promise<couponservicev1_QuoteResponse>;
     },
+    Claim(request) {
+      const path = `app/v1/mall/user-coupons/claim`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'UserCouponService',
+        method: 'Claim',
+      }) as Promise<wellKnownEmpty>;
+    },
   };
 }
 export type couponservicev1_ListUserCouponResponse = {
@@ -5924,6 +6136,12 @@ export type couponservicev1_QuoteResponse = {
   discount?: number;
   postDiscountTotal?: number;
   preDiscountTotal?: number;
+};
+
+// 请求 - 领取优惠券（买家自助）
+// 仅带模板 ID；user_id 由 core 从 viewer 强制，客户端不可伪造。
+export type couponservicev1_ClaimCouponRequest = {
+  couponTemplateId: number | undefined;
 };
 
 // 用户个人资料服务
@@ -6143,6 +6361,194 @@ export type identityservicev1_EmailVerification = {
   email: string | undefined;
 };
 
+// 收藏夹前台服务（裁剪版：仅 List/Create/Delete）。
+// user_id 由后端 UserPrivacy 隐私层强制，客户端不可伪造。
+export interface WishlistService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<wishlistservicev1_ListWishlistResponse>;
+  Create(
+    request: wishlistservicev1_CreateWishlistRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: wishlistservicev1_DeleteWishlistRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createWishlistServiceClient(
+  transport: ClientTransport,
+): WishlistService {
+  return {
+    List(request) {
+      const path = `app/v1/mall/wishlist`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.field) {
+        queryParams.push(
+          `filterExpr.conditions.field=${encodeURIComponent(request.filterExpr.conditions.field.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.op) {
+        queryParams.push(
+          `filterExpr.conditions.op=${encodeURIComponent(request.filterExpr.conditions.op.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.value) {
+        queryParams.push(
+          `filterExpr.conditions.value=${encodeURIComponent(request.filterExpr.conditions.value.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonValue) {
+        queryParams.push(
+          `filterExpr.conditions.jsonValue=${encodeURIComponent(request.filterExpr.conditions.jsonValue.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.values) {
+        request.filterExpr.conditions.values.forEach((x) => {
+          queryParams.push(
+            `filterExpr.conditions.values=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      if (request.filterExpr?.conditions?.datePart) {
+        queryParams.push(
+          `filterExpr.conditions.datePart=${encodeURIComponent(request.filterExpr.conditions.datePart.toString())}`,
+        );
+      }
+      if (request.filterExpr?.conditions?.jsonPath) {
+        queryParams.push(
+          `filterExpr.conditions.jsonPath=${encodeURIComponent(request.filterExpr.conditions.jsonPath.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.sorting?.field) {
+        queryParams.push(
+          `sorting.field=${encodeURIComponent(request.sorting.field.toString())}`,
+        );
+      }
+      if (request.sorting?.direction) {
+        queryParams.push(
+          `sorting.direction=${encodeURIComponent(request.sorting.direction.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'WishlistService',
+        method: 'List',
+      }) as Promise<wishlistservicev1_ListWishlistResponse>;
+    },
+    Create(request) {
+      const path = `app/v1/mall/wishlist`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'WishlistService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      const path = `app/v1/mall/wishlist`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'DELETE', body, {
+        service: 'WishlistService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type wishlistservicev1_ListWishlistResponse = {
+  items: undefined | wishlistservicev1_Wishlist[];
+  total: number | undefined;
+};
+
+// 收藏项
+export type wishlistservicev1_Wishlist = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  productId?: number;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  userId?: number;
+};
+
+export type wishlistservicev1_CreateWishlistRequest = {
+  data: undefined | wishlistservicev1_Wishlist;
+};
+
+export type wishlistservicev1_DeleteWishlistRequest = {
+  id?: number;
+};
+
 export class ApiClient {
   private _authenticationService?: AuthenticationService;
   private _brandService?: BrandService;
@@ -6150,6 +6556,7 @@ export class ApiClient {
   private _cartService?: CartService;
   private _categoryService?: CategoryService;
   private _commentService?: CommentService;
+  private _couponTemplateService?: CouponTemplateService;
   private _fileTransferService?: FileTransferService;
   private _interactionService?: InteractionService;
   private _internalMessageRecipientService?: InternalMessageRecipientService;
@@ -6169,6 +6576,7 @@ export class ApiClient {
   private readonly _transport: ClientTransport;
   private _userCouponService?: UserCouponService;
   private _userProfileService?: UserProfileService;
+  private _wishlistService?: WishlistService;
 
   constructor(transport: ClientTransport) {
     this._transport = transport;
@@ -6196,6 +6604,10 @@ export class ApiClient {
 
   get commentService(): CommentService {
     return this._commentService ??= createCommentServiceClient(this._transport);
+  }
+
+  get couponTemplateService(): CouponTemplateService {
+    return this._couponTemplateService ??= createCouponTemplateServiceClient(this._transport);
   }
 
   get fileTransferService(): FileTransferService {
@@ -6268,6 +6680,10 @@ export class ApiClient {
 
   get userProfileService(): UserProfileService {
     return this._userProfileService ??= createUserProfileServiceClient(this._transport);
+  }
+
+  get wishlistService(): WishlistService {
+    return this._wishlistService ??= createWishlistServiceClient(this._transport);
   }
 }
 

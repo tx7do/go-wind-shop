@@ -27,6 +27,7 @@ import (
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
 	storageV1 "go-wind-shop/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-shop/api/gen/go/task/service/v1"
+	wishlistV1 "go-wind-shop/api/gen/go/wishlist/service/v1"
 
 	shippingV1 "go-wind-shop/api/gen/go/shipping/service/v1"
 	taxV1 "go-wind-shop/api/gen/go/tax/service/v1"
@@ -86,10 +87,12 @@ func NewGrpcServer(
 	skuService *service.SkuService,
 	skuPriceService *service.SkuPriceService,
 	skuAttributeCombinationService *service.SkuAttributeCombinationService,
+	stockAlertService *service.StockAlertService,
 
-	cartService *service.CartService,
-	cartItemService *service.CartItemService,
-	orderService *service.OrderService,
+		cartService *service.CartService,
+		cartItemService *service.CartItemService,
+		wishlistService *service.WishlistService,
+		orderService *service.OrderService,
 	orderItemService *service.OrderItemService,
 		paymentTransactionService *service.PaymentTransactionService,
 		paymentRefundService *service.PaymentRefundService,
@@ -159,10 +162,12 @@ func NewGrpcServer(
 	catalogV1.RegisterSkuServiceServer(srv, skuService)
 	catalogV1.RegisterSkuPriceServiceServer(srv, skuPriceService)
 	catalogV1.RegisterSkuAttributeCombinationServiceServer(srv, skuAttributeCombinationService)
+	catalogV1.RegisterStockAlertServiceServer(srv, stockAlertService)
 
-	cartV1.RegisterCartServiceServer(srv, cartService)
-	cartV1.RegisterCartItemServiceServer(srv, cartItemService)
-	orderV1.RegisterOrderServiceServer(srv, orderService)
+		cartV1.RegisterCartServiceServer(srv, cartService)
+		cartV1.RegisterCartItemServiceServer(srv, cartItemService)
+		wishlistV1.RegisterWishlistServiceServer(srv, wishlistService)
+		orderV1.RegisterOrderServiceServer(srv, orderService)
 	orderV1.RegisterOrderItemServiceServer(srv, orderItemService)
 	paymentV1.RegisterPaymentTransactionServiceServer(srv, paymentTransactionService)
 	paymentV1.RegisterPaymentRefundServiceServer(srv, paymentRefundService)

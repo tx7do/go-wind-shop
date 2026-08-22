@@ -368,6 +368,7 @@ var (
 		{Name: "object_id", Type: field.TypeUint32, Nullable: true, Comment: "对象ID（商品ID）"},
 		{Name: "content", Type: field.TypeString, Nullable: true, Comment: "评论内容"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "评论状态", Enums: []string{"STATUS_PENDING", "STATUS_APPROVED", "STATUS_REJECTED", "STATUS_SPAM"}},
+		{Name: "rating", Type: field.TypeUint8, Nullable: true, Comment: "评分1-5（仅顶级评论可携带，回复无意义）"},
 		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父节点ID"},
 	}
 	// MallCommentsTable holds the schema information for the "mall_comments" table.
@@ -379,7 +380,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "mall_comments_mall_comments_children",
-				Columns:    []*schema.Column{MallCommentsColumns[12]},
+				Columns:    []*schema.Column{MallCommentsColumns[13]},
 				RefColumns: []*schema.Column{MallCommentsColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -398,7 +399,7 @@ var (
 			{
 				Name:    "comment_parent_id",
 				Unique:  false,
-				Columns: []*schema.Column{MallCommentsColumns[12]},
+				Columns: []*schema.Column{MallCommentsColumns[13]},
 			},
 		},
 	}
@@ -446,6 +447,7 @@ var (
 		{Name: "max_redemptions_per_user", Type: field.TypeInt32, Nullable: true, Comment: "每人核销上限（0=不限量；>0 为该模板下每用户累计可核销次数）", Default: 0},
 		{Name: "redeemed_count", Type: field.TypeInt32, Nullable: true, Comment: "已核销次数（核销自增、返还自减，行锁保护）", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "模板状态", Enums: []string{"ACTIVE", "INACTIVE"}},
+		{Name: "claimable", Type: field.TypeBool, Nullable: true, Comment: "是否公开可领取（领券中心仅展示 true 的模板，默认 false）", Default: false},
 	}
 	// MallCouponTemplatesTable holds the schema information for the "mall_coupon_templates" table.
 	MallCouponTemplatesTable = &schema.Table{
@@ -3028,6 +3030,39 @@ var (
 			},
 		},
 	}
+	// MallStockAlertsColumns holds the columns for the "mall_stock_alerts" table.
+	MallStockAlertsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sku_id", Type: field.TypeUint32, Nullable: true, Comment: "触发告警的SKU ID"},
+		{Name: "stock_qty_at_trigger", Type: field.TypeInt32, Nullable: true, Comment: "检测时的库存数量", Default: 0},
+		{Name: "threshold", Type: field.TypeInt32, Nullable: true, Comment: "触发阈值", Default: 0},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "告警状态", Enums: []string{"OPEN", "RESOLVED"}},
+	}
+	// MallStockAlertsTable holds the schema information for the "mall_stock_alerts" table.
+	MallStockAlertsTable = &schema.Table{
+		Name:       "mall_stock_alerts",
+		Comment:    "库存预警记录表",
+		Columns:    MallStockAlertsColumns,
+		PrimaryKey: []*schema.Column{MallStockAlertsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "stockalert_sku_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallStockAlertsColumns[7]},
+			},
+			{
+				Name:    "stockalert_status",
+				Unique:  false,
+				Columns: []*schema.Column{MallStockAlertsColumns[10]},
+			},
+		},
+	}
 	// SysTasksColumns holds the columns for the "sys_tasks" table.
 	SysTasksColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -3659,6 +3694,33 @@ var (
 			},
 		},
 	}
+	// MallWishlistColumns holds the columns for the "mall_wishlist" table.
+	MallWishlistColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "用户ID（由隐私层强制）"},
+		{Name: "product_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的商品ID"},
+	}
+	// MallWishlistTable holds the schema information for the "mall_wishlist" table.
+	MallWishlistTable = &schema.Table{
+		Name:       "mall_wishlist",
+		Comment:    "收藏夹表",
+		Columns:    MallWishlistColumns,
+		PrimaryKey: []*schema.Column{MallWishlistColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "wishlist_tenant_id_user_id_product_id",
+				Unique:  true,
+				Columns: []*schema.Column{MallWishlistColumns[7], MallWishlistColumns[8], MallWishlistColumns[9]},
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		SysApisTable,
@@ -3716,6 +3778,7 @@ var (
 		MallSkusTable,
 		MallSkuAttributeCombinationsTable,
 		MallSkuPricesTable,
+		MallStockAlertsTable,
 		SysTasksTable,
 		MallTaxRatesTable,
 		SysTenantsTable,
@@ -3725,6 +3788,7 @@ var (
 		SysUserOrgUnitsTable,
 		SysUserPositionsTable,
 		SysUserRolesTable,
+		MallWishlistTable,
 	}
 )
 
@@ -4009,6 +4073,11 @@ func init() {
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
+	MallStockAlertsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_stock_alerts",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
 	SysTasksTable.Annotation = &entsql.Annotation{
 		Table:     "sys_tasks",
 		Charset:   "utf8mb4",
@@ -4051,6 +4120,11 @@ func init() {
 	}
 	SysUserRolesTable.Annotation = &entsql.Annotation{
 		Table:     "sys_user_roles",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallWishlistTable.Annotation = &entsql.Annotation{
+		Table:     "mall_wishlist",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

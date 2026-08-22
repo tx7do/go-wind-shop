@@ -668,6 +668,18 @@ func (f SkuPriceFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SkuPriceMutation", m)
 }
 
+// The StockAlertFunc type is an adapter to allow the use of ordinary
+// function as StockAlert mutator.
+type StockAlertFunc func(context.Context, *ent.StockAlertMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f StockAlertFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.StockAlertMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StockAlertMutation", m)
+}
+
 // The TaskFunc type is an adapter to allow the use of ordinary
 // function as Task mutator.
 type TaskFunc func(context.Context, *ent.TaskMutation) (ent.Value, error)
@@ -774,6 +786,18 @@ func (f UserRoleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserRoleMutation", m)
+}
+
+// The WishlistFunc type is an adapter to allow the use of ordinary
+// function as Wishlist mutator.
+type WishlistFunc func(context.Context, *ent.WishlistMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f WishlistFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.WishlistMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.WishlistMutation", m)
 }
 
 // Condition is a hook condition function.

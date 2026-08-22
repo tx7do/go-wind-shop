@@ -260,6 +260,20 @@ func (_c *CouponTemplateCreate) SetNillableStatus(v *coupontemplate.Status) *Cou
 	return _c
 }
 
+// SetClaimable sets the "claimable" field.
+func (_c *CouponTemplateCreate) SetClaimable(v bool) *CouponTemplateCreate {
+	_c.mutation.SetClaimable(v)
+	return _c
+}
+
+// SetNillableClaimable sets the "claimable" field if the given value is not nil.
+func (_c *CouponTemplateCreate) SetNillableClaimable(v *bool) *CouponTemplateCreate {
+	if v != nil {
+		_c.SetClaimable(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *CouponTemplateCreate) SetID(v uint32) *CouponTemplateCreate {
 	_c.mutation.SetID(v)
@@ -330,6 +344,10 @@ func (_c *CouponTemplateCreate) defaults() error {
 	if _, ok := _c.mutation.RedeemedCount(); !ok {
 		v := coupontemplate.DefaultRedeemedCount
 		_c.mutation.SetRedeemedCount(v)
+	}
+	if _, ok := _c.mutation.Claimable(); !ok {
+		v := coupontemplate.DefaultClaimable
+		_c.mutation.SetClaimable(v)
 	}
 	return nil
 }
@@ -451,6 +469,10 @@ func (_c *CouponTemplateCreate) createSpec() (*CouponTemplate, *sqlgraph.CreateS
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(coupontemplate.FieldStatus, field.TypeEnum, value)
 		_node.Status = &value
+	}
+	if value, ok := _c.mutation.Claimable(); ok {
+		_spec.SetField(coupontemplate.FieldClaimable, field.TypeBool, value)
+		_node.Claimable = &value
 	}
 	return _node, _spec
 }
@@ -819,6 +841,24 @@ func (u *CouponTemplateUpsert) UpdateStatus() *CouponTemplateUpsert {
 // ClearStatus clears the value of the "status" field.
 func (u *CouponTemplateUpsert) ClearStatus() *CouponTemplateUpsert {
 	u.SetNull(coupontemplate.FieldStatus)
+	return u
+}
+
+// SetClaimable sets the "claimable" field.
+func (u *CouponTemplateUpsert) SetClaimable(v bool) *CouponTemplateUpsert {
+	u.Set(coupontemplate.FieldClaimable, v)
+	return u
+}
+
+// UpdateClaimable sets the "claimable" field to the value that was provided on create.
+func (u *CouponTemplateUpsert) UpdateClaimable() *CouponTemplateUpsert {
+	u.SetExcluded(coupontemplate.FieldClaimable)
+	return u
+}
+
+// ClearClaimable clears the value of the "claimable" field.
+func (u *CouponTemplateUpsert) ClearClaimable() *CouponTemplateUpsert {
+	u.SetNull(coupontemplate.FieldClaimable)
 	return u
 }
 
@@ -1244,6 +1284,27 @@ func (u *CouponTemplateUpsertOne) UpdateStatus() *CouponTemplateUpsertOne {
 func (u *CouponTemplateUpsertOne) ClearStatus() *CouponTemplateUpsertOne {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.ClearStatus()
+	})
+}
+
+// SetClaimable sets the "claimable" field.
+func (u *CouponTemplateUpsertOne) SetClaimable(v bool) *CouponTemplateUpsertOne {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.SetClaimable(v)
+	})
+}
+
+// UpdateClaimable sets the "claimable" field to the value that was provided on create.
+func (u *CouponTemplateUpsertOne) UpdateClaimable() *CouponTemplateUpsertOne {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.UpdateClaimable()
+	})
+}
+
+// ClearClaimable clears the value of the "claimable" field.
+func (u *CouponTemplateUpsertOne) ClearClaimable() *CouponTemplateUpsertOne {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.ClearClaimable()
 	})
 }
 
@@ -1835,6 +1896,27 @@ func (u *CouponTemplateUpsertBulk) UpdateStatus() *CouponTemplateUpsertBulk {
 func (u *CouponTemplateUpsertBulk) ClearStatus() *CouponTemplateUpsertBulk {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.ClearStatus()
+	})
+}
+
+// SetClaimable sets the "claimable" field.
+func (u *CouponTemplateUpsertBulk) SetClaimable(v bool) *CouponTemplateUpsertBulk {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.SetClaimable(v)
+	})
+}
+
+// UpdateClaimable sets the "claimable" field to the value that was provided on create.
+func (u *CouponTemplateUpsertBulk) UpdateClaimable() *CouponTemplateUpsertBulk {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.UpdateClaimable()
+	})
+}
+
+// ClearClaimable clears the value of the "claimable" field.
+func (u *CouponTemplateUpsertBulk) ClearClaimable() *CouponTemplateUpsertBulk {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.ClearClaimable()
 	})
 }
 

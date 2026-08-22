@@ -34,6 +34,10 @@ service UserCouponService {
   // 试算（报价预览）：给定券实例 ID，在当前登录用户的购物车快照上计算折前/折后金额，
   // 不持锁、不落库。最终抵扣以下单时事务内校验为准。
   rpc Quote (QuoteRequest) returns (QuoteResponse) {}
+
+  // 领取：买家自助领取公开可领模板（claimable=true）。
+  // user_id 由 core 从 viewer 强制（不从请求取），事务内 ForUpdate 锁模板 + per-user 限领原子校验。
+  rpc Claim (ClaimCouponRequest) returns (google.protobuf.Empty) {}
 }
 
 // 优惠券模板
@@ -104,6 +108,11 @@ message CouponTemplate {
   optional string currency = 10 [
     json_name = "currency",
     (gnostic.openapi.v3.property) = {description: "币种（ISO 4217）"}
+  ];
+
+  optional bool claimable = 12 [
+    json_name = "claimable",
+    (gnostic.openapi.v3.property) = {description: "是否公开可领取（领券中心仅展示 true 的模板）"}
   ];
 
   // ===== 以下是 infra mixin 注入字段（高编号） =====
@@ -251,4 +260,10 @@ message QuoteResponse {
   optional int64 pre_discount_total = 2 [json_name = "preDiscountTotal", (gnostic.openapi.v3.property) = {description: "折前总额（最小货币单位，分）"}];
   optional int64 discount = 3 [json_name = "discount", (gnostic.openapi.v3.property) = {description: "抵扣额（最小货币单位，分；不适用时为 0）"}];
   optional int64 post_discount_total = 4 [json_name = "postDiscountTotal", (gnostic.openapi.v3.property) = {description: "折后应付额（最小货币单位，分；= max(0, pre_discount_total - discount)）"}];
+}
+
+// 请求 - 领取优惠券（买家自助）
+// 仅带模板 ID；user_id 由 core 从 viewer 强制，客户端不可伪造。
+message ClaimCouponRequest {
+  uint32 coupon_template_id = 1 [json_name = "couponTemplateId", (gnostic.openapi.v3.property) = {description: "要领取的优惠券模板ID"}];
 }

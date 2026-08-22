@@ -13,6 +13,10 @@ import {
   useListCarts,
   useCreateCart,
   useCreateCartItem,
+  useListWishlist,
+  useCreateWishlist,
+  useDeleteWishlist,
+  useGetProductRating,
 } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { useAccessStore } from '@/stores/modules/core/access.state';
@@ -118,6 +122,73 @@ const skus = computed<SkuEntity[]>(() => {
   const items = (skusQuery.data?.value as any)?.items ?? [];
   return (items as SkuEntity[]) ?? [];
 });
+
+// ---------- 收藏状态 ----------
+// 查询当前 viewer 对此商品是否已收藏。后端 UserPrivacy 自动注入 user_id=viewer，
+// 故返回的 items 即当前用户对 productId 的收藏记录（至多 1 条，由唯一索引保证）。
+const favoriteQuery = useListWishlist(
+  computed(() => ({
+    page: 1,
+    pageSize: 10,
+    noPaging: false,
+    query: JSON.stringify({ productId: productId.value }),
+  })),
+  { enabled: computed(() => isLogin.value && productId.value > 0) },
+);
+
+// 当前用户对此商品的收藏记录 id（存在即已收藏）。
+const favoriteRecordId = computed<number | undefined>(() => {
+  const items = (favoriteQuery.data?.value as any)?.items ?? [];
+  return (items as Array<{ id?: number }>)[0]?.id;
+});
+const isFavorited = computed(() => favoriteRecordId.value !== undefined);
+
+const createFavoriteMutation = useCreateWishlist({
+  onSuccess: () => {
+    favoriteQuery.refetch();
+  },
+});
+const deleteFavoriteMutation = useDeleteWishlist({
+  onSuccess: () => {
+    favoriteQuery.refetch();
+  },
+});
+
+async function toggleFavorite() {
+  if (!isLogin.value) {
+    navigateTo(localePath('/login'));
+    return;
+  }
+  if (isFavorited.value && favoriteRecordId.value !== undefined) {
+    try {
+      await deleteFavoriteMutation.mutateAsync(favoriteRecordId.value);
+    } catch {
+      toast.error(t('mall.wishlist.errors.removeFailed'));
+    }
+  } else {
+    try {
+      // 仅传 productId；user_id 由后端 UserPrivacy 强制覆盖为 viewer，不可伪造。
+      await createFavoriteMutation.mutateAsync({ productId: productId.value } as any);
+    } catch {
+      // 忽略——状态由 query 体现
+    }
+  }
+}
+
+// ---------- 商品评分聚合（匿名可读）----------
+const ratingQuery = useGetProductRating(
+  computed(() => ({ productId: productId.value })),
+  { enabled: computed(() => productId.value > 0) },
+);
+const ratingAverage = computed<number>(() => {
+  const v = (ratingQuery.data?.value as any)?.average;
+  return typeof v === 'number' ? v : 0;
+});
+const ratingCount = computed<number>(() => {
+  const v = (ratingQuery.data?.value as any)?.count;
+  return typeof v === 'number' ? v : 0;
+});
+const hasRating = computed(() => ratingCount.value > 0 && ratingAverage.value > 0);
 
 // ---------- 属性 & 属性值 ----------
 const attributesQuery = useListProductAttributes({
@@ -498,6 +569,22 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
         <h1 class="text-3xl font-bold text-foreground">
           {{ productTranslation.name }}
         </h1>
+
+        <!-- 收藏 toggle：未收藏显示空心心形，已收藏显示填充心形 -->
+        <button
+          type="button"
+          :class="[
+            'inline-flex w-fit items-center gap-2 rounded-lg border px-4 py-2 text-sm transition-colors',
+            isFavorited
+              ? 'border-primary text-primary'
+              : 'border-border text-muted-foreground hover:border-primary/40 hover:text-primary',
+          ]"
+          @click="toggleFavorite"
+        >
+          <XIcon icon="lucide:heart" :size="16" :class="isFavorited ? 'fill-current' : ''" />
+          <span>{{ isFavorited ? t('mall.wishlist.table.action') : t('mall.wishlist.title') }}</span>
+        </button>
+
         <p class="text-sm text-muted-foreground">
           {{ productTranslation.shortDescription }}
         </p>
@@ -511,6 +598,20 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
           <p class="mt-1 text-3xl font-extrabold text-primary">
             {{ t('mall.product.currencyCny') }}{{ displayPrice }}
           </p>
+        </div>
+
+        <!-- 商品评分聚合（只读展示） -->
+        <div class="flex items-center gap-3">
+          <UiRatingStars v-if="hasRating" :value="ratingAverage" />
+          <span class="text-xs tabular-nums text-muted-foreground">
+            <template v-if="hasRating">
+              {{ t('mall.productRating.average') }}: {{ ratingAverage.toFixed(1) }} ·
+              {{ t('mall.productRating.count') }}: {{ ratingCount }}
+            </template>
+            <template v-else>
+              {{ t('mall.productRating.noRating') }}
+            </template>
+          </span>
         </div>
 
         <!-- SKU 卡片选择器（aria-radiogroup，保留键盘可访问性） -->

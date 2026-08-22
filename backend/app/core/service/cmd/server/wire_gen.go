@@ -125,10 +125,14 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	skuPriceService := service.NewSkuPriceService(context, skuPriceRepo)
 	skuAttributeCombinationRepo := data.NewSkuAttributeCombinationRepo(context, entClient)
 	skuAttributeCombinationService := service.NewSkuAttributeCombinationService(context, skuAttributeCombinationRepo)
+	stockAlertRepo := data.NewStockAlertRepo(context, entClient)
+	stockAlertService := service.NewStockAlertService(context, stockAlertRepo)
 	cartRepo := data.NewCartRepo(context, entClient)
 	cartService := service.NewCartService(context, cartRepo)
 	cartItemRepo := data.NewCartItemRepo(context, entClient)
 	cartItemService := service.NewCartItemService(context, cartItemRepo)
+	wishlistRepo := data.NewWishlistRepo(context, entClient)
+	wishlistService := service.NewWishlistService(context, wishlistRepo)
 	orderRepo := data.NewOrderRepo(context, entClient)
 	orderItemRepo := data.NewOrderItemRepo(context, entClient)
 	orderService := service.NewOrderService(context, orderRepo, orderItemRepo, skuRepo, cartItemRepo, entClient)
@@ -156,15 +160,15 @@ func initApp(context *bootstrap.Context) (*kratos.App, func(), error) {
 	interactionAdminService := service.NewInteractionAdminService(context, interactionRepo, operationAuditLogRepo)
 	invoiceRepo := data.NewInvoiceRepo(context, entClient)
 	invoiceService := service.NewInvoiceService(context, invoiceRepo)
-	grpcServer, err := server.NewGrpcServer(context, v, authenticationService, loginPolicyService, userCredentialService, taskService, fileService, languageService, tenantService, userService, roleService, positionService, orgUnitService, menuService, apiService, permissionService, permissionGroupService, permissionAuditLogService, policyEvaluationLogService, loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, categoryService, brandService, productService, productAttributeService, productAttributeValueService, skuService, skuPriceService, skuAttributeCombinationService, cartService, cartItemService, orderService, orderItemService, paymentTransactionService, paymentRefundService, shippingAddressService, shipmentService, couponTemplateService, userCouponService, shippingRateService, taxRateService, commentService, interactionService, interactionAdminService, invoiceService)
+	grpcServer, err := server.NewGrpcServer(context, v, authenticationService, loginPolicyService, userCredentialService, taskService, fileService, languageService, tenantService, userService, roleService, positionService, orgUnitService, menuService, apiService, permissionService, permissionGroupService, permissionAuditLogService, policyEvaluationLogService, loginAuditLogService, apiAuditLogService, operationAuditLogService, dataAccessAuditLogService, internalMessageService, internalMessageCategoryService, internalMessageRecipientService, categoryService, brandService, productService, productAttributeService, productAttributeValueService, skuService, skuPriceService, skuAttributeCombinationService, stockAlertService, cartService, cartItemService, wishlistService, orderService, orderItemService, paymentTransactionService, paymentRefundService, shippingAddressService, shipmentService, couponTemplateService, userCouponService, shippingRateService, taxRateService, commentService, interactionService, interactionAdminService, invoiceService)
 	if err != nil {
 		cleanup3()
 		cleanup2()
 		cleanup()
 		return nil, nil, err
 	}
-	stockAlertService := service.NewStockAlertService(context, skuRepo, internalMessageService)
-	asynqServer := server.NewAsynqServer(context, taskService, orderService, userCouponService, stockAlertService, productSearchService)
+	stockAlertScannerService := service.NewStockAlertScannerService(context, skuRepo, internalMessageService, stockAlertRepo)
+	asynqServer := server.NewAsynqServer(context, taskService, orderService, userCouponService, stockAlertScannerService, productSearchService)
 	app := newApp(context, grpcServer, asynqServer)
 	return app, func() {
 		cleanup3()

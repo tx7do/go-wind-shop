@@ -61,6 +61,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
+	"go-wind-shop/app/core/service/internal/data/ent/stockalert"
 	"go-wind-shop/app/core/service/internal/data/ent/task"
 	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
 	"go-wind-shop/app/core/service/internal/data/ent/tenant"
@@ -70,6 +71,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/userorgunit"
 	"go-wind-shop/app/core/service/internal/data/ent/userposition"
 	"go-wind-shop/app/core/service/internal/data/ent/userrole"
+	"go-wind-shop/app/core/service/internal/data/ent/wishlist"
 	"reflect"
 	"sync"
 
@@ -191,6 +193,7 @@ func checkColumn(t, c string) error {
 			sku.Table:                              sku.ValidColumn,
 			skuattributecombination.Table:          skuattributecombination.ValidColumn,
 			skuprice.Table:                         skuprice.ValidColumn,
+			stockalert.Table:                       stockalert.ValidColumn,
 			task.Table:                             task.ValidColumn,
 			taxrate.Table:                          taxrate.ValidColumn,
 			tenant.Table:                           tenant.ValidColumn,
@@ -200,6 +203,7 @@ func checkColumn(t, c string) error {
 			userorgunit.Table:                      userorgunit.ValidColumn,
 			userposition.Table:                     userposition.ValidColumn,
 			userrole.Table:                         userrole.ValidColumn,
+			wishlist.Table:                         wishlist.ValidColumn,
 		})
 	})
 	return columnCheck(t, c)

@@ -40,7 +40,7 @@ type ShippingAddressServiceHTTPServer interface {
 
 func RegisterShippingAddressServiceHTTPServer(s *http.Server, srv ShippingAddressServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/mall/addresses", _ShippingAddressService_List14_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/addresses", _ShippingAddressService_List15_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/addresses/count", _ShippingAddressService_Count6_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/addresses/{id}", _ShippingAddressService_Get14_HTTP_Handler(srv))
 	r.POST("/app/v1/mall/addresses", _ShippingAddressService_Create6_HTTP_Handler(srv))
@@ -48,7 +48,7 @@ func RegisterShippingAddressServiceHTTPServer(s *http.Server, srv ShippingAddres
 	r.DELETE("/app/v1/mall/addresses", _ShippingAddressService_Delete3_HTTP_Handler(srv))
 }
 
-func _ShippingAddressService_List14_HTTP_Handler(srv ShippingAddressServiceHTTPServer) func(ctx http.Context) error {
+func _ShippingAddressService_List15_HTTP_Handler(srv ShippingAddressServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

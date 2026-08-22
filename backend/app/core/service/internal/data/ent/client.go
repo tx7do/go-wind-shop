@@ -66,6 +66,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
+	"go-wind-shop/app/core/service/internal/data/ent/stockalert"
 	"go-wind-shop/app/core/service/internal/data/ent/task"
 	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
 	"go-wind-shop/app/core/service/internal/data/ent/tenant"
@@ -75,6 +76,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/userorgunit"
 	"go-wind-shop/app/core/service/internal/data/ent/userposition"
 	"go-wind-shop/app/core/service/internal/data/ent/userrole"
+	"go-wind-shop/app/core/service/internal/data/ent/wishlist"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -197,6 +199,8 @@ type Client struct {
 	SkuAttributeCombination *SkuAttributeCombinationClient
 	// SkuPrice is the client for interacting with the SkuPrice builders.
 	SkuPrice *SkuPriceClient
+	// StockAlert is the client for interacting with the StockAlert builders.
+	StockAlert *StockAlertClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
 	// TaxRate is the client for interacting with the TaxRate builders.
@@ -215,6 +219,8 @@ type Client struct {
 	UserPosition *UserPositionClient
 	// UserRole is the client for interacting with the UserRole builders.
 	UserRole *UserRoleClient
+	// Wishlist is the client for interacting with the Wishlist builders.
+	Wishlist *WishlistClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -281,6 +287,7 @@ func (c *Client) init() {
 	c.Sku = NewSkuClient(c.config)
 	c.SkuAttributeCombination = NewSkuAttributeCombinationClient(c.config)
 	c.SkuPrice = NewSkuPriceClient(c.config)
+	c.StockAlert = NewStockAlertClient(c.config)
 	c.Task = NewTaskClient(c.config)
 	c.TaxRate = NewTaxRateClient(c.config)
 	c.Tenant = NewTenantClient(c.config)
@@ -290,6 +297,7 @@ func (c *Client) init() {
 	c.UserOrgUnit = NewUserOrgUnitClient(c.config)
 	c.UserPosition = NewUserPositionClient(c.config)
 	c.UserRole = NewUserRoleClient(c.config)
+	c.Wishlist = NewWishlistClient(c.config)
 }
 
 type (
@@ -437,6 +445,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Sku:                              NewSkuClient(cfg),
 		SkuAttributeCombination:          NewSkuAttributeCombinationClient(cfg),
 		SkuPrice:                         NewSkuPriceClient(cfg),
+		StockAlert:                       NewStockAlertClient(cfg),
 		Task:                             NewTaskClient(cfg),
 		TaxRate:                          NewTaxRateClient(cfg),
 		Tenant:                           NewTenantClient(cfg),
@@ -446,6 +455,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		UserOrgUnit:                      NewUserOrgUnitClient(cfg),
 		UserPosition:                     NewUserPositionClient(cfg),
 		UserRole:                         NewUserRoleClient(cfg),
+		Wishlist:                         NewWishlistClient(cfg),
 	}, nil
 }
 
@@ -520,6 +530,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Sku:                              NewSkuClient(cfg),
 		SkuAttributeCombination:          NewSkuAttributeCombinationClient(cfg),
 		SkuPrice:                         NewSkuPriceClient(cfg),
+		StockAlert:                       NewStockAlertClient(cfg),
 		Task:                             NewTaskClient(cfg),
 		TaxRate:                          NewTaxRateClient(cfg),
 		Tenant:                           NewTenantClient(cfg),
@@ -529,6 +540,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		UserOrgUnit:                      NewUserOrgUnitClient(cfg),
 		UserPosition:                     NewUserPositionClient(cfg),
 		UserRole:                         NewUserRoleClient(cfg),
+		Wishlist:                         NewWishlistClient(cfg),
 	}, nil
 }
 
@@ -570,9 +582,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
 		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Role,
 		c.RoleMetadata, c.RolePermission, c.Shipment, c.ShippingAddress,
-		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.Task,
-		c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential, c.UserOrgUnit,
-		c.UserPosition, c.UserRole,
+		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.StockAlert,
+		c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
 	} {
 		n.Use(hooks...)
 	}
@@ -594,9 +606,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
 		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Role,
 		c.RoleMetadata, c.RolePermission, c.Shipment, c.ShippingAddress,
-		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.Task,
-		c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential, c.UserOrgUnit,
-		c.UserPosition, c.UserRole,
+		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.StockAlert,
+		c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential,
+		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -715,6 +727,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.SkuAttributeCombination.mutate(ctx, m)
 	case *SkuPriceMutation:
 		return c.SkuPrice.mutate(ctx, m)
+	case *StockAlertMutation:
+		return c.StockAlert.mutate(ctx, m)
 	case *TaskMutation:
 		return c.Task.mutate(ctx, m)
 	case *TaxRateMutation:
@@ -733,6 +747,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.UserPosition.mutate(ctx, m)
 	case *UserRoleMutation:
 		return c.UserRole.mutate(ctx, m)
+	case *WishlistMutation:
+		return c.Wishlist.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -8247,6 +8263,139 @@ func (c *SkuPriceClient) mutate(ctx context.Context, m *SkuPriceMutation) (Value
 	}
 }
 
+// StockAlertClient is a client for the StockAlert schema.
+type StockAlertClient struct {
+	config
+}
+
+// NewStockAlertClient returns a client for the StockAlert from the given config.
+func NewStockAlertClient(c config) *StockAlertClient {
+	return &StockAlertClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `stockalert.Hooks(f(g(h())))`.
+func (c *StockAlertClient) Use(hooks ...Hook) {
+	c.hooks.StockAlert = append(c.hooks.StockAlert, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `stockalert.Intercept(f(g(h())))`.
+func (c *StockAlertClient) Intercept(interceptors ...Interceptor) {
+	c.inters.StockAlert = append(c.inters.StockAlert, interceptors...)
+}
+
+// Create returns a builder for creating a StockAlert entity.
+func (c *StockAlertClient) Create() *StockAlertCreate {
+	mutation := newStockAlertMutation(c.config, OpCreate)
+	return &StockAlertCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of StockAlert entities.
+func (c *StockAlertClient) CreateBulk(builders ...*StockAlertCreate) *StockAlertCreateBulk {
+	return &StockAlertCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *StockAlertClient) MapCreateBulk(slice any, setFunc func(*StockAlertCreate, int)) *StockAlertCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &StockAlertCreateBulk{err: fmt.Errorf("calling to StockAlertClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*StockAlertCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &StockAlertCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for StockAlert.
+func (c *StockAlertClient) Update() *StockAlertUpdate {
+	mutation := newStockAlertMutation(c.config, OpUpdate)
+	return &StockAlertUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *StockAlertClient) UpdateOne(_m *StockAlert) *StockAlertUpdateOne {
+	mutation := newStockAlertMutation(c.config, OpUpdateOne, withStockAlert(_m))
+	return &StockAlertUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *StockAlertClient) UpdateOneID(id uint32) *StockAlertUpdateOne {
+	mutation := newStockAlertMutation(c.config, OpUpdateOne, withStockAlertID(id))
+	return &StockAlertUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for StockAlert.
+func (c *StockAlertClient) Delete() *StockAlertDelete {
+	mutation := newStockAlertMutation(c.config, OpDelete)
+	return &StockAlertDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *StockAlertClient) DeleteOne(_m *StockAlert) *StockAlertDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *StockAlertClient) DeleteOneID(id uint32) *StockAlertDeleteOne {
+	builder := c.Delete().Where(stockalert.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &StockAlertDeleteOne{builder}
+}
+
+// Query returns a query builder for StockAlert.
+func (c *StockAlertClient) Query() *StockAlertQuery {
+	return &StockAlertQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeStockAlert},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a StockAlert entity by its id.
+func (c *StockAlertClient) Get(ctx context.Context, id uint32) (*StockAlert, error) {
+	return c.Query().Where(stockalert.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *StockAlertClient) GetX(ctx context.Context, id uint32) *StockAlert {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *StockAlertClient) Hooks() []Hook {
+	return c.hooks.StockAlert
+}
+
+// Interceptors returns the client interceptors.
+func (c *StockAlertClient) Interceptors() []Interceptor {
+	return c.inters.StockAlert
+}
+
+func (c *StockAlertClient) mutate(ctx context.Context, m *StockAlertMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&StockAlertCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&StockAlertUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&StockAlertUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&StockAlertDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown StockAlert mutation op: %q", m.Op())
+	}
+}
+
 // TaskClient is a client for the Task schema.
 type TaskClient struct {
 	config
@@ -9452,6 +9601,140 @@ func (c *UserRoleClient) mutate(ctx context.Context, m *UserRoleMutation) (Value
 	}
 }
 
+// WishlistClient is a client for the Wishlist schema.
+type WishlistClient struct {
+	config
+}
+
+// NewWishlistClient returns a client for the Wishlist from the given config.
+func NewWishlistClient(c config) *WishlistClient {
+	return &WishlistClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `wishlist.Hooks(f(g(h())))`.
+func (c *WishlistClient) Use(hooks ...Hook) {
+	c.hooks.Wishlist = append(c.hooks.Wishlist, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `wishlist.Intercept(f(g(h())))`.
+func (c *WishlistClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Wishlist = append(c.inters.Wishlist, interceptors...)
+}
+
+// Create returns a builder for creating a Wishlist entity.
+func (c *WishlistClient) Create() *WishlistCreate {
+	mutation := newWishlistMutation(c.config, OpCreate)
+	return &WishlistCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Wishlist entities.
+func (c *WishlistClient) CreateBulk(builders ...*WishlistCreate) *WishlistCreateBulk {
+	return &WishlistCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *WishlistClient) MapCreateBulk(slice any, setFunc func(*WishlistCreate, int)) *WishlistCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &WishlistCreateBulk{err: fmt.Errorf("calling to WishlistClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*WishlistCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &WishlistCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Wishlist.
+func (c *WishlistClient) Update() *WishlistUpdate {
+	mutation := newWishlistMutation(c.config, OpUpdate)
+	return &WishlistUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *WishlistClient) UpdateOne(_m *Wishlist) *WishlistUpdateOne {
+	mutation := newWishlistMutation(c.config, OpUpdateOne, withWishlist(_m))
+	return &WishlistUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *WishlistClient) UpdateOneID(id uint32) *WishlistUpdateOne {
+	mutation := newWishlistMutation(c.config, OpUpdateOne, withWishlistID(id))
+	return &WishlistUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Wishlist.
+func (c *WishlistClient) Delete() *WishlistDelete {
+	mutation := newWishlistMutation(c.config, OpDelete)
+	return &WishlistDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *WishlistClient) DeleteOne(_m *Wishlist) *WishlistDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *WishlistClient) DeleteOneID(id uint32) *WishlistDeleteOne {
+	builder := c.Delete().Where(wishlist.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &WishlistDeleteOne{builder}
+}
+
+// Query returns a query builder for Wishlist.
+func (c *WishlistClient) Query() *WishlistQuery {
+	return &WishlistQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeWishlist},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Wishlist entity by its id.
+func (c *WishlistClient) Get(ctx context.Context, id uint32) (*Wishlist, error) {
+	return c.Query().Where(wishlist.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *WishlistClient) GetX(ctx context.Context, id uint32) *Wishlist {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *WishlistClient) Hooks() []Hook {
+	hooks := c.hooks.Wishlist
+	return append(hooks[:len(hooks):len(hooks)], wishlist.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *WishlistClient) Interceptors() []Interceptor {
+	return c.inters.Wishlist
+}
+
+func (c *WishlistClient) mutate(ctx context.Context, m *WishlistMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&WishlistCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&WishlistUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&WishlistUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&WishlistDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Wishlist mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
@@ -9466,8 +9749,9 @@ type (
 		Position, Product, ProductAttribute, ProductAttributeTranslation,
 		ProductAttributeValue, ProductAttributeValueTranslation, ProductTranslation,
 		Role, RoleMetadata, RolePermission, Shipment, ShippingAddress, ShippingRate,
-		Sku, SkuAttributeCombination, SkuPrice, Task, TaxRate, Tenant, User,
-		UserCoupon, UserCredential, UserOrgUnit, UserPosition, UserRole []ent.Hook
+		Sku, SkuAttributeCombination, SkuPrice, StockAlert, Task, TaxRate, Tenant,
+		User, UserCoupon, UserCredential, UserOrgUnit, UserPosition, UserRole,
+		Wishlist []ent.Hook
 	}
 	inters struct {
 		Api, ApiAuditLog, Brand, BrandTranslation, Cart, CartItem, Category,
@@ -9481,8 +9765,8 @@ type (
 		Position, Product, ProductAttribute, ProductAttributeTranslation,
 		ProductAttributeValue, ProductAttributeValueTranslation, ProductTranslation,
 		Role, RoleMetadata, RolePermission, Shipment, ShippingAddress, ShippingRate,
-		Sku, SkuAttributeCombination, SkuPrice, Task, TaxRate, Tenant, User,
-		UserCoupon, UserCredential, UserOrgUnit, UserPosition,
-		UserRole []ent.Interceptor
+		Sku, SkuAttributeCombination, SkuPrice, StockAlert, Task, TaxRate, Tenant,
+		User, UserCoupon, UserCredential, UserOrgUnit, UserPosition, UserRole,
+		Wishlist []ent.Interceptor
 	}
 )

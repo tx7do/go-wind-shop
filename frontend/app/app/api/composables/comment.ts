@@ -10,6 +10,7 @@ import { getCurrentLocale } from '@/utils/locale';
 import type {
   commentservicev1_CreateCommentRequest,
   commentservicev1_ListCommentResponse,
+  commentservicev1_ProductRatingSummary,
 } from '@/api/generated/app/service/v1';
 
 // ==============================
@@ -48,5 +49,29 @@ export function useCreateComment(
   return useMutation({
     mutationFn: (request) => createComment(request),
     ...options,
+  });
+}
+
+// ==============================
+// 商品评分聚合（Query，匿名可读）
+// ==============================
+export async function fetchGetProductRating(params: any) {
+  return await apiClient.commentService.GetProductRating(params);
+}
+export function useGetProductRating(
+  params: any,
+  options?: UseQueryOptions<commentservicev1_ProductRatingSummary, Error>,
+) {
+  return useQuery({
+    queryKey: ['getProductRating', params, getCurrentLocale()],
+    queryFn: () => fetchGetProductRating(toValue(params)),
+    ...options,
+  });
+}
+export async function fetchGetProductRatingStore(params: any) {
+  return queryClient.fetchQuery({
+    queryKey: ['getProductRating', params, getCurrentLocale()],
+    queryFn: () => fetchGetProductRating(toValue(params)),
+    retry: 0,
   });
 }

@@ -42,6 +42,8 @@ type Comment struct {
 	Content *string `json:"content,omitempty"`
 	// 评论状态
 	Status *comment.Status `json:"status,omitempty"`
+	// 评分1-5（仅顶级评论可携带，回复无意义）
+	Rating *uint8 `json:"rating,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the CommentQuery when eager-loading is set.
 	Edges        CommentEdges `json:"edges"`
@@ -84,7 +86,7 @@ func (*Comment) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case comment.FieldID, comment.FieldCreatedBy, comment.FieldUpdatedBy, comment.FieldDeletedBy, comment.FieldTenantID, comment.FieldParentID, comment.FieldObjectID:
+		case comment.FieldID, comment.FieldCreatedBy, comment.FieldUpdatedBy, comment.FieldDeletedBy, comment.FieldTenantID, comment.FieldParentID, comment.FieldObjectID, comment.FieldRating:
 			values[i] = new(sql.NullInt64)
 		case comment.FieldContentType, comment.FieldContent, comment.FieldStatus:
 			values[i] = new(sql.NullString)
@@ -195,6 +197,13 @@ func (_m *Comment) assignValues(columns []string, values []any) error {
 				_m.Status = new(comment.Status)
 				*_m.Status = comment.Status(value.String)
 			}
+		case comment.FieldRating:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field rating", values[i])
+			} else if value.Valid {
+				_m.Rating = new(uint8)
+				*_m.Rating = uint8(value.Int64)
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -298,6 +307,11 @@ func (_m *Comment) String() string {
 	builder.WriteString(", ")
 	if v := _m.Status; v != nil {
 		builder.WriteString("status=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Rating; v != nil {
+		builder.WriteString("rating=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteByte(')')

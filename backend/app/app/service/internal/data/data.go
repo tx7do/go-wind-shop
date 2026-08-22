@@ -32,6 +32,7 @@ import (
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
 	storageV1 "go-wind-shop/api/gen/go/storage/service/v1"
 	shippingV1 "go-wind-shop/api/gen/go/shipping/service/v1"
+	wishlistV1 "go-wind-shop/api/gen/go/wishlist/service/v1"
 
 	"go-wind-shop/pkg/oss"
 	"go-wind-shop/pkg/serviceid"
@@ -256,6 +257,15 @@ func NewCartItemServiceClient(ctx *bootstrap.Context, r registry.Discovery) cart
 	return cartV1.NewCartItemServiceClient(cli)
 }
 
+func NewWishlistServiceClient(ctx *bootstrap.Context, r registry.Discovery) wishlistV1.WishlistServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return wishlistV1.NewWishlistServiceClient(cli)
+}
+
 func NewOrderServiceClient(ctx *bootstrap.Context, r registry.Discovery) orderV1.OrderServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {
@@ -308,6 +318,15 @@ func NewUserCouponServiceClient(ctx *bootstrap.Context, r registry.Discovery) co
 	}
 
 	return couponV1.NewUserCouponServiceClient(cli)
+}
+
+func NewCouponTemplateServiceClient(ctx *bootstrap.Context, r registry.Discovery) couponV1.CouponTemplateServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return couponV1.NewCouponTemplateServiceClient(cli)
 }
 
 func NewPaymentTransactionServiceClient(ctx *bootstrap.Context, r registry.Discovery) paymentV1.PaymentTransactionServiceClient {

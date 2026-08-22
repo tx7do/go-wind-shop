@@ -162,6 +162,7 @@ func (r *CommentRepo) Create(ctx context.Context, req *commentV1.CreateCommentRe
 		SetNillableObjectID(req.Data.ObjectId).
 		SetNillableContent(req.Data.Content).
 		SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
+		SetNillableRating(ratingPtrToUint8(req.Data.Rating)).
 		SetNillableParentID(req.Data.ParentId).
 		SetNillableTenantID(req.Data.TenantId).
 		SetNillableCreatedBy(req.Data.CreatedBy).
@@ -239,4 +240,59 @@ func (r *CommentRepo) Delete(ctx context.Context, req *commentV1.DeleteCommentRe
 	}
 
 	return nil
+}
+
+// GetProductRating 计算指定商品的评分聚合。
+// 仅统计 content_type=PRODUCT AND object_id=? AND status=APPROVED 的评论。
+// - Mean(rating)：SQL AVG，自动忽略 NULL（无评分的评论不计入平均，但仍计入 count）。
+// - Count()：SQL COUNT(*)，统计所有匹配行（含无评分）。
+// 返回 ProductRatingSummary{Average, Count}；无数据时 Average=0, Count=0。
+func (r *CommentRepo) GetProductRating(ctx context.Context, productID uint32) (*commentV1.ProductRatingSummary, error) {
+	var rows []struct {
+		Avg   *float64
+		Count *int64
+	}
+	err := r.entClient.Client().Comment.Query().
+		Where(
+			comment.ContentTypeEQ(comment.ContentTypeCommentContentTypeProduct),
+			comment.ObjectIDEQ(productID),
+			comment.StatusEQ(comment.StatusCommentStatusApproved),
+		).
+		Aggregate(
+			ent.As(ent.Mean(comment.FieldRating), "avg"),
+			ent.As(ent.Count(), "count"),
+		).
+		Scan(ctx, &rows)
+	if err != nil {
+		r.log.Errorf("query product rating failed: %s", err.Error())
+		return nil, commentV1.ErrorInternalServerError("query product rating failed")
+	}
+
+	summary := &commentV1.ProductRatingSummary{
+		Average: 0,
+		Count:   0,
+	}
+	if len(rows) > 0 {
+		if rows[0].Avg != nil {
+			summary.Average = *rows[0].Avg
+		}
+		if rows[0].Count != nil {
+			summary.Count = uint64(*rows[0].Count)
+		}
+	}
+	// 评分数为 0 时强制平均分 0（避免 Mean 返回 NULL 被解为 0 的歧义）。
+	if summary.Count == 0 {
+		summary.Average = 0
+	}
+	return summary, nil
+}
+
+// ratingPtrToUint8 将 *uint32（proto optional uint32）转为 *uint8（ent rating 列类型）。
+// nil 透传。值范围校验由 BFF 层负责（1-5），此处仅做类型转换。
+func ratingPtrToUint8(p *uint32) *uint8 {
+	if p == nil {
+		return nil
+	}
+	v := uint8(*p)
+	return &v
 }

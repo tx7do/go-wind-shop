@@ -257,6 +257,33 @@ func (_u *CommentUpdate) ClearStatus() *CommentUpdate {
 	return _u
 }
 
+// SetRating sets the "rating" field.
+func (_u *CommentUpdate) SetRating(v uint8) *CommentUpdate {
+	_u.mutation.ResetRating()
+	_u.mutation.SetRating(v)
+	return _u
+}
+
+// SetNillableRating sets the "rating" field if the given value is not nil.
+func (_u *CommentUpdate) SetNillableRating(v *uint8) *CommentUpdate {
+	if v != nil {
+		_u.SetRating(*v)
+	}
+	return _u
+}
+
+// AddRating adds value to the "rating" field.
+func (_u *CommentUpdate) AddRating(v int8) *CommentUpdate {
+	_u.mutation.AddRating(v)
+	return _u
+}
+
+// ClearRating clears the value of the "rating" field.
+func (_u *CommentUpdate) ClearRating() *CommentUpdate {
+	_u.mutation.ClearRating()
+	return _u
+}
+
 // SetParent sets the "parent" edge to the Comment entity.
 func (_u *CommentUpdate) SetParent(v *Comment) *CommentUpdate {
 	return _u.SetParentID(v.ID)
@@ -440,6 +467,15 @@ func (_u *CommentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(comment.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Rating(); ok {
+		_spec.SetField(comment.FieldRating, field.TypeUint8, value)
+	}
+	if value, ok := _u.mutation.AddedRating(); ok {
+		_spec.AddField(comment.FieldRating, field.TypeUint8, value)
+	}
+	if _u.mutation.RatingCleared() {
+		_spec.ClearField(comment.FieldRating, field.TypeUint8)
 	}
 	if _u.mutation.ParentCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -765,6 +801,33 @@ func (_u *CommentUpdateOne) ClearStatus() *CommentUpdateOne {
 	return _u
 }
 
+// SetRating sets the "rating" field.
+func (_u *CommentUpdateOne) SetRating(v uint8) *CommentUpdateOne {
+	_u.mutation.ResetRating()
+	_u.mutation.SetRating(v)
+	return _u
+}
+
+// SetNillableRating sets the "rating" field if the given value is not nil.
+func (_u *CommentUpdateOne) SetNillableRating(v *uint8) *CommentUpdateOne {
+	if v != nil {
+		_u.SetRating(*v)
+	}
+	return _u
+}
+
+// AddRating adds value to the "rating" field.
+func (_u *CommentUpdateOne) AddRating(v int8) *CommentUpdateOne {
+	_u.mutation.AddRating(v)
+	return _u
+}
+
+// ClearRating clears the value of the "rating" field.
+func (_u *CommentUpdateOne) ClearRating() *CommentUpdateOne {
+	_u.mutation.ClearRating()
+	return _u
+}
+
 // SetParent sets the "parent" edge to the Comment entity.
 func (_u *CommentUpdateOne) SetParent(v *Comment) *CommentUpdateOne {
 	return _u.SetParentID(v.ID)
@@ -978,6 +1041,15 @@ func (_u *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err er
 	}
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(comment.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.Rating(); ok {
+		_spec.SetField(comment.FieldRating, field.TypeUint8, value)
+	}
+	if value, ok := _u.mutation.AddedRating(); ok {
+		_spec.AddField(comment.FieldRating, field.TypeUint8, value)
+	}
+	if _u.mutation.RatingCleared() {
+		_spec.ClearField(comment.FieldRating, field.TypeUint8)
 	}
 	if _u.mutation.ParentCleared() {
 		edge := &sqlgraph.EdgeSpec{

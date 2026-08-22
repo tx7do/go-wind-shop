@@ -26,6 +26,10 @@
       </div>
 
       <div v-if="isLogin" class="mt-8 comment-post">
+        <div class="comment-post__rating">
+          <span class="text-xs text-muted-foreground">{{ t('mall.productRating.selectRating') }}</span>
+          <UiRatingInput v-model="postRating" />
+        </div>
         <UiTextarea
           v-model="postContent"
           :placeholder="t('comment.postPlaceholder')"
@@ -35,7 +39,7 @@
         <UiButton
           variant="default"
           size="sm"
-          :disabled="postMutation.isPending.value || !postContent.trim()"
+          :disabled="postMutation.isPending.value || !postContent.trim() || postRating < 1 || postRating > 5"
           @click="submitPost"
         >
           {{ postMutation.isPending.value ? t('common.submitting') : t('comment.submit') }}
@@ -79,6 +83,7 @@ const isLogin = computed(() => {
 });
 
 const postContent = ref('');
+const postRating = ref(0);
 
 const commentQueryParams = computed(() => ({
   objectId: props.productId,
@@ -162,6 +167,7 @@ const postMutation = useCreateComment({
   onSuccess: () => {
     toast.success(t('comment.pendingApproval'));
     postContent.value = '';
+    postRating.value = 0;
     queryClient.invalidateQueries({ queryKey: ['listComments'] });
   },
   onError: () => {
@@ -176,10 +182,12 @@ async function submitPost() {
     return;
   }
   if (!postContent.value.trim()) return;
+  if (postRating.value < 1 || postRating.value > 5) return;
 
   const req: commentservicev1_CreateCommentRequest = {
     data: {
       content: postContent.value,
+      rating: postRating.value,
       contentType: 'CONTENT_TYPE_PRODUCT' as any,
       objectId: props.productId,
       parentId: 0,
@@ -204,6 +212,12 @@ async function submitPost() {
 
   &__input {
     width: 100%;
+  }
+
+  &__rating {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 }
 </style>

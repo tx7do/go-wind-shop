@@ -12,7 +12,7 @@ import (
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/known/emptypb"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
 	unsafe "unsafe"
 )
@@ -28,30 +28,35 @@ var File_app_service_v1_i_user_coupon_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_user_coupon_proto_rawDesc = "" +
 	"\n" +
-	"\"app/service/v1/i_user_coupon.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1ecoupon/service/v1/coupon.proto2\xf3\x02\n" +
+	"\"app/service/v1/i_user_coupon.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1ecoupon/service/v1/coupon.proto2\xe7\x03\n" +
 	"\x11UserCouponService\x12o\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a).coupon.service.v1.ListUserCouponResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/app/v1/mall/user-coupons\x12u\n" +
 	"\x03Get\x12'.coupon.service.v1.GetUserCouponRequest\x1a\x1d.coupon.service.v1.UserCoupon\"&\x82\xd3\xe4\x93\x02 \x12\x1e/app/v1/mall/user-coupons/{id}\x12v\n" +
-	"\x05Quote\x12\x1f.coupon.service.v1.QuoteRequest\x1a .coupon.service.v1.QuoteResponse\"*\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/app/v1/mall/user-coupons/quoteB\xb2\x01\n" +
+	"\x05Quote\x12\x1f.coupon.service.v1.QuoteRequest\x1a .coupon.service.v1.QuoteResponse\"*\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/app/v1/mall/user-coupons/quote\x12r\n" +
+	"\x05Claim\x12%.coupon.service.v1.ClaimCouponRequest\x1a\x16.google.protobuf.Empty\"*\x82\xd3\xe4\x93\x02$:\x01*\"\x1f/app/v1/mall/user-coupons/claimB\xb2\x01\n" +
 	"\x12com.app.service.v1B\x10IUserCouponProtoP\x01Z0go-wind-shop/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_user_coupon_proto_goTypes = []any{
 	(*v1.PagingRequest)(nil),           // 0: pagination.PagingRequest
 	(*v11.GetUserCouponRequest)(nil),   // 1: coupon.service.v1.GetUserCouponRequest
 	(*v11.QuoteRequest)(nil),           // 2: coupon.service.v1.QuoteRequest
-	(*v11.ListUserCouponResponse)(nil), // 3: coupon.service.v1.ListUserCouponResponse
-	(*v11.UserCoupon)(nil),             // 4: coupon.service.v1.UserCoupon
-	(*v11.QuoteResponse)(nil),          // 5: coupon.service.v1.QuoteResponse
+	(*v11.ClaimCouponRequest)(nil),     // 3: coupon.service.v1.ClaimCouponRequest
+	(*v11.ListUserCouponResponse)(nil), // 4: coupon.service.v1.ListUserCouponResponse
+	(*v11.UserCoupon)(nil),             // 5: coupon.service.v1.UserCoupon
+	(*v11.QuoteResponse)(nil),          // 6: coupon.service.v1.QuoteResponse
+	(*emptypb.Empty)(nil),              // 7: google.protobuf.Empty
 }
 var file_app_service_v1_i_user_coupon_proto_depIdxs = []int32{
 	0, // 0: app.service.v1.UserCouponService.List:input_type -> pagination.PagingRequest
 	1, // 1: app.service.v1.UserCouponService.Get:input_type -> coupon.service.v1.GetUserCouponRequest
 	2, // 2: app.service.v1.UserCouponService.Quote:input_type -> coupon.service.v1.QuoteRequest
-	3, // 3: app.service.v1.UserCouponService.List:output_type -> coupon.service.v1.ListUserCouponResponse
-	4, // 4: app.service.v1.UserCouponService.Get:output_type -> coupon.service.v1.UserCoupon
-	5, // 5: app.service.v1.UserCouponService.Quote:output_type -> coupon.service.v1.QuoteResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	3, // 3: app.service.v1.UserCouponService.Claim:input_type -> coupon.service.v1.ClaimCouponRequest
+	4, // 4: app.service.v1.UserCouponService.List:output_type -> coupon.service.v1.ListUserCouponResponse
+	5, // 5: app.service.v1.UserCouponService.Get:output_type -> coupon.service.v1.UserCoupon
+	6, // 6: app.service.v1.UserCouponService.Quote:output_type -> coupon.service.v1.QuoteResponse
+	7, // 7: app.service.v1.UserCouponService.Claim:output_type -> google.protobuf.Empty
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

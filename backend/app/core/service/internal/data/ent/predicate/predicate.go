@@ -171,6 +171,9 @@ type SkuAttributeCombination func(*sql.Selector)
 // SkuPrice is the predicate function for skuprice builders.
 type SkuPrice func(*sql.Selector)
 
+// StockAlert is the predicate function for stockalert builders.
+type StockAlert func(*sql.Selector)
+
 // Task is the predicate function for task builders.
 type Task func(*sql.Selector)
 
@@ -197,3 +200,6 @@ type UserPosition func(*sql.Selector)
 
 // UserRole is the predicate function for userrole builders.
 type UserRole func(*sql.Selector)
+
+// Wishlist is the predicate function for wishlist builders.
+type Wishlist func(*sql.Selector)

@@ -36,12 +36,12 @@ type ProductServiceHTTPServer interface {
 
 func RegisterProductServiceHTTPServer(s *http.Server, srv ProductServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/app/v1/mall/products", _ProductService_List10_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/products", _ProductService_List11_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/products/{id}", _ProductService_Get10_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/products/search", _ProductService_SearchProducts0_HTTP_Handler(srv))
 }
 
-func _ProductService_List10_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+func _ProductService_List11_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

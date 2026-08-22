@@ -136,6 +136,28 @@ const trade: RouteRecordRaw[] = [
         },
         component: () => import("@/pages/app/trade/invoice/index.vue"),
       },
+      {
+        path: "low-stock",
+        name: "TradeLowStockManagement",
+        meta: {
+          order: 12,
+          icon: "lucide:alert-triangle",
+          title: "routes.trade.lowStock",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/low-stock/index.vue"),
+      },
+      {
+        path: "stock-alerts",
+        name: "TradeStockAlertManagement",
+        meta: {
+          order: 13,
+          icon: "lucide:shield-alert",
+          title: "routes.trade.stockAlert",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/stock-alert/index.vue"),
+      },
     ],
   },
 ];

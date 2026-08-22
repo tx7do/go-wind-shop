@@ -61,7 +61,9 @@
     "couponTemplate": "Coupon Template",
     "userCoupon": "User Coupon",
     "comment": "Comment Moderation",
-    "invoice": "Invoice"
+    "invoice": "Invoice",
+    "lowStock": "Low-Stock Management",
+    "stockAlert": "Stock Alert Management"
   },
   "tenant": {
     "moduleName": "Tenant Management",

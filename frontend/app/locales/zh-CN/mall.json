@@ -42,6 +42,38 @@
     "title": "购物车",
     "subtitle": "管理你准备结算的商品"
   },
+  "wishlist": {
+    "title": "我的收藏",
+    "subtitle": "管理你收藏的商品",
+    "empty": "你还没有收藏任何商品。",
+    "table": {
+      "product": "商品",
+      "createdAt": "收藏时间",
+      "action": "操作"
+    },
+    "errors": {
+      "removeFailed": "取消收藏失败，请稍后重试。"
+    }
+  },
+  "productRating": {
+    "average": "平均评分",
+    "count": "评分数",
+    "noRating": "暂无评分",
+    "selectRating": "选择评分"
+  },
+  "coupons": {
+    "title": "优惠券中心",
+    "subtitle": "浏览并领取公开可用的优惠券",
+    "empty": "当前没有可领取的优惠券。",
+    "claim": "领取",
+    "claimed": "已领取",
+    "discount": "折扣",
+    "validUntil": "有效期至",
+    "discountType": "折扣类型",
+    "errors": {
+      "claimFailed": "领取失败，可能已达领取上限或券已失效。"
+    }
+  },
   "checkout": {
     "title": "结算",
     "subtitle": "确认收货信息并提交订单"

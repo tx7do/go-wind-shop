@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/stock_alert.proto";
+
+// 库存预警记录管理服务（admin 裁剪：仅 List/Get/Update，Update 唯一允许标记 RESOLVED）
+service StockAlertService {
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListStockAlertResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/stock-alerts"
+    };
+  }
+
+  rpc Get (catalog.service.v1.GetStockAlertRequest) returns (catalog.service.v1.StockAlert) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/stock-alerts/{id}"
+    };
+  }
+
+  rpc Update (catalog.service.v1.UpdateStockAlertRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/stock-alerts/{id}"
+      body: "*"
+    };
+  }
+}

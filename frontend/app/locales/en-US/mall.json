@@ -42,6 +42,38 @@
     "title": "Shopping Cart",
     "subtitle": "Manage the items you're about to check out"
   },
+  "wishlist": {
+    "title": "My Wishlist",
+    "subtitle": "Manage the products you've saved",
+    "empty": "You haven't saved any products yet.",
+    "table": {
+      "product": "Product",
+      "createdAt": "Saved At",
+      "action": "Action"
+    },
+    "errors": {
+      "removeFailed": "Failed to remove from wishlist. Please try again later."
+    }
+  },
+  "productRating": {
+    "average": "Average Rating",
+    "count": "Ratings",
+    "noRating": "No ratings yet",
+    "selectRating": "Select Rating"
+  },
+  "coupons": {
+    "title": "Coupon Center",
+    "subtitle": "Browse and claim publicly available coupons",
+    "empty": "No coupons available to claim right now.",
+    "claim": "Claim",
+    "claimed": "Claimed",
+    "discount": "Discount",
+    "validUntil": "Valid Until",
+    "discountType": "Discount Type",
+    "errors": {
+      "claimFailed": "Failed to claim. You may have reached the claim limit or the coupon is no longer valid."
+    }
+  },
   "checkout": {
     "title": "Checkout",
     "subtitle": "Confirm shipping details and place your order"

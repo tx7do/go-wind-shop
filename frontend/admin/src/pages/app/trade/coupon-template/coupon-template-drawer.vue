@@ -94,6 +94,10 @@
         </ElSelect>
       </ElFormItem>
 
+      <ElFormItem :label="$t('pages.mall.couponTemplate.claimable')" prop="claimable">
+        <ElSwitch v-model="formData.claimable" />
+      </ElFormItem>
+
       <ElFormItem :label="$t('pages.mall.couponTemplate.currency')" prop="currency">
         <ElInput v-model="formData.currency" :placeholder="$t('common.placeholder.input')" />
       </ElFormItem>
@@ -142,6 +146,7 @@ const formData = reactive<{
   maxRedemptionsPerUser: number;
   status: string;
   currency: string;
+  claimable: boolean;
 }>({
   discountType: "FIXED_AMOUNT",
   discountValue: 0,
@@ -152,6 +157,7 @@ const formData = reactive<{
   maxRedemptionsPerUser: 0,
   status: "ACTIVE",
   currency: "CNY",
+  claimable: false,
 });
 
 const formRules: FormRules = {
@@ -199,6 +205,7 @@ function resetForm() {
   formData.maxRedemptionsPerUser = 0;
   formData.status = "ACTIVE";
   formData.currency = "CNY";
+  formData.claimable = false;
   formRef.value?.clearValidate();
 }
 

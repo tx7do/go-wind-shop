@@ -28,24 +28,27 @@ var File_app_service_v1_i_comment_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_comment_proto_rawDesc = "" +
 	"\n" +
-	"\x1eapp/service/v1/i_comment.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a comment/service/v1/comment.proto2\xb6\x04\n" +
+	"\x1eapp/service/v1/i_comment.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a comment/service/v1/comment.proto2\xd5\x05\n" +
 	"\x0eCommentService\x12i\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.comment.service.v1.ListCommentResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/app/v1/mall/comments\x12m\n" +
 	"\x03Get\x12%.comment.service.v1.GetCommentRequest\x1a\x1b.comment.service.v1.Comment\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/app/v1/mall/comments/{id}\x12l\n" +
 	"\x06Create\x12(.comment.service.v1.CreateCommentRequest\x1a\x16.google.protobuf.Empty\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/app/v1/mall/comments\x12q\n" +
 	"\x06Update\x12(.comment.service.v1.UpdateCommentRequest\x1a\x16.google.protobuf.Empty\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\x1a\x1a/app/v1/mall/comments/{id}\x12i\n" +
-	"\x06Delete\x12(.comment.service.v1.DeleteCommentRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17*\x15/app/v1/mall/commentsB\xaf\x01\n" +
+	"\x06Delete\x12(.comment.service.v1.DeleteCommentRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17*\x15/app/v1/mall/comments\x12\x9c\x01\n" +
+	"\x10GetProductRating\x12+.comment.service.v1.GetProductRatingRequest\x1a(.comment.service.v1.ProductRatingSummary\"1\x82\xd3\xe4\x93\x02+\x12)/app/v1/mall/products/{product_id}/ratingB\xaf\x01\n" +
 	"\x12com.app.service.v1B\rICommentProtoP\x01Z0go-wind-shop/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_comment_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),         // 0: pagination.PagingRequest
-	(*v11.GetCommentRequest)(nil),    // 1: comment.service.v1.GetCommentRequest
-	(*v11.CreateCommentRequest)(nil), // 2: comment.service.v1.CreateCommentRequest
-	(*v11.UpdateCommentRequest)(nil), // 3: comment.service.v1.UpdateCommentRequest
-	(*v11.DeleteCommentRequest)(nil), // 4: comment.service.v1.DeleteCommentRequest
-	(*v11.ListCommentResponse)(nil),  // 5: comment.service.v1.ListCommentResponse
-	(*v11.Comment)(nil),              // 6: comment.service.v1.Comment
-	(*emptypb.Empty)(nil),            // 7: google.protobuf.Empty
+	(*v1.PagingRequest)(nil),            // 0: pagination.PagingRequest
+	(*v11.GetCommentRequest)(nil),       // 1: comment.service.v1.GetCommentRequest
+	(*v11.CreateCommentRequest)(nil),    // 2: comment.service.v1.CreateCommentRequest
+	(*v11.UpdateCommentRequest)(nil),    // 3: comment.service.v1.UpdateCommentRequest
+	(*v11.DeleteCommentRequest)(nil),    // 4: comment.service.v1.DeleteCommentRequest
+	(*v11.GetProductRatingRequest)(nil), // 5: comment.service.v1.GetProductRatingRequest
+	(*v11.ListCommentResponse)(nil),     // 6: comment.service.v1.ListCommentResponse
+	(*v11.Comment)(nil),                 // 7: comment.service.v1.Comment
+	(*emptypb.Empty)(nil),               // 8: google.protobuf.Empty
+	(*v11.ProductRatingSummary)(nil),    // 9: comment.service.v1.ProductRatingSummary
 }
 var file_app_service_v1_i_comment_proto_depIdxs = []int32{
 	0, // 0: app.service.v1.CommentService.List:input_type -> pagination.PagingRequest
@@ -53,13 +56,15 @@ var file_app_service_v1_i_comment_proto_depIdxs = []int32{
 	2, // 2: app.service.v1.CommentService.Create:input_type -> comment.service.v1.CreateCommentRequest
 	3, // 3: app.service.v1.CommentService.Update:input_type -> comment.service.v1.UpdateCommentRequest
 	4, // 4: app.service.v1.CommentService.Delete:input_type -> comment.service.v1.DeleteCommentRequest
-	5, // 5: app.service.v1.CommentService.List:output_type -> comment.service.v1.ListCommentResponse
-	6, // 6: app.service.v1.CommentService.Get:output_type -> comment.service.v1.Comment
-	7, // 7: app.service.v1.CommentService.Create:output_type -> google.protobuf.Empty
-	7, // 8: app.service.v1.CommentService.Update:output_type -> google.protobuf.Empty
-	7, // 9: app.service.v1.CommentService.Delete:output_type -> google.protobuf.Empty
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
+	5, // 5: app.service.v1.CommentService.GetProductRating:input_type -> comment.service.v1.GetProductRatingRequest
+	6, // 6: app.service.v1.CommentService.List:output_type -> comment.service.v1.ListCommentResponse
+	7, // 7: app.service.v1.CommentService.Get:output_type -> comment.service.v1.Comment
+	8, // 8: app.service.v1.CommentService.Create:output_type -> google.protobuf.Empty
+	8, // 9: app.service.v1.CommentService.Update:output_type -> google.protobuf.Empty
+	8, // 10: app.service.v1.CommentService.Delete:output_type -> google.protobuf.Empty
+	9, // 11: app.service.v1.CommentService.GetProductRating:output_type -> comment.service.v1.ProductRatingSummary
+	6, // [6:12] is the sub-list for method output_type
+	0, // [0:6] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

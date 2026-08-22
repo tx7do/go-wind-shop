@@ -48,6 +48,8 @@ const (
 	FieldRedeemedCount = "redeemed_count"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldClaimable holds the string denoting the claimable field in the database.
+	FieldClaimable = "claimable"
 	// Table holds the table name of the coupontemplate in the database.
 	Table = "mall_coupon_templates"
 )
@@ -72,6 +74,7 @@ var Columns = []string{
 	FieldMaxRedemptionsPerUser,
 	FieldRedeemedCount,
 	FieldStatus,
+	FieldClaimable,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -106,6 +109,8 @@ var (
 	DefaultMaxRedemptionsPerUser int32
 	// DefaultRedeemedCount holds the default value on creation for the "redeemed_count" field.
 	DefaultRedeemedCount int32
+	// DefaultClaimable holds the default value on creation for the "claimable" field.
+	DefaultClaimable bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
 	IDValidator func(uint32) error
 )
@@ -247,4 +252,9 @@ func ByRedeemedCount(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByClaimable orders the results by the claimable field.
+func ByClaimable(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldClaimable, opts...).ToFunc()
 }
