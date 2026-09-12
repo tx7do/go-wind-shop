@@ -1,16 +1,14 @@
 <div align="center">
 
+<img src="docs/brand/vortex-tile.svg" width="120" alt="GoWind Shop｜风行商城" />
+
 # GoWind Shop｜风行商城
-
-**开箱即用的企业级出海电商全栈脚手架**
-
-> 让出海电商开发如风般自由 — GoWind Shop
 
 [![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go)](https://go.dev/)
 [![Vue](https://img.shields.io/badge/Vue-3.x-4FC08D?logo=vuedotjs)](https://vuejs.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?logo=docker)](https://www.docker.com/)
 
-**中文** | [English](./README.en-US.md) | [日本語](./README.ja-JP.md)
+[English](./README.en-US.md) | **中文** | [日本語](./README.ja-JP.md)
 
 </div>
 

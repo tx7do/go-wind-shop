@@ -1,10 +1,8 @@
 <div align="center">
 
+<img src="docs/brand/vortex-tile.svg" width="120" alt="GoWind Shop" />
+
 # GoWind Shop
-
-**Out-of-the-box enterprise-grade cross-border e-commerce full-stack scaffold**
-
-> Make cross-border e-commerce development as free as the wind — GoWind Shop
 
 [![Go Version](https://img.shields.io/badge/Go-1.25+-00ADD8?logo=go)](https://go.dev/)
 [![Vue](https://img.shields.io/badge/Vue-3.x-4FC08D?logo=vuedotjs)](https://vuejs.org/)
