@@ -23,7 +23,7 @@ GoWind Shop（风行商城）是一套面向出海场景的企业级多语言电
 - **多语言原生支持**：基于 i18n 的多语言内容分发，面向出海场景
 - **契约驱动（Protobuf-first）**：接口、数据模型、错误码均以 proto 为单一事实源，自动生成 Go / TypeScript / OpenAPI
 - **三服务 BFF 架构**：`admin` / `app` 瘦网关 + `core` 核心实现，业务逻辑与传输层解耦
-- **全栈代码生成**：Ent Schema → ORM，Wire 依赖注入，一键 CRUD 脚手架
+- **全栈代码生成**：Ent Schema → ORM，一键 CRUD 脚手架
 - **生产就绪**：JWT 鉴权、Casbin / OPA 授权、SSE 推送、Asynq 异步任务、OpenTelemetry 链路追踪、Swagger 文档、Docker 一键部署
 
 ---
@@ -53,7 +53,7 @@ core-service (gRPC，业务实现与数据访问)
 
 <table>
 <tr><th>层级</th><th>技术</th></tr>
-<tr><td><strong>后端框架</strong></td><td><code>Golang</code> · <code>go-kratos v2</code> · <code>Wire</code> · <code>Protobuf / Buf</code></td></tr>
+<tr><td><strong>后端框架</strong></td><td><code>Golang</code> · <code>go-kratos v2</code> · <code>Protobuf / Buf</code></td></tr>
 <tr><td><strong>ORM</strong></td><td><code>entgo.io/ent</code> · <code>PostgreSQL</code> · <code>MySQL</code></td></tr>
 <tr><td><strong>中间件</strong></td><td><code>Redis</code> · <code>MinIO</code>（S3 兼容对象存储） · <code>ElasticSearch / OpenSearch</code> · <code>etcd</code>（服务发现）</td></tr>
 <tr><td><strong>认证授权</strong></td><td><code>kratos-authn</code>（JWT HS256） · <code>kratos-authz</code>（Casbin / OPA）</td></tr>
@@ -201,7 +201,7 @@ go-wind-shop/
 │   │   └── gen/go/                 # buf 生成的 Go 代码
 │   ├── app/                        # 应用实现层（admin / app / core 三个微服务）
 │   │   └── <admin|app|core>/service/
-│   │       ├── cmd/server/         # 入口 + wire 注入
+│   │       ├── cmd/server/         # 入口 + 手写依赖装配
 │   │       ├── configs/            # 运行时配置（YAML）
 │   │       └── internal/           # 业务核心（server / service / data）
 │   ├── pkg/                        # 跨服务公共库

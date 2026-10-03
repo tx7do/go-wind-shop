@@ -23,7 +23,7 @@ GoWind Shop is an enterprise-grade multi-language e-commerce platform built for 
 - **Multi-language native support**: i18n-based multi-language content distribution, designed for cross-border scenarios.
 - **Contract-driven (Protobuf-first)**: interfaces, data models, and error codes use proto as the single source of truth, auto-generating Go / TypeScript / OpenAPI.
 - **Three-service BFF architecture**: `admin` / `app` thin gateways plus a `core` implementation, decoupling business logic from the transport layer.
-- **Full-stack code generation**: Ent schema → ORM, Wire dependency injection, one-click CRUD scaffolding.
+- **Full-stack code generation**: Ent schema → ORM, one-click CRUD scaffolding.
 - **Production-ready**: JWT authentication, Casbin / OPA authorization, SSE push, Asynq async tasks, OpenTelemetry tracing, Swagger docs, one-click Docker deployment.
 
 ---
@@ -53,7 +53,7 @@ core-service (gRPC, business implementation and data access)
 
 <table>
 <tr><th>Layer</th><th>Technology</th></tr>
-<tr><td><strong>Backend framework</strong></td><td><code>Golang</code> · <code>go-kratos v2</code> · <code>Wire</code> · <code>Protobuf / Buf</code></td></tr>
+<tr><td><strong>Backend framework</strong></td><td><code>Golang</code> · <code>go-kratos v2</code> · <code>Protobuf / Buf</code></td></tr>
 <tr><td><strong>ORM</strong></td><td><code>entgo.io/ent</code> · <code>PostgreSQL</code> · <code>MySQL</code></td></tr>
 <tr><td><strong>Middleware</strong></td><td><code>Redis</code> · <code>MinIO</code> (S3-compatible object storage) · <code>ElasticSearch / OpenSearch</code> · <code>etcd</code> (service discovery)</td></tr>
 <tr><td><strong>Authentication & Authorization</strong></td><td><code>kratos-authn</code> (JWT HS256) · <code>kratos-authz</code> (Casbin / OPA)</td></tr>
@@ -201,7 +201,7 @@ go-wind-shop/
 │   │   └── gen/go/                 # buf-generated Go code
 │   ├── app/                        # Application layer (admin / app / core microservices)
 │   │   └── <admin|app|core>/service/
-│   │       ├── cmd/server/         # Entry point + wire injection
+│   │       ├── cmd/server/         # Entry point + hand-written assembly
 │   │       ├── configs/            # Runtime configuration (YAML)
 │   │       └── internal/           # Business core (server / service / data)
 │   ├── pkg/                        # Cross-service shared libraries

@@ -23,7 +23,7 @@ GoWind Shop（風行ショップ）は、越境シナリオ向けのエンター
 - **多言語ネイティブサポート**：i18n に基づく多言語コンテンツ配信、越境シナリオ向け設計。
 - **契約駆動（Protobufファースト）**：インターフェース・データモデル・エラーコードは proto を唯一の真実の情報源とし、Go / TypeScript / OpenAPI を自動生成。
 - **3サービスBFFアーキテクチャ**：`admin` / `app` の薄いゲートウェイと `core` のコア実装により、ビジネスロジックとトランスポート層を分離。
-- **フルスタックコード生成**：Ent スキーマ → ORM、Wire による依存性注入、ワンクリック CRUD スキャフォールド。
+- **フルスタックコード生成**：Ent スキーマ → ORM、ワンクリック CRUD スキャフォールド。
 - **本番対応**：JWT 認証、Casbin / OPA 認可、SSE プッシュ、Asynq 非同期タスク、OpenTelemetry トレーシング、Swagger ドキュメント、Docker ワンクリックデプロイ。
 
 ---
@@ -53,7 +53,7 @@ core-service (gRPC、業務実装とデータアクセス)
 
 <table>
 <tr><th>階層</th><th>技術</th></tr>
-<tr><td><strong>バックエンドフレームワーク</strong></td><td><code>Golang</code> · <code>go-kratos v2</code> · <code>Wire</code> · <code>Protobuf / Buf</code></td></tr>
+<tr><td><strong>バックエンドフレームワーク</strong></td><td><code>Golang</code> · <code>go-kratos v2</code> · <code>Protobuf / Buf</code></td></tr>
 <tr><td><strong>ORM</strong></td><td><code>entgo.io/ent</code> · <code>PostgreSQL</code> · <code>MySQL</code></td></tr>
 <tr><td><strong>ミドルウェア</strong></td><td><code>Redis</code> · <code>MinIO</code>（S3 互換オブジェクトストレージ） · <code>ElasticSearch / OpenSearch</code> · <code>etcd</code>（サービスディスカバリ）</td></tr>
 <tr><td><strong>認証・認可</strong></td><td><code>kratos-authn</code>（JWT HS256） · <code>kratos-authz</code>（Casbin / OPA）</td></tr>
@@ -201,7 +201,7 @@ go-wind-shop/
 │   │   └── gen/go/                 # buf 生成 Go コード
 │   ├── app/                        # アプリケーション層（admin / app / core の3マイクロサービス）
 │   │   └── <admin|app|core>/service/
-│   │       ├── cmd/server/         # エントリポイント + wire インジェクション
+│   │       ├── cmd/server/         # エントリポイント + 手書きアセンブリ
 │   │       ├── configs/            # 実行時設定（YAML）
 │   │       └── internal/           # 業務コア（server / service / data）
 │   ├── pkg/                        # サービス間共通ライブラリ

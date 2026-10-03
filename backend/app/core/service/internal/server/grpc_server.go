@@ -94,6 +94,8 @@ func NewGrpcServer(
 		wishlistService *service.WishlistService,
 		orderService *service.OrderService,
 	orderItemService *service.OrderItemService,
+
+	// register:grpc-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
 		paymentTransactionService *service.PaymentTransactionService,
 		paymentRefundService *service.PaymentRefundService,
 		shippingAddressService *service.ShippingAddressService,
@@ -188,6 +190,8 @@ func NewGrpcServer(
 	interactionV1.RegisterInteractionAdminServiceServer(srv, interactionAdminService)
 
 	invoiceV1.RegisterInvoiceServiceServer(srv, invoiceService)
+
+	// register:grpc-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 
 	return srv, nil
 }

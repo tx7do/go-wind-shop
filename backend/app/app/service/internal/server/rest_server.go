@@ -116,6 +116,8 @@ func NewRestServer(
 	shippingAddressService *service.ShippingAddressService,
 	shipmentService *service.ShipmentService,
 	internalMessageRecipientService *service.InternalMessageRecipientService,
+
+	// register:rest-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
 		userCouponService *service.UserCouponService,
 		couponTemplateService *service.CouponTemplateService,
 		commentService *service.CommentService,
@@ -161,6 +163,8 @@ func NewRestServer(
 	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
 	appV1.RegisterInteractionServiceHTTPServer(srv, interactionService)
 	appV1.RegisterInvoiceServiceHTTPServer(srv, invoiceService)
+
+	// register:rest-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(
 			srv,

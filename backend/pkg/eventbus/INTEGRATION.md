@@ -240,21 +240,17 @@ func (s *TaskService) registerHandlersWithAudit() error {
 }
 ```
 
-### 5. Add EventBus to Wire Dependencies
+### 5. Register EventBus in the Hand-Written Wiring
 
-In `data/init.go`:
+In `cmd/server/wiring.go`, append the constructor to the infrastructure section
+and pass the manager to the consuming service constructor (no ProviderSet —
+this project uses hand-written assembly, see the 依赖装配 chapter of
+`backend/AGENTS.md`):
 
 ```go
-var ProviderSet = wire.NewSet(
-    NewData,
-    // ... existing providers ...
-    NewEventBusManager,  // Add this
-)
-
-// NewEventBusManager creates a new event bus manager
-func NewEventBusManager(logger log.Logger) *eventbus.Manager {
-    return eventbus.NewManager(logger)
-}
+// wiring.go, infrastructure section:
+eventBusManager := eventbus.NewManager(logger)
+// then pass eventBusManager to service.NewTaskService(...)
 ```
 
 ## Event Flow Example
