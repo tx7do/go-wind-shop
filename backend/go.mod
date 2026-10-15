@@ -36,6 +36,7 @@ require (
 	github.com/tx7do/go-utils/geoip v1.1.8
 	github.com/tx7do/go-utils/id v0.0.6
 	github.com/tx7do/go-utils/jwtutil v0.0.3
+	github.com/tx7do/go-utils/mailer v0.1.1
 	github.com/tx7do/go-utils/mapper v0.0.3
 	github.com/tx7do/go-utils/password v0.0.2
 	github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact v0.0.0-20260621140333-c4bf78d8d062

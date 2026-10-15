@@ -12,25 +12,27 @@
 // 当 SMTP_HOST 未配置时，Sender 处于降级模式：不真正发邮件，而是把验证码
 // 写入日志（WARN 级）。这样开发/演示环境无需 SMTP 即可跑通完整找回流程；
 // 生产环境配置好环境变量后自动切换为真实发送。
+//
+// SMTP 传输层（TLS 模式/认证/报文拼装）由 github.com/tx7do/go-utils/mailer 承担；
+// 本包只管环境变量解析、降级策略与脱敏工具。
 package email
 
 import (
-	"crypto/tls"
+	"context"
 	"errors"
-	"fmt"
-	"net"
-	"net/smtp"
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"github.com/tx7do/go-utils/mailer"
 )
 
 const (
 	defaultFromName = "GoWind Shop"
-	defaultTimeout  = 15 * time.Second
+
+	// implicitTLSPort 全程 TLS 的端口；其余端口由 mailer 明文建连后自动 STARTTLS 升级。
+	implicitTLSPort = 465
 )
 
 // Config 从环境变量构建的 SMTP 配置。Host 为空表示未配置（降级模式）。
@@ -93,72 +95,25 @@ func (s *Sender) Send(to, subject, body string) error {
 		s.log.Warnf("[email degraded] SMTP not configured, skip sending. to=%s subject=%s", to, subject)
 		return nil
 	}
-	return s.sendSMTP(to, subject, body)
+	// mailer.SendMail 的 ctx 贯穿 TCP 建连：SMTP 不可达时不会卡到 OS 级连接超时。
+	// 本包对外维持无 ctx 的既有签名，调用方是找回密码的同步链路，Background 足够。
+	return mailer.SendMail(context.Background(), mailer.SmtpConfig{
+		Host:     s.cfg.Host,
+		Port:     uint32(s.cfg.Port),
+		Username: s.cfg.User,
+		Password: s.cfg.Password,
+		From:     s.cfg.From,
+		FromName: s.cfg.FromName,
+		TlsMode:  tlsModeOf(s.cfg.Port),
+	}, []string{to}, subject, body)
 }
 
-func (s *Sender) sendSMTP(to, subject, body string) error {
-	addr := net.JoinHostPort(s.cfg.Host, strconv.Itoa(s.cfg.Port))
-	auth := smtp.PlainAuth("", s.cfg.User, s.cfg.Password, s.cfg.Host)
-
-	headers := map[string]string{
-		"From":         fmt.Sprintf("%s <%s>", s.cfg.FromName, s.cfg.From),
-		"To":           to,
-		"Subject":      subject,
-		"MIME-Version": "1.0",
-		"Content-Type": "text/plain; charset=UTF-8",
-		"Date":         time.Now().Format(time.RFC1123Z),
+// tlsModeOf 按端口推断加密方式：465 全程 TLS，其余由 mailer 自动 STARTTLS 升级。
+func tlsModeOf(port int) string {
+	if port == implicitTLSPort {
+		return "SSL"
 	}
-
-	var msg strings.Builder
-	for k, v := range headers {
-		fmt.Fprintf(&msg, "%s: %s\r\n", k, v)
-	}
-	msg.WriteString("\r\n")
-	msg.WriteString(body)
-
-	// 端口 465 用隐式 TLS，其余用 STARTTLS（PLAIN AUTH 前尝试升级）。
-	if s.cfg.Port == 465 {
-		return s.sendImplicitTLS(addr, auth, []string{to}, []byte(msg.String()))
-	}
-	return smtp.SendMail(addr, auth, s.cfg.From, []string{to}, []byte(msg.String()))
-}
-
-func (s *Sender) sendImplicitTLS(addr string, auth smtp.Auth, to []string, msg []byte) error {
-	dialer := &net.Dialer{Timeout: defaultTimeout}
-	conn, err := tls.DialWithDialer(dialer, "tcp", addr, &tls.Config{ServerName: s.cfg.Host})
-	if err != nil {
-		return fmt.Errorf("smtp tls dial: %w", err)
-	}
-	defer conn.Close()
-
-	c, err := smtp.NewClient(conn, s.cfg.Host)
-	if err != nil {
-		return fmt.Errorf("smtp client: %w", err)
-	}
-	defer c.Close()
-
-	if err = c.Auth(auth); err != nil {
-		return fmt.Errorf("smtp auth: %w", err)
-	}
-	if err = c.Mail(s.cfg.From); err != nil {
-		return fmt.Errorf("smtp mail: %w", err)
-	}
-	for _, rcpt := range to {
-		if err = c.Rcpt(rcpt); err != nil {
-			return fmt.Errorf("smtp rcpt: %w", err)
-		}
-	}
-	w, err := c.Data()
-	if err != nil {
-		return fmt.Errorf("smtp data: %w", err)
-	}
-	if _, err = w.Write(msg); err != nil {
-		return fmt.Errorf("smtp write: %w", err)
-	}
-	if err = w.Close(); err != nil {
-		return fmt.Errorf("smtp close: %w", err)
-	}
-	return c.Quit()
+	return "START_TLS"
 }
 
 // MaskEmail 邮箱脱敏：保留首字符与域名，中间用 *** 替代。
