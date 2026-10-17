@@ -773,7 +773,9 @@ html.dark {
   .pagination-container {
     background-color: var(--dark-bg-table) !important; // 和表格容器统一，避免模块割裂
     border-top-color: var(--dark-border) !important;
-    padding: 12px 0 !important;
+    // 上 16 = 表格 → 分页器间距，下 0：到卡片边的留白由 .pro-page__content 的 20px 内缩唯一提供
+    // （与 ProPagination 的 scoped 声明同一条约定的暗色覆写，两处必须一起改）
+    padding: 16px 0 0 !important;
   }
 
   .el-pagination {

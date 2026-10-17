@@ -81,11 +81,40 @@ $border: 1px solid var(--el-border-color-light);
   /* ---------- GoWind 全局组件变量 ---------- */
   --gowind-drawer-width: 480px;
   --gowind-form-item-margin-bottom: 24px;
+
+  /* 语义色"作文字"时的合格档：--el-color-* 基准值是填充档，当文字墨用时对比度不够
+   * （如亮色 success/warning 软底标签文字 <2:1、danger 文字按钮 ~3.5:1）。
+   * 这里用 color-mix 从基准色反解出文字档，换主题色后随 --el-color-* 联动，不是写死的色值。
+   * 填充（实底按钮/徽标底色）继续用基准值，只有"文字/软底标签前景"换本组变量。
+   * 自建变量（base.css 里没有同名项），不需要 !important。 */
+  --gowind-primary-text: color-mix(in srgb, var(--el-color-primary) 90%, #0b0f19);
+  --gowind-success-text: color-mix(in srgb, var(--el-color-success) 50%, #0b0f19);
+  --gowind-warning-text: color-mix(in srgb, var(--el-color-warning) 50%, #0b0f19);
+  --gowind-danger-text: color-mix(in srgb, var(--el-color-danger) 70%, #0b0f19);
+  /* 实底语义色上的前景 = 暗色 L0（白字在 danger 实底上对比不足） */
+  --gowind-solid-ink: #0b0f19;
+
+  /* 卡片静止档：投影只表达层级，卡片静止 = `0 1px 2px rgba(0,0,0,.05)`，悬浮才是更重的晕。
+   * Pro 卡/骨架卡统一走这两个自建变量（base.css 里没有同名项，不需要 !important）；
+   * 不复用 --el-box-shadow-light——它剩下的使用者全是浮层（下拉/通知/弹层），浮层要的就是那圈晕。
+   * 描边同理走 --gowind-card-border：--el-border-color-lighter 运行时是出厂 #EBEEF5，偏淡。 */
+  --gowind-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --gowind-card-border: #e4e4e7;
 }
 
 html.dark {
   --el-table-row-hover-bg-color: #252a37;
   --el-table-header-bg-color: #1f232b;
+
+  /* 文字档暗色侧：对暗面全部 ≥4.5:1 的最小升档（基准色混白） */
+  --gowind-primary-text: color-mix(in srgb, var(--el-color-primary) 70%, #ffffff);
+  --gowind-success-text: color-mix(in srgb, var(--el-color-success) 90%, #ffffff);
+  --gowind-warning-text: color-mix(in srgb, var(--el-color-warning) 90%, #ffffff);
+  --gowind-danger-text: color-mix(in srgb, var(--el-color-danger) 90%, #ffffff);
+
+  /* 卡片暗色档：投影 36% 黑的浅落影；描边落分隔线档 8% 白 */
+  --gowind-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.36);
+  --gowind-card-border: rgba(255, 255, 255, 0.08);
 }
 
 /* ---------- el-dialog ---------- */

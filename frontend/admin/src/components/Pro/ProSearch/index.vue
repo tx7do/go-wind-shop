@@ -279,11 +279,18 @@ defineExpose({
 
 <style lang="scss" scoped>
 .pro-search {
-  padding: 16px 20px;
+  /* 四边 20px（§2.2 p-5），与列表卡同一档内缩：EP 的 ElForm 自身不带 padding，
+     所以这里只有一个内缩来源。原 `16px 20px` 上下比左右浅 4px，字段行贴卡片上下边。 */
+  padding: 20px;
   background: var(--el-bg-color);
-  border: 1px solid var(--el-border-color-lighter);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 5%);
+  /* 描边与投影走 §2.2/§2.3 的卡片档（--gowind-card-*，定义见 styles/vendors/_element-plus.scss 的
+     :root 与 html.dark）：不走全向晕的浮层投影，静止卡片只需要 1px/2px 的浅落影。
+     骨架卡 .ts-search 是这里的镜像，两处必须一起改。 */
+  border: 1px solid var(--gowind-card-border);
+  /* 卡片圆角 12（§2.4 大容器用 LG）：原先 8 与 .el-input__wrapper 的 8 同档，
+     卡片不比它装的内容更圆；骨架卡的 .ts-search 是这里的镜像，两处必须一起改。 */
+  border-radius: 12px;
+  box-shadow: var(--gowind-card-shadow);
 }
 
 // === Grid 布局模式（参考 Vben） ===

@@ -335,16 +335,19 @@ function stagger(delay: number) {
 }
 
 // 搜索栏
+// 这两张骨架卡的 padding / border-radius / 描边 / 投影是「真卡镜像」：值必须与 ProSearch、
+// ProPage__content 保持一致（内缩 20、大容器圆角 12、--gowind-card-* 卡片档），
+// 改真卡时要同步这里，否则骨架→真实的切换会跳形。
 .ts-search {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
   gap: 0 16px;
-  padding: 16px 20px;
+  padding: 20px;
   background: var(--el-bg-color);
-  border-radius: 8px;
-  border: 1px solid var(--el-border-color-lighter);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  border-radius: 12px;
+  border: 1px solid var(--gowind-card-border);
+  box-shadow: var(--gowind-card-shadow);
 }
 
 :global(html.dark) {
@@ -388,10 +391,10 @@ function stagger(delay: number) {
 // 表格卡片
 .ts-table-card {
   background: var(--el-bg-color);
-  border-radius: 8px;
-  border: 1px solid var(--el-border-color-lighter);
+  border-radius: 12px;
+  border: 1px solid var(--gowind-card-border);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: var(--gowind-card-shadow);
   flex: 1;
 }
 
