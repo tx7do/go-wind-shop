@@ -279,7 +279,7 @@ const handleSubmit = async () => {
 async function createTenantWithAdminUser() {
   // 检查密码和确认密码是否一致
   if (formData.value.password !== formData.value.passwordConfirm) {
-    ElMessage.error($t("pages.notification.password_mismatch"));
+    ElMessage.error($t("common.notification.password_mismatch"));
     return;
   }
 

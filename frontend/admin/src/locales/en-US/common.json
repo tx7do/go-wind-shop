@@ -132,7 +132,12 @@
     "syncFailed": "Sync failed",
     "password_mismatch": "The two passwords do not match",
     "update_status_success": "Status updated successfully",
-    "passwordChanged": "Password changed, please sign in again"
+    "passwordChanged": "Password changed, please sign in again",
+    "create_success": "Create successful",
+    "create_failed": "Create failed",
+    "operation_success": "Operation successful",
+    "operation_failed": "Operation failed",
+    "update_status_failed": "Status update failed"
   },
   "title": {
     "confirm": "Confirm",
@@ -394,6 +399,7 @@
     "json_parse_error": "JSON parse error",
     "json_serialize_error": "JSON serialization error",
     "unknown_error": "Unknown error",
-    "image_upload_failed": "Image upload failed"
+    "image_upload_failed": "Image upload failed",
+    "clear_content_confirm": "Are you sure you want to clear all content?"
   }
 }

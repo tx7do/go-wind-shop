@@ -132,7 +132,12 @@
     "syncFailed": "同步失败",
     "password_mismatch": "两次输入的密码不一致",
     "update_status_success": "状态更新成功",
-    "passwordChanged": "密码修改成功，请重新登录"
+    "passwordChanged": "密码修改成功，请重新登录",
+    "create_success": "创建成功",
+    "create_failed": "创建失败",
+    "operation_success": "操作成功",
+    "operation_failed": "操作失败",
+    "update_status_failed": "状态更新失败"
   },
   "title": {
     "confirm": "确认",
@@ -394,6 +399,7 @@
     "json_parse_error": "JSON解析错误",
     "json_serialize_error": "JSON序列化错误",
     "unknown_error": "未知错误",
-    "image_upload_failed": "图片上传失败"
+    "image_upload_failed": "图片上传失败",
+    "clear_content_confirm": "确定要清空所有内容吗？"
   }
 }
