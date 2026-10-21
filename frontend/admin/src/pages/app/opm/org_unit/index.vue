@@ -9,14 +9,14 @@
     >
       <!-- 类型 -->
       <template #type="scope: any">
-        <ElTag size="small" effect="dark" round :color="orgUnitTypeToColor(scope.row.type)">
+        <ElTag size="small" round :type="orgUnitTypeToType(scope.row.type)">
           {{ orgUnitTypeToName(scope.row.type) }}
         </ElTag>
       </template>
 
       <!-- 状态 -->
       <template #status="scope: any">
-        <ElTag size="small" effect="dark" round :color="orgUnitStatusToColor(scope.row.status)">
+        <ElTag size="small" effect="plain" round :type="orgUnitStatusToType(scope.row.status)">
           {{ orgUnitStatusToName(scope.row.status) }}
         </ElTag>
       </template>
@@ -36,10 +36,10 @@ import type { ProPageConfig, ToolsButton } from "@/components/Pro/ProPage/types"
 import OrgDrawer from "./org-drawer.vue";
 
 import {
-  orgUnitStatusToColor,
+  orgUnitStatusToType,
   orgUnitStatusToName,
   orgUnitTypeListForQuery,
-  orgUnitTypeToColor,
+  orgUnitTypeToType,
   orgUnitTypeToName,
   fetchListOrgUnits,
   useDeleteOrgUnit,
@@ -110,7 +110,7 @@ const pageConfig = computed<ProPageConfig>(() => ({
       } as ToolsButton,
     ],
     toolbarRight: ["add"],
-    defaultToolbar: ["refresh", "filter"],
+    defaultToolbar: ["exports", "refresh", "zoom", "filter"],
     tableAttrs: {
       border: true,
       stripe: false,
@@ -121,7 +121,6 @@ const pageConfig = computed<ProPageConfig>(() => ({
       },
     },
     columns: [
-      { type: "index", label: $t("common.table.seq"), width: 60 },
       { prop: "name", label: $t("pages.org_unit.name"), minWidth: 150, treeNode: true },
       { prop: "code", label: $t("pages.org_unit.code"), minWidth: 120 },
       {

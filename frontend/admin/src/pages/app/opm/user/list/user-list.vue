@@ -197,6 +197,7 @@ const pageConfig = computed<ProPageConfig>(() => ({
   },
 
   table: {
+    exportFilename: "users",
     listAction: async (query: any) => {
       const { page, pageSize, ...queryParams } = query;
       const result = await userViewStore.fetchUserList(page || 1, pageSize || 10, queryParams);
@@ -207,7 +208,7 @@ const pageConfig = computed<ProPageConfig>(() => ({
     },
     toolbar: [],
     toolbarRight: ["add"],
-    defaultToolbar: ["refresh", "filter"],
+    defaultToolbar: ["exports", "refresh", "zoom", "filter"],
     tableAttrs: { border: true, stripe: true, height: "auto" },
     columns: [
       { type: "index", label: $t("common.table.seq"), width: 60 },
@@ -259,7 +260,7 @@ const pageConfig = computed<ProPageConfig>(() => ({
         prop: "action",
         label: $t("common.table.action"),
         fixed: "right",
-        width: 150,
+        width: 260,
         cellType: "tool",
         buttons: [
           { name: "detail", label: $t("common.button.detail"), icon: "lucide:eye" },
