@@ -21,7 +21,7 @@ import (
 
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
 	auditV1 "go-wind-shop/api/gen/go/audit/service/v1"
-	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
+	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 
 	"go-wind-shop/pkg/metadata"
 	"go-wind-shop/pkg/middleware/auth"
@@ -153,6 +153,14 @@ func NewRestServer(
 	monitorAlertService *service.MonitorAlertService,
 	serverMonitorService *service.ServerMonitorService,
 	redisCacheMonitorService *service.RedisCacheMonitorService,
+	aiAgentService *service.AiAgentService,
+	aiProviderService *service.AiProviderService,
+	aiChatService *service.AiChatService,
+	aiConversationService *service.AiConversationService,
+	aiMessageService *service.AiMessageService,
+	aiKnowledgeService *service.AiKnowledgeService,
+	aiQueryService *service.AiQueryService,
+	aiUsageLogService *service.AiUsageLogService,
 
 	apiAuditLogService *service.ApiAuditLogService,
 	dataAccessAuditLogService *service.DataAccessAuditLogService,
@@ -251,6 +259,14 @@ func NewRestServer(
 	adminV1.RegisterMonitorAlertServiceHTTPServer(srv, monitorAlertService)
 	adminV1.RegisterServerMonitorServiceHTTPServer(srv, serverMonitorService)
 	adminV1.RegisterRedisCacheMonitorServiceHTTPServer(srv, redisCacheMonitorService)
+	adminV1.RegisterAiAgentServiceHTTPServer(srv, aiAgentService)
+	adminV1.RegisterAiProviderServiceHTTPServer(srv, aiProviderService)
+	adminV1.RegisterAiChatServiceHTTPServer(srv, aiChatService)
+	adminV1.RegisterAiConversationServiceHTTPServer(srv, aiConversationService)
+	adminV1.RegisterAiMessageServiceHTTPServer(srv, aiMessageService)
+	adminV1.RegisterAiKnowledgeBaseServiceHTTPServer(srv, aiKnowledgeService)
+	adminV1.RegisterAiQueryServiceHTTPServer(srv, aiQueryService)
+	adminV1.RegisterAiUsageLogServiceHTTPServer(srv, aiUsageLogService)
 
 	// 注册文件传输服务，用于处理文件上传下载等功能
 	// TODO 它不能够使用代码生成器生成的Handler，需要手动注册。代码生成器生成的Handler无法处理文件上传下载的请求。

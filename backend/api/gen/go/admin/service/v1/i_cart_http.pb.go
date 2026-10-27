@@ -42,16 +42,16 @@ type CartServiceHTTPServer interface {
 
 func RegisterCartServiceHTTPServer(s *http.Server, srv CartServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/carts", _CartService_List4_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/carts", _CartService_List10_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/carts/count", _CartService_Count1_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/carts/{id}", _CartService_Get4_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/carts", _CartService_Create3_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/carts/{id}", _CartService_Get8_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/carts", _CartService_Create6_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/carts/batch", _CartService_BatchCreate1_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/carts/{id}", _CartService_Update3_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/carts", _CartService_Delete3_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/carts/{id}", _CartService_Update7_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/carts", _CartService_Delete8_HTTP_Handler(srv))
 }
 
-func _CartService_List4_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.Context) error {
+func _CartService_List10_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -89,7 +89,7 @@ func _CartService_Count1_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.C
 	}
 }
 
-func _CartService_Get4_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.Context) error {
+func _CartService_Get8_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetCartRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -111,7 +111,7 @@ func _CartService_Get4_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.Con
 	}
 }
 
-func _CartService_Create3_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.Context) error {
+func _CartService_Create6_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateCartRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -155,7 +155,7 @@ func _CartService_BatchCreate1_HTTP_Handler(srv CartServiceHTTPServer) func(ctx 
 	}
 }
 
-func _CartService_Update3_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.Context) error {
+func _CartService_Update7_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateCartRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -180,7 +180,7 @@ func _CartService_Update3_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.
 	}
 }
 
-func _CartService_Delete3_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.Context) error {
+func _CartService_Delete8_HTTP_Handler(srv CartServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteCartRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -328,16 +328,16 @@ type CartItemServiceHTTPServer interface {
 
 func RegisterCartItemServiceHTTPServer(s *http.Server, srv CartItemServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/cart-items", _CartItemService_List5_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/cart-items", _CartItemService_List11_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/cart-items/count", _CartItemService_Count2_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/cart-items/{id}", _CartItemService_Get5_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/cart-items", _CartItemService_Create4_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/cart-items/{id}", _CartItemService_Get9_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/cart-items", _CartItemService_Create7_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/cart-items/batch", _CartItemService_BatchCreate2_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/cart-items/{id}", _CartItemService_Update4_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/cart-items", _CartItemService_Delete4_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/cart-items/{id}", _CartItemService_Update8_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/cart-items", _CartItemService_Delete9_HTTP_Handler(srv))
 }
 
-func _CartItemService_List5_HTTP_Handler(srv CartItemServiceHTTPServer) func(ctx http.Context) error {
+func _CartItemService_List11_HTTP_Handler(srv CartItemServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -375,7 +375,7 @@ func _CartItemService_Count2_HTTP_Handler(srv CartItemServiceHTTPServer) func(ct
 	}
 }
 
-func _CartItemService_Get5_HTTP_Handler(srv CartItemServiceHTTPServer) func(ctx http.Context) error {
+func _CartItemService_Get9_HTTP_Handler(srv CartItemServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetCartItemRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -397,7 +397,7 @@ func _CartItemService_Get5_HTTP_Handler(srv CartItemServiceHTTPServer) func(ctx 
 	}
 }
 
-func _CartItemService_Create4_HTTP_Handler(srv CartItemServiceHTTPServer) func(ctx http.Context) error {
+func _CartItemService_Create7_HTTP_Handler(srv CartItemServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateCartItemRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -441,7 +441,7 @@ func _CartItemService_BatchCreate2_HTTP_Handler(srv CartItemServiceHTTPServer) f
 	}
 }
 
-func _CartItemService_Update4_HTTP_Handler(srv CartItemServiceHTTPServer) func(ctx http.Context) error {
+func _CartItemService_Update8_HTTP_Handler(srv CartItemServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateCartItemRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -466,7 +466,7 @@ func _CartItemService_Update4_HTTP_Handler(srv CartItemServiceHTTPServer) func(c
 	}
 }
 
-func _CartItemService_Delete4_HTTP_Handler(srv CartItemServiceHTTPServer) func(ctx http.Context) error {
+func _CartItemService_Delete9_HTTP_Handler(srv CartItemServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteCartItemRequest
 		if err := ctx.BindQuery(&in); err != nil {

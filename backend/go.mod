@@ -8,6 +8,7 @@ require (
 	github.com/dtm-labs/dtm v1.19.0
 	github.com/dtm-labs/dtmdriver v0.0.6
 	github.com/envoyproxy/protoc-gen-validate v1.3.3
+	github.com/expr-lang/expr v1.17.8
 	github.com/getkin/kin-openapi v0.138.0
 	github.com/go-kratos/kratos/v2 v2.9.2
 	github.com/go-sql-driver/mysql v1.10.0
@@ -22,6 +23,7 @@ require (
 	github.com/mileusna/useragent v1.3.5
 	github.com/minio/minio-go/v7 v7.0.99
 	github.com/redis/go-redis/v9 v9.22.0
+	github.com/sashabaranov/go-openai v1.41.2
 	github.com/stretchr/testify v1.12.1
 	github.com/tx7do/go-crud/api v0.0.7
 	github.com/tx7do/go-crud/entgo v0.0.57
@@ -33,6 +35,7 @@ require (
 	github.com/tx7do/go-utils/captcha v0.0.4
 	github.com/tx7do/go-utils/copierutil v0.0.8
 	github.com/tx7do/go-utils/crypto v0.0.2
+	github.com/tx7do/go-utils/doctext v0.1.0
 	github.com/tx7do/go-utils/geoip v1.1.8
 	github.com/tx7do/go-utils/id v0.0.6
 	github.com/tx7do/go-utils/jwtutil v0.0.3
@@ -40,6 +43,7 @@ require (
 	github.com/tx7do/go-utils/mapper v0.0.3
 	github.com/tx7do/go-utils/notify v0.0.6
 	github.com/tx7do/go-utils/password v0.0.2
+	github.com/tx7do/go-wind-plugins/ai/openai v0.0.1
 	github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact v0.0.0-20260621140333-c4bf78d8d062
 	github.com/tx7do/kratos-authn v1.1.10
 	github.com/tx7do/kratos-authn/engine/jwt v1.1.10
@@ -62,6 +66,7 @@ require (
 	github.com/tx7do/kratos-transport/broker v1.3.2
 	github.com/tx7do/kratos-transport/transport/asynq v1.3.12
 	github.com/tx7do/kratos-transport/transport/sse v1.3.4
+	github.com/xuri/excelize/v2 v2.9.1
 	github.com/yuin/gopher-lua v1.1.2
 	go.etcd.io/etcd/client/v3 v3.6.11
 	go.opentelemetry.io/otel/trace v1.46.0
@@ -136,6 +141,7 @@ require (
 	github.com/klauspost/compress v1.19.2 // indirect
 	github.com/klauspost/cpuid/v2 v2.3.0 // indirect
 	github.com/klauspost/crc32 v1.3.0 // indirect
+	github.com/ledongthuc/pdf v0.0.0-20260907135840-6c8c28e0e8a0 // indirect
 	github.com/lestrrat-go/blackmagic v1.0.4 // indirect
 	github.com/lestrrat-go/dsig v1.3.0 // indirect
 	github.com/lestrrat-go/dsig-secp256k1 v1.0.0 // indirect
@@ -216,7 +222,6 @@ require (
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xuri/efp v0.0.1 // indirect
-	github.com/xuri/excelize/v2 v2.9.1 // indirect
 	github.com/xuri/nfp v0.0.1 // indirect
 	github.com/yashtewari/glob-intersection v0.2.0 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect

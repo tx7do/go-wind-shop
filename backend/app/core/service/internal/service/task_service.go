@@ -382,3 +382,11 @@ func (s *TaskService) EnqueueSearchReindex(payload *task.SearchReindexPayload) e
 		payload.Entity, payload.ID, payload.Op)
 	return nil
 }
+
+// EnqueueAiDocReindex 入队知识库切片重索引任务（AI 域）。
+func (s *TaskService) EnqueueAiDocReindex(baseID uint32) error {
+	if s.taskScheduler == nil {
+		return nil
+	}
+	return s.taskScheduler.NewTask(task.AiDocReindexTaskType, &task.AiDocReindexPayload{BaseID: baseID})
+}

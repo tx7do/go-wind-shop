@@ -28,6 +28,7 @@ import (
 	interactionV1 "go-wind-shop/api/gen/go/interaction/service/v1"
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
+	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 	configV1 "go-wind-shop/api/gen/go/config/service/v1"
 	accessKeyV1 "go-wind-shop/api/gen/go/access_key/service/v1"
 	onlineSessionV1 "go-wind-shop/api/gen/go/online_session/service/v1"
@@ -653,4 +654,76 @@ func NewRedisCacheMonitorServiceClient(ctx *bootstrap.Context, r registry.Discov
 	}
 
 	return redisCacheV1.NewRedisCacheMonitorServiceClient(cli)
+}
+
+func NewAiAgentServiceClient(ctx *bootstrap.Context, r registry.Discovery) aiV1.AiAgentServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return aiV1.NewAiAgentServiceClient(cli)
+}
+
+func NewAiChatServiceClient(ctx *bootstrap.Context, r registry.Discovery) aiV1.AiChatServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return aiV1.NewAiChatServiceClient(cli)
+}
+
+func NewAiConversationServiceClient(ctx *bootstrap.Context, r registry.Discovery) aiV1.AiConversationServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return aiV1.NewAiConversationServiceClient(cli)
+}
+
+func NewAiQueryServiceClient(ctx *bootstrap.Context, r registry.Discovery) aiV1.AiQueryServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return aiV1.NewAiQueryServiceClient(cli)
+}
+
+func NewAiUsageLogServiceClient(ctx *bootstrap.Context, r registry.Discovery) aiV1.AiUsageLogServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return aiV1.NewAiUsageLogServiceClient(cli)
+}
+
+func NewAiKnowledgeBaseServiceClient(ctx *bootstrap.Context, r registry.Discovery) aiV1.AiKnowledgeBaseServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return aiV1.NewAiKnowledgeBaseServiceClient(cli)
+}
+
+func NewAiMessageServiceClient(ctx *bootstrap.Context, r registry.Discovery) aiV1.AiMessageServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return aiV1.NewAiMessageServiceClient(cli)
+}
+
+func NewAiProviderServiceClient(ctx *bootstrap.Context, r registry.Discovery) aiV1.AiProviderServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return aiV1.NewAiProviderServiceClient(cli)
 }

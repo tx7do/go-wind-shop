@@ -14,6 +14,24 @@ type Tx struct {
 	config
 	// AccessKey is the client for interacting with the AccessKey builders.
 	AccessKey *AccessKeyClient
+	// AiAgentApp is the client for interacting with the AiAgentApp builders.
+	AiAgentApp *AiAgentAppClient
+	// AiAgentRun is the client for interacting with the AiAgentRun builders.
+	AiAgentRun *AiAgentRunClient
+	// AiChunk is the client for interacting with the AiChunk builders.
+	AiChunk *AiChunkClient
+	// AiConversation is the client for interacting with the AiConversation builders.
+	AiConversation *AiConversationClient
+	// AiDoc is the client for interacting with the AiDoc builders.
+	AiDoc *AiDocClient
+	// AiKnowledgeBase is the client for interacting with the AiKnowledgeBase builders.
+	AiKnowledgeBase *AiKnowledgeBaseClient
+	// AiMessage is the client for interacting with the AiMessage builders.
+	AiMessage *AiMessageClient
+	// AiProvider is the client for interacting with the AiProvider builders.
+	AiProvider *AiProviderClient
+	// AiUsageLog is the client for interacting with the AiUsageLog builders.
+	AiUsageLog *AiUsageLogClient
 	// Api is the client for interacting with the Api builders.
 	Api *APIClient
 	// ApiAuditLog is the client for interacting with the ApiAuditLog builders.
@@ -298,6 +316,15 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.AccessKey = NewAccessKeyClient(tx.config)
+	tx.AiAgentApp = NewAiAgentAppClient(tx.config)
+	tx.AiAgentRun = NewAiAgentRunClient(tx.config)
+	tx.AiChunk = NewAiChunkClient(tx.config)
+	tx.AiConversation = NewAiConversationClient(tx.config)
+	tx.AiDoc = NewAiDocClient(tx.config)
+	tx.AiKnowledgeBase = NewAiKnowledgeBaseClient(tx.config)
+	tx.AiMessage = NewAiMessageClient(tx.config)
+	tx.AiProvider = NewAiProviderClient(tx.config)
+	tx.AiUsageLog = NewAiUsageLogClient(tx.config)
 	tx.Api = NewAPIClient(tx.config)
 	tx.ApiAuditLog = NewApiAuditLogClient(tx.config)
 	tx.Brand = NewBrandClient(tx.config)

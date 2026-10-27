@@ -28,3 +28,32 @@ const NotificationDeliverySweepCronSpec = "*/5 * * * *"
 
 // NotificationDeliverySweepTaskData 空载荷：清扫阈值走环境变量（NOTIFICATION_DELIVERY_STALE_MINUTES）。
 type NotificationDeliverySweepTaskData struct{}
+// AiDocReindexTaskType 知识库切片重索引任务的 asynq 任务类型。
+const AiDocReindexTaskType = "ai.doc.reindex"
+
+// AiDocReindexPayload 知识库切片重索引任务 payload。
+// BaseID=0 表示对全部知识库重索引；>0 只处理指定库。
+type AiDocReindexPayload struct {
+	BaseID uint32 `json:"base_id"`
+}
+
+// AiQueryRunTaskType 定时问数任务的 asynq 任务类型。
+// 执行一次问数并把结果以站内信推送给平台侧用户。
+const AiQueryRunTaskType = "ai.query.run"
+
+// AiQueryRunPayload 定时问数任务 payload。
+type AiQueryRunPayload struct {
+	Question string `json:"question"`
+	Lang     string `json:"lang"`
+}
+
+// AiPostIndexTaskType 帖子语义索引任务的 asynq 任务类型。
+// 把帖子标题+摘要向量化写入 AI 全局搜索索引（sys_ai_search_index）。
+const AiPostIndexTaskType = "ai.post.index"
+
+// AiPostIndexPayload 帖子语义索引任务 payload。
+type AiPostIndexPayload struct {
+	PostID   uint32 `json:"post_id"`
+	TenantID uint32 `json:"tenant_id"`
+	Op       string `json:"op"` // index / delete
+}

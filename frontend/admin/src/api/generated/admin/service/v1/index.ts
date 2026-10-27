@@ -717,6 +717,1661 @@ export function createAdminPortalServiceClient(
     },
   };
 }
+// AI Agent 编排管理服务（可视化画布）
+export interface AiAgentService {
+  // 分页查询 Agent 应用列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<aiservicev1_ListAiAgentAppsResponse>;
+  // 查询 Agent 应用详情
+  Get(
+    request: aiservicev1_GetAiAgentAppRequest,
+  ): Promise<aiservicev1_AiAgentApp>;
+  // 创建 Agent 应用
+  Create(
+    request: aiservicev1_CreateAiAgentAppRequest,
+  ): Promise<aiservicev1_AiAgentApp>;
+  // 更新 Agent 应用
+  Update(
+    request: aiservicev1_UpdateAiAgentAppRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除 Agent 应用
+  Delete(
+    request: aiservicev1_DeleteAiAgentAppRequest,
+  ): Promise<wellKnownEmpty>;
+  // 试运行（同步执行图，返回含 trace 的运行记录）
+  // 审批裁决运行（WAITING_APPROVAL → 继续/驳回）
+  ApproveRun(
+    request: aiservicev1_ApproveAgentRunRequest,
+  ): Promise<aiservicev1_AiAgentRun>;
+  Run(
+    request: aiservicev1_RunAiAgentAppRequest,
+  ): Promise<aiservicev1_AiAgentRun>;
+  // 查询运行台账（appId eq 过滤走 PagingRequest；独立集合路径，避免与 /{id} 参数路由抢配）
+  ListRuns(
+    request: pagination_PagingRequest,
+  ): Promise<aiservicev1_ListAiAgentRunsResponse>;
+  // 查询运行详情（含 trace JSON）
+  GetRun(
+    request: aiservicev1_GetAiAgentRunRequest,
+  ): Promise<aiservicev1_AiAgentRun>;
+}
+
+export function createAiAgentServiceClient(
+  transport: ClientTransport,
+): AiAgentService {
+  return {
+    List(request) {
+      const path = `/admin/v1/ai/agents`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AiAgentService',
+        method: 'List',
+      }) as Promise<aiservicev1_ListAiAgentAppsResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/agents/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'AiAgentService',
+        method: 'Get',
+      }) as Promise<aiservicev1_AiAgentApp>;
+    },
+    Create(request) {
+      const path = `/admin/v1/ai/agents`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiAgentService',
+        method: 'Create',
+      }) as Promise<aiservicev1_AiAgentApp>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/agents/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'AiAgentService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/agents/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'AiAgentService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    ApproveRun(request) {
+      if (request.runId === undefined || request.runId === null) {
+        throw new Error('missing required field request.run_id');
+      }
+      const path = `/admin/v1/ai/agent-runs/${request.runId}/approve`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["runId"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiAgentService',
+        method: 'ApproveRun',
+      }) as Promise<aiservicev1_AiAgentRun>;
+    },
+    Run(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/agents/${request.id}/run`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiAgentService',
+        method: 'Run',
+      }) as Promise<aiservicev1_AiAgentRun>;
+    },
+    ListRuns(request) {
+      const path = `/admin/v1/ai/agent-runs`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AiAgentService',
+        method: 'ListRuns',
+      }) as Promise<aiservicev1_ListAiAgentRunsResponse>;
+    },
+    GetRun(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/agent-runs/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'AiAgentService',
+        method: 'GetRun',
+      }) as Promise<aiservicev1_AiAgentRun>;
+    },
+  };
+}
+// 查询列表 - 回应
+export type aiservicev1_ListAiAgentAppsResponse = {
+  items: aiservicev1_AiAgentApp[] | undefined;
+  total: number | undefined;
+};
+
+// Agent 编排应用
+export type aiservicev1_AiAgentApp = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  description?: string;
+  enabled?: boolean;
+  // 图 DSL（JSON：nodes/edges；节点五种、模板与条件表达式语义见设计文档 §2）
+  graph?: string;
+  id?: number;
+  name?: string;
+  // 创建/更新入参带出（与 AiConversation 同口径）：租户隔离 mixin 无创建钩子，租户必须显式写
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 查询详情 - 请求
+export type aiservicev1_GetAiAgentAppRequest = {
+  id: number | undefined;
+};
+
+// 创建 - 请求
+export type aiservicev1_CreateAiAgentAppRequest = {
+  data: aiservicev1_AiAgentApp | undefined;
+};
+
+// 更新 - 请求
+export type aiservicev1_UpdateAiAgentAppRequest = {
+  data: aiservicev1_AiAgentApp | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除 - 请求
+export type aiservicev1_DeleteAiAgentAppRequest = {
+  id: number | undefined;
+};
+
+// 审批裁决运行 - 请求
+export type aiservicev1_ApproveAgentRunRequest = {
+  approved: boolean | undefined;
+  // 审批意见（驳回时写入运行 error；批准时注入挂起节点 note 变量）
+  note: string | undefined;
+  runId: number | undefined;
+};
+
+// Agent 运行记录
+export type aiservicev1_AiAgentRun = {
+  appId?: number;
+  completionTokens?: number;
+  createdAt?: wellKnownTimestamp;
+  durationMs?: number;
+  error?: string;
+  id?: number;
+  // 运行入参（JSON 对象：start 节点 inputVars 的 name → 值）
+  input?: string;
+  output?: string;
+  // 等待审批的节点 ID（status=WAITING_APPROVAL 时有值）
+  pendingNodeId?: string;
+  promptTokens?: number;
+  // 挂起恢复快照 JSON：{vars, nextNodeId}（ApproveRun 批准后据此继续执行）
+  resumeState?: string;
+  status?: aiservicev1_AiAgentRun_Status;
+  totalTokens?: number;
+  // 逐节点执行轨迹（JSON 数组：{nodeId,type,status,ms,summary,usage}）
+  trace?: string;
+};
+
+// 运行状态
+export type aiservicev1_AiAgentRun_Status =
+  | 'FAILED'
+  | 'RUNNING'
+  | 'STATUS_UNSPECIFIED'
+  | 'SUCCEEDED'
+  | 'WAITING_APPROVAL';
+// 试运行 - 请求
+export type aiservicev1_RunAiAgentAppRequest = {
+  id: number | undefined;
+  // 运行入参：start 节点声明的输入变量名 → 值（JSON 对象字符串）
+  input: { [key: string]: string } | undefined;
+};
+
+// 运行台账列表 - 回应
+export type aiservicev1_ListAiAgentRunsResponse = {
+  items: aiservicev1_AiAgentRun[] | undefined;
+  total: number | undefined;
+};
+
+// 运行详情 - 请求
+export type aiservicev1_GetAiAgentRunRequest = {
+  id: number | undefined;
+};
+
+// AI 对话服务（表单助手）
+//
+// 流式语义：本 RPC 是普通 POST（body 为扁平请求体，不包 data）。
+// BFF 消费 core 的 ChatStreamFrame 流：chunk/tool 帧经 SSE 网关
+// （`ai_chat_chunk` / `ai_chat_tool` 事件）推给发起用户，done 帧作为
+// 同步响应返回。前端先累积 chunk 做流式渲染，POST 响应到达后以响应
+// 中的完整消息为准。
+export interface AiChatService {
+  // 发起一轮对话
+  Chat(
+    request: aiservicev1_ChatRequest,
+  ): Promise<aiservicev1_ChatResponse>;
+}
+
+export function createAiChatServiceClient(
+  transport: ClientTransport,
+): AiChatService {
+  return {
+    Chat(request) {
+      const path = `/admin/v1/ai/chat/completions`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiChatService',
+        method: 'Chat',
+      }) as Promise<aiservicev1_ChatResponse>;
+    },
+  };
+}
+// 发起对话 - 请求
+export type aiservicev1_ChatRequest = {
+  content?: string;
+  conversationId?: number;
+  knowledgeBaseId?: number;
+  operatorTenantId?: number;
+  operatorUserId?: number;
+  providerId?: number;
+};
+
+// 发起对话 - 回应
+export type aiservicev1_ChatResponse = {
+  // 会话（新建时返回新建的会话）
+  conversation: aiservicev1_AiConversation | undefined;
+  // 模型回复消息（含 token 用量与模型名）
+  message: aiservicev1_AiMessage | undefined;
+};
+
+// AI 对话会话
+export type aiservicev1_AiConversation = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  lastMessageAt?: wellKnownTimestamp;
+  providerId?: number;
+  tenantId?: number;
+  title?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  userId?: number;
+};
+
+// AI 对话消息
+export type aiservicev1_AiMessage = {
+  completionTokens?: number;
+  content?: string;
+  conversationId?: number;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  durationMs?: number;
+  errorMessage?: string;
+  id?: number;
+  modelName?: string;
+  promptTokens?: number;
+  role?: aiservicev1_AiRole;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  userId?: number;
+};
+
+// 消息角色
+export type aiservicev1_AiRole =
+  | 'AI_ROLE_UNSPECIFIED'
+  | 'ASSISTANT'
+  | 'SYSTEM'
+  | 'USER';
+// AI 内容生成服务（表单助手）
+export interface AiContentService {
+  // 生成内容
+  GenerateContent(
+    request: aiservicev1_GenerateContentRequest,
+  ): Promise<aiservicev1_GenerateContentResponse>;
+  // 语义搜索（菜单等可导航条目）
+  SemanticSearch(
+    request: aiservicev1_SemanticSearchRequest,
+  ): Promise<aiservicev1_SemanticSearchResponse>;
+  // 重建搜索索引
+  RebuildSearchIndex(
+    request: wellKnownEmpty,
+  ): Promise<aiservicev1_RebuildSearchIndexResponse>;
+  // AI 安全与异常洞察（平台用户专属）
+  GetSafetyInsights(
+    request: aiservicev1_SafetyInsightsRequest,
+  ): Promise<aiservicev1_SafetyInsightsResponse>;
+}
+
+export function createAiContentServiceClient(
+  transport: ClientTransport,
+): AiContentService {
+  return {
+    GenerateContent(request) {
+      const path = `/admin/v1/ai/content/generate`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiContentService',
+        method: 'GenerateContent',
+      }) as Promise<aiservicev1_GenerateContentResponse>;
+    },
+    SemanticSearch(request) {
+      const path = `/admin/v1/ai/content/search`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiContentService',
+        method: 'SemanticSearch',
+      }) as Promise<aiservicev1_SemanticSearchResponse>;
+    },
+    RebuildSearchIndex(_request) {
+      const path = `/admin/v1/ai/content/rebuild-index`;
+      const body = null;
+      return transport.unary(path, 'POST', body, {
+        service: 'AiContentService',
+        method: 'RebuildSearchIndex',
+      }) as Promise<aiservicev1_RebuildSearchIndexResponse>;
+    },
+    GetSafetyInsights(request) {
+      const path = `/admin/v1/ai/insights`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiContentService',
+        method: 'GetSafetyInsights',
+      }) as Promise<aiservicev1_SafetyInsightsResponse>;
+    },
+  };
+}
+// 内容生成 - 请求
+export type aiservicev1_GenerateContentRequest = {
+  // 补充上下文（如已有内容的续写、字段标签等，可选）
+  context?: string;
+  // 输出语言（BCP-47，默认 zh-CN）
+  lang?: string;
+  // 期望长度（字符数提示，默认 200）
+  maxLength?: number;
+  // 场景标识
+  scene: aiservicev1_ContentScene | undefined;
+  // 主题/关键词（用户输入的生成指令）
+  topic: string | undefined;
+};
+
+// 场景标识（服务端按此选择预设提示词模板）
+export type aiservicev1_ContentScene =
+  // 公告/通知正文
+  | 'ANNOUNCEMENT'
+  | 'CONTENT_SCENE_UNSPECIFIED'
+  // 通用描述（角色/菜单/字典项/文件等实体描述）
+  | 'DESCRIPTION'
+  // 自由生成（用户自带完整提示词）
+  | 'GENERAL'
+  // 文章正文
+  | 'POST_BODY'
+  // 文章摘要
+  | 'POST_SUMMARY'
+  // 文章标题
+  | 'POST_TITLE'
+  // 回复/反馈文案
+  | 'REPLY'
+  // 社交平台发布文案（短文案，可带话题标签）
+  | 'SOCIAL_POST';
+// 内容生成 - 回应
+export type aiservicev1_GenerateContentResponse = {
+  content: string | undefined;
+  totalTokens: number | undefined;
+};
+
+// 语义搜索 - 请求
+export type aiservicev1_SemanticSearchRequest = {
+  limit?: number;
+  query: string | undefined;
+};
+
+// 语义搜索 - 回应
+export type aiservicev1_SemanticSearchResponse = {
+  items: aiservicev1_SemanticSearchItem[] | undefined;
+};
+
+// 搜索结果项
+export type aiservicev1_SemanticSearchItem = {
+  itemType: string | undefined;
+  route: string | undefined;
+  score: number | undefined;
+  title: string | undefined;
+};
+
+// 重建搜索索引 - 回应
+export type aiservicev1_RebuildSearchIndexResponse = {
+  indexedCount: number | undefined;
+};
+
+// AI 安全洞察 - 请求
+export type aiservicev1_SafetyInsightsRequest = {
+  // 界面语言（BCP-47），决定 LLM 总评的输出语言；
+  // 告警只回传结构化事实，文案由前端 i18n 模板渲染
+  lang?: string;
+};
+
+// AI 安全洞察 - 回应
+export type aiservicev1_SafetyInsightsResponse = {
+  alerts: aiservicev1_AiInsightAlert[] | undefined;
+  summary: string | undefined;
+};
+
+// 异常告警条目：规则预筛的确定性结构化事实，不含人类文案——
+// 文案由前端按 type 选 i18n 模板并以 facts 插值渲染
+export type aiservicev1_AiInsightAlert = {
+  facts: { [key: string]: string } | undefined;
+  items: aiservicev1_AiSensitiveOpItem[] | undefined;
+  severity: string | undefined;
+  type: string | undefined;
+};
+
+// 敏感操作明细项
+export type aiservicev1_AiSensitiveOpItem = {
+  action: string | undefined;
+  createdAt: string | undefined;
+  resourceType: string | undefined;
+  username: string | undefined;
+};
+
+// AI 对话会话管理服务
+export interface AiConversationService {
+  // 分页查询会话列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<aiservicev1_ListAiConversationResponse>;
+  // 查询会话详情
+  Get(
+    request: aiservicev1_GetAiConversationRequest,
+  ): Promise<aiservicev1_AiConversation>;
+  // 更新会话（改标题）
+  Update(
+    request: aiservicev1_UpdateAiConversationRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除会话
+  Delete(
+    request: aiservicev1_DeleteAiConversationRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createAiConversationServiceClient(
+  transport: ClientTransport,
+): AiConversationService {
+  return {
+    List(request) {
+      const path = `/admin/v1/ai/conversations`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AiConversationService',
+        method: 'List',
+      }) as Promise<aiservicev1_ListAiConversationResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/conversations/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AiConversationService',
+        method: 'Get',
+      }) as Promise<aiservicev1_AiConversation>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/conversations/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'AiConversationService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/conversations/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'AiConversationService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 查询会话列表 - 回应
+export type aiservicev1_ListAiConversationResponse = {
+  items: aiservicev1_AiConversation[] | undefined;
+  total: number | undefined;
+};
+
+// 查询会话详情 - 请求
+export type aiservicev1_GetAiConversationRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 更新会话 - 请求
+export type aiservicev1_UpdateAiConversationRequest = {
+  allowMissing?: boolean;
+  data: aiservicev1_AiConversation | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除会话 - 请求
+export type aiservicev1_DeleteAiConversationRequest = {
+  id?: number;
+};
+
+// AI 知识库管理服务（RAG）
+export interface AiKnowledgeBaseService {
+  // 分页查询知识库列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<aiservicev1_ListAiKnowledgeBaseResponse>;
+  // 查询知识库详情
+  Get(
+    request: aiservicev1_GetAiKnowledgeBaseRequest,
+  ): Promise<aiservicev1_AiKnowledgeBase>;
+  // 创建知识库
+  Create(
+    request: aiservicev1_CreateAiKnowledgeBaseRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新知识库
+  Update(
+    request: aiservicev1_UpdateAiKnowledgeBaseRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除知识库
+  Delete(
+    request: aiservicev1_DeleteAiKnowledgeBaseRequest,
+  ): Promise<wellKnownEmpty>;
+  // 上传文档（纯文本：切片 → 向量化 → 落库）
+  UploadDoc(
+    request: aiservicev1_UploadAiDocRequest,
+  ): Promise<aiservicev1_UploadAiDocResponse>;
+  // 上传文档文件（txt/md/docx/pdf：抽取文本后入库）
+  UploadDocFile(
+    request: aiservicev1_UploadAiDocFileRequest,
+  ): Promise<aiservicev1_UploadAiDocResponse>;
+  // 查询知识库下的文档
+  ListDocs(
+    request: aiservicev1_ListAiDocsRequest,
+  ): Promise<aiservicev1_ListAiDocsResponse>;
+  // 删除文档
+  DeleteDoc(
+    request: aiservicev1_DeleteAiDocRequest,
+  ): Promise<wellKnownEmpty>;
+  // 检索测试
+  Search(
+    request: aiservicev1_SearchAiKnowledgeRequest,
+  ): Promise<aiservicev1_SearchAiKnowledgeResponse>;
+  // 重索引（异步任务）
+  ReindexDocs(
+    request: aiservicev1_ReindexDocsRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createAiKnowledgeBaseServiceClient(
+  transport: ClientTransport,
+): AiKnowledgeBaseService {
+  return {
+    List(request) {
+      const path = `/admin/v1/ai/knowledge-bases`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AiKnowledgeBaseService',
+        method: 'List',
+      }) as Promise<aiservicev1_ListAiKnowledgeBaseResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/knowledge-bases/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AiKnowledgeBaseService',
+        method: 'Get',
+      }) as Promise<aiservicev1_AiKnowledgeBase>;
+    },
+    Create(request) {
+      const path = `/admin/v1/ai/knowledge-bases`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiKnowledgeBaseService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/knowledge-bases/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'AiKnowledgeBaseService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/knowledge-bases/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'AiKnowledgeBaseService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    UploadDoc(request) {
+      if (request.baseId === undefined || request.baseId === null) {
+        throw new Error('missing required field request.base_id');
+      }
+      const path = `/admin/v1/ai/knowledge-bases/${request.baseId}/docs`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["baseId"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiKnowledgeBaseService',
+        method: 'UploadDoc',
+      }) as Promise<aiservicev1_UploadAiDocResponse>;
+    },
+    UploadDocFile(request) {
+      if (request.baseId === undefined || request.baseId === null) {
+        throw new Error('missing required field request.base_id');
+      }
+      const path = `/admin/v1/ai/knowledge-bases/${request.baseId}/docs/file`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["baseId"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiKnowledgeBaseService',
+        method: 'UploadDocFile',
+      }) as Promise<aiservicev1_UploadAiDocResponse>;
+    },
+    ListDocs(request) {
+      if (request.baseId === undefined || request.baseId === null) {
+        throw new Error('missing required field request.base_id');
+      }
+      const path = `/admin/v1/ai/knowledge-bases/${request.baseId}/docs`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'AiKnowledgeBaseService',
+        method: 'ListDocs',
+      }) as Promise<aiservicev1_ListAiDocsResponse>;
+    },
+    DeleteDoc(request) {
+      if (request.baseId === undefined || request.baseId === null) {
+        throw new Error('missing required field request.base_id');
+      }
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/knowledge-bases/${request.baseId}/docs/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'AiKnowledgeBaseService',
+        method: 'DeleteDoc',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Search(request) {
+      if (request.baseId === undefined || request.baseId === null) {
+        throw new Error('missing required field request.base_id');
+      }
+      const path = `/admin/v1/ai/knowledge-bases/${request.baseId}/search`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["baseId"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiKnowledgeBaseService',
+        method: 'Search',
+      }) as Promise<aiservicev1_SearchAiKnowledgeResponse>;
+    },
+    ReindexDocs(request) {
+      const path = `/admin/v1/ai/knowledge-bases/reindex`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiKnowledgeBaseService',
+        method: 'ReindexDocs',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 查询知识库列表 - 回应
+export type aiservicev1_ListAiKnowledgeBaseResponse = {
+  items: aiservicev1_AiKnowledgeBase[] | undefined;
+  total: number | undefined;
+};
+
+// AI 知识库
+export type aiservicev1_AiKnowledgeBase = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  description?: string;
+  docCount?: number;
+  embeddingModel?: string;
+  id?: number;
+  name?: string;
+  providerId?: number;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  userId?: number;
+};
+
+// 查询知识库详情 - 请求
+export type aiservicev1_GetAiKnowledgeBaseRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 创建知识库 - 请求
+export type aiservicev1_CreateAiKnowledgeBaseRequest = {
+  data: aiservicev1_AiKnowledgeBase | undefined;
+};
+
+// 更新知识库 - 请求
+export type aiservicev1_UpdateAiKnowledgeBaseRequest = {
+  allowMissing?: boolean;
+  data: aiservicev1_AiKnowledgeBase | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除知识库 - 请求
+export type aiservicev1_DeleteAiKnowledgeBaseRequest = {
+  id?: number;
+};
+
+// 上传文档 - 请求（纯文本；内容直接随请求体传输）
+export type aiservicev1_UploadAiDocRequest = {
+  baseId: number | undefined;
+  content: string | undefined;
+  name: string | undefined;
+};
+
+// 上传文档 - 回应
+export type aiservicev1_UploadAiDocResponse = {
+  chunkCount: number | undefined;
+  doc: aiservicev1_AiDoc | undefined;
+};
+
+// AI 文档
+export type aiservicev1_AiDoc = {
+  baseId?: number;
+  chunkCount?: number;
+  createdAt?: wellKnownTimestamp;
+  errorMessage?: string;
+  id?: number;
+  name?: string;
+  status?: string;
+  tenantId?: number;
+  userId?: number;
+};
+
+// 上传文档文件 - 请求（文件字节经 protojson 即 base64 字符串传输）
+export type aiservicev1_UploadAiDocFileRequest = {
+  baseId: number | undefined;
+  contentBase64: string | undefined;
+  docName?: string;
+  fileName: string | undefined;
+};
+
+// 查询文档列表 - 请求
+export type aiservicev1_ListAiDocsRequest = {
+  baseId: number | undefined;
+};
+
+// 查询文档列表 - 回应
+export type aiservicev1_ListAiDocsResponse = {
+  items: aiservicev1_AiDoc[] | undefined;
+  total: number | undefined;
+};
+
+// 删除文档 - 请求
+export type aiservicev1_DeleteAiDocRequest = {
+  baseId: number | undefined;
+  id: number | undefined;
+};
+
+// 检索 - 请求
+export type aiservicev1_SearchAiKnowledgeRequest = {
+  baseId: number | undefined;
+  query: string | undefined;
+  topK?: number;
+};
+
+// 检索 - 回应
+export type aiservicev1_SearchAiKnowledgeResponse = {
+  hits: aiservicev1_KnowledgeHit[] | undefined;
+};
+
+// 检索命中片段
+export type aiservicev1_KnowledgeHit = {
+  chunkIndex: number | undefined;
+  content: string | undefined;
+  doc: aiservicev1_AiDoc | undefined;
+  score: number | undefined;
+};
+
+// 重索引 - 请求
+export type aiservicev1_ReindexDocsRequest = {
+  // 知识库ID；0 表示全部知识库
+  baseId?: number;
+};
+
+// AI 对话消息服务
+export interface AiMessageService {
+  // 分页查询消息列表（按 conversationId 过滤；ID 类字段精确匹配，不走模糊搜索）
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<aiservicev1_ListAiMessageResponse>;
+  // 删除消息
+  Delete(
+    request: aiservicev1_DeleteAiMessageRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createAiMessageServiceClient(
+  transport: ClientTransport,
+): AiMessageService {
+  return {
+    List(request) {
+      const path = `/admin/v1/ai/messages`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AiMessageService',
+        method: 'List',
+      }) as Promise<aiservicev1_ListAiMessageResponse>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/messages/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'AiMessageService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 查询消息列表 - 回应
+export type aiservicev1_ListAiMessageResponse = {
+  items: aiservicev1_AiMessage[] | undefined;
+  total: number | undefined;
+};
+
+// 删除消息 - 请求
+export type aiservicev1_DeleteAiMessageRequest = {
+  id?: number;
+};
+
+// AI 模型提供商管理服务
+export interface AiProviderService {
+  // 分页查询 AI 提供商列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<aiservicev1_ListAiProviderResponse>;
+  // 查询 AI 提供商详情
+  Get(
+    request: aiservicev1_GetAiProviderRequest,
+  ): Promise<aiservicev1_AiProvider>;
+  // 创建 AI 提供商
+  Create(
+    request: aiservicev1_CreateAiProviderRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新 AI 提供商
+  Update(
+    request: aiservicev1_UpdateAiProviderRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除 AI 提供商
+  Delete(
+    request: aiservicev1_DeleteAiProviderRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createAiProviderServiceClient(
+  transport: ClientTransport,
+): AiProviderService {
+  return {
+    List(request) {
+      const path = `/admin/v1/ai/providers`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AiProviderService',
+        method: 'List',
+      }) as Promise<aiservicev1_ListAiProviderResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/providers/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AiProviderService',
+        method: 'Get',
+      }) as Promise<aiservicev1_AiProvider>;
+    },
+    Create(request) {
+      const path = `/admin/v1/ai/providers`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiProviderService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/providers/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'AiProviderService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/ai/providers/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'AiProviderService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 查询 AI 提供商列表 - 回应
+export type aiservicev1_ListAiProviderResponse = {
+  items: aiservicev1_AiProvider[] | undefined;
+  total: number | undefined;
+};
+
+// AI 模型提供商（一行 = 一个可调用的模型端点配置）
+export type aiservicev1_AiProvider = {
+  apiKey?: string;
+  apiKeyHint?: string;
+  baseUrl?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  isDefault?: boolean;
+  isEnabled?: boolean;
+  localHost?: string;
+  localPort?: number;
+  modelName?: string;
+  modelType?: aiservicev1_AiProvider_ModelType;
+  name?: string;
+  organization?: string;
+  remark?: string;
+  systemPrompt?: string;
+  timeoutSeconds?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 模型部署形态
+export type aiservicev1_AiProvider_ModelType =
+  | 'CLOUD'
+  | 'LOCAL'
+  | 'MODEL_TYPE_UNSPECIFIED';
+// 查询 AI 提供商详情 - 请求
+export type aiservicev1_GetAiProviderRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 创建 AI 提供商 - 请求
+export type aiservicev1_CreateAiProviderRequest = {
+  data: aiservicev1_AiProvider | undefined;
+};
+
+// 更新 AI 提供商 - 请求
+export type aiservicev1_UpdateAiProviderRequest = {
+  allowMissing?: boolean;
+  data: aiservicev1_AiProvider | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除 AI 提供商 - 请求
+export type aiservicev1_DeleteAiProviderRequest = {
+  id?: number;
+};
+
+// 智能问数服务（NL → 只读 SQL → 结构化结果）
+// 平台管理员专属：第一版查的是全平台数据，且 SQL 会触达原生库表。
+export interface AiQueryService {
+  // 智能问数
+  Ask(
+    request: aiservicev1_AskAiQueryRequest,
+  ): Promise<aiservicev1_AskAiQueryResponse>;
+}
+
+export function createAiQueryServiceClient(
+  transport: ClientTransport,
+): AiQueryService {
+  return {
+    Ask(request) {
+      const path = `/admin/v1/ai/query/ask`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiQueryService',
+        method: 'Ask',
+      }) as Promise<aiservicev1_AskAiQueryResponse>;
+    },
+  };
+}
+// 智能问数 - 请求
+export type aiservicev1_AskAiQueryRequest = {
+  // 对话历史（最近若干轮，建议 ≤5；用于消解追问里的指代，如"那只看 admin 的"）
+  history: aiservicev1_AiQueryHistoryItem[] | undefined;
+  // 界面语言（BCP-47），决定结论 answer 的输出语言；默认 zh-CN
+  lang?: string;
+  question: string | undefined;
+  // 是否生成自然语言结论（二次模型调用；默认 true）
+  withAnswer?: boolean;
+};
+
+// 对话历史一轮（多轮追问用）：只回传问答摘要，供模型消解指代（如"那只看 admin 的"）
+export type aiservicev1_AiQueryHistoryItem = {
+  question: string | undefined;
+  resultSummary: string | undefined;
+  sql: string | undefined;
+};
+
+// 智能问数 - 回应
+export type aiservicev1_AskAiQueryResponse = {
+  // 自然语言结论（with_answer=false 或模型失败时为空）
+  answer?: string;
+  // 结果列名
+  columns: string[] | undefined;
+  // 执行失败原因（SQL 语法/列不存在等；有值时 rows 为空）
+  errorMessage?: string;
+  // 实际返回的行数
+  rowCount: number | undefined;
+  // 结果行（上限 100 行）
+  rows: aiservicev1_AiQueryRow[] | undefined;
+  // 生成的只读 SQL（原样返回，便于核对与复用）
+  sql: string | undefined;
+  // 本次消耗的总 token 数（计入 AI_TOKENS 用量）
+  totalTokens: number | undefined;
+};
+
+// 结果行（values 与 columns 下标对应；时间/数字均已格式化为字符串）
+export type aiservicev1_AiQueryRow = {
+  values: string[] | undefined;
+};
+
+// AI 用量流水服务（配额记账事实源）
+export interface AiUsageLogService {
+  // 分页查询用量流水
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<aiservicev1_ListAiUsageLogResponse>;
+  // 当月用量汇总（tokens/调用量/配额上限）
+  GetUsageSummary(
+    request: wellKnownEmpty,
+  ): Promise<aiservicev1_UsageSummaryResponse>;
+}
+
+export function createAiUsageLogServiceClient(
+  transport: ClientTransport,
+): AiUsageLogService {
+  return {
+    List(request) {
+      const path = `/admin/v1/ai/usage-logs`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AiUsageLogService',
+        method: 'List',
+      }) as Promise<aiservicev1_ListAiUsageLogResponse>;
+    },
+    GetUsageSummary(_request) {
+      const path = `/admin/v1/ai/usage-summary`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'AiUsageLogService',
+        method: 'GetUsageSummary',
+      }) as Promise<aiservicev1_UsageSummaryResponse>;
+    },
+  };
+}
+// 查询用量流水列表 - 回应
+export type aiservicev1_ListAiUsageLogResponse = {
+  items: aiservicev1_AiUsageLog[] | undefined;
+  total: number | undefined;
+};
+
+// AI 调用用量流水（每次成功的模型调用一行；配额按 total_tokens 聚合）
+export type aiservicev1_AiUsageLog = {
+  completionTokens?: number;
+  conversationId?: number;
+  createdAt?: wellKnownTimestamp;
+  durationMs?: number;
+  id?: number;
+  modelName?: string;
+  promptTokens?: number;
+  providerId?: number;
+  tenantId?: number;
+  totalTokens?: number;
+  userId?: number;
+};
+
+// 当月用量汇总 - 回应
+export type aiservicev1_UsageSummaryResponse = {
+  breakdown: aiservicev1_UsageBreakdown[] | undefined;
+  monthCalls: number | undefined;
+  monthTokens: number | undefined;
+  quotaConfigured: boolean | undefined;
+  quotaLimit: number | undefined;
+};
+
+// 用量细分行（provider × 模型 维度聚合）
+export type aiservicev1_UsageBreakdown = {
+  calls: number | undefined;
+  completionTokens: number | undefined;
+  modelName: string | undefined;
+  promptTokens: number | undefined;
+  providerId: number | undefined;
+  providerName: string | undefined;
+  totalTokens: number | undefined;
+};
+
 // API资源管理服务
 export interface ApiService {
   // 查询API资源列表
@@ -15514,6 +17169,15 @@ export type identityservicev1_EmailVerification = {
 export class ApiClient {
   private _accessKeyService?: AccessKeyService;
   private _adminPortalService?: AdminPortalService;
+  private _aiAgentService?: AiAgentService;
+  private _aiChatService?: AiChatService;
+  private _aiContentService?: AiContentService;
+  private _aiConversationService?: AiConversationService;
+  private _aiKnowledgeBaseService?: AiKnowledgeBaseService;
+  private _aiMessageService?: AiMessageService;
+  private _aiProviderService?: AiProviderService;
+  private _aiQueryService?: AiQueryService;
+  private _aiUsageLogService?: AiUsageLogService;
   private _apiAuditLogService?: ApiAuditLogService;
   private _apiService?: ApiService;
   private _authenticationService?: AuthenticationService;
@@ -15586,6 +17250,42 @@ export class ApiClient {
 
   get adminPortalService(): AdminPortalService {
     return this._adminPortalService ??= createAdminPortalServiceClient(this._transport);
+  }
+
+  get aiAgentService(): AiAgentService {
+    return this._aiAgentService ??= createAiAgentServiceClient(this._transport);
+  }
+
+  get aiChatService(): AiChatService {
+    return this._aiChatService ??= createAiChatServiceClient(this._transport);
+  }
+
+  get aiContentService(): AiContentService {
+    return this._aiContentService ??= createAiContentServiceClient(this._transport);
+  }
+
+  get aiConversationService(): AiConversationService {
+    return this._aiConversationService ??= createAiConversationServiceClient(this._transport);
+  }
+
+  get aiKnowledgeBaseService(): AiKnowledgeBaseService {
+    return this._aiKnowledgeBaseService ??= createAiKnowledgeBaseServiceClient(this._transport);
+  }
+
+  get aiMessageService(): AiMessageService {
+    return this._aiMessageService ??= createAiMessageServiceClient(this._transport);
+  }
+
+  get aiProviderService(): AiProviderService {
+    return this._aiProviderService ??= createAiProviderServiceClient(this._transport);
+  }
+
+  get aiQueryService(): AiQueryService {
+    return this._aiQueryService ??= createAiQueryServiceClient(this._transport);
+  }
+
+  get aiUsageLogService(): AiUsageLogService {
+    return this._aiUsageLogService ??= createAiUsageLogServiceClient(this._transport);
   }
 
   get apiAuditLogService(): ApiAuditLogService {

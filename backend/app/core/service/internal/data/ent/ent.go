@@ -7,6 +7,15 @@ import (
 	"errors"
 	"fmt"
 	"go-wind-shop/app/core/service/internal/data/ent/accesskey"
+	"go-wind-shop/app/core/service/internal/data/ent/aiagentapp"
+	"go-wind-shop/app/core/service/internal/data/ent/aiagentrun"
+	"go-wind-shop/app/core/service/internal/data/ent/aichunk"
+	"go-wind-shop/app/core/service/internal/data/ent/aiconversation"
+	"go-wind-shop/app/core/service/internal/data/ent/aidoc"
+	"go-wind-shop/app/core/service/internal/data/ent/aiknowledgebase"
+	"go-wind-shop/app/core/service/internal/data/ent/aimessage"
+	"go-wind-shop/app/core/service/internal/data/ent/aiprovider"
+	"go-wind-shop/app/core/service/internal/data/ent/aiusagelog"
 	"go-wind-shop/app/core/service/internal/data/ent/api"
 	"go-wind-shop/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/brand"
@@ -150,6 +159,15 @@ func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			accesskey.Table:                        accesskey.ValidColumn,
+			aiagentapp.Table:                       aiagentapp.ValidColumn,
+			aiagentrun.Table:                       aiagentrun.ValidColumn,
+			aichunk.Table:                          aichunk.ValidColumn,
+			aiconversation.Table:                   aiconversation.ValidColumn,
+			aidoc.Table:                            aidoc.ValidColumn,
+			aiknowledgebase.Table:                  aiknowledgebase.ValidColumn,
+			aimessage.Table:                        aimessage.ValidColumn,
+			aiprovider.Table:                       aiprovider.ValidColumn,
+			aiusagelog.Table:                       aiusagelog.ValidColumn,
 			api.Table:                              api.ValidColumn,
 			apiauditlog.Table:                      apiauditlog.ValidColumn,
 			brand.Table:                            brand.ValidColumn,

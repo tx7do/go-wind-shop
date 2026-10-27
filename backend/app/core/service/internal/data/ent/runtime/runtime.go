@@ -6,6 +6,15 @@ import (
 	"context"
 	permissionpb "go-wind-shop/api/gen/go/permission/service/v1"
 	"go-wind-shop/app/core/service/internal/data/ent/accesskey"
+	"go-wind-shop/app/core/service/internal/data/ent/aiagentapp"
+	"go-wind-shop/app/core/service/internal/data/ent/aiagentrun"
+	"go-wind-shop/app/core/service/internal/data/ent/aichunk"
+	"go-wind-shop/app/core/service/internal/data/ent/aiconversation"
+	"go-wind-shop/app/core/service/internal/data/ent/aidoc"
+	"go-wind-shop/app/core/service/internal/data/ent/aiknowledgebase"
+	"go-wind-shop/app/core/service/internal/data/ent/aimessage"
+	"go-wind-shop/app/core/service/internal/data/ent/aiprovider"
+	"go-wind-shop/app/core/service/internal/data/ent/aiusagelog"
 	"go-wind-shop/app/core/service/internal/data/ent/api"
 	"go-wind-shop/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/brand"
@@ -118,6 +127,245 @@ func init() {
 	accesskeyDescID := accesskeyMixinFields0[0].Descriptor()
 	// accesskey.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	accesskey.IDValidator = accesskeyDescID.Validators[0].(func(uint32) error)
+	aiagentappMixin := schema.AiAgentApp{}.Mixin()
+	aiagentapp.Policy = privacy.NewPolicies(aiagentappMixin[3], schema.AiAgentApp{})
+	aiagentapp.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := aiagentapp.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	aiagentappMixinFields0 := aiagentappMixin[0].Fields()
+	_ = aiagentappMixinFields0
+	aiagentappMixinFields3 := aiagentappMixin[3].Fields()
+	_ = aiagentappMixinFields3
+	aiagentappFields := schema.AiAgentApp{}.Fields()
+	_ = aiagentappFields
+	// aiagentappDescTenantID is the schema descriptor for tenant_id field.
+	aiagentappDescTenantID := aiagentappMixinFields3[0].Descriptor()
+	// aiagentapp.DefaultTenantID holds the default value on creation for the tenant_id field.
+	aiagentapp.DefaultTenantID = aiagentappDescTenantID.Default.(uint32)
+	// aiagentappDescName is the schema descriptor for name field.
+	aiagentappDescName := aiagentappFields[0].Descriptor()
+	// aiagentapp.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	aiagentapp.NameValidator = aiagentappDescName.Validators[0].(func(string) error)
+	// aiagentappDescEnabled is the schema descriptor for enabled field.
+	aiagentappDescEnabled := aiagentappFields[3].Descriptor()
+	// aiagentapp.DefaultEnabled holds the default value on creation for the enabled field.
+	aiagentapp.DefaultEnabled = aiagentappDescEnabled.Default.(bool)
+	// aiagentappDescID is the schema descriptor for id field.
+	aiagentappDescID := aiagentappMixinFields0[0].Descriptor()
+	// aiagentapp.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	aiagentapp.IDValidator = aiagentappDescID.Validators[0].(func(uint32) error)
+	aiagentrunMixin := schema.AiAgentRun{}.Mixin()
+	aiagentrun.Policy = privacy.NewPolicies(aiagentrunMixin[3], schema.AiAgentRun{})
+	aiagentrun.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := aiagentrun.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	aiagentrunMixinFields0 := aiagentrunMixin[0].Fields()
+	_ = aiagentrunMixinFields0
+	aiagentrunMixinFields3 := aiagentrunMixin[3].Fields()
+	_ = aiagentrunMixinFields3
+	aiagentrunFields := schema.AiAgentRun{}.Fields()
+	_ = aiagentrunFields
+	// aiagentrunDescTenantID is the schema descriptor for tenant_id field.
+	aiagentrunDescTenantID := aiagentrunMixinFields3[0].Descriptor()
+	// aiagentrun.DefaultTenantID holds the default value on creation for the tenant_id field.
+	aiagentrun.DefaultTenantID = aiagentrunDescTenantID.Default.(uint32)
+	// aiagentrunDescPendingNodeID is the schema descriptor for pending_node_id field.
+	aiagentrunDescPendingNodeID := aiagentrunFields[2].Descriptor()
+	// aiagentrun.PendingNodeIDValidator is a validator for the "pending_node_id" field. It is called by the builders before save.
+	aiagentrun.PendingNodeIDValidator = aiagentrunDescPendingNodeID.Validators[0].(func(string) error)
+	// aiagentrunDescPromptTokens is the schema descriptor for prompt_tokens field.
+	aiagentrunDescPromptTokens := aiagentrunFields[8].Descriptor()
+	// aiagentrun.DefaultPromptTokens holds the default value on creation for the prompt_tokens field.
+	aiagentrun.DefaultPromptTokens = aiagentrunDescPromptTokens.Default.(uint32)
+	// aiagentrunDescCompletionTokens is the schema descriptor for completion_tokens field.
+	aiagentrunDescCompletionTokens := aiagentrunFields[9].Descriptor()
+	// aiagentrun.DefaultCompletionTokens holds the default value on creation for the completion_tokens field.
+	aiagentrun.DefaultCompletionTokens = aiagentrunDescCompletionTokens.Default.(uint32)
+	// aiagentrunDescTotalTokens is the schema descriptor for total_tokens field.
+	aiagentrunDescTotalTokens := aiagentrunFields[10].Descriptor()
+	// aiagentrun.DefaultTotalTokens holds the default value on creation for the total_tokens field.
+	aiagentrun.DefaultTotalTokens = aiagentrunDescTotalTokens.Default.(uint32)
+	// aiagentrunDescDurationMs is the schema descriptor for duration_ms field.
+	aiagentrunDescDurationMs := aiagentrunFields[11].Descriptor()
+	// aiagentrun.DefaultDurationMs holds the default value on creation for the duration_ms field.
+	aiagentrun.DefaultDurationMs = aiagentrunDescDurationMs.Default.(uint32)
+	// aiagentrunDescID is the schema descriptor for id field.
+	aiagentrunDescID := aiagentrunMixinFields0[0].Descriptor()
+	// aiagentrun.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	aiagentrun.IDValidator = aiagentrunDescID.Validators[0].(func(uint32) error)
+	aichunkMixin := schema.AiChunk{}.Mixin()
+	aichunk.Policy = privacy.NewPolicies(aichunkMixin[2], schema.AiChunk{})
+	aichunk.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := aichunk.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	aichunkMixinFields0 := aichunkMixin[0].Fields()
+	_ = aichunkMixinFields0
+	aichunkMixinFields2 := aichunkMixin[2].Fields()
+	_ = aichunkMixinFields2
+	aichunkFields := schema.AiChunk{}.Fields()
+	_ = aichunkFields
+	// aichunkDescTenantID is the schema descriptor for tenant_id field.
+	aichunkDescTenantID := aichunkMixinFields2[0].Descriptor()
+	// aichunk.DefaultTenantID holds the default value on creation for the tenant_id field.
+	aichunk.DefaultTenantID = aichunkDescTenantID.Default.(uint32)
+	// aichunkDescID is the schema descriptor for id field.
+	aichunkDescID := aichunkMixinFields0[0].Descriptor()
+	// aichunk.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	aichunk.IDValidator = aichunkDescID.Validators[0].(func(uint32) error)
+	aiconversationMixin := schema.AiConversation{}.Mixin()
+	aiconversation.Policy = privacy.NewPolicies(aiconversationMixin[3], schema.AiConversation{})
+	aiconversation.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := aiconversation.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	aiconversationMixinFields0 := aiconversationMixin[0].Fields()
+	_ = aiconversationMixinFields0
+	aiconversationMixinFields3 := aiconversationMixin[3].Fields()
+	_ = aiconversationMixinFields3
+	aiconversationFields := schema.AiConversation{}.Fields()
+	_ = aiconversationFields
+	// aiconversationDescTenantID is the schema descriptor for tenant_id field.
+	aiconversationDescTenantID := aiconversationMixinFields3[0].Descriptor()
+	// aiconversation.DefaultTenantID holds the default value on creation for the tenant_id field.
+	aiconversation.DefaultTenantID = aiconversationDescTenantID.Default.(uint32)
+	// aiconversationDescID is the schema descriptor for id field.
+	aiconversationDescID := aiconversationMixinFields0[0].Descriptor()
+	// aiconversation.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	aiconversation.IDValidator = aiconversationDescID.Validators[0].(func(uint32) error)
+	aidocMixin := schema.AiDoc{}.Mixin()
+	aidoc.Policy = privacy.NewPolicies(aidocMixin[3], schema.AiDoc{})
+	aidoc.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := aidoc.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	aidocMixinFields0 := aidocMixin[0].Fields()
+	_ = aidocMixinFields0
+	aidocMixinFields3 := aidocMixin[3].Fields()
+	_ = aidocMixinFields3
+	aidocFields := schema.AiDoc{}.Fields()
+	_ = aidocFields
+	// aidocDescTenantID is the schema descriptor for tenant_id field.
+	aidocDescTenantID := aidocMixinFields3[0].Descriptor()
+	// aidoc.DefaultTenantID holds the default value on creation for the tenant_id field.
+	aidoc.DefaultTenantID = aidocDescTenantID.Default.(uint32)
+	// aidocDescID is the schema descriptor for id field.
+	aidocDescID := aidocMixinFields0[0].Descriptor()
+	// aidoc.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	aidoc.IDValidator = aidocDescID.Validators[0].(func(uint32) error)
+	aiknowledgebaseMixin := schema.AiKnowledgeBase{}.Mixin()
+	aiknowledgebase.Policy = privacy.NewPolicies(aiknowledgebaseMixin[3], schema.AiKnowledgeBase{})
+	aiknowledgebase.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := aiknowledgebase.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	aiknowledgebaseMixinFields0 := aiknowledgebaseMixin[0].Fields()
+	_ = aiknowledgebaseMixinFields0
+	aiknowledgebaseMixinFields3 := aiknowledgebaseMixin[3].Fields()
+	_ = aiknowledgebaseMixinFields3
+	aiknowledgebaseFields := schema.AiKnowledgeBase{}.Fields()
+	_ = aiknowledgebaseFields
+	// aiknowledgebaseDescTenantID is the schema descriptor for tenant_id field.
+	aiknowledgebaseDescTenantID := aiknowledgebaseMixinFields3[0].Descriptor()
+	// aiknowledgebase.DefaultTenantID holds the default value on creation for the tenant_id field.
+	aiknowledgebase.DefaultTenantID = aiknowledgebaseDescTenantID.Default.(uint32)
+	// aiknowledgebaseDescID is the schema descriptor for id field.
+	aiknowledgebaseDescID := aiknowledgebaseMixinFields0[0].Descriptor()
+	// aiknowledgebase.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	aiknowledgebase.IDValidator = aiknowledgebaseDescID.Validators[0].(func(uint32) error)
+	aimessageMixin := schema.AiMessage{}.Mixin()
+	aimessage.Policy = privacy.NewPolicies(aimessageMixin[3], schema.AiMessage{})
+	aimessage.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := aimessage.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	aimessageMixinFields0 := aimessageMixin[0].Fields()
+	_ = aimessageMixinFields0
+	aimessageMixinFields3 := aimessageMixin[3].Fields()
+	_ = aimessageMixinFields3
+	aimessageFields := schema.AiMessage{}.Fields()
+	_ = aimessageFields
+	// aimessageDescTenantID is the schema descriptor for tenant_id field.
+	aimessageDescTenantID := aimessageMixinFields3[0].Descriptor()
+	// aimessage.DefaultTenantID holds the default value on creation for the tenant_id field.
+	aimessage.DefaultTenantID = aimessageDescTenantID.Default.(uint32)
+	// aimessageDescID is the schema descriptor for id field.
+	aimessageDescID := aimessageMixinFields0[0].Descriptor()
+	// aimessage.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	aimessage.IDValidator = aimessageDescID.Validators[0].(func(uint32) error)
+	aiproviderMixin := schema.AiProvider{}.Mixin()
+	aiproviderMixinFields0 := aiproviderMixin[0].Fields()
+	_ = aiproviderMixinFields0
+	aiproviderMixinFields3 := aiproviderMixin[3].Fields()
+	_ = aiproviderMixinFields3
+	aiproviderFields := schema.AiProvider{}.Fields()
+	_ = aiproviderFields
+	// aiproviderDescIsEnabled is the schema descriptor for is_enabled field.
+	aiproviderDescIsEnabled := aiproviderMixinFields3[0].Descriptor()
+	// aiprovider.DefaultIsEnabled holds the default value on creation for the is_enabled field.
+	aiprovider.DefaultIsEnabled = aiproviderDescIsEnabled.Default.(bool)
+	// aiproviderDescIsDefault is the schema descriptor for is_default field.
+	aiproviderDescIsDefault := aiproviderFields[11].Descriptor()
+	// aiprovider.DefaultIsDefault holds the default value on creation for the is_default field.
+	aiprovider.DefaultIsDefault = aiproviderDescIsDefault.Default.(bool)
+	// aiproviderDescID is the schema descriptor for id field.
+	aiproviderDescID := aiproviderMixinFields0[0].Descriptor()
+	// aiprovider.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	aiprovider.IDValidator = aiproviderDescID.Validators[0].(func(uint32) error)
+	aiusagelogMixin := schema.AiUsageLog{}.Mixin()
+	aiusagelog.Policy = privacy.NewPolicies(aiusagelogMixin[2], schema.AiUsageLog{})
+	aiusagelog.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := aiusagelog.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	aiusagelogMixinFields0 := aiusagelogMixin[0].Fields()
+	_ = aiusagelogMixinFields0
+	aiusagelogMixinFields2 := aiusagelogMixin[2].Fields()
+	_ = aiusagelogMixinFields2
+	aiusagelogFields := schema.AiUsageLog{}.Fields()
+	_ = aiusagelogFields
+	// aiusagelogDescTenantID is the schema descriptor for tenant_id field.
+	aiusagelogDescTenantID := aiusagelogMixinFields2[0].Descriptor()
+	// aiusagelog.DefaultTenantID holds the default value on creation for the tenant_id field.
+	aiusagelog.DefaultTenantID = aiusagelogDescTenantID.Default.(uint32)
+	// aiusagelogDescID is the schema descriptor for id field.
+	aiusagelogDescID := aiusagelogMixinFields0[0].Descriptor()
+	// aiusagelog.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	aiusagelog.IDValidator = aiusagelogDescID.Validators[0].(func(uint32) error)
 	apiMixin := schema.Api{}.Mixin()
 	apiMixinFields0 := apiMixin[0].Fields()
 	_ = apiMixinFields0

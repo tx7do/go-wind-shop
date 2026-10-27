@@ -23,6 +23,7 @@ import (
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	invoiceV1 "go-wind-shop/api/gen/go/invoice/service/v1"
 	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
+	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 	configV1 "go-wind-shop/api/gen/go/config/service/v1"
 	monitorAlertV1 "go-wind-shop/api/gen/go/monitor_alert/service/v1"
 	onlineSessionV1 "go-wind-shop/api/gen/go/online_session/service/v1"
@@ -69,6 +70,14 @@ func NewGrpcServer(
 	accessKeyService *service.AccessKeyService,
 	serverMonitorService *service.ServerMonitorService,
 	redisCacheMonitorService *service.RedisCacheMonitorService,
+	aiAgentService *service.AiAgentService,
+	aiProviderService *service.AiProviderService,
+	aiChatService *service.AiChatService,
+	aiConversationService *service.AiConversationService,
+	aiMessageService *service.AiMessageService,
+	aiKnowledgeService *service.AiKnowledgeService,
+	aiUsageLogService *service.AiUsageLogService,
+	aiQueryService *service.AiQueryService,
 	userCredentialService *service.UserCredentialService,
 
 	taskService *service.TaskService,
@@ -224,6 +233,14 @@ func NewGrpcServer(
 	accessKeyV1.RegisterAccessKeyServiceServer(srv, accessKeyService)
 	serverMonitorV1.RegisterServerMonitorServiceServer(srv, serverMonitorService)
 	redisCacheV1.RegisterRedisCacheMonitorServiceServer(srv, redisCacheMonitorService)
+	aiV1.RegisterAiAgentServiceServer(srv, aiAgentService)
+	aiV1.RegisterAiProviderServiceServer(srv, aiProviderService)
+	aiV1.RegisterAiChatServiceServer(srv, aiChatService)
+	aiV1.RegisterAiConversationServiceServer(srv, aiConversationService)
+	aiV1.RegisterAiMessageServiceServer(srv, aiMessageService)
+	aiV1.RegisterAiKnowledgeBaseServiceServer(srv, aiKnowledgeService)
+	aiV1.RegisterAiUsageLogServiceServer(srv, aiUsageLogService)
+	aiV1.RegisterAiQueryServiceServer(srv, aiQueryService)
 
 	// register:grpc-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 

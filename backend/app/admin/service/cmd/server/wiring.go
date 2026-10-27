@@ -113,6 +113,14 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	monitorAlertServiceClient := data.NewMonitorAlertServiceClient(ctx, discovery)
 	serverMonitorServiceClient := data.NewServerMonitorServiceClient(ctx, discovery)
 	redisCacheMonitorServiceClient := data.NewRedisCacheMonitorServiceClient(ctx, discovery)
+	aiAgentServiceClient := data.NewAiAgentServiceClient(ctx, discovery)
+	aiChatServiceClient := data.NewAiChatServiceClient(ctx, discovery)
+	aiConversationServiceClient := data.NewAiConversationServiceClient(ctx, discovery)
+	aiQueryServiceClient := data.NewAiQueryServiceClient(ctx, discovery)
+	aiUsageLogServiceClient := data.NewAiUsageLogServiceClient(ctx, discovery)
+	aiKnowledgeBaseServiceClient := data.NewAiKnowledgeBaseServiceClient(ctx, discovery)
+	aiMessageServiceClient := data.NewAiMessageServiceClient(ctx, discovery)
+	aiProviderServiceClient := data.NewAiProviderServiceClient(ctx, discovery)
 	dataAccessAuditLogServiceClient := data.NewDataAccessAuditLogServiceClient(ctx, discovery)
 	policyEvaluationLogServiceClient := data.NewPolicyEvaluationLogServiceClient(ctx, discovery)
 	permissionAuditLogServiceClient := data.NewPermissionAuditLogServiceClient(ctx, discovery)
@@ -182,6 +190,16 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	monitorAlertService := service.NewMonitorAlertService(ctx, monitorAlertServiceClient)
 	serverMonitorService := service.NewServerMonitorService(ctx, serverMonitorServiceClient)
 	redisCacheMonitorService := service.NewRedisCacheMonitorService(ctx, redisCacheMonitorServiceClient)
+
+	// ── AI 域（移植自 go-wind-cms）──
+	aiAgentService := service.NewAiAgentService(ctx, aiAgentServiceClient)
+	aiProviderService := service.NewAiProviderService(ctx, aiProviderServiceClient)
+	aiChatService := service.NewAiChatService(ctx, aiChatServiceClient, authenticationServiceClient)
+	aiConversationService := service.NewAiConversationService(ctx, aiConversationServiceClient)
+	aiMessageService := service.NewAiMessageService(ctx, aiMessageServiceClient)
+	aiKnowledgeService := service.NewAiKnowledgeService(ctx, aiKnowledgeBaseServiceClient)
+	aiQueryService := service.NewAiQueryService(ctx, aiQueryServiceClient)
+	aiUsageLogService := service.NewAiUsageLogService(ctx, aiUsageLogServiceClient)
 	apiAuditLogService := service.NewApiAuditLogService(ctx, apiAuditLogServiceClient, apiServiceClient)
 	dataAccessAuditLogService := service.NewDataAccessAuditLogService(ctx, dataAccessAuditLogServiceClient)
 	loginAuditLogService := service.NewLoginAuditLogService(ctx, loginAuditLogServiceClient)
@@ -253,6 +271,14 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		monitorAlertService,
 		serverMonitorService,
 		redisCacheMonitorService,
+		aiAgentService,
+		aiProviderService,
+		aiChatService,
+		aiConversationService,
+		aiMessageService,
+		aiKnowledgeService,
+		aiQueryService,
+		aiUsageLogService,
 		apiAuditLogService,
 		dataAccessAuditLogService,
 		loginAuditLogService,

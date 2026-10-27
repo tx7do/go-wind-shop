@@ -40,15 +40,15 @@ type PaymentTransactionServiceHTTPServer interface {
 
 func RegisterPaymentTransactionServiceHTTPServer(s *http.Server, srv PaymentTransactionServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/payment-transactions", _PaymentTransactionService_List25_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/payment-transactions", _PaymentTransactionService_List31_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/payment-transactions/count", _PaymentTransactionService_Count10_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/payment-transactions/{id}", _PaymentTransactionService_Get27_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/payment-transactions", _PaymentTransactionService_Create20_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/payment-transactions/{id}", _PaymentTransactionService_Update20_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/payment-transactions", _PaymentTransactionService_Delete21_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/payment-transactions/{id}", _PaymentTransactionService_Get31_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/payment-transactions", _PaymentTransactionService_Create23_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/payment-transactions/{id}", _PaymentTransactionService_Update24_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/payment-transactions", _PaymentTransactionService_Delete26_HTTP_Handler(srv))
 }
 
-func _PaymentTransactionService_List25_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentTransactionService_List31_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -86,7 +86,7 @@ func _PaymentTransactionService_Count10_HTTP_Handler(srv PaymentTransactionServi
 	}
 }
 
-func _PaymentTransactionService_Get27_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentTransactionService_Get31_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPaymentTransactionRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -108,7 +108,7 @@ func _PaymentTransactionService_Get27_HTTP_Handler(srv PaymentTransactionService
 	}
 }
 
-func _PaymentTransactionService_Create20_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentTransactionService_Create23_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreatePaymentTransactionRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -130,7 +130,7 @@ func _PaymentTransactionService_Create20_HTTP_Handler(srv PaymentTransactionServ
 	}
 }
 
-func _PaymentTransactionService_Update20_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentTransactionService_Update24_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdatePaymentTransactionRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -155,7 +155,7 @@ func _PaymentTransactionService_Update20_HTTP_Handler(srv PaymentTransactionServ
 	}
 }
 
-func _PaymentTransactionService_Delete21_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentTransactionService_Delete26_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeletePaymentTransactionRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -287,15 +287,15 @@ type PaymentRefundServiceHTTPServer interface {
 
 func RegisterPaymentRefundServiceHTTPServer(s *http.Server, srv PaymentRefundServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/payment-refunds", _PaymentRefundService_List26_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/payment-refunds", _PaymentRefundService_List32_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/payment-refunds/count", _PaymentRefundService_Count11_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/payment-refunds/{id}", _PaymentRefundService_Get28_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/payment-refunds", _PaymentRefundService_Create21_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/payment-refunds/{id}", _PaymentRefundService_Update21_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/payment-refunds", _PaymentRefundService_Delete22_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/payment-refunds/{id}", _PaymentRefundService_Get32_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/payment-refunds", _PaymentRefundService_Create24_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/payment-refunds/{id}", _PaymentRefundService_Update25_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/payment-refunds", _PaymentRefundService_Delete27_HTTP_Handler(srv))
 }
 
-func _PaymentRefundService_List26_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentRefundService_List32_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -333,7 +333,7 @@ func _PaymentRefundService_Count11_HTTP_Handler(srv PaymentRefundServiceHTTPServ
 	}
 }
 
-func _PaymentRefundService_Get28_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentRefundService_Get32_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPaymentRefundRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -355,7 +355,7 @@ func _PaymentRefundService_Get28_HTTP_Handler(srv PaymentRefundServiceHTTPServer
 	}
 }
 
-func _PaymentRefundService_Create21_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentRefundService_Create24_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreatePaymentRefundRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -377,7 +377,7 @@ func _PaymentRefundService_Create21_HTTP_Handler(srv PaymentRefundServiceHTTPSer
 	}
 }
 
-func _PaymentRefundService_Update21_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentRefundService_Update25_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdatePaymentRefundRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -402,7 +402,7 @@ func _PaymentRefundService_Update21_HTTP_Handler(srv PaymentRefundServiceHTTPSer
 	}
 }
 
-func _PaymentRefundService_Delete22_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentRefundService_Delete27_HTTP_Handler(srv PaymentRefundServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeletePaymentRefundRequest
 		if err := ctx.BindQuery(&in); err != nil {

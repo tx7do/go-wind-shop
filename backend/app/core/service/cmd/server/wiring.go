@@ -198,6 +198,15 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	accessKeyRepo := data.NewAccessKeyRepo(ctx, entClient)
 	accessKeyRateLimiter := data.NewAccessKeyRateLimiter(ctx, redisClient)
 
+	// ── AI 域（移植自 go-wind-cms）──
+	aiProviderRepo := data.NewAiProviderRepo(ctx, entClient)
+	aiConversationRepo := data.NewAiConversationRepo(ctx, entClient)
+	aiMessageRepo := data.NewAiMessageRepo(ctx, entClient)
+	aiUsageLogRepo := data.NewAiUsageLogRepo(ctx, entClient)
+	aiKnowledgeRepo := data.NewAiKnowledgeRepo(ctx, entClient)
+	aiAgentAppRepo := data.NewAiAgentAppRepo(ctx, entClient)
+	aiAgentRunRepo := data.NewAiAgentRunRepo(ctx, entClient)
+
 	// ── Notification 通知域（移植自 go-wind-cms）──
 	notificationChannelRepo := data.NewNotificationChannelRepo(ctx, entClient)
 	notificationDeliveryRepo := data.NewNotificationDeliveryRepo(ctx, entClient)
@@ -224,6 +233,14 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	serverMonitorService := service.NewServerMonitorService(ctx, entClient)
 	redisCacheMonitorService := service.NewRedisCacheMonitorService(ctx, redisClient)
 	monitorAlertService.RegisterNotifier(notificationService)
+	aiAgentService := service.NewAiAgentService(ctx, aiAgentAppRepo, aiAgentRunRepo, aiProviderRepo, aiKnowledgeRepo, aiUsageLogRepo, redisClient)
+	aiProviderService := service.NewAiProviderService(ctx, aiProviderRepo)
+	aiChatService := service.NewAiChatService(ctx, aiConversationRepo, aiMessageRepo, aiProviderRepo, aiUsageLogRepo, aiKnowledgeRepo, entClient)
+	aiConversationService := service.NewAiConversationService(ctx, aiConversationRepo)
+	aiMessageService := service.NewAiMessageService(ctx, aiMessageRepo)
+	aiKnowledgeService := service.NewAiKnowledgeService(ctx, aiKnowledgeRepo, aiProviderRepo, aiUsageLogRepo, taskService)
+	aiUsageLogService := service.NewAiUsageLogService(ctx, aiUsageLogRepo, aiProviderRepo)
+	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient, internalMessageRepo, internalMessageService)
 
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
@@ -247,6 +264,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		accessKeyService,
 		serverMonitorService,
 		redisCacheMonitorService,
+		aiAgentService,
+		aiProviderService, aiChatService, aiConversationService, aiMessageService,
+		aiKnowledgeService, aiUsageLogService, aiQueryService,
 		userCredentialService,
 		taskService,
 		fileService,

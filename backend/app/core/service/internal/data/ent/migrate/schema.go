@@ -45,6 +45,317 @@ var (
 			},
 		},
 	}
+	// SysAiAgentAppsColumns holds the columns for the "sys_ai_agent_apps" table.
+	SysAiAgentAppsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Comment: "应用名称（租户内唯一）"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "应用描述"},
+		{Name: "graph", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "图 DSL（JSON：nodes/edges，五种节点）"},
+		{Name: "enabled", Type: field.TypeBool, Comment: "是否启用（停用的应用拒绝运行）", Default: true},
+	}
+	// SysAiAgentAppsTable holds the schema information for the "sys_ai_agent_apps" table.
+	SysAiAgentAppsTable = &schema.Table{
+		Name:       "sys_ai_agent_apps",
+		Comment:    "AI Agent 编排应用",
+		Columns:    SysAiAgentAppsColumns,
+		PrimaryKey: []*schema.Column{SysAiAgentAppsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "uidx_sys_ai_agent_apps_tenant_name",
+				Unique:  true,
+				Columns: []*schema.Column{SysAiAgentAppsColumns[7], SysAiAgentAppsColumns[8]},
+			},
+		},
+	}
+	// SysAiAgentRunsColumns holds the columns for the "sys_ai_agent_runs" table.
+	SysAiAgentRunsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "app_id", Type: field.TypeUint32, Nullable: true, Comment: "应用ID"},
+		{Name: "status", Type: field.TypeEnum, Comment: "运行状态", Enums: []string{"RUNNING", "SUCCEEDED", "FAILED", "WAITING_APPROVAL"}, Default: "RUNNING"},
+		{Name: "pending_node_id", Type: field.TypeString, Nullable: true, Size: 64, Comment: "等待审批的节点 ID（status=WAITING_APPROVAL 时有值）"},
+		{Name: "resume_state", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "挂起恢复快照 JSON：{vars, nextNodeId}（审批通过后据此继续执行）"},
+		{Name: "input", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "运行入参 JSON（start 节点声明的变量）"},
+		{Name: "output", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "产出（到达的 end 节点渲染值）"},
+		{Name: "error", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "失败原因"},
+		{Name: "trace", Type: field.TypeString, Size: 2147483647, Comment: "逐节点执行轨迹 JSON"},
+		{Name: "prompt_tokens", Type: field.TypeUint32, Comment: "输入 token 合计", Default: 0},
+		{Name: "completion_tokens", Type: field.TypeUint32, Comment: "输出 token 合计", Default: 0},
+		{Name: "total_tokens", Type: field.TypeUint32, Comment: "总 token 合计", Default: 0},
+		{Name: "duration_ms", Type: field.TypeUint32, Comment: "总耗时（毫秒）", Default: 0},
+	}
+	// SysAiAgentRunsTable holds the schema information for the "sys_ai_agent_runs" table.
+	SysAiAgentRunsTable = &schema.Table{
+		Name:       "sys_ai_agent_runs",
+		Comment:    "AI Agent 运行记录",
+		Columns:    SysAiAgentRunsColumns,
+		PrimaryKey: []*schema.Column{SysAiAgentRunsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_ai_agent_runs_tenant_app",
+				Unique:  false,
+				Columns: []*schema.Column{SysAiAgentRunsColumns[7], SysAiAgentRunsColumns[8]},
+			},
+		},
+	}
+	// SysAiChunksColumns holds the columns for the "sys_ai_chunks" table.
+	SysAiChunksColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "切片文本"},
+		{Name: "chunk_index", Type: field.TypeUint32, Nullable: true, Comment: "切片序号"},
+		{Name: "doc_id", Type: field.TypeUint32, Nullable: true, Comment: "所属文档ID（edge 外键）"},
+	}
+	// SysAiChunksTable holds the schema information for the "sys_ai_chunks" table.
+	SysAiChunksTable = &schema.Table{
+		Name:       "sys_ai_chunks",
+		Comment:    "AI 知识库切片",
+		Columns:    SysAiChunksColumns,
+		PrimaryKey: []*schema.Column{SysAiChunksColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "sys_ai_chunks_sys_ai_docs_chunks",
+				Columns:    []*schema.Column{SysAiChunksColumns[5]},
+				RefColumns: []*schema.Column{SysAiDocsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
+	// SysAiConversationsColumns holds the columns for the "sys_ai_conversations" table.
+	SysAiConversationsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "title", Type: field.TypeString, Nullable: true, Comment: "会话标题"},
+		{Name: "provider_id", Type: field.TypeUint32, Nullable: true, Comment: "会话使用的提供商ID（0=未指定）"},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "归属用户ID"},
+		{Name: "last_message_at", Type: field.TypeTime, Nullable: true, Comment: "最近一条消息时间"},
+	}
+	// SysAiConversationsTable holds the schema information for the "sys_ai_conversations" table.
+	SysAiConversationsTable = &schema.Table{
+		Name:       "sys_ai_conversations",
+		Comment:    "AI 对话会话",
+		Columns:    SysAiConversationsColumns,
+		PrimaryKey: []*schema.Column{SysAiConversationsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_ai_conversations_tenant_user",
+				Unique:  false,
+				Columns: []*schema.Column{SysAiConversationsColumns[7], SysAiConversationsColumns[10]},
+			},
+			{
+				Name:    "idx_sys_ai_conversations_last_message_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysAiConversationsColumns[11]},
+			},
+		},
+	}
+	// SysAiDocsColumns holds the columns for the "sys_ai_docs" table.
+	SysAiDocsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "文档名称"},
+		{Name: "chunk_count", Type: field.TypeUint32, Nullable: true, Comment: "切片数"},
+		{Name: "status", Type: field.TypeString, Nullable: true, Comment: "状态：READY/FAILED"},
+		{Name: "error_message", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "失败原因"},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "上传人用户ID"},
+		{Name: "base_id", Type: field.TypeUint32, Nullable: true, Comment: "所属知识库ID（edge 外键）"},
+	}
+	// SysAiDocsTable holds the schema information for the "sys_ai_docs" table.
+	SysAiDocsTable = &schema.Table{
+		Name:       "sys_ai_docs",
+		Comment:    "AI 知识库文档",
+		Columns:    SysAiDocsColumns,
+		PrimaryKey: []*schema.Column{SysAiDocsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "sys_ai_docs_sys_ai_knowledge_bases_docs",
+				Columns:    []*schema.Column{SysAiDocsColumns[13]},
+				RefColumns: []*schema.Column{SysAiKnowledgeBasesColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_ai_docs_tenant",
+				Unique:  false,
+				Columns: []*schema.Column{SysAiDocsColumns[7]},
+			},
+		},
+	}
+	// SysAiKnowledgeBasesColumns holds the columns for the "sys_ai_knowledge_bases" table.
+	SysAiKnowledgeBasesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "知识库名称"},
+		{Name: "description", Type: field.TypeString, Nullable: true, Comment: "描述"},
+		{Name: "provider_id", Type: field.TypeUint32, Nullable: true, Comment: "向量化使用的模型提供商ID"},
+		{Name: "embedding_model", Type: field.TypeString, Nullable: true, Comment: "embedding 模型名"},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "创建人用户ID"},
+	}
+	// SysAiKnowledgeBasesTable holds the schema information for the "sys_ai_knowledge_bases" table.
+	SysAiKnowledgeBasesTable = &schema.Table{
+		Name:       "sys_ai_knowledge_bases",
+		Comment:    "AI 知识库",
+		Columns:    SysAiKnowledgeBasesColumns,
+		PrimaryKey: []*schema.Column{SysAiKnowledgeBasesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_ai_knowledge_bases_tenant",
+				Unique:  false,
+				Columns: []*schema.Column{SysAiKnowledgeBasesColumns[7]},
+			},
+		},
+	}
+	// SysAiMessagesColumns holds the columns for the "sys_ai_messages" table.
+	SysAiMessagesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "role", Type: field.TypeEnum, Nullable: true, Comment: "消息角色", Enums: []string{"USER", "ASSISTANT", "SYSTEM"}},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "消息正文（Markdown）"},
+		{Name: "model_name", Type: field.TypeString, Nullable: true, Comment: "模型名称快照"},
+		{Name: "prompt_tokens", Type: field.TypeUint32, Nullable: true, Comment: "输入 token 数"},
+		{Name: "completion_tokens", Type: field.TypeUint32, Nullable: true, Comment: "输出 token 数"},
+		{Name: "duration_ms", Type: field.TypeUint32, Nullable: true, Comment: "生成耗时（毫秒）"},
+		{Name: "error_message", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "生成失败原因"},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "归属用户ID"},
+		{Name: "conversation_id", Type: field.TypeUint32, Nullable: true, Comment: "所属会话ID（edge 外键）"},
+	}
+	// SysAiMessagesTable holds the schema information for the "sys_ai_messages" table.
+	SysAiMessagesTable = &schema.Table{
+		Name:       "sys_ai_messages",
+		Comment:    "AI 对话消息",
+		Columns:    SysAiMessagesColumns,
+		PrimaryKey: []*schema.Column{SysAiMessagesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "sys_ai_messages_sys_ai_conversations_messages",
+				Columns:    []*schema.Column{SysAiMessagesColumns[16]},
+				RefColumns: []*schema.Column{SysAiConversationsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_ai_messages_tenant_user",
+				Unique:  false,
+				Columns: []*schema.Column{SysAiMessagesColumns[7], SysAiMessagesColumns[15]},
+			},
+		},
+	}
+	// SysAiProvidersColumns holds the columns for the "sys_ai_providers" table.
+	SysAiProvidersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "is_enabled", Type: field.TypeBool, Nullable: true, Comment: "是否启用", Default: true},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "提供商显示名称"},
+		{Name: "model_type", Type: field.TypeEnum, Nullable: true, Comment: "模型部署形态", Enums: []string{"LOCAL", "CLOUD"}},
+		{Name: "model_name", Type: field.TypeString, Nullable: true, Comment: "模型名称"},
+		{Name: "base_url", Type: field.TypeString, Nullable: true, Comment: "云端 OpenAI 兼容 API 地址"},
+		{Name: "organization", Type: field.TypeString, Nullable: true, Comment: "OpenAI Organization"},
+		{Name: "api_key", Type: field.TypeString, Nullable: true, Comment: "API Key（AES-GCM 加密落库，enc: 前缀）"},
+		{Name: "api_key_hint", Type: field.TypeString, Nullable: true, Comment: "API Key 脱敏提示（如 sk-***abcd）"},
+		{Name: "local_host", Type: field.TypeString, Nullable: true, Comment: "本地模型主机"},
+		{Name: "local_port", Type: field.TypeInt, Nullable: true, Comment: "本地模型端口"},
+		{Name: "timeout_seconds", Type: field.TypeInt, Nullable: true, Comment: "连接超时秒数"},
+		{Name: "system_prompt", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "系统提示词"},
+		{Name: "is_default", Type: field.TypeBool, Nullable: true, Comment: "是否默认提供商", Default: false},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+	}
+	// SysAiProvidersTable holds the schema information for the "sys_ai_providers" table.
+	SysAiProvidersTable = &schema.Table{
+		Name:       "sys_ai_providers",
+		Comment:    "AI 模型提供商",
+		Columns:    SysAiProvidersColumns,
+		PrimaryKey: []*schema.Column{SysAiProvidersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_ai_providers_enabled_default",
+				Unique:  false,
+				Columns: []*schema.Column{SysAiProvidersColumns[7], SysAiProvidersColumns[19]},
+			},
+			{
+				Name:    "idx_sys_ai_providers_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysAiProvidersColumns[1]},
+			},
+		},
+	}
+	// SysAiUsageLogsColumns holds the columns for the "sys_ai_usage_logs" table.
+	SysAiUsageLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "provider_id", Type: field.TypeUint32, Nullable: true, Comment: "提供商ID"},
+		{Name: "conversation_id", Type: field.TypeUint32, Nullable: true, Comment: "会话ID（0=非对话调用）"},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "发起用户ID"},
+		{Name: "model_name", Type: field.TypeString, Nullable: true, Comment: "模型名称"},
+		{Name: "prompt_tokens", Type: field.TypeUint32, Nullable: true, Comment: "输入 token 数"},
+		{Name: "completion_tokens", Type: field.TypeUint32, Nullable: true, Comment: "输出 token 数"},
+		{Name: "total_tokens", Type: field.TypeUint32, Nullable: true, Comment: "总 token 数"},
+		{Name: "duration_ms", Type: field.TypeUint32, Nullable: true, Comment: "调用耗时（毫秒）"},
+	}
+	// SysAiUsageLogsTable holds the schema information for the "sys_ai_usage_logs" table.
+	SysAiUsageLogsTable = &schema.Table{
+		Name:       "sys_ai_usage_logs",
+		Comment:    "AI 调用用量流水",
+		Columns:    SysAiUsageLogsColumns,
+		PrimaryKey: []*schema.Column{SysAiUsageLogsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_ai_usage_logs_tenant_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{SysAiUsageLogsColumns[2], SysAiUsageLogsColumns[1]},
+			},
+			{
+				Name:    "idx_sys_ai_usage_logs_user",
+				Unique:  false,
+				Columns: []*schema.Column{SysAiUsageLogsColumns[5]},
+			},
+		},
+	}
 	// SysApisColumns holds the columns for the "sys_apis" table.
 	SysApisColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -4164,6 +4475,15 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		SysAccessKeysTable,
+		SysAiAgentAppsTable,
+		SysAiAgentRunsTable,
+		SysAiChunksTable,
+		SysAiConversationsTable,
+		SysAiDocsTable,
+		SysAiKnowledgeBasesTable,
+		SysAiMessagesTable,
+		SysAiProvidersTable,
+		SysAiUsageLogsTable,
 		SysApisTable,
 		SysAPIAuditLogsTable,
 		MallBrandsTable,
@@ -4246,6 +4566,54 @@ var (
 func init() {
 	SysAccessKeysTable.Annotation = &entsql.Annotation{
 		Table:     "sys_access_keys",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysAiAgentAppsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_ai_agent_apps",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysAiAgentRunsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_ai_agent_runs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysAiChunksTable.ForeignKeys[0].RefTable = SysAiDocsTable
+	SysAiChunksTable.Annotation = &entsql.Annotation{
+		Table:     "sys_ai_chunks",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysAiConversationsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_ai_conversations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysAiDocsTable.ForeignKeys[0].RefTable = SysAiKnowledgeBasesTable
+	SysAiDocsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_ai_docs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysAiKnowledgeBasesTable.Annotation = &entsql.Annotation{
+		Table:     "sys_ai_knowledge_bases",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysAiMessagesTable.ForeignKeys[0].RefTable = SysAiConversationsTable
+	SysAiMessagesTable.Annotation = &entsql.Annotation{
+		Table:     "sys_ai_messages",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysAiProvidersTable.Annotation = &entsql.Annotation{
+		Table:     "sys_ai_providers",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysAiUsageLogsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_ai_usage_logs",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}
