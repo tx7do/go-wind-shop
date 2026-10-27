@@ -17,6 +17,7 @@ import (
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 
+	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 	auditV1 "go-wind-shop/api/gen/go/audit/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
@@ -49,6 +50,7 @@ type AuditExportService struct {
 	dataAccessClient       auditV1.DataAccessAuditLogServiceClient
 	permissionClient       auditV1.PermissionAuditLogServiceClient
 	policyEvaluationClient permissionV1.PolicyEvaluationLogServiceClient
+	usageClient            aiV1.AiUsageLogServiceClient
 	log                    *log.Helper
 
 	// tokenChecker 手动路由的鉴权锚：导出端点未设 Operation，auth 中间件的
@@ -64,6 +66,7 @@ func NewAuditExportService(
 	dataAccessClient auditV1.DataAccessAuditLogServiceClient,
 	permissionClient auditV1.PermissionAuditLogServiceClient,
 	policyEvaluationClient permissionV1.PolicyEvaluationLogServiceClient,
+	usageClient aiV1.AiUsageLogServiceClient,
 	tokenChecker auth.AccessTokenChecker,
 ) *AuditExportService {
 	return &AuditExportService{
@@ -73,6 +76,7 @@ func NewAuditExportService(
 		dataAccessClient:       dataAccessClient,
 		permissionClient:       permissionClient,
 		policyEvaluationClient: policyEvaluationClient,
+		usageClient:            usageClient,
 		log:                    ctx.NewLoggerHelper("audit-export/service/admin-service"),
 		tokenChecker:           tokenChecker,
 	}
@@ -212,34 +216,31 @@ func (s *AuditExportService) ServeExport(w http.ResponseWriter, r *http.Request)
 
 // ServeAiUsageExport AI 用量流水导出：GET /admin/v1/ai/usage-logs:export
 // 租户视角与 /admin/v1/ai/usage-logs 列表一致（core 侧按操作者裁定）。
-// 【缓行】ServeAiUsageExport AI 用量流水导出依赖 AI 域（aiUsageLogServiceClient），
-// AI 域接入后从 go-wind-cms 同名服务恢复：
-// func (s *AuditExportService) ServeAiUsageExport(w http.ResponseWriter, r *http.Request) error {
-// 	ctx, ok := s.authorize(w, r)
-// 	if !ok {
-// 		return nil
-// 	}
-// 	q := r.URL.Query()
-// 	s.exportType(ctx, w, q, "ai-usage-logs",
-// 		func(ctx context.Context, page int64) ([]any, uint64, error) {
-// 			resp, err := s.usageClient.List(ctx, pagingReq(page, q.Get("query")))
-// 			if err != nil {
-// 				return nil, 0, err
-// 			}
-// 			return toAnySlice(resp.GetItems()), resp.GetTotal(), nil
-// 		},
-// 		[]colDef{
-// 			{"模型", func(v any) string { return v.(*aiV1.AiUsageLog).GetModelName() }},
-// 			{"输入 tokens", func(v any) string { return strconv.FormatUint(uint64(v.(*aiV1.AiUsageLog).GetPromptTokens()), 10) }},
-// 			{"输出 tokens", func(v any) string { return strconv.FormatUint(uint64(v.(*aiV1.AiUsageLog).GetCompletionTokens()), 10) }},
-// 			{"总 tokens", func(v any) string { return strconv.FormatUint(uint64(v.(*aiV1.AiUsageLog).GetTotalTokens()), 10) }},
-// 			{"耗时(ms)", func(v any) string { return strconv.FormatUint(uint64(v.(*aiV1.AiUsageLog).GetDurationMs()), 10) }},
-// 			{"时间", func(v any) string { return tsStr(v.(*aiV1.AiUsageLog).CreatedAt) }},
-// 		},
-// 	)
-// 	return nil
-// }
-// 
+func (s *AuditExportService) ServeAiUsageExport(w http.ResponseWriter, r *http.Request) error {
+	ctx, ok := s.authorize(w, r)
+	if !ok {
+		return nil
+	}
+	q := r.URL.Query()
+	s.exportType(ctx, w, q, "ai-usage-logs",
+		func(ctx context.Context, page int64) ([]any, uint64, error) {
+			resp, err := s.usageClient.List(ctx, pagingReq(page, q.Get("query")))
+			if err != nil {
+				return nil, 0, err
+			}
+			return toAnySlice(resp.GetItems()), resp.GetTotal(), nil
+		},
+		[]colDef{
+			{"模型", func(v any) string { return v.(*aiV1.AiUsageLog).GetModelName() }},
+			{"输入 tokens", func(v any) string { return strconv.FormatUint(uint64(v.(*aiV1.AiUsageLog).GetPromptTokens()), 10) }},
+			{"输出 tokens", func(v any) string { return strconv.FormatUint(uint64(v.(*aiV1.AiUsageLog).GetCompletionTokens()), 10) }},
+			{"总 tokens", func(v any) string { return strconv.FormatUint(uint64(v.(*aiV1.AiUsageLog).GetTotalTokens()), 10) }},
+			{"耗时(ms)", func(v any) string { return strconv.FormatUint(uint64(v.(*aiV1.AiUsageLog).GetDurationMs()), 10) }},
+			{"时间", func(v any) string { return tsStr(v.(*aiV1.AiUsageLog).CreatedAt) }},
+		},
+	)
+	return nil
+}
 
 // ── 公共样板 ────────────────────────────────────────────────────────
 

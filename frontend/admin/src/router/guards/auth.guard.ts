@@ -41,8 +41,9 @@ function setupAccessGuard(router: Router) {
         return {
           path: LOGIN_PATH,
           // 如不需要，直接删除 query
-          query:
-            to.fullPath === DEFAULT_HOME_PATH ? {} : { redirect: encodeURIComponent(to.fullPath) },
+          // redirect 不手动 encodeURIComponent：vue-router 序列化 query 时会自动编码，
+          // 手动编一次会双重编码，登录页 decodeURIComponent 只解一层后仍带 %2F，跳转落空
+          query: to.fullPath === DEFAULT_HOME_PATH ? {} : { redirect: to.fullPath },
           // 携带当前跳转的页面，登录后重新跳转该页面
           replace: true,
         };

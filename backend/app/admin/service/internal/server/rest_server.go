@@ -251,6 +251,9 @@ func NewRestServer(
 	srv.Route("/").GET("admin/v1/audit-logs:export", func(ctx http.Context) error {
 		return auditExportService.ServeExport(ctx.Response(), ctx.Request())
 	})
+	srv.Route("/").GET("admin/v1/ai/usage-logs:export", func(ctx http.Context) error {
+		return auditExportService.ServeAiUsageExport(ctx.Response(), ctx.Request())
+	})
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
 	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)
 	adminV1.RegisterConfigServiceHTTPServer(srv, configService)

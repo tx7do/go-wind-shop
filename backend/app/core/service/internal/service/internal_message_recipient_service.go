@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"encoding/json"
+	"strconv"
+	"strings"
 
 	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -12,6 +14,8 @@ import (
 	"go-wind-shop/app/core/service/internal/data"
 
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
+	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
+	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
 )
 
 type InternalMessageRecipientService struct {
@@ -21,17 +25,79 @@ type InternalMessageRecipientService struct {
 
 	internalMessageRepo          *data.InternalMessageRepo
 	internalMessageRecipientRepo *data.InternalMessageRecipientRepo
+
+	userRepo data.UserRepo
+
+	// notifier 通知域投递缝（Notifier 接口，由 NotificationService 实现）。
+	// 构造期留 nil，装配期由 wiring 注入；未注入时收件行仅落库，不出站到渠道路由。
+	notifier Notifier
+}
+
+// RegisterNotifier 注入通知域投递缝。
+func (s *InternalMessageRecipientService) RegisterNotifier(notifier Notifier) {
+	s.notifier = notifier
+}
+
+// Create 落一条收件行（BFF 发送编排逐收件人调用）。
+// 落库成功后经通知域投递缝出站（INTERNAL_MESSAGE 事件，related_id=消息ID）：
+// 渠道路由决定走邮箱还是仅站内行；出站失败不影响收件行（台账可查，异步可重试）。
+func (s *InternalMessageRecipientService) Create(ctx context.Context, req *internalMessageV1.CreateInternalMessageRecipientRequest) (*internalMessageV1.InternalMessageRecipient, error) {
+	if req == nil || req.Data == nil {
+		return nil, internalMessageV1.ErrorBadRequest("invalid parameter")
+	}
+
+	entity, err := s.internalMessageRecipientRepo.Create(ctx, req.Data)
+	if err != nil {
+		s.log.Errorf("create recipient failed: %v", err)
+		return nil, err
+	}
+
+	if s.notifier != nil && entity.GetRecipientUserId() > 0 {
+		// title/content 取请求入参（shop 收件行表无这两列，repo 往返后 DTO 不携带）
+		if _, dErr := s.notifier.SendDirect(ctx, &notificationV1.SendDirectNotificationRequest{
+			EventType:       notificationV1.EventType_INTERNAL_MESSAGE,
+			Target:          s.notificationTargetFor(ctx, entity.GetRecipientUserId()),
+			Title:           req.Data.GetTitle(),
+			Content:         req.Data.GetContent(),
+			RecipientUserId: entity.RecipientUserId,
+			RelatedId:       entity.MessageId,
+		}); dErr != nil {
+			s.log.Errorf("recipient [%d] notifier deliver failed (delivery ledger records attempt): %v", entity.GetId(), dErr)
+		}
+	}
+
+	return entity, nil
+}
+
+// notificationTargetFor 返回收件人的 SendDirect Target：
+// INTERNAL_MESSAGE 事件的 EMAIL 路由需要邮箱地址，而本链路持有的是收件人
+// uid——这里解析 sys_users.email；未配置邮箱回落 uid 字符串（既有行为，
+// EMAIL 渠道投递以 FAILED 呈现而非误发）。INTERNAL 渠道不消费 Target。
+func (s *InternalMessageRecipientService) notificationTargetFor(ctx context.Context, uid uint32) string {
+	u, uErr := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{Id: uid},
+	})
+	if uErr != nil || u == nil {
+		s.log.Warnf("notification target: read user [%d] failed: %v", uid, uErr)
+		return strconv.FormatUint(uint64(uid), 10)
+	}
+	if strings.TrimSpace(u.GetEmail()) != "" {
+		return u.GetEmail()
+	}
+	return strconv.FormatUint(uint64(uid), 10)
 }
 
 func NewInternalMessageRecipientService(
 	ctx *bootstrap.Context,
 	internalMessageRepo *data.InternalMessageRepo,
 	internalMessageRecipientRepo *data.InternalMessageRecipientRepo,
+	userRepo data.UserRepo,
 ) *InternalMessageRecipientService {
 	return &InternalMessageRecipientService{
 		log:                          ctx.NewLoggerHelper("internal-message-recipient/service/core-service"),
 		internalMessageRepo:          internalMessageRepo,
 		internalMessageRecipientRepo: internalMessageRecipientRepo,
+		userRepo:                     userRepo,
 	}
 }
 

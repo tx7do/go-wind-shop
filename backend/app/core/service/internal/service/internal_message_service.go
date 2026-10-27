@@ -2,6 +2,8 @@ package service
 
 import (
 	"context"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -15,6 +17,8 @@ import (
 	"go-wind-shop/app/core/service/internal/data"
 
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
+	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
+	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
 )
 
 type InternalMessageService struct {
@@ -27,6 +31,16 @@ type InternalMessageService struct {
 	internalMessageRecipientRepo *data.InternalMessageRecipientRepo
 
 	userRepo data.UserRepo
+
+	// notifier 通知域投递缝（Notifier 接口，由 NotificationService 实现）。
+	// 构造期留 nil，装配期由 wiring 在两个 service 都就绪后 RegisterNotifier 注入；
+	// 未注入时站内信仅落收件行，不出站到渠道路由。
+	notifier Notifier
+}
+
+// RegisterNotifier 注入通知域投递缝。
+func (s *InternalMessageService) RegisterNotifier(notifier Notifier) {
+	s.notifier = notifier
 }
 
 func NewInternalMessageService(
@@ -241,5 +255,46 @@ func (s *InternalMessageService) sendNotification(ctx context.Context, messageId
 	}
 	recipient.Id = entity.Id
 
+	// 经通知域投递缝出站（INTERNAL_MESSAGE 事件）：渠道路由决定走邮箱还是仅站内行。
+	// 单收件人投递失败不中断发送（收件行已落，出站失败在台账可查）；未接线时静默跳过。
+	if s.notifier != nil {
+		if _, dErr := s.deliverViaNotifier(ctx, &notificationV1.SendDirectNotificationRequest{
+			EventType:       notificationV1.EventType_INTERNAL_MESSAGE,
+			Target:          s.notificationTargetFor(ctx, recipientUserId),
+			Title:           title,
+			Content:         content,
+			RecipientUserId: trans.Ptr(recipientUserId),
+			RelatedId:       trans.Ptr(messageId),
+		}); dErr != nil {
+			s.log.Errorf("send message: notifier deliver to user [%d] failed: %v", recipientUserId, dErr)
+		}
+	}
+
 	return nil
+}
+
+// deliverViaNotifier 经通知域投递缝发一条通知；未接线时返回 nil（静默跳过出站）。
+func (s *InternalMessageService) deliverViaNotifier(ctx context.Context, req *notificationV1.SendDirectNotificationRequest) (*notificationV1.SendNotificationResponse, error) {
+	if s.notifier == nil {
+		return nil, nil
+	}
+	return s.notifier.SendDirect(ctx, req)
+}
+
+// notificationTargetFor 返回收件人的 SendDirect Target：
+// INTERNAL_MESSAGE 事件的 EMAIL 路由需要邮箱地址，而本链路持有的是收件人
+// uid——这里解析 sys_users.email；未配置邮箱回落 uid 字符串（既有行为，
+// EMAIL 渠道投递以 FAILED 呈现而非误发）。INTERNAL 渠道不消费 Target。
+func (s *InternalMessageService) notificationTargetFor(ctx context.Context, uid uint32) string {
+	u, uErr := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{Id: uid},
+	})
+	if uErr != nil || u == nil {
+		s.log.Warnf("notification target: read user [%d] failed: %v", uid, uErr)
+		return strconv.FormatUint(uint64(uid), 10)
+	}
+	if strings.TrimSpace(u.GetEmail()) != "" {
+		return u.GetEmail()
+	}
+	return strconv.FormatUint(uint64(uid), 10)
 }
