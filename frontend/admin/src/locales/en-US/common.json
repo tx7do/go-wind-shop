@@ -138,7 +138,8 @@
     "create_failed": "Create failed",
     "operation_success": "Operation successful",
     "operation_failed": "Operation failed",
-    "update_status_failed": "Status update failed"
+    "update_status_failed": "Status update failed",
+    "confirmTitle": "Confirm"
   },
   "title": {
     "confirm": "Confirm",
@@ -431,5 +432,8 @@
     "refresh": "Refresh Content",
     "preferences": "Preferences",
     "theme": "Theme"
+  },
+  "validate": {
+    "required": "This field is required"
   }
 }

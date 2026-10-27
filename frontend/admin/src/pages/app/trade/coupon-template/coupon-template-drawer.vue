@@ -161,9 +161,9 @@ const formData = reactive<{
 });
 
 const formRules: FormRules = {
-  discountType: [{ required: true, message: $t("common.validate.required"), trigger: "change" }],
-  status: [{ required: true, message: $t("common.validate.required"), trigger: "change" }],
-  currency: [{ required: true, message: $t("common.validate.required"), trigger: "blur" }],
+  discountType: [{ required: true, message: $t("common.validation.required"), trigger: "change" }],
+  status: [{ required: true, message: $t("common.validation.required"), trigger: "change" }],
+  currency: [{ required: true, message: $t("common.validation.required"), trigger: "blur" }],
 };
 
 const title = computed(() =>

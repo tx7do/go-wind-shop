@@ -90,10 +90,10 @@ async function handleServerExport() {
       "login",
       new PaginationQuery({ formValues: latestFormValuesRef.value }),
     );
-    ElMessage.success($t("pages.curd.message.exportSuccess"));
+    ElMessage.success($t("pages.login_audit_log.exportServerSuccess"));
   } catch (error: any) {
     console.error("server-side audit export failed", error);
-    ElMessage.error(error?.message || $t("pages.curd.message.exportFailed"));
+    ElMessage.error(error?.message || $t("pages.login_audit_log.exportServerFailed"));
   } finally {
     exporting.value = false;
   }

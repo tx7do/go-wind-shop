@@ -138,7 +138,8 @@
     "create_failed": "创建失败",
     "operation_success": "操作成功",
     "operation_failed": "操作失败",
-    "update_status_failed": "状态更新失败"
+    "update_status_failed": "状态更新失败",
+    "confirmTitle": "确认操作"
   },
   "title": {
     "confirm": "确认",
@@ -431,5 +432,8 @@
     "refresh": "刷新内容",
     "preferences": "偏好设置",
     "theme": "主题切换"
+  },
+  "validate": {
+    "required": "请输入"
   }
 }

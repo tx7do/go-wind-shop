@@ -67,7 +67,7 @@ const formData = reactive<{
 });
 
 const formRules: FormRules = {
-  status: [{ required: true, message: $t("common.validate.required"), trigger: "change" }],
+  status: [{ required: true, message: $t("common.validation.required"), trigger: "change" }],
 };
 
 const title = computed(() => $t("pages.mall.comment.button.update"));
