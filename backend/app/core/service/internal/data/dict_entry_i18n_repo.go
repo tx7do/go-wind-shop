@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
@@ -21,7 +21,7 @@ import (
 
 type DictEntryI18nRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[dictV1.DictEntryI18N, ent.DictEntryI18n]
 
@@ -38,7 +38,7 @@ type DictEntryI18nRepo struct {
 // NewDictEntryI18nRepo creates a new DictEntryI18nRepo
 func NewDictEntryI18nRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *DictEntryI18nRepo {
 	repo := &DictEntryI18nRepo{
-		log:       ctx.NewLoggerHelper("dict-entry-i18n/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("dict-entry-i18n/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[dictV1.DictEntryI18N, ent.DictEntryI18n](),
 	}

@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -16,7 +16,7 @@ import (
 type UserCredentialService struct {
 	authenticationV1.UnimplementedUserCredentialServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	userCredentialsRepo *data.UserCredentialRepo
 }
@@ -26,7 +26,7 @@ func NewUserCredentialService(
 	userCredentialRepo *data.UserCredentialRepo,
 ) *UserCredentialService {
 	return &UserCredentialService{
-		log:                 ctx.NewLoggerHelper("user-credential/service/core-service"),
+		log:                 logx.New(ctx.NewLoggerHelper("user-credential/service/core-service")),
 		userCredentialsRepo: userCredentialRepo,
 	}
 }

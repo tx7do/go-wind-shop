@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/tx7do/go-utils/aggregator"
@@ -28,7 +28,7 @@ import (
 type PermissionService struct {
 	permissionV1.UnimplementedPermissionServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	permissionRepo      *data.PermissionRepo
 	permissionGroupRepo *data.PermissionGroupRepo
@@ -51,7 +51,7 @@ func NewPermissionService(
 	roleRepo *data.RoleRepo,
 ) *PermissionService {
 	svc := &PermissionService{
-		log:                     ctx.NewLoggerHelper("permission/service/core-service"),
+		log:                     logx.New(ctx.NewLoggerHelper("permission/service/core-service")),
 		permissionRepo:          permissionRepo,
 		permissionGroupRepo:     permissionGroupRepo,
 		menuRepo:                menuRepo,

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -23,7 +23,7 @@ import (
 
 type InternalMessageCategoryRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[internalMessageV1.InternalMessageCategory, ent.InternalMessageCategory]
 
@@ -39,7 +39,7 @@ type InternalMessageCategoryRepo struct {
 
 func NewInternalMessageCategoryRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *InternalMessageCategoryRepo {
 	repo := &InternalMessageCategoryRepo{
-		log:       ctx.NewLoggerHelper("internal-message-category/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("internal-message-category/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[internalMessageV1.InternalMessageCategory, ent.InternalMessageCategory](),
 	}

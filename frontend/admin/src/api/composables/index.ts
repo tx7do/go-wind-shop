@@ -104,3 +104,4 @@ export * from "./ai-agent";
 export * from "./ai-chat";
 export * from "./ai-knowledge";
 export * from "./ai-provider";
+export * from "./script";

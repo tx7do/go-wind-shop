@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
@@ -24,7 +24,7 @@ import (
 // 平台管理员（tenantId=0）见全量。
 type AiUsageLogRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[aiV1.AiUsageLog, ent.AiUsageLog]
 
@@ -40,7 +40,7 @@ type AiUsageLogRepo struct {
 
 func NewAiUsageLogRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *AiUsageLogRepo {
 	repo := &AiUsageLogRepo{
-		log:       ctx.NewLoggerHelper("ai_usage_log/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("ai_usage_log/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[aiV1.AiUsageLog, ent.AiUsageLog](),
 	}

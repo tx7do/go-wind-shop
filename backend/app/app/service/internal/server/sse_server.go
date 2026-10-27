@@ -1,6 +1,7 @@
 package server
 
 import (
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/kratos-bootstrap/transport/sse"
 
@@ -15,7 +16,7 @@ func NewSseServer(ctx *bootstrap.Context) *sseServer.Server {
 		return nil
 	}
 
-	l := ctx.NewLoggerHelper("sse-server/app-service")
+	l := logx.New(ctx.NewLoggerHelper("sse-server/app-service"))
 
 	srv := sse.NewSseServer(cfg.Server.Sse,
 		sseServer.WithSubscriberFunction(func(streamID sseServer.StreamID, sub *sseServer.Subscriber) {

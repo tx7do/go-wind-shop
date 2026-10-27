@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -20,7 +20,7 @@ import (
 type PermissionGroupService struct {
 	permissionV1.UnimplementedPermissionGroupServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	permissionGroupRepo *data.PermissionGroupRepo
 	permissionRepo      *data.PermissionRepo
@@ -32,7 +32,7 @@ func NewPermissionGroupService(
 	permissionRepo *data.PermissionRepo,
 ) *PermissionGroupService {
 	svc := &PermissionGroupService{
-		log:                 ctx.NewLoggerHelper("permission-group/service/core-service"),
+		log:                 logx.New(ctx.NewLoggerHelper("permission-group/service/core-service")),
 		permissionGroupRepo: permissionGroupRepo,
 		permissionRepo:      permissionRepo,
 	}

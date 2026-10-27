@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/jinzhu/copier"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/durationpb"
@@ -27,7 +27,7 @@ import (
 
 type ApiAuditLogRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[auditV1.ApiAuditLog, ent.ApiAuditLog]
 
@@ -43,7 +43,7 @@ type ApiAuditLogRepo struct {
 
 func NewApiAuditLogRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *ApiAuditLogRepo {
 	repo := &ApiAuditLogRepo{
-		log:       ctx.NewLoggerHelper("api-audit-log/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("api-audit-log/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[auditV1.ApiAuditLog, ent.ApiAuditLog](),
 	}

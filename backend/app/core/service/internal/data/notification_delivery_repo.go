@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
@@ -29,7 +29,7 @@ import (
 // 清扫之所以不算伪造，见它的注释。
 type NotificationDeliveryRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[notifyV1.NotificationDelivery, ent.NotificationDelivery]
 
@@ -49,7 +49,7 @@ type NotificationDeliveryRepo struct {
 
 func NewNotificationDeliveryRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *NotificationDeliveryRepo {
 	repo := &NotificationDeliveryRepo{
-		log:       ctx.NewLoggerHelper("notification-delivery/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("notification-delivery/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[notifyV1.NotificationDelivery, ent.NotificationDelivery](),
 		channelConverter: mapper.NewEnumTypeConverter[notifyV1.Channel, notificationdelivery.Channel](

@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -26,7 +26,7 @@ import (
 type InvoiceService struct {
 	appV1.InvoiceServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	invoiceServiceClient invoiceV1.InvoiceServiceClient
 }
@@ -36,7 +36,7 @@ func NewInvoiceService(
 	invoiceServiceClient invoiceV1.InvoiceServiceClient,
 ) *InvoiceService {
 	return &InvoiceService{
-		log:                  ctx.NewLoggerHelper("invoice/service/app-service"),
+		log:                  logx.New(ctx.NewLoggerHelper("invoice/service/app-service")),
 		invoiceServiceClient: invoiceServiceClient,
 	}
 }

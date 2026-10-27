@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/aggregator"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -22,7 +22,7 @@ import (
 type RoleService struct {
 	permissionV1.UnimplementedRoleServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	roleRepo     *data.RoleRepo
 	tenantRepo   *data.TenantRepo
@@ -36,7 +36,7 @@ func NewRoleService(
 	userRoleRepo *data.UserRoleRepo,
 ) *RoleService {
 	svc := &RoleService{
-		log:          ctx.NewLoggerHelper("role/service/core-service"),
+		log:          logx.New(ctx.NewLoggerHelper("role/service/core-service")),
 		roleRepo:     roleRepo,
 		tenantRepo:   tenantRepo,
 		userRoleRepo: userRoleRepo,

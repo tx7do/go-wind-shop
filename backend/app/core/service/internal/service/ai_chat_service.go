@@ -1,6 +1,7 @@
 package service
 
 import (
+	"go-wind-shop/pkg/logx"
 	"context"
 	"fmt"
 	"strings"
@@ -9,7 +10,6 @@ import (
 	"github.com/sashabaranov/go-openai"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	"github.com/go-kratos/kratos/v2/log"
 	"google.golang.org/grpc"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-crud/viewer"
@@ -36,7 +36,7 @@ const (
 // done 帧携带完整回复；SSE 推送由 admin BFF 消费该流后完成（见 i_ai_chat）。
 type AiChatService struct {
 	aiV1.UnimplementedAiChatServiceServer
-	log              *log.Helper
+	log *logx.Helper
 	conversationRepo *data.AiConversationRepo
 	messageRepo      *data.AiMessageRepo
 	providerRepo     *data.AiProviderRepo
@@ -55,7 +55,7 @@ func NewAiChatService(
 	entClient *entCrud.EntClient[*ent.Client],
 ) *AiChatService {
 	return &AiChatService{
-		log:              ctx.NewLoggerHelper("ai_chat/service/core-service"),
+		log:              logx.New(ctx.NewLoggerHelper("ai_chat/service/core-service")),
 		conversationRepo: conversationRepo,
 		messageRepo:      messageRepo,
 		providerRepo:     providerRepo,

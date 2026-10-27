@@ -198,6 +198,10 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	accessKeyRepo := data.NewAccessKeyRepo(ctx, entClient)
 	accessKeyRateLimiter := data.NewAccessKeyRateLimiter(ctx, redisClient)
 
+	// ── Script 脚本域（移植自 go-wind-admin，ent 同构）──
+	scriptRepo := data.NewScriptRepo(ctx, entClient)
+	scriptLogRepo := data.NewScriptLogRepo(ctx, entClient)
+
 	// ── AI 域（移植自 go-wind-cms）──
 	aiProviderRepo := data.NewAiProviderRepo(ctx, entClient)
 	aiConversationRepo := data.NewAiConversationRepo(ctx, entClient)
@@ -245,6 +249,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiKnowledgeService := service.NewAiKnowledgeService(ctx, aiKnowledgeRepo, aiProviderRepo, aiUsageLogRepo, taskService)
 	aiUsageLogService := service.NewAiUsageLogService(ctx, aiUsageLogRepo, aiProviderRepo)
 	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient, internalMessageRepo, internalMessageService)
+	scriptRuntime := service.NewScriptRuntime(ctx, scriptRepo, redisClient, minIOClient, scriptLogRepo, aiProviderRepo, aiUsageLogRepo)
+	scriptService := service.NewScriptService(ctx, scriptRepo, scriptRuntime)
+	scriptLogService := service.NewScriptLogService(ctx, scriptLogRepo)
 
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
@@ -271,6 +278,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		aiAgentService,
 		aiProviderService, aiChatService, aiConversationService, aiMessageService,
 		aiKnowledgeService, aiUsageLogService, aiQueryService,
+		scriptService, scriptLogService,
 		userCredentialService,
 		taskService,
 		fileService,

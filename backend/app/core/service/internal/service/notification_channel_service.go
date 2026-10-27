@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -24,7 +24,7 @@ import (
 type NotificationChannelService struct {
 	notifyV1.UnimplementedNotificationChannelServiceServer
 
-	log  *log.Helper
+	log *logx.Helper
 	repo *data.NotificationChannelRepo
 
 	notifier Notifier
@@ -36,7 +36,7 @@ func NewNotificationChannelService(
 	notifier Notifier,
 ) *NotificationChannelService {
 	return &NotificationChannelService{
-		log:      ctx.NewLoggerHelper("notification-channel/service/core-service"),
+		log:      logx.New(ctx.NewLoggerHelper("notification-channel/service/core-service")),
 		repo:     repo,
 		notifier: notifier,
 	}

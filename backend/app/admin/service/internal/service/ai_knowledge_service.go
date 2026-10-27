@@ -1,9 +1,8 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -18,12 +17,12 @@ type AiKnowledgeService struct {
 	adminV1.AiKnowledgeBaseServiceHTTPServer
 
 	aiKnowledgeBaseServiceClient aiV1.AiKnowledgeBaseServiceClient
-	log                          *log.Helper
+	log *logx.Helper
 }
 
 func NewAiKnowledgeService(ctx *bootstrap.Context, aiKnowledgeBaseServiceClient aiV1.AiKnowledgeBaseServiceClient) *AiKnowledgeService {
 	return &AiKnowledgeService{
-		log:                          ctx.NewLoggerHelper("ai_knowledge/service/admin-service"),
+		log:                          logx.New(ctx.NewLoggerHelper("ai_knowledge/service/admin-service")),
 		aiKnowledgeBaseServiceClient: aiKnowledgeBaseServiceClient,
 	}
 }

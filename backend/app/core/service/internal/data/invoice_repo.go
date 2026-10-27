@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -23,7 +23,7 @@ import (
 
 type InvoiceRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[invoiceV1.Invoice, ent.Invoice]
 
@@ -42,7 +42,7 @@ type InvoiceRepo struct {
 
 func NewInvoiceRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *InvoiceRepo {
 	repo := &InvoiceRepo{
-		log:                   ctx.NewLoggerHelper("invoice/repo/core-service"),
+		log:                   logx.New(ctx.NewLoggerHelper("invoice/repo/core-service")),
 		entClient:             entClient,
 		mapper:                mapper.NewCopierMapper[invoiceV1.Invoice, ent.Invoice](),
 		statusConverter:       mapper.NewEnumTypeConverter[invoiceV1.Invoice_Status, invoice.Status](invoiceV1.Invoice_Status_name, invoiceV1.Invoice_Status_value),

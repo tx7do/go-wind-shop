@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/mapper"
 	"github.com/tx7do/go-utils/timeutil"
@@ -17,7 +17,7 @@ import (
 )
 
 type UserOrgUnitRepo struct {
-	log *log.Helper
+	log *logx.Helper
 
 	entClient       *entCrud.EntClient[*ent.Client]
 	statusConverter *mapper.EnumTypeConverter[identityV1.UserOrgUnit_Status, userorgunit.Status]
@@ -25,7 +25,7 @@ type UserOrgUnitRepo struct {
 
 func NewUserOrgUnitRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *UserOrgUnitRepo {
 	return &UserOrgUnitRepo{
-		log:       ctx.NewLoggerHelper("user-org-unit/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("user-org-unit/repo/core-service")),
 		entClient: entClient,
 		statusConverter: mapper.NewEnumTypeConverter[identityV1.UserOrgUnit_Status, userorgunit.Status](
 			identityV1.UserOrgUnit_Status_name,

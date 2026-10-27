@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 
 	"github.com/tx7do/go-utils/jwtutil"
 	"github.com/tx7do/go-utils/trans"
@@ -41,7 +41,7 @@ func NewAuthenticatorConfig(ctx *bootstrap.Context) *authenticationV1.Authentica
 }
 
 type Authenticator struct {
-	log *log.Helper
+	log *logx.Helper
 
 	AdminAuthenticator authnEngine.Authenticator
 	AppAuthenticator   authnEngine.Authenticator
@@ -62,7 +62,7 @@ func NewAuthenticator(
 	//log.Infof("Authenticator Config: %+v", cfg)
 
 	a := Authenticator{
-		log:            ctx.NewLoggerHelper("authenticator/data/core-service"),
+		log:            logx.New(ctx.NewLoggerHelper("authenticator/data/core-service")),
 		userTokenCache: userTokenCache,
 		cfg:            cfg,
 	}

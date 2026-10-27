@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -28,7 +28,7 @@ import (
 type NotificationRuleService struct {
 	notifyV1.UnimplementedNotificationRuleServiceServer
 
-	log      *log.Helper
+	log *logx.Helper
 	repo     *data.NotificationRuleRepo
 	channel  *data.NotificationChannelRepo
 	notifier Notifier
@@ -41,7 +41,7 @@ func NewNotificationRuleService(
 	notifier Notifier,
 ) *NotificationRuleService {
 	svc := &NotificationRuleService{
-		log:      ctx.NewLoggerHelper("notification-rule/service/core-service"),
+		log:      logx.New(ctx.NewLoggerHelper("notification-rule/service/core-service")),
 		repo:     repo,
 		channel:  channelRepo,
 		notifier: notifier,

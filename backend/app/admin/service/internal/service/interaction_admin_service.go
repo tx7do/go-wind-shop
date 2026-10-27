@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
@@ -16,7 +16,7 @@ type InteractionAdminService struct {
 	adminV1.InteractionAdminServiceHTTPServer
 
 	interactionAdminServiceClient interactionV1.InteractionAdminServiceClient
-	log                           *log.Helper
+	log *logx.Helper
 }
 
 func NewInteractionAdminService(
@@ -25,7 +25,7 @@ func NewInteractionAdminService(
 ) *InteractionAdminService {
 	return &InteractionAdminService{
 		interactionAdminServiceClient: interactionAdminServiceClient,
-		log:                           ctx.NewLoggerHelper("interaction-admin/service/admin-service"),
+		log:                           logx.New(ctx.NewLoggerHelper("interaction-admin/service/admin-service")),
 	}
 }
 

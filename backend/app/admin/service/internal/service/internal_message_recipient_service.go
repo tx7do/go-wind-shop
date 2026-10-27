@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -15,7 +15,7 @@ import (
 type InternalMessageRecipientService struct {
 	adminV1.InternalMessageRecipientServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	messageServiceClient          internalMessageV1.InternalMessageServiceClient
 	messageRecipientServiceClient internalMessageV1.InternalMessageRecipientServiceClient
@@ -26,7 +26,7 @@ func NewInternalMessageRecipientService(
 	messageServiceClient internalMessageV1.InternalMessageServiceClient,
 	messageRecipientServiceClient internalMessageV1.InternalMessageRecipientServiceClient,
 ) *InternalMessageRecipientService {
-	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "internal-message-recipient/service/admin-service"))
+	l := logx.NewFromLogger(ctx.GetLogger().With("module", "internal-message-recipient/service/admin-service"))
 	return &InternalMessageRecipientService{
 		log:                           l,
 		messageServiceClient:          messageServiceClient,

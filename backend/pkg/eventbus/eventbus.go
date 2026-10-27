@@ -1,12 +1,13 @@
 package eventbus
 
 import (
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
 	"fmt"
 	"sync"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 )
 
 // EventBus manages event subscriptions and publishing
@@ -38,16 +39,16 @@ type DefaultEventBus struct {
 	mu           sync.RWMutex
 	handlers     map[string][]Handler
 	onceHandlers map[string][]Handler
-	logger       *log.Helper
+	logger *logx.Helper
 	closed       bool
 }
 
 // NewEventBus creates a new event bus
-func NewEventBus(logger log.Logger) EventBus {
+func NewEventBus(logger bLogger.Logger) EventBus {
 	return &DefaultEventBus{
 		handlers:     make(map[string][]Handler),
 		onceHandlers: make(map[string][]Handler),
-		logger:       log.NewHelper(log.With(logger, "module", "eventbus")),
+		logger:       logx.NewFromLogger(logger.With("module", "eventbus")),
 	}
 }
 

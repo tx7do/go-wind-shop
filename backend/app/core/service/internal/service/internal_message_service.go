@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/aggregator"
 	"github.com/tx7do/go-utils/timeutil"
@@ -24,7 +24,7 @@ import (
 type InternalMessageService struct {
 	internalMessageV1.UnimplementedInternalMessageServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	internalMessageRepo          *data.InternalMessageRepo
 	internalMessageCategoryRepo  *data.InternalMessageCategoryRepo
@@ -51,7 +51,7 @@ func NewInternalMessageService(
 	userRepo data.UserRepo,
 ) *InternalMessageService {
 	return &InternalMessageService{
-		log:                          ctx.NewLoggerHelper("internal-message/service/core-service"),
+		log:                          logx.New(ctx.NewLoggerHelper("internal-message/service/core-service")),
 		internalMessageRepo:          internalMessageRepo,
 		internalMessageCategoryRepo:  internalMessageCategoryRepo,
 		internalMessageRecipientRepo: internalMessageRecipientRepo,

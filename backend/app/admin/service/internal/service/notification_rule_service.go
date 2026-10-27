@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -16,13 +16,13 @@ import (
 type NotificationRuleService struct {
 	adminV1.NotificationRuleServiceHTTPServer
 
-	log      *log.Helper
+	log *logx.Helper
 	ruleCli  notifyV1.NotificationRuleServiceClient
 }
 
 func NewNotificationRuleService(ctx *bootstrap.Context, ruleClient notifyV1.NotificationRuleServiceClient) *NotificationRuleService {
 	return &NotificationRuleService{
-		log:     ctx.NewLoggerHelper("notification-rule/service/admin-service"),
+		log:     logx.New(ctx.NewLoggerHelper("notification-rule/service/admin-service")),
 		ruleCli: ruleClient,
 	}
 }

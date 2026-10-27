@@ -1,12 +1,11 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 	"encoding/json"
 	"fmt"
 	"strings"
 
-	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/sliceutil"
 	"github.com/tx7do/go-utils/trans"
@@ -23,7 +22,7 @@ import (
 type AdminPortalService struct {
 	adminV1.AdminPortalServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	menuServiceClient       permissionV1.MenuServiceClient
 	permissionServiceClient permissionV1.PermissionServiceClient
@@ -40,7 +39,7 @@ func NewRouterService(
 	userServiceClient identityV1.UserServiceClient,
 ) *AdminPortalService {
 	return &AdminPortalService{
-		log:                     ctx.NewLoggerHelper("admin-portal/service/admin-service"),
+		log:                     logx.New(ctx.NewLoggerHelper("admin-portal/service/admin-service")),
 		menuServiceClient:       menuServiceClient,
 		permissionServiceClient: permissionServiceClient,
 		roleServiceClient:       roleServiceClient,

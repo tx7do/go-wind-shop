@@ -30,11 +30,12 @@ require (
 	github.com/tx7do/go-crud/opensearch v0.0.5
 	github.com/tx7do/go-crud/pagination v0.0.16
 	github.com/tx7do/go-crud/viewer v0.0.7
+	github.com/tx7do/go-scripts v0.0.9
 	github.com/tx7do/go-utils v1.1.40
 	github.com/tx7do/go-utils/aggregator v0.0.5
 	github.com/tx7do/go-utils/captcha v0.0.4
 	github.com/tx7do/go-utils/copierutil v0.0.8
-	github.com/tx7do/go-utils/crypto v0.0.2
+	github.com/tx7do/go-utils/crypto v0.0.4
 	github.com/tx7do/go-utils/doctext v0.1.0
 	github.com/tx7do/go-utils/geoip v1.1.8
 	github.com/tx7do/go-utils/id v0.0.6
@@ -42,6 +43,7 @@ require (
 	github.com/tx7do/go-utils/mailer v0.1.1
 	github.com/tx7do/go-utils/mapper v0.0.3
 	github.com/tx7do/go-utils/notify v0.0.6
+	github.com/tx7do/go-utils/ossutil v0.1.0
 	github.com/tx7do/go-utils/password v0.0.2
 	github.com/tx7do/go-wind-plugins/ai/openai v0.0.1
 	github.com/tx7do/go-wind-toolkit/protoc-gen-go-redact v0.0.0-20260621140333-c4bf78d8d062
@@ -51,16 +53,16 @@ require (
 	github.com/tx7do/kratos-authz/engine/casbin v1.1.12
 	github.com/tx7do/kratos-authz/engine/opa v1.1.15
 	github.com/tx7do/kratos-authz/middleware v1.1.13
-	github.com/tx7do/kratos-bootstrap/api v0.0.39
-	github.com/tx7do/kratos-bootstrap/bootstrap v0.1.16
+	github.com/tx7do/kratos-bootstrap/api v0.0.44
+	github.com/tx7do/kratos-bootstrap/bootstrap v0.1.17
 	github.com/tx7do/kratos-bootstrap/cache/redis v0.1.1
 	github.com/tx7do/kratos-bootstrap/database/ent v0.1.5
 	github.com/tx7do/kratos-bootstrap/database/opensearch v0.1.1
 	github.com/tx7do/kratos-bootstrap/oss/minio v0.1.1
-	github.com/tx7do/kratos-bootstrap/registry v0.2.2
+	github.com/tx7do/kratos-bootstrap/registry v0.2.3
 	github.com/tx7do/kratos-bootstrap/registry/etcd v0.2.2
 	github.com/tx7do/kratos-bootstrap/rpc v0.1.1
-	github.com/tx7do/kratos-bootstrap/tracer v0.1.4
+	github.com/tx7do/kratos-bootstrap/tracer v0.1.5
 	github.com/tx7do/kratos-bootstrap/transport/sse v0.0.4
 	github.com/tx7do/kratos-swagger-ui v0.0.1
 	github.com/tx7do/kratos-transport/broker v1.3.2
@@ -74,6 +76,19 @@ require (
 	google.golang.org/genproto/googleapis/api v0.0.0-20260908043556-f8649ddbbfe6
 	google.golang.org/grpc v1.83.1
 	google.golang.org/protobuf v1.36.12
+)
+
+require (
+	github.com/dlclark/regexp2/v2 v2.5.2 // indirect
+	github.com/dop251/goja v0.0.0-20260723142020-b4aef50fa347 // indirect
+	github.com/dop251/goja_nodejs v0.0.0-20260212111938-1f56ff5bcf14 // indirect
+	github.com/go-sourcemap/sourcemap v2.1.4+incompatible // indirect
+	github.com/google/pprof v0.0.0-20260709232956-b9395ee17fa0 // indirect
+	github.com/mitchellh/mapstructure v1.5.1-0.20220423185008-bf980b35cac4 // indirect
+	github.com/tengattack/gluacrypto v0.0.0-20240324200146-54b58c95c255 // indirect
+	github.com/vadv/gopher-lua-libs v0.8.0 // indirect
+	github.com/yuin/gluamapper v0.0.0-20150323120927-d836955830e7 // indirect
+	layeh.com/gopher-luar v1.0.11 // indirect
 )
 
 require (
@@ -96,25 +111,23 @@ require (
 	github.com/casbin/govaluate v1.10.0 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
-	github.com/clipperhouse/displaywidth v0.6.2 // indirect
-	github.com/clipperhouse/stringish v0.1.1 // indirect
-	github.com/clipperhouse/uax29/v2 v2.3.0 // indirect
+	github.com/clipperhouse/displaywidth v0.11.0 // indirect
+	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.7.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1 // indirect
 	github.com/dtm-labs/logger v0.0.2 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/fatih/color v1.18.0 // indirect
-	github.com/felixge/httpsnoop v1.0.4 // indirect
-	github.com/fsnotify/fsnotify v1.9.0 // indirect
+	github.com/fatih/color v1.19.0 // indirect
+	github.com/felixge/httpsnoop v1.1.0 // indirect
+	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/go-ini/ini v1.67.0 // indirect
 	github.com/go-kratos/aegis v0.2.0 // indirect
 	github.com/go-logr/logr v1.4.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/go-openapi/inflect v1.0.0 // indirect
-	github.com/go-openapi/jsonpointer v0.21.0 // indirect
-	github.com/go-openapi/swag v0.23.0 // indirect
+	github.com/go-openapi/jsonpointer v1.0.0 // indirect
 	github.com/go-playground/form/v4 v4.3.0 // indirect
 	github.com/go-resty/resty/v2 v2.17.2 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
@@ -131,7 +144,7 @@ require (
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/graph-gophers/dataloader/v7 v7.1.3 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.30.0 // indirect
 	github.com/hashicorp/hcl/v2 v2.24.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
@@ -152,9 +165,9 @@ require (
 	github.com/lithammer/shortuuid/v4 v4.3.0 // indirect
 	github.com/lufia/plan9stats v0.0.0-20260216142805-b3301c5f2a88 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
-	github.com/mattn/go-colorable v0.1.14 // indirect
-	github.com/mattn/go-isatty v0.0.22 // indirect
-	github.com/mattn/go-runewidth v0.0.19 // indirect
+	github.com/mattn/go-colorable v0.1.15 // indirect
+	github.com/mattn/go-isatty v0.0.24 // indirect
+	github.com/mattn/go-runewidth v0.0.28 // indirect
 	github.com/minio/crc64nvme v1.1.1 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
@@ -165,9 +178,9 @@ require (
 	github.com/oasdiff/yaml v0.0.9 // indirect
 	github.com/oasdiff/yaml3 v0.0.12 // indirect
 	github.com/olekukonko/cat v0.0.0-20250911104152-50322a0618f6 // indirect
-	github.com/olekukonko/errors v1.1.0 // indirect
-	github.com/olekukonko/ll v0.1.4-0.20260115111900-9e59c2286df0 // indirect
-	github.com/olekukonko/tablewriter v1.1.3 // indirect
+	github.com/olekukonko/errors v1.3.0 // indirect
+	github.com/olekukonko/ll v0.1.8 // indirect
+	github.com/olekukonko/tablewriter v1.1.4 // indirect
 	github.com/open-policy-agent/opa v1.16.1 // indirect
 	github.com/opensearch-project/opensearch-go/v4 v4.6.0 // indirect
 	github.com/openzipkin/zipkin-go v0.4.3 // indirect
@@ -203,11 +216,15 @@ require (
 	github.com/tklauser/numcpus v0.11.0 // indirect
 	github.com/tx7do/go-crud/audit v0.0.3 // indirect
 	github.com/tx7do/go-crud/cache v0.0.2 // indirect
+	github.com/tx7do/go-scripts/hostmodule v0.0.1
+	github.com/tx7do/go-scripts/javascript v0.0.10
+	github.com/tx7do/go-scripts/lua v0.0.12
+	github.com/tx7do/go-utils/eventbus v0.1.0
 	github.com/tx7do/go-wind v0.0.2 // indirect
 	github.com/tx7do/go-wind-plugins/encoding v0.0.1 // indirect
 	github.com/tx7do/go-wind-plugins/encoding/json v0.0.1 // indirect
-	github.com/tx7do/kratos-bootstrap/config v0.2.2 // indirect
-	github.com/tx7do/kratos-bootstrap/logger v0.1.2 // indirect
+	github.com/tx7do/kratos-bootstrap/config v0.2.3 // indirect
+	github.com/tx7do/kratos-bootstrap/logger v0.1.3
 	github.com/tx7do/kratos-transport/tracing v1.1.1 // indirect
 	github.com/tx7do/kratos-transport/transport v1.3.3 // indirect
 	github.com/tx7do/kratos-transport/transport/keepalive v1.3.4 // indirect
@@ -235,14 +252,14 @@ require (
 	go.mongodb.org/mongo-driver/v2 v2.9.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/otel v1.46.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.43.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.43.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.43.0 // indirect
-	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0 // indirect
-	go.opentelemetry.io/otel/exporters/zipkin v1.43.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 // indirect
+	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.45.0 // indirect
+	go.opentelemetry.io/otel/exporters/zipkin v1.45.0 // indirect
 	go.opentelemetry.io/otel/metric v1.46.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.46.0 // indirect
-	go.opentelemetry.io/proto/otlp v1.10.0 // indirect
+	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.28.0 // indirect

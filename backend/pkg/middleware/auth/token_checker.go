@@ -3,7 +3,7 @@ package auth
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -11,7 +11,7 @@ import (
 )
 
 type TokenChecker struct {
-	log *log.Helper
+	log *logx.Helper
 
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient
 	clientType                  authenticationV1.ClientType
@@ -23,7 +23,7 @@ func NewTokenChecker(
 	clientType authenticationV1.ClientType,
 ) AccessTokenChecker {
 	return &TokenChecker{
-		log:                         log.NewHelper(log.With(ctx.GetLogger(), "module", "token-checker/auth/middleware")),
+		log:                         logx.NewFromLogger(ctx.GetLogger().With("module", "token-checker/auth/middleware")),
 		authenticationServiceClient: authenticationServiceClient,
 		clientType:                  clientType,
 	}

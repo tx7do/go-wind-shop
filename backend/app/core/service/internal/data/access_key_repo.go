@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"entgo.io/ent/dialect/sql"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -28,7 +28,7 @@ import (
 // 令牌交换（免鉴权流程）的查询经 SystemViewer 旁路租户 scope（见 *BySystem 方法）。
 type AccessKeyRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 	mapper    *mapper.CopierMapper[accesskeyV1.AccessKey, ent.AccessKey]
 	// 状态枚举转换（ent SwitchStatus ON/OFF <-> proto AccessKey_Status）
 	statusConverter *mapper.EnumTypeConverter[accesskeyV1.AccessKey_Status, accesskey.Status]
@@ -45,7 +45,7 @@ type AccessKeyRepo struct {
 
 func NewAccessKeyRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *AccessKeyRepo {
 	r := &AccessKeyRepo{
-		log:             ctx.NewLoggerHelper("access-key/repo/core-service"),
+		log:             logx.New(ctx.NewLoggerHelper("access-key/repo/core-service")),
 		entClient:       entClient,
 		mapper:          mapper.NewCopierMapper[accesskeyV1.AccessKey, ent.AccessKey](),
 		statusConverter: mapper.NewEnumTypeConverter[accesskeyV1.AccessKey_Status, accesskey.Status](accesskeyV1.AccessKey_Status_name, accesskeyV1.AccessKey_Status_value),

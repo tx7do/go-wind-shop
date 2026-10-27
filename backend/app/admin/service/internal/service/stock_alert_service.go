@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -22,7 +22,7 @@ import (
 type StockAlertService struct {
 	adminV1.StockAlertServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	stockAlertServiceClient catalogV1.StockAlertServiceClient
 }
@@ -32,7 +32,7 @@ func NewStockAlertService(
 	stockAlertServiceClient catalogV1.StockAlertServiceClient,
 ) *StockAlertService {
 	return &StockAlertService{
-		log:                     ctx.NewLoggerHelper("stock-alert/service/admin-service"),
+		log:                     logx.New(ctx.NewLoggerHelper("stock-alert/service/admin-service")),
 		stockAlertServiceClient: stockAlertServiceClient,
 	}
 }

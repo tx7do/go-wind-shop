@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -24,7 +24,7 @@ import (
 
 type BrandRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.Brand, ent.Brand]
 
@@ -47,7 +47,7 @@ func NewBrandRepo(
 ) *BrandRepo {
 	repo := &BrandRepo{
 		entClient:            entClient,
-		log:                  ctx.NewLoggerHelper("brand/repo/core-service"),
+		log:                  logx.New(ctx.NewLoggerHelper("brand/repo/core-service")),
 		mapper:               mapper.NewCopierMapper[catalogV1.Brand, ent.Brand](),
 		brandTranslationRepo: brandTranslationRepo,
 	}

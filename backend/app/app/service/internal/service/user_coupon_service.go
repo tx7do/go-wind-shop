@@ -1,10 +1,9 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 	"encoding/json"
 
-	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -30,7 +29,7 @@ import (
 type UserCouponService struct {
 	appV1.UserCouponServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	userCouponServiceClient couponV1.UserCouponServiceClient
 }
@@ -40,7 +39,7 @@ func NewUserCouponService(
 	userCouponServiceClient couponV1.UserCouponServiceClient,
 ) *UserCouponService {
 	return &UserCouponService{
-		log:                     ctx.NewLoggerHelper("user-coupon/service/app-service"),
+		log:                     logx.New(ctx.NewLoggerHelper("user-coupon/service/app-service")),
 		userCouponServiceClient: userCouponServiceClient,
 	}
 }

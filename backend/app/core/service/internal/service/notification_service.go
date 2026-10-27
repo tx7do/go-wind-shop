@@ -11,7 +11,7 @@ import (
 
 	"github.com/hibiken/asynq"
 	kratosErrors "github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/id"
 	"github.com/tx7do/go-utils/timeutil"
@@ -35,7 +35,7 @@ import (
 type NotificationService struct {
 	notifyV1.UnimplementedNotificationServiceServer
 
-	log          *log.Helper
+	log *logx.Helper
 	deliveryRepo *data.NotificationDeliveryRepo
 	ruleRepo     *data.NotificationRuleRepo
 	templateRepo *data.NotificationTemplateRepo
@@ -59,7 +59,7 @@ func NewNotificationService(
 	channelRegistry *channel.Registry,
 ) *NotificationService {
 	return &NotificationService{
-		log:          ctx.NewLoggerHelper("notification/service/core-service"),
+		log:          logx.New(ctx.NewLoggerHelper("notification/service/core-service")),
 		deliveryRepo: deliveryRepo,
 		ruleRepo:     ruleRepo,
 		templateRepo: templateRepo,

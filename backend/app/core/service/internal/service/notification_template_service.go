@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -24,7 +24,7 @@ type NotificationTemplateService struct {
 	notifyV1.UnimplementedNotificationTemplateServiceServer
 
 	templateRepo *data.NotificationTemplateRepo
-	log          *log.Helper
+	log *logx.Helper
 }
 
 func NewNotificationTemplateService(
@@ -33,7 +33,7 @@ func NewNotificationTemplateService(
 ) *NotificationTemplateService {
 	return &NotificationTemplateService{
 		templateRepo: templateRepo,
-		log:          ctx.NewLoggerHelper("notification-template/service/core-service"),
+		log:          logx.New(ctx.NewLoggerHelper("notification-template/service/core-service")),
 	}
 }
 

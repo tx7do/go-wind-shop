@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -23,7 +23,7 @@ import (
 
 type LoginPolicyRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper          *mapper.CopierMapper[authenticationV1.LoginPolicy, ent.LoginPolicy]
 	typeConverter   *mapper.EnumTypeConverter[authenticationV1.LoginPolicy_Type, loginpolicy.Type]
@@ -41,7 +41,7 @@ type LoginPolicyRepo struct {
 
 func NewLoginPolicyRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *LoginPolicyRepo {
 	repo := &LoginPolicyRepo{
-		log:       ctx.NewLoggerHelper("login-policy/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("login-policy/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[authenticationV1.LoginPolicy, ent.LoginPolicy](),
 		typeConverter: mapper.NewEnumTypeConverter[authenticationV1.LoginPolicy_Type, loginpolicy.Type](

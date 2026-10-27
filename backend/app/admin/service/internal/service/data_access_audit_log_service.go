@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -16,14 +16,14 @@ import (
 type DataAccessAuditLogService struct {
 	adminV1.DataAccessAuditLogServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	dataAccessAuditLogServiceClient auditV1.DataAccessAuditLogServiceClient
 }
 
 func NewDataAccessAuditLogService(ctx *bootstrap.Context, dataAccessAuditLogServiceClient auditV1.DataAccessAuditLogServiceClient) *DataAccessAuditLogService {
 	return &DataAccessAuditLogService{
-		log:                             ctx.NewLoggerHelper("data-access-audit-log/service/admin-service"),
+		log:                             logx.New(ctx.NewLoggerHelper("data-access-audit-log/service/admin-service")),
 		dataAccessAuditLogServiceClient: dataAccessAuditLogServiceClient,
 	}
 }

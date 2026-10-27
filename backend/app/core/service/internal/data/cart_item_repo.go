@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -23,7 +23,7 @@ import (
 
 type CartItemRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[cartV1.CartItem, ent.CartItem]
 
@@ -39,7 +39,7 @@ type CartItemRepo struct {
 
 func NewCartItemRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *CartItemRepo {
 	repo := &CartItemRepo{
-		log:       ctx.NewLoggerHelper("cart-item/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("cart-item/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[cartV1.CartItem, ent.CartItem](),
 	}

@@ -4,14 +4,14 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 )
 
 // Middleware is a function that wraps a Handler
 type Middleware func(Handler) Handler
 
 // LoggingMiddleware logs event handling
-func LoggingMiddleware(logger *log.Helper) Middleware {
+func LoggingMiddleware(logger *logx.Helper) Middleware {
 	return func(next Handler) Handler {
 		return EventHandlerFunc(func(ctx context.Context, event *Event) error {
 			logger.Infof("Handling event: type=%s, id=%s, source=%s", event.Type, event.ID, event.Source)
@@ -27,7 +27,7 @@ func LoggingMiddleware(logger *log.Helper) Middleware {
 }
 
 // RecoveryMiddleware recovers from panics in handlers
-func RecoveryMiddleware(logger *log.Helper) Middleware {
+func RecoveryMiddleware(logger *logx.Helper) Middleware {
 	return func(next Handler) Handler {
 		return EventHandlerFunc(func(ctx context.Context, event *Event) (err error) {
 			defer func() {
@@ -88,7 +88,7 @@ func RetryMiddleware(maxRetries int, delay time.Duration) Middleware {
 }
 
 // MetricsMiddleware collects metrics for event handling
-func MetricsMiddleware(logger *log.Helper) Middleware {
+func MetricsMiddleware(logger *logx.Helper) Middleware {
 	return func(next Handler) Handler {
 		return EventHandlerFunc(func(ctx context.Context, event *Event) error {
 			start := time.Now()

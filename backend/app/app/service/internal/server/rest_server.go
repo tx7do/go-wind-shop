@@ -1,6 +1,7 @@
 package server
 
 import (
+	"go-wind-shop/pkg/logx"
 	"context"
 
 	"github.com/go-kratos/kratos/v2/middleware"
@@ -33,7 +34,7 @@ func NewRestMiddleware(
 	authorizer authzEngine.Engine,
 ) []middleware.Middleware {
 	var ms []middleware.Middleware
-	ms = append(ms, logging.Server(ctx.GetLogger()))
+	ms = append(ms, logging.Server(logx.AsKratos(ctx.GetLogger())))
 
 	// add white list for authentication.
 	rpc.AddWhiteList(

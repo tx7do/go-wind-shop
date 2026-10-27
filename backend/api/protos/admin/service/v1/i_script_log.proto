@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+
+import "pagination/v1/pagination.proto";
+import "script/service/v1/script_log.proto";
+
+// 脚本执行日志管理服务（平台管理员）
+service ScriptLogService {
+  // 分页查询脚本执行日志
+  rpc List (pagination.PagingRequest) returns (script.service.v1.ListScriptLogsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/script/logs"
+    };
+  }
+
+  // 统计脚本执行日志数量
+  rpc Count (pagination.PagingRequest) returns (script.service.v1.CountScriptLogsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/script/logs/count"
+    };
+  }
+
+  // 清理指定时间之前的日志
+  rpc Purge (script.service.v1.PurgeScriptLogsRequest) returns (script.service.v1.PurgeScriptLogsResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/script/logs/purge"
+      body: "*"
+    };
+  }
+}

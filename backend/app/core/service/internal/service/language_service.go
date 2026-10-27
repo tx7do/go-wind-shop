@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -20,7 +20,7 @@ import (
 type LanguageService struct {
 	dictV1.UnimplementedLanguageServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	languageRepo *data.LanguageRepo
 }
@@ -30,7 +30,7 @@ func NewLanguageService(
 	languageRepo *data.LanguageRepo,
 ) *LanguageService {
 	svc := &LanguageService{
-		log:          ctx.NewLoggerHelper("language/service/core-service"),
+		log:          logx.New(ctx.NewLoggerHelper("language/service/core-service")),
 		languageRepo: languageRepo,
 	}
 

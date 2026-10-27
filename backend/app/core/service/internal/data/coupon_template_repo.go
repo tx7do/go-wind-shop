@@ -1,11 +1,11 @@
 package data
 
 import (
+	"go-wind-shop/pkg/logx"
 	"context"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -24,7 +24,7 @@ import (
 
 type CouponTemplateRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[couponV1.CouponTemplate, ent.CouponTemplate]
 
@@ -43,7 +43,7 @@ type CouponTemplateRepo struct {
 
 func NewCouponTemplateRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *CouponTemplateRepo {
 	repo := &CouponTemplateRepo{
-		log:                   ctx.NewLoggerHelper("coupon-template/repo/core-service"),
+		log:                   logx.New(ctx.NewLoggerHelper("coupon-template/repo/core-service")),
 		entClient:             entClient,
 		mapper:                mapper.NewCopierMapper[couponV1.CouponTemplate, ent.CouponTemplate](),
 		discountTypeConverter: mapper.NewEnumTypeConverter[couponV1.CouponTemplate_DiscountType, coupontemplate.DiscountType](couponV1.CouponTemplate_DiscountType_name, couponV1.CouponTemplate_DiscountType_value),

@@ -1,10 +1,11 @@
 package eventbus
 
 import (
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
 	"sync"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 )
 
 // Manager manages multiple event buses and provides a global interface
@@ -12,12 +13,12 @@ type Manager struct {
 	mu     sync.RWMutex
 	buses  map[string]EventBus
 	global EventBus
-	logger *log.Helper
+	logger *logx.Helper
 }
 
 // NewManager creates a new event bus manager
-func NewManager(logger log.Logger) *Manager {
-	l := log.NewHelper(log.With(logger, "module", "eventbus/manager"))
+func NewManager(logger bLogger.Logger) *Manager {
+	l := logx.NewFromLogger(logger.With("module", "eventbus/manager"))
 	return &Manager{
 		buses:  make(map[string]EventBus),
 		global: NewEventBus(logger),
@@ -35,7 +36,7 @@ func (m *Manager) GetBus(name string) EventBus {
 	}
 
 	// Create new bus
-	bus := NewEventBus(log.DefaultLogger)
+	bus := NewEventBus(bLogger.GetLogger())
 	m.buses[name] = bus
 	m.logger.Infof("Created new event bus: %s", name)
 

@@ -5,7 +5,7 @@ import (
 	"sort"
 
 	"github.com/getkin/kin-openapi/openapi3"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/go-kratos/kratos/v2/transport/http"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -29,7 +29,7 @@ type RouteWalker interface {
 type ApiService struct {
 	adminV1.ApiServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	apiServiceClient permissionV1.ApiServiceClient
 	routeWalker      RouteWalker
@@ -40,7 +40,7 @@ func NewApiService(
 	apiServiceClient permissionV1.ApiServiceClient,
 ) *ApiService {
 	svc := &ApiService{
-		log:              ctx.NewLoggerHelper("api/service/admin-service"),
+		log:              logx.New(ctx.NewLoggerHelper("api/service/admin-service")),
 		apiServiceClient: apiServiceClient,
 	}
 

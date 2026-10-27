@@ -148,6 +148,10 @@ type Tx struct {
 	RoleMetadata *RoleMetadataClient
 	// RolePermission is the client for interacting with the RolePermission builders.
 	RolePermission *RolePermissionClient
+	// Script is the client for interacting with the Script builders.
+	Script *ScriptClient
+	// ScriptLog is the client for interacting with the ScriptLog builders.
+	ScriptLog *ScriptLogClient
 	// Shipment is the client for interacting with the Shipment builders.
 	Shipment *ShipmentClient
 	// ShippingAddress is the client for interacting with the ShippingAddress builders.
@@ -383,6 +387,8 @@ func (tx *Tx) init() {
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
 	tx.RolePermission = NewRolePermissionClient(tx.config)
+	tx.Script = NewScriptClient(tx.config)
+	tx.ScriptLog = NewScriptLogClient(tx.config)
 	tx.Shipment = NewShipmentClient(tx.config)
 	tx.ShippingAddress = NewShippingAddressClient(tx.config)
 	tx.ShippingRate = NewShippingRateClient(tx.config)

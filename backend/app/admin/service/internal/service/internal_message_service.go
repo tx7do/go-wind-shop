@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -32,7 +32,7 @@ type InternalMessagePublisher interface {
 type InternalMessageService struct {
 	adminV1.InternalMessageServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	internalMessageServiceClient          internalMessageV1.InternalMessageServiceClient
 	internalMessageCategoryServiceClient  internalMessageV1.InternalMessageCategoryServiceClient
@@ -55,7 +55,7 @@ func NewInternalMessageService(
 	userRepo identityV1.UserServiceClient,
 	clientType authenticationV1.ClientType,
 ) *InternalMessageService {
-	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "internal-message/service/admin-service"))
+	l := logx.NewFromLogger(ctx.GetLogger().With("module", "internal-message/service/admin-service"))
 	return &InternalMessageService{
 		log:                                   l,
 		internalMessageServiceClient:          internalMessageRepo,

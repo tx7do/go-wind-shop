@@ -5,7 +5,7 @@ import (
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
 	"sync"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -18,7 +18,7 @@ import (
 type ApiAuditLogService struct {
 	adminV1.ApiAuditLogServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	apiAuditLogServiceClient auditV1.ApiAuditLogServiceClient
 	apiServiceClient         permissionV1.ApiServiceClient
@@ -33,7 +33,7 @@ func NewApiAuditLogService(
 	apiServiceClient permissionV1.ApiServiceClient,
 ) *ApiAuditLogService {
 	return &ApiAuditLogService{
-		log:                      ctx.NewLoggerHelper("api-audit-log/service/admin-service"),
+		log:                      logx.New(ctx.NewLoggerHelper("api-audit-log/service/admin-service")),
 		apiAuditLogServiceClient: apiAuditLogServiceClient,
 		apiServiceClient:         apiServiceClient,
 	}

@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 	"entgo.io/ent/dialect/sql"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -45,7 +45,7 @@ type sysConfigCacheEntry struct {
 type ConfigRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
 	rdb       *redis.Client
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper             *mapper.CopierMapper[configV1.Config, ent.SysConfig]
 	valueTypeConverter *mapper.EnumTypeConverter[configV1.Config_ConfigValueType, sysconfig.ValueType]
@@ -65,7 +65,7 @@ type ConfigRepo struct {
 
 func NewConfigRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client], rdb *redis.Client) *ConfigRepo {
 	repo := &ConfigRepo{
-		log:       ctx.NewLoggerHelper("config/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("config/repo/core-service")),
 		entClient: entClient,
 		rdb:       rdb,
 		mapper:    mapper.NewCopierMapper[configV1.Config, ent.SysConfig](),

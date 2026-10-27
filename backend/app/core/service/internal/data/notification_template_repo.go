@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
@@ -23,7 +23,7 @@ import (
 // code 全局唯一（SendDirect 与测试渲染的引用锚）。
 type NotificationTemplateRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[notifyV1.NotificationTemplate, ent.NotificationTemplate]
 
@@ -39,7 +39,7 @@ type NotificationTemplateRepo struct {
 
 func NewNotificationTemplateRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *NotificationTemplateRepo {
 	repo := &NotificationTemplateRepo{
-		log:       ctx.NewLoggerHelper("notification-template/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("notification-template/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[notifyV1.NotificationTemplate, ent.NotificationTemplate](),
 	}

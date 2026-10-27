@@ -1,10 +1,9 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -18,14 +17,14 @@ import (
 type CouponTemplateService struct {
 	couponV1.UnimplementedCouponTemplateServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	repo *data.CouponTemplateRepo
 }
 
 func NewCouponTemplateService(ctx *bootstrap.Context, repo *data.CouponTemplateRepo) *CouponTemplateService {
 	return &CouponTemplateService{
-		log:  ctx.NewLoggerHelper("coupon-template/service/core-service"),
+		log:  logx.New(ctx.NewLoggerHelper("coupon-template/service/core-service")),
 		repo: repo,
 	}
 }

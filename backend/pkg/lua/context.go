@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/google/uuid"
 )
 
@@ -17,7 +17,7 @@ type Context struct {
 	Data       map[string]interface{} // Input/output data
 	User       *UserContext           // Current user info
 	Request    *HTTPContext           // HTTP request info
-	Logger     *log.Helper            // Logger instance
+	Logger *logx.Helper            // Logger instance
 	Cancel     context.Context        // Cancellation context
 	Stopped    bool                   // Set to true if script calls stop()
 	StopReason string                 // Reason for stopping
@@ -166,7 +166,7 @@ func (c *Context) WithRequest(req *HTTPContext) *Context {
 }
 
 // WithLogger sets the logger
-func (c *Context) WithLogger(logger *log.Helper) *Context {
+func (c *Context) WithLogger(logger *logx.Helper) *Context {
 	c.Logger = logger
 	return c
 }

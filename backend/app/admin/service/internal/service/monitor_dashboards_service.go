@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
@@ -15,7 +15,7 @@ import (
 type ServerMonitorService struct {
 	adminV1.ServerMonitorServiceHTTPServer
 
-	log              *log.Helper
+	log *logx.Helper
 	serverMonitorCli serverMonitorV1.ServerMonitorServiceClient
 }
 
@@ -23,7 +23,7 @@ func NewServerMonitorService(
 	ctx *bootstrap.Context,
 	serverMonitorCli serverMonitorV1.ServerMonitorServiceClient,
 ) *ServerMonitorService {
-	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "server-monitor/service/admin-service"))
+	l := logx.NewFromLogger(ctx.GetLogger().With("module", "server-monitor/service/admin-service"))
 	return &ServerMonitorService{
 		log:              l,
 		serverMonitorCli: serverMonitorCli,
@@ -39,7 +39,7 @@ func (s *ServerMonitorService) Get(ctx context.Context, req *serverMonitorV1.Get
 type RedisCacheMonitorService struct {
 	adminV1.RedisCacheMonitorServiceHTTPServer
 
-	log           *log.Helper
+	log *logx.Helper
 	redisCacheCli redisCacheV1.RedisCacheMonitorServiceClient
 }
 
@@ -47,7 +47,7 @@ func NewRedisCacheMonitorService(
 	ctx *bootstrap.Context,
 	redisCacheCli redisCacheV1.RedisCacheMonitorServiceClient,
 ) *RedisCacheMonitorService {
-	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "redis-cache-monitor/service/admin-service"))
+	l := logx.NewFromLogger(ctx.GetLogger().With("module", "redis-cache-monitor/service/admin-service"))
 	return &RedisCacheMonitorService{
 		log:           l,
 		redisCacheCli: redisCacheCli,

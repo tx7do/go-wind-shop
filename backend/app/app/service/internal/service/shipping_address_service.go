@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -21,7 +21,7 @@ import (
 type ShippingAddressService struct {
 	appV1.ShippingAddressServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	shippingAddressServiceClient addressV1.ShippingAddressServiceClient
 }
@@ -31,7 +31,7 @@ func NewShippingAddressService(
 	shippingAddressServiceClient addressV1.ShippingAddressServiceClient,
 ) *ShippingAddressService {
 	return &ShippingAddressService{
-		log:                          ctx.NewLoggerHelper("shipping-address/service/app-service"),
+		log:                          logx.New(ctx.NewLoggerHelper("shipping-address/service/app-service")),
 		shippingAddressServiceClient: shippingAddressServiceClient,
 	}
 }

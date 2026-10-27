@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	ktransport "github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/tx7do/go-utils/trans"
@@ -23,7 +23,7 @@ import (
 type AccessKeyService struct {
 	adminV1.AccessKeyServiceHTTPServer
 
-	log          *log.Helper
+	log *logx.Helper
 	accessKeyCli accesskeyV1.AccessKeyServiceClient
 }
 
@@ -31,7 +31,7 @@ func NewAccessKeyService(
 	ctx *bootstrap.Context,
 	accessKeyCli accesskeyV1.AccessKeyServiceClient,
 ) *AccessKeyService {
-	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "access-key/service/admin-service"))
+	l := logx.NewFromLogger(ctx.GetLogger().With("module", "access-key/service/admin-service"))
 	return &AccessKeyService{
 		log:          l,
 		accessKeyCli: accessKeyCli,

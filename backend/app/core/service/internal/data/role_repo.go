@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -27,7 +27,7 @@ import (
 
 type RoleRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper          *mapper.CopierMapper[permissionV1.Role, ent.Role]
 	statusConverter *mapper.EnumTypeConverter[permissionV1.Role_Status, role.Status]
@@ -57,7 +57,7 @@ func NewRoleRepo(
 	userRoleRepo *UserRoleRepo,
 ) *RoleRepo {
 	repo := &RoleRepo{
-		log:       ctx.NewLoggerHelper("role/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("role/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[permissionV1.Role, ent.Role](),
 		statusConverter: mapper.NewEnumTypeConverter[permissionV1.Role_Status, role.Status](

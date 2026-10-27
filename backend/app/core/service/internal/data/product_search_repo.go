@@ -1,12 +1,12 @@
 package data
 
 import (
+	"go-wind-shop/pkg/logx"
 	"context"
 	"encoding/json"
 	"errors"
 	"strconv"
 
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	// 搜索后端为 OpenSearch（与 go-wind-cms 一致），沿用 elasticsearchCrud 别名减小 diff
@@ -71,12 +71,12 @@ type ProductSearchResult struct {
 
 type ProductSearchRepo struct {
 	esClient *elasticsearchCrud.Client
-	log      *log.Helper
+	log *logx.Helper
 }
 
 func NewProductSearchRepo(ctx *bootstrap.Context, esClient *elasticsearchCrud.Client) *ProductSearchRepo {
 	return &ProductSearchRepo{
-		log:      ctx.NewLoggerHelper("product-search/repo/core-service"),
+		log:      logx.New(ctx.NewLoggerHelper("product-search/repo/core-service")),
 		esClient: esClient,
 	}
 }

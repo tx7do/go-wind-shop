@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -17,13 +17,13 @@ import (
 // List 仅限本人会话的消息（经会话归属校验）。
 type AiMessageService struct {
 	aiV1.UnimplementedAiMessageServiceServer
-	log  *log.Helper
+	log *logx.Helper
 	repo *data.AiMessageRepo
 }
 
 func NewAiMessageService(ctx *bootstrap.Context, repo *data.AiMessageRepo) *AiMessageService {
 	return &AiMessageService{
-		log:  ctx.NewLoggerHelper("ai_message/service/core-service"),
+		log:  logx.New(ctx.NewLoggerHelper("ai_message/service/core-service")),
 		repo: repo,
 	}
 }

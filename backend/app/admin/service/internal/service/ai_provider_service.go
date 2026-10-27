@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -22,12 +22,12 @@ type AiProviderService struct {
 	adminV1.AiProviderServiceHTTPServer
 
 	aiProviderServiceClient aiV1.AiProviderServiceClient
-	log                     *log.Helper
+	log *logx.Helper
 }
 
 func NewAiProviderService(ctx *bootstrap.Context, aiProviderServiceClient aiV1.AiProviderServiceClient) *AiProviderService {
 	return &AiProviderService{
-		log:                     ctx.NewLoggerHelper("ai_provider/service/admin-service"),
+		log:                     logx.New(ctx.NewLoggerHelper("ai_provider/service/admin-service")),
 		aiProviderServiceClient: aiProviderServiceClient,
 	}
 }

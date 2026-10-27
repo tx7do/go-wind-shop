@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -23,7 +23,7 @@ import (
 
 type TaxRateRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper         *mapper.CopierMapper[taxV1.TaxRate, ent.TaxRate]
 	statusConverter *mapper.EnumTypeConverter[taxV1.TaxRate_Status, taxrate.Status]
@@ -40,7 +40,7 @@ type TaxRateRepo struct {
 
 func NewTaxRateRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *TaxRateRepo {
 	repo := &TaxRateRepo{
-		log:             ctx.NewLoggerHelper("tax-rate/repo/core-service"),
+		log:             logx.New(ctx.NewLoggerHelper("tax-rate/repo/core-service")),
 		entClient:       entClient,
 		mapper:          mapper.NewCopierMapper[taxV1.TaxRate, ent.TaxRate](),
 		statusConverter: mapper.NewEnumTypeConverter[taxV1.TaxRate_Status, taxrate.Status](taxV1.TaxRate_Status_name, taxV1.TaxRate_Status_value),

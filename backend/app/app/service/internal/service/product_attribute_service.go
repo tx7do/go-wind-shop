@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -14,7 +14,7 @@ import (
 type ProductAttributeService struct {
 	appV1.ProductAttributeServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	productAttributeServiceClient catalogV1.ProductAttributeServiceClient
 }
@@ -24,7 +24,7 @@ func NewProductAttributeService(
 	productAttributeServiceClient catalogV1.ProductAttributeServiceClient,
 ) *ProductAttributeService {
 	return &ProductAttributeService{
-		log:                           ctx.NewLoggerHelper("product-attribute/service/app-service"),
+		log:                           logx.New(ctx.NewLoggerHelper("product-attribute/service/app-service")),
 		productAttributeServiceClient: productAttributeServiceClient,
 	}
 }

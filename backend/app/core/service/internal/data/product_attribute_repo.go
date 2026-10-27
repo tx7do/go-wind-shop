@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -24,7 +24,7 @@ import (
 
 type ProductAttributeRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.ProductAttribute, ent.ProductAttribute]
 
@@ -47,7 +47,7 @@ func NewProductAttributeRepo(
 ) *ProductAttributeRepo {
 	repo := &ProductAttributeRepo{
 		entClient:                       entClient,
-		log:                             ctx.NewLoggerHelper("product-attribute/repo/core-service"),
+		log:                             logx.New(ctx.NewLoggerHelper("product-attribute/repo/core-service")),
 		mapper:                          mapper.NewCopierMapper[catalogV1.ProductAttribute, ent.ProductAttribute](),
 		productAttributeTranslationRepo: productAttributeTranslationRepo,
 	}

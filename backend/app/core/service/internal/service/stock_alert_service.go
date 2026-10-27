@@ -4,7 +4,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -22,7 +22,7 @@ const StockAlertThreshold int32 = 10
 // 扫描 stock_qty <= 阈值的 SKU，向全体运营人员发送站内消息通知补货，
 // 并向 stock_alert 表落库 OPEN 态告警记录（去重：同 SKU 仅保留一条 OPEN）。
 type StockAlertScannerService struct {
-	log            *log.Helper
+	log *logx.Helper
 	skuRepo        *data.SkuRepo
 	messageSvc     *InternalMessageService
 	stockAlertRepo *data.StockAlertRepo
@@ -35,7 +35,7 @@ func NewStockAlertScannerService(
 	stockAlertRepo *data.StockAlertRepo,
 ) *StockAlertScannerService {
 	return &StockAlertScannerService{
-		log:            ctx.NewLoggerHelper("stock-alert-scanner/service/core-service"),
+		log:            logx.New(ctx.NewLoggerHelper("stock-alert-scanner/service/core-service")),
 		skuRepo:        skuRepo,
 		messageSvc:     messageSvc,
 		stockAlertRepo: stockAlertRepo,

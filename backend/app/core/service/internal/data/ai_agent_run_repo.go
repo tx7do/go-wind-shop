@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
@@ -22,7 +22,7 @@ import (
 
 type AiAgentRunRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper          *mapper.CopierMapper[aiV1.AiAgentRun, ent.AiAgentRun]
 	statusConverter *mapper.EnumTypeConverter[aiV1.AiAgentRun_Status, aiagentrun.Status]
@@ -39,7 +39,7 @@ type AiAgentRunRepo struct {
 
 func NewAiAgentRunRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *AiAgentRunRepo {
 	repo := &AiAgentRunRepo{
-		log:       ctx.NewLoggerHelper("ai-agent-run/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("ai-agent-run/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[aiV1.AiAgentRun, ent.AiAgentRun](),
 		statusConverter: mapper.NewEnumTypeConverter[aiV1.AiAgentRun_Status, aiagentrun.Status](

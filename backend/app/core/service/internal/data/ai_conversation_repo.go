@@ -6,7 +6,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -24,7 +24,7 @@ import (
 
 type AiConversationRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[aiV1.AiConversation, ent.AiConversation]
 
@@ -40,7 +40,7 @@ type AiConversationRepo struct {
 
 func NewAiConversationRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *AiConversationRepo {
 	repo := &AiConversationRepo{
-		log:       ctx.NewLoggerHelper("ai_conversation/repo/admin-service"),
+		log:       logx.New(ctx.NewLoggerHelper("ai_conversation/repo/admin-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[aiV1.AiConversation, ent.AiConversation](),
 	}

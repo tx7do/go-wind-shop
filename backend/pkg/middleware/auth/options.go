@@ -1,9 +1,10 @@
 package auth
 
 import (
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 
 	authenticationV1 "go-wind-shop/api/gen/go/authentication/service/v1"
 )
@@ -60,7 +61,7 @@ func (c *composedChecker) IsBlockedAccessToken(ctx context.Context, accessToken 
 }
 
 type options struct {
-	log *log.Helper
+	log *logx.Helper
 
 	accessTokenChecker                AccessTokenChecker // 访问令牌检查器
 	enableCheckRefreshTokenExpiration bool               // 是否启用刷新令牌过期检查
@@ -138,8 +139,8 @@ func WithEnableAuthority(enable bool) Option {
 }
 
 // WithLogger 设置日志记录器
-func WithLogger(logger log.Logger) Option {
+func WithLogger(logger bLogger.Logger) Option {
 	return func(o *options) {
-		o.log = log.NewHelper(log.With(logger, "module", "auth.middleware"))
+		o.log = logx.NewFromLogger(logger.With("module", "auth.middleware"))
 	}
 }

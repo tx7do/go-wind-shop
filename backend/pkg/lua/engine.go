@@ -1,13 +1,14 @@
 package lua
 
 import (
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
 	"fmt"
 	"reflect"
 	"sync"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 	lua "github.com/yuin/gopher-lua"
 
@@ -29,7 +30,7 @@ type CallbackInfo struct {
 type Engine struct {
 	config          *Config
 	pool            *vmPool
-	logger          *log.Helper
+	logger *logx.Helper
 	registry        *hook.Registry
 	rdb             *redis.Client              // Redis client for cache operations
 	eventbusManager *eventbus.Manager          // EventBus manager
@@ -64,12 +65,12 @@ func DefaultConfig() *Config {
 }
 
 // NewEngine creates a new Lua engine
-func NewEngine(config *Config, logger log.Logger) *Engine {
+func NewEngine(config *Config, logger bLogger.Logger) *Engine {
 	if config == nil {
 		config = DefaultConfig()
 	}
 
-	l := log.NewHelper(log.With(logger, "module", "lua/engine"))
+	l := logx.NewFromLogger(logger.With("module", "lua/engine"))
 
 	engine := &Engine{
 		config:       config,

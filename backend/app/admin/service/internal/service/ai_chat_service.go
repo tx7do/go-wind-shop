@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/kratos-transport/transport/sse"
@@ -43,7 +43,7 @@ type AiChatService struct {
 
 	aiChatServiceClient         aiV1.AiChatServiceClient
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient
-	log                         *log.Helper
+	log *logx.Helper
 
 	aiChatPublisher AiChatPublisher
 }
@@ -54,7 +54,7 @@ func NewAiChatService(
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient,
 ) *AiChatService {
 	return &AiChatService{
-		log:                         ctx.NewLoggerHelper("ai_chat/service/admin-service"),
+		log:                         logx.New(ctx.NewLoggerHelper("ai_chat/service/admin-service")),
 		aiChatServiceClient:         aiChatServiceClient,
 		authenticationServiceClient: authenticationServiceClient,
 		aiChatPublisher:             noopAiChatPublisher{},

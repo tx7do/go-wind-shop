@@ -1,6 +1,7 @@
 package data
 
 import (
+	"go-wind-shop/pkg/logx"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -11,7 +12,7 @@ import (
 	"github.com/go-kratos/kratos/v2/registry"
 
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	redisClient "github.com/tx7do/kratos-bootstrap/cache/redis"
+	redisx "go-wind-shop/pkg/redisx"
 	bRegistry "github.com/tx7do/kratos-bootstrap/registry"
 	"github.com/tx7do/kratos-bootstrap/rpc"
 
@@ -29,6 +30,7 @@ import (
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
 	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
+	scriptV1 "go-wind-shop/api/gen/go/script/service/v1"
 	configV1 "go-wind-shop/api/gen/go/config/service/v1"
 	accessKeyV1 "go-wind-shop/api/gen/go/access_key/service/v1"
 	onlineSessionV1 "go-wind-shop/api/gen/go/online_session/service/v1"
@@ -59,9 +61,9 @@ func NewRedisClient(ctx *bootstrap.Context) (*redis.Client, func(), error) {
 		return nil, func() {}, nil
 	}
 
-	l := ctx.NewLoggerHelper("redis/data/admin-service")
+	l := logx.New(ctx.NewLoggerHelper("redis/data/admin-service"))
 
-	cli := redisClient.NewClient(cfg.Data, l)
+	cli := redisx.NewClient(cfg.Data, l)
 
 	return cli, func() {
 		if err := cli.Close(); err != nil {
@@ -726,4 +728,20 @@ func NewAiProviderServiceClient(ctx *bootstrap.Context, r registry.Discovery) ai
 	}
 
 	return aiV1.NewAiProviderServiceClient(cli)
+}
+
+func NewScriptServiceClient(ctx *bootstrap.Context, r registry.Discovery) scriptV1.ScriptServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+	return scriptV1.NewScriptServiceClient(cli)
+}
+
+func NewScriptLogServiceClient(ctx *bootstrap.Context, r registry.Discovery) scriptV1.ScriptLogServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+	return scriptV1.NewScriptLogServiceClient(cli)
 }

@@ -1,9 +1,8 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -19,7 +18,7 @@ import (
 type CouponTemplateService struct {
 	adminV1.CouponTemplateServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	couponTemplateServiceClient couponV1.CouponTemplateServiceClient
 }
@@ -29,7 +28,7 @@ func NewCouponTemplateService(
 	couponTemplateServiceClient couponV1.CouponTemplateServiceClient,
 ) *CouponTemplateService {
 	return &CouponTemplateService{
-		log:                         ctx.NewLoggerHelper("coupon-template/service/admin-service"),
+		log:                         logx.New(ctx.NewLoggerHelper("coupon-template/service/admin-service")),
 		couponTemplateServiceClient: couponTemplateServiceClient,
 	}
 }
@@ -91,7 +90,7 @@ func (s *CouponTemplateService) Delete(ctx context.Context, req *couponV1.Delete
 type UserCouponService struct {
 	adminV1.UserCouponServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	userCouponServiceClient couponV1.UserCouponServiceClient
 }
@@ -101,7 +100,7 @@ func NewUserCouponService(
 	userCouponServiceClient couponV1.UserCouponServiceClient,
 ) *UserCouponService {
 	return &UserCouponService{
-		log:                     ctx.NewLoggerHelper("user-coupon/service/admin-service"),
+		log:                     logx.New(ctx.NewLoggerHelper("user-coupon/service/admin-service")),
 		userCouponServiceClient: userCouponServiceClient,
 	}
 }

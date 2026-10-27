@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -28,7 +28,7 @@ import (
 type PermissionService struct {
 	adminV1.PermissionServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	permissionServiceClient      permissionV1.PermissionServiceClient
 	permissionGroupServiceClient permissionV1.PermissionGroupServiceClient
@@ -51,7 +51,7 @@ func NewPermissionService(
 	menuServiceClient permissionV1.MenuServiceClient,
 ) *PermissionService {
 	svc := &PermissionService{
-		log: ctx.NewLoggerHelper("permission/service/admin-service"),
+		log: logx.New(ctx.NewLoggerHelper("permission/service/admin-service")),
 
 		permissionServiceClient:      permissionServiceClient,
 		permissionGroupServiceClient: permissionGroupServiceClient,

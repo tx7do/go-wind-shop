@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -19,7 +19,7 @@ import (
 type UserProfileService struct {
 	adminV1.UserProfileServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	userServiceClient     identityV1.UserServiceClient
 	tenantServiceClient   identityV1.TenantServiceClient
@@ -41,7 +41,7 @@ func NewUserProfileService(
 	userCredentialServiceClient authenticationV1.UserCredentialServiceClient,
 ) *UserProfileService {
 	return &UserProfileService{
-		log:                         ctx.NewLoggerHelper("user-profile/service/admin-service"),
+		log:                         logx.New(ctx.NewLoggerHelper("user-profile/service/admin-service")),
 		userServiceClient:           userServiceClient,
 		tenantServiceClient:         tenantServiceClient,
 		orgUnitServiceClient:        orgUnitServiceClient,

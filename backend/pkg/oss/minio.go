@@ -7,7 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
+	"go-wind-shop/pkg/logx"
 	"github.com/minio/minio-go/v7"
 	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/trans"
@@ -28,12 +29,12 @@ const (
 type MinIOClient struct {
 	mc         *minio.Client
 	conf       *conf.OSS
-	log        *log.Helper
+	log *logx.Helper
 	hmacSecret []byte
 }
 
-func NewMinIoClient(cfg *conf.Bootstrap, logger log.Logger) *MinIOClient {
-	l := log.NewHelper(log.With(logger, "module", "minio/data/admin-service"))
+func NewMinIoClient(cfg *conf.Bootstrap, logger bLogger.Logger) *MinIOClient {
+	l := logx.NewFromLogger(logger.With("module", "minio/data/admin-service"))
 	return &MinIOClient{
 		log:        l,
 		conf:       cfg.Oss,

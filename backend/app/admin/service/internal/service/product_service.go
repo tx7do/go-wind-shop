@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -18,7 +18,7 @@ import (
 type ProductService struct {
 	adminV1.ProductServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	productServiceClient catalogV1.ProductServiceClient
 }
@@ -28,7 +28,7 @@ func NewProductService(
 	productServiceClient catalogV1.ProductServiceClient,
 ) *ProductService {
 	return &ProductService{
-		log:                  ctx.NewLoggerHelper("product/service/admin-service"),
+		log:                  logx.New(ctx.NewLoggerHelper("product/service/admin-service")),
 		productServiceClient: productServiceClient,
 	}
 }

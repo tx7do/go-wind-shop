@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -28,7 +28,7 @@ type ServerMonitorService struct {
 	serverMonitorV1.UnimplementedServerMonitorServiceServer
 
 	entClient *entCrud.EntClient[*entgo.Client]
-	log       *log.Helper
+	log *logx.Helper
 }
 
 func NewServerMonitorService(
@@ -37,7 +37,7 @@ func NewServerMonitorService(
 ) *ServerMonitorService {
 	return &ServerMonitorService{
 		entClient: entClient,
-		log:       ctx.NewLoggerHelper("server-monitor/service/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("server-monitor/service/core-service")),
 	}
 }
 

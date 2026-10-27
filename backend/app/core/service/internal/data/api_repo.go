@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -24,7 +24,7 @@ import (
 
 type ApiRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper         *mapper.CopierMapper[permissionV1.Api, ent.Api]
 	scopeConverter *mapper.EnumTypeConverter[permissionV1.Api_Scope, api.Scope]
@@ -41,7 +41,7 @@ type ApiRepo struct {
 
 func NewApiRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *ApiRepo {
 	repo := &ApiRepo{
-		log:       ctx.NewLoggerHelper("api/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("api/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[permissionV1.Api, ent.Api](),
 		scopeConverter: mapper.NewEnumTypeConverter[permissionV1.Api_Scope, api.Scope](

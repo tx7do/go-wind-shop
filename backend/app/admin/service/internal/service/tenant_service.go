@@ -1,11 +1,10 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	"github.com/go-kratos/kratos/v2/log"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
@@ -22,7 +21,7 @@ import (
 type TenantService struct {
 	adminV1.TenantServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	userServiceClient           identityV1.UserServiceClient
 	userCredentialServiceClient authenticationV1.UserCredentialServiceClient
@@ -38,7 +37,7 @@ func NewTenantService(
 	roleServiceClient permissionV1.RoleServiceClient,
 ) *TenantService {
 	svc := &TenantService{
-		log:                         ctx.NewLoggerHelper("tenant/service/admin-service"),
+		log:                         logx.New(ctx.NewLoggerHelper("tenant/service/admin-service")),
 		userServiceClient:           userServiceClient,
 		userCredentialServiceClient: userCredentialServiceClient,
 		tenantServiceClient:         tenantServiceClient,

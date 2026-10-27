@@ -1,11 +1,10 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 	"strings"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/trans"
@@ -45,7 +44,7 @@ type AuthenticationService struct {
 
 	authenticator *data.Authenticator
 
-	log *log.Helper
+	log *logx.Helper
 }
 
 func NewAuthenticationService(
@@ -57,7 +56,7 @@ func NewAuthenticationService(
 	tenantRepo *data.TenantRepo,
 	permissionRepo *data.PermissionRepo,
 ) *AuthenticationService {
-	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "authn/service/core-service"))
+	l := logx.NewFromLogger(ctx.GetLogger().With("module", "authn/service/core-service"))
 	return &AuthenticationService{
 		log:                l,
 		userRepo:           userRepo,

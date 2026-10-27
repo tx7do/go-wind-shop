@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -22,12 +22,12 @@ import (
 // 这里返回 (nil, nil) 时由调用方按"未配置"处理（不静音不退订）。
 type NotificationPreferenceRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 }
 
 func NewNotificationPreferenceRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *NotificationPreferenceRepo {
 	return &NotificationPreferenceRepo{
-		log:       ctx.NewLoggerHelper("notification-preference/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("notification-preference/repo/core-service")),
 		entClient: entClient,
 	}
 }

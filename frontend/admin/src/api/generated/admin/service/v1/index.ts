@@ -14092,6 +14092,594 @@ export type permissionservicev1_DeleteRoleRequest = {
   tenantId?: number;
 };
 
+// 脚本管理服务（平台管理员）
+export interface ScriptService {
+  // 分页查询脚本列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<scriptservicev1_ListScriptsResponse>;
+  // 统计脚本数量
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<scriptservicev1_CountScriptsResponse>;
+  // 查询脚本详情
+  Get(
+    request: scriptservicev1_GetScriptRequest,
+  ): Promise<scriptservicev1_Script>;
+  /** Alternate HTTP binding #1 of Get: GET /admin/v1/scripts/name/{name} */
+  GetAlt1(
+    request: scriptservicev1_GetScriptRequest,
+  ): Promise<scriptservicev1_Script>;
+  // 创建脚本
+  Create(
+    request: scriptservicev1_CreateScriptRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新脚本
+  Update(
+    request: scriptservicev1_UpdateScriptRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除脚本
+  Delete(
+    request: scriptservicev1_DeleteScriptRequest,
+  ): Promise<wellKnownEmpty>;
+  // 试运行脚本
+  TestRun(
+    request: scriptservicev1_TestRunScriptRequest,
+  ): Promise<scriptservicev1_TestRunScriptResponse>;
+  // 列出全部已注册的钩子点
+  ListHookPoints(
+    request: wellKnownEmpty,
+  ): Promise<scriptservicev1_ListHookPointsResponse>;
+}
+
+export function createScriptServiceClient(
+  transport: ClientTransport,
+): ScriptService {
+  return {
+    List(request) {
+      const path = `/admin/v1/scripts`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ScriptService',
+        method: 'List',
+      }) as Promise<scriptservicev1_ListScriptsResponse>;
+    },
+    Count(request) {
+      const path = `/admin/v1/scripts/count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ScriptService',
+        method: 'Count',
+      }) as Promise<scriptservicev1_CountScriptsResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/scripts/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.name) {
+        queryParams.push(
+          `name=${encodeURIComponent(request.name.toString())}`,
+        );
+      }
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ScriptService',
+        method: 'Get',
+      }) as Promise<scriptservicev1_Script>;
+    },
+
+    // Alternate HTTP binding #1 of Get: GET /admin/v1/scripts/name/{name}
+    GetAlt1(request) {
+      if (request.name === undefined || request.name === null) {
+        throw new Error('missing required field request.name');
+      }
+      const path = `/admin/v1/scripts/name/${request.name}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ScriptService',
+        method: 'Get',
+      }) as Promise<scriptservicev1_Script>;
+    },
+    Create(request) {
+      const path = `/admin/v1/scripts`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ScriptService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/scripts/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'ScriptService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      const path = `/admin/v1/scripts`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.ids) {
+        request.ids.forEach((x) => {
+          queryParams.push(
+            `ids=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'DELETE', body, {
+        service: 'ScriptService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    TestRun(request) {
+      const path = `/admin/v1/scripts/test_run`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ScriptService',
+        method: 'TestRun',
+      }) as Promise<scriptservicev1_TestRunScriptResponse>;
+    },
+    ListHookPoints(_request) {
+      const path = `/admin/v1/script/hooks`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'ScriptService',
+        method: 'ListHookPoints',
+      }) as Promise<scriptservicev1_ListHookPointsResponse>;
+    },
+  };
+}
+// 查询脚本列表 - 回应
+export type scriptservicev1_ListScriptsResponse = {
+  items: scriptservicev1_Script[] | undefined;
+  total: number | undefined;
+};
+
+// 脚本
+export type scriptservicev1_Script = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  critical?: boolean;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  description?: string;
+  hookPoint?: string;
+  id?: number;
+  isEnabled?: boolean;
+  language?: scriptservicev1_Language;
+  name?: string;
+  priority?: number;
+  source?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  version?: number;
+};
+
+// 脚本语言
+export type scriptservicev1_Language =
+  // JavaScript（goja，无沙箱，仅限平台管理员使用）
+  | 'JAVASCRIPT'
+  // Lua（gopher-lua，沙箱完整，推荐）
+  | 'LUA';
+export type scriptservicev1_CountScriptsResponse = {
+  count: number | undefined;
+};
+
+// 查询脚本详情 - 请求
+export type scriptservicev1_GetScriptRequest = {
+  id?: number;
+  name?: string;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 创建脚本 - 请求
+export type scriptservicev1_CreateScriptRequest = {
+  data: scriptservicev1_Script | undefined;
+};
+
+// 更新脚本 - 请求
+export type scriptservicev1_UpdateScriptRequest = {
+  allowMissing?: boolean;
+  data: scriptservicev1_Script | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除脚本 - 请求
+export type scriptservicev1_DeleteScriptRequest = {
+  ids: number[] | undefined;
+};
+
+// 试运行脚本 - 请求
+export type scriptservicev1_TestRunScriptRequest = {
+  // 运行未保存的草稿（name/language/source 必填）
+  draft?: scriptservicev1_Script;
+  // 运行已保存的脚本
+  id?: number;
+  // 执行上下文初始数据（值以 JSON 字符串提供）
+  input: { [key: string]: string } | undefined;
+};
+
+// 试运行脚本 - 回应
+export type scriptservicev1_TestRunScriptResponse = {
+  // 上下文数据快照（键值均以 JSON 字符串编码）
+  context: { [key: string]: string } | undefined;
+  durationMs: number | undefined;
+  error: string | undefined;
+  success: boolean | undefined;
+};
+
+// 列出钩子点 - 回应
+export type scriptservicev1_ListHookPointsResponse = {
+  items: scriptservicev1_HookPoint[] | undefined;
+  // 引擎支持的语言列表（如 lua / javascript）
+  languages: string[] | undefined;
+};
+
+// 钩子点
+export type scriptservicev1_HookPoint = {
+  description: string | undefined;
+  name: string | undefined;
+  scriptCount: number | undefined;
+};
+
+// 脚本执行日志管理服务（平台管理员）
+export interface ScriptLogService {
+  // 分页查询脚本执行日志
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<scriptservicev1_ListScriptLogsResponse>;
+  // 统计脚本执行日志数量
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<scriptservicev1_CountScriptLogsResponse>;
+  // 清理指定时间之前的日志
+  Purge(
+    request: scriptservicev1_PurgeScriptLogsRequest,
+  ): Promise<scriptservicev1_PurgeScriptLogsResponse>;
+}
+
+export function createScriptLogServiceClient(
+  transport: ClientTransport,
+): ScriptLogService {
+  return {
+    List(request) {
+      const path = `/admin/v1/script/logs`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ScriptLogService',
+        method: 'List',
+      }) as Promise<scriptservicev1_ListScriptLogsResponse>;
+    },
+    Count(request) {
+      const path = `/admin/v1/script/logs/count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ScriptLogService',
+        method: 'Count',
+      }) as Promise<scriptservicev1_CountScriptLogsResponse>;
+    },
+    Purge(request) {
+      const path = `/admin/v1/script/logs/purge`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ScriptLogService',
+        method: 'Purge',
+      }) as Promise<scriptservicev1_PurgeScriptLogsResponse>;
+    },
+  };
+}
+// 查询脚本执行日志列表 - 回应
+export type scriptservicev1_ListScriptLogsResponse = {
+  items: scriptservicev1_ScriptLog[] | undefined;
+  total: number | undefined;
+};
+
+// 脚本执行日志
+export type scriptservicev1_ScriptLog = {
+  createdAt?: wellKnownTimestamp;
+  durationMs?: number;
+  error?: string;
+  hookPoint?: string;
+  id?: number;
+  language?: string;
+  scriptId?: number;
+  scriptName?: string;
+  success?: boolean;
+  triggerType?: string;
+  version?: number;
+};
+
+export type scriptservicev1_CountScriptLogsResponse = {
+  count: number | undefined;
+};
+
+// 清理日志 - 请求（删除 created_at 早于 before 的日志）
+export type scriptservicev1_PurgeScriptLogsRequest = {
+  before: undefined | wellKnownTimestamp;
+};
+
+// 清理日志 - 回应
+export type scriptservicev1_PurgeScriptLogsResponse = {
+  deleted: number | undefined;
+};
+
 // 物流单管理服务（admin 侧，卖家运营可读写）
 export interface ShipmentService {
   List(
@@ -17233,6 +17821,8 @@ export class ApiClient {
   private _productService?: ProductService;
   private _redisCacheMonitorService?: RedisCacheMonitorService;
   private _roleService?: RoleService;
+  private _scriptLogService?: ScriptLogService;
+  private _scriptService?: ScriptService;
   private _serverMonitorService?: ServerMonitorService;
   private _shipmentService?: ShipmentService;
   private _shippingRateService?: ShippingRateService;
@@ -17482,6 +18072,14 @@ export class ApiClient {
 
   get roleService(): RoleService {
     return this._roleService ??= createRoleServiceClient(this._transport);
+  }
+
+  get scriptLogService(): ScriptLogService {
+    return this._scriptLogService ??= createScriptLogServiceClient(this._transport);
+  }
+
+  get scriptService(): ScriptService {
+    return this._scriptService ??= createScriptServiceClient(this._transport);
   }
 
   get serverMonitorService(): ServerMonitorService {

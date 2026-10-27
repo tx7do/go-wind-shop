@@ -3,7 +3,7 @@ package data
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -29,13 +29,13 @@ import (
 //   - 跨租户隔离由 mixin + 查询带 tenant_id 保证。
 type InteractionRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 }
 
 func NewInteractionRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *InteractionRepo {
 	return &InteractionRepo{
 		entClient: entClient,
-		log:       ctx.NewLoggerHelper("interaction/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("interaction/repo/core-service")),
 	}
 }
 

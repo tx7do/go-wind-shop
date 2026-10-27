@@ -1,7 +1,7 @@
 package api
 
 import (
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	lua "github.com/yuin/gopher-lua"
 )
 
@@ -30,7 +30,7 @@ type Script struct {
 
 // RegisterHookAPI registers the hook management API for Lua as a requireable module
 // This allows Lua scripts to register themselves to hooks dynamically
-func RegisterHookAPI(L *lua.LState, engine HookEngine, logger *log.Helper) {
+func RegisterHookAPI(L *lua.LState, engine HookEngine, logger *logx.Helper) {
 	// Create loader function that returns the module
 	loader := func(L *lua.LState) int {
 		// Create hook module

@@ -1,6 +1,7 @@
 package data
 
 import (
+	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 
 	authnEngine "github.com/tx7do/kratos-authn/engine"
@@ -13,7 +14,7 @@ import (
 
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	redisClient "github.com/tx7do/kratos-bootstrap/cache/redis"
+	redisx "go-wind-shop/pkg/redisx"
 	bRegistry "github.com/tx7do/kratos-bootstrap/registry"
 	"github.com/tx7do/kratos-bootstrap/rpc"
 
@@ -49,9 +50,9 @@ func NewRedisClient(ctx *bootstrap.Context) (*redis.Client, func(), error) {
 		return nil, func() {}, nil
 	}
 
-	l := ctx.NewLoggerHelper("redis/data/app-service")
+	l := logx.New(ctx.NewLoggerHelper("redis/data/app-service"))
 
-	cli := redisClient.NewClient(cfg.Data, l)
+	cli := redisx.NewClient(cfg.Data, l)
 
 	return cli, func() {
 		if err := cli.Close(); err != nil {

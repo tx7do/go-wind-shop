@@ -74,6 +74,8 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/role"
 	"go-wind-shop/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
+	"go-wind-shop/app/core/service/internal/data/ent/script"
+	"go-wind-shop/app/core/service/internal/data/ent/scriptlog"
 	"go-wind-shop/app/core/service/internal/data/ent/shipment"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingaddress"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingrate"
@@ -226,6 +228,8 @@ func checkColumn(t, c string) error {
 			role.Table:                             role.ValidColumn,
 			rolemetadata.Table:                     rolemetadata.ValidColumn,
 			rolepermission.Table:                   rolepermission.ValidColumn,
+			script.Table:                           script.ValidColumn,
+			scriptlog.Table:                        scriptlog.ValidColumn,
 			shipment.Table:                         shipment.ValidColumn,
 			shippingaddress.Table:                  shippingaddress.ValidColumn,
 			shippingrate.Table:                     shippingrate.ValidColumn,

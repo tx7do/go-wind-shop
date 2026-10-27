@@ -1,13 +1,13 @@
 package data
 
 import (
+	"go-wind-shop/pkg/logx"
 	"context"
 
 	"strconv"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -73,7 +73,7 @@ type UserRepo interface {
 
 type userRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper          *mapper.CopierMapper[identityV1.User, ent.User]
 	genderConverter *mapper.EnumTypeConverter[identityV1.User_Gender, user.Gender]
@@ -104,7 +104,7 @@ func NewUserRepo(
 	membershipRepo *MembershipRepo,
 ) UserRepo {
 	repo := &userRepo{
-		log:              ctx.NewLoggerHelper("user/repo/core-service"),
+		log:              logx.New(ctx.NewLoggerHelper("user/repo/core-service")),
 		entClient:        entClient,
 		mapper:           mapper.NewCopierMapper[identityV1.User, ent.User](),
 		genderConverter:  mapper.NewEnumTypeConverter[identityV1.User_Gender, user.Gender](identityV1.User_Gender_name, identityV1.User_Gender_value),

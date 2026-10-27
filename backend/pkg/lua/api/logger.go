@@ -3,7 +3,7 @@ package api
 import (
 	"math"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	lua "github.com/yuin/gopher-lua"
 
 	"go-wind-shop/pkg/lua/internal/convert"
@@ -23,7 +23,7 @@ func convertForFormat(val interface{}) interface{} {
 }
 
 // RegisterLogger registers the logger API for Lua as a requireable module
-func RegisterLogger(L *lua.LState, logger *log.Helper) {
+func RegisterLogger(L *lua.LState, logger *logx.Helper) {
 	// Create loader function that returns the module
 	loader := func(L *lua.LState) int {
 		// Create log module

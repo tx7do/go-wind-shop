@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
@@ -26,7 +26,7 @@ import (
 // 对外 DTO 永不携带凭据（仅 Has* 布尔标识），sender 经 GetDecrypted*/GetFirstEnabled* 拿解密配置。
 type NotificationChannelRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper        *mapper.CopierMapper[notifyV1.NotificationChannel, ent.NotificationChannel]
 	typeConverter *mapper.EnumTypeConverter[notifyV1.NotificationChannel_Type, notificationchannel.Type]
@@ -50,7 +50,7 @@ type NotificationChannelRepo struct {
 
 func NewNotificationChannelRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *NotificationChannelRepo {
 	repo := &NotificationChannelRepo{
-		log:       ctx.NewLoggerHelper("notification-channel/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("notification-channel/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[notifyV1.NotificationChannel, ent.NotificationChannel](),
 		typeConverter: mapper.NewEnumTypeConverter[notifyV1.NotificationChannel_Type, notificationchannel.Type](

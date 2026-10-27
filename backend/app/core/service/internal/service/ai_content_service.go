@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/sashabaranov/go-openai"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/trans"
@@ -46,7 +46,7 @@ var aiContentScenePrompts = map[aiV1.ContentScene]string{
 // AiContentService AI 内容生成（表单助手）。
 type AiContentService struct {
 	aiV1.UnimplementedAiContentServiceServer
-	log          *log.Helper
+	log *logx.Helper
 	providerRepo *data.AiProviderRepo
 	usageRepo    *data.AiUsageLogRepo
 	knowledgeRepo *data.AiKnowledgeRepo
@@ -71,7 +71,7 @@ func NewAiContentService(
 	userRepo data.UserRepo,
 ) *AiContentService {
 	return &AiContentService{
-		log:           ctx.NewLoggerHelper("ai_content/service/core-service"),
+		log:           logx.New(ctx.NewLoggerHelper("ai_content/service/core-service")),
 		providerRepo:  providerRepo,
 		usageRepo:     usageRepo,
 		knowledgeRepo: knowledgeRepo,

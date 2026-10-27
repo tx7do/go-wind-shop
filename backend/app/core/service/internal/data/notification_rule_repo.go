@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
@@ -26,7 +26,7 @@ import (
 //（单表单行、走 event_type 唯一索引）。
 type NotificationRuleRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper             *mapper.CopierMapper[notifyV1.NotificationRule, ent.NotificationRule]
 	channelConverter   *mapper.EnumTypeConverter[notifyV1.Channel, notificationrule.Channel]
@@ -44,7 +44,7 @@ type NotificationRuleRepo struct {
 
 func NewNotificationRuleRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *NotificationRuleRepo {
 	repo := &NotificationRuleRepo{
-		log:       ctx.NewLoggerHelper("notification-rule/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("notification-rule/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[notifyV1.NotificationRule, ent.NotificationRule](),
 		channelConverter: mapper.NewEnumTypeConverter[notifyV1.Channel, notificationrule.Channel](

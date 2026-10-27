@@ -1,6 +1,6 @@
 package data
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"encoding/json"
 	"strconv"
 	"context"
@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -60,14 +59,14 @@ var verifyAndRevokeRefreshTokenScript = redis.NewScript(`
 
 // UserTokenCache 用户令牌缓存
 type UserTokenCache struct {
-	log *log.Helper
+	log *logx.Helper
 	rdb *redis.Client
 }
 
 func NewUserTokenCache(ctx *bootstrap.Context, rdb *redis.Client) *UserTokenCache {
 	utc := &UserTokenCache{
 		rdb: rdb,
-		log: ctx.NewLoggerHelper("user-token/cache/core-service"),
+		log: logx.New(ctx.NewLoggerHelper("user-token/cache/core-service")),
 	}
 	return utc
 }

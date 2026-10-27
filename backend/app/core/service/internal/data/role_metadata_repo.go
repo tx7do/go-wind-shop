@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
@@ -20,7 +20,7 @@ import (
 
 type RoleMetadataRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper              *mapper.CopierMapper[permissionV1.RoleMetadata, ent.RoleMetadata]
 	syncPolicyConverter *mapper.EnumTypeConverter[permissionV1.RoleMetadata_SyncPolicy, rolemetadata.SyncPolicy]
@@ -41,7 +41,7 @@ func NewRoleMetadataRepo(
 	entClient *entCrud.EntClient[*ent.Client],
 ) *RoleMetadataRepo {
 	repo := &RoleMetadataRepo{
-		log:       ctx.NewLoggerHelper("role-metadata/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("role-metadata/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[permissionV1.RoleMetadata, ent.RoleMetadata](),
 		syncPolicyConverter: mapper.NewEnumTypeConverter[permissionV1.RoleMetadata_SyncPolicy, rolemetadata.SyncPolicy](

@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"github.com/tx7do/go-utils/copierutil"
@@ -28,7 +28,7 @@ import (
 
 type MenuRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper          *mapper.CopierMapper[permissionV1.Menu, ent.Menu]
 	statusConverter *mapper.EnumTypeConverter[permissionV1.Menu_Status, menu.Status]
@@ -46,7 +46,7 @@ type MenuRepo struct {
 
 func NewMenuRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *MenuRepo {
 	repo := &MenuRepo{
-		log:             ctx.NewLoggerHelper("menu/repo/core-service"),
+		log:             logx.New(ctx.NewLoggerHelper("menu/repo/core-service")),
 		entClient:       entClient,
 		mapper:          mapper.NewCopierMapper[permissionV1.Menu, ent.Menu](),
 		statusConverter: mapper.NewEnumTypeConverter[permissionV1.Menu_Status, menu.Status](permissionV1.Menu_Status_name, permissionV1.Menu_Status_value),

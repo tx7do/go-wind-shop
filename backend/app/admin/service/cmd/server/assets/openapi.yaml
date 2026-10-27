@@ -11817,6 +11817,481 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/admin.service.v1.ListRouteResponse'
+    /admin/v1/script/hooks:
+        get:
+            tags:
+                - ScriptService
+            description: 列出全部已注册的钩子点
+            operationId: ScriptService_ListHookPoints
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/script.service.v1.ListHookPointsResponse'
+    /admin/v1/script/logs:
+        get:
+            tags:
+                - ScriptLogService
+            description: 分页查询脚本执行日志
+            operationId: ScriptLogService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/script.service.v1.ListScriptLogsResponse'
+    /admin/v1/script/logs/count:
+        get:
+            tags:
+                - ScriptLogService
+            description: 统计脚本执行日志数量
+            operationId: ScriptLogService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/script.service.v1.CountScriptLogsResponse'
+    /admin/v1/script/logs/purge:
+        post:
+            tags:
+                - ScriptLogService
+            description: 清理指定时间之前的日志
+            operationId: ScriptLogService_Purge
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/script.service.v1.PurgeScriptLogsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/script.service.v1.PurgeScriptLogsResponse'
+    /admin/v1/scripts:
+        get:
+            tags:
+                - ScriptService
+            description: 分页查询脚本列表
+            operationId: ScriptService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/script.service.v1.ListScriptsResponse'
+        post:
+            tags:
+                - ScriptService
+            description: 创建脚本
+            operationId: ScriptService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/script.service.v1.CreateScriptRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - ScriptService
+            description: 删除脚本
+            operationId: ScriptService_Delete
+            parameters:
+                - name: ids
+                  in: query
+                  schema:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/scripts/count:
+        get:
+            tags:
+                - ScriptService
+            description: 统计脚本数量
+            operationId: ScriptService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/script.service.v1.CountScriptsResponse'
+    /admin/v1/scripts/name/{name}:
+        get:
+            tags:
+                - ScriptService
+            description: 查询脚本详情
+            operationId: ScriptService_Get
+            parameters:
+                - name: name
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/script.service.v1.Script'
+    /admin/v1/scripts/test_run:
+        post:
+            tags:
+                - ScriptService
+            description: 试运行脚本
+            operationId: ScriptService_TestRun
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/script.service.v1.TestRunScriptRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/script.service.v1.TestRunScriptResponse'
+    /admin/v1/scripts/{id}:
+        get:
+            tags:
+                - ScriptService
+            description: 查询脚本详情
+            operationId: ScriptService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: name
+                  in: query
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/script.service.v1.Script'
+        put:
+            tags:
+                - ScriptService
+            description: 更新脚本
+            operationId: ScriptService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/script.service.v1.UpdateScriptRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/server-monitor:
         get:
             tags:
@@ -20027,6 +20502,235 @@ components:
                 clientName:
                     type: string
             description: SLOWLOG GET 返回的单条慢日志
+        script.service.v1.CountScriptLogsResponse:
+            type: object
+            properties:
+                count:
+                    type: string
+        script.service.v1.CountScriptsResponse:
+            type: object
+            properties:
+                count:
+                    type: string
+        script.service.v1.CreateScriptRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/script.service.v1.Script'
+            description: 创建脚本 - 请求
+        script.service.v1.HookPoint:
+            type: object
+            properties:
+                name:
+                    type: string
+                description:
+                    type: string
+                scriptCount:
+                    type: integer
+                    format: uint32
+            description: 钩子点
+        script.service.v1.ListHookPointsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/script.service.v1.HookPoint'
+                languages:
+                    type: array
+                    items:
+                        type: string
+                    description: 引擎支持的语言列表（如 lua / javascript）
+            description: 列出钩子点 - 回应
+        script.service.v1.ListScriptLogsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/script.service.v1.ScriptLog'
+                total:
+                    type: string
+            description: 查询脚本执行日志列表 - 回应
+        script.service.v1.ListScriptsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/script.service.v1.Script'
+                total:
+                    type: string
+            description: 查询脚本列表 - 回应
+        script.service.v1.PurgeScriptLogsRequest:
+            type: object
+            properties:
+                before:
+                    type: string
+                    description: 删除该时间之前的日志
+                    format: date-time
+            description: 清理日志 - 请求（删除 created_at 早于 before 的日志）
+        script.service.v1.PurgeScriptLogsResponse:
+            type: object
+            properties:
+                deleted:
+                    type: string
+            description: 清理日志 - 回应
+        script.service.v1.Script:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 脚本ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 脚本唯一名称，如 user_after_create_notify
+                language:
+                    enum:
+                        - LUA
+                        - JAVASCRIPT
+                    type: string
+                    description: 脚本语言
+                    format: enum
+                hookPoint:
+                    type: string
+                    description: 挂载的钩子点名称，空表示未挂载（仅可试运行）
+                source:
+                    type: string
+                    description: 脚本源码
+                priority:
+                    type: integer
+                    description: 执行优先级，越小越先执行
+                    format: int32
+                description:
+                    type: string
+                    description: 脚本用途说明
+                critical:
+                    type: boolean
+                    description: 关键脚本：执行失败时中断钩子链
+                version:
+                    type: integer
+                    description: 版本号，每次更新自增（热更新指纹）
+                    format: uint32
+                isEnabled:
+                    type: boolean
+                    description: 是否启用
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 脚本
+        script.service.v1.ScriptLog:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 日志ID
+                    format: uint32
+                scriptId:
+                    type: integer
+                    description: 脚本ID，试运行草稿为 0
+                    format: uint32
+                scriptName:
+                    type: string
+                    description: 脚本名称
+                language:
+                    type: string
+                    description: 脚本语言
+                triggerType:
+                    type: string
+                    description: 触发方式（hook/task/test_run）
+                hookPoint:
+                    type: string
+                    description: 钩子点或任务类型
+                version:
+                    type: integer
+                    description: 执行时的脚本版本
+                    format: uint32
+                success:
+                    type: boolean
+                    description: 是否执行成功
+                durationMs:
+                    type: string
+                    description: 执行耗时（毫秒）
+                error:
+                    type: string
+                    description: 失败原因（成功为空）
+                createdAt:
+                    type: string
+                    description: 执行时间
+                    format: date-time
+            description: 脚本执行日志
+        script.service.v1.TestRunScriptRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 运行已保存的脚本
+                    format: uint32
+                draft:
+                    allOf:
+                        - $ref: '#/components/schemas/script.service.v1.Script'
+                    description: 运行未保存的草稿（name/language/source 必填）
+                input:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: 执行上下文初始数据，值以 JSON 字符串提供
+            description: 试运行脚本 - 请求
+        script.service.v1.TestRunScriptResponse:
+            type: object
+            properties:
+                success:
+                    type: boolean
+                error:
+                    type: string
+                context:
+                    type: object
+                    additionalProperties:
+                        type: string
+                    description: 上下文数据快照（键值均以 JSON 字符串编码）
+                durationMs:
+                    type: string
+            description: 试运行脚本 - 回应
+        script.service.v1.UpdateScriptRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/script.service.v1.Script'
+                updateMask:
+                    example: name,source,is_enabled
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+            description: 更新脚本 - 请求
         server_monitor.service.v1.DatabaseInfo:
             type: object
             properties:
@@ -20934,6 +21638,10 @@ tags:
       description: Redis 缓存监控查询服务（只读聚合视图）。
     - name: RoleService
       description: 角色管理服务
+    - name: ScriptLogService
+      description: 脚本执行日志管理服务（平台管理员）
+    - name: ScriptService
+      description: 脚本管理服务（平台管理员）
     - name: ServerMonitorService
       description: 服务监控查询服务（只读聚合视图；采集在 core 进程内完成）。
     - name: ShipmentService

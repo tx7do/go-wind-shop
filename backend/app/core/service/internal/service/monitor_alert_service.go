@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -42,7 +42,7 @@ type MonitorAlertService struct {
 	repo      *data.MonitorAlertRuleRepo
 	entClient *entCrud.EntClient[*ent.Client]
 	rdb       *redis.Client
-	log       *log.Helper
+	log *logx.Helper
 
 	// 构造期留 nil，装配期由 wiring 在服务就绪后 RegisterNotifier 注入
 	notifier Notifier
@@ -58,7 +58,7 @@ func NewMonitorAlertService(
 		repo:      repo,
 		entClient: entClient,
 		rdb:       rdb,
-		log:       ctx.NewLoggerHelper("monitor-alert/service/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("monitor-alert/service/core-service")),
 		// notifier 默认"未装配"占位：装配期由 RegisterNotifier 换成 NotificationService
 		// （与 InternalMessageService 同模式）。
 	}

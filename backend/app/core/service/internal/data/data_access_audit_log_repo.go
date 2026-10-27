@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -23,7 +23,7 @@ import (
 
 type DataAccessAuditLogRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[auditV1.DataAccessAuditLog, ent.DataAccessAuditLog]
 
@@ -41,7 +41,7 @@ type DataAccessAuditLogRepo struct {
 
 func NewDataAccessAuditLogRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *DataAccessAuditLogRepo {
 	repo := &DataAccessAuditLogRepo{
-		log:       ctx.NewLoggerHelper("data-access-audit-log/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("data-access-audit-log/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[auditV1.DataAccessAuditLog, ent.DataAccessAuditLog](),
 		accessTypeConverter: mapper.NewEnumTypeConverter[auditV1.DataAccessAuditLog_AccessType, dataaccessauditlog.AccessType](

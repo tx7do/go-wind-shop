@@ -824,6 +824,30 @@ func (f RolePermissionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.RolePermissionMutation", m)
 }
 
+// The ScriptFunc type is an adapter to allow the use of ordinary
+// function as Script mutator.
+type ScriptFunc func(context.Context, *ent.ScriptMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ScriptFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ScriptMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ScriptMutation", m)
+}
+
+// The ScriptLogFunc type is an adapter to allow the use of ordinary
+// function as ScriptLog mutator.
+type ScriptLogFunc func(context.Context, *ent.ScriptLogMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ScriptLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ScriptLogMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ScriptLogMutation", m)
+}
+
 // The ShipmentFunc type is an adapter to allow the use of ordinary
 // function as Shipment mutator.
 type ShipmentFunc func(context.Context, *ent.ShipmentMutation) (ent.Value, error)

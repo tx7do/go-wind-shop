@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/sashabaranov/go-openai"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/trans"
@@ -99,7 +99,7 @@ var aiQuerySelectPattern = regexp.MustCompile(`(?is)^\s*\(?\s*(SELECT|WITH)\b`)
 // 安全边界见 ai_query.proto：只读校验/表白名单/LIMIT 钳制/只读事务四重防线。
 type AiQueryService struct {
 	aiV1.UnimplementedAiQueryServiceServer
-	log              *log.Helper
+	log *logx.Helper
 	providerRepo     *data.AiProviderRepo
 	usageRepo        *data.AiUsageLogRepo
 	entClient        *entCrud.EntClient[*ent.Client]
@@ -116,7 +116,7 @@ func NewAiQueryService(
 	internalMessages *InternalMessageService,
 ) *AiQueryService {
 	return &AiQueryService{
-		log:              ctx.NewLoggerHelper("ai_query/service/core-service"),
+		log:              logx.New(ctx.NewLoggerHelper("ai_query/service/core-service")),
 		providerRepo:     providerRepo,
 		usageRepo:        usageRepo,
 		entClient:        entClient,

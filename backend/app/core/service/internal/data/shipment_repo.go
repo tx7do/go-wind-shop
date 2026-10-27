@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -23,7 +23,7 @@ import (
 
 type ShipmentRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[shippingV1.Shipment, ent.Shipment]
 
@@ -41,7 +41,7 @@ type ShipmentRepo struct {
 
 func NewShipmentRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *ShipmentRepo {
 	repo := &ShipmentRepo{
-		log:             ctx.NewLoggerHelper("shipment/repo/core-service"),
+		log:             logx.New(ctx.NewLoggerHelper("shipment/repo/core-service")),
 		entClient:       entClient,
 		mapper:          mapper.NewCopierMapper[shippingV1.Shipment, ent.Shipment](),
 		statusConverter: mapper.NewEnumTypeConverter[shippingV1.Shipment_Status, shipment.Status](shippingV1.Shipment_Status_name, shippingV1.Shipment_Status_value),

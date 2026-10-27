@@ -1,13 +1,13 @@
 package service
 
 import (
+	"go-wind-shop/pkg/logx"
 	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/hibiken/asynq"
@@ -40,7 +40,7 @@ const OrderPendingTTL = 30 * time.Minute
 type OrderService struct {
 	orderV1.UnimplementedOrderServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	orderRepo     *data.OrderRepo
 	orderItemRepo *data.OrderItemRepo
@@ -60,7 +60,7 @@ func NewOrderService(
 	entClient *entCrud.EntClient[*ent.Client],
 ) *OrderService {
 	return &OrderService{
-		log:           ctx.NewLoggerHelper("order/service/core-service"),
+		log:           logx.New(ctx.NewLoggerHelper("order/service/core-service")),
 		orderRepo:     orderRepo,
 		orderItemRepo: orderItemRepo,
 		skuRepo:       skuRepo,

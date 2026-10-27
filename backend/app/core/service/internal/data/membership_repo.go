@@ -1,10 +1,10 @@
 package data
 
 import (
+	"go-wind-shop/pkg/logx"
 	"context"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
@@ -21,7 +21,7 @@ import (
 )
 
 type MembershipRepo struct {
-	log *log.Helper
+	log *logx.Helper
 
 	entClient       *entCrud.EntClient[*ent.Client]
 	mapper          *mapper.CopierMapper[identityV1.Membership, ent.Membership]
@@ -40,7 +40,7 @@ func NewMembershipRepo(
 	membershipOrgUnitRepo *MembershipOrgUnitRepo,
 ) *MembershipRepo {
 	repo := &MembershipRepo{
-		log:       ctx.NewLoggerHelper("membership/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("membership/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[identityV1.Membership, ent.Membership](),
 		statusConverter: mapper.NewEnumTypeConverter[identityV1.Membership_Status, membership.Status](

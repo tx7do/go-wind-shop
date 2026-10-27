@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -26,7 +26,7 @@ import (
 
 type OrgUnitRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper          *mapper.CopierMapper[identityV1.OrgUnit, ent.OrgUnit]
 	typeConverter   *mapper.EnumTypeConverter[identityV1.OrgUnit_Type, orgunit.Type]
@@ -44,7 +44,7 @@ type OrgUnitRepo struct {
 
 func NewOrgUnitRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *OrgUnitRepo {
 	repo := &OrgUnitRepo{
-		log:             ctx.NewLoggerHelper("org-unit/repo/core-service"),
+		log:             logx.New(ctx.NewLoggerHelper("org-unit/repo/core-service")),
 		entClient:       entClient,
 		mapper:          mapper.NewCopierMapper[identityV1.OrgUnit, ent.OrgUnit](),
 		typeConverter:   mapper.NewEnumTypeConverter[identityV1.OrgUnit_Type, orgunit.Type](identityV1.OrgUnit_Type_name, identityV1.OrgUnit_Type_value),

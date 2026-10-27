@@ -1,9 +1,10 @@
 package auth
 
 import (
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
+	"go-wind-shop/pkg/logx"
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/transport"
 	"github.com/go-kratos/kratos/v2/transport/http"
@@ -25,7 +26,7 @@ var defaultAction = authzEngine.Action("ANY")
 // Server 衔接认证和鉴权
 func Server(opts ...Option) middleware.Middleware {
 	op := options{
-		log: log.NewHelper(log.With(log.DefaultLogger, "module", "auth/middleware")),
+		log: logx.NewFromLogger(bLogger.GetLogger().With("module", "auth/middleware")),
 
 		injectOperatorId: false,
 		injectTenantId:   false,

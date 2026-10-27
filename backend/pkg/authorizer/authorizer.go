@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
 
 	authzEngine "github.com/tx7do/kratos-authz/engine"
@@ -17,7 +17,7 @@ import (
 
 // Authorizer 权限管理器
 type Authorizer struct {
-	log *log.Helper
+	log *logx.Helper
 
 	engine   authzEngine.Engine
 	provider Provider
@@ -28,7 +28,7 @@ func NewAuthorizer(
 	provider Provider,
 ) *Authorizer {
 	a := &Authorizer{
-		log:      ctx.NewLoggerHelper("authorizer"),
+		log:      logx.New(ctx.NewLoggerHelper("authorizer")),
 		provider: provider,
 	}
 

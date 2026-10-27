@@ -1,6 +1,7 @@
 package server
 
 import (
+	"go-wind-shop/pkg/logx"
 	"github.com/dtm-labs/dtm/client/workflow"
 
 	"github.com/go-kratos/kratos/v2/log"
@@ -19,7 +20,7 @@ type GrpcMiddlewares []middleware.Middleware
 
 func NewGrpcMiddleware(ctx *bootstrap.Context) GrpcMiddlewares {
 	var ms GrpcMiddlewares
-	ms = append(ms, logging.Server(ctx.GetLogger()))
+	ms = append(ms, logging.Server(logx.AsKratos(ctx.GetLogger())))
 	ms = append(ms, ent.Server())
 	return ms
 }

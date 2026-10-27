@@ -1,9 +1,9 @@
 package service
 
 import (
+	"go-wind-shop/pkg/logx"
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -51,7 +51,7 @@ func tenantIDFromContext(ctx context.Context) uint32 {
 type UserService struct {
 	identityV1.UnimplementedUserServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	userRepo           data.UserRepo
 	userCredentialRepo *data.UserCredentialRepo
@@ -75,7 +75,7 @@ func NewUserService(
 	membershipRepo *data.MembershipRepo,
 ) *UserService {
 	svc := &UserService{
-		log:                ctx.NewLoggerHelper("user/service/core-service"),
+		log:                logx.New(ctx.NewLoggerHelper("user/service/core-service")),
 		userRepo:           userRepo,
 		roleRepo:           roleRepo,
 		userCredentialRepo: userCredentialRepo,

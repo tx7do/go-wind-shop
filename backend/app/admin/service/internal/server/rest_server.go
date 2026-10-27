@@ -22,6 +22,7 @@ import (
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
 	auditV1 "go-wind-shop/api/gen/go/audit/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
+	logx "go-wind-shop/pkg/logx"
 
 	"go-wind-shop/pkg/metadata"
 	"go-wind-shop/pkg/middleware/auth"
@@ -38,7 +39,7 @@ func NewRestMiddleware(
 	operationAuditLogServiceClient auditV1.OperationAuditLogServiceClient,
 ) []middleware.Middleware {
 	var ms []middleware.Middleware
-	ms = append(ms, logging.Server(ctx.GetLogger()))
+	ms = append(ms, logging.Server(logx.AsKratos(ctx.GetLogger())))
 
 	// add white list for authentication.
 	rpc.AddWhiteList(
@@ -153,6 +154,8 @@ func NewRestServer(
 	monitorAlertService *service.MonitorAlertService,
 	serverMonitorService *service.ServerMonitorService,
 	redisCacheMonitorService *service.RedisCacheMonitorService,
+	scriptService *service.ScriptService,
+	scriptLogService *service.ScriptLogService,
 	aiAgentService *service.AiAgentService,
 	aiProviderService *service.AiProviderService,
 	aiChatService *service.AiChatService,
@@ -262,6 +265,8 @@ func NewRestServer(
 	adminV1.RegisterMonitorAlertServiceHTTPServer(srv, monitorAlertService)
 	adminV1.RegisterServerMonitorServiceHTTPServer(srv, serverMonitorService)
 	adminV1.RegisterRedisCacheMonitorServiceHTTPServer(srv, redisCacheMonitorService)
+	adminV1.RegisterScriptServiceHTTPServer(srv, scriptService)
+	adminV1.RegisterScriptLogServiceHTTPServer(srv, scriptLogService)
 	adminV1.RegisterAiAgentServiceHTTPServer(srv, aiAgentService)
 	adminV1.RegisterAiProviderServiceHTTPServer(srv, aiProviderService)
 	adminV1.RegisterAiChatServiceHTTPServer(srv, aiChatService)

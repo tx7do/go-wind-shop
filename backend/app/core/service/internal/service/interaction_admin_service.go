@@ -4,7 +4,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/trans"
@@ -27,7 +27,7 @@ type InteractionAdminService struct {
 
 	interactionRepo       *data.InteractionRepo
 	operationAuditLogRepo *data.OperationAuditLogRepo
-	log                   *log.Helper
+	log *logx.Helper
 }
 
 func NewInteractionAdminService(
@@ -38,7 +38,7 @@ func NewInteractionAdminService(
 	return &InteractionAdminService{
 		interactionRepo:       interactionRepo,
 		operationAuditLogRepo: operationAuditLogRepo,
-		log:                   ctx.NewLoggerHelper("interaction-admin/service/core-service"),
+		log:                   logx.New(ctx.NewLoggerHelper("interaction-admin/service/core-service")),
 	}
 }
 

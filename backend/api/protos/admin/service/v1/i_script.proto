@@ -1,0 +1,74 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+import "pagination/v1/pagination.proto";
+import "script/service/v1/script.proto";
+
+// 脚本管理服务（平台管理员）
+service ScriptService {
+  // 分页查询脚本列表
+  rpc List (pagination.PagingRequest) returns (script.service.v1.ListScriptsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/scripts"
+    };
+  }
+
+  // 统计脚本数量
+  rpc Count (pagination.PagingRequest) returns (script.service.v1.CountScriptsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/scripts/count"
+    };
+  }
+
+  // 查询脚本详情
+  rpc Get (script.service.v1.GetScriptRequest) returns (script.service.v1.Script) {
+    option (google.api.http) = {
+      get: "/admin/v1/scripts/{id}"
+      additional_bindings {
+        get: "/admin/v1/scripts/name/{name}"
+      }
+    };
+  }
+
+  // 创建脚本
+  rpc Create (script.service.v1.CreateScriptRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/scripts"
+      body: "*"
+    };
+  }
+
+  // 更新脚本
+  rpc Update (script.service.v1.UpdateScriptRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/scripts/{id}"
+      body: "*"
+    };
+  }
+
+  // 删除脚本
+  rpc Delete (script.service.v1.DeleteScriptRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/scripts"
+    };
+  }
+
+  // 试运行脚本
+  rpc TestRun (script.service.v1.TestRunScriptRequest) returns (script.service.v1.TestRunScriptResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/scripts/test_run"
+      body: "*"
+    };
+  }
+
+  // 列出全部已注册的钩子点
+  rpc ListHookPoints (google.protobuf.Empty) returns (script.service.v1.ListHookPointsResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/script/hooks"
+    };
+  }
+}

@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -16,7 +16,7 @@ import (
 type PolicyEvaluationLogService struct {
 	permissionV1.UnimplementedPolicyEvaluationLogServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	policyEvaluationLogRepo *data.PolicyEvaluationLogRepo
 }
@@ -26,7 +26,7 @@ func NewPolicyEvaluationLogService(
 	policyEvaluationLogRepo *data.PolicyEvaluationLogRepo,
 ) *PolicyEvaluationLogService {
 	return &PolicyEvaluationLogService{
-		log:                     ctx.NewLoggerHelper("policy-evaluation-log/service/core-service"),
+		log:                     logx.New(ctx.NewLoggerHelper("policy-evaluation-log/service/core-service")),
 		policyEvaluationLogRepo: policyEvaluationLogRepo,
 	}
 }

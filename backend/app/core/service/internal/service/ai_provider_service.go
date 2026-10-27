@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -17,13 +17,13 @@ import (
 // 操作人（created_by/updated_by）与密钥加密由 admin BFF 层负责。
 type AiProviderService struct {
 	aiV1.UnimplementedAiProviderServiceServer
-	log  *log.Helper
+	log *logx.Helper
 	repo *data.AiProviderRepo
 }
 
 func NewAiProviderService(ctx *bootstrap.Context, repo *data.AiProviderRepo) *AiProviderService {
 	return &AiProviderService{
-		log:  ctx.NewLoggerHelper("ai_provider/service/core-service"),
+		log:  logx.New(ctx.NewLoggerHelper("ai_provider/service/core-service")),
 		repo: repo,
 	}
 }

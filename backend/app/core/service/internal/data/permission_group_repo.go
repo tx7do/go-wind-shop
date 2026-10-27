@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -26,7 +26,7 @@ import (
 
 type PermissionGroupRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper          *mapper.CopierMapper[permissionV1.PermissionGroup, ent.PermissionGroup]
 	statusConverter *mapper.EnumTypeConverter[permissionV1.PermissionGroup_Status, permissiongroup.Status]
@@ -46,7 +46,7 @@ func NewPermissionGroupRepo(
 	entClient *entCrud.EntClient[*ent.Client],
 ) *PermissionGroupRepo {
 	repo := &PermissionGroupRepo{
-		log:       ctx.NewLoggerHelper("permission-group/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("permission-group/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[permissionV1.PermissionGroup, ent.PermissionGroup](),
 		statusConverter: mapper.NewEnumTypeConverter[permissionV1.PermissionGroup_Status, permissiongroup.Status](

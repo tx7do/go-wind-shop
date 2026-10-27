@@ -112,18 +112,17 @@ const system: RouteRecordRaw[] = [
         component: () => import("@/pages/app/system/monitor_alert/index.vue"),
       },
 
-      // 【缓行】脚本管理：后端 script 域（go-wind-admin 源，gorm 架构）待适配 ent 后接入
-      // {
-      //   path: "scripts",
-      //   name: "ScriptManagement",
-      //   meta: {
-      //     order: 9,
-      //     icon: "lucide:file-code-2",
-      //     title: "routes.system.scripts",
-      //     authority: ["sys:platform_admin"],
-      //   },
-      //   component: () => import("@/pages/app/system/script/index.vue"),
-      // },
+      {
+        path: "scripts",
+        name: "ScriptManagement",
+        meta: {
+          order: 9,
+          icon: "lucide:file-code-2",
+          title: "routes.system.scripts",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/system/script/index.vue"),
+      },
 
       {
         path: "configs",

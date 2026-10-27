@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
@@ -30,7 +30,7 @@ import (
 
 type PermissionRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper          *mapper.CopierMapper[permissionV1.Permission, ent.Permission]
 	statusConverter *mapper.EnumTypeConverter[permissionV1.Permission_Status, permission.Status]
@@ -55,7 +55,7 @@ func NewPermissionRepo(
 	permissionMenuRepo *PermissionMenuRepo,
 ) *PermissionRepo {
 	repo := &PermissionRepo{
-		log:       ctx.NewLoggerHelper("permission/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("permission/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[permissionV1.Permission, ent.Permission](),
 		statusConverter: mapper.NewEnumTypeConverter[permissionV1.Permission_Status, permission.Status](

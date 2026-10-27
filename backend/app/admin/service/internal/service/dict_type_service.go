@@ -1,9 +1,8 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -18,7 +17,7 @@ import (
 type DictTypeService struct {
 	adminV1.DictTypeServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	dictTypeServiceClient dictV1.DictTypeServiceClient
 }
@@ -27,7 +26,7 @@ func NewDictTypeService(
 	ctx *bootstrap.Context,
 	dictTypeServiceClient dictV1.DictTypeServiceClient,
 ) *DictTypeService {
-	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "dict/service/admin-service"))
+	l := logx.NewFromLogger(ctx.GetLogger().With("module", "dict/service/admin-service"))
 	return &DictTypeService{
 		log:                   l,
 		dictTypeServiceClient: dictTypeServiceClient,

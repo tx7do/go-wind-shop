@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -19,7 +19,7 @@ import (
 type MonitorAlertService struct {
 	adminV1.MonitorAlertServiceHTTPServer
 
-	log             *log.Helper
+	log *logx.Helper
 	monitorAlertCli monitorAlertV1.MonitorAlertServiceClient
 }
 
@@ -27,7 +27,7 @@ func NewMonitorAlertService(
 	ctx *bootstrap.Context,
 	monitorAlertCli monitorAlertV1.MonitorAlertServiceClient,
 ) *MonitorAlertService {
-	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "monitor-alert/service/admin-service"))
+	l := logx.NewFromLogger(ctx.GetLogger().With("module", "monitor-alert/service/admin-service"))
 	return &MonitorAlertService{
 		log:             l,
 		monitorAlertCli: monitorAlertCli,

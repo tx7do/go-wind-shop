@@ -1,11 +1,11 @@
 package data
 
 import (
+	"go-wind-shop/pkg/logx"
 	"context"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -23,7 +23,7 @@ import (
 
 type TaskRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper        *mapper.CopierMapper[taskV1.Task, ent.Task]
 	typeConverter *mapper.EnumTypeConverter[taskV1.Task_Type, task.Type]
@@ -40,7 +40,7 @@ type TaskRepo struct {
 
 func NewTaskRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *TaskRepo {
 	repo := &TaskRepo{
-		log:           ctx.NewLoggerHelper("task/repo/core-service"),
+		log:           logx.New(ctx.NewLoggerHelper("task/repo/core-service")),
 		entClient:     entClient,
 		mapper:        mapper.NewCopierMapper[taskV1.Task, ent.Task](),
 		typeConverter: mapper.NewEnumTypeConverter[taskV1.Task_Type, task.Type](taskV1.Task_Type_name, taskV1.Task_Type_value),

@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/trans"
@@ -37,7 +37,7 @@ const (
 type AccessKeyService struct {
 	accesskeyV1.UnimplementedAccessKeyServiceServer
 
-	log           *log.Helper
+	log *logx.Helper
 	repo          *data.AccessKeyRepo
 	authenticator *data.Authenticator
 	rateLimiter   *data.AccessKeyRateLimiter
@@ -50,7 +50,7 @@ func NewAccessKeyService(
 	rateLimiter *data.AccessKeyRateLimiter,
 ) *AccessKeyService {
 	return &AccessKeyService{
-		log:           ctx.NewLoggerHelper("access-key/service/core-service"),
+		log:           logx.New(ctx.NewLoggerHelper("access-key/service/core-service")),
 		repo:          repo,
 		authenticator: authenticator,
 		rateLimiter:   rateLimiter,

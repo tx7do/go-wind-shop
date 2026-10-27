@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/minio/minio-go/v7"
 	lua "github.com/yuin/gopher-lua"
 
@@ -13,7 +13,7 @@ import (
 )
 
 // RegisterOSS registers the OSS (Object Storage Service) API for Lua as a requireable module
-func RegisterOSS(L *lua.LState, ossClient *oss.MinIOClient, logger *log.Helper) {
+func RegisterOSS(L *lua.LState, ossClient *oss.MinIOClient, logger *logx.Helper) {
 	// Create loader function that returns the module
 	loader := func(L *lua.LState) int {
 		// Create oss module

@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
@@ -22,7 +22,7 @@ import (
 // MonitorAlertRuleRepo 监控告警规则仓储：指标阈值 → 触发通知，平台全局。
 type MonitorAlertRuleRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper           *mapper.CopierMapper[monitorAlertV1.MonitorAlertRule, ent.MonitorAlertRule]
 	metricConverter  *mapper.EnumTypeConverter[monitorAlertV1.MonitorMetric, monitoralertrule.Metric]
@@ -32,7 +32,7 @@ type MonitorAlertRuleRepo struct {
 
 func NewMonitorAlertRuleRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *MonitorAlertRuleRepo {
 	repo := &MonitorAlertRuleRepo{
-		log:              ctx.NewLoggerHelper("monitor-alert/repo/core-service"),
+		log:              logx.New(ctx.NewLoggerHelper("monitor-alert/repo/core-service")),
 		entClient:        entClient,
 		mapper:           mapper.NewCopierMapper[monitorAlertV1.MonitorAlertRule, ent.MonitorAlertRule](),
 		metricConverter:  mapper.NewEnumTypeConverter[monitorAlertV1.MonitorMetric, monitoralertrule.Metric](monitorAlertV1.MonitorMetric_name, monitorAlertV1.MonitorMetric_value),

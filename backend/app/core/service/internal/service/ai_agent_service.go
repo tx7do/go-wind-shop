@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 	"github.com/sashabaranov/go-openai"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -36,7 +36,7 @@ import (
 type AiAgentService struct {
 	aiV1.UnimplementedAiAgentServiceServer
 
-	log           *log.Helper
+	log *logx.Helper
 	appRepo       *data.AiAgentAppRepo
 	runRepo       *data.AiAgentRunRepo
 	providerRepo  *data.AiProviderRepo
@@ -56,7 +56,7 @@ func NewAiAgentService(
 	rdb *redis.Client,
 ) *AiAgentService {
 	return &AiAgentService{
-		log:           ctx.NewLoggerHelper("ai-agent/service/core-service"),
+		log:           logx.New(ctx.NewLoggerHelper("ai-agent/service/core-service")),
 		appRepo:       appRepo,
 		runRepo:       runRepo,
 		providerRepo:  providerRepo,

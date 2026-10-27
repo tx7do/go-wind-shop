@@ -1,25 +1,19 @@
-﻿package client
+package client
 
 import (
-	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	redisClient "github.com/tx7do/kratos-bootstrap/cache/redis"
+	"github.com/redis/go-redis/v9"
+	"go-wind-shop/pkg/logx"
+	"go-wind-shop/pkg/redisx"
 )
 
-// NewRedisClient 创建Redis客户端
+// NewRedisClient 创建 Redis 客户端
 func NewRedisClient(ctx *bootstrap.Context) (*redis.Client, func(), error) {
+	l := logx.New(ctx.NewLoggerHelper("redis/data/core-service"))
 	cfg := ctx.GetConfig()
-	if cfg == nil {
+	if cfg == nil || cfg.Data == nil {
 		return nil, func() {}, nil
 	}
-
-	l := ctx.NewLoggerHelper("redis/data/core-service")
-
-	cli := redisClient.NewClient(cfg.Data, l)
-
-	return cli, func() {
-		if err := cli.Close(); err != nil {
-			l.Error(err)
-		}
-	}, nil
+	cli := redisx.NewClient(cfg.Data, l)
+	return cli, func() { _ = cli.Close() }, nil
 }

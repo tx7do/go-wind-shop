@@ -1,9 +1,8 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -18,13 +17,13 @@ import (
 type FileService struct {
 	adminV1.FileServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	fileServiceClient storageV1.FileServiceClient
 }
 
 func NewFileService(ctx *bootstrap.Context, fileServiceClient storageV1.FileServiceClient) *FileService {
-	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "file/service/admin-service"))
+	l := logx.NewFromLogger(ctx.GetLogger().With("module", "file/service/admin-service"))
 	return &FileService{
 		log:               l,
 		fileServiceClient: fileServiceClient,

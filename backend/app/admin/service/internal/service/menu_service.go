@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -18,14 +18,14 @@ import (
 type MenuService struct {
 	adminV1.MenuServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	menuServiceClient permissionV1.MenuServiceClient
 }
 
 func NewMenuService(ctx *bootstrap.Context, menuServiceClient permissionV1.MenuServiceClient) *MenuService {
 	return &MenuService{
-		log:               ctx.NewLoggerHelper("menu/service/admin-service"),
+		log:               logx.New(ctx.NewLoggerHelper("menu/service/admin-service")),
 		menuServiceClient: menuServiceClient,
 	}
 }

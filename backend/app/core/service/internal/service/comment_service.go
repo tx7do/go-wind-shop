@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -16,14 +16,14 @@ import (
 type CommentService struct {
 	commentV1.UnimplementedCommentServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	repo *data.CommentRepo
 }
 
 func NewCommentService(ctx *bootstrap.Context, repo *data.CommentRepo) *CommentService {
 	return &CommentService{
-		log:  ctx.NewLoggerHelper("comment/service/core-service"),
+		log:  logx.New(ctx.NewLoggerHelper("comment/service/core-service")),
 		repo: repo,
 	}
 }

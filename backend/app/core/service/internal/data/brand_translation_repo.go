@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -23,7 +23,7 @@ import (
 
 type BrandTranslationRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.BrandTranslation, ent.BrandTranslation]
 
@@ -41,7 +41,7 @@ func NewBrandTranslationRepo(ctx *bootstrap.Context, entClient *entCrud.EntClien
 	repo := &BrandTranslationRepo{
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[catalogV1.BrandTranslation, ent.BrandTranslation](),
-		log:       ctx.NewLoggerHelper("brand-translation/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("brand-translation/repo/core-service")),
 	}
 
 	repo.init()

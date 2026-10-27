@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -21,7 +21,7 @@ type RedisCacheMonitorService struct {
 	redisCacheV1.UnimplementedRedisCacheMonitorServiceServer
 
 	rdb *redis.Client
-	log *log.Helper
+	log *logx.Helper
 }
 
 func NewRedisCacheMonitorService(
@@ -30,7 +30,7 @@ func NewRedisCacheMonitorService(
 ) *RedisCacheMonitorService {
 	return &RedisCacheMonitorService{
 		rdb: rdb,
-		log: ctx.NewLoggerHelper("redis-cache-monitor/service/core-service"),
+		log: logx.New(ctx.NewLoggerHelper("redis-cache-monitor/service/core-service")),
 	}
 }
 

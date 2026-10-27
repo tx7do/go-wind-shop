@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
@@ -16,12 +16,12 @@ type AiQueryService struct {
 	adminV1.AiQueryServiceHTTPServer
 
 	aiQueryServiceClient aiV1.AiQueryServiceClient
-	log                  *log.Helper
+	log *logx.Helper
 }
 
 func NewAiQueryService(ctx *bootstrap.Context, aiQueryServiceClient aiV1.AiQueryServiceClient) *AiQueryService {
 	return &AiQueryService{
-		log:                  ctx.NewLoggerHelper("ai_query/service/admin-service"),
+		log:                  logx.New(ctx.NewLoggerHelper("ai_query/service/admin-service")),
 		aiQueryServiceClient: aiQueryServiceClient,
 	}
 }

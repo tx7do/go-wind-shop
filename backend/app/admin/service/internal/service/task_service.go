@@ -1,9 +1,8 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -19,7 +18,7 @@ import (
 type TaskService struct {
 	adminV1.TaskServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	taskServiceClient taskV1.TaskServiceClient
 }
@@ -28,7 +27,7 @@ func NewTaskService(
 	ctx *bootstrap.Context,
 	taskServiceClient taskV1.TaskServiceClient,
 ) *TaskService {
-	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "task/service/admin-service"))
+	l := logx.NewFromLogger(ctx.GetLogger().With("module", "task/service/admin-service"))
 	return &TaskService{
 		log:               l,
 		taskServiceClient: taskServiceClient,

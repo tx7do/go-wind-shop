@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -16,14 +16,14 @@ import (
 type InvoiceService struct {
 	invoiceV1.UnimplementedInvoiceServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	repo *data.InvoiceRepo
 }
 
 func NewInvoiceService(ctx *bootstrap.Context, repo *data.InvoiceRepo) *InvoiceService {
 	return &InvoiceService{
-		log:  ctx.NewLoggerHelper("invoice/service/core-service"),
+		log:  logx.New(ctx.NewLoggerHelper("invoice/service/core-service")),
 		repo: repo,
 	}
 }

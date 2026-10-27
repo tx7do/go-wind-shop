@@ -1,9 +1,9 @@
 package service
 
 import (
+	"go-wind-shop/pkg/logx"
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/aggregator"
 	"github.com/tx7do/go-utils/trans"
@@ -20,7 +20,7 @@ import (
 type TenantService struct {
 	identityV1.UnimplementedTenantServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	tenantRepo          *data.TenantRepo
 	userRepo            data.UserRepo
@@ -36,7 +36,7 @@ func NewTenantService(
 	roleRepo *data.RoleRepo,
 ) *TenantService {
 	return &TenantService{
-		log:                 ctx.NewLoggerHelper("tenant/service/core-service"),
+		log:                 logx.New(ctx.NewLoggerHelper("tenant/service/core-service")),
 		tenantRepo:          tenantRepo,
 		userRepo:            userRepo,
 		userCredentialsRepo: userCredentialsRepo,

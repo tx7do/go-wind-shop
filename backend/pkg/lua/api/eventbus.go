@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	lua "github.com/yuin/gopher-lua"
 
 	"go-wind-shop/pkg/eventbus"
@@ -16,7 +16,7 @@ import (
 type LuaEventHandler struct {
 	L        *lua.LState
 	function *lua.LFunction
-	logger   *log.Helper
+	logger *logx.Helper
 	mu       sync.Mutex
 }
 
@@ -61,7 +61,7 @@ func (h *LuaEventHandler) Handle(ctx context.Context, event *eventbus.Event) err
 }
 
 // RegisterEventBus registers the EventBus API for Lua
-func RegisterEventBus(L *lua.LState, manager *eventbus.Manager, logger *log.Helper) {
+func RegisterEventBus(L *lua.LState, manager *eventbus.Manager, logger *logx.Helper) {
 	// Store manager in registry for later access (kept as internal global)
 	L.SetGlobal("_eventbus_manager", lua.LString("internal"))
 

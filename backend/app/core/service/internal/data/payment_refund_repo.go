@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -23,7 +23,7 @@ import (
 
 type PaymentRefundRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[paymentV1.PaymentRefund, ent.PaymentRefund]
 
@@ -41,7 +41,7 @@ type PaymentRefundRepo struct {
 
 func NewPaymentRefundRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *PaymentRefundRepo {
 	repo := &PaymentRefundRepo{
-		log:             ctx.NewLoggerHelper("payment-refund/repo/core-service"),
+		log:             logx.New(ctx.NewLoggerHelper("payment-refund/repo/core-service")),
 		entClient:       entClient,
 		mapper:          mapper.NewCopierMapper[paymentV1.PaymentRefund, ent.PaymentRefund](),
 		statusConverter: mapper.NewEnumTypeConverter[paymentV1.PaymentRefund_Status, paymentrefund.Status](paymentV1.PaymentRefund_Status_name, paymentV1.PaymentRefund_Status_value),

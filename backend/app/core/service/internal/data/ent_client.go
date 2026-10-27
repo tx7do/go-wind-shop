@@ -2,6 +2,7 @@ package data
 
 import (
 	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 
 	"entgo.io/ent/dialect/sql"
 
@@ -21,7 +22,7 @@ import (
 
 // NewEntClient 创建Ent ORM数据库客户端
 func NewEntClient(ctx *bootstrap.Context) (*entCrud.EntClient[*ent.Client], func(), error) {
-	l := ctx.NewLoggerHelper("ent/data/core-service")
+	l := logx.New(ctx.NewLoggerHelper("ent/data/core-service"))
 
 	cfg := ctx.GetConfig()
 	if cfg == nil || cfg.Data == nil {

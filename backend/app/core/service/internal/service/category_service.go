@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -16,14 +16,14 @@ import (
 type CategoryService struct {
 	catalogV1.UnimplementedCategoryServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	repo *data.CategoryRepo
 }
 
 func NewCategoryService(ctx *bootstrap.Context, repo *data.CategoryRepo) *CategoryService {
 	return &CategoryService{
-		log:  ctx.NewLoggerHelper("category/service/core-service"),
+		log:  logx.New(ctx.NewLoggerHelper("category/service/core-service")),
 		repo: repo,
 	}
 }

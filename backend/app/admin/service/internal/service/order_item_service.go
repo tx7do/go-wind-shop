@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -18,7 +18,7 @@ import (
 type OrderItemService struct {
 	adminV1.OrderItemServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	orderItemServiceClient orderV1.OrderItemServiceClient
 }
@@ -28,7 +28,7 @@ func NewOrderItemService(
 	orderItemServiceClient orderV1.OrderItemServiceClient,
 ) *OrderItemService {
 	return &OrderItemService{
-		log:                    ctx.NewLoggerHelper("order-item/service/admin-service"),
+		log:                    logx.New(ctx.NewLoggerHelper("order-item/service/admin-service")),
 		orderItemServiceClient: orderItemServiceClient,
 	}
 }

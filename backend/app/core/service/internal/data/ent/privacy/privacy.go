@@ -1743,6 +1743,54 @@ func (f RolePermissionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.RolePermissionMutation", m)
 }
 
+// The ScriptQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ScriptQueryRuleFunc func(context.Context, *ent.ScriptQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ScriptQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ScriptQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ScriptQuery", q)
+}
+
+// The ScriptMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ScriptMutationRuleFunc func(context.Context, *ent.ScriptMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ScriptMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ScriptMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ScriptMutation", m)
+}
+
+// The ScriptLogQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ScriptLogQueryRuleFunc func(context.Context, *ent.ScriptLogQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ScriptLogQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ScriptLogQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ScriptLogQuery", q)
+}
+
+// The ScriptLogMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ScriptLogMutationRuleFunc func(context.Context, *ent.ScriptLogMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ScriptLogMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ScriptLogMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ScriptLogMutation", m)
+}
+
 // The ShipmentQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type ShipmentQueryRuleFunc func(context.Context, *ent.ShipmentQuery) error
@@ -2346,6 +2394,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.RolePermissionQuery:
 		return q.Filter(), nil
+	case *ent.ScriptQuery:
+		return q.Filter(), nil
+	case *ent.ScriptLogQuery:
+		return q.Filter(), nil
 	case *ent.ShipmentQuery:
 		return q.Filter(), nil
 	case *ent.ShippingAddressQuery:
@@ -2524,6 +2576,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.RoleMetadataMutation:
 		return m.Filter(), nil
 	case *ent.RolePermissionMutation:
+		return m.Filter(), nil
+	case *ent.ScriptMutation:
+		return m.Filter(), nil
+	case *ent.ScriptLogMutation:
 		return m.Filter(), nil
 	case *ent.ShipmentMutation:
 		return m.Filter(), nil

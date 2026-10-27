@@ -24,6 +24,7 @@ import (
 	invoiceV1 "go-wind-shop/api/gen/go/invoice/service/v1"
 	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
 	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
+	scriptV1 "go-wind-shop/api/gen/go/script/service/v1"
 	configV1 "go-wind-shop/api/gen/go/config/service/v1"
 	monitorAlertV1 "go-wind-shop/api/gen/go/monitor_alert/service/v1"
 	onlineSessionV1 "go-wind-shop/api/gen/go/online_session/service/v1"
@@ -40,12 +41,13 @@ import (
 	shippingV1 "go-wind-shop/api/gen/go/shipping/service/v1"
 	taxV1 "go-wind-shop/api/gen/go/tax/service/v1"
 
+	"go-wind-shop/pkg/logx"
 	"go-wind-shop/pkg/middleware/ent"
 )
 
 func NewGrpcMiddleware(ctx *bootstrap.Context) []middleware.Middleware {
 	var ms []middleware.Middleware
-	ms = append(ms, logging.Server(ctx.GetLogger()))
+	ms = append(ms, logging.Server(logx.AsKratos(ctx.GetLogger())))
 	ms = append(ms, ent.Server())
 	return ms
 }
@@ -78,6 +80,8 @@ func NewGrpcServer(
 	aiKnowledgeService *service.AiKnowledgeService,
 	aiUsageLogService *service.AiUsageLogService,
 	aiQueryService *service.AiQueryService,
+	scriptService *service.ScriptService,
+	scriptLogService *service.ScriptLogService,
 	userCredentialService *service.UserCredentialService,
 
 	taskService *service.TaskService,
@@ -241,6 +245,8 @@ func NewGrpcServer(
 	aiV1.RegisterAiKnowledgeBaseServiceServer(srv, aiKnowledgeService)
 	aiV1.RegisterAiUsageLogServiceServer(srv, aiUsageLogService)
 	aiV1.RegisterAiQueryServiceServer(srv, aiQueryService)
+	scriptV1.RegisterScriptServiceServer(srv, scriptService)
+	scriptV1.RegisterScriptLogServiceServer(srv, scriptLogService)
 
 	// register:grpc-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 

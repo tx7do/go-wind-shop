@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -22,7 +22,7 @@ import (
 
 type PermissionAuditLogRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper              *mapper.CopierMapper[auditV1.PermissionAuditLog, ent.PermissionAuditLog]
 	actionTypeConverter *mapper.EnumTypeConverter[auditV1.PermissionAuditLog_ActionType, permissionauditlog.Action]
@@ -39,7 +39,7 @@ type PermissionAuditLogRepo struct {
 
 func NewPermissionAuditLogRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *PermissionAuditLogRepo {
 	repo := &PermissionAuditLogRepo{
-		log:       ctx.NewLoggerHelper("permission-audit-log/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("permission-audit-log/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[auditV1.PermissionAuditLog, ent.PermissionAuditLog](),
 		actionTypeConverter: mapper.NewEnumTypeConverter[auditV1.PermissionAuditLog_ActionType, permissionauditlog.Action](

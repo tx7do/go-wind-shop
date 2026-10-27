@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -23,14 +23,14 @@ import (
 type OnlineSessionService struct {
 	onlineSessionV1.UnimplementedOnlineSessionServiceServer
 
-	log           *log.Helper
+	log *logx.Helper
 	authenticator *data.Authenticator
 }
 
 // NewOnlineSessionService 构造（authenticator 持有会话元数据的读写与吊销）。
 func NewOnlineSessionService(ctx *bootstrap.Context, authenticator *data.Authenticator) *OnlineSessionService {
 	return &OnlineSessionService{
-		log:           ctx.NewLoggerHelper("online-session/service/core-service"),
+		log:           logx.New(ctx.NewLoggerHelper("online-session/service/core-service")),
 		authenticator: authenticator,
 	}
 }

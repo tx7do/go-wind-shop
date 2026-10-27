@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -21,7 +21,7 @@ import (
 // 本仓无套餐配额体系，Summary 的 quota 字段恒 false/0。
 type AiUsageLogService struct {
 	aiV1.UnimplementedAiUsageLogServiceServer
-	log  *log.Helper
+	log *logx.Helper
 	repo *data.AiUsageLogRepo
 
 	providerRepo *data.AiProviderRepo
@@ -29,7 +29,7 @@ type AiUsageLogService struct {
 
 func NewAiUsageLogService(ctx *bootstrap.Context, repo *data.AiUsageLogRepo, providerRepo *data.AiProviderRepo) *AiUsageLogService {
 	return &AiUsageLogService{
-		log:          ctx.NewLoggerHelper("ai_usage_log/service/core-service"),
+		log:          logx.New(ctx.NewLoggerHelper("ai_usage_log/service/core-service")),
 		repo:         repo,
 		providerRepo: providerRepo,
 	}

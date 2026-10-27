@@ -1,11 +1,10 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 	"encoding/json"
 	"errors"
 
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/hibiken/asynq"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
@@ -36,7 +35,7 @@ type TaskScheduler interface {
 type TaskService struct {
 	taskV1.UnimplementedTaskServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	taskScheduler TaskScheduler
 
@@ -50,7 +49,7 @@ func NewTaskService(
 	userRepo data.UserRepo,
 ) *TaskService {
 	svc := &TaskService{
-		log:      ctx.NewLoggerHelper("task/service/core-service"),
+		log:      logx.New(ctx.NewLoggerHelper("task/service/core-service")),
 		taskRepo: taskRepo,
 		userRepo: userRepo,
 	}

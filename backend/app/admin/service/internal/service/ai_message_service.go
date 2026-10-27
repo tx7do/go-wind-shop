@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -18,12 +18,12 @@ type AiMessageService struct {
 	adminV1.AiMessageServiceHTTPServer
 
 	aiMessageServiceClient aiV1.AiMessageServiceClient
-	log                    *log.Helper
+	log *logx.Helper
 }
 
 func NewAiMessageService(ctx *bootstrap.Context, aiMessageServiceClient aiV1.AiMessageServiceClient) *AiMessageService {
 	return &AiMessageService{
-		log:                    ctx.NewLoggerHelper("ai_message/service/admin-service"),
+		log:                    logx.New(ctx.NewLoggerHelper("ai_message/service/admin-service")),
 		aiMessageServiceClient: aiMessageServiceClient,
 	}
 }

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 )
@@ -49,14 +49,14 @@ var incrIfNotLockedScript = redis.NewScript(`
 // AccessKeyRateLimiter 基于 Redis 的令牌交换失败计数器，按 IP 与 AK 双维度限流。
 // Redis 不可用时 fail-open（限流属防御性增强，不应让 Redis 故障阻断合法机器调用）。
 type AccessKeyRateLimiter struct {
-	log *log.Helper
+	log *logx.Helper
 	rdb *redis.Client
 }
 
 func NewAccessKeyRateLimiter(ctx *bootstrap.Context, rdb *redis.Client) *AccessKeyRateLimiter {
 	return &AccessKeyRateLimiter{
 		rdb: rdb,
-		log: ctx.NewLoggerHelper("access-key/rate-limiter/core-service"),
+		log: logx.New(ctx.NewLoggerHelper("access-key/rate-limiter/core-service")),
 	}
 }
 

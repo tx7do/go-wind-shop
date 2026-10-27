@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -15,13 +15,13 @@ import (
 )
 
 type PermissionMenuRepo struct {
-	log       *log.Helper
+	log *logx.Helper
 	entClient *entCrud.EntClient[*ent.Client]
 }
 
 func NewPermissionMenuRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *PermissionMenuRepo {
 	return &PermissionMenuRepo{
-		log:       ctx.NewLoggerHelper("permission-menu/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("permission-menu/repo/core-service")),
 		entClient: entClient,
 	}
 }

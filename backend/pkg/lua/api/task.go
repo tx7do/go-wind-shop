@@ -1,14 +1,14 @@
 package api
 
 import (
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	lua "github.com/yuin/gopher-lua"
 )
 
 // TaskHandlerRegistry stores Lua-based task handlers
 type TaskHandlerRegistry struct {
 	handlers map[string]*LuaTaskHandler
-	logger   *log.Helper
+	logger *logx.Helper
 	engine   VMManager
 }
 
@@ -35,7 +35,7 @@ var globalTaskRegistry = &TaskHandlerRegistry{
 }
 
 // RegisterTask registers the task API for Lua scripts
-func RegisterTask(L *lua.LState, engine VMManager, logger *log.Helper) {
+func RegisterTask(L *lua.LState, engine VMManager, logger *logx.Helper) {
 	globalTaskRegistry.logger = logger
 	globalTaskRegistry.engine = engine
 

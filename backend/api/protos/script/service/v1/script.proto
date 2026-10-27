@@ -1,0 +1,203 @@
+syntax = "proto3";
+
+package script.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 脚本管理服务
+service ScriptService {
+  // 分页查询脚本列表
+  rpc List (pagination.PagingRequest) returns (ListScriptsResponse) {}
+
+  // 统计脚本数量
+  rpc Count (pagination.PagingRequest) returns (CountScriptsResponse) {}
+
+  // 查询脚本详情
+  rpc Get (GetScriptRequest) returns (Script) {}
+
+  // 创建脚本
+  rpc Create (CreateScriptRequest) returns (google.protobuf.Empty) {}
+
+  // 更新脚本
+  rpc Update (UpdateScriptRequest) returns (google.protobuf.Empty) {}
+
+  // 删除脚本
+  rpc Delete (DeleteScriptRequest) returns (google.protobuf.Empty) {}
+
+  // 试运行脚本（已保存按 id，或直接运行草稿）
+  rpc TestRun (TestRunScriptRequest) returns (TestRunScriptResponse) {}
+
+  // 列出全部已注册的钩子点
+  rpc ListHookPoints (google.protobuf.Empty) returns (ListHookPointsResponse) {}
+}
+
+// 脚本语言
+enum Language {
+  // Lua（gopher-lua，沙箱完整，推荐）
+  LUA = 0;
+  // JavaScript（goja，无沙箱，仅限平台管理员使用）
+  JAVASCRIPT = 1;
+}
+
+// 脚本
+message Script {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {
+      description: "脚本ID"
+    }
+  ]; // 脚本ID
+
+  optional string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "脚本唯一名称，如 user_after_create_notify"}
+  ]; // 脚本唯一名称
+
+  optional Language language = 3 [
+    json_name = "language",
+    (gnostic.openapi.v3.property) = {description: "脚本语言"}
+  ]; // 脚本语言
+
+  optional string hook_point = 4 [
+    json_name = "hookPoint",
+    (gnostic.openapi.v3.property) = {description: "挂载的钩子点名称，空表示未挂载（仅可试运行）"}
+  ]; // 挂载的钩子点
+
+  optional string source = 5 [
+    json_name = "source",
+    (gnostic.openapi.v3.property) = {description: "脚本源码"}
+  ]; // 脚本源码
+
+  optional int32 priority = 6 [
+    json_name = "priority",
+    (gnostic.openapi.v3.property) = {description: "执行优先级，越小越先执行"}
+  ]; // 执行优先级
+
+  optional string description = 7 [
+    json_name = "description",
+    (gnostic.openapi.v3.property) = {description: "脚本用途说明"}
+  ]; // 脚本用途说明
+
+  optional bool critical = 8 [
+    json_name = "critical",
+    (gnostic.openapi.v3.property) = {description: "关键脚本：执行失败时中断钩子链"}
+  ]; // 关键脚本
+
+  optional uint32 version = 9 [
+    json_name = "version",
+    (gnostic.openapi.v3.property) = {description: "版本号，每次更新自增（热更新指纹）"}
+  ]; // 版本号
+
+  optional bool is_enabled = 10 [
+    json_name = "isEnabled",
+    (gnostic.openapi.v3.property) = {description: "是否启用"}
+  ]; // 是否启用
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];// 删除时间
+}
+
+// 查询脚本列表 - 回应
+message ListScriptsResponse {
+  repeated Script items = 1;
+  uint64 total = 2;
+}
+
+// 查询脚本详情 - 请求
+message GetScriptRequest {
+  oneof query_by {
+    uint32 id = 1;
+    string name = 2;
+  }
+
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {
+      description: "视图字段过滤器，用于控制返回的字段"
+    }
+  ]; // 视图字段过滤器，用于控制返回的字段
+}
+
+// 创建脚本 - 请求
+message CreateScriptRequest {
+  Script data = 1;
+}
+
+// 更新脚本 - 请求
+message UpdateScriptRequest {
+  uint32 id = 1;
+
+  Script data = 2;
+
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {
+      description: "要更新的字段列表",
+      example: {yaml : "name,source,is_enabled"}
+    },
+    json_name = "updateMask"
+  ]; // 要更新的字段列表
+
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。"},
+    json_name = "allowMissing"
+  ]; // 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+}
+
+// 删除脚本 - 请求
+message DeleteScriptRequest {
+  repeated uint32 ids = 1;  // 要删除的ID列表
+}
+
+// 试运行脚本 - 请求
+message TestRunScriptRequest {
+  oneof target {
+    // 运行已保存的脚本
+    uint32 id = 1;
+    // 运行未保存的草稿（name/language/source 必填）
+    Script draft = 2;
+  }
+
+  // 执行上下文初始数据（值以 JSON 字符串提供）
+  map<string, string> input = 3 [
+    json_name = "input",
+    (gnostic.openapi.v3.property) = {description: "执行上下文初始数据，值以 JSON 字符串提供"}
+  ]; // 执行上下文初始数据
+}
+
+// 试运行脚本 - 回应
+message TestRunScriptResponse {
+  bool success = 1;          // 是否执行成功
+  string error = 2;          // 失败原因（success=false 时有值）
+  // 上下文数据快照（键值均以 JSON 字符串编码）
+  map<string, string> context = 3;
+  int64 duration_ms = 4;     // 执行耗时（毫秒）
+}
+
+// 钩子点
+message HookPoint {
+  string name = 1;           // 钩子点名称
+  string description = 2;    // 描述
+  uint32 script_count = 3;   // 挂载的脚本数量（含回调）
+}
+
+// 列出钩子点 - 回应
+message ListHookPointsResponse {
+  repeated HookPoint items = 1;
+  // 引擎支持的语言列表（如 lua / javascript）
+  repeated string languages = 2;
+}
+
+message CountScriptsResponse {
+  uint64 count = 1;  // 脚本数量
+}

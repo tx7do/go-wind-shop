@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+package script.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 脚本执行日志服务（只读 + 清理）
+service ScriptLogService {
+  // 分页查询脚本执行日志
+  rpc List (pagination.PagingRequest) returns (ListScriptLogsResponse) {}
+
+  // 统计脚本执行日志数量
+  rpc Count (pagination.PagingRequest) returns (CountScriptLogsResponse) {}
+
+  // 清理指定时间之前的日志
+  rpc Purge (PurgeScriptLogsRequest) returns (PurgeScriptLogsResponse) {}
+}
+
+// 脚本执行日志
+message ScriptLog {
+  optional uint32 id = 1 [
+    json_name = "id",
+    (gnostic.openapi.v3.property) = {
+      description: "日志ID"
+    }
+  ]; // 日志ID
+
+  optional uint32 script_id = 2 [
+    json_name = "scriptId",
+    (gnostic.openapi.v3.property) = {description: "脚本ID，试运行草稿为 0"}
+  ]; // 脚本ID
+
+  optional string script_name = 3 [
+    json_name = "scriptName",
+    (gnostic.openapi.v3.property) = {description: "脚本名称"}
+  ]; // 脚本名称
+
+  optional string language = 4 [
+    json_name = "language",
+    (gnostic.openapi.v3.property) = {description: "脚本语言"}
+  ]; // 脚本语言
+
+  optional string trigger_type = 5 [
+    json_name = "triggerType",
+    (gnostic.openapi.v3.property) = {description: "触发方式（hook/task/test_run）"}
+  ]; // 触发方式
+
+  optional string hook_point = 6 [
+    json_name = "hookPoint",
+    (gnostic.openapi.v3.property) = {description: "钩子点或任务类型"}
+  ]; // 钩子点或任务类型
+
+  optional uint32 version = 7 [
+    json_name = "version",
+    (gnostic.openapi.v3.property) = {description: "执行时的脚本版本"}
+  ]; // 执行时的脚本版本
+
+  optional bool success = 8 [
+    json_name = "success",
+    (gnostic.openapi.v3.property) = {description: "是否执行成功"}
+  ]; // 是否执行成功
+
+  optional int64 duration_ms = 9 [
+    json_name = "durationMs",
+    (gnostic.openapi.v3.property) = {description: "执行耗时（毫秒）"}
+  ]; // 执行耗时（毫秒）
+
+  optional string error = 10 [
+    json_name = "error",
+    (gnostic.openapi.v3.property) = {description: "失败原因（成功为空）"}
+  ]; // 失败原因
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "执行时间"}]; // 执行时间
+}
+
+// 查询脚本执行日志列表 - 回应
+message ListScriptLogsResponse {
+  repeated ScriptLog items = 1;
+  uint64 total = 2;
+}
+
+message CountScriptLogsResponse {
+  uint64 count = 1;  // 日志数量
+}
+
+// 清理日志 - 请求（删除 created_at 早于 before 的日志）
+message PurgeScriptLogsRequest {
+  google.protobuf.Timestamp before = 1 [
+    json_name = "before",
+    (gnostic.openapi.v3.property) = {description: "删除该时间之前的日志"}
+  ]; // 清理阈值
+}
+
+// 清理日志 - 回应
+message PurgeScriptLogsResponse {
+  uint64 deleted = 1;  // 删除的日志条数
+}

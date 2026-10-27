@@ -1,13 +1,13 @@
 package data
 
 import (
+	"go-wind-shop/pkg/logx"
 	"context"
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
 	"strings"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -26,7 +26,7 @@ import (
 
 type DictEntryRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[dictV1.DictEntry, ent.DictEntry]
 
@@ -48,7 +48,7 @@ func NewDictEntryRepo(
 	i18n *DictEntryI18nRepo,
 ) *DictEntryRepo {
 	repo := &DictEntryRepo{
-		log:       ctx.NewLoggerHelper("dict-entry/repo/admin-service"),
+		log:       logx.New(ctx.NewLoggerHelper("dict-entry/repo/admin-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[dictV1.DictEntry, ent.DictEntry](),
 		i18n:      i18n,

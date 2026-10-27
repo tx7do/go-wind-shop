@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/go-utils/trans"
@@ -33,7 +33,7 @@ type AuthenticationService struct {
 	codeStore *resetcode.Store
 	emailer   *email.Sender
 
-	log *log.Helper
+	log *logx.Helper
 }
 
 func NewAuthenticationService(
@@ -43,7 +43,7 @@ func NewAuthenticationService(
 	userCredentialServiceClient authenticationV1.UserCredentialServiceClient,
 	rdb *redis.Client,
 ) *AuthenticationService {
-	helper := ctx.NewLoggerHelper("authn/service/app-service")
+	helper := logx.New(ctx.NewLoggerHelper("authn/service/app-service"))
 	return &AuthenticationService{
 		log:                         helper,
 		authenticationServiceClient: authenticationServiceClient,

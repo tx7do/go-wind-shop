@@ -1,13 +1,12 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 	"fmt"
 	"path/filepath"
 	"strings"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/sashabaranov/go-openai"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/doctext"
@@ -38,7 +37,7 @@ const (
 // 操作者身份经 viewer 上下文（unary 中间件注入）获取。
 type AiKnowledgeService struct {
 	aiV1.UnimplementedAiKnowledgeBaseServiceServer
-	log  *log.Helper
+	log *logx.Helper
 	repo *data.AiKnowledgeRepo
 
 	providerRepo *data.AiProviderRepo
@@ -54,7 +53,7 @@ func NewAiKnowledgeService(
 	taskService *TaskService,
 ) *AiKnowledgeService {
 	s := &AiKnowledgeService{
-		log:          ctx.NewLoggerHelper("ai_knowledge/service/core-service"),
+		log:          logx.New(ctx.NewLoggerHelper("ai_knowledge/service/core-service")),
 		repo:         repo,
 		providerRepo: providerRepo,
 		usageLogRepo: usageLogRepo,
@@ -297,7 +296,7 @@ func (s *AiKnowledgeService) Search(ctx context.Context, req *aiV1.SearchAiKnowl
 // searchKnowledgeBase 包级检索：向量化 query 并按余弦相似度取 topK 片段。
 // tenantId=0（平台用户）可检索任意库，租户用户经 SQL 的 tenant 过滤兜底；
 // chat 主链路（RAG 注入）与本 service 共用。向量化消耗记入用量流水。
-func searchKnowledgeBase(ctx context.Context, knowledgeRepo *data.AiKnowledgeRepo, providerRepo *data.AiProviderRepo, usageLogRepo *data.AiUsageLogRepo, log *log.Helper, userId, tenantId uint32, baseId uint32, query string, topK int) ([]*data.ChunkHit, error) {
+func searchKnowledgeBase(ctx context.Context, knowledgeRepo *data.AiKnowledgeRepo, providerRepo *data.AiProviderRepo, usageLogRepo *data.AiUsageLogRepo, log *logx.Helper, userId, tenantId uint32, baseId uint32, query string, topK int) ([]*data.ChunkHit, error) {
 	base, err := knowledgeRepo.GetEntityByID(ctx, baseId)
 	if err != nil {
 		return nil, err
@@ -314,7 +313,7 @@ func searchKnowledgeBase(ctx context.Context, knowledgeRepo *data.AiKnowledgeRep
 // ── 向量化 ─────────────────────────────────────────────────────────
 
 // embedOneForBase 单文本向量化，返回 pgvector 字面量（包级，供检索与 chat 复用）。
-func embedOneForBase(ctx context.Context, providerRepo *data.AiProviderRepo, usageLogRepo *data.AiUsageLogRepo, log *log.Helper, userId, tenantId uint32, base *ent.AiKnowledgeBase, text string) (string, error) {
+func embedOneForBase(ctx context.Context, providerRepo *data.AiProviderRepo, usageLogRepo *data.AiUsageLogRepo, log *logx.Helper, userId, tenantId uint32, base *ent.AiKnowledgeBase, text string) (string, error) {
 	vectors, err := embedTextsForBase(ctx, providerRepo, usageLogRepo, log, userId, tenantId, base, []string{text})
 	if err != nil {
 		return "", err
@@ -324,7 +323,7 @@ func embedOneForBase(ctx context.Context, providerRepo *data.AiProviderRepo, usa
 
 // embedTextsForBase 批量向量化，返回与 texts 对齐的 pgvector 字面量数组。
 // embedding 消耗与 chat 同口径记入用量流水；记量失败不阻断向量化，仅记日志。
-func embedTextsForBase(ctx context.Context, providerRepo *data.AiProviderRepo, usageLogRepo *data.AiUsageLogRepo, log *log.Helper, userId, tenantId uint32, base *ent.AiKnowledgeBase, texts []string) ([]string, error) {
+func embedTextsForBase(ctx context.Context, providerRepo *data.AiProviderRepo, usageLogRepo *data.AiUsageLogRepo, log *logx.Helper, userId, tenantId uint32, base *ent.AiKnowledgeBase, texts []string) ([]string, error) {
 	provider, err := providerRepo.GetEntityByID(ctx, derefUint32(base.ProviderID))
 	if err != nil {
 		return nil, err

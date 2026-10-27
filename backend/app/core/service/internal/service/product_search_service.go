@@ -4,7 +4,7 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"go-wind-shop/app/core/service/internal/data"
@@ -35,7 +35,7 @@ import (
 // ============================================================================
 
 type ProductSearchService struct {
-	log                *log.Helper
+	log *logx.Helper
 	productSearchRepo  *data.ProductSearchRepo
 	productRepo        *data.ProductRepo
 }
@@ -46,7 +46,7 @@ func NewProductSearchService(
 	productRepo *data.ProductRepo,
 ) *ProductSearchService {
 	return &ProductSearchService{
-		log:               ctx.NewLoggerHelper("product-search/service/core-service"),
+		log:               logx.New(ctx.NewLoggerHelper("product-search/service/core-service")),
 		productSearchRepo: productSearchRepo,
 		productRepo:       productRepo,
 	}

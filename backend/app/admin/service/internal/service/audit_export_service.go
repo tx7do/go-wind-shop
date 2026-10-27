@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/xuri/excelize/v2"
@@ -51,7 +51,7 @@ type AuditExportService struct {
 	permissionClient       auditV1.PermissionAuditLogServiceClient
 	policyEvaluationClient permissionV1.PolicyEvaluationLogServiceClient
 	usageClient            aiV1.AiUsageLogServiceClient
-	log                    *log.Helper
+	log *logx.Helper
 
 	// tokenChecker 手动路由的鉴权锚：导出端点未设 Operation，auth 中间件的
 	// selector 不会应用（不会注入操作人），须自行验 Bearer token。
@@ -77,7 +77,7 @@ func NewAuditExportService(
 		permissionClient:       permissionClient,
 		policyEvaluationClient: policyEvaluationClient,
 		usageClient:            usageClient,
-		log:                    ctx.NewLoggerHelper("audit-export/service/admin-service"),
+		log:                    logx.New(ctx.NewLoggerHelper("audit-export/service/admin-service")),
 		tokenChecker:           tokenChecker,
 	}
 }

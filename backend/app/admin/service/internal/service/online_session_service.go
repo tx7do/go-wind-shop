@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -17,7 +17,7 @@ import (
 type OnlineSessionService struct {
 	adminV1.OnlineSessionServiceHTTPServer
 
-	log             *log.Helper
+	log *logx.Helper
 	onlineSessionCli onlineSessionV1.OnlineSessionServiceClient
 }
 
@@ -25,7 +25,7 @@ func NewOnlineSessionService(
 	ctx *bootstrap.Context,
 	onlineSessionCli onlineSessionV1.OnlineSessionServiceClient,
 ) *OnlineSessionService {
-	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "online-session/service/admin-service"))
+	l := logx.NewFromLogger(ctx.GetLogger().With("module", "online-session/service/admin-service"))
 	return &OnlineSessionService{
 		log:              l,
 		onlineSessionCli: onlineSessionCli,

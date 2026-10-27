@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -24,7 +24,7 @@ import (
 
 type TenantRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper               *mapper.CopierMapper[identityV1.Tenant, ent.Tenant]
 	statusConverter      *mapper.EnumTypeConverter[identityV1.Tenant_Status, tenant.Status]
@@ -43,7 +43,7 @@ type TenantRepo struct {
 
 func NewTenantRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *TenantRepo {
 	repo := &TenantRepo{
-		log:                  ctx.NewLoggerHelper("tenant/repo/core-service"),
+		log:                  logx.New(ctx.NewLoggerHelper("tenant/repo/core-service")),
 		entClient:            entClient,
 		mapper:               mapper.NewCopierMapper[identityV1.Tenant, ent.Tenant](),
 		statusConverter:      mapper.NewEnumTypeConverter[identityV1.Tenant_Status, tenant.Status](identityV1.Tenant_Status_name, identityV1.Tenant_Status_value),

@@ -24,7 +24,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/mailer"
 )
 
@@ -74,10 +74,10 @@ func (c Config) Configured() bool {
 // Sender 邮件发送器。
 type Sender struct {
 	cfg Config
-	log *log.Helper
+	log *logx.Helper
 }
 
-func NewSender(cfg Config, logger *log.Helper) *Sender {
+func NewSender(cfg Config, logger *logx.Helper) *Sender {
 	return &Sender{cfg: cfg, log: logger}
 }
 

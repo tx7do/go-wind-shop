@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	sse "github.com/tx7do/kratos-transport/transport/sse"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -25,7 +25,7 @@ type AiAgentService struct {
 	adminV1.AiAgentServiceHTTPServer
 
 	aiAgentServiceClient aiV1.AiAgentServiceClient
-	log                  *log.Helper
+	log *logx.Helper
 
 	agentRunPublisher AiAgentRunPublisher
 }
@@ -39,7 +39,7 @@ func (s *AiAgentService) RegisterAiAgentRunPublisher(p AiAgentRunPublisher) {
 
 func NewAiAgentService(ctx *bootstrap.Context, aiAgentServiceClient aiV1.AiAgentServiceClient) *AiAgentService {
 	return &AiAgentService{
-		log:                  ctx.NewLoggerHelper("ai-agent/service/admin-service"),
+		log:                  logx.New(ctx.NewLoggerHelper("ai-agent/service/admin-service")),
 		aiAgentServiceClient: aiAgentServiceClient,
 	}
 }

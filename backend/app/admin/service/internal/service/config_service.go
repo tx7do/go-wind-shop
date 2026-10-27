@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -20,7 +20,7 @@ import (
 type ConfigService struct {
 	adminV1.ConfigServiceHTTPServer
 
-	log           *log.Helper
+	log *logx.Helper
 	configServiceClient configV1.ConfigServiceClient
 }
 
@@ -28,7 +28,7 @@ func NewConfigService(
 	ctx *bootstrap.Context,
 	configServiceClient configV1.ConfigServiceClient,
 ) *ConfigService {
-	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "config/service/admin-service"))
+	l := logx.NewFromLogger(ctx.GetLogger().With("module", "config/service/admin-service"))
 	return &ConfigService{
 		log:                 l,
 		configServiceClient: configServiceClient,

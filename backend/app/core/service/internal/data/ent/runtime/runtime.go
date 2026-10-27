@@ -74,6 +74,8 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-shop/app/core/service/internal/data/ent/schema"
+	"go-wind-shop/app/core/service/internal/data/ent/script"
+	"go-wind-shop/app/core/service/internal/data/ent/scriptlog"
 	"go-wind-shop/app/core/service/internal/data/ent/shipment"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingaddress"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingrate"
@@ -1874,6 +1876,58 @@ func init() {
 	rolepermissionDescID := rolepermissionMixinFields0[0].Descriptor()
 	// rolepermission.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	rolepermission.IDValidator = rolepermissionDescID.Validators[0].(func(uint32) error)
+	scriptMixin := schema.Script{}.Mixin()
+	scriptMixinFields0 := scriptMixin[0].Fields()
+	_ = scriptMixinFields0
+	scriptMixinFields3 := scriptMixin[3].Fields()
+	_ = scriptMixinFields3
+	scriptFields := schema.Script{}.Fields()
+	_ = scriptFields
+	// scriptDescIsEnabled is the schema descriptor for is_enabled field.
+	scriptDescIsEnabled := scriptMixinFields3[0].Descriptor()
+	// script.DefaultIsEnabled holds the default value on creation for the is_enabled field.
+	script.DefaultIsEnabled = scriptDescIsEnabled.Default.(bool)
+	// scriptDescPriority is the schema descriptor for priority field.
+	scriptDescPriority := scriptFields[4].Descriptor()
+	// script.DefaultPriority holds the default value on creation for the priority field.
+	script.DefaultPriority = scriptDescPriority.Default.(int32)
+	// scriptDescCritical is the schema descriptor for critical field.
+	scriptDescCritical := scriptFields[6].Descriptor()
+	// script.DefaultCritical holds the default value on creation for the critical field.
+	script.DefaultCritical = scriptDescCritical.Default.(bool)
+	// scriptDescVersion is the schema descriptor for version field.
+	scriptDescVersion := scriptFields[7].Descriptor()
+	// script.DefaultVersion holds the default value on creation for the version field.
+	script.DefaultVersion = scriptDescVersion.Default.(uint32)
+	// scriptDescID is the schema descriptor for id field.
+	scriptDescID := scriptMixinFields0[0].Descriptor()
+	// script.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	script.IDValidator = scriptDescID.Validators[0].(func(uint32) error)
+	scriptlogMixin := schema.ScriptLog{}.Mixin()
+	scriptlogMixinFields0 := scriptlogMixin[0].Fields()
+	_ = scriptlogMixinFields0
+	scriptlogFields := schema.ScriptLog{}.Fields()
+	_ = scriptlogFields
+	// scriptlogDescScriptID is the schema descriptor for script_id field.
+	scriptlogDescScriptID := scriptlogFields[0].Descriptor()
+	// scriptlog.DefaultScriptID holds the default value on creation for the script_id field.
+	scriptlog.DefaultScriptID = scriptlogDescScriptID.Default.(uint32)
+	// scriptlogDescVersion is the schema descriptor for version field.
+	scriptlogDescVersion := scriptlogFields[5].Descriptor()
+	// scriptlog.DefaultVersion holds the default value on creation for the version field.
+	scriptlog.DefaultVersion = scriptlogDescVersion.Default.(uint32)
+	// scriptlogDescSuccess is the schema descriptor for success field.
+	scriptlogDescSuccess := scriptlogFields[6].Descriptor()
+	// scriptlog.DefaultSuccess holds the default value on creation for the success field.
+	scriptlog.DefaultSuccess = scriptlogDescSuccess.Default.(bool)
+	// scriptlogDescDurationMs is the schema descriptor for duration_ms field.
+	scriptlogDescDurationMs := scriptlogFields[7].Descriptor()
+	// scriptlog.DefaultDurationMs holds the default value on creation for the duration_ms field.
+	scriptlog.DefaultDurationMs = scriptlogDescDurationMs.Default.(int64)
+	// scriptlogDescID is the schema descriptor for id field.
+	scriptlogDescID := scriptlogMixinFields0[0].Descriptor()
+	// scriptlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	scriptlog.IDValidator = scriptlogDescID.Validators[0].(func(uint32) error)
 	shipmentMixin := schema.Shipment{}.Mixin()
 	shipment.Policy = privacy.NewPolicies(shipmentMixin[3], schema.Shipment{})
 	shipment.Hooks[0] = func(next ent.Mutator) ent.Mutator {

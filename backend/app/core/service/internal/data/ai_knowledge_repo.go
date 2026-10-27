@@ -8,7 +8,7 @@ import (
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -30,7 +30,7 @@ import (
 
 type AiKnowledgeRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[aiV1.AiKnowledgeBase, ent.AiKnowledgeBase]
 
@@ -46,7 +46,7 @@ type AiKnowledgeRepo struct {
 
 func NewAiKnowledgeRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *AiKnowledgeRepo {
 	repo := &AiKnowledgeRepo{
-		log:       ctx.NewLoggerHelper("ai_knowledge/repo/admin-service"),
+		log:       logx.New(ctx.NewLoggerHelper("ai_knowledge/repo/admin-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[aiV1.AiKnowledgeBase, ent.AiKnowledgeBase](),
 	}

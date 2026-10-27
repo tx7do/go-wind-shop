@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/mapper"
 	"github.com/tx7do/go-utils/timeutil"
@@ -17,14 +17,14 @@ import (
 )
 
 type MembershipRoleRepo struct {
-	log             *log.Helper
+	log *logx.Helper
 	entClient       *entCrud.EntClient[*ent.Client]
 	statusConverter *mapper.EnumTypeConverter[permissionV1.MembershipRole_Status, membershiprole.Status]
 }
 
 func NewMembershipRoleRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *MembershipRoleRepo {
 	return &MembershipRoleRepo{
-		log:       ctx.NewLoggerHelper("membership-role/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("membership-role/repo/core-service")),
 		entClient: entClient,
 		statusConverter: mapper.NewEnumTypeConverter[permissionV1.MembershipRole_Status, membershiprole.Status](
 			permissionV1.MembershipRole_Status_name,

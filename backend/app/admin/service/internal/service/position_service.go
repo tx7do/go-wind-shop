@@ -1,9 +1,8 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -18,7 +17,7 @@ import (
 type PositionService struct {
 	adminV1.PositionServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	positionServiceClient identityV1.PositionServiceClient
 	orgUnitServiceClient  identityV1.OrgUnitServiceClient
@@ -30,7 +29,7 @@ func NewPositionService(
 	orgUnitServiceClient identityV1.OrgUnitServiceClient,
 ) *PositionService {
 	return &PositionService{
-		log:                   ctx.NewLoggerHelper("position/service/admin-service"),
+		log:                   logx.New(ctx.NewLoggerHelper("position/service/admin-service")),
 		positionServiceClient: positionServiceClient,
 		orgUnitServiceClient:  orgUnitServiceClient,
 	}

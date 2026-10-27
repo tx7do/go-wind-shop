@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -16,13 +16,13 @@ import (
 type CartService struct {
 	cartV1.UnimplementedCartServiceServer
 
-	log  *log.Helper
+	log *logx.Helper
 	repo *data.CartRepo
 }
 
 func NewCartService(ctx *bootstrap.Context, repo *data.CartRepo) *CartService {
 	return &CartService{
-		log:  ctx.NewLoggerHelper("cart/service/core-service"),
+		log:  logx.New(ctx.NewLoggerHelper("cart/service/core-service")),
 		repo: repo,
 	}
 }

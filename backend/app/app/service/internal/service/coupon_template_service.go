@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
@@ -23,7 +23,7 @@ import (
 type CouponTemplateService struct {
 	appV1.CouponTemplateServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	couponTemplateServiceClient couponV1.CouponTemplateServiceClient
 }
@@ -33,7 +33,7 @@ func NewCouponTemplateService(
 	couponTemplateServiceClient couponV1.CouponTemplateServiceClient,
 ) *CouponTemplateService {
 	return &CouponTemplateService{
-		log:                         ctx.NewLoggerHelper("coupon-template/service/app-service"),
+		log:                         logx.New(ctx.NewLoggerHelper("coupon-template/service/app-service")),
 		couponTemplateServiceClient: couponTemplateServiceClient,
 	}
 }

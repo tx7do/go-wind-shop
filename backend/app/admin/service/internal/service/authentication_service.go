@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/captcha"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -30,7 +30,7 @@ const CaptchaEnabled = true
 type AuthenticationService struct {
 	adminV1.AuthenticationServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient
 
@@ -43,7 +43,7 @@ func NewAuthenticationService(
 	captchaClient *captcha.Captcha,
 ) *AuthenticationService {
 	return &AuthenticationService{
-		log:                         log.NewHelper(log.With(ctx.GetLogger(), "module", "user/service/admin-service")),
+		log:                         logx.NewFromLogger(ctx.GetLogger().With("module", "user/service/admin-service")),
 		authenticationServiceClient: authenticationServiceClient,
 		captchaClient:               captchaClient,
 	}

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -31,7 +31,7 @@ type NotificationPreferenceService struct {
 
 	prefRepo     *data.NotificationPreferenceRepo
 	categoryRepo *data.InternalMessageCategoryRepo
-	log          *log.Helper
+	log *logx.Helper
 }
 
 func NewNotificationPreferenceService(
@@ -42,7 +42,7 @@ func NewNotificationPreferenceService(
 	return &NotificationPreferenceService{
 		prefRepo:     prefRepo,
 		categoryRepo: categoryRepo,
-		log:          ctx.NewLoggerHelper("notification-preference/service/core-service"),
+		log:          logx.New(ctx.NewLoggerHelper("notification-preference/service/core-service")),
 	}
 }
 

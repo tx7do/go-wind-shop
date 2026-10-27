@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -27,7 +27,7 @@ import (
 
 type FileRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper            *mapper.CopierMapper[storageV1.File, ent.File]
 	providerConverter *mapper.EnumTypeConverter[storageV1.OSSProvider, file.Provider]
@@ -44,7 +44,7 @@ type FileRepo struct {
 
 func NewFileRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *FileRepo {
 	repo := &FileRepo{
-		log:               ctx.NewLoggerHelper("file/repo/core-service"),
+		log:               logx.New(ctx.NewLoggerHelper("file/repo/core-service")),
 		entClient:         entClient,
 		mapper:            mapper.NewCopierMapper[storageV1.File, ent.File](),
 		providerConverter: mapper.NewEnumTypeConverter[storageV1.OSSProvider, file.Provider](storageV1.OSSProvider_name, storageV1.OSSProvider_value),

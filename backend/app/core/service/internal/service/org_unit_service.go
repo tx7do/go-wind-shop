@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/aggregator"
 	"github.com/tx7do/go-utils/trans"
@@ -18,7 +19,7 @@ import (
 type OrgUnitService struct {
 	identityV1.UnimplementedOrgUnitServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	orgUnitRepo *data.OrgUnitRepo
 	userRepo    data.UserRepo
@@ -30,7 +31,7 @@ func NewOrgUnitService(
 	userRepo data.UserRepo,
 ) *OrgUnitService {
 	return &OrgUnitService{
-		log:         ctx.NewLoggerHelper("org-unit/service/core-service"),
+		log:         logx.New(ctx.NewLoggerHelper("org-unit/service/core-service")),
 		orgUnitRepo: organizationRepo,
 		userRepo:    userRepo,
 	}

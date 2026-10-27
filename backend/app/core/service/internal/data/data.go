@@ -1,6 +1,6 @@
 package data
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"errors"
 
 	"github.com/go-kratos/kratos/v2/registry"
@@ -8,7 +8,7 @@ import (
 	"github.com/tx7do/go-utils/password"
 
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	redisClient "github.com/tx7do/kratos-bootstrap/cache/redis"
+	redisx "go-wind-shop/pkg/redisx"
 	"github.com/tx7do/kratos-bootstrap/database/opensearch"
 	bRegistry "github.com/tx7do/kratos-bootstrap/registry"
 
@@ -30,9 +30,9 @@ func NewRedisClient(ctx *bootstrap.Context) (*redis.Client, func(), error) {
 		return nil, func() {}, nil
 	}
 
-	l := ctx.NewLoggerHelper("redis/data/core-service")
+	l := logx.New(ctx.NewLoggerHelper("redis/data/core-service"))
 
-	cli := redisClient.NewClient(cfg.Data, l)
+	cli := redisx.NewClient(cfg.Data, l)
 
 	return cli, func() {
 		if err := cli.Close(); err != nil {
@@ -52,7 +52,7 @@ func NewElasticSearchClient(ctx *bootstrap.Context) (*elasticsearchCrud.Client, 
 		return nil, func() {}, errors.New("opensearch config is nil")
 	}
 
-	cli, err := opensearch.NewClient(ctx.GetLogger(), cfg)
+	cli, err := opensearch.NewClient(logx.AsKratos(ctx.GetLogger()), cfg)
 	if err != nil {
 		return nil, func() {}, err
 	}

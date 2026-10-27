@@ -1,10 +1,9 @@
 package data
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
@@ -19,7 +18,7 @@ import (
 )
 
 type RolePermissionRepo struct {
-	log       *log.Helper
+	log *logx.Helper
 	entClient *entCrud.EntClient[*ent.Client]
 
 	mapper          *mapper.CopierMapper[permissionV1.RolePermission, ent.RolePermission]
@@ -29,7 +28,7 @@ type RolePermissionRepo struct {
 
 func NewRolePermissionRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *RolePermissionRepo {
 	repo := &RolePermissionRepo{
-		log:       ctx.NewLoggerHelper("role-permission/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("role-permission/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[permissionV1.RolePermission, ent.RolePermission](),
 		statusConverter: mapper.NewEnumTypeConverter[permissionV1.RolePermission_Status, rolepermission.Status](

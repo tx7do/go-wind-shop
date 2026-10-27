@@ -1,11 +1,11 @@
 package data
 
 import (
+	"go-wind-shop/pkg/logx"
 	"context"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -23,7 +23,7 @@ import (
 
 type OrderRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[orderV1.Order, ent.Order]
 
@@ -41,7 +41,7 @@ type OrderRepo struct {
 
 func NewOrderRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *OrderRepo {
 	repo := &OrderRepo{
-		log:             ctx.NewLoggerHelper("order/repo/core-service"),
+		log:             logx.New(ctx.NewLoggerHelper("order/repo/core-service")),
 		entClient:       entClient,
 		mapper:          mapper.NewCopierMapper[orderV1.Order, ent.Order](),
 		statusConverter: mapper.NewEnumTypeConverter[orderV1.Order_Status, order.Status](orderV1.Order_Status_name, orderV1.Order_Status_value),

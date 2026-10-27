@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/trans"
@@ -18,7 +18,7 @@ import (
 type PaymentRefundService struct {
 	paymentV1.UnimplementedPaymentRefundServiceServer
 
-	log                   *log.Helper
+	log *logx.Helper
 	repo                  *data.PaymentRefundRepo
 	transactionRepo       *data.PaymentTransactionRepo
 	transactionService    *PaymentTransactionService
@@ -31,7 +31,7 @@ func NewPaymentRefundService(
 	transactionService *PaymentTransactionService,
 ) *PaymentRefundService {
 	return &PaymentRefundService{
-		log:                ctx.NewLoggerHelper("payment-refund/service/core-service"),
+		log:                logx.New(ctx.NewLoggerHelper("payment-refund/service/core-service")),
 		repo:               repo,
 		transactionRepo:    transactionRepo,
 		transactionService: transactionService,

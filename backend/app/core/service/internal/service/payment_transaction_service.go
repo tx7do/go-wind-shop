@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -19,7 +19,7 @@ import (
 type PaymentTransactionService struct {
 	paymentV1.UnimplementedPaymentTransactionServiceServer
 
-	log          *log.Helper
+	log *logx.Helper
 	repo         *data.PaymentTransactionRepo
 	orderService *OrderService
 }
@@ -30,7 +30,7 @@ func NewPaymentTransactionService(
 	orderService *OrderService,
 ) *PaymentTransactionService {
 	return &PaymentTransactionService{
-		log:          ctx.NewLoggerHelper("payment-transaction/service/core-service"),
+		log:          logx.New(ctx.NewLoggerHelper("payment-transaction/service/core-service")),
 		repo:         repo,
 		orderService: orderService,
 	}

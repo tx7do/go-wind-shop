@@ -3,13 +3,13 @@ package api
 import (
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	lua "github.com/yuin/gopher-lua"
 )
 
 // RegisterUtilAPI registers utility functions for Lua scripts
 // Provides common utilities like sleep, time, etc.
-func RegisterUtilAPI(L *lua.LState, logger *log.Helper) {
+func RegisterUtilAPI(L *lua.LState, logger *logx.Helper) {
 	// Create loader function that returns the module
 	loader := func(L *lua.LState) int {
 		// Create util module

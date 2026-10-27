@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 	lua "github.com/yuin/gopher-lua"
 
@@ -13,7 +13,7 @@ import (
 )
 
 // RegisterCache registers the Redis cache API for Lua as a requireable module
-func RegisterCache(L *lua.LState, rdb *redis.Client, logger *log.Helper) {
+func RegisterCache(L *lua.LState, rdb *redis.Client, logger *logx.Helper) {
 	// Create loader function that returns the module
 	loader := func(L *lua.LState) int {
 		// Create cache module

@@ -1,11 +1,10 @@
 package data
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -23,7 +22,7 @@ import (
 
 type OperationAuditLogRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log       *log.Helper
+	log *logx.Helper
 
 	mapper *mapper.CopierMapper[auditV1.OperationAuditLog, ent.OperationAuditLog]
 
@@ -41,7 +40,7 @@ type OperationAuditLogRepo struct {
 
 func NewOperationAuditLogRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *OperationAuditLogRepo {
 	repo := &OperationAuditLogRepo{
-		log:       ctx.NewLoggerHelper("operation-audit-log/repo/core-service"),
+		log:       logx.New(ctx.NewLoggerHelper("operation-audit-log/repo/core-service")),
 		entClient: entClient,
 		mapper:    mapper.NewCopierMapper[auditV1.OperationAuditLog, ent.OperationAuditLog](),
 		actionTypeConverter: mapper.NewEnumTypeConverter[auditV1.OperationAuditLog_ActionType, operationauditlog.Action](

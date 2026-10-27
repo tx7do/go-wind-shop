@@ -1,9 +1,8 @@
 package service
 
-import (
+import (	"go-wind-shop/pkg/logx"
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -20,7 +19,7 @@ import (
 type RoleService struct {
 	adminV1.RoleServiceHTTPServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	roleServiceClient   permissionV1.RoleServiceClient
 	tenantServiceClient identityV1.TenantServiceClient
@@ -31,7 +30,7 @@ func NewRoleService(
 	roleServiceClient permissionV1.RoleServiceClient,
 	tenantServiceClient identityV1.TenantServiceClient,
 ) *RoleService {
-	l := log.NewHelper(log.With(ctx.GetLogger(), "module", "role/service/admin-service"))
+	l := logx.NewFromLogger(ctx.GetLogger().With("module", "role/service/admin-service"))
 	return &RoleService{
 		log:                 l,
 		roleServiceClient:   roleServiceClient,

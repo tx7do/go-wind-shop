@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -16,12 +16,12 @@ type AiContentService struct {
 	adminV1.AiContentServiceHTTPServer
 
 	aiContentServiceClient aiV1.AiContentServiceClient
-	log                    *log.Helper
+	log *logx.Helper
 }
 
 func NewAiContentService(ctx *bootstrap.Context, aiContentServiceClient aiV1.AiContentServiceClient) *AiContentService {
 	return &AiContentService{
-		log:                    ctx.NewLoggerHelper("ai_content/service/admin-service"),
+		log:                    logx.New(ctx.NewLoggerHelper("ai_content/service/admin-service")),
 		aiContentServiceClient: aiContentServiceClient,
 	}
 }

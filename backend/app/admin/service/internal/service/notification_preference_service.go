@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -15,13 +15,13 @@ import (
 type NotificationPreferenceService struct {
 	adminV1.NotificationPreferenceServiceHTTPServer
 
-	log          *log.Helper
+	log *logx.Helper
 	preferenceCli notifyV1.NotificationPreferenceServiceClient
 }
 
 func NewNotificationPreferenceService(ctx *bootstrap.Context, preferenceClient notifyV1.NotificationPreferenceServiceClient) *NotificationPreferenceService {
 	return &NotificationPreferenceService{
-		log:           ctx.NewLoggerHelper("notification-preference/service/admin-service"),
+		log:           logx.New(ctx.NewLoggerHelper("notification-preference/service/admin-service")),
 		preferenceCli: preferenceClient,
 	}
 }

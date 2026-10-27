@@ -9,7 +9,7 @@ import (
 	"path"
 	"strings"
 
-	"github.com/go-kratos/kratos/v2/log"
+	"go-wind-shop/pkg/logx"
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
 	"github.com/tx7do/go-utils/trans"
@@ -25,7 +25,7 @@ import (
 type FileTransferService struct {
 	storageV1.UnimplementedFileTransferServiceServer
 
-	log *log.Helper
+	log *logx.Helper
 
 	mc       *oss.MinIOClient
 	fileRepo *data.FileRepo
@@ -37,7 +37,7 @@ func NewFileTransferService(
 	fileRepo *data.FileRepo,
 ) *FileTransferService {
 	return &FileTransferService{
-		log:      ctx.NewLoggerHelper("file-transfer/service/core-service"),
+		log:      logx.New(ctx.NewLoggerHelper("file-transfer/service/core-service")),
 		mc:       mc,
 		fileRepo: fileRepo,
 	}
