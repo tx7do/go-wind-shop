@@ -140,7 +140,13 @@
     "mfaUnbindSuccess": "TOTP 解绑成功",
     "mfaUnbindFailed": "TOTP 解绑失败",
     "mfaUnbindConfirmTitle": "确定解绑 TOTP？",
-    "mfaUnbindConfirmContent": "解绑后，登录将不再要求验证码，会降低账号安全性。"
+    "mfaUnbindConfirmContent": "解绑后，登录将不再要求验证码，会降低账号安全性。",
+    "backupEmail": "备用邮箱",
+    "backupEmailDesc": "用于接收安全通知与辅助找回密码",
+    "securePhone": "安全手机",
+    "securePhoneDesc": "用于登录验证与安全提醒",
+    "secureQuestion": "安全问题",
+    "secureQuestionDesc": "用于身份验证与密码找回"
   },
   "accountBind": {
     "email": "邮箱账号",
@@ -162,11 +168,32 @@
     "vcodeRequired": "请输入验证码",
     "confirmBind": "确认绑定",
     "bindSuccess": "邮箱绑定成功",
-    "bindFailed": "绑定失败"
+    "bindFailed": "绑定失败",
+    "bind": "绑定",
+    "unbind": "解绑",
+    "manage": "管理",
+    "dingtalk": "钉钉",
+    "dingtalkDesc": "未绑定钉钉账号",
+    "wechat": "微信",
+    "wechatDesc": "未绑定微信账号",
+    "weibo": "微博",
+    "weiboDesc": "未绑定微博账号",
+    "github": "GitHub",
+    "githubDesc": "未绑定 GitHub 账号",
+    "emailDesc": "未绑定邮箱账号，可在基本设置中填写",
+    "phoneDesc": "未绑定手机号，可在基本设置中填写"
   },
   "resetMfa": "重置 MFA",
   "resetMfaConfirmTitle": "重置该用户的 MFA？",
   "resetMfaConfirmDesc": "将清空其 TOTP 认证器绑定，用户下次登录无需二次验证，需重新绑定。",
   "resetMfaSuccess": "MFA 已重置",
-  "resetMfaFailed": "MFA 重置失败"
+  "resetMfaFailed": "MFA 重置失败",
+  "msgNotify": {
+    "systemMessage": "系统消息",
+    "systemMessageDesc": "接收系统公告与平台提醒",
+    "todoTask": "待办任务",
+    "todoTaskDesc": "接收待办任务与审批提醒",
+    "accountPassword": "账户安全",
+    "accountPasswordDesc": "接收账户与密码相关安全通知"
+  }
 }
