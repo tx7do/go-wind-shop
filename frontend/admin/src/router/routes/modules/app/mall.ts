@@ -49,6 +49,26 @@ const mall: RouteRecordRaw[] = [
         component: () => import("@/pages/app/mall/product/index.vue"),
       },
       {
+        path: "products/create",
+        name: "MallProductCreate",
+        meta: {
+          hideInMenu: true,
+          title: "routes.mall.productCreate",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/mall/product/edit.vue"),
+      },
+      {
+        path: "products/:id/edit",
+        name: "MallProductEdit",
+        meta: {
+          hideInMenu: true,
+          title: "routes.mall.productEdit",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/mall/product/edit.vue"),
+      },
+      {
         path: "product-attributes",
         name: "MallProductAttributeManagement",
         meta: {

@@ -77,6 +77,8 @@
     "category": "Category Management",
     "brand": "Brand Management",
     "product": "Product Management",
+    "productCreate": "Create Product",
+    "productEdit": "Edit Product",
     "productAttribute": "Attribute Management",
     "productAttributeValue": "Attribute Value Management",
     "sku": "SKU Management"

@@ -30,6 +30,7 @@
   },
   "product": {
     "moduleName": "商品管理",
+    "settings": "设置",
     "name": "商品名称",
     "slug": "商品标识",
     "shortDescription": "商品简述",

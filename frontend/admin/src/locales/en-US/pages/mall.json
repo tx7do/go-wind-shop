@@ -30,6 +30,7 @@
   },
   "product": {
     "moduleName": "Product Management",
+    "settings": "Settings",
     "name": "Product Name",
     "slug": "Product Slug",
     "shortDescription": "Short Description",

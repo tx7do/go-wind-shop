@@ -13,19 +13,16 @@
         </ElTag>
       </template>
     </ProPage>
-
-    <!-- 新增/编辑抽屉 -->
-    <ProductDrawer ref="drawerRef" @success="handleSuccess" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from "vue";
+import { ref, computed, onActivated } from "vue";
+import { useRouter } from "vue-router";
 import { ElTag } from "element-plus";
 
 import ProPage from "@/components/Pro/ProPage/index.vue";
 import type { ProPageConfig } from "@/components/Pro/ProPage/types";
-import ProductDrawer from "./product-drawer.vue";
 
 import { fetchListProducts, useDeleteProduct } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
@@ -33,9 +30,14 @@ import { $t, useI18n } from "@/core/i18n";
 
 const { mutateAsync: deleteProduct } = useDeleteProduct();
 const { locale } = useI18n();
+const router = useRouter();
+
+// 从编辑页返回后刷新列表（编辑页为独立路由，keep-alive 恢复时触发）
+onActivated(() => {
+  pageRef.value?.refresh();
+});
 
 const pageRef = ref();
-const drawerRef = ref();
 
 // 按 UI 当前语言从 translations 中取对应字段的字面值。
 // List 响应含全部语言的 translations，须匹配 languageCode 才能取到
@@ -157,16 +159,13 @@ const pageConfig = computed<ProPageConfig>(() => ({
 }));
 
 function handleAdd() {
-  drawerRef.value?.open();
+  router.push("/mall/products/create");
 }
 
 function handleEdit(row: any) {
-  drawerRef.value?.open(row);
+  router.push(`/mall/products/${row.id}/edit`);
 }
 
-function handleSuccess() {
-  pageRef.value?.refresh();
-}
 </script>
 
 <style lang="scss" scoped>
