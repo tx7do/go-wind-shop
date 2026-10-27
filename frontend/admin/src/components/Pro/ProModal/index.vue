@@ -40,7 +40,7 @@
 
 <script setup lang="ts" generic="T extends Record<string, any>">
 import { computed, ref } from "vue";
-import { ElButton, ElDrawer, ElDialog } from "element-plus";
+import { ElButton, ElDrawer, ElDialog, ElMessage } from "element-plus";
 import { useI18n } from "@/core/i18n";
 import ProForm from "../ProForm/index.vue";
 import type { ProModalConfig, ModalMode } from "./types";
@@ -135,8 +135,16 @@ function handleClose() {
 
 async function handleSubmit() {
   if (props.mode === "view") return;
+  // 二段式校验：validate 失败时 reject 的是字段错误对象（非 false），
+  // 若直接放 try/catch 用 `error !== false` 判断会恒为 true，导致校验失败
+  // （如必填项为空）也误弹「操作失败」。这里先单独校验，失败即返回。
+  const valid = await formRef.value?.validate().then(
+    () => true,
+    () => false
+  );
+  if (!valid) return;
+
   try {
-    await formRef.value?.validate();
     submitting.value = true;
     if (typeof props.config.beforeSubmit === "function") {
       props.config.beforeSubmit(props.formData!);
@@ -144,6 +152,9 @@ async function handleSubmit() {
     await props.config.submitAction?.(props.formData!);
     emit("submit");
     visible.value = false;
+  } catch {
+    // 仅提交动作失败会进入此分支（校验失败已在上方提前 return）
+    ElMessage.error(t("common.operationFailed"));
   } finally {
     submitting.value = false;
   }

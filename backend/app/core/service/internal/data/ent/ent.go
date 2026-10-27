@@ -32,6 +32,11 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-shop/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-shop/app/core/service/internal/data/ent/menu"
+	"go-wind-shop/app/core/service/internal/data/ent/notificationchannel"
+	"go-wind-shop/app/core/service/internal/data/ent/notificationdelivery"
+	"go-wind-shop/app/core/service/internal/data/ent/notificationpreference"
+	"go-wind-shop/app/core/service/internal/data/ent/notificationrule"
+	"go-wind-shop/app/core/service/internal/data/ent/notificationtemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/operationauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/order"
 	"go-wind-shop/app/core/service/internal/data/ent/orderitem"
@@ -164,6 +169,11 @@ func checkColumn(t, c string) error {
 			membershipposition.Table:               membershipposition.ValidColumn,
 			membershiprole.Table:                   membershiprole.ValidColumn,
 			menu.Table:                             menu.ValidColumn,
+			notificationchannel.Table:              notificationchannel.ValidColumn,
+			notificationdelivery.Table:             notificationdelivery.ValidColumn,
+			notificationpreference.Table:           notificationpreference.ValidColumn,
+			notificationrule.Table:                 notificationrule.ValidColumn,
+			notificationtemplate.Table:             notificationtemplate.ValidColumn,
 			operationauditlog.Table:                operationauditlog.ValidColumn,
 			order.Table:                            order.ValidColumn,
 			orderitem.Table:                        orderitem.ValidColumn,

@@ -94,7 +94,7 @@
 
     <!-- 工具按钮 -->
     <div class="tabs-bar__tools">
-      <ElTooltip v-if="showMaximize" :content="isMaximized ? '还原' : '最大化'" placement="bottom">
+      <ElTooltip v-if="showMaximize" :content="isMaximized ? t('preferences.tabbar.contextMenu.restoreMaximize') : t('preferences.tabbar.contextMenu.maximize')" placement="bottom">
         <ElIcon class="tabs-bar__tool-btn" @click="toggleMaximize">
           <FullScreen v-if="!isMaximized" />
           <ScaleToOriginal v-else />
@@ -761,41 +761,41 @@ $chrome-radius: 7px;
   align-items: center;
   width: 100%;
   padding: 0 16px;
-  background-color: var(--el-bg-color);
   border-bottom: 1px solid var(--tabs-bar-border-color);
+  background-color: var(--el-bg-color);
 
   // ==================== 滚动按钮 ====================
   &__scroll-btn {
     display: flex;
-    flex-shrink: 0;
     align-items: center;
     justify-content: center;
     width: 24px;
     height: 100%;
-    color: var(--el-text-color-secondary);
+    flex-shrink: 0;
     cursor: pointer;
-    background: transparent;
     border-radius: 4px;
+    color: var(--el-text-color-secondary);
+    background: transparent;
     transition: all 0.2s ease;
 
     &:hover {
-      color: var(--el-color-primary);
+      color: var(--gowind-primary-text);
       background: var(--el-fill-color-light);
       transform: scale(1.05);
     }
 
     &.is-disabled {
-      pointer-events: none;
       opacity: 0.3;
+      pointer-events: none;
     }
   }
 
   // ==================== 内容区域 ====================
   &__content {
-    position: relative;
     flex: 1;
     height: 100%;
     overflow: hidden;
+    position: relative;
 
     &--chrome {
       padding-top: 3px;
@@ -805,31 +805,30 @@ $chrome-radius: 7px;
   &__inner {
     display: flex;
     align-items: stretch;
-    width: max-content;
     height: 100%;
+    width: max-content;
     padding-right: 8px;
   }
 
   // ==================== 单个标签项 ====================
   &__item {
-    position: relative;
     display: flex;
-    flex-shrink: 0;
     align-items: center;
-    height: 100%;
-    color: var(--el-text-color-regular);
+    position: relative;
     cursor: pointer;
     user-select: none;
     transition: all 0.2s ease;
+    flex-shrink: 0;
+    height: 100%;
+    color: var(--el-text-color-regular);
 
     &.is-active {
-      font-weight: 600;
-      color: var(--el-color-primary);
+      color: var(--gowind-primary-text);
     }
 
-    // 亮/暗模式通用：hover 文字提亮（语义变量自动跟随主题）
+    // 亮/暗模式通用：hover 文字提亮
     &:not(.is-active):hover {
-      color: var(--el-text-color-primary);
+      color: var(--tabs-bar-hover-color);
     }
 
     // ---- Plain 样式 ----
@@ -837,57 +836,57 @@ $chrome-radius: 7px;
       padding: 0 16px;
 
       &.is-active {
-        font-weight: 600;
-        color: var(--el-color-primary);
+        color: var(--gowind-primary-text);
         background-color: var(--tabs-bar-active-bg);
+        font-weight: 600;
         border-bottom: 2px solid var(--el-color-primary);
       }
 
       &:not(.is-active):hover {
-        color: var(--tabs-bar-hover-color);
         background: var(--tabs-bar-hover-bg);
+        color: var(--tabs-bar-hover-color);
       }
     }
 
     // ---- Card 样式 ----
     &--card {
-      height: calc(100% - 6px);
       padding: 0 16px;
       margin: 3px 0 3px 4px;
+      height: calc(100% - 6px);
       border: 1px solid transparent;
       border-radius: 8px 8px 0 0;
 
       &.is-active {
-        font-weight: 600;
-        color: var(--el-color-primary);
+        color: var(--gowind-primary-text);
         background-color: var(--tabs-bar-active-bg);
+        font-weight: 600;
         border-bottom: 2px solid var(--el-color-primary);
         box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.04);
       }
 
       &:not(.is-active):hover {
-        color: var(--tabs-bar-hover-color);
         background: var(--tabs-bar-hover-bg);
+        color: var(--tabs-bar-hover-color);
       }
     }
 
     // ---- Brisk 样式 ----
     &--brisk {
-      position: relative;
       padding: 0 16px;
+      position: relative;
 
       // 底部指示线
       &::after {
+        content: "";
         position: absolute;
         bottom: 0;
         left: 0;
         width: 100%;
         height: 2px;
-        content: "";
         background-color: var(--el-color-primary);
         transform: scaleX(0);
-        transform-origin: left;
         transition: transform 0.3s ease;
+        transform-origin: left;
       }
 
       &:hover::after {
@@ -895,9 +894,9 @@ $chrome-radius: 7px;
       }
 
       &.is-active {
-        font-weight: 600;
-        color: var(--el-color-primary);
+        color: var(--gowind-primary-text);
         background-color: var(--tabs-bar-active-bg);
+        font-weight: 600;
 
         &::after {
           transform: scaleX(1);
@@ -905,16 +904,16 @@ $chrome-radius: 7px;
       }
 
       &:not(.is-active):hover {
-        color: var(--tabs-bar-hover-color);
         background: var(--tabs-bar-hover-bg);
+        color: var(--tabs-bar-hover-color);
       }
     }
 
     // ---- Chrome 样式 ----
     &--chrome {
-      z-index: 1;
-      padding: 0 calc(#{$chrome-radius} * 2 + 2px);
       margin-right: -$chrome-radius;
+      padding: 0 calc(#{$chrome-radius} * 2 + 2px);
+      z-index: 1;
 
       &:hover {
         z-index: 2;
@@ -938,16 +937,18 @@ $chrome-radius: 7px;
         }
 
         .tabs-bar__chrome-bg__content {
-          margin: 0 2px;
           background-color: var(--el-fill-color-light);
+          margin: 0 2px;
           border-radius: 4px;
         }
       }
 
       &.is-active {
-        color: var(--el-color-primary);
+        color: var(--gowind-primary-text);
       }
     }
+
+    // Chrome 激活标签不再叠加底部主色指示线（vben 温和配方：形状即指示，design-language.md §4）
   }
 
   // ==================== Chrome 风格特殊元素 ====================
@@ -955,13 +956,13 @@ $chrome-radius: 7px;
   // 分隔线
   &__divider {
     position: absolute;
-    top: 50%;
     left: $chrome-radius;
-    z-index: 0;
+    top: 50%;
+    transform: translateY(-50%);
     width: 1px;
     height: 14px;
     background-color: var(--el-border-color);
-    transform: translateY(-50%);
+    z-index: 0;
     transition: opacity 0.15s;
   }
 
@@ -997,44 +998,48 @@ $chrome-radius: 7px;
 
     .is-active & {
       &__content {
-        background-color: var(--el-color-primary-light-9);
+        // 主色与当前主题底色混色：亮色→淡蓝、暗色→深蓝（html.dark 下被实色规则覆盖）。
+        // 不能用 primary-light-N：主题生成器以内联变量写死为暗色调值，亮色下会是深蓝块
+        background-color: rgba(26, 102, 255, 0.12);
+        background-color: color-mix(in srgb, var(--el-color-primary) 15%, var(--el-bg-color));
       }
 
       &__before,
       &__after {
-        fill: var(--el-color-primary-light-9);
+        fill: rgba(26, 102, 255, 0.12);
+        fill: color-mix(in srgb, var(--el-color-primary) 15%, var(--el-bg-color));
       }
     }
   }
 
   // ==================== 标签内容 ====================
   &__item-main {
-    z-index: 2;
     display: flex;
-    gap: 8px;
     align-items: center;
+    gap: 8px;
     height: 100%;
     padding-right: 4px;
+    z-index: 2;
     overflow: hidden;
   }
 
   &__icon {
-    display: flex;
     flex-shrink: 0;
-    align-items: center;
-    justify-content: center;
     width: 14px;
     height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   &__title {
-    max-width: 120px;
+    font-size: 13px; // 从 12px 增大到 13px
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    font-size: 13px; // 从 12px 增大到 13px
+    max-width: 120px;
     // flex 父级 align-items:center 已负责垂直居中，这里用 normal 避免 span 行高异常
     line-height: normal;
-    white-space: nowrap;
   }
 
   // ==================== 关闭/固定按钮 ====================
@@ -1052,41 +1057,41 @@ $chrome-radius: 7px;
   }
 
   &__close {
-    color: #94a3b8;
+    color: var(--el-text-color-placeholder);
     opacity: 0;
     transition: all 0.2s ease;
 
     .tabs-bar__item:hover & {
-      color: #666e7d;
       opacity: 1;
+      color: var(--el-text-color-secondary);
     }
 
     .tabs-bar__item.is-active & {
-      color: var(--el-color-primary);
       opacity: 1;
+      color: var(--gowind-primary-text);
     }
 
     &:hover {
-      color: #f53f3f;
       background-color: rgba(245, 63, 63, 0.1);
+      color: #f53f3f;
     }
   }
 
   &__pin {
     color: var(--el-text-color-secondary);
     .tabs-bar__item.is-active & {
-      color: var(--el-color-primary);
+      color: var(--gowind-primary-text);
     }
   }
 
   // ==================== 工具按钮区域 ====================
   &__tools {
     display: flex;
-    flex-shrink: 0;
-    gap: 2px;
     align-items: center;
+    gap: 2px;
     height: 100%;
     padding: 0 8px;
+    flex-shrink: 0;
     border-left: 1px solid var(--el-border-color-lighter);
   }
 
@@ -1096,14 +1101,14 @@ $chrome-radius: 7px;
     justify-content: center;
     width: 28px;
     height: 28px;
-    color: var(--el-text-color-secondary);
     cursor: pointer;
-    background: transparent;
     border-radius: 6px;
+    color: var(--el-text-color-secondary);
+    background: transparent;
     transition: all 0.2s ease;
 
     &:hover {
-      color: var(--el-color-primary);
+      color: var(--gowind-primary-text);
       background: var(--el-fill-color-light);
       transform: scale(1.05);
     }
@@ -1124,8 +1129,8 @@ $chrome-radius: 7px;
 
     li {
       display: flex;
-      gap: 6px;
       align-items: center;
+      gap: 6px;
       padding: 6px 16px;
       cursor: pointer;
       transition: background-color 0.15s;
@@ -1135,24 +1140,24 @@ $chrome-radius: 7px;
       }
 
       &.is-disabled {
-        pointer-events: none;
-        cursor: not-allowed;
         opacity: 0.45;
+        cursor: not-allowed;
+        pointer-events: none;
       }
     }
 
     &-divider {
       height: 1px !important;
-      min-height: 1px !important;
-      padding: 0 !important;
       margin: 4px 0 !important;
-      overflow: hidden;
-      font-size: 0 !important;
-      line-height: 0 !important;
-      pointer-events: none;
-      cursor: default;
-      user-select: none;
+      padding: 0 !important;
       background-color: var(--el-border-color-lighter) !important;
+      min-height: 1px !important;
+      line-height: 0 !important;
+      font-size: 0 !important;
+      overflow: hidden;
+      cursor: default;
+      pointer-events: none;
+      user-select: none;
 
       &:hover {
         background-color: var(--el-border-color-lighter) !important;
@@ -1184,19 +1189,19 @@ $chrome-radius: 7px;
 <style lang="scss">
 // ==================== 暗黑模式适配（非 scoped，确保选择器优先级稳定） ====================
 html.dark .tabs-bar {
-  --tabs-bar-border-color: rgba(255, 255, 255, 0.06);
-  --tabs-bar-hover-bg: rgba(255, 255, 255, 0.05);
+  --tabs-bar-border-color: rgba(255, 255, 255, 0.08);
+  --tabs-bar-hover-bg: rgba(255, 255, 255, 0.08);
   --tabs-bar-hover-color: #e5eaf3;
-  --tabs-bar-active-bg: #1a1d24;
+  --tabs-bar-active-bg: #111827;
 
   // 未激活文字：亮灰色，清晰可读
   .tabs-bar__item {
     color: #8a94a6;
     transition: all 0.2s ease;
 
+    // 选中：正常亮文字 + 中性微底（vben 温和配方，design-language.md §4；chrome 由 chrome-bg 承担底色）
     &.is-active {
-      font-weight: 600;
-      color: var(--el-color-primary);
+      color: #e5eaf3;
       background-color: rgba(255, 255, 255, 0.04);
       border-radius: 4px 4px 0 0;
     }
@@ -1209,20 +1214,28 @@ html.dark .tabs-bar {
 
   // Card 激活态：底部主色指示线 + 微亮背景
   .tabs-bar__item--card.is-active {
-    background-color: rgba(255, 255, 255, 0.04);
     border-color: transparent;
     border-bottom-color: var(--el-color-primary);
+    background-color: rgba(255, 255, 255, 0.04);
     box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.2);
   }
 
-  // Chrome 激活态背景（更明显的区分）
+  // Chrome 激活/悬停态：item 本体保持透明，仅由 chrome-bg 一层承担背景。
+  // 通用规则里的半透明白底会与 chrome-bg 叠加，两层圆角不一致会形成"描边"伪影
+  .tabs-bar__item--chrome.is-active,
+  .tabs-bar__item--chrome:not(.is-active):hover {
+    background-color: transparent;
+    border-radius: 0;
+  }
+
+  // Chrome 激活态背景：中性灰（vben 温和配方，design-language.md §4）
   .tabs-bar__item--chrome.is-active .tabs-bar__chrome-bg__content {
-    background-color: rgba(255, 255, 255, 0.06);
+    background-color: rgba(255, 255, 255, 0.1);
   }
 
   .tabs-bar__item--chrome.is-active .tabs-bar__chrome-bg__before,
   .tabs-bar__item--chrome.is-active .tabs-bar__chrome-bg__after {
-    fill: rgba(255, 255, 255, 0.06);
+    fill: rgba(255, 255, 255, 0.1);
   }
 
   .tabs-bar__item--chrome:not(.is-active):hover .tabs-bar__chrome-bg__content {
@@ -1272,6 +1285,15 @@ html.dark .tabs-bar {
   // 固定按钮
   .tabs-bar__pin {
     color: rgba(255, 255, 255, 0.45);
+  }
+
+  // 选中标签的关闭/固定按钮跟随中性文字色（不再用主色）
+  .tabs-bar__item.is-active .tabs-bar__close {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  .tabs-bar__item.is-active .tabs-bar__pin {
+    color: rgba(255, 255, 255, 0.75);
   }
 }
 </style>

@@ -34,10 +34,10 @@ GoWind Shop uses a three-service BFF architecture: `admin` and `app` are thin ga
 
 ```
 HTTP/REST request
-  └─ admin-service  (admin gateway BFF, REST:6600 / SSE:6601 / gRPC)
+  └─ admin-service  (admin gateway BFF, REST:10600 / SSE:10601 / gRPC)
        └─ gRPC → core-service  (core business + data persistence)
 
-app-service (storefront gateway BFF, REST:6700) ──gRPC──→ core-service
+app-service (storefront gateway BFF, REST:10700) ──gRPC──→ core-service
 core-service (gRPC, business implementation and data access)
 ```
 

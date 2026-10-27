@@ -10,8 +10,11 @@ import type {
   identityservicev1_CreateTenantWithAdminUserRequest,
   identityservicev1_DeleteTenantRequest,
   identityservicev1_GetTenantRequest,
+  // 【缓行】随租户用量/数据清理一并停用：identityservicev1_GetTenantUsageRequest,
+  // identityservicev1_CleanupTenantDataRequest,
   identityservicev1_ListTenantResponse,
   identityservicev1_Tenant,
+  // 【缓行】identityservicev1_TenantUsage,
   identityservicev1_Tenant_AuditStatus as Tenant_AuditStatus,
   identityservicev1_Tenant_Status as Tenant_Status,
   identityservicev1_Tenant_Type as Tenant_Type,
@@ -20,6 +23,7 @@ import { makeUpdateMask, type PaginationQuery } from "@/core/transport/rest";
 import { apiClient } from "@/api/client";
 import { queryClient } from "@/plugins/vue-query";
 import { i18n } from "@/core/i18n";
+import type { TagType } from "./shared";
 
 const t = i18n.global.t;
 
@@ -113,6 +117,40 @@ export function useCreateTenantWithAdminUser(
 }
 
 // ==============================
+// 租户用量查询 / 清理租户数据
+// 【缓行】后端 GetUsage / CleanupData 接口无下游实现（上游 identity proto 有，
+// 本仓库 proto 未同步），接口落地后再放开以下实现。
+// ==============================
+// export function useGetTenantUsage(
+//   req: identityservicev1_GetTenantUsageRequest,
+//   options?: UseQueryOptions<identityservicev1_TenantUsage, Error>
+// ) {
+//   return useQuery({
+//     queryKey: ["getTenantUsage", req],
+//     queryFn: () => apiClient.tenantService.GetUsage(req),
+//     ...options,
+//   });
+// }
+//
+// export async function fetchTenantUsage(req: identityservicev1_GetTenantUsageRequest) {
+//   return queryClient.fetchQuery({
+//     queryKey: ["getTenantUsage", req],
+//     queryFn: () => apiClient.tenantService.GetUsage(req),
+//     staleTime: 0,
+//     retry: 0,
+//   });
+// }
+//
+// export function useCleanupTenantData(
+//   options?: UseMutationOptions<{}, Error, identityservicev1_CleanupTenantDataRequest>
+// ) {
+//   return useMutation({
+//     mutationFn: (req) => apiClient.tenantService.CleanupData(req),
+//     ...options,
+//   });
+// }
+
+// ==============================
 // 租户枚举与工具函数
 // ==============================
 
@@ -130,20 +168,20 @@ export function tenantTypeToName(tenantType: Tenant_Type) {
   return matchedItem ? matchedItem.label : "";
 }
 
-export function tenantTypeToColor(tenantType: Tenant_Type) {
+// 租户类型 → tag 语义 type（与 react 端 TENANT_TYPE_COLORS 同构）
+export function tenantTypeToType(tenantType: Tenant_Type): TagType {
   switch (tenantType) {
-    case "CUSTOM":
-      return "#0050B3";
     case "INTERNAL":
-      return "#1890FF";
+      return "primary";
     case "PAID":
-      return "#52C41A";
+      return "success";
     case "PARTNER":
-      return "#722ED1";
+      return "warning";
     case "TRIAL":
-      return "#FF7D00";
+    case "CUSTOM":
+      return "info";
     default:
-      return "#8C8C8C";
+      return "info";
   }
 }
 
@@ -160,18 +198,20 @@ export function tenantStatusToName(tenantStatus: Tenant_Status) {
   return matchedItem ? matchedItem.label : "";
 }
 
-export function tenantStatusToColor(tenantStatus: Tenant_Status) {
+// 启用状态 → tag 语义 type（与 react 端 TENANT_STATUS_COLORS 同构：ON 启用、OFF 停用、
+// EXPIRED 到期告警、FREEZE 冻结中性）
+export function tenantStatusToType(tenantStatus: Tenant_Status): TagType {
   switch (tenantStatus) {
-    case "EXPIRED":
-      return "#F5222D";
-    case "FREEZE":
-      return "#FAAD14";
-    case "OFF":
-      return "#8C8C8C";
     case "ON":
-      return "#52C41A";
+      return "success";
+    case "OFF":
+      return "danger";
+    case "EXPIRED":
+      return "warning";
+    case "FREEZE":
+      return "info";
     default:
-      return "#8C8C8C";
+      return "info";
   }
 }
 
@@ -187,15 +227,16 @@ export function tenantAuditStatusToName(tenantAuditStatus: Tenant_AuditStatus) {
   return matchedItem ? matchedItem.label : "";
 }
 
-export function tenantAuditStatusToColor(tenantAuditStatus: Tenant_AuditStatus) {
+// 审核状态 → tag 语义 type（与 react 端 AUDIT_STATUS_COLORS 同构）
+export function tenantAuditStatusToType(tenantAuditStatus: Tenant_AuditStatus): TagType {
   switch (tenantAuditStatus) {
     case "APPROVED":
-      return "#52C41A";
+      return "success";
     case "PENDING":
-      return "#1890FF";
+      return "warning";
     case "REJECTED":
-      return "#F5222D";
+      return "danger";
     default:
-      return "#8C8C8C";
+      return "info";
   }
 }

@@ -9,7 +9,7 @@
     >
       <!-- 状态 -->
       <template #status="scope: any">
-        <ElTag size="small" effect="dark" round :color="userStatusToColor(scope.row.status)">
+        <ElTag size="small" effect="plain" round :type="userStatusToType(scope.row.status)">
           {{ userStatusToName(scope.row.status) }}
         </ElTag>
       </template>
@@ -72,26 +72,32 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from "vue";
-import { ElTag } from "element-plus";
+import { computed, ref, watch } from "vue";
+import { ElMessage, ElMessageBox, ElNotification, ElTag } from "element-plus";
 
 import ProPage from "@/components/Pro/ProPage/index.vue";
 import type { ProPageConfig } from "@/components/Pro/ProPage/types";
+import type { ProFormField } from "@/components/Pro/ProForm/types";
+import type { ProTableColumn } from "@/components/Pro/ProTable/types";
 import UserDrawer from "./user-drawer.vue";
 
 import {
+  // 【缓行】MFA 未接入：disableMfa,
   fetchListPositions,
   fetchListRoles,
   userStatusList,
-  userStatusToColor,
+  userStatusToType,
   userStatusToName,
   useDeleteUser,
 } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
 import { $t } from "@/core/i18n";
+// 【缓行】字段权限未启用：import { parseResourceHiddenFields } from "@/core/access";
+const parseResourceHiddenFields = (_fields: unknown, _resource: string) => new Set<string>();
 import { router } from "@/router";
 import { getRandomColor } from "@/utils/color";
 import { useUserViewStore } from "./user-view.state";
+import { useAccessStore, useAppUserStore } from "@/stores";
 
 const { mutateAsync: deleteUser } = useDeleteUser();
 const userViewStore = useUserViewStore();
@@ -104,6 +110,9 @@ watch(
   () => [userViewStore.currentOrgUnitId, userViewStore.currentTenantId],
   () => {
     pageRef.value?.refresh();
+    // 角色/职位下拉选项依赖租户/组织，切换后必须重跑 initFn 刷新，
+    // 否则下拉里仍是旧租户/旧组织下的选项，按过期选项搜索会查不到人。
+    pageRef.value?.reloadFieldOptions(["roleId", "positionId"]);
   }
 );
 
@@ -111,7 +120,7 @@ const pageConfig = computed<ProPageConfig>(() => ({
   skeleton: true,
   search: {
     grid: true,
-    fields: [
+    fields: ([
       {
         type: "input",
         label: $t("pages.user.form.username"),
@@ -193,7 +202,9 @@ const pageConfig = computed<ProPageConfig>(() => ({
           }
         },
       },
-    ],
+    ] satisfies ProFormField[]).filter(
+      (f) => !userHiddenFields.value.has(f.field as string)
+    ),
   },
 
   table: {
@@ -210,7 +221,7 @@ const pageConfig = computed<ProPageConfig>(() => ({
     toolbarRight: ["add"],
     defaultToolbar: ["exports", "refresh", "zoom", "filter"],
     tableAttrs: { border: true, stripe: true, height: "auto" },
-    columns: [
+    columns: ([
       { type: "index", label: $t("common.table.seq"), width: 60 },
       { prop: "username", label: $t("pages.user.table.username"), width: 120 },
       { prop: "realname", label: $t("pages.user.table.realname"), width: 100 },
@@ -265,6 +276,9 @@ const pageConfig = computed<ProPageConfig>(() => ({
         buttons: [
           { name: "detail", label: $t("common.button.detail"), icon: "lucide:eye" },
           { name: "edit", label: $t("common.button.edit"), icon: "lucide:pen-line" },
+          ...(isPlatformSide.value
+            ? [{ name: "resetMfa", label: $t("pages.user.resetMfa"), icon: "lucide:shield-off" }]
+            : []),
           {
             name: "delete",
             label: $t("common.button.delete"),
@@ -273,9 +287,20 @@ const pageConfig = computed<ProPageConfig>(() => ({
           },
         ],
       },
-    ],
+    ] satisfies ProTableColumn<any>[]).filter(
+      (col) => !userHiddenFields.value.has(col.prop as string)
+    ),
   },
 }));
+
+// 仅平台侧操作者（tenantId=0）显示救援重置；非平台用户由后端 403 兜底
+const isPlatformSide = computed(() => Number(useAppUserStore().userInfo?.tenantId ?? 0) === 0);
+
+// 字段权限：当前用户在 User 资源上被隐藏的字段，命中的列整列不渲染
+const accessStore = useAccessStore();
+const userHiddenFields = computed(() =>
+  parseResourceHiddenFields((accessStore as any).hiddenFields ?? [], "User")
+);
 
 function handleAdd() {
   drawerRef.value?.open({ create: true });
@@ -288,6 +313,31 @@ function handleEdit(row: any) {
 function handleOperate(data: { name: string; row: any }) {
   if (data.name === "detail") {
     router.push(`/opm/users/detail/${data.row.id}`);
+  } else if (data.name === "resetMfa") {
+    handleResetMfa(data.row);
+  }
+}
+
+// 管理端救援重置：清空目标用户 TOTP 因子（认证器丢失解锁用，仅平台管理员生效）
+async function handleResetMfa(row: any) {
+  try {
+    await ElMessageBox.confirm(
+      $t("pages.user.resetMfaConfirmDesc"),
+      $t("pages.user.resetMfaConfirmTitle"),
+      {
+        confirmButtonText: $t("pages.user.resetMfa"),
+        cancelButtonText: $t("core.login.mfaCancel"),
+        type: "warning",
+      }
+    );
+  } catch {
+    return;
+  }
+  try {
+    // 【缓行】MFA 未接入：await disableMfa({ userId: row.id, method: "TOTP" } as any);
+    ElMessage.warning("MFA 管理待接入");
+  } catch (err: any) {
+    ElNotification.error(err?.message || $t("pages.user.resetMfaFailed"));
   }
 }
 

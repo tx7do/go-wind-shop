@@ -1,7 +1,8 @@
 {
   "dashboard": {
     "title": "Dashboard",
-    "analytics": "Analytics"
+    "analytics": "Analytics",
+    "workspace": "Workbench"
   },
   "opm": {
     "moduleName": "Organizational Personnel Management",
@@ -32,13 +33,44 @@
     "policyEvaluationLog": "Policy Evaluation Log",
     "redisCacheMonitor": "Redis Cache Monitor"
   },
+  "ai": {
+    "moduleName": "AI Assistant",
+    "agents": "Agent Apps",
+    "chat": "AI Assistant",
+    "providers": "AI Providers",
+    "knowledge": "Knowledge Bases",
+    "query": "AI Query",
+    "usage": "Usage"
+  },
   "system": {
     "moduleName": "System Management",
     "dict": "Dictionary Management",
     "file": "File Management",
     "task": "Task Management",
     "loginPolicy": "Login Policy",
-    "language": "Language Management"
+    "language": "Language Management",
+    "onlineSessions": "Online Users",
+    "serverMonitor": "Server Monitor",
+    "scripts": "Scripts",
+    "config": "Config Management",
+    "accessKeys": "OpenAPI Credentials",
+    "monitorAlerts": "Monitor Alerts"
+  },
+  "notification": {
+    "moduleName": "Notifications",
+    "channels": "Notification Channels",
+    "rules": "Notification Routing Rules",
+    "deliveries": "Notification Deliveries",
+    "templates": "Templates"
+  },
+  "tenant": {
+    "moduleName": "Tenant Management",
+    "member": "Tenant Member",
+    "plan": "Subscription Plans"
+  },
+  "profile": {
+    "settings": "Profile Center",
+    "internalMessage": "Internal Message"
   },
   "mall": {
     "moduleName": "Catalog Management",
@@ -64,13 +96,5 @@
     "invoice": "Invoice",
     "lowStock": "Low-Stock Management",
     "stockAlert": "Stock Alert Management"
-  },
-  "tenant": {
-    "moduleName": "Tenant Management",
-    "member": "Tenant Member"
-  },
-  "profile": {
-    "settings": "Profile Center",
-    "internalMessage": "Internal Message"
   }
 }

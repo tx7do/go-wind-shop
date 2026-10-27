@@ -1,4 +1,5 @@
 import { computed } from "vue";
+import type { TagType } from "./shared";
 import {
   useMutation,
   type UseMutationOptions,
@@ -101,24 +102,25 @@ export const loginPolicyTypeList = computed(() => [
 
 export const loginPolicyMethodList = computed(() => [
   { value: "IP", label: t("enum.loginPolicy.method.IP") },
-  { value: "MAC", label: t("enum.loginPolicy.method.MAC") },
+  // MAC 不在下拉中：HTTP 请求上下文拿不到 MAC 地址，选了也永不命中（后端枚举保留兼容存量数据）
   { value: "REGION", label: t("enum.loginPolicy.method.REGION") },
   { value: "TIME", label: t("enum.loginPolicy.method.TIME") },
   { value: "DEVICE", label: t("enum.loginPolicy.method.DEVICE") },
 ]);
 
-const LOGIN_POLICY_METHOD_COLOR_MAP: Record<string, string> = {
-  IP: "#4096FF",
-  MAC: "#909399",
-  REGION: "#FF9A2E",
-  TIME: "#F56C6C",
-  DEVICE: "#86909C",
-  DEFAULT: "#86909C",
+const LOGIN_POLICY_METHOD_TAG_TYPE_MAP: Record<string, TagType> = {
+  IP: "primary",
+  MAC: "info",
+  REGION: "warning",
+  TIME: "danger",
+  DEVICE: "info",
+  DEFAULT: "info",
 };
 
-export function loginPolicyMethodToColor(methodName: LoginPolicy_Method) {
+export function loginPolicyMethodToType(methodName: LoginPolicy_Method): TagType {
   return (
-    LOGIN_POLICY_METHOD_COLOR_MAP[methodName as string] || LOGIN_POLICY_METHOD_COLOR_MAP.DEFAULT
+    LOGIN_POLICY_METHOD_TAG_TYPE_MAP[methodName as string] ||
+    LOGIN_POLICY_METHOD_TAG_TYPE_MAP.DEFAULT
   );
 }
 
@@ -128,14 +130,14 @@ export function loginPolicyTypeToName(typeName: LoginPolicy_Type) {
   return matchedItem ? matchedItem.label : "";
 }
 
-export function loginPolicyTypeToColor(typeName: LoginPolicy_Type) {
+export function loginPolicyTypeToType(typeName: LoginPolicy_Type): TagType {
   switch (typeName) {
     case "BLACKLIST":
-      return "red";
+      return "danger";
     case "WHITELIST":
-      return "green";
+      return "success";
     default:
-      return "gray";
+      return "info";
   }
 }
 

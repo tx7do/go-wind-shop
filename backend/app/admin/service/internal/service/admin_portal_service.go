@@ -212,3 +212,22 @@ func (s *AdminPortalService) GetNavigation(ctx context.Context, _ *emptypb.Empty
 
 	return &adminV1.ListRouteResponse{Items: s.fillRouteItem(menuList.Items)}, nil
 }
+
+// GetInitialContext 一次性返回进入后台所需的菜单树与权限码。
+// 复用 GetNavigation 与 GetMyPermissionCode，避免内嵌接口的 nil 实现被调用而 panic。
+func (s *AdminPortalService) GetInitialContext(ctx context.Context, _ *emptypb.Empty) (*adminV1.InitialContextResponse, error) {
+	navigation, err := s.GetNavigation(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	permissionCodes, err := s.GetMyPermissionCode(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return &adminV1.InitialContextResponse{
+		Menus:       navigation.GetItems(),
+		Permissions: permissionCodes.GetCodes(),
+	}, nil
+}

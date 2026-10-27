@@ -38,7 +38,6 @@
     "welcomeSubtitle": "Please enter your account information to start managing your system",
     "copyright": "Copyright © 2026 GoWind",
     "login": "Login",
-    "register": "Register",
     "username": "Username",
     "password": "Password",
     "tenantCode": "Tenant code (leave empty for platform)",
@@ -52,6 +51,15 @@
     "otherLoginMethods": "Other Login Methods",
     "agree": "I agree to the",
     "userAgreement": "User Agreement",
+    "mfaTitle": "Multi-Factor Authentication",
+    "mfaDesc": "Enter the 6-digit verification code from your authenticator app to continue.",
+    "mfaCodePlaceholder": "Enter 6-digit code",
+    "mfaCodeRequired": "Please enter the verification code",
+    "mfaCodeFormatError": "Verification code must be 6 digits",
+    "mfaVerify": "Verify",
+    "mfaCancel": "Cancel",
+    "mfaVerifyFailed": "MFA verification failed",
+    "mfaNotRequired": "No MFA challenge in progress",
     "message": {
       "username": {
         "required": "Please enter username"
@@ -65,7 +73,8 @@
       "captchaCode": {
         "required": "Please enter captcha"
       }
-    }
+    },
+    "register": "Register"
   },
   "notice": {
     "title": "Inbox",
@@ -76,11 +85,6 @@
     "markAllReadFailed": "Failed to mark all as read",
     "viewAll": "Go to Inbox",
     "detail": "Notification Details"
-  },
-  "register": {
-    "register": "Register",
-    "haveAccount": "Already have an account?",
-    "login": "Login"
   },
   "resetPwd": {
     "resetPassword": "Reset Password",
@@ -114,5 +118,19 @@
       "notFound": "Resource Not Found",
       "internalServerError": "Internal Server Error"
     }
+  },
+  "sso": {
+    "title": "SSO Callback",
+    "failed": "SSO login failed",
+    "backToLogin": "Back to login",
+    "redirecting": "Signing in with SSO…",
+    "missingParams": "Missing code or state parameter",
+    "button": "Sign in with SSO",
+    "or": "or"
+  },
+  "register": {
+    "register": "Register",
+    "haveAccount": "Already have an account?",
+    "login": "Login"
   }
 }

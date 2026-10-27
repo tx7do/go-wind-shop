@@ -9,60 +9,57 @@
 @forward "element-plus/theme-chalk/src/common/var.scss" with (
   $colors: (
     "primary": (
-      // 现代蓝 — 高级感拉满
-      "base": #165dff,
+      // 规范主色 hsl(212 100% 45%)（docs/design-language.md）
+      "base": #006BE6,
     ),
     "success": (
-      "base": #00b42a,
+      // 规范成功色 hsl(144 57% 58%) = #57D188（docs/design-language.md §2.1，
+      // 2026-09-13 勘误：原 #57D1A0 换算有误）
+      "base": #57D188,
     ),
     "warning": (
-      "base": #ff7d00,
+      // 规范警告色 hsl(42 84% 61%) = #EFBD48（同上勘误：原 #EF7A48 有误）
+      "base": #EFBD48,
     ),
     "danger": (
-      "base": #f53f3f,
+      "base": #FF3860,
     ),
+    // info 与主色同值：运行时 utils/theme.ts 同样把 info 映射为主色，
+    // 对齐 react 端 antd colorInfo=主色的三端一致映射（design-language.md §2.1），两处值必须一致
     "info": (
-      "base": #86909c,
+      "base": #006BE6,
     ),
   ),
   $bg-color: (
-    "page": #f7f8fa,
+    "page": #F1F3F6,
   ),
   // 圆角 — 现代大圆角
   $border-radius: (
-      "base": 8px,
-      "small": 6px,
-      "round": 20px,
-      "circle": 100%,
-    ),
+    "base": 8px,
+    "small": 6px,
+    "round": 20px,
+    "circle": 100%,
+  ),
   // 阴影更柔和
   $box-shadow: (
-      "": (
-        0 4px 12px rgba(0, 0, 0, 0.08),
-      ),
-      "light": (
-        0 2px 8px rgba(0, 0, 0, 0.06),
-      ),
-      "lighter": (
-        0 1px 4px rgba(0, 0, 0, 0.04),
-      ),
-      "dark": (
-        0 6px 16px rgba(0, 0, 0, 0.12),
-      ),
-    ),
+    "": (0 4px 12px rgba(0, 0, 0, 0.08)),
+    "light": (0 2px 8px rgba(0, 0, 0, 0.06)),
+    "lighter": (0 1px 4px rgba(0, 0, 0, 0.04)),
+    "dark": (0 6px 16px rgba(0, 0, 0, 0.12)),
+  ),
   // 表格更清爽
   $table: (
-      "header-font-color": #1d2129,
-      "header-bg-color": #f0f2f5,
-      "row-hover-bg-color": #f2f3f5,
-      "border-color": #e5e6eb,
-    ),
+    "header-font-color": #1F2937,
+    "header-bg-color": #F0F2F5,
+    "row-hover-bg-color": #F2F3F5,
+    "border-color": #E4E4E7,
+  ),
   // 填充色优化
   $fill-color: (
-      "light": #f2f3f5,
-      "lighter": #f7f8fa,
-      "extra-light": #fafbfc,
-    )
+    "light": #F2F3F5,
+    "lighter": #F7F8FA,
+    "extra-light": #FAFBFC,
+  ),
 );
 
 // ============================================
@@ -71,57 +68,21 @@
 
 $border: 1px solid var(--el-border-color-light);
 
-/* ---------- 表格 hover 颜色跟随主色调 ---------- */
+/* ---------- 表格变量 ---------- */
+/* 表格的 --el-table-* 变量由 Element Plus 主题系统（含 dark/css-vars.css）
+   按亮/暗模式自动提供，此处不再硬编码覆盖，避免亮/暗覆盖不全导致暗黑下出现
+   浅色表头或边框。 */
 :root {
-  --el-table-row-hover-bg-color: #f5f8ff;
-  --el-table-header-text-color: #1d2129;
-  --el-table-header-bg-color: #f0f2f5;
-  --el-table-border-color: #e5e6eb;
-
   /* ---------- GoWind 全局组件变量 ---------- */
   --gowind-drawer-width: 480px;
   --gowind-form-item-margin-bottom: 24px;
-
-  /* 语义色"作文字"时的合格档：--el-color-* 基准值是填充档，当文字墨用时对比度不够
-   * （如亮色 success/warning 软底标签文字 <2:1、danger 文字按钮 ~3.5:1）。
-   * 这里用 color-mix 从基准色反解出文字档，换主题色后随 --el-color-* 联动，不是写死的色值。
-   * 填充（实底按钮/徽标底色）继续用基准值，只有"文字/软底标签前景"换本组变量。
-   * 自建变量（base.css 里没有同名项），不需要 !important。 */
-  --gowind-primary-text: color-mix(in srgb, var(--el-color-primary) 90%, #0b0f19);
-  --gowind-success-text: color-mix(in srgb, var(--el-color-success) 50%, #0b0f19);
-  --gowind-warning-text: color-mix(in srgb, var(--el-color-warning) 50%, #0b0f19);
-  --gowind-danger-text: color-mix(in srgb, var(--el-color-danger) 70%, #0b0f19);
-  /* 实底语义色上的前景 = 暗色 L0（白字在 danger 实底上对比不足） */
-  --gowind-solid-ink: #0b0f19;
-
-  /* 卡片静止档：投影只表达层级，卡片静止 = `0 1px 2px rgba(0,0,0,.05)`，悬浮才是更重的晕。
-   * Pro 卡/骨架卡统一走这两个自建变量（base.css 里没有同名项，不需要 !important）；
-   * 不复用 --el-box-shadow-light——它剩下的使用者全是浮层（下拉/通知/弹层），浮层要的就是那圈晕。
-   * 描边同理走 --gowind-card-border：--el-border-color-lighter 运行时是出厂 #EBEEF5，偏淡。 */
-  --gowind-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --gowind-card-border: #e4e4e7;
-}
-
-html.dark {
-  --el-table-row-hover-bg-color: #252a37;
-  --el-table-header-bg-color: #1f232b;
-
-  /* 文字档暗色侧：对暗面全部 ≥4.5:1 的最小升档（基准色混白） */
-  --gowind-primary-text: color-mix(in srgb, var(--el-color-primary) 70%, #ffffff);
-  --gowind-success-text: color-mix(in srgb, var(--el-color-success) 90%, #ffffff);
-  --gowind-warning-text: color-mix(in srgb, var(--el-color-warning) 90%, #ffffff);
-  --gowind-danger-text: color-mix(in srgb, var(--el-color-danger) 90%, #ffffff);
-
-  /* 卡片暗色档：投影 36% 黑的浅落影；描边落分隔线档 8% 白 */
-  --gowind-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.36);
-  --gowind-card-border: rgba(255, 255, 255, 0.08);
 }
 
 /* ---------- el-dialog ---------- */
 .el-dialog {
-  overflow: hidden;
   border-radius: 12px;
   box-shadow: var(--el-box-shadow-dark);
+  overflow: hidden;
 
   .el-dialog__header {
     padding: 16px 20px;
@@ -149,16 +110,16 @@ html.dark {
   flex-direction: column;
 
   // 亮色模式：赋予立体层级感，左侧精细分割线 + 温润漫反射投影
-  border-left: 1px solid #e2e8f0 !important;
-  box-shadow: -12px 0 32px rgba(0, 0, 0, 0.05) !important;
+  border-left: 1px solid var(--el-border-color) !important;
+  box-shadow: var(--el-box-shadow-dark) !important;
 
   .el-drawer__header {
     flex-shrink: 0; // 不被压缩
     padding: 16px 20px;
     margin: 0;
-    font-weight: 600;
     color: inherit;
     border-bottom: $border;
+    font-weight: 600;
   }
 
   .el-drawer__body {
@@ -171,10 +132,8 @@ html.dark {
   .el-drawer__footer {
     flex-shrink: 0; // 不被压缩
     padding: 16px 20px;
-    background: var(--el-bg-color, #ffffff);
-    // 使用 EP 语义变量，浅色为白、暗色自动跟随 html.dark 的 --el-bg-color，
-    // 避免 #ffffff/#f1f5f9 在暗色模式下漏白底（此前靠 _dark-mode.scss !important 兜底）
-    border-top: 1px solid var(--el-border-color-lighter, #f1f5f9);
+    border-top: 1px solid var(--el-border-color);
+    background: var(--el-bg-color);
   }
 }
 
@@ -206,15 +165,16 @@ body,
 .vxe-cell,
 .vxe-header--column .vxe-cell,
 .vxe-body--column .vxe-cell {
-  font-family: "Noto Sans SC", "Noto Sans JP", "Noto Sans KR", sans-serif !important;
+  font-family: "Noto Sans SC", "Noto Sans JP", "Noto Sans KR",
+    sans-serif !important;
 }
 
 // --- 菜单：flex 居中，抛弃基线 ---
 .el-menu-item,
 .el-sub-menu__title {
   display: flex !important;
-  gap: 6px !important;
   align-items: center !important;
+  gap: 6px !important;
   line-height: normal !important;
 }
 
@@ -253,8 +213,8 @@ body,
 .el-breadcrumb__inner,
 .el-breadcrumb__inner a {
   display: inline-flex !important;
-  gap: 4px;
   align-items: center !important;
+  gap: 4px;
   line-height: normal !important;
 }
 
@@ -318,19 +278,19 @@ body,
 
 /* ---------- 按钮精致化 ---------- */
 .el-button {
-  height: var(--el-button-height, 32px);
   border-radius: 8px;
+  height: var(--el-button-height, 32px);
   transition: all 0.25s ease;
 
   &:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--el-box-shadow-base);
   }
 }
 
 /* ---------- 卡片精致化 ---------- */
 .el-card {
-  border: 1px solid var(--el-border-color-lighter, #ebedf0);
   border-radius: 12px;
+  border: 1px solid var(--el-border-color-lighter);
   box-shadow: var(--el-box-shadow-light);
   transition: box-shadow 0.25s ease;
 
@@ -340,21 +300,21 @@ body,
 }
 
 /* ---------- 表格高级感 ---------- */
+/* 表格边框/表头背景/边框使用 Element Plus 主题变量（含 dark/css-vars.css），
+   亮/暗模式自动切换，不再硬编码浅色值。 */
 .el-table {
-  --el-table-border-color: #e5e6eb;
-  overflow: hidden;
   border-radius: 8px;
+  overflow: hidden;
 
   // 表头紧凑 + 视觉分隔增强
   .el-table__header-wrapper th.el-table__cell {
+    font-weight: 600;
+    font-size: 13px;
     padding-top: 3px;
     padding-bottom: 3px;
-    font-size: 13px;
-    font-weight: 600;
-    // 加深表头背景，和数据区形成对比
-    background-color: #f0f2f5 !important;
-    // 底部加一条深灰色实线，明确切分标题和数据
-    border-bottom: 1px solid #d9dde3 !important;
+    // 表头背景与边框跟随主题变量
+    background-color: var(--el-table-header-bg-color) !important;
+    border-bottom: 1px solid var(--el-table-border-color) !important;
   }
 
   // 内容区紧凑
@@ -375,14 +335,14 @@ body,
   .el-table__empty-text {
     display: flex;
     flex-direction: column;
-    gap: 8px;
     align-items: center;
+    gap: 8px;
     color: var(--el-text-color-placeholder);
 
     .el-icon {
-      margin-bottom: 8px;
       font-size: 48px;
       color: var(--el-text-color-placeholder);
+      margin-bottom: 8px;
     }
   }
 }
@@ -395,32 +355,41 @@ body,
 
     // 聚焦态外发光
     &.is-focus {
-      box-shadow:
-        0 0 0 1px var(--el-color-primary) inset,
-        0 0 0 3px var(--el-color-primary-light-8);
+      box-shadow: 0 0 0 1px var(--el-color-primary) inset,
+                  0 0 0 3px var(--el-color-primary-light-8);
     }
   }
+}
+
+/* ---------- 抽屉/对话框表单内输入控件统一撑满 ---------- */
+/* ElInput/ElInputNumber 默认带固定宽度（160px/150px），导致抽屉表单中各输入
+   控件长短不一。此处限定 drawer/dialog 内的表单输入控件撑满 content 区，
+   与同表单其他控件宽度一致，消除长短不一。亮暗通用（仅涉 width）。 */
+.el-drawer .el-form .el-input,
+.el-drawer .el-form .el-input-number,
+.el-dialog .el-form .el-input,
+.el-dialog .el-form .el-input-number {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 /* ---------- Select / Textarea 聚焦态外发光 ---------- */
 .el-select .el-input__wrapper.is-focus,
 .el-date-editor .el-input__wrapper.is-focus {
-  box-shadow:
-    0 0 0 1px var(--el-color-primary) inset,
-    0 0 0 3px var(--el-color-primary-light-8) !important;
+  box-shadow: 0 0 0 1px var(--el-color-primary) inset,
+              0 0 0 3px var(--el-color-primary-light-8) !important;
 }
 
 .el-textarea__inner:focus {
-  box-shadow:
-    0 0 0 1px var(--el-color-primary) inset,
-    0 0 0 3px var(--el-color-primary-light-8) !important;
+  box-shadow: 0 0 0 1px var(--el-color-primary) inset,
+              0 0 0 3px var(--el-color-primary-light-8) !important;
 }
 
 /* ---------- 下拉菜单精致化 ---------- */
 .el-select-dropdown,
 .el-popper.is-light {
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--el-box-shadow-light);
 }
 
 /* ---------- 标签精致化 ---------- */
@@ -428,10 +397,30 @@ body,
 .el-tag {
   height: 22px;
   padding: 0 8px;
+  border-radius: 4px; /* 比按钮的 6px 更方正 */
   font-size: 12px;
   font-weight: 500;
   cursor: default; /* 不可点击，和按钮区分 */
-  border-radius: 4px; /* 比按钮的 6px 更方正 */
+}
+
+/* 亮色 Tag 文字对比度（design-language.md §2.1 语义色偏浅，直接作 light 底上的
+   文字不达 WCAG AA）：向黑混 40% 压深文字。注意不能用 dark-2——运行时主题生成器
+   （utils/theme.ts）在亮色下把 dark-N 重定义为向白混，越「dark」越浅。
+   :not(.el-tag--plain) 抬到 (0,3,0)——EP 的 tag 组件样式经 resolver 按需注入在应用样式
+   之后，同特异性必被压回，必须靠特异性取胜；plain 变体沿用 _layouts.scss 的既有校准。
+   primary 基色对白 ≈4.9:1 已达标，保持品牌色不动；暗色模式由 _dark-mode.scss
+   按语义色 !important 接管 color，不受此 var 影响。 */
+.el-tag.el-tag--success:not(.el-tag--plain) {
+  --el-tag-text-color: color-mix(in srgb, var(--el-color-success) 60%, black);
+}
+.el-tag.el-tag--warning:not(.el-tag--plain) {
+  --el-tag-text-color: color-mix(in srgb, var(--el-color-warning) 60%, black);
+}
+.el-tag.el-tag--danger:not(.el-tag--plain) {
+  --el-tag-text-color: color-mix(in srgb, var(--el-color-danger) 60%, black);
+}
+.el-tag.el-tag--info:not(.el-tag--plain) {
+  --el-tag-text-color: color-mix(in srgb, var(--el-color-info) 60%, black);
 }
 
 /* ---------- 消息提示精致化 ---------- */
@@ -442,7 +431,7 @@ body,
 /* ---------- 通知精致化 ---------- */
 .el-notification {
   border-radius: 12px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--el-box-shadow-light);
 }
 
 /* ---------- 分页精致化 ---------- */
@@ -473,17 +462,17 @@ body,
   margin-bottom: var(--gowind-form-item-margin-bottom);
 }
 
-/* 表单 Label 亮色模式加深，增强可读性 */
+/* 表单 Label 跟随 Element Plus 主题变量，亮/暗模式自动切换，避免暗黑下低对比 */
 .el-form-item__label {
+  color: var(--el-text-color-regular) !important;
+  font-weight: 500 !important;
   font-size: 14px; // 表单标签字号
-  font-weight: 550 !important;
-  color: #475569 !important;
 }
 
 /* ---------- 消息弹窗精致化 ---------- */
 .el-message-box {
-  overflow: hidden;
   border-radius: 12px;
+  overflow: hidden;
 }
 
 /* ---------- 字重巤底：表格/表头/输入框 ---------- */
@@ -497,11 +486,183 @@ body,
 }
 
 .el-table__header th {
-  font-size: 14px !important; // 表头字号
   font-weight: var(--el-font-weight-bold, 600) !important;
+  font-size: 14px !important; // 表头字号
 }
 
 .el-input__inner {
-  font-size: 14px; // 输入框字号
   font-weight: var(--el-font-weight-primary);
+  font-size: 14px; // 输入框字号
 }
+
+/* ============================================
+ * 3. 语义色"作文字"时的合格档（design-language.md §2.1）
+ * ============================================
+ * 库内把 --el-color-{primary,success,warning,danger} 原值同时用于实底填充和文字/软底标签，
+ * 而基准值本身按 §2.1 的亮度（primary 0.16 / success 0.49 / warning 0.55 / danger 0.22）
+ * 只适合当填充，不适合当文字：2026-09-28 三端实测——暗色主色文字 3.33~3.59（ele 端 363 处）、
+ * 亮色 success/warning 标签文字 1.91/1.74、亮色 danger 文字按钮 3.51。
+ * 这里按"色阶派生规则"用 color-mix 从基准色反解出文字档（比例 = 对白底与该色浅底 tint
+ * 双双 ≥4.5:1 的最小降档；暗色侧 = 对 §2.3 的 L0/L1/浮层/表头全部暗面 ≥4.5:1 的最小升档），
+ * 因此换主色后仍随 --el-color-* 联动，不是写死的色值。
+ * 填充（实底按钮/徽标底色）继续用基准值，只有"文字/软底标签前景"换成本节变量。
+ *
+ * 本节一律带 !important，原因是注入顺序而非权重（2026-09-28 探针实测）：
+ * unplugin-element-plus 在组件首次使用时才追加 theme-chalk 的单组件 css 与 base.css，
+ * 这些 <style> 落在本文件（bootstrap.ts:6 的 @/styles/index.scss）之后，
+ * 于是 `.el-tag.el-tag--primary`、`.el-button--primary.is-link` 与 base.css 的 :root
+ * 都用等价选择器把值改回去并胜出——实测 sheet 序号：全局 scss=#3，el-button.css=#10，
+ * el-tag.css=#71，base.css=#6。同一坑此前只被 _dark-mode.scss:25-26 用 !important 绕开，
+ * 所以浅色模式下 index.scss:50 的 --el-text-color-secondary:#6B7280 一直是死声明
+ * （实测 paints #909399，183 处空值单元格 + 98 处命令面板文字因此只有 3.08:1）。
+ */
+:root {
+  --gowind-primary-text: color-mix(in srgb, var(--el-color-primary) 90%, #0b0f19);
+  --gowind-success-text: color-mix(in srgb, var(--el-color-success) 50%, #0b0f19);
+  --gowind-warning-text: color-mix(in srgb, var(--el-color-warning) 50%, #0b0f19);
+  --gowind-danger-text: color-mix(in srgb, var(--el-color-danger) 70%, #0b0f19);
+
+  /* 文字-主 / 文字-常规（§2.2 定稿 #1F2937 / #374151）。EP 出厂值是 zinc 中性系
+   * （#303133 / #606266），对比度本身达标（白 13.02 / 7.03，2026-10-14 登录页实测），
+   * 但三端文字层次统一走 gray 冷调——暗色侧 _dark-mode.scss:21-24 已按 §2.3 覆盖，
+   * 浅色侧一直漏这两档。必须带 !important，理由见本文件头注释（注入顺序）。 */
+  --el-text-color-primary: #1f2937 !important;
+  --el-text-color-regular: #374151 !important;
+  /* 次要文字档（§2.2 定稿 #676E7C）：EP 默认 #909399 对白底只有 3.08:1，
+   * 而上一版取 gray-500 #6B7280 是**按白底**量的——离开白底就掉下来：
+   * 白 4.83 / 页面大底 #F5F5F5 4.43 / 卡片灰 #F0F2F5 4.31 / 面板头 #F0F2F5 实测 4.31（2026-09-28 扫测）。
+   * 沿同一色相压暗到 #676E7C 后四处全部达标：5.12 / 4.70 / 4.57 / 4.57。
+   * 与 react 端 SECONDARY_TEXT_LIGHT、vue-vben 端 --muted-foreground 同值，三端一起改。 */
+  --el-text-color-secondary: #676e7c !important;
+  /* 占位符对齐 §2.2 的 gray-400（暗色侧 _dark-mode.scss 早已用同值） */
+  --el-text-color-placeholder: #9ca3af !important;
+
+  /* 实底语义色上的前景 = §2.1 规定的暗色 L0（白字在 #FF3860 上只有 3.51:1） */
+  --gowind-solid-ink: #0b0f19;
+
+  /* 卡片静止档（§2.2 定稿：投影只表达层级，卡片静止 = `0 1px 2px rgba(0,0,0,.05)`，
+   * 悬浮才是 `0 4px 12px rgba(0,0,0,.08)`）。原先 Pro 卡/骨架卡直接吃 `--el-box-shadow-light`，
+   * 运行时实测是出厂值 `0 0 12px rgba(0,0,0,.12)`——比本端的**悬浮档还重**（.12 > .08），
+   * 且没有 Y 偏移（全向扩散），静止态读起来像"发一圈灰光飘着"，层级语言是反的。
+   * 不复用 `--el-box-shadow-light`：它剩下的使用者里**只有两处是页面卡**，其余是浮层
+   * （下拉 `.el-select-dropdown`/`.el-popper.is-light`、`.el-notification`、通知面板、页签右键菜单、
+   * hover 展开的侧栏覆盖层 —— 这些要的就是那圈 12px 晕，保持不动）。两处页面卡：
+   * 聊天页 `.chat-card`（2026-10-18 已改走本对变量）与 `.el-card`（:282，**亮色仍吃 12px 晕、
+   * 暗色已被 _dark-mode.scss:110 覆成静止档 —— 同一组件两态不同档，属已知待决，未批不动**）。
+   * 描边同理走 `--gowind-card-border`（§2.2 = #E4E4E7）：EP 的 `--el-border-color-lighter`
+   * 运行时实测是出厂 #EBEEF5，比权威淡一档；本文件顶部 `@forward ... with (...)` 那张 map
+   * 里的 `#E4E4E7` 到不了运行时（机制同下面那段"页面画布"注释——bootstrap.ts:4 引的是预编译 dist/index.css，
+   * 连 `$table: ("border-color")` 也没落地：预编译 el-table.css 里写的是
+   * `--el-table-border-color: var(--el-border-color-lighter)`，实测仍是 #EBEEF5）。
+   * 这两条与 `--gowind-*-text` 同族（自建变量，base.css 里没有同名项，不需要 !important）。 */
+  --gowind-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --gowind-card-border: #e4e4e7;
+}
+
+/* 页面画布（§2.2 定稿 #F1F3F6）：本文件 :34 的 Sass map `$bg-color: ("page": #F1F3F6)`
+ * 到不了运行时——base.css 的 :root 把 --el-bg-color-page 写成出厂值 #F2F3F5 并胜出
+ * （2026-10-14 实测读回 #f2f3f5）。必须限定 html:not(.dark)：_dark-mode.scss:71 的暗色档
+ * 不带 !important，若把这条写进上面的 :root，!important 会压过暗色块、把
+ * LayoutMain（:132 用 var(--el-bg-color-page)）整片刷成浅色——实测踩过。 */
+html:not(.dark) {
+  --el-bg-color-page: #f1f3f6 !important;
+}
+
+html.dark {
+  --gowind-primary-text: color-mix(in srgb, var(--el-color-primary) 70%, #ffffff);
+  --gowind-success-text: color-mix(in srgb, var(--el-color-success) 90%, #ffffff);
+  --gowind-warning-text: color-mix(in srgb, var(--el-color-warning) 90%, #ffffff);
+  --gowind-danger-text: color-mix(in srgb, var(--el-color-danger) 90%, #ffffff);
+
+  /* 卡片暗色档：投影取本端 .el-card 早已采用的 `0 1px 2px rgba(0,0,0,.36)`（_dark-mode.scss:110
+   * 的注释原话：EP 暗色的 `--el-box-shadow` 是 72% 黑晕，"窄间距卡片间叠出黑缝"——那一版已经
+   * 认定它不对，只是 Pro 卡没跟）。描边落 §2.3 的分隔线档 8% 白：原先走 `--el-border-color-lighter`
+   * 的暗色值，实测 6% 白，低于该条自己写的下限"5% 时卡片与大底糊成一片"。 */
+  --gowind-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.36);
+  --gowind-card-border: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- link / text 按钮：前景走文字档 ---------- */
+/* EP 的 .el-button--{type}.is-link/.is-text/.is-plain 把 --el-button-text-color 指到基准色
+ * （is-plain 只改静止态前景：plain 的 hover 走 --el-button-hover-text-color，仍是白字实底，不受本节影响） */
+.el-button--primary.is-link,
+.el-button--primary.is-text,
+.el-button--primary.is-plain {
+  --el-button-text-color: var(--gowind-primary-text) !important;
+  --el-button-hover-link-text-color: var(--gowind-primary-text) !important;
+}
+
+.el-button--danger.is-link,
+.el-button--danger.is-text,
+.el-button--danger.is-plain {
+  --el-button-text-color: var(--gowind-danger-text) !important;
+  --el-button-hover-link-text-color: var(--gowind-danger-text) !important;
+}
+
+.el-button--success.is-link,
+.el-button--success.is-text,
+.el-button--success.is-plain {
+  --el-button-text-color: var(--gowind-success-text) !important;
+  --el-button-hover-link-text-color: var(--gowind-success-text) !important;
+}
+
+.el-button--warning.is-link,
+.el-button--warning.is-text,
+.el-button--warning.is-plain {
+  --el-button-text-color: var(--gowind-warning-text) !important;
+  --el-button-hover-link-text-color: var(--gowind-warning-text) !important;
+}
+
+/* ---------- 禁用态：实底按钮一律去实底 ----------
+ * 现象（2026-09-29 /ai/chat 发送按钮实测，空态 vs 有字态）：暗色下底色/文字/边框三项零差异
+ * （两态都是 #006BE6 + #FFFFFF），唯一线索只剩 cursor:not-allowed；浅色下是 #80B5F3 + 白字，
+ * 仍是一枚淡蓝药丸。用户读作"点了没反应"而不是"还不能点"。
+ * 两个来源，分别修：
+ *   暗色 = 我们自己的 _dark-mode.scss 用 !important 给 .el-button--{type} 硬刷实底、没排除
+ *          is-disabled（那边已补 :not(.is-disabled)，禁用态由此回落到本节这条 var 通道——
+ *          只改变量不改 background-color 声明，是因为 EP 原生就走 var(--el-button-disabled-bg-color)）；
+ *   浅色 = EP 原生配方 --el-button-disabled-bg-color: <type>-light-5 + 前景留白字。
+ * 基准 = react / vben（antd 的配方是中性 rgba(墨/白,.05) 底 + rgba(.25) 字，
+ * 实测 react 暗 #1D2432 + #4B515C、浅 #F5F5F5 + #BFBFBF；vben 暗 #232A38 + #4B515C）。
+ * 禁用件按 WCAG 1.4.3 属 inactive 豁免，这一档要的是"状态可辨"不是可读性，所以照 react 取淡。 */
+.el-button--primary,
+.el-button--success,
+.el-button--warning,
+.el-button--danger,
+.el-button--info {
+  --el-button-disabled-text-color: rgba(11, 15, 25, 0.25) !important;
+  --el-button-disabled-bg-color: rgba(11, 15, 25, 0.05) !important;
+  --el-button-disabled-border-color: rgba(11, 15, 25, 0.1) !important;
+}
+
+html.dark {
+  .el-button--primary,
+  .el-button--success,
+  .el-button--warning,
+  .el-button--danger,
+  .el-button--info {
+    --el-button-disabled-text-color: rgba(248, 250, 252, 0.25) !important;
+    --el-button-disabled-bg-color: rgba(248, 250, 252, 0.05) !important;
+    --el-button-disabled-border-color: rgba(248, 250, 252, 0.1) !important;
+  }
+}
+
+/* ---------- Tag（light/plain 效果）：文字档；dark 效果由 EP 自己的白字规则胜出 ---------- */
+.el-tag.el-tag--primary {
+  --el-tag-text-color: var(--gowind-primary-text) !important;
+}
+
+.el-tag.el-tag--success {
+  --el-tag-text-color: var(--gowind-success-text) !important;
+}
+
+.el-tag.el-tag--warning {
+  --el-tag-text-color: var(--gowind-warning-text) !important;
+}
+
+.el-tag.el-tag--danger {
+  --el-tag-text-color: var(--gowind-danger-text) !important;
+}
+
+/* 徽标实底不再换暗墨（2026-10-15 用户裁决，与危险实底按钮同批）：暗墨坐在红色实底上观感刺眼，
+   亮/暗两态一律回 EP 原生白字（--el-color-white），沿革见 docs/design-language.md §2.1。 */

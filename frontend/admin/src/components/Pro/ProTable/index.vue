@@ -77,8 +77,13 @@
       </template>
       <template #empty>
         <div class="pro-table__empty">
-          <IconifyIcon icon="lucide:inbox" class="pro-table__empty-icon" />
-          <span>{{ t(tableConfig.emptyText ?? "common.table.noData") }}</span>
+          <ElEmpty
+            :description="t(tableConfig.emptyText ?? 'common.table.noData')"
+            :image-size="120"
+          />
+          <ElButton v-if="emptyActionText" type="primary" @click="emit('empty-action')">
+            {{ t(emptyActionText) }}
+          </ElButton>
         </div>
       </template>
     </vxe-table>
@@ -108,6 +113,7 @@
           type="index"
           :label="col.label"
           :width="col.width ?? 60"
+          :align="col.align || 'center'"
         />
         <ElTableColumn v-else-if="col.type === 'expand'" type="expand">
           <template #default="scope">
@@ -151,8 +157,13 @@
       </template>
       <template #empty>
         <div class="pro-table__empty">
-          <IconifyIcon icon="lucide:inbox" class="pro-table__empty-icon" />
-          <span>{{ t(tableConfig.emptyText ?? "common.table.noData") }}</span>
+          <ElEmpty
+            :description="t(tableConfig.emptyText ?? 'common.table.noData')"
+            :image-size="120"
+          />
+          <ElButton v-if="emptyActionText" type="primary" @click="emit('empty-action')">
+            {{ t(emptyActionText) }}
+          </ElButton>
         </div>
       </template>
     </ElTable>
@@ -175,7 +186,7 @@
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { Icon as IconifyIcon } from "@iconify/vue";
-import { ElTable, ElTableColumn } from "element-plus";
+import { ElTable, ElTableColumn, ElEmpty, ElButton } from "element-plus";
 import ProPagination from "../ProPagination/index.vue";
 import ProTableCellContent from "./ProTableCellContent.vue";
 import { proTableGlobalConfig, mergeTableConfig } from "./proTableConfig";
@@ -199,6 +210,7 @@ const emit = defineEmits<{
   "size-change": [pageSize: number];
   "row-click": [row: T];
   "sort-change": [data: { prop: string; order: string | null }];
+  "empty-action": [];
 }>();
 
 const tableRef = ref<any>(null);
@@ -216,8 +228,8 @@ function updateTableHeight() {
   const wrapperHeight = tableWrapperRef.value.clientHeight;
   if (wrapperHeight <= 0) return;
   // 减去分页器高度（如果存在）。offsetHeight 已含分页器自己的 padding-top，
-  // 那 16px 就是「表格 → 分页器」间距，唯一来源在 CSS（ProPagination 的 .pro-pagination）；
-  // 原先这里还额外 +12，与分页器 padding 叠成多余空档——两处各写一份。
+  // 那 16px 就是 §2.6 的「表格 → 分页器」间距，唯一来源在 CSS（ProPagination 的 .pro-pagination）；
+  // 原先这里还额外 +20，与分页器 padding 叠成上 36 的实测间距——两处各写一份。
   const pagerEl = tableWrapperRef.value.querySelector(".pro-pagination") as HTMLElement | null;
   const pagerHeight = pagerEl ? pagerEl.offsetHeight : 0;
   vxeTableHeight.value = wrapperHeight - pagerHeight;
@@ -260,7 +272,7 @@ const tableAttrs = computed(() => ({
 }));
 
 const resolvedColumns = computed(() =>
-  [...props.columns].map((col) => {
+  [...props.columns].map((col, colIdx) => {
     const resolved = { ...col };
     const colDef = tableConfig.value.column!;
 
@@ -273,6 +285,15 @@ const resolvedColumns = computed(() =>
 
     if (resolved.initFn) resolved.initFn(resolved);
     if (resolved.show === undefined) resolved.show = true;
+
+    // vxe 列持久化（custom-config.storage）要求每个进入渲染的列都有唯一 field；
+    // 不绑定数据的列（如操作列 cellType:"tool"）缺 prop 会被判 field 缺失而告警。
+    // 这里给这类列补一个表内唯一的合成字段，既满足持久化，也避免与真实数据列撞名。
+    // selection/index/expand 由 type 标识走单独分支，不在此列。
+    if (resolved.prop === undefined && resolved.type === undefined) {
+      resolved.prop = `__col_${colIdx}`;
+    }
+
     return resolved;
   })
 );
@@ -379,7 +400,9 @@ defineExpose({
       top: 25%;
       width: 1px;
       height: 50%;
-      background-color: var(--el-border-color-lighter);
+      // 用 --el-border-color（亮 #dcdfe6 / 暗 --dark-border #3a3f4a）而非
+      // --el-border-color-lighter（亮 #ebeef5，与表头 #EBEDF0 几乎同色，不可见）。
+      background-color: var(--el-border-color);
     }
   }
 

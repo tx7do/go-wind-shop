@@ -27,13 +27,13 @@
 
 ```
 HTTP/REST 请求
-  └─ admin-service  (网关 BFF，REST:6600 / SSE:6601 / gRPC)
+  └─ admin-service  (网关 BFF，REST:10600 / SSE:10601 / gRPC)
        └─ gRPC → core-service  (核心业务 + 数据落点)
                  ├─ ent ORM → PostgreSQL
                  ├─ Redis / MinIO / ElasticSearch
                  └─ Asynq（延时任务）
 
-app-service (前台 BFF，REST:6700) ──gRPC──→ core-service
+app-service (前台 BFF，REST:10700) ──gRPC──→ core-service
 core-service (gRPC，真正干活)
 ```
 
@@ -494,8 +494,8 @@ func NewRestMiddleware(...) []middleware.Middleware {
 ## Swagger / API 文档
 
 OpenAPI v3 由 proto 自动生成（`make openapi`），Swagger UI 内嵌运行时：
-- Admin Swagger UI: `http://localhost:6600/docs/`
-- App Swagger UI: `http://localhost:6700/docs/`
+- Admin Swagger UI: `http://localhost:10600/docs/`
+- App Swagger UI: `http://localhost:10700/docs/`
 - 配置开关：`configs/server.yaml` 中 `enable_swagger: true`
 
 ## 新增业务模块 Checklist（以 user 模块为模板）

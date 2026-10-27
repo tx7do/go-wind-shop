@@ -147,6 +147,7 @@ import {
 } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
 import { $t } from "@/core/i18n";
+import { extractLeafIds } from "@/utils/format";
 
 const emit = defineEmits<{
   success: [];
@@ -465,7 +466,10 @@ async function handleSubmit() {
 
     const submitData = {
       ...formData,
-      menuIds: filterNumbers(menuTreeRef.value?.getCheckedKeys() || []),
+      // 菜单树用叶子交集剥离父菜单 ID（即便 check-strictly 下用户手动勾父菜单，
+      // 其 ID 也会混入 checkedKeys，filterNumbers 无法过滤数字父 key）。
+      // API 树父节点 key 是 'module_${mod}' 字符串，filterNumbers 能正确剥离。
+      menuIds: extractLeafIds(menuTreeRef.value?.getCheckedKeys() || [], menuTreeData.value),
       apiIds: filterNumbers(apiTreeRef.value?.getCheckedKeys() || []),
     };
 

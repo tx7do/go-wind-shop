@@ -133,7 +133,7 @@ pnpm preview      # 预览构建结果
 
 ```env
 # .env.development
-NUXT_PUBLIC_API_BASE_URL=http://localhost:6700
+NUXT_PUBLIC_API_BASE_URL=http://localhost:10700
 NUXT_PUBLIC_ENABLE_MOCK=false
 NUXT_PUBLIC_AES_KEY=
 ```

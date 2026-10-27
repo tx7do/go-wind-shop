@@ -243,10 +243,20 @@ async function open(row?: any) {
     // 编辑模式
     isCreate.value = false;
     currentId.value = row.id;
-    Object.assign(formData, row);
-    // 处理 taskOptions 字段
+    // 仅回填表单声明的字段，避免把 id/createdAt 等不可变字段灌入 formData
+    formData.type = row.type ?? "PERIODIC";
+    formData.typeName = row.typeName ?? "";
+    formData.taskPayload = row.taskPayload ?? "";
+    formData.cronSpec = row.cronSpec ?? "";
+    formData.enable = row.enable ?? true;
+    formData.remark = row.remark ?? "";
+    // 仅回填 taskOptions 声明的子字段
     if (row.taskOptions) {
-      Object.assign(formData.taskOptions, row.taskOptions);
+      formData.taskOptions.maxRetry = row.taskOptions.maxRetry ?? 3;
+      formData.taskOptions.timeout = row.taskOptions.timeout;
+      formData.taskOptions.deadline = row.taskOptions.deadline;
+      formData.taskOptions.processIn = row.taskOptions.processIn;
+      formData.taskOptions.processAt = row.taskOptions.processAt;
     }
   } else {
     // 创建模式

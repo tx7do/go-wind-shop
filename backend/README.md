@@ -23,13 +23,13 @@ GoWind Shop（风行商城）— 面向出海场景的企业级电商平台（�
 
 ### Swagger UI
 
-- [Admin Swagger UI](http://localhost:6600/docs/)
-- [App Swagger UI](http://localhost:6700/docs/)
+- [Admin Swagger UI](http://localhost:10600/docs/)
+- [App Swagger UI](http://localhost:10700/docs/)
 
 ### openapi.yaml
 
-- [Admin openapi.yaml](http://localhost:6600/docs/openapi.yaml)
-- [Front openapi.yaml](http://localhost:6700/docs/openapi.yaml)
+- [Admin openapi.yaml](http://localhost:10600/docs/openapi.yaml)
+- [Front openapi.yaml](http://localhost:10700/docs/openapi.yaml)
 
 ## 生成Protobuf API
 

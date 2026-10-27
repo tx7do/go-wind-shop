@@ -103,6 +103,7 @@ const languageMap: Record<string, EditorLanguage> = {
   cpp: "cpp",
   "c#": "csharp",
   csharp: "csharp",
+  lua: "lua",
 };
 
 /**

@@ -8,6 +8,9 @@
       :placeholder="placeholder"
       :upload-image="uploadImage"
       :options="currentOptions"
+      :auto-detect-language="
+        editorType === EditorType.CODE ? codeOptions?.autoDetectLanguage : undefined
+      "
       @update:model-value="handleUpdate"
       @change="handleChange"
       @ready="handleReady"

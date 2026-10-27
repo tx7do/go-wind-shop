@@ -8,7 +8,7 @@ const permission: RouteRecordRaw[] = [
     component: Layout,
     redirect: "/permission/codes",
     meta: {
-      order: 2002,
+      order: 11,
       icon: "lucide:shield-check",
       title: "routes.permission.moduleName",
       keepAlive: true,

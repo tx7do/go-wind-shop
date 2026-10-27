@@ -9,20 +9,21 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
-	elasticsearchCrud "github.com/tx7do/go-crud/elasticsearch"
+	// 搜索后端为 OpenSearch（与 go-wind-cms 一致），沿用 elasticsearchCrud 别名减小 diff
+	elasticsearchCrud "github.com/tx7do/go-crud/opensearch"
 )
 
 // ============================================================================
-// Elasticsearch 商品搜索 Repo —— products 索引的 ES 操作封装
+// OpenSearch 商品搜索 Repo —— products 索引的 OpenSearch 操作封装
 //
 // 与 go-wind-cms 的 search_repo.go 的关键差异：
 //
-//   1. 商品是全局共享目录（mall_products 无 TenantID mixin），ES 文档无
+//   1. 商品是全局共享目录（mall_products 无 TenantID mixin），文档无
 //      tenant_id 字段。搜索过滤只有 status + language 两个 term，无 tenant_id。
-//   2. ES wrapper（go-crud/elasticsearch，ES v9）无 delete-by-query，只有
+//   2. OpenSearch wrapper（go-crud/opensearch）无 delete-by-query，只有
 //      DeleteDocument(indexName, docID)。删除需枚举已索引语言逐个删，
 //      docID = {product_id}_{language}。
-//   3. 搜索用 ES wrapper 的 SearchWithHighlight（JSON query map + sourceFields
+//   3. 搜索用 wrapper 的 SearchWithHighlight（JSON query map + sourceFields
 //      限制），功能等价于 CMS 的 raw OpenSearch DSL。
 //
 // 安全模型：
@@ -85,7 +86,7 @@ func NewProductSearchRepo(ctx *bootstrap.Context, esClient *elasticsearchCrud.Cl
 // 并定义 keyword 字段（product_id/language/status）。
 func (r *ProductSearchRepo) EnsureIndexTemplate(ctx context.Context) error {
 	if r.esClient == nil {
-		return errors.New("elasticsearch client is nil")
+		return errors.New("opensearch client is nil")
 	}
 
 	properties := map[string]any{
@@ -128,7 +129,7 @@ func (r *ProductSearchRepo) EnsureIndexTemplate(ctx context.Context) error {
 // 文档 id = {product_id}_{language}，同一商品的每种语言各一个 ES 文档。
 func (r *ProductSearchRepo) IndexProduct(ctx context.Context, doc *ProductDocument) error {
 	if r.esClient == nil {
-		return errors.New("elasticsearch client is nil")
+		return errors.New("opensearch client is nil")
 	}
 	if doc == nil {
 		return errors.New("nil product document")
@@ -152,7 +153,7 @@ func (r *ProductSearchRepo) IndexProduct(ctx context.Context, doc *ProductDocume
 // languages 由 ProductRepo.ListAvailedLanguages 提供（DB 中该商品实际存在的翻译语言）。
 func (r *ProductSearchRepo) DeleteProduct(ctx context.Context, productID uint32, languages []string) error {
 	if r.esClient == nil {
-		return errors.New("elasticsearch client is nil")
+		return errors.New("opensearch client is nil")
 	}
 	if productID == 0 {
 		return errors.New("delete product requires non-zero productID")
@@ -171,7 +172,7 @@ func (r *ProductSearchRepo) DeleteProduct(ctx context.Context, productID uint32,
 		}
 	}
 
-	r.log.Infof("deleted ES documents for product_id=%s (%d languages)", pidStr, len(languages))
+	r.log.Infof("deleted OpenSearch documents for product_id=%s (%d languages)", pidStr, len(languages))
 	return nil
 }
 
@@ -195,7 +196,7 @@ func (r *ProductSearchRepo) SearchProducts(
 	result := &ProductSearchResult{}
 
 	if r.esClient == nil {
-		return result, errors.New("elasticsearch client is nil")
+		return result, errors.New("opensearch client is nil")
 	}
 
 	// 强制不可绕过的状态/语言过滤

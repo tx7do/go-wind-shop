@@ -38,7 +38,6 @@
     "welcomeSubtitle": "请输入您的账户信息以开始管理您的系统",
     "copyright": "Copyright © 2026 GoWind",
     "login": "登 录",
-    "register": "注 册",
     "username": "用户名",
     "password": "密码",
     "tenantCode": "租户编号（留空为平台登录）",
@@ -52,6 +51,15 @@
     "otherLoginMethods": "其他登录方式",
     "agree": "我已同意并阅读",
     "userAgreement": "用户协议",
+    "mfaTitle": "多因素认证",
+    "mfaDesc": "请输入认证器应用中显示的 6 位验证码以继续。",
+    "mfaCodePlaceholder": "请输入 6 位验证码",
+    "mfaCodeRequired": "请输入验证码",
+    "mfaCodeFormatError": "验证码必须为 6 位数字",
+    "mfaVerify": "验证",
+    "mfaCancel": "取消",
+    "mfaVerifyFailed": "MFA 验证失败",
+    "mfaNotRequired": "当前无 MFA 验证进行中",
     "message": {
       "username": {
         "required": "请输入用户名"
@@ -65,7 +73,8 @@
       "captchaCode": {
         "required": "请输入验证码"
       }
-    }
+    },
+    "register": "注 册"
   },
   "notice": {
     "title": "收件箱",
@@ -76,11 +85,6 @@
     "markAllReadFailed": "全部已读操作失败",
     "viewAll": "进入收件箱",
     "detail": "通知详情"
-  },
-  "register": {
-    "register": "注册",
-    "haveAccount": "已有账号？",
-    "login": "登 录"
   },
   "resetPwd": {
     "resetPassword": "重置密码",
@@ -114,5 +118,19 @@
       "notFound": "资源不存在",
       "internalServerError": "服务器内部错误"
     }
+  },
+  "sso": {
+    "title": "SSO 回调",
+    "failed": "SSO 登录失败",
+    "backToLogin": "返回登录页",
+    "redirecting": "SSO 登录中，即将跳转…",
+    "missingParams": "回调缺少 code 或 state 参数",
+    "button": "使用企业账号登录",
+    "or": "或"
+  },
+  "register": {
+    "register": "注册",
+    "haveAccount": "已有账号？",
+    "login": "登 录"
   }
 }

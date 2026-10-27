@@ -17,7 +17,7 @@
                 :content="typeof field.tips === 'string' ? field.tips : ''"
                 placement="top"
               >
-                <ElIcon class="text-secondary"><QuestionFilled /></ElIcon>
+                <ElIcon style="--color: var(--el-text-color-secondary)"><QuestionFilled /></ElIcon>
               </ElTooltip>
               <span v-if="colon" class="ml-0.5">:</span>
             </span>
@@ -76,7 +76,7 @@
             {{ searchButtonText || t("common.button.search") }}
           </ElButton>
 
-          <ElButton v-if="showResetButton" :icon="Refresh" @click="handleReset">
+          <ElButton v-if="showResetButton" text :icon="Refresh" @click="handleReset">
             {{ resetButtonText || t("common.button.reset") }}
           </ElButton>
 
@@ -274,53 +274,70 @@ defineExpose({
   setQueryParams: (params: Partial<T>) => {
     Object.assign(queryParams, params);
   },
+  // 按 field 名重跑该字段的 initFn（重新拉取下拉选项）。
+  // initFn 默认只在 onMounted 执行一次；当字段选项依赖外部响应式数据
+  // （如租户/组织切换）时，调用方可通过此方法触发重新加载，避免选项过期。
+  reloadFieldOptions: (fieldNames: string | string[]) => {
+    const names = Array.isArray(fieldNames) ? fieldNames : [fieldNames];
+    props.fields.forEach((field) => {
+      if (field.initFn && names.includes(field.field as string)) {
+        field.initFn(field as any);
+      }
+    });
+  },
 });
 </script>
 
 <style lang="scss" scoped>
 .pro-search {
   /* 四边 20px（§2.2 p-5），与列表卡同一档内缩：EP 的 ElForm 自身不带 padding，
-     所以这里只有一个内缩来源。原 `16px 20px` 上下比左右浅 4px，字段行贴卡片上下边。 */
+     所以这里只有一个内缩来源（react 端要额外归零 ProComponents 的 24px，本端无此问题）。
+     原 `16px 20px` 上下比左右浅 4px，字段行贴卡片上下边、却与列表内容左右对齐，读起来不一致。 */
   padding: 20px;
   background: var(--el-bg-color);
-  /* 描边与投影走 §2.2/§2.3 的卡片档（--gowind-card-*，定义见 styles/vendors/_element-plus.scss 的
-     :root 与 html.dark）：不走全向晕的浮层投影，静止卡片只需要 1px/2px 的浅落影。
-     骨架卡 .ts-search 是这里的镜像，两处必须一起改。 */
+  /* 描边与投影走 §2.2/§2.3 的卡片档（`--gowind-card-*`，定义见 _element-plus.scss 的
+   * :root 与 html.dark）：不走 `--el-box-shadow-light`，那是浮层用的 12px 全向晕，
+   * 比本端悬浮档还重；静止卡片只需要 1px/2px 的浅落影。骨架卡 .ts-search 是这里的镜像。 */
   border: 1px solid var(--gowind-card-border);
   /* 卡片圆角 12（§2.4 大容器用 LG）：原先 8 与 .el-input__wrapper 的 8 同档，
-     卡片不比它装的内容更圆；骨架卡的 .ts-search 是这里的镜像，两处必须一起改。 */
+     卡片不比它装的内容更圆；react/vben 的列表卡实测都是 12/控件 8，本端对齐到同一档。
+     骨架卡的 .ts-search 是这里的镜像，两处必须一起改。 */
   border-radius: 12px;
   box-shadow: var(--gowind-card-shadow);
 }
 
 // === Grid 布局模式（参考 Vben） ===
+// 列数按容器宽度自适应，不能用视口断点：
+// 本组件常嵌在 ElSplitter 栏位等窄容器里，视口断点会把输入框挤成细条。
+// 列宽下限须同时约束「绝对 240px」和「容器 20%」：只给 240px 下限时超宽容器会
+// 生成大量窄列，字段挤在左侧、按钮被 grid-column:-1 孤立在最右，中间全是空洞。
+// 用 auto-fit（非 auto-fill）：未占用的轨道塌缩为 0 并由 1fr 均分拉伸，
+// 字段少时铺满整行、按钮紧跟在同一行末尾，不会留下空轨道。
 .pro-search--grid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  // 下限 200px：Splitter 40% 栏（约 550px）扣掉卡片内边距后只剩 ~510px，
+  // 240px 下限时布局解析出的轨道+按钮隐式列会超出容器（权限点管理左栏实测
+  // 溢出 144px）；200px 仍能在超宽容器被 20% 约束压制，不会产生大量窄列。
+  grid-template-columns: repeat(auto-fit, minmax(max(200px, 20%), 1fr));
+  // 兜底：actions 的 grid-column:-1 在 auto-fit 解析异常掉进隐式列时，
+  // 隐式列默认按内容宽（按钮组 ~144px）会把表单撑出容器，这里强制均分
+  grid-auto-columns: 1fr;
   gap: 16px;
-
-  @media (min-width: 640px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-  @media (min-width: 1024px) {
-    grid-template-columns: repeat(4, 1fr);
-  }
 
   // 让表单项内容拉伸
   :deep(.el-form-item__content) {
     flex: 1;
-    width: 100%;
     min-width: 0;
+    width: 100%;
   }
 
-  // 按钮区域包装器 - 放在最后一格，靠右对齐
+  // 按钮区域包装器 - 靠右对齐。不用 grid-column:-1 强制定到最后一列：
+  // Splitter 首帧宽度未定时 auto-fit 只解析出 1 条显式轨道，-1 会创建按
+  // 内容宽（~144px）的隐式列并把表单撑出容器（权限点管理左栏实测）；
+  // 自然流布局下按钮组跟随最后一个字段，配合 justify-self 永远靠右。
   :deep(.pro-search__actions-wrapper) {
-    grid-column: -1;
-    align-self: end;
     justify-self: end;
+    align-self: end;
   }
 }
 
@@ -339,8 +356,8 @@ defineExpose({
 
   // 表单项内容区域
   :deep(.el-form-item__content) {
-    width: 100%;
     min-width: 0;
+    width: 100%;
   }
 
   // 输入框宽度自适应
@@ -355,15 +372,15 @@ defineExpose({
   // 按钮区域包装器 - 保持固定宽度靠右
   :deep(.pro-search__actions-wrapper) {
     flex: 0 0 auto !important;
-    width: auto;
-    min-width: fit-content;
     margin-left: auto;
+    min-width: fit-content;
+    width: auto;
 
     // 当空间不足时，按钮区域换到下一行并占满整行
     @media (max-width: 768px) {
+      margin-left: 0;
       width: 100%;
       margin-top: 8px;
-      margin-left: 0;
     }
   }
 }
@@ -382,12 +399,12 @@ defineExpose({
 .pro-search__collapse-btn {
   display: inline-flex;
   align-items: center;
-  margin-left: 12px;
-  font-size: 13px;
-  color: var(--el-color-primary);
-  white-space: nowrap;
   cursor: pointer;
+  color: var(--gowind-primary-text);
+  font-size: 13px;
   user-select: none;
+  white-space: nowrap;
+  margin-left: 12px;
 
   &:hover {
     opacity: 0.85;
@@ -404,71 +421,55 @@ defineExpose({
 :deep(.pro-search__actions) {
   .el-button {
     height: 32px;
+    border-radius: 6px;
     padding: 0 16px;
     font-size: 14px;
     line-height: normal;
-    cursor: pointer;
-    border-radius: 6px;
     transition: all 0.2s ease;
+    cursor: pointer;
 
-    // 搜索按钮（primary）—— 标准 Element Plus 主色
-    &.el-button--primary {
-      color: #fff;
+    // 搜索按钮（primary，非 plain）—— 标准 Element Plus 主色实心主操作。
+    // plain+primary 由 Element Plus 内置镂空样式接管，此处用 :not(.is-plain) 排除。
+    &.el-button--primary:not(.is-plain) {
       background-color: var(--el-color-primary);
       border-color: var(--el-color-primary);
+      color: var(--el-color-white);
 
       &:hover,
       &:focus {
-        color: #fff;
         background-color: var(--el-color-primary-light-3);
         border-color: var(--el-color-primary-light-3);
+        color: var(--el-color-white);
       }
 
       &:active {
-        color: #fff;
         background-color: var(--el-color-primary-dark-2);
         border-color: var(--el-color-primary-dark-2);
+        color: var(--el-color-white);
       }
     }
 
-    // 重置按钮（default）—— 中性灰
-    // 用 EP fill 语义变量，浅色为浅灰、暗色自动跟随，避免 rgba(0,0,0,0.04) 在深底不可见
-    // stylelint-disable-next-line selector-max-universal
-    &:not(.el-button--primary):not(.el-button--danger):not(.el-button--success):not(
-        .el-button--warning
-      ):not(.el-button--info) {
-      color: var(--el-text-color-regular);
-      background-color: var(--el-fill-color-light);
-      border-color: var(--el-border-color, #dcdfe6);
-
-      &:hover,
-      &:focus {
-        color: var(--el-text-color-primary);
-        background-color: var(--el-fill-color);
-        border-color: var(--el-border-color-light, #c0c4cc);
-      }
+    // 重置按钮（text）—— 由 Element Plus text 按钮样式接管（透明背景、无边框），
+    // 此处仅保留尺寸规范，不覆盖其颜色/背景，确保 text 语义在亮/暗模式下都正确。
+    &.is-text {
+      height: 32px;
+      border-radius: 6px;
+      padding: 0 16px;
+      font-size: 14px;
+      line-height: normal;
     }
   }
 }
 
 // 表单项标签样式优化
 :deep(.el-form-item__label) {
-  max-width: 120px;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  max-width: 120px;
 }
 
 :deep(.el-input-number .el-input__inner) {
   text-align: left;
-}
-
-// ======== 暗色模式适配 ========
-:global(html.dark) {
-  .pro-search {
-    background-color: #14171c; // 比页面底色 #0C0E13 亮一个色阶，建立层级
-    border-color: #23272f;
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 20%);
-  }
 }
 </style>

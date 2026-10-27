@@ -29,7 +29,7 @@
           {{ data?.nickname }}
         </ElDescriptionsItem>
         <ElDescriptionsItem :label="$t('pages.user.detail.desc.gender')">
-          <ElTag :color="genderToColor(data?.gender)" effect="dark" round>
+          <ElTag :type="genderToType(data?.gender)" round>
             {{ genderToName(data?.gender) }}
           </ElTag>
         </ElDescriptionsItem>
@@ -47,16 +47,16 @@
             {{ role }}
           </ElTag>
         </ElDescriptionsItem>
-        <ElDescriptionsItem :label="$t('pages.user.detail.desc.mobile')">
+        <ElDescriptionsItem v-if="!isFieldHidden('mobile')" :label="$t('pages.user.detail.desc.mobile')">
           {{ data?.mobile }}
         </ElDescriptionsItem>
-        <ElDescriptionsItem :label="$t('pages.user.detail.desc.email')">
+        <ElDescriptionsItem v-if="!isFieldHidden('email')" :label="$t('pages.user.detail.desc.email')">
           {{ data?.email }}
         </ElDescriptionsItem>
-        <ElDescriptionsItem :label="$t('pages.user.detail.desc.region')">
+        <ElDescriptionsItem v-if="!isFieldHidden('region')" :label="$t('pages.user.detail.desc.region')">
           {{ data?.region }}
         </ElDescriptionsItem>
-        <ElDescriptionsItem :label="$t('pages.user.detail.desc.address')">
+        <ElDescriptionsItem v-if="!isFieldHidden('address')" :label="$t('pages.user.detail.desc.address')">
           {{ data?.address }}
         </ElDescriptionsItem>
         <ElDescriptionsItem :label="$t('pages.user.detail.desc.tenantName')">
@@ -93,10 +93,10 @@
         <ElDescriptionsItem :label="$t('common.table.createdAt')">
           {{ formatDateTime(data?.createdAt ?? "") }}
         </ElDescriptionsItem>
-        <ElDescriptionsItem :label="$t('pages.user.detail.desc.lastLoginAt')">
+        <ElDescriptionsItem v-if="!isFieldHidden('lastLoginAt')" :label="$t('pages.user.detail.desc.lastLoginAt')">
           {{ data?.lastLoginAt }}
         </ElDescriptionsItem>
-        <ElDescriptionsItem :label="$t('pages.user.detail.desc.lastLoginIp')">
+        <ElDescriptionsItem v-if="!isFieldHidden('lastLoginIp')" :label="$t('pages.user.detail.desc.lastLoginIp')">
           {{ data?.lastLoginIp }}
         </ElDescriptionsItem>
       </ElDescriptions>
@@ -110,9 +110,11 @@ import { computed, ref } from "vue";
 import { ElDescriptions, ElDescriptionsItem, ElAvatar, ElTag } from "element-plus";
 import { formatDateTime } from "@/utils";
 import { $t } from "@/core/i18n";
+// 【缓行】字段权限未启用：import { isFieldHidden as isFieldHiddenBase } from "@/core/access";
+import { useAccessStore } from "@/stores";
 
 import { type identityservicev1_User as User } from "@/api/generated/admin/service/v1";
-import { genderToColor, genderToName, fetchUser } from "@/api/composables";
+import { genderToType, genderToName, fetchUser } from "@/api/composables";
 import { getCharColor, getRandomColor } from "@/utils/color";
 
 const props = defineProps({
@@ -121,6 +123,13 @@ const props = defineProps({
 
 const data = ref<User>();
 const pageLoading = ref(true);
+
+// 字段权限：User 资源上被隐藏的字段整项不渲染
+const accessStore = useAccessStore();
+function isFieldHidden(_field: string): boolean {
+  // 【缓行】字段权限未启用，恒可见；接入后恢复 isFieldHiddenBase(accessStore.hiddenFields, "User", field)
+  return false;
+}
 
 // 获取首字母（默认用'?'）
 const getFirstChar = computed(() => {

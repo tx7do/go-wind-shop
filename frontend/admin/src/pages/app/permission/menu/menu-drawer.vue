@@ -280,17 +280,33 @@ async function open(row?: any) {
   pageLoading.value = true;
 
   try {
-    // 加载菜单树数据
-    await loadMenuTree();
+    // 加载菜单树数据（编辑模式下排除自身，防止自环）
+    await loadMenuTree(row?.id);
 
     if (row) {
       // 编辑模式
       isCreate.value = false;
       currentId.value = row.id;
-      Object.assign(formData, row);
-      // 处理 meta 字段
+      // 仅回填表单声明的顶层字段，避免把 id/createdAt 等不可变字段灌入 formData
+      formData.type = row.type ?? "MENU";
+      formData.parentId = row.parentId ?? 0;
+      formData.path = row.path ?? "";
+      formData.component = row.component ?? "BasicLayout";
+      formData.status = row.status ?? "ON";
+      // 仅回填 meta 声明的子字段
       if (row.meta) {
-        Object.assign(formData.meta, row.meta);
+        formData.meta = {
+          title: row.meta.title ?? "",
+          icon: row.meta.icon ?? "",
+          order: row.meta.order ?? 1,
+          authority: Array.isArray(row.meta.authority) ? [...row.meta.authority] : [],
+          keepAlive: row.meta.keepAlive ?? false,
+          affixTab: row.meta.affixTab ?? false,
+          hideInMenu: row.meta.hideInMenu ?? false,
+          hideChildrenInMenu: row.meta.hideChildrenInMenu ?? false,
+          hideInBreadcrumb: row.meta.hideInBreadcrumb ?? false,
+          hideInTab: row.meta.hideInTab ?? false,
+        };
       }
       // 初始化 titleSuffix
       if (row.meta?.title && $te(row.meta.title)) {
@@ -341,10 +357,11 @@ function resetForm() {
 }
 
 // 加载菜单树
-async function loadMenuTree() {
+async function loadMenuTree(excludeId?: number) {
   try {
     const result = await fetchListMenus(new PaginationQuery({ formValues: { status: "ON" } }));
-    menuTreeData.value = buildMenuTree(result.items || []);
+    // 编辑模式下排除自身，防止把菜单设为自己的父级（自环）
+    menuTreeData.value = buildMenuTree(result.items || [], excludeId);
   } catch (error) {
     console.error("加载菜单树失败", error);
   }

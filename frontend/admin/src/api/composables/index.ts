@@ -24,6 +24,12 @@ export * from "./tenant";
 // 组织人员管理 (OPM)
 export * from "./org-unit";
 export * from "./position";
+export * from "./notification-channel";
+export * from "./notification-channel-schema";
+export * from "./notification-delivery";
+export * from "./notification-preference";
+export * from "./notification-rule";
+export * from "./notification-template";
 
 // 权限管理
 export * from "./permission";

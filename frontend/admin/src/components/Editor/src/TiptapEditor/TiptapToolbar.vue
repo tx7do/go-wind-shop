@@ -272,7 +272,7 @@ const markdownInputRef = defineModel<HTMLInputElement | undefined>("markdownInpu
 
 /* ---- 危险操作按钮 ---- */
 .tb-danger {
-  color: var(--el-color-danger);
+  color: var(--gowind-danger-text);
 }
 
 .tb-danger:hover:not(:disabled) {

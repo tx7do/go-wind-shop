@@ -6,7 +6,9 @@ import { QueryClient, VueQueryPlugin } from "@tanstack/vue-query";
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      // 管理后台不缓存查询响应：每次组件挂载都向后端重新请求
       staleTime: 0,
+      // 查询在无观察者（组件卸载）后立即回收，跨挂载不残留缓存
       gcTime: 0,
       retry: 1, // 网络波动时自动重试 1 次
       refetchOnWindowFocus: false,

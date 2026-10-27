@@ -100,6 +100,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	internalMessageServiceClient := data.NewInternalMessageServiceClient(ctx, discovery)
 	internalMessageCategoryServiceClient := data.NewInternalMessageCategoryServiceClient(ctx, discovery)
 	internalMessageRecipientServiceClient := data.NewInternalMessageRecipientServiceClient(ctx, discovery)
+	notificationServiceClient := data.NewNotificationServiceClient(ctx, discovery)
+	notificationChannelServiceClient := data.NewNotificationChannelServiceClient(ctx, discovery)
+	notificationRuleServiceClient := data.NewNotificationRuleServiceClient(ctx, discovery)
+	notificationTemplateServiceClient := data.NewNotificationTemplateServiceClient(ctx, discovery)
+	notificationPreferenceServiceClient := data.NewNotificationPreferenceServiceClient(ctx, discovery)
 	dataAccessAuditLogServiceClient := data.NewDataAccessAuditLogServiceClient(ctx, discovery)
 	policyEvaluationLogServiceClient := data.NewPolicyEvaluationLogServiceClient(ctx, discovery)
 	permissionAuditLogServiceClient := data.NewPermissionAuditLogServiceClient(ctx, discovery)
@@ -151,6 +156,13 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	internalMessageService := service.NewInternalMessageService(ctx, internalMessageServiceClient, internalMessageCategoryServiceClient, internalMessageRecipientServiceClient, authenticationServiceClient, userServiceClient, clientType)
 	internalMessageCategoryService := service.NewInternalMessageCategoryService(ctx, internalMessageCategoryServiceClient)
 	internalMessageRecipientService := service.NewInternalMessageRecipientService(ctx, internalMessageServiceClient, internalMessageRecipientServiceClient)
+
+	// ── Notification 通知域（移植自 go-wind-cms）──
+	notificationService := service.NewNotificationService(ctx, notificationServiceClient)
+	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelServiceClient)
+	notificationRuleService := service.NewNotificationRuleService(ctx, notificationRuleServiceClient)
+	notificationTemplateService := service.NewNotificationTemplateService(ctx, notificationTemplateServiceClient)
+	notificationPreferenceService := service.NewNotificationPreferenceService(ctx, notificationPreferenceServiceClient)
 	apiAuditLogService := service.NewApiAuditLogService(ctx, apiAuditLogServiceClient, apiServiceClient)
 	dataAccessAuditLogService := service.NewDataAccessAuditLogService(ctx, dataAccessAuditLogServiceClient)
 	loginAuditLogService := service.NewLoginAuditLogService(ctx, loginAuditLogServiceClient)
@@ -208,6 +220,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		internalMessageService,
 		internalMessageCategoryService,
 		internalMessageRecipientService,
+		notificationService,
+		notificationChannelService,
+		notificationRuleService,
+		notificationTemplateService,
+		notificationPreferenceService,
 		apiAuditLogService,
 		dataAccessAuditLogService,
 		loginAuditLogService,

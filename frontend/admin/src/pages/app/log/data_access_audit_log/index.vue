@@ -3,7 +3,7 @@
     <ProPage ref="pageRef" :config="pageConfig" @operate="handleOperate">
       <!-- 是否成功 -->
       <template #success="scope: any">
-        <ElTag size="small" effect="dark" round :color="successToColor(scope.row.success)">
+        <ElTag size="small" round :type="successToType(scope.row.success)">
           {{ successToNameWithStatusCode(scope.row.success, scope.row.statusCode) }}
         </ElTag>
       </template>
@@ -12,11 +12,21 @@
       <template #accessType="scope: any">
         <ElTag
           size="small"
-          effect="dark"
           round
-          :color="dataAccessAuditLogAccessTypeToColor(scope.row.accessType)"
+          :type="dataAccessAuditLogAccessTypeToType(scope.row.accessType)"
         >
           {{ dataAccessAuditLogAccessTypeToName(scope.row.accessType) }}
+        </ElTag>
+      </template>
+
+      <!-- 数据分类 -->
+      <template #dataCategory="scope: any">
+        <ElTag
+          size="small"
+          round
+          :type="dataAccessAuditLogCategoryToType(scope.row.dataCategory)"
+        >
+          {{ dataAccessAuditLogCategoryToName(scope.row.dataCategory) }}
         </ElTag>
       </template>
 
@@ -42,20 +52,34 @@ import DataAccessAuditLogDetailDrawer from "./detail-drawer.vue";
 
 import {
   dataAccessAuditLogAccessTypeList,
-  dataAccessAuditLogAccessTypeToColor,
+  dataAccessAuditLogAccessTypeToType,
   dataAccessAuditLogAccessTypeToName,
+  dataAccessAuditLogCategoryToType,
+  dataAccessAuditLogCategoryToName,
   successStatusList,
-  successToColor,
+  successToType,
   successToNameWithStatusCode,
   fetchListDataAccessAuditLogs,
 } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
+// 【缓行】后端审计服务端导出接口无下游实现，接入后恢复：
+// import { exportAuditLogsServer } from "@/api/composables";
 import { $t } from "@/core/i18n";
 
 const pageRef = ref();
 const drawerRef = ref();
+const latestFormValuesRef = ref<Record<string, unknown>>({});
+
+const exporting = ref(false);
+
+async function handleServerExport() {
+  // 【缓行】服务端导出接口未接入，先提示暂不支持（原实现见上方注释的 import）
+  ElMessage.warning($t("pages.curd.message.notImplementedYet"));
+}
 
 function handleOperate(data: { name: string; row: any }) {
+  // 服务端全量导出（XLSX，上限 50 万行）：不带搜索条件，突破导出弹窗
+  // 客户端聚合的 1 万行上限；带条件的导出走右侧既有的导出弹窗
   if (data.name === "detail") {
     drawerRef.value?.open({ row: data.row });
   }
@@ -149,6 +173,9 @@ const pageConfig = computed<ProPageConfig>(() => ({
   },
 
   table: {
+    // 服务端全量导出：导出全部下拉的第三项，错误处理在本页 handleServerExport
+    exportServer: handleServerExport,
+
     listAction: async (query: any) => {
       const { page, pageSize, createdAt, ...queryParams } = query;
 
@@ -159,18 +186,22 @@ const pageConfig = computed<ProPageConfig>(() => ({
         endTime = dayjs(createdAt[1]).format("YYYY-MM-DD HH:mm:ss");
       }
 
+      // 列表与导出共用同一份搜索条件：服务端导出透传的就是这里看到的
+      const formValues = {
+        username: queryParams.username,
+        accessType: queryParams.accessType,
+        tableName: queryParams.tableName,
+        ipAddress: queryParams.ipAddress,
+        success: queryParams.success,
+        created_at__gte: startTime,
+        created_at__lte: endTime,
+      };
+      latestFormValuesRef.value = formValues;
+
       const result = await fetchListDataAccessAuditLogs(
         new PaginationQuery({
           paging: { page: page || 1, pageSize: pageSize || 10 },
-          formValues: {
-            username: queryParams.username,
-            accessType: queryParams.accessType,
-            tableName: queryParams.tableName,
-            ipAddress: queryParams.ipAddress,
-            success: queryParams.success,
-            created_at__gte: startTime,
-            created_at__lte: endTime,
-          },
+          formValues,
           orderBy: ["-created_at"],
         })
       );
@@ -205,6 +236,7 @@ const pageConfig = computed<ProPageConfig>(() => ({
         prop: "dataCategory",
         label: $t("pages.data_access_audit_log.dataCategory"),
         minWidth: 150,
+        slotName: "dataCategory",
       },
       {
         prop: "latencyMs",

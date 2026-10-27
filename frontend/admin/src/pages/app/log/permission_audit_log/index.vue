@@ -5,9 +5,8 @@
       <template #action="scope: any">
         <ElTag
           size="small"
-          effect="dark"
           round
-          :color="permissionAuditLogActionToColor(scope.row.action)"
+          :type="permissionAuditLogActionToType(scope.row.action)"
         >
           {{ permissionAuditLogActionToName(scope.row.action) }}
         </ElTag>
@@ -35,17 +34,29 @@ import PermissionAuditLogDetailDrawer from "./detail-drawer.vue";
 
 import {
   permissionAuditLogActionList,
-  permissionAuditLogActionToColor,
+  permissionAuditLogActionToType,
   permissionAuditLogActionToName,
   fetchListPermissionAuditLogs,
 } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
+// 【缓行】后端审计服务端导出接口无下游实现，接入后恢复：
+// import { exportAuditLogsServer } from "@/api/composables";
 import { $t } from "@/core/i18n";
 
 const pageRef = ref();
 const drawerRef = ref();
+const latestFormValuesRef = ref<Record<string, unknown>>({});
+
+const exporting = ref(false);
+
+async function handleServerExport() {
+  // 【缓行】服务端导出接口未接入，先提示暂不支持（原实现见上方注释的 import）
+  ElMessage.warning($t("pages.curd.message.notImplementedYet"));
+}
 
 function handleOperate(data: { name: string; row: any }) {
+  // 服务端全量导出（XLSX，上限 50 万行）：不带搜索条件，突破导出弹窗
+  // 客户端聚合的 1 万行上限；带条件的导出走右侧既有的导出弹窗
   if (data.name === "detail") {
     drawerRef.value?.open({ row: data.row });
   }
@@ -132,6 +143,9 @@ const pageConfig = computed<ProPageConfig>(() => ({
   },
 
   table: {
+    // 服务端全量导出：导出全部下拉的第三项，错误处理在本页 handleServerExport
+    exportServer: handleServerExport,
+
     listAction: async (query: any) => {
       const { page, pageSize, createdAt, ...queryParams } = query;
 
@@ -142,17 +156,21 @@ const pageConfig = computed<ProPageConfig>(() => ({
         endTime = dayjs(createdAt[1]).format("YYYY-MM-DD HH:mm:ss");
       }
 
+      // 列表与导出共用同一份搜索条件：服务端导出透传的就是这里看到的
+      const formValues = {
+        targetType: queryParams.targetType,
+        operatorName: queryParams.operatorName,
+        action: queryParams.action,
+        ipAddress: queryParams.ipAddress,
+        created_at__gte: startTime,
+        created_at__lte: endTime,
+      };
+      latestFormValuesRef.value = formValues;
+
       const result = await fetchListPermissionAuditLogs(
         new PaginationQuery({
           paging: { page: page || 1, pageSize: pageSize || 10 },
-          formValues: {
-            targetType: queryParams.targetType,
-            operatorName: queryParams.operatorName,
-            action: queryParams.action,
-            ipAddress: queryParams.ipAddress,
-            created_at__gte: startTime,
-            created_at__lte: endTime,
-          },
+          formValues,
           orderBy: ["-created_at"],
         })
       );
@@ -193,7 +211,6 @@ const pageConfig = computed<ProPageConfig>(() => ({
         align: "right",
       },
       {
-        prop: "action",
         label: $t("common.table.action"),
         fixed: "right",
         width: 90,

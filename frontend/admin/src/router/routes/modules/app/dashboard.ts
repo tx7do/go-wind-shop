@@ -8,7 +8,7 @@ const routes: RouteRecordRaw[] = [
     component: Layout,
     meta: {
       icon: "lucide:layout-dashboard",
-      order: -1,
+      order: 1,
       title: "routes.dashboard.title",
       authority: ["sys:platform_admin", "sys:tenant_manager"],
     },

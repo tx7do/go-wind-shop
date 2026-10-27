@@ -1,16 +1,18 @@
 package data
 
 import (
+	"errors"
+
 	"github.com/go-kratos/kratos/v2/registry"
 
 	"github.com/tx7do/go-utils/password"
 
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	redisClient "github.com/tx7do/kratos-bootstrap/cache/redis"
-	"github.com/tx7do/kratos-bootstrap/database/elasticsearch"
+	"github.com/tx7do/kratos-bootstrap/database/opensearch"
 	bRegistry "github.com/tx7do/kratos-bootstrap/registry"
 
-	elasticsearchCrud "github.com/tx7do/go-crud/elasticsearch"
+	elasticsearchCrud "github.com/tx7do/go-crud/opensearch"
 
 	"github.com/redis/go-redis/v9"
 
@@ -39,13 +41,18 @@ func NewRedisClient(ctx *bootstrap.Context) (*redis.Client, func(), error) {
 	}, nil
 }
 
+// NewElasticSearchClient 创建 OpenSearch 客户端（与 go-wind-cms 一致，搜索后端为 OpenSearch）
 func NewElasticSearchClient(ctx *bootstrap.Context) (*elasticsearchCrud.Client, func(), error) {
 	cfg := ctx.GetConfig()
 	if cfg == nil {
 		return nil, func() {}, nil
 	}
 
-	cli, err := elasticsearch.NewClient(ctx.GetLogger(), cfg)
+	if cfg.Data != nil && cfg.Data.Opensearch == nil {
+		return nil, func() {}, errors.New("opensearch config is nil")
+	}
+
+	cli, err := opensearch.NewClient(ctx.GetLogger(), cfg)
 	if err != nil {
 		return nil, func() {}, err
 	}

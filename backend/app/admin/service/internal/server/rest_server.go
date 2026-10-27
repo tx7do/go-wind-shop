@@ -21,7 +21,7 @@ import (
 
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
 	auditV1 "go-wind-shop/api/gen/go/audit/service/v1"
-	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
+	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 
 	"go-wind-shop/pkg/metadata"
 	"go-wind-shop/pkg/middleware/auth"
@@ -139,6 +139,12 @@ func NewRestServer(
 	internalMessageCategoryService *service.InternalMessageCategoryService,
 	internalMessageRecipientService *service.InternalMessageRecipientService,
 
+	notificationService *service.NotificationService,
+	notificationChannelService *service.NotificationChannelService,
+	notificationRuleService *service.NotificationRuleService,
+	notificationTemplateService *service.NotificationTemplateService,
+	notificationPreferenceService *service.NotificationPreferenceService,
+
 	apiAuditLogService *service.ApiAuditLogService,
 	dataAccessAuditLogService *service.DataAccessAuditLogService,
 	loginAuditLogService *service.LoginAuditLogService,
@@ -216,6 +222,12 @@ func NewRestServer(
 	adminV1.RegisterInternalMessageServiceHTTPServer(srv, internalMessageService)
 	adminV1.RegisterInternalMessageCategoryServiceHTTPServer(srv, internalMessageCategoryService)
 	adminV1.RegisterInternalMessageRecipientServiceHTTPServer(srv, internalMessageRecipientService)
+
+	adminV1.RegisterNotificationServiceHTTPServer(srv, notificationService)
+	adminV1.RegisterNotificationChannelServiceHTTPServer(srv, notificationChannelService)
+	adminV1.RegisterNotificationRuleServiceHTTPServer(srv, notificationRuleService)
+	adminV1.RegisterNotificationTemplateServiceHTTPServer(srv, notificationTemplateService)
+	adminV1.RegisterNotificationPreferenceServiceHTTPServer(srv, notificationPreferenceService)
 
 	// 注册文件传输服务，用于处理文件上传下载等功能
 	// TODO 它不能够使用代码生成器生成的Handler，需要手动注册。代码生成器生成的Handler无法处理文件上传下载的请求。

@@ -34,10 +34,10 @@ GoWind Shop は 3 サービスの BFF アーキテクチャを採用します。
 
 ```
 HTTP/REST リクエスト
-  └─ admin-service  (管理画面ゲートウェイ BFF、REST:6600 / SSE:6601 / gRPC)
+  └─ admin-service  (管理画面ゲートウェイ BFF、REST:10600 / SSE:10601 / gRPC)
        └─ gRPC → core-service  (コア業務 + データ永続化)
 
-app-service (店舗ゲートウェイ BFF、REST:6700) ──gRPC──→ core-service
+app-service (店舗ゲートウェイ BFF、REST:10700) ──gRPC──→ core-service
 core-service (gRPC、業務実装とデータアクセス)
 ```
 

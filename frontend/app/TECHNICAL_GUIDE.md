@@ -379,7 +379,7 @@ pages/
 
 ```bash
 # .env.development
-NUXT_PUBLIC_API_BASE_URL=http://localhost:6700
+NUXT_PUBLIC_API_BASE_URL=http://localhost:10700
 NUXT_PUBLIC_ENABLE_MOCK=false
 NUXT_PUBLIC_AES_KEY=
 
@@ -389,7 +389,7 @@ NUXT_PUBLIC_ENABLE_MOCK=false
 NUXT_PUBLIC_AES_KEY=your-secret-key
 ```
 
-> `NUXT_PUBLIC_API_BASE_URL` 在开发环境指向 app-service（前台 BFF，REST:6700）。
+> `NUXT_PUBLIC_API_BASE_URL` 在开发环境指向 app-service（前台 BFF，REST:10700）。
 
 ### 5.2 构建命令
 

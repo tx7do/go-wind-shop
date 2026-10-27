@@ -113,6 +113,11 @@ export interface ProTableProps<T = any> {
   tableId?: string;
   table?: Record<string, any>;
   config?: Partial<ProTableConfig>;
+  /**
+   * 空态引导按钮文案 i18n key。独立 prop 传递，避免并入 config 对象
+   * 导致 tableConfig computed 依赖上层 pageConfig 而引发递归更新。
+   */
+  emptyActionText?: string;
 
   pagination?: boolean;
   total?: number;

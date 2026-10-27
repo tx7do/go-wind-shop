@@ -34,10 +34,10 @@ GoWind Shop 采用三服务 BFF 架构：`admin` 与 `app` 为瘦网关，仅做
 
 ```
 HTTP/REST 请求
-  └─ admin-service  (后台网关 BFF，REST:6600 / SSE:6601 / gRPC)
+  └─ admin-service  (后台网关 BFF，REST:10600 / SSE:10601 / gRPC)
        └─ gRPC → core-service  (核心业务 + 数据落点)
 
-app-service (前台网关 BFF，REST:6700) ──gRPC──→ core-service
+app-service (前台网关 BFF，REST:10700) ──gRPC──→ core-service
 core-service (gRPC，业务实现与数据访问)
 ```
 

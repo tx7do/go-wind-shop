@@ -28,14 +28,14 @@
 
       <!-- 类型 -->
       <template #type="scope: any">
-        <ElTag size="small" effect="dark" round :color="menuTypeToColor(scope.row.type)">
+        <ElTag size="small" round :type="menuTypeToType(scope.row.type)">
           {{ menuTypeToName(scope.row.type) }}
         </ElTag>
       </template>
 
       <!-- 状态 -->
       <template #status="scope: any">
-        <ElTag size="small" effect="dark" round :color="statusToColor(scope.row.status)">
+        <ElTag size="small" effect="plain" round :type="statusToType(scope.row.status)">
           {{ statusToName(scope.row.status) }}
         </ElTag>
       </template>
@@ -64,7 +64,7 @@
 
 <script lang="ts" setup>
 import { ref } from "vue";
-import { ElTag } from "element-plus";
+import { ElMessage, ElMessageBox, ElTag } from "element-plus";
 import { Icon as IconifyIcon } from "@iconify/vue";
 
 import ProPage from "@/components/Pro/ProPage/index.vue";
@@ -73,19 +73,25 @@ import MenuDrawer from "./menu-drawer.vue";
 
 import {
   buildMenuTree,
-  menuTypeToColor,
+  // 【缓行】后端菜单同步接口无下游实现：buildSyncMenusRequest,
+  menuTypeToType,
   menuTypeToName,
   statusList,
-  statusToColor,
+  statusToType,
   statusToName,
   fetchListMenus,
   useDeleteMenu,
+  // 【缓行】useSyncMenus,
 } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
 import { getRandomColor } from "@/utils/color";
 import { $t } from "@/core/i18n";
+// 【缓行】import { accessRoutes } from "@/router/routes";
 
 const { mutateAsync: deleteMenu } = useDeleteMenu();
+// 【缓行】后端菜单同步接口无下游实现，接入后恢复：
+// const { mutateAsync: syncMenus, isPending: isSyncing } = useSyncMenus();
+const isSyncing = ref(false);
 
 /**
  * 菜单标题关键词的前端过滤。
@@ -173,6 +179,11 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("common.tree.collapse_all"),
         attrs: { icon: "SortUp" },
       } as ToolsButton,
+      {
+        name: "syncMenus",
+        label: $t("pages.menu.sync"),
+        attrs: { type: "warning", plain: true, icon: "Refresh", loading: isSyncing.value },
+      } as ToolsButton,
     ],
     toolbarRight: ["add"],
     defaultToolbar: ["exports", "refresh", "zoom", "filter"],
@@ -249,6 +260,10 @@ function handleSuccess() {
 }
 
 function handleToolbar(name: string) {
+  if (name === "syncMenus") {
+    handleSyncMenus();
+    return;
+  }
   const vxeTable = pageRef.value?.tableRef?.tableRef;
   if (!vxeTable) return;
   if (name === "expandAll") {
@@ -256,6 +271,12 @@ function handleToolbar(name: string) {
   } else if (name === "collapseAll") {
     vxeTable.clearTreeExpand();
   }
+}
+
+/* 同步菜单：将本地静态路由全量推送到后端（后端会清空重建，角色授权需重做）
+ * 【缓行】后端菜单同步接口无下游实现，接入后恢复原实现（确认框 + buildSyncMenusRequest + syncMenus）。 */
+async function handleSyncMenus() {
+  ElMessage.warning($t("pages.menu.sync") + "：接口待接入");
 }
 
 function normalizeAuthority(authority: unknown): string[] {

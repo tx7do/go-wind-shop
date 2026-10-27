@@ -54,7 +54,7 @@ import { useLayout } from "./useLayout";
 
 const { showTagsView, showLogo, isSidebarOpen, toggleSidebar, routes } = useLayout();
 
-const SIDEBAR_COLLAPSED_WIDTH = 54;
+const SIDEBAR_COLLAPSED_WIDTH = 48;
 
 // =====================
 // 侧边栏基础状态
@@ -112,9 +112,10 @@ const sidebarClass = computed(() => ({
 
 const sidebarStyle = computed(() => ({
   width: `${sidebarActualWidth.value}px`,
-  // 自动模式展开时添加阴影，区分覆盖层与内容区
+  // 自动模式展开时添加阴影，区分覆盖层与内容区；阴影色使用 Element Plus 主题变量，
+  // 亮/暗模式自动切换，避免硬编码 rgba 在暗黑下不可见。
   ...(expandOnHover.value && isHoverExpanded.value
-    ? { boxShadow: "6px 0 16px rgba(0, 0, 0, 0.08)" }
+    ? { boxShadow: "var(--el-box-shadow-light)" }
     : {}),
 }));
 

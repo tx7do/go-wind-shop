@@ -8,7 +8,7 @@ const trade: RouteRecordRaw[] = [
     component: Layout,
     redirect: "/trade/orders",
     meta: {
-      order: 2007,
+      order: 3,
       icon: "lucide:receipt",
       title: "routes.trade.moduleName",
       keepAlive: true,

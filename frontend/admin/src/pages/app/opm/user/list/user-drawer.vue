@@ -122,11 +122,11 @@
         />
       </ElFormItem>
 
-      <ElFormItem :label="$t('pages.user.table.email')" prop="email">
+      <ElFormItem v-if="!isFieldHidden('email')" :label="$t('pages.user.table.email')" prop="email">
         <ElInput v-model="formData.email" :placeholder="$t('common.placeholder.input')" clearable />
       </ElFormItem>
 
-      <ElFormItem :label="$t('pages.user.table.mobile')" prop="mobile">
+      <ElFormItem v-if="!isFieldHidden('mobile')" :label="$t('pages.user.table.mobile')" prop="mobile">
         <ElInput
           v-model="formData.mobile"
           :placeholder="$t('common.placeholder.input')"
@@ -184,7 +184,8 @@ import {
 } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
 import { $t } from "@/core/i18n";
-import { DRAWER_WIDTH } from "@/constants";
+// 【缓行】字段权限未启用：import { isFieldHidden as isFieldHiddenBase } from "@/core/access";
+import { useAccessStore } from "@/stores";
 
 const emit = defineEmits<{
   success: [];
@@ -192,6 +193,13 @@ const emit = defineEmits<{
 
 const { mutateAsync: createUser } = useCreateUser();
 const { mutateAsync: updateUser } = useUpdateUser();
+
+// 字段权限：被隐藏的 User 字段不渲染、不提交（后端响应/写入两侧还会再兜底裁剪）
+// 【缓行】字段权限未启用，恒可见恒提交；接入后恢复 isFieldHiddenBase(accessStore.hiddenFields, ...)
+const accessStore = useAccessStore();
+function isFieldHidden(_field: string): boolean {
+  return false;
+}
 
 const visible = ref(false);
 const submitLoading = ref(false);
@@ -359,6 +367,15 @@ async function handleSubmit() {
       ...formData,
       password: isCreate.value ? formData.password : undefined,
     };
+
+    // 被字段权限隐藏的字段整项剔除，避免把空值当成显式清空提交
+    // 【缓行】字段权限未启用，无隐藏字段集合，跳过剔除
+    for (const key of ((accessStore as any).hiddenFields ?? []) as string[]) {
+      const dotIndex = key.indexOf(".");
+      if (dotIndex > 0 && key.slice(0, dotIndex) === "User") {
+        delete (submitData as any)[key.slice(dotIndex + 1)];
+      }
+    }
 
     if (isCreate.value) {
       await createUser({ data: submitData as any, password: formData.password });

@@ -9,7 +9,7 @@
     >
       <!-- 状态 -->
       <template #status="scope: any">
-        <ElTag size="small" effect="dark" round :color="statusToColor(scope.row.status)">
+        <ElTag size="small" effect="plain" round :type="statusToType(scope.row.status)">
           {{ statusToName(scope.row.status) }}
         </ElTag>
       </template>
@@ -30,7 +30,7 @@ import PermissionDrawer from "./permission-drawer.vue";
 
 import {
   statusList,
-  statusToColor,
+  statusToType,
   statusToName,
   useDeletePermission,
   useSyncPermissions,
@@ -209,6 +209,7 @@ function handleSuccess() {
   padding: 20px;
   width: 100%;
   min-width: 0;
-  flex-shrink: 0;
+  // ProSplitter 面板内必须允许收缩（同 permission-group-list）
+  flex-shrink: 1;
 }
 </style>

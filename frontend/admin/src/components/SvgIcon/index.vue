@@ -13,6 +13,7 @@
 -->
 <template>
   <!-- 本地 SVG 图标：通过内联 SVG 渲染 -->
+  <!-- eslint-disable-next-line vue/no-v-html -- svgContent 来自构建时打包的本地 SVG 资源，非用户输入 -->
   <span
     v-if="isSvgIcon"
     :class="[attrs.class, 'svg-local-icon']"

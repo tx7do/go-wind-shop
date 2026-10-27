@@ -81,6 +81,11 @@ export interface ProPageConfig<T = any, Q = any> {
   table: {
     columns: ProTableColumn<T>[];
     tableAttrs?: Record<string, any>;
+    /**
+     * 空态引导按钮文案 i18n key。配置后 ProTable 空态将渲染 el-empty + 引导按钮，
+     * 按钮点击触发 add 流程（打开新增抽屉 + emit add）。不配置则空态无按钮。
+     */
+    emptyActionText?: string;
     pagination?: boolean;
     toolbar?: Array<ToolbarLeft | ToolsButton>;
     toolbarRight?: Array<ToolbarLeft | ToolsButton>;

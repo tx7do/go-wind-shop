@@ -280,7 +280,7 @@ onMounted(() => {
       line-height: normal !important;
       padding: 0 16px !important;
       margin: 4px 12px !important;
-      border-radius: 6px !important;
+      border-radius: 8px !important;
       font-size: 14px !important; // 从 13px 增大到 14px
       font-weight: 400 !important;
       transition:
@@ -317,28 +317,13 @@ onMounted(() => {
       background-color: #f5f7fa !important;
     }
 
-    // 选中菜单项：左侧竖条 + 主色文字 + 加粗，与暗色模式一致
+    // 选中菜单项：主色实底药丸 + 白字（react antd Menu 基准，design-language.md §4）
     .el-menu-item.is-active {
-      background-color: var(--el-color-primary-light-9) !important;
-      color: var(--el-color-primary) !important;
-      font-weight: 700 !important;
-      box-shadow: inset 3px 0 0 0 var(--el-color-primary) !important;
+      background-color: var(--el-color-primary) !important;
+      color: #fff !important;
 
       .el-icon {
-        color: var(--el-color-primary) !important;
-      }
-    }
-
-    // ============================================
-    // navigation.styleType: rounded 风格
-    // 激活菜单项带圆角背景色
-    // ============================================
-    &.nav-style--rounded {
-      .el-menu-item.is-active {
-        background-color: var(--el-color-primary-light-9) !important;
-        color: var(--el-color-primary) !important;
-        font-weight: 700 !important;
-        box-shadow: inset 3px 0 0 0 var(--el-color-primary) !important;
+        color: #fff !important;
       }
     }
 
@@ -359,24 +344,14 @@ onMounted(() => {
         color: #ffffff !important;
       }
 
-      // 选中菜单：品牌色透明度背景 + 左侧竖条 + 纯白文字
+      // 选中菜单：主色实底药丸 + 白字（react antd Menu 基准，design-language.md §4）
       .el-menu-item.is-active {
-        background-color: rgba(24, 144, 255, 0.15) !important;
+        background-color: var(--el-color-primary) !important;
         color: #ffffff !important;
-        font-weight: 700 !important;
-        box-shadow: inset 3px 0 0 0 var(--el-color-primary) !important;
 
         .el-icon {
-          color: var(--el-color-primary) !important;
+          color: #ffffff !important;
         }
-      }
-
-      // rounded 风格暗黑模式
-      &.nav-style--rounded .el-menu-item.is-active {
-        background-color: rgba(24, 144, 255, 0.15) !important;
-        color: #ffffff !important;
-        font-weight: 700 !important;
-        box-shadow: inset 3px 0 0 0 var(--el-color-primary) !important;
       }
     }
   }

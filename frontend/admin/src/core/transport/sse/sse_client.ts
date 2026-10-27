@@ -159,16 +159,26 @@ export class SSEClient {
         this.status = "error";
         this.triggerHandler("error", err, new Event("error"));
 
-        // 手动关闭不重连
+        // 手动关闭不重连：抛出异常会被 fetchEventSource 当作致命错误，
+        // 触发 reject 终止重试（区别于返回数值表示「稍后重试」）。
         if (this.abortController?.signal.aborted) {
           throw err;
         }
 
+        // fetchEventSource 的运行时契约：onerror 返回数值时，
+        // 该数值会被用作下一次重试的 setTimeout 间隔（ms）。
+        // 默认不返回时库使用 DefaultRetryInterval=1000ms，这里返回配置的
+        // reconnectDelay，避免服务端持续断开时形成紧密重连风暴。
         console.log(`[SSE] ${this.config.reconnectDelay}ms 后重试...`);
+        return this.config.reconnectDelay;
       },
 
       // 关闭
       onclose: () => {
+        // 服务端主动关闭连接时 fetchEventSource 默认会 resolve 终止整个流程、不再重连。
+        // 这里抛出异常使其落入 onerror 的处理路径（库会把 onclose 抛出的异常
+        // 交给 catch 分支，进而调用 onerror），由 onerror 返回 reconnectDelay
+        // 实现带退避的重连。
         this.status = "disconnected";
         throw new Error("SSE 连接关闭，准备重连");
       },
@@ -206,7 +216,14 @@ export class SSEClient {
     if (this.transport === "event-source") {
       this._connectByEventSource(targetUrl);
     } else {
-      this._connectByFetchEventSource(targetUrl);
+      // _connectByFetchEventSource 是 async，其内部的 throw（如 onopen 失败）
+      // 会让 Promise reject。这里必须捕获，否则会变成 Unhandled Promise Rejection，
+      // 且 this.status 会永久停在 'connecting'，导致后续 connect() 被状态守卫挡住、
+      // 再也连不上。失败时重置为 disconnected 以允许后续重连。
+      this._connectByFetchEventSource(targetUrl).catch((err) => {
+        this.status = "disconnected";
+        console.error("[SSE] connect failed:", err);
+      });
     }
 
     return null;
@@ -224,7 +241,7 @@ export class SSEClient {
    * @param eventName
    * @param handler
    */
-  off(eventName: SSEEventName, handler?: SSEEventHandler): void {
+  off<T = unknown>(eventName: SSEEventName, handler?: SSEEventHandler<T>): void {
     const handlers = this.handlers.get(eventName);
     if (!handlers) return;
 
@@ -262,15 +279,6 @@ export class SSEClient {
   }
 
   /**
-   * 动态设置/更新请求头（不会影响正在进行中的连接，下次 connect 时生效）
-   * 注意：EventSource 模式不支持自定义请求头，此方法仅对 fetch-event-source 模式生效
-   * @param headers 键值对，会浅合并到当前 headers 配置中
-   */
-  setHeaders(headers: Record<string, string>): void {
-    this.config.headers = { ...this.config.headers, ...headers };
-  }
-
-  /**
    * 关闭当前连接并使用新的 URL / headers 重新连接
    * 适用于 token 刷新后需要携带新凭证的场景
    * @param url 可选的新连接 URL，默认沿用配置中的 URL
@@ -278,5 +286,14 @@ export class SSEClient {
   reconnect(url?: string): void {
     this.close();
     this.connect(url);
+  }
+
+  /**
+   * 动态设置/更新请求头（不会影响正在进行中的连接，下次 connect 时生效）
+   * 注意：EventSource 模式不支持自定义请求头，此方法仅对 fetch-event-source 模式生效
+   * @param headers 键值对，会浅合并到当前 headers 配置中
+   */
+  setHeaders(headers: Record<string, string>): void {
+    this.config.headers = { ...this.config.headers, ...headers };
   }
 }

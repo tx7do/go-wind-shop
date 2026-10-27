@@ -11,19 +11,24 @@
       <!-- 是否启用 -->
       <template #enable="scope: any">
         <ElSwitch
-          v-model="scope.row.enable"
+          :model-value="scope.row.enable"
           :loading="scope.row.pending"
-          @change="(value: string | number | boolean) => handleEnableChanged(scope.row, !!value)"
+          @update:model-value="
+            (value: string | number | boolean) => handleEnableChanged(scope.row, !!value)
+          "
         />
       </template>
 
       <!-- 任务类型 -->
       <template #type="scope: any">
-        <ElTag size="small" effect="dark" round :color="taskTypeToColor(scope.row.type)">
+        <ElTag size="small" round :type="taskTypeToType(scope.row.type)">
           {{ taskTypeToName(scope.row.type) }}
         </ElTag>
       </template>
     </ProPage>
+
+    <!-- 系统级常驻任务监控（只读 asynq Inspector） -->
+    <SystemTasksModal ref="sysTasksRef" />
 
     <!-- 新增/编辑抽屉 -->
     <TaskDrawer ref="drawerRef" @success="handleSuccess" />
@@ -35,13 +40,14 @@ import { ref } from "vue";
 import { ElMessage, ElMessageBox, ElSwitch, ElTag } from "element-plus";
 
 import ProPage from "@/components/Pro/ProPage/index.vue";
+import SystemTasksModal from "./system-tasks-modal.vue";
 import type { ProPageConfig, ToolsButton } from "@/components/Pro/ProPage/types";
 import TaskDrawer from "./task-drawer.vue";
 
 import {
   enableList,
   taskTypeList,
-  taskTypeToColor,
+  taskTypeToType,
   taskTypeToName,
   fetchListTasks,
   useDeleteTask,
@@ -62,6 +68,7 @@ const { mutateAsync: stopAllTask } = useStopAllTasks();
 const { mutateAsync: restartAllTask } = useRestartAllTasks();
 
 const pageRef = ref();
+const sysTasksRef = ref();
 const drawerRef = ref();
 
 const pageConfig = computed<ProPageConfig>(() => ({
@@ -114,7 +121,13 @@ const pageConfig = computed<ProPageConfig>(() => ({
     deleteAction: async (ids: string) => {
       await deleteTask({ id: ids as any });
     },
-    toolbar: [],
+    toolbar: [
+      {
+        name: "sysTasks",
+        label: $t("pages.task.sysTasksButton"),
+        icon: "lucide:server-cog",
+      },
+    ],
     toolbarRight: [
       {
         name: "startAll",
@@ -208,6 +221,10 @@ function handleEdit(row: any) {
 }
 
 async function handleToolbar(name: string) {
+  if (name === "sysTasks") {
+    sysTasksRef.value?.open();
+    return;
+  }
   const actionMap: Record<string, () => Promise<any>> = {
     startAll: () => startAllTask(),
     stopAll: () => stopAllTask(),
@@ -282,15 +299,18 @@ async function handleOperate(data: { name: string; row: any }) {
 
 async function handleEnableChanged(row: any, checked: boolean) {
   row.pending = true;
-  row.enable = checked;
+  // 不乐观赋值 row.enable：Switch 用 :model-value 单向绑定服务器值，
+  // 操作结果由 refresh() 从服务器重载决定，避免失败时 UI 与服务器状态脱节。
   try {
-    await updateTask({ id: row.id, values: { enable: row.enable } });
-    await controlTask({ typeName: row.typeName, controlType: row.enable ? "Start" : "Stop" });
+    await updateTask({ id: row.id, values: { enable: checked } });
+    await controlTask({ typeName: row.typeName, controlType: checked ? "Start" : "Stop" });
     ElMessage.success($t("common.notification.update_status_success"));
   } catch {
     ElMessage.error($t("common.notification.update_status_failed"));
   } finally {
     row.pending = false;
+    // 无论成功失败，都从服务器刷新，确保 UI 反映真实状态
+    pageRef.value?.refresh();
   }
 }
 

@@ -11,6 +11,13 @@
     "ON": "On",
     "OFF": "Off"
   },
+  "config": {
+    "valueType": {
+      "STRING": "String",
+      "BOOL": "Bool",
+      "INT": "Int"
+    }
+  },
   "dataAccessAuditLog": {
     "accessType": {
       "SELECT": "Select",
@@ -28,6 +35,16 @@
       "SCAN": "Scan",
       "ADMIN_OPERATION": "Admin Operation",
       "OTHER": "Other"
+    },
+    "dataCategory": {
+      "USER_DATA": "User Data",
+      "ORG_DATA": "Org Data",
+      "ACCESS_CONTROL": "Access Control",
+      "TENANT_DATA": "Tenant Data",
+      "MESSAGE_DATA": "Messages",
+      "AUDIT_LOG": "Audit Logs",
+      "SYSTEM_CONFIG": "System Config",
+      "UNKNOWN": "Other"
     }
   },
   "ossProvider": {
@@ -119,7 +136,8 @@
     "status": {
       "SUCCESS": "Success",
       "FAILED": "Failed",
-      "PARTIAL": "Partial Success"
+      "PARTIAL": "Partial Success",
+      "LOCKED": "Locked"
     },
     "actionType": {
       "LOGIN": "Login",
@@ -160,6 +178,7 @@
       "BULK_GRANT": "Bulk Grant",
       "BULK_REVOKE": "Bulk Revoke",
       "EXPIRE": "Expire",
+      "SUSPEND": "Suspend",
       "RESUME": "Resume",
       "ROLLBACK": "Rollback",
       "OTHER": "Other"
@@ -187,6 +206,43 @@
       "READ": "Read",
       "REVOKED": "Revoked",
       "DELETED": "Deleted"
+    }
+  },
+  "notificationDelivery": {
+    "eventType": {
+      "PASSWORD_RESET_CODE": "Password reset code",
+      "CONTACT_BIND_CODE": "Contact binding code",
+      "CHANNEL_TEST_EMAIL": "Channel test email",
+      "INTERNAL_MESSAGE": "In-app message",
+      "EVENT_TYPE_UNSPECIFIED": "Unspecified"
+    },
+    "channel": {
+      "EMAIL": "Email",
+      "SMS": "SMS",
+      "WEBHOOK": "Webhook",
+      "INTERNAL": "In-app",
+      "CHANNEL_UNSPECIFIED": "Unspecified"
+    },
+    "status": {
+      "SENDING": "Sending",
+      "SENT": "Sent",
+      "FAILED": "Failed",
+      "SKIPPED": "Channel not configured",
+      "DELIVERY_STATUS_UNSPECIFIED": "Unspecified"
+    }
+  },
+  "notificationRule": {
+    "eventType": {
+      "PASSWORD_RESET_CODE": "Password reset code",
+      "CONTACT_BIND_CODE": "Contact binding code",
+      "CHANNEL_TEST_EMAIL": "Channel test email",
+      "INTERNAL_MESSAGE": "In-app message"
+    },
+    "channel": {
+      "EMAIL": "Email",
+      "SMS": "SMS",
+      "WEBHOOK": "Webhook",
+      "INTERNAL": "In-app"
     }
   },
   "user": {
@@ -217,5 +273,56 @@
     "OIDC_SOCIAL": "OIDC/Social",
     "FIDO2": "FIDO2",
     "BIOMETRIC": "Biometric"
+  },
+  "plan": {
+    "version": {
+      "FREE": "Free",
+      "STANDARD": "Standard",
+      "ENTERPRISE": "Enterprise",
+      "PLAN_VERSION_UNSPECIFIED": "Unspecified"
+    },
+    "expiryPolicy": {
+      "BLOCK_LOGIN": "Block Login",
+      "FREEZE": "Freeze",
+      "READONLY": "Read Only",
+      "PLAN_EXPIRY_POLICY_UNSPECIFIED": "Unspecified"
+    },
+    "quotaType": {
+      "API_CALL": "API Call Count",
+      "STORAGE": "Storage Capacity",
+      "USER_LIMIT": "User Limit",
+      "PLAN_QUOTA_TYPE_UNSPECIFIED": "Unspecified"
+    }
+  },
+  "module": {
+    "DASHBOARD": "Dashboard",
+    "OPM": "Org & Personnel",
+    "SYSTEM": "System Config",
+    "DICT": "Dictionary",
+    "TENANT": "Tenant Management",
+    "PERMISSION": "Permission",
+    "LOG": "Audit Log",
+    "INTERNAL_MESSAGE": "Internal Message",
+    "FILE": "File Management",
+    "TASK": "Task Scheduler"
+  },
+  "role": {
+    "dataScope": {
+      "ALL": "All",
+      "SELECTED_UNITS": "Custom",
+      "UNIT_AND_CHILD": "Department and Subordinates",
+      "UNIT_ONLY": "Department Only",
+      "SELF": "Self Only"
+    }
+  },
+  "membershipPosition": {
+    "status": {
+      "PROBATION": "Probation",
+      "ACTIVE": "Active",
+      "LEAVE": "Left",
+      "RESIGNED": "Resigned",
+      "TERMINATED": "Terminated",
+      "EXPIRED": "Expired"
+    }
   }
 }

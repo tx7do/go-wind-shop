@@ -32,6 +32,8 @@ export interface EditorProps {
     language?: string;
     lineNumbers?: boolean;
     tabSize?: number;
+    /** 关闭 hljs 自动语言探测，强制使用 language 指定的高亮（探测表未收录的语言如 lua 会被误判为 plaintext） */
+    autoDetectLanguage?: boolean;
   };
 }
 

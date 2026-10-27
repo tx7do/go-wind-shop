@@ -121,7 +121,11 @@ const drawer = useDrawerForm({
     const result = await fetchListPermissionGroups(
       new PaginationQuery({ formValues: { status: "ON" } })
     );
-    permissionGroupTreeData.value = buildPermissionGroupTree(result.items || []);
+    // 编辑模式下排除自身，防止把分组设为自己的父级（自环）
+    permissionGroupTreeData.value = buildPermissionGroupTree(
+      result.items || [],
+      drawer.currentId.value
+    );
   },
 });
 

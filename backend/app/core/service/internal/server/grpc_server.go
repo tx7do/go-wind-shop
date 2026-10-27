@@ -22,6 +22,7 @@ import (
 	interactionV1 "go-wind-shop/api/gen/go/interaction/service/v1"
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	invoiceV1 "go-wind-shop/api/gen/go/invoice/service/v1"
+	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
@@ -49,6 +50,11 @@ func NewGrpcServer(
 
 	authenticationService *service.AuthenticationService,
 	loginPolicyService *service.LoginPolicyService,
+	notificationService *service.NotificationService,
+	notificationChannelService *service.NotificationChannelService,
+	notificationRuleService *service.NotificationRuleService,
+	notificationTemplateService *service.NotificationTemplateService,
+	notificationPreferenceService *service.NotificationPreferenceService,
 	userCredentialService *service.UserCredentialService,
 
 	taskService *service.TaskService,
@@ -190,6 +196,12 @@ func NewGrpcServer(
 	interactionV1.RegisterInteractionAdminServiceServer(srv, interactionAdminService)
 
 	invoiceV1.RegisterInvoiceServiceServer(srv, invoiceService)
+
+	notificationV1.RegisterNotificationServiceServer(srv, notificationService)
+	notificationV1.RegisterNotificationChannelServiceServer(srv, notificationChannelService)
+	notificationV1.RegisterNotificationRuleServiceServer(srv, notificationRuleService)
+	notificationV1.RegisterNotificationTemplateServiceServer(srv, notificationTemplateService)
+	notificationV1.RegisterNotificationPreferenceServiceServer(srv, notificationPreferenceService)
 
 	// register:grpc-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 

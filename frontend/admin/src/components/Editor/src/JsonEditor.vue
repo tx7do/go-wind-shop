@@ -342,7 +342,7 @@ onUnmounted(() => {
   margin: 0;
   font-size: 12px;
   line-height: 1.4;
-  color: var(--el-color-danger);
+  color: var(--gowind-danger-text);
   background-color: var(--el-color-danger-light-9);
   border-bottom: 1px solid var(--el-color-danger-light-7);
 }

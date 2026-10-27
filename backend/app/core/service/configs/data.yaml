@@ -15,8 +15,9 @@ data:
     read_timeout: 0.4s
     write_timeout: 0.6s
 
-  elastic_search:
+  # OpenSearch（与 go-wind-cms 一致；compose 里服务名/初始密码见 docker-compose*.yaml 的 opensearch）
+  opensearch:
     addresses:
-      - "http://elasticsearch:9200"
-    username: "elastic"
-    password: "*Abcd123456"
+      - "http://localhost:9200"
+    username: "admin"
+    password: "@Abcd#123456"

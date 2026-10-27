@@ -1,5 +1,7 @@
 {
   "moduleName": "Menu",
+  "sync": "Sync Menus",
+  "syncConfirm": "Menus from the current frontend routes will be merged into the server: missing menus are added and existing ones updated in place (menu IDs and role-menu assignments are preserved); extra menus on the server are kept. Continue?",
   "name": "Name",
   "type": "Type",
   "title": "Title",

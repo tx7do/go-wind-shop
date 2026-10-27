@@ -3,8 +3,15 @@
     <ProPage ref="pageRef" :config="pageConfig" @add="handleAdd" @edit="handleEdit">
       <!-- 状态 -->
       <template #status="scope: any">
-        <ElTag size="small" effect="dark" round :color="statusToColor(scope.row.status)">
+        <ElTag size="small" effect="plain" round :type="statusToType(scope.row.status)">
           {{ statusToName(scope.row.status) }}
+        </ElTag>
+      </template>
+
+      <!-- 数据权限范围 -->
+      <template #dataScope="scope: any">
+        <ElTag size="small" round :type="dataScopeToType(scope.row.dataScope)">
+          {{ roleDataScopeToName(scope.row.dataScope) }}
         </ElTag>
       </template>
     </ProPage>
@@ -24,8 +31,10 @@ import RoleDrawer from "./role-drawer.vue";
 
 import {
   statusList,
-  statusToColor,
+  statusToType,
   statusToName,
+  dataScopeToType,
+  roleDataScopeToName,
   fetchListRoles,
   useDeleteRole,
 } from "@/api/composables";
@@ -93,6 +102,12 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("common.table.status"),
         minWidth: 100,
         slotName: "status",
+      },
+      {
+        prop: "dataScope",
+        label: $t("pages.role.dataScope"),
+        minWidth: 100,
+        slotName: "dataScope",
       },
       { prop: "description", label: $t("common.table.description"), minWidth: 150 },
       {

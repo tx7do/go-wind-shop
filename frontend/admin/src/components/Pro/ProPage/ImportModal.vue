@@ -177,11 +177,20 @@ async function doImport() {
           ElMessage.error(t("pages.curd.message.noDataParsed"));
           return;
         }
-        props.importsAction!(data).then(() => {
-          ElMessage.success(t("pages.curd.message.importSuccess"));
-          handleClose();
-          emit("success");
-        });
+        props.importsAction!(data)
+          .then(() => {
+            ElMessage.success(t("pages.curd.message.importSuccess"));
+            handleClose();
+            emit("success");
+          })
+          .catch((err: any) => {
+            ElMessage.error(
+              `${t("pages.curd.message.importFailed")}: ${err?.message ?? ""}`
+            );
+          });
+      })
+      .catch(() => {
+        ElMessage.error(t("pages.curd.message.readFileFailed"));
       });
     };
     return;

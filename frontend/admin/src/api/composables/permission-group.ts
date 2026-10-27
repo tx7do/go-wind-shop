@@ -113,16 +113,28 @@ export function travelPermissionGroupChild(
   return false;
 }
 
-export function buildPermissionGroupTree(groups: PermissionGroup[]): PermissionGroup[] {
+export function buildPermissionGroupTree(
+  groups: PermissionGroup[],
+  excludeId?: number
+): PermissionGroup[] {
+  // 深拷贝后再构建树，避免就地修改 group.name = t(...) 污染传入的
+  // vue-query 缓存（否则翻译值会被永久写回缓存，后续读取拿到已翻译的 name）。
+  const cloned: PermissionGroup[] =
+    typeof structuredClone === "function"
+      ? structuredClone(groups)
+      : (JSON.parse(JSON.stringify(groups)) as PermissionGroup[]);
   const tree: PermissionGroup[] = [];
-  for (const group of groups) {
+  for (const group of cloned) {
     if (!group) continue;
+    // 排除指定节点（防自环：编辑某分组时不让它出现在自己的父级候选里）
+    if (excludeId !== undefined && group.id === excludeId) continue;
     if (group.parentId !== 0 && group.parentId !== undefined) continue;
     if (group?.name) group.name = t(group?.name ?? "");
     tree.push(group);
   }
-  for (const group of groups) {
+  for (const group of cloned) {
     if (!group) continue;
+    if (excludeId !== undefined && group.id === excludeId) continue;
     if (group.parentId === 0 || group.parentId === undefined) continue;
     if (travelPermissionGroupChild(tree, group)) continue;
     if (group?.name) group.name = t(group?.name ?? "");

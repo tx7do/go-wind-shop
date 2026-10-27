@@ -694,7 +694,7 @@ function stagger(delay: number) {
 
 :global(html.dark) {
   .sk-search {
-    background-color: #14171c;
+    background-color: #111827;
     border-color: #23272f;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }

@@ -8,7 +8,7 @@ const mall: RouteRecordRaw[] = [
     component: Layout,
     redirect: "/mall/categories",
     meta: {
-      order: 2006,
+      order: 2,
       icon: "lucide:shopping-cart",
       title: "routes.mall.moduleName",
       keepAlive: true,

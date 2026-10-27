@@ -52,8 +52,8 @@
       />
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="handleLinkCancel">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" @click="handleLinkOk">{{ $t('common.confirm') }}</el-button>
+          <el-button @click="handleLinkCancel">{{ $t("common.button.cancel") }}</el-button>
+          <el-button type="primary" @click="handleLinkOk">{{ $t("common.button.confirm") }}</el-button>
         </div>
       </template>
     </ElDialog>
@@ -99,8 +99,8 @@
       </div>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="handleCodeBlockCancel">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" @click="handleCodeBlockOk">{{ $t('common.confirm') }}</el-button>
+          <el-button @click="handleCodeBlockCancel">{{ $t("common.button.cancel") }}</el-button>
+          <el-button type="primary" @click="handleCodeBlockOk">{{ $t("common.button.confirm") }}</el-button>
         </div>
       </template>
     </ElDialog>
@@ -140,8 +140,8 @@
       </div>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="handleVideoCancel">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" @click="handleVideoOk">{{ $t('common.confirm') }}</el-button>
+          <el-button @click="handleVideoCancel">{{ $t("common.button.cancel") }}</el-button>
+          <el-button type="primary" @click="handleVideoOk">{{ $t("common.button.confirm") }}</el-button>
         </div>
       </template>
     </ElDialog>
@@ -214,8 +214,8 @@
       </div>
       <template #footer>
         <div class="dialog-footer">
-          <el-button @click="handleIframeCancel">{{ $t('common.cancel') }}</el-button>
-          <el-button type="primary" @click="handleIframeOk">{{ $t('common.confirm') }}</el-button>
+          <el-button @click="handleIframeCancel">{{ $t("common.button.cancel") }}</el-button>
+          <el-button type="primary" @click="handleIframeOk">{{ $t("common.button.confirm") }}</el-button>
         </div>
       </template>
     </ElDialog>
@@ -226,6 +226,7 @@
 import { computed, onUnmounted, ref, toRef } from "vue";
 
 import { $t } from "@/core/i18n";
+import { uploadFile } from "@/api/composables";
 
 import { EditorContent } from "@tiptap/vue-3";
 import { marked } from "marked";
@@ -364,19 +365,22 @@ const statusInfo = computed(() => {
   return { chars, words, cursor: `${line}:${col}` };
 });
 
-// 图片上传处理
+// 图片上传处理：外部注入 uploadImage 优先；未注入时走内置文件上传（publicUrl）
 const handleImageUpload = async (event: Event) => {
   const input = event.target as HTMLInputElement;
   const file = input.files?.[0];
-  if (!file || !props.uploadImage) {
-    emit("imageUpload", file!);
+  if (!file) {
     return;
   }
 
   try {
-    const url = await props.uploadImage(file);
+    const url = props.uploadImage
+      ? await props.uploadImage(file)
+      : ((await uploadFile("", "", file)) as any)?.publicUrl || "";
     if (url && editor.value) {
       editor.value.chain().focus().setImage({ src: url }).run();
+    } else if (!url) {
+      ElMessage.error($t("common.editor.image_upload_failed"));
     }
   } catch (error) {
     console.error("Image upload failed:", error);

@@ -83,7 +83,7 @@ async function downloadFile(bucketName: string, objectName: string, preferPresig
 /**
  * 上传文件到MinIO
  */
-async function uploadFile(
+export async function uploadFile(
   bucketName: string,
   fileDirectory: string,
   fileData: File,

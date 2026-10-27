@@ -1,10 +1,9 @@
 @import "tailwindcss";
 
-/* 暗黑模式锁定为 class 策略（html.dark）。
-   Tailwind v4 默认是 media 策略，若未来有人写 dark: 工具类，会跟随系统
-   而非手动切换，与 Element Plus 的 html.dark 体系脱钩。
-   显式声明后 dark: 只在 .dark 下生效，与 update-css-variables.ts 的
-   root.classList.toggle('dark') 一致。 */
+/* dark: 变体必须挂到 html.dark 上：应用的主题开关（update-css-variables 切换根类，
+   element-plus/vxe 变量全部跟随）与 tailwind dark: 工具类此前脱钩——tailwind v4
+   默认 dark: 走系统 prefers-color-scheme，应用内切暗色而系统为浅色时，
+   全端所有 dark:bg-* / dark:text-* 等类不生效，页面出现暗底嵌白卡、浅底白字。 */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* ============================================

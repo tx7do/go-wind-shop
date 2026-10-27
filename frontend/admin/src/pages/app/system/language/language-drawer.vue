@@ -49,11 +49,19 @@
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.language.isEnabled')" prop="isEnabled">
-        <ElSwitch v-model="formData.isEnabled" />
+        <ElSwitch
+          v-model="formData.isEnabled"
+          :active-text="$t('common.status.enabled')"
+          :inactive-text="$t('common.status.disabled')"
+        />
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.language.isDefault')" prop="isDefault">
-        <ElSwitch v-model="formData.isDefault" />
+        <ElSwitch
+          v-model="formData.isDefault"
+          :active-text="$t('common.status.enabled')"
+          :inactive-text="$t('common.status.disabled')"
+        />
       </ElFormItem>
     </ElForm>
 
@@ -124,7 +132,13 @@ function open(row?: any) {
     // 编辑模式
     isCreate.value = false;
     currentId.value = row.id;
-    Object.assign(formData, row);
+    // 仅回填表单声明的字段，避免把 id/createdAt 等不可变字段灌入 formData
+    formData.languageName = row.languageName ?? "";
+    formData.languageCode = row.languageCode ?? "";
+    formData.nativeName = row.nativeName ?? "";
+    formData.sortOrder = row.sortOrder ?? 1;
+    formData.isEnabled = row.isEnabled ?? true;
+    formData.isDefault = row.isDefault ?? false;
   } else {
     // 创建模式
     isCreate.value = true;

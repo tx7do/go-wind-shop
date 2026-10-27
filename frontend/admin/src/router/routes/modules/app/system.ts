@@ -6,9 +6,9 @@ const system: RouteRecordRaw[] = [
     path: "/system",
     name: "System",
     component: Layout,
-    redirect: "/system/menus",
+    redirect: "/system/files",
     meta: {
-      order: 2005,
+      order: 14,
       icon: "lucide:settings",
       title: "routes.system.moduleName",
       keepAlive: true,

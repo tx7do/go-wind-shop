@@ -5,6 +5,7 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"go-wind-shop/app/core/service/internal/data"
 	"go-wind-shop/app/core/service/internal/server"
+	"go-wind-shop/app/core/service/internal/data/channel"
 	"go-wind-shop/app/core/service/internal/service"
 )
 
@@ -189,6 +190,24 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	invoiceService := service.NewInvoiceService(ctx, invoiceRepo)
 	stockAlertScannerService := service.NewStockAlertScannerService(ctx, skuRepo, internalMessageService, stockAlertRepo)
 
+	// ── Notification 通知域（移植自 go-wind-cms）──
+	notificationChannelRepo := data.NewNotificationChannelRepo(ctx, entClient)
+	notificationDeliveryRepo := data.NewNotificationDeliveryRepo(ctx, entClient)
+	notificationRuleRepo := data.NewNotificationRuleRepo(ctx, entClient)
+	notificationTemplateRepo := data.NewNotificationTemplateRepo(ctx, entClient)
+	notificationPreferenceRepo := data.NewNotificationPreferenceRepo(ctx, entClient)
+
+	channelRegistry := channel.NewRegistry()
+	channelRegistry.Register(channel.NewEmailSender(notificationChannelRepo))
+	channelRegistry.Register(channel.NewWebhookSender(notificationChannelRepo))
+	channelRegistry.Register(channel.NewSettingsSender(notificationChannelRepo))
+	channelRegistry.Register(channel.NewSmsSender(notificationChannelRepo))
+	notificationService := service.NewNotificationService(ctx, notificationDeliveryRepo, notificationRuleRepo, notificationTemplateRepo, channelRegistry)
+	notificationChannelService := service.NewNotificationChannelService(ctx, notificationChannelRepo, notificationService)
+	notificationRuleService := service.NewNotificationRuleService(ctx, notificationRuleRepo, notificationChannelRepo, notificationService)
+	notificationTemplateService := service.NewNotificationTemplateService(ctx, notificationTemplateRepo)
+	notificationPreferenceService := service.NewNotificationPreferenceService(ctx, notificationPreferenceRepo, internalMessageCategoryRepo)
+
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
@@ -198,6 +217,11 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	grpcServer, err := server.NewGrpcServer(ctx, grpcMiddlewares,
 		authenticationService,
 		loginPolicyService,
+		notificationService,
+		notificationChannelService,
+		notificationRuleService,
+		notificationTemplateService,
+		notificationPreferenceService,
 		userCredentialService,
 		taskService,
 		fileService,

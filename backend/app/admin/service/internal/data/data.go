@@ -27,6 +27,7 @@ import (
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	interactionV1 "go-wind-shop/api/gen/go/interaction/service/v1"
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
+	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
 	invoiceV1 "go-wind-shop/api/gen/go/invoice/service/v1"
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
@@ -531,3 +532,47 @@ func NewInvoiceServiceClient(ctx *bootstrap.Context, r registry.Discovery) invoi
 	return invoiceV1.NewInvoiceServiceClient(cli)
 }
 
+func NewNotificationServiceClient(ctx *bootstrap.Context, r registry.Discovery) notificationV1.NotificationServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return notificationV1.NewNotificationServiceClient(cli)
+}
+
+func NewNotificationChannelServiceClient(ctx *bootstrap.Context, r registry.Discovery) notificationV1.NotificationChannelServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return notificationV1.NewNotificationChannelServiceClient(cli)
+}
+
+func NewNotificationRuleServiceClient(ctx *bootstrap.Context, r registry.Discovery) notificationV1.NotificationRuleServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return notificationV1.NewNotificationRuleServiceClient(cli)
+}
+
+func NewNotificationTemplateServiceClient(ctx *bootstrap.Context, r registry.Discovery) notificationV1.NotificationTemplateServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return notificationV1.NewNotificationTemplateServiceClient(cli)
+}
+
+func NewNotificationPreferenceServiceClient(ctx *bootstrap.Context, r registry.Discovery) notificationV1.NotificationPreferenceServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return notificationV1.NewNotificationPreferenceServiceClient(cli)
+}

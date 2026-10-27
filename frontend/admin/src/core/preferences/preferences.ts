@@ -15,6 +15,38 @@ const STORAGE_KEY = "preferences";
 const STORAGE_KEY_LOCALE = `${STORAGE_KEY}-locale`;
 const STORAGE_KEY_THEME = `${STORAGE_KEY}-theme`;
 
+/**
+ * 旧版缓存迁移：设计语言规范（docs/design-language.md，2026-09-08）把默认
+ * 主色/语义色统一到 vben 基准。缓存按精确旧值匹配改写，只有仍停留在迁移前
+ * 默认色的用户被迁移，自选过主题色的用户不受影响。
+ */
+const LEGACY_THEME_COLORS = {
+  colorPrimary: "hsl(220 100% 55%)",
+  colorSuccess: "hsl(145 100% 35%)",
+  colorWarning: "hsl(32 100% 50%)",
+  colorDestructive: "hsl(0 91% 60%)",
+};
+
+function migrateCachedPreferences(cached: null | Preferences): null | Preferences {
+  if (!cached?.theme) {
+    return cached;
+  }
+  const { theme } = cached;
+  if (theme.colorPrimary === LEGACY_THEME_COLORS.colorPrimary) {
+    theme.colorPrimary = defaultPreferences.theme.colorPrimary;
+  }
+  if (theme.colorSuccess === LEGACY_THEME_COLORS.colorSuccess) {
+    theme.colorSuccess = defaultPreferences.theme.colorSuccess;
+  }
+  if (theme.colorWarning === LEGACY_THEME_COLORS.colorWarning) {
+    theme.colorWarning = defaultPreferences.theme.colorWarning;
+  }
+  if (theme.colorDestructive === LEGACY_THEME_COLORS.colorDestructive) {
+    theme.colorDestructive = defaultPreferences.theme.colorDestructive;
+  }
+  return cached;
+}
+
 class PreferenceManager {
   private cache: null | StorageManager = null;
   // private flattenedState: Flatten<Preferences>;
@@ -75,7 +107,7 @@ class PreferenceManager {
    *  从缓存中加载偏好设置。如果缓存中没有找到对应的偏好设置，则返回默认偏好设置。
    */
   private loadCachedPreferences() {
-    return this.cache?.getItem<Preferences>(STORAGE_KEY);
+    return migrateCachedPreferences(this.cache?.getItem<Preferences>(STORAGE_KEY) ?? null);
   }
 
   /**
@@ -108,11 +140,9 @@ class PreferenceManager {
     );
 
     // 监听系统主题偏好设置变化
-    // 仅在 auto 模式下跟随系统：手动选择 dark/light 后，系统主题变化不应覆盖用户选择
     window
       .matchMedia("(prefers-color-scheme: dark)")
       .addEventListener("change", ({ matches: isDark }) => {
-        if (this.state.theme.mode !== "auto") return;
         this.updatePreferences({
           theme: { mode: isDark ? "dark" : "light" },
         });

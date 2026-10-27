@@ -179,27 +179,6 @@ function stagger(delay: number) {
   }
 }
 
-// 暗黑模式微光调整
-:global(html.dark) {
-  .ts-bar,
-  .ts-field__input,
-  .ts-field__label,
-  .ts-btn,
-  .ts-btn-circle,
-  .ts-pagi-btn {
-    &::after {
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.06) 40%,
-        rgba(255, 255, 255, 0.1) 60%,
-        transparent 100%
-      );
-      background-size: 300% 100%;
-    }
-  }
-}
-
 // --- 骨架条 ---
 .ts-bar {
   @include skeleton-pulse;
@@ -335,9 +314,8 @@ function stagger(delay: number) {
 }
 
 // 搜索栏
-// 这两张骨架卡的 padding / border-radius / 描边 / 投影是「真卡镜像」：值必须与 ProSearch、
-// ProPage__content 保持一致（内缩 20、大容器圆角 12、--gowind-card-* 卡片档），
-// 改真卡时要同步这里，否则骨架→真实的切换会跳形。
+// 这两张骨架卡的 padding / border-radius 是「真卡镜像」：值必须与 ProSearch、ProPage__content
+// 保持一致（§2.2 内缩 20、§2.4 大容器圆角 12），改真卡时要同步这里，否则骨架→真实的切换会跳形。
 .ts-search {
   display: flex;
   flex-wrap: wrap;
@@ -348,13 +326,6 @@ function stagger(delay: number) {
   border-radius: 12px;
   border: 1px solid var(--gowind-card-border);
   box-shadow: var(--gowind-card-shadow);
-}
-
-:global(html.dark) {
-  .ts-search {
-    background-color: #14171c;
-    border-color: #23272f;
-  }
 }
 
 .ts-field {
@@ -396,12 +367,6 @@ function stagger(delay: number) {
   overflow: hidden;
   box-shadow: var(--gowind-card-shadow);
   flex: 1;
-}
-
-:global(html.dark) {
-  .ts-table-card {
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-  }
 }
 
 // 表头

@@ -9,8 +9,12 @@ dayjs.extend(relativeTime);
 
 const dateUtil = dayjs;
 
-dayjs.tz.setDefault("Asia/Shanghai");
-dateUtil.tz.setDefault("Asia/Shanghai");
+// 统一以上海时区展示时间。注意：setDefault 仅影响 dayjs.tz(input) 的解析，
+// 不影响 dayjs(input)（按浏览器本地时区）。因此 formatDate 内必须使用
+// dateUtil.tz(...) 才能让该默认时区真正生效，否则跨时区客户端会显示偏差。
+const DEFAULT_TZ = "Asia/Shanghai";
+dayjs.tz.setDefault(DEFAULT_TZ);
+dateUtil.tz.setDefault(DEFAULT_TZ);
 
 export { dateUtil };
 
@@ -19,11 +23,13 @@ export function formatDate(time: number | string, format = "YYYY-MM-DD") {
     return "";
   }
   if (isDate(time)) {
-    return dateUtil(time).format(format);
+    return dateUtil.tz(time, DEFAULT_TZ).format(format);
   }
 
   try {
-    const date = dateUtil(time);
+    // 使用 tz 解析：后端返回的 UTC 时间（如 2026-08-06T12:00:00Z）
+    // 会被统一转换为上海时区展示，避免随浏览器本地时区漂移。
+    const date = dateUtil.tz(time, DEFAULT_TZ);
     if (!date.isValid()) {
       // throw new Error('Invalid date');
       return "";

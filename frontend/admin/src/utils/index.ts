@@ -8,6 +8,8 @@ export { isExternal, isValidURL, isEmail, isMobile, VALIDATORS } from "./validat
 // 文件下载
 export { downloadFile } from "./download";
 
+export * from "./crypto";
+export * from "./sanitize";
 export * from "./color";
 export * from "./format";
 export * from "./theme";
@@ -23,6 +25,5 @@ export * from "./letter";
 export * from "./dom";
 export * from "./state-handler";
 export * from "./cn";
-export * from "./sanitize";
 
 export { default as cloneDeep } from "lodash.clonedeep";
