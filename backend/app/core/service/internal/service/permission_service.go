@@ -378,3 +378,12 @@ func (s *PermissionService) createDefaultPermissions(ctx context.Context) error 
 
 	return nil
 }
+
+// GetHiddenFieldsByRoleIds 按角色集合聚合字段权限隐藏字段（"资源.字段" 串）。
+func (s *PermissionService) GetHiddenFieldsByRoleIds(ctx context.Context, req *permissionV1.GetHiddenFieldsByRoleIdsRequest) (*permissionV1.GetHiddenFieldsByRoleIdsResponse, error) {
+	hiddenFields, err := s.permissionRepo.GetHiddenFieldsByRoleIDs(ctx, req.GetRoleIds())
+	if err != nil {
+		return nil, err
+	}
+	return &permissionV1.GetHiddenFieldsByRoleIdsResponse{HiddenFields: hiddenFields}, nil
+}

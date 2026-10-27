@@ -56,6 +56,40 @@ func (m *Role) validate(all bool) error {
 
 	var errors []error
 
+	for idx, item := range m.GetFieldPermissions() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RoleValidationError{
+						field:  fmt.Sprintf("FieldPermissions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RoleValidationError{
+						field:  fmt.Sprintf("FieldPermissions[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RoleValidationError{
+					field:  fmt.Sprintf("FieldPermissions[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.Id != nil {
 		// no validation rules for Id
 	}
@@ -4434,6 +4468,110 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UnassignUsersFromRoleResponseValidationError{}
+
+// Validate checks the field values on RoleFieldPermission with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RoleFieldPermission) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RoleFieldPermission with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RoleFieldPermissionMultiError, or nil if none found.
+func (m *RoleFieldPermission) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RoleFieldPermission) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Resource
+
+	if len(errors) > 0 {
+		return RoleFieldPermissionMultiError(errors)
+	}
+
+	return nil
+}
+
+// RoleFieldPermissionMultiError is an error wrapping multiple validation
+// errors returned by RoleFieldPermission.ValidateAll() if the designated
+// constraints aren't met.
+type RoleFieldPermissionMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RoleFieldPermissionMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RoleFieldPermissionMultiError) AllErrors() []error { return m }
+
+// RoleFieldPermissionValidationError is the validation error returned by
+// RoleFieldPermission.Validate if the designated constraints aren't met.
+type RoleFieldPermissionValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RoleFieldPermissionValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RoleFieldPermissionValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RoleFieldPermissionValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RoleFieldPermissionValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RoleFieldPermissionValidationError) ErrorName() string {
+	return "RoleFieldPermissionValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RoleFieldPermissionValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRoleFieldPermission.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RoleFieldPermissionValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RoleFieldPermissionValidationError{}
 
 // Validate checks the field values on RoleOverride_PermissionDelta with the
 // rules defined in the proto definition for this message. If any rules are

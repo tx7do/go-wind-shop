@@ -40,6 +40,10 @@ interface AccessState {
    * 登录是否过期
    */
   loginExpired: boolean;
+  /**
+   * 字段权限隐藏字段集（"资源.字段" 串，如 "User.email"，来自 GetMyPermissionCode）
+   */
+  hiddenFields: string[];
 
   /**
    * 登录 accessToken
@@ -65,6 +69,7 @@ export const useAccessStore = defineStore("core-access", {
       this.accessRoutes = [];
       this.isAccessChecked = false;
       this.loginExpired = false;
+      this.hiddenFields = [];
       this.accessTokenExpireTime = undefined;
       this.refreshTokenExpireTime = undefined;
     },
@@ -91,6 +96,13 @@ export const useAccessStore = defineStore("core-access", {
     setAccessCodes(codes: string[]) {
       this.accessCodes = codes;
     },
+
+		/**
+		 * @zh_CN 设置字段权限隐藏字段集
+		 */
+		setHiddenFields(fields: string[]) {
+			this.hiddenFields = fields;
+		},
     setAccessMenus(menus: MenuRecordRaw[]) {
       this.accessMenus = menus;
     },
@@ -137,6 +149,7 @@ export const useAccessStore = defineStore("core-access", {
     accessTokenExpireTime: undefined,
     isAccessChecked: false,
     loginExpired: false,
+    hiddenFields: [],
     refreshToken: null,
     refreshTokenExpireTime: undefined,
   }),

@@ -110,7 +110,7 @@ import { computed, ref } from "vue";
 import { ElDescriptions, ElDescriptionsItem, ElAvatar, ElTag } from "element-plus";
 import { formatDateTime } from "@/utils";
 import { $t } from "@/core/i18n";
-// 【缓行】字段权限未启用：import { isFieldHidden as isFieldHiddenBase } from "@/core/access";
+import { isFieldHidden as isFieldHiddenBase } from "@/core/access";
 import { useAccessStore } from "@/stores";
 
 import { type identityservicev1_User as User } from "@/api/generated/admin/service/v1";

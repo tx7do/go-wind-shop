@@ -140,13 +140,7 @@
     "mfaUnbindSuccess": "TOTP unbound successfully",
     "mfaUnbindFailed": "Failed to unbind TOTP",
     "mfaUnbindConfirmTitle": "Unbind TOTP?",
-    "mfaUnbindConfirmContent": "After unbinding, login will no longer require a verification code. This reduces account security.",
-    "backupEmail": "Backup Email",
-    "backupEmailDesc": "For security notices and password recovery",
-    "securePhone": "Security Phone",
-    "securePhoneDesc": "For login verification and security alerts",
-    "secureQuestion": "Security Questions",
-    "secureQuestionDesc": "For identity verification and password recovery"
+    "mfaUnbindConfirmContent": "After unbinding, login will no longer require a verification code. This reduces account security."
   },
   "accountBind": {
     "email": "Email Account",
@@ -168,32 +162,11 @@
     "vcodeRequired": "Code is required",
     "confirmBind": "Confirm",
     "bindSuccess": "Email bound successfully",
-    "bindFailed": "Failed to bind",
-    "bind": "Bind",
-    "unbind": "Unbind",
-    "manage": "Manage",
-    "dingtalk": "DingTalk",
-    "dingtalkDesc": "No DingTalk account bound",
-    "wechat": "WeChat",
-    "wechatDesc": "No WeChat account bound",
-    "weibo": "Weibo",
-    "weiboDesc": "No Weibo account bound",
-    "github": "GitHub",
-    "githubDesc": "No GitHub account bound",
-    "emailDesc": "No email bound; fill it in Basic Settings",
-    "phoneDesc": "No phone bound; fill it in Basic Settings"
+    "bindFailed": "Failed to bind"
   },
   "resetMfa": "Reset MFA",
   "resetMfaConfirmTitle": "Reset MFA for this user?",
   "resetMfaConfirmDesc": "This will remove their TOTP binding. Next login will skip MFA until re-enrolled.",
   "resetMfaSuccess": "MFA reset successfully",
-  "resetMfaFailed": "Failed to reset MFA",
-  "msgNotify": {
-    "systemMessage": "System Messages",
-    "systemMessageDesc": "Receive system announcements and platform notices",
-    "todoTask": "Todo Tasks",
-    "todoTaskDesc": "Receive todo task and approval reminders",
-    "accountPassword": "Account Security",
-    "accountPasswordDesc": "Receive account and password security notices"
-  }
+  "resetMfaFailed": "Failed to reset MFA"
 }

@@ -664,9 +664,11 @@ export type permissionservicev1_MenuMeta = {
 // 查询权限码列表 - 回应
 export type ListPermissionCodeResponse = {
   codes: string[] | undefined;
+  hiddenFields: string[] | undefined;
 };
 
 export type InitialContextResponse = {
+  hiddenFields: string[] | undefined;
   menus: permissionservicev1_MenuRouteItem[] | undefined;
   permissions: string[] | undefined;
 };
@@ -14034,6 +14036,7 @@ export type permissionservicev1_Role = {
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
   description?: string;
+  fieldPermissions: permissionservicev1_RoleFieldPermission[] | undefined;
   id?: number;
   isProtected?: boolean;
   name?: string;
@@ -14056,6 +14059,11 @@ export type permissionservicev1_Role_Type =
   | 'SYSTEM'
   | 'TEMPLATE'
   | 'TENANT';
+export type permissionservicev1_RoleFieldPermission = {
+  hiddenFields: string[] | undefined;
+  resource: string | undefined;
+};
+
 // 角色数据 - 请求
 export type permissionservicev1_GetRoleRequest = {
   code?: string;

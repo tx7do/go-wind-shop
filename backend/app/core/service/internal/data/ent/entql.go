@@ -1870,21 +1870,22 @@ var schemaGraph = func() *sqlgraph.Schema {
 		},
 		Type: "Role",
 		Fields: map[string]*sqlgraph.FieldSpec{
-			role.FieldCreatedAt:   {Type: field.TypeTime, Column: role.FieldCreatedAt},
-			role.FieldUpdatedAt:   {Type: field.TypeTime, Column: role.FieldUpdatedAt},
-			role.FieldDeletedAt:   {Type: field.TypeTime, Column: role.FieldDeletedAt},
-			role.FieldCreatedBy:   {Type: field.TypeUint32, Column: role.FieldCreatedBy},
-			role.FieldUpdatedBy:   {Type: field.TypeUint32, Column: role.FieldUpdatedBy},
-			role.FieldDeletedBy:   {Type: field.TypeUint32, Column: role.FieldDeletedBy},
-			role.FieldRemark:      {Type: field.TypeString, Column: role.FieldRemark},
-			role.FieldDescription: {Type: field.TypeString, Column: role.FieldDescription},
-			role.FieldSortOrder:   {Type: field.TypeUint32, Column: role.FieldSortOrder},
-			role.FieldTenantID:    {Type: field.TypeUint32, Column: role.FieldTenantID},
-			role.FieldStatus:      {Type: field.TypeEnum, Column: role.FieldStatus},
-			role.FieldName:        {Type: field.TypeString, Column: role.FieldName},
-			role.FieldCode:        {Type: field.TypeString, Column: role.FieldCode},
-			role.FieldIsProtected: {Type: field.TypeBool, Column: role.FieldIsProtected},
-			role.FieldType:        {Type: field.TypeEnum, Column: role.FieldType},
+			role.FieldCreatedAt:        {Type: field.TypeTime, Column: role.FieldCreatedAt},
+			role.FieldUpdatedAt:        {Type: field.TypeTime, Column: role.FieldUpdatedAt},
+			role.FieldDeletedAt:        {Type: field.TypeTime, Column: role.FieldDeletedAt},
+			role.FieldCreatedBy:        {Type: field.TypeUint32, Column: role.FieldCreatedBy},
+			role.FieldUpdatedBy:        {Type: field.TypeUint32, Column: role.FieldUpdatedBy},
+			role.FieldDeletedBy:        {Type: field.TypeUint32, Column: role.FieldDeletedBy},
+			role.FieldRemark:           {Type: field.TypeString, Column: role.FieldRemark},
+			role.FieldDescription:      {Type: field.TypeString, Column: role.FieldDescription},
+			role.FieldSortOrder:        {Type: field.TypeUint32, Column: role.FieldSortOrder},
+			role.FieldTenantID:         {Type: field.TypeUint32, Column: role.FieldTenantID},
+			role.FieldStatus:           {Type: field.TypeEnum, Column: role.FieldStatus},
+			role.FieldName:             {Type: field.TypeString, Column: role.FieldName},
+			role.FieldCode:             {Type: field.TypeString, Column: role.FieldCode},
+			role.FieldIsProtected:      {Type: field.TypeBool, Column: role.FieldIsProtected},
+			role.FieldFieldPermissions: {Type: field.TypeJSON, Column: role.FieldFieldPermissions},
+			role.FieldType:             {Type: field.TypeEnum, Column: role.FieldType},
 		},
 	}
 	graph.Nodes[66] = &sqlgraph.Node{
@@ -10228,6 +10229,11 @@ func (f *RoleFilter) WhereCode(p entql.StringP) {
 // WhereIsProtected applies the entql bool predicate on the is_protected field.
 func (f *RoleFilter) WhereIsProtected(p entql.BoolP) {
 	f.Where(p.Field(role.FieldIsProtected))
+}
+
+// WhereFieldPermissions applies the entql json.RawMessage predicate on the field_permissions field.
+func (f *RoleFilter) WhereFieldPermissions(p entql.BytesP) {
+	f.Where(p.Field(role.FieldFieldPermissions))
 }
 
 // WhereType applies the entql string predicate on the type field.

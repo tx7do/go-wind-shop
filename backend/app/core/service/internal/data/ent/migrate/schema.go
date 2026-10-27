@@ -3367,6 +3367,7 @@ var (
 		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "角色名称"},
 		{Name: "code", Type: field.TypeString, Nullable: true, Comment: "角色标识"},
 		{Name: "is_protected", Type: field.TypeBool, Comment: "是否受保护的角色", Default: false},
+		{Name: "field_permissions", Type: field.TypeJSON, Nullable: true, Comment: "字段权限配置（角色在各资源上隐藏的字段集，黑名单语义）"},
 		{Name: "type", Type: field.TypeEnum, Comment: "角色类型", Enums: []string{"SYSTEM", "TEMPLATE", "TENANT"}, Default: "TENANT"},
 	}
 	// SysRolesTable holds the schema information for the "sys_roles" table.

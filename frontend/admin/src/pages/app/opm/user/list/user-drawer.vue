@@ -184,7 +184,7 @@ import {
 } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
 import { $t } from "@/core/i18n";
-// 【缓行】字段权限未启用：import { isFieldHidden as isFieldHiddenBase } from "@/core/access";
+import { isFieldHidden as isFieldHiddenBase } from "@/core/access";
 import { useAccessStore } from "@/stores";
 
 const emit = defineEmits<{

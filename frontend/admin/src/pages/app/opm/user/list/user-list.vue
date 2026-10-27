@@ -299,7 +299,7 @@ const isPlatformSide = computed(() => Number(useAppUserStore().userInfo?.tenantI
 // 字段权限：当前用户在 User 资源上被隐藏的字段，命中的列整列不渲染
 const accessStore = useAccessStore();
 const userHiddenFields = computed(() =>
-  parseResourceHiddenFields((accessStore as any).hiddenFields ?? [], "User")
+  parseResourceHiddenFields(accessStore.hiddenFields, "User")
 );
 
 function handleAdd() {

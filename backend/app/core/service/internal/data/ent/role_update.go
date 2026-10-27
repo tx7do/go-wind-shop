@@ -6,12 +6,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	permissionpb "go-wind-shop/api/gen/go/permission/service/v1"
 	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 	"go-wind-shop/app/core/service/internal/data/ent/role"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
+	"entgo.io/ent/dialect/sql/sqljson"
 	"entgo.io/ent/schema/field"
 )
 
@@ -285,6 +287,24 @@ func (_u *RoleUpdate) SetNillableIsProtected(v *bool) *RoleUpdate {
 	return _u
 }
 
+// SetFieldPermissions sets the "field_permissions" field.
+func (_u *RoleUpdate) SetFieldPermissions(v []permissionpb.RoleFieldPermission) *RoleUpdate {
+	_u.mutation.SetFieldPermissions(v)
+	return _u
+}
+
+// AppendFieldPermissions appends value to the "field_permissions" field.
+func (_u *RoleUpdate) AppendFieldPermissions(v []permissionpb.RoleFieldPermission) *RoleUpdate {
+	_u.mutation.AppendFieldPermissions(v)
+	return _u
+}
+
+// ClearFieldPermissions clears the value of the "field_permissions" field.
+func (_u *RoleUpdate) ClearFieldPermissions() *RoleUpdate {
+	_u.mutation.ClearFieldPermissions()
+	return _u
+}
+
 // SetType sets the "type" field.
 func (_u *RoleUpdate) SetType(v role.Type) *RoleUpdate {
 	_u.mutation.SetType(v)
@@ -457,6 +477,17 @@ func (_u *RoleUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if value, ok := _u.mutation.IsProtected(); ok {
 		_spec.SetField(role.FieldIsProtected, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.FieldPermissions(); ok {
+		_spec.SetField(role.FieldFieldPermissions, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedFieldPermissions(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, role.FieldFieldPermissions, value)
+		})
+	}
+	if _u.mutation.FieldPermissionsCleared() {
+		_spec.ClearField(role.FieldFieldPermissions, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(role.FieldType, field.TypeEnum, value)
@@ -739,6 +770,24 @@ func (_u *RoleUpdateOne) SetNillableIsProtected(v *bool) *RoleUpdateOne {
 	return _u
 }
 
+// SetFieldPermissions sets the "field_permissions" field.
+func (_u *RoleUpdateOne) SetFieldPermissions(v []permissionpb.RoleFieldPermission) *RoleUpdateOne {
+	_u.mutation.SetFieldPermissions(v)
+	return _u
+}
+
+// AppendFieldPermissions appends value to the "field_permissions" field.
+func (_u *RoleUpdateOne) AppendFieldPermissions(v []permissionpb.RoleFieldPermission) *RoleUpdateOne {
+	_u.mutation.AppendFieldPermissions(v)
+	return _u
+}
+
+// ClearFieldPermissions clears the value of the "field_permissions" field.
+func (_u *RoleUpdateOne) ClearFieldPermissions() *RoleUpdateOne {
+	_u.mutation.ClearFieldPermissions()
+	return _u
+}
+
 // SetType sets the "type" field.
 func (_u *RoleUpdateOne) SetType(v role.Type) *RoleUpdateOne {
 	_u.mutation.SetType(v)
@@ -941,6 +990,17 @@ func (_u *RoleUpdateOne) sqlSave(ctx context.Context) (_node *Role, err error) {
 	}
 	if value, ok := _u.mutation.IsProtected(); ok {
 		_spec.SetField(role.FieldIsProtected, field.TypeBool, value)
+	}
+	if value, ok := _u.mutation.FieldPermissions(); ok {
+		_spec.SetField(role.FieldFieldPermissions, field.TypeJSON, value)
+	}
+	if value, ok := _u.mutation.AppendedFieldPermissions(); ok {
+		_spec.AddModifier(func(u *sql.UpdateBuilder) {
+			sqljson.Append(u, role.FieldFieldPermissions, value)
+		})
+	}
+	if _u.mutation.FieldPermissionsCleared() {
+		_spec.ClearField(role.FieldFieldPermissions, field.TypeJSON)
 	}
 	if value, ok := _u.mutation.GetType(); ok {
 		_spec.SetField(role.FieldType, field.TypeEnum, value)

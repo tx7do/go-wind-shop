@@ -7,6 +7,8 @@ import (
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
+	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
+
 	"github.com/tx7do/go-crud/entgo/mixin"
 )
 
@@ -46,6 +48,10 @@ func (Role) Fields() []ent.Field {
 			Comment("是否受保护的角色").
 			Default(false).
 			Nillable(),
+
+		field.JSON("field_permissions", []permissionV1.RoleFieldPermission{}).
+			Comment("字段权限配置（角色在各资源上隐藏的字段集，黑名单语义）").
+			Optional(),
 
 		field.Enum("type").
 			Comment("角色类型").

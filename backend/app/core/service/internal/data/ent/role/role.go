@@ -42,6 +42,8 @@ const (
 	FieldCode = "code"
 	// FieldIsProtected holds the string denoting the is_protected field in the database.
 	FieldIsProtected = "is_protected"
+	// FieldFieldPermissions holds the string denoting the field_permissions field in the database.
+	FieldFieldPermissions = "field_permissions"
 	// FieldType holds the string denoting the type field in the database.
 	FieldType = "type"
 	// Table holds the table name of the role in the database.
@@ -65,6 +67,7 @@ var Columns = []string{
 	FieldName,
 	FieldCode,
 	FieldIsProtected,
+	FieldFieldPermissions,
 	FieldType,
 }
 

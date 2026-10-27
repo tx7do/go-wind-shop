@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	permissionpb "go-wind-shop/api/gen/go/permission/service/v1"
 	"go-wind-shop/app/core/service/internal/data/ent/role"
 	"time"
 
@@ -218,6 +219,12 @@ func (_c *RoleCreate) SetNillableIsProtected(v *bool) *RoleCreate {
 	return _c
 }
 
+// SetFieldPermissions sets the "field_permissions" field.
+func (_c *RoleCreate) SetFieldPermissions(v []permissionpb.RoleFieldPermission) *RoleCreate {
+	_c.mutation.SetFieldPermissions(v)
+	return _c
+}
+
 // SetType sets the "type" field.
 func (_c *RoleCreate) SetType(v role.Type) *RoleCreate {
 	_c.mutation.SetType(v)
@@ -422,6 +429,10 @@ func (_c *RoleCreate) createSpec() (*Role, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.IsProtected(); ok {
 		_spec.SetField(role.FieldIsProtected, field.TypeBool, value)
 		_node.IsProtected = &value
+	}
+	if value, ok := _c.mutation.FieldPermissions(); ok {
+		_spec.SetField(role.FieldFieldPermissions, field.TypeJSON, value)
+		_node.FieldPermissions = value
 	}
 	if value, ok := _c.mutation.GetType(); ok {
 		_spec.SetField(role.FieldType, field.TypeEnum, value)
@@ -704,6 +715,24 @@ func (u *RoleUpsert) SetIsProtected(v bool) *RoleUpsert {
 // UpdateIsProtected sets the "is_protected" field to the value that was provided on create.
 func (u *RoleUpsert) UpdateIsProtected() *RoleUpsert {
 	u.SetExcluded(role.FieldIsProtected)
+	return u
+}
+
+// SetFieldPermissions sets the "field_permissions" field.
+func (u *RoleUpsert) SetFieldPermissions(v []permissionpb.RoleFieldPermission) *RoleUpsert {
+	u.Set(role.FieldFieldPermissions, v)
+	return u
+}
+
+// UpdateFieldPermissions sets the "field_permissions" field to the value that was provided on create.
+func (u *RoleUpsert) UpdateFieldPermissions() *RoleUpsert {
+	u.SetExcluded(role.FieldFieldPermissions)
+	return u
+}
+
+// ClearFieldPermissions clears the value of the "field_permissions" field.
+func (u *RoleUpsert) ClearFieldPermissions() *RoleUpsert {
+	u.SetNull(role.FieldFieldPermissions)
 	return u
 }
 
@@ -1036,6 +1065,27 @@ func (u *RoleUpsertOne) SetIsProtected(v bool) *RoleUpsertOne {
 func (u *RoleUpsertOne) UpdateIsProtected() *RoleUpsertOne {
 	return u.Update(func(s *RoleUpsert) {
 		s.UpdateIsProtected()
+	})
+}
+
+// SetFieldPermissions sets the "field_permissions" field.
+func (u *RoleUpsertOne) SetFieldPermissions(v []permissionpb.RoleFieldPermission) *RoleUpsertOne {
+	return u.Update(func(s *RoleUpsert) {
+		s.SetFieldPermissions(v)
+	})
+}
+
+// UpdateFieldPermissions sets the "field_permissions" field to the value that was provided on create.
+func (u *RoleUpsertOne) UpdateFieldPermissions() *RoleUpsertOne {
+	return u.Update(func(s *RoleUpsert) {
+		s.UpdateFieldPermissions()
+	})
+}
+
+// ClearFieldPermissions clears the value of the "field_permissions" field.
+func (u *RoleUpsertOne) ClearFieldPermissions() *RoleUpsertOne {
+	return u.Update(func(s *RoleUpsert) {
+		s.ClearFieldPermissions()
 	})
 }
 
@@ -1536,6 +1586,27 @@ func (u *RoleUpsertBulk) SetIsProtected(v bool) *RoleUpsertBulk {
 func (u *RoleUpsertBulk) UpdateIsProtected() *RoleUpsertBulk {
 	return u.Update(func(s *RoleUpsert) {
 		s.UpdateIsProtected()
+	})
+}
+
+// SetFieldPermissions sets the "field_permissions" field.
+func (u *RoleUpsertBulk) SetFieldPermissions(v []permissionpb.RoleFieldPermission) *RoleUpsertBulk {
+	return u.Update(func(s *RoleUpsert) {
+		s.SetFieldPermissions(v)
+	})
+}
+
+// UpdateFieldPermissions sets the "field_permissions" field to the value that was provided on create.
+func (u *RoleUpsertBulk) UpdateFieldPermissions() *RoleUpsertBulk {
+	return u.Update(func(s *RoleUpsert) {
+		s.UpdateFieldPermissions()
+	})
+}
+
+// ClearFieldPermissions clears the value of the "field_permissions" field.
+func (u *RoleUpsertBulk) ClearFieldPermissions() *RoleUpsertBulk {
+	return u.Update(func(s *RoleUpsert) {
+		s.ClearFieldPermissions()
 	})
 }
 

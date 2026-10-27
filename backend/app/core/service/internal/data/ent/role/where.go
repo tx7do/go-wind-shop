@@ -849,6 +849,16 @@ func IsProtectedNEQ(v bool) predicate.Role {
 	return predicate.Role(sql.FieldNEQ(FieldIsProtected, v))
 }
 
+// FieldPermissionsIsNil applies the IsNil predicate on the "field_permissions" field.
+func FieldPermissionsIsNil() predicate.Role {
+	return predicate.Role(sql.FieldIsNull(FieldFieldPermissions))
+}
+
+// FieldPermissionsNotNil applies the NotNil predicate on the "field_permissions" field.
+func FieldPermissionsNotNil() predicate.Role {
+	return predicate.Role(sql.FieldNotNull(FieldFieldPermissions))
+}
+
 // TypeEQ applies the EQ predicate on the "type" field.
 func TypeEQ(v Type) predicate.Role {
 	return predicate.Role(sql.FieldEQ(FieldType, v))

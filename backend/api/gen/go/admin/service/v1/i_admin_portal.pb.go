@@ -73,6 +73,7 @@ func (x *ListRouteResponse) GetItems() []*v1.MenuRouteItem {
 type ListPermissionCodeResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Codes         []string               `protobuf:"bytes,1,rep,name=codes,proto3" json:"codes,omitempty"`
+	HiddenFields  []string               `protobuf:"bytes,2,rep,name=hidden_fields,json=hiddenFields,proto3" json:"hidden_fields,omitempty"` // 字段权限隐藏字段集（"资源.字段" 串，供前端列显隐）
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -114,10 +115,18 @@ func (x *ListPermissionCodeResponse) GetCodes() []string {
 	return nil
 }
 
+func (x *ListPermissionCodeResponse) GetHiddenFields() []string {
+	if x != nil {
+		return x.HiddenFields
+	}
+	return nil
+}
+
 type InitialContextResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Menus         []*v1.MenuRouteItem    `protobuf:"bytes,1,rep,name=menus,proto3" json:"menus,omitempty"`             // 菜单树
-	Permissions   []string               `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"` // 权限码
+	Menus         []*v1.MenuRouteItem    `protobuf:"bytes,1,rep,name=menus,proto3" json:"menus,omitempty"`                                   // 菜单树
+	Permissions   []string               `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`                       // 权限码
+	HiddenFields  []string               `protobuf:"bytes,3,rep,name=hidden_fields,json=hiddenFields,proto3" json:"hidden_fields,omitempty"` // 字段权限隐藏字段集
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -166,18 +175,27 @@ func (x *InitialContextResponse) GetPermissions() []string {
 	return nil
 }
 
+func (x *InitialContextResponse) GetHiddenFields() []string {
+	if x != nil {
+		return x.HiddenFields
+	}
+	return nil
+}
+
 var File_admin_service_v1_i_admin_portal_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_admin_portal_proto_rawDesc = "" +
 	"\n" +
 	"%admin/service/v1/i_admin_portal.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a permission/service/v1/menu.proto\"O\n" +
 	"\x11ListRouteResponse\x12:\n" +
-	"\x05items\x18\x01 \x03(\v2$.permission.service.v1.MenuRouteItemR\x05items\"2\n" +
+	"\x05items\x18\x01 \x03(\v2$.permission.service.v1.MenuRouteItemR\x05items\"W\n" +
 	"\x1aListPermissionCodeResponse\x12\x14\n" +
-	"\x05codes\x18\x01 \x03(\tR\x05codes\"v\n" +
+	"\x05codes\x18\x01 \x03(\tR\x05codes\x12#\n" +
+	"\rhidden_fields\x18\x02 \x03(\tR\fhiddenFields\"\x9b\x01\n" +
 	"\x16InitialContextResponse\x12:\n" +
 	"\x05menus\x18\x01 \x03(\v2$.permission.service.v1.MenuRouteItemR\x05menus\x12 \n" +
-	"\vpermissions\x18\x02 \x03(\tR\vpermissions2\xf1\x02\n" +
+	"\vpermissions\x18\x02 \x03(\tR\vpermissions\x12#\n" +
+	"\rhidden_fields\x18\x03 \x03(\tR\fhiddenFields2\xf1\x02\n" +
 	"\x12AdminPortalService\x12f\n" +
 	"\rGetNavigation\x12\x16.google.protobuf.Empty\x1a#.admin.service.v1.ListRouteResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/admin/v1/routes\x12y\n" +
 	"\x13GetMyPermissionCode\x12\x16.google.protobuf.Empty\x1a,.admin.service.v1.ListPermissionCodeResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/admin/v1/perm-codes\x12x\n" +

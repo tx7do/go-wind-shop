@@ -45,6 +45,9 @@ service PermissionService {
 
   // 根据权限ID列表获取权限值列表
   rpc ListPermissionCodesByIds(ListPermissionCodesByIdsRequest) returns (ListPermissionCodesByIdsResponse) {}
+
+  // GetHiddenFieldsByRoleIds 按角色集合聚合字段权限隐藏字段（"资源.字段" 串）。多角色取并集。
+  rpc GetHiddenFieldsByRoleIds(GetHiddenFieldsByRoleIdsRequest) returns (GetHiddenFieldsByRoleIdsResponse) {}
 }
 
 // 权限点
@@ -233,4 +236,15 @@ message PermissionResourceIds {
 
 message ListPermissionResourcesResponse {
   map<int32, PermissionResourceIds> resources = 1;
+}
+
+// GetHiddenFieldsByRoleIds 按角色集合聚合字段权限隐藏字段（"资源.字段" 串）。
+// 多角色取并集；随 perm-codes 一起下发，供前端做列显隐。
+
+message GetHiddenFieldsByRoleIdsRequest {
+  repeated uint32 role_ids = 1 [json_name = "roleIds"];
+}
+
+message GetHiddenFieldsByRoleIdsResponse {
+  repeated string hidden_fields = 1 [json_name = "hiddenFields"];
 }

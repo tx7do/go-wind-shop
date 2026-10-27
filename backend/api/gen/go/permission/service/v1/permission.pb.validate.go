@@ -2128,3 +2128,211 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListPermissionResourcesResponseValidationError{}
+
+// Validate checks the field values on GetHiddenFieldsByRoleIdsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetHiddenFieldsByRoleIdsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetHiddenFieldsByRoleIdsRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// GetHiddenFieldsByRoleIdsRequestMultiError, or nil if none found.
+func (m *GetHiddenFieldsByRoleIdsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetHiddenFieldsByRoleIdsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetHiddenFieldsByRoleIdsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetHiddenFieldsByRoleIdsRequestMultiError is an error wrapping multiple
+// validation errors returned by GetHiddenFieldsByRoleIdsRequest.ValidateAll()
+// if the designated constraints aren't met.
+type GetHiddenFieldsByRoleIdsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetHiddenFieldsByRoleIdsRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetHiddenFieldsByRoleIdsRequestMultiError) AllErrors() []error { return m }
+
+// GetHiddenFieldsByRoleIdsRequestValidationError is the validation error
+// returned by GetHiddenFieldsByRoleIdsRequest.Validate if the designated
+// constraints aren't met.
+type GetHiddenFieldsByRoleIdsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetHiddenFieldsByRoleIdsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetHiddenFieldsByRoleIdsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetHiddenFieldsByRoleIdsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetHiddenFieldsByRoleIdsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetHiddenFieldsByRoleIdsRequestValidationError) ErrorName() string {
+	return "GetHiddenFieldsByRoleIdsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetHiddenFieldsByRoleIdsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetHiddenFieldsByRoleIdsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetHiddenFieldsByRoleIdsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetHiddenFieldsByRoleIdsRequestValidationError{}
+
+// Validate checks the field values on GetHiddenFieldsByRoleIdsResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *GetHiddenFieldsByRoleIdsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetHiddenFieldsByRoleIdsResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// GetHiddenFieldsByRoleIdsResponseMultiError, or nil if none found.
+func (m *GetHiddenFieldsByRoleIdsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetHiddenFieldsByRoleIdsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetHiddenFieldsByRoleIdsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetHiddenFieldsByRoleIdsResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// GetHiddenFieldsByRoleIdsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetHiddenFieldsByRoleIdsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetHiddenFieldsByRoleIdsResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetHiddenFieldsByRoleIdsResponseMultiError) AllErrors() []error { return m }
+
+// GetHiddenFieldsByRoleIdsResponseValidationError is the validation error
+// returned by GetHiddenFieldsByRoleIdsResponse.Validate if the designated
+// constraints aren't met.
+type GetHiddenFieldsByRoleIdsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetHiddenFieldsByRoleIdsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetHiddenFieldsByRoleIdsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetHiddenFieldsByRoleIdsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetHiddenFieldsByRoleIdsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetHiddenFieldsByRoleIdsResponseValidationError) ErrorName() string {
+	return "GetHiddenFieldsByRoleIdsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetHiddenFieldsByRoleIdsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetHiddenFieldsByRoleIdsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetHiddenFieldsByRoleIdsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetHiddenFieldsByRoleIdsResponseValidationError{}

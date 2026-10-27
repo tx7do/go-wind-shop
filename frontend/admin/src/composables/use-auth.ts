@@ -169,6 +169,7 @@ async function login(
       const userStore = useAppUserStore();
       userStore.setUserInfo(userInfo);
       accessStore.setAccessCodes(fetchAccessCodeResult.codes ?? []);
+			accessStore.setHiddenFields(fetchAccessCodeResult.hiddenFields ?? []);
 
       if (accessStore.loginExpired) {
         accessStore.setLoginExpired(false);
@@ -266,6 +267,7 @@ async function getUserPermissionCodes() {
       // 只存权限码，角色码由 userStore.userRoles 管理
       const codes = fetchAccessCodeResult ? (fetchAccessCodeResult.codes ?? []) : [];
       accessStore.setAccessCodes(codes);
+      accessStore.setHiddenFields(fetchAccessCodeResult ? (fetchAccessCodeResult.hiddenFields ?? []) : []);
     } catch (error: unknown) {
       // 网络异常：抛出特定标记，让路由守卫跳转错误页而非白屏
       if (isNetworkError(error)) {
@@ -292,6 +294,8 @@ export function useAuth() {
     loginLoading,
     login,
     logout,
+    // 不调服务端 logout API，仅清本地会话态并跳登录页（如改密后后端已吊销全部会话的场景）
+    forceLogout: () => _doLogout(true),
     getCaptcha,
     fetchUserInfo,
     fetchAccessCodes,

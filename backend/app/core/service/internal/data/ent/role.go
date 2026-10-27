@@ -3,7 +3,9 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
+	permissionpb "go-wind-shop/api/gen/go/permission/service/v1"
 	"go-wind-shop/app/core/service/internal/data/ent/role"
 	"strings"
 	"time"
@@ -46,6 +48,8 @@ type Role struct {
 	Code *string `json:"code,omitempty"`
 	// 是否受保护的角色
 	IsProtected *bool `json:"is_protected,omitempty"`
+	// 字段权限配置（角色在各资源上隐藏的字段集，黑名单语义）
+	FieldPermissions []permissionpb.RoleFieldPermission `json:"field_permissions,omitempty"`
 	// 角色类型
 	Type         *role.Type `json:"type,omitempty"`
 	selectValues sql.SelectValues
@@ -56,6 +60,8 @@ func (*Role) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case role.FieldFieldPermissions:
+			values[i] = new([]byte)
 		case role.FieldIsProtected:
 			values[i] = new(sql.NullBool)
 		case role.FieldID, role.FieldCreatedBy, role.FieldUpdatedBy, role.FieldDeletedBy, role.FieldSortOrder, role.FieldTenantID:
@@ -183,6 +189,14 @@ func (_m *Role) assignValues(columns []string, values []any) error {
 				_m.IsProtected = new(bool)
 				*_m.IsProtected = value.Bool
 			}
+		case role.FieldFieldPermissions:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field field_permissions", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &_m.FieldPermissions); err != nil {
+					return fmt.Errorf("unmarshal field field_permissions: %w", err)
+				}
+			}
 		case role.FieldType:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field type", values[i])
@@ -295,6 +309,9 @@ func (_m *Role) String() string {
 		builder.WriteString("is_protected=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
+	builder.WriteString(", ")
+	builder.WriteString("field_permissions=")
+	builder.WriteString(fmt.Sprintf("%v", _m.FieldPermissions))
 	builder.WriteString(", ")
 	if v := _m.Type; v != nil {
 		builder.WriteString("type=")

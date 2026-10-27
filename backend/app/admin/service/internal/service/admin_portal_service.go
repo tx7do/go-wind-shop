@@ -137,8 +137,25 @@ func (s *AdminPortalService) GetMyPermissionCode(ctx context.Context, _ *emptypb
 		return nil, adminV1.ErrorInternalServerError("list permission codes by ids failed")
 	}
 
-	return &adminV1.ListPermissionCodeResponse{
-		Codes: permissionCodeResp.PermissionCodes,
+	
+// 字段权限隐藏字段：按用户角色集合聚合（"资源.字段" 串，前端列显隐）
+	user, uErr := s.userServiceClient.Get(ctx, &identityV1.GetUserRequest{
+		QueryBy: &identityV1.GetUserRequest_Id{Id: operator.GetUserId()},
+	})
+	if uErr != nil {
+		s.log.Errorf("query user for hidden fields failed [%s]", uErr.Error())
+		return nil, adminV1.ErrorInternalServerError("query user failed")
+	}
+	hiddenFieldsResp, hErr := s.permissionServiceClient.GetHiddenFieldsByRoleIds(ctx, &permissionV1.GetHiddenFieldsByRoleIdsRequest{
+		RoleIds: user.GetRoleIds(),
+	})
+	if hErr != nil {
+		s.log.Errorf("list hidden fields by role ids failed [%s]", hErr.Error())
+		return nil, adminV1.ErrorInternalServerError("list hidden fields failed")
+	}
+return &adminV1.ListPermissionCodeResponse{
+		Codes:        permissionCodeResp.PermissionCodes,
+		HiddenFields: hiddenFieldsResp.HiddenFields,
 	}, nil
 }
 
@@ -227,7 +244,8 @@ func (s *AdminPortalService) GetInitialContext(ctx context.Context, _ *emptypb.E
 	}
 
 	return &adminV1.InitialContextResponse{
-		Menus:       navigation.GetItems(),
-		Permissions: permissionCodes.GetCodes(),
+		Menus:        navigation.GetItems(),
+		Permissions:  permissionCodes.GetCodes(),
+		HiddenFields: permissionCodes.GetHiddenFields(),
 	}, nil
 }

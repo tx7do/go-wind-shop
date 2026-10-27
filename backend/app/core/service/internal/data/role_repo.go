@@ -460,6 +460,9 @@ func (r *RoleRepo) CreateWithTx(ctx context.Context, tx *ent.Tx, data *permissio
 		SetNillableDescription(data.Description).
 		SetNillableCreatedBy(data.CreatedBy).
 		SetCreatedAt(time.Now())
+		if data.FieldPermissions != nil {
+			builder.SetFieldPermissions(toEntFieldPermissions(data.FieldPermissions))
+		}
 
 	if data.Id != nil {
 		builder.SetID(data.GetId())
@@ -578,6 +581,9 @@ func (r *RoleRepo) Update(ctx context.Context, req *permissionV1.UpdateRoleReque
 				SetNillableDescription(req.Data.Description).
 				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
+				if req.Data.FieldPermissions != nil {
+					builder.SetFieldPermissions(toEntFieldPermissions(req.Data.FieldPermissions))
+				}
 		},
 		func(s *sql.Selector) {
 			s.Where(sql.EQ(role.FieldID, req.GetId()))
@@ -784,4 +790,16 @@ func (r *RoleRepo) CanAssignRole(ctx context.Context, roleID uint32) (bool, erro
 	}
 
 	return true, nil
+}
+
+// toEntFieldPermissions DTO 指针切片 → ent JSON 列的值切片。
+func toEntFieldPermissions(in []*permissionV1.RoleFieldPermission) []permissionV1.RoleFieldPermission {
+	out := make([]permissionV1.RoleFieldPermission, 0, len(in))
+	for _, p := range in {
+		if p == nil {
+			continue
+		}
+		out = append(out, *p)
+	}
+	return out
 }

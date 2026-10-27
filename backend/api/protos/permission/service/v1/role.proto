@@ -126,6 +126,11 @@ message Role {
     (gnostic.openapi.v3.property) = {description: "绑定的权限点ID列表"}
   ]; // 绑定的权限点ID列表
 
+    repeated RoleFieldPermission field_permissions = 12 [
+    json_name = "fieldPermissions",
+    (gnostic.openapi.v3.property) = {description: "字段权限配置（角色在各资源上隐藏的字段集，黑名单语义）"}
+  ]; // 字段权限配置
+
   optional uint32 tenant_id = 40 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户ID，0代表系统全局角色"}
@@ -676,4 +681,15 @@ message UnassignUsersFromRoleResponse {
     json_name = "notFoundUserIds",
     (gnostic.openapi.v3.property) = {description: "部分失败时返回每个失败项的详细信息（如 DB 锁、权限不足等）"}
   ]; // 部分失败时返回每个失败项的详细信息（如 DB 锁、权限不足等）
+}
+message RoleFieldPermission {
+  string resource = 1 [
+    json_name = "resource",
+    (gnostic.openapi.v3.property) = {description: "资源名（proto 消息名，如 User）"}
+  ]; // 资源名（proto 消息名，如 User）
+
+  repeated string hidden_fields = 2 [
+    json_name = "hiddenFields",
+    (gnostic.openapi.v3.property) = {description: "隐藏字段列表（proto 字段 json_name，如 email）"}
+  ]; // 隐藏字段列表（proto 字段 json_name，如 email）
 }

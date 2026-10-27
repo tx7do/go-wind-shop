@@ -1071,6 +1071,94 @@ func (x *ListPermissionResourcesResponse) GetResources() map[int32]*PermissionRe
 	return nil
 }
 
+type GetHiddenFieldsByRoleIdsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	RoleIds       []uint32               `protobuf:"varint,1,rep,packed,name=role_ids,json=roleIds,proto3" json:"role_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetHiddenFieldsByRoleIdsRequest) Reset() {
+	*x = GetHiddenFieldsByRoleIdsRequest{}
+	mi := &file_permission_service_v1_permission_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetHiddenFieldsByRoleIdsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetHiddenFieldsByRoleIdsRequest) ProtoMessage() {}
+
+func (x *GetHiddenFieldsByRoleIdsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_service_v1_permission_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetHiddenFieldsByRoleIdsRequest.ProtoReflect.Descriptor instead.
+func (*GetHiddenFieldsByRoleIdsRequest) Descriptor() ([]byte, []int) {
+	return file_permission_service_v1_permission_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *GetHiddenFieldsByRoleIdsRequest) GetRoleIds() []uint32 {
+	if x != nil {
+		return x.RoleIds
+	}
+	return nil
+}
+
+type GetHiddenFieldsByRoleIdsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	HiddenFields  []string               `protobuf:"bytes,1,rep,name=hidden_fields,json=hiddenFields,proto3" json:"hidden_fields,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetHiddenFieldsByRoleIdsResponse) Reset() {
+	*x = GetHiddenFieldsByRoleIdsResponse{}
+	mi := &file_permission_service_v1_permission_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetHiddenFieldsByRoleIdsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetHiddenFieldsByRoleIdsResponse) ProtoMessage() {}
+
+func (x *GetHiddenFieldsByRoleIdsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_service_v1_permission_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetHiddenFieldsByRoleIdsResponse.ProtoReflect.Descriptor instead.
+func (*GetHiddenFieldsByRoleIdsResponse) Descriptor() ([]byte, []int) {
+	return file_permission_service_v1_permission_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *GetHiddenFieldsByRoleIdsResponse) GetHiddenFields() []string {
+	if x != nil {
+		return x.HiddenFields
+	}
+	return nil
+}
+
 var File_permission_service_v1_permission_proto protoreflect.FileDescriptor
 
 const file_permission_service_v1_permission_proto_rawDesc = "" +
@@ -1178,7 +1266,11 @@ const file_permission_service_v1_permission_proto_rawDesc = "" +
 	"\tresources\x18\x01 \x03(\v2E.permission.service.v1.ListPermissionResourcesResponse.ResourcesEntryR\tresources\x1aj\n" +
 	"\x0eResourcesEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\x05R\x03key\x12B\n" +
-	"\x05value\x18\x02 \x01(\v2,.permission.service.v1.PermissionResourceIdsR\x05value:\x028\x012\x87\b\n" +
+	"\x05value\x18\x02 \x01(\v2,.permission.service.v1.PermissionResourceIdsR\x05value:\x028\x01\"<\n" +
+	"\x1fGetHiddenFieldsByRoleIdsRequest\x12\x19\n" +
+	"\brole_ids\x18\x01 \x03(\rR\aroleIds\"G\n" +
+	" GetHiddenFieldsByRoleIdsResponse\x12#\n" +
+	"\rhidden_fields\x18\x01 \x03(\tR\fhiddenFields2\x97\t\n" +
 	"\x11PermissionService\x12R\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a-.permission.service.v1.ListPermissionResponse\"\x00\x12T\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a..permission.service.v1.CountPermissionResponse\"\x00\x12W\n" +
@@ -1189,7 +1281,8 @@ const file_permission_service_v1_permission_proto_rawDesc = "" +
 	"\vBatchCreate\x123.permission.service.v1.BatchCreatePermissionRequest\x1a4.permission.service.v1.BatchCreatePermissionResponse\"\x00\x12Z\n" +
 	"\x0fSyncPermissions\x12-.permission.service.v1.SyncPermissionsRequest\x1a\x16.google.protobuf.Empty\"\x00\x12\x8a\x01\n" +
 	"\x17ListPermissionResources\x125.permission.service.v1.ListPermissionResourcesRequest\x1a6.permission.service.v1.ListPermissionResourcesResponse\"\x00\x12\x8d\x01\n" +
-	"\x18ListPermissionCodesByIds\x126.permission.service.v1.ListPermissionCodesByIdsRequest\x1a7.permission.service.v1.ListPermissionCodesByIdsResponse\"\x00B\xde\x01\n" +
+	"\x18ListPermissionCodesByIds\x126.permission.service.v1.ListPermissionCodesByIdsRequest\x1a7.permission.service.v1.ListPermissionCodesByIdsResponse\"\x00\x12\x8d\x01\n" +
+	"\x18GetHiddenFieldsByRoleIds\x126.permission.service.v1.GetHiddenFieldsByRoleIdsRequest\x1a7.permission.service.v1.GetHiddenFieldsByRoleIdsResponse\"\x00B\xde\x01\n" +
 	"\x19com.permission.service.v1B\x0fPermissionProtoP\x01Z:go-wind-shop/api/gen/go/permission/service/v1;permissionpb\xa2\x02\x03PSX\xaa\x02\x15Permission.Service.V1\xca\x02\x15Permission\\Service\\V1\xe2\x02!Permission\\Service\\V1\\GPBMetadata\xea\x02\x17Permission::Service::V1b\x06proto3"
 
 var (
@@ -1205,7 +1298,7 @@ func file_permission_service_v1_permission_proto_rawDescGZIP() []byte {
 }
 
 var file_permission_service_v1_permission_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_permission_service_v1_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 16)
+var file_permission_service_v1_permission_proto_msgTypes = make([]protoimpl.MessageInfo, 18)
 var file_permission_service_v1_permission_proto_goTypes = []any{
 	(Permission_Status)(0),                           // 0: permission.service.v1.Permission.Status
 	(ListPermissionResourcesRequest_ResourceType)(0), // 1: permission.service.v1.ListPermissionResourcesRequest.ResourceType
@@ -1224,32 +1317,34 @@ var file_permission_service_v1_permission_proto_goTypes = []any{
 	(*ListPermissionResourcesRequest)(nil),           // 14: permission.service.v1.ListPermissionResourcesRequest
 	(*PermissionResourceIds)(nil),                    // 15: permission.service.v1.PermissionResourceIds
 	(*ListPermissionResourcesResponse)(nil),          // 16: permission.service.v1.ListPermissionResourcesResponse
-	nil,                                              // 17: permission.service.v1.ListPermissionResourcesResponse.ResourcesEntry
-	(*timestamppb.Timestamp)(nil),                    // 18: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),                    // 19: google.protobuf.FieldMask
-	(*PermissionGroup)(nil),                          // 20: permission.service.v1.PermissionGroup
-	(*v1.PagingRequest)(nil),                         // 21: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                            // 22: google.protobuf.Empty
+	(*GetHiddenFieldsByRoleIdsRequest)(nil),          // 17: permission.service.v1.GetHiddenFieldsByRoleIdsRequest
+	(*GetHiddenFieldsByRoleIdsResponse)(nil),         // 18: permission.service.v1.GetHiddenFieldsByRoleIdsResponse
+	nil,                                              // 19: permission.service.v1.ListPermissionResourcesResponse.ResourcesEntry
+	(*timestamppb.Timestamp)(nil),                    // 20: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),                    // 21: google.protobuf.FieldMask
+	(*PermissionGroup)(nil),                          // 22: permission.service.v1.PermissionGroup
+	(*v1.PagingRequest)(nil),                         // 23: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                            // 24: google.protobuf.Empty
 }
 var file_permission_service_v1_permission_proto_depIdxs = []int32{
 	0,  // 0: permission.service.v1.Permission.status:type_name -> permission.service.v1.Permission.Status
-	18, // 1: permission.service.v1.Permission.created_at:type_name -> google.protobuf.Timestamp
-	18, // 2: permission.service.v1.Permission.updated_at:type_name -> google.protobuf.Timestamp
-	18, // 3: permission.service.v1.Permission.deleted_at:type_name -> google.protobuf.Timestamp
+	20, // 1: permission.service.v1.Permission.created_at:type_name -> google.protobuf.Timestamp
+	20, // 2: permission.service.v1.Permission.updated_at:type_name -> google.protobuf.Timestamp
+	20, // 3: permission.service.v1.Permission.deleted_at:type_name -> google.protobuf.Timestamp
 	2,  // 4: permission.service.v1.ListPermissionResponse.items:type_name -> permission.service.v1.Permission
-	19, // 5: permission.service.v1.GetPermissionRequest.view_mask:type_name -> google.protobuf.FieldMask
+	21, // 5: permission.service.v1.GetPermissionRequest.view_mask:type_name -> google.protobuf.FieldMask
 	2,  // 6: permission.service.v1.CreatePermissionRequest.data:type_name -> permission.service.v1.Permission
 	2,  // 7: permission.service.v1.UpdatePermissionRequest.data:type_name -> permission.service.v1.Permission
-	19, // 8: permission.service.v1.UpdatePermissionRequest.update_mask:type_name -> google.protobuf.FieldMask
+	21, // 8: permission.service.v1.UpdatePermissionRequest.update_mask:type_name -> google.protobuf.FieldMask
 	2,  // 9: permission.service.v1.BatchCreatePermissionRequest.data:type_name -> permission.service.v1.Permission
 	2,  // 10: permission.service.v1.BatchCreatePermissionResponse.data:type_name -> permission.service.v1.Permission
 	2,  // 11: permission.service.v1.SyncPermissionsRequest.permissions:type_name -> permission.service.v1.Permission
-	20, // 12: permission.service.v1.SyncPermissionsRequest.permission_groups:type_name -> permission.service.v1.PermissionGroup
+	22, // 12: permission.service.v1.SyncPermissionsRequest.permission_groups:type_name -> permission.service.v1.PermissionGroup
 	1,  // 13: permission.service.v1.ListPermissionResourcesRequest.resource_types:type_name -> permission.service.v1.ListPermissionResourcesRequest.ResourceType
-	17, // 14: permission.service.v1.ListPermissionResourcesResponse.resources:type_name -> permission.service.v1.ListPermissionResourcesResponse.ResourcesEntry
+	19, // 14: permission.service.v1.ListPermissionResourcesResponse.resources:type_name -> permission.service.v1.ListPermissionResourcesResponse.ResourcesEntry
 	15, // 15: permission.service.v1.ListPermissionResourcesResponse.ResourcesEntry.value:type_name -> permission.service.v1.PermissionResourceIds
-	21, // 16: permission.service.v1.PermissionService.List:input_type -> pagination.PagingRequest
-	21, // 17: permission.service.v1.PermissionService.Count:input_type -> pagination.PagingRequest
+	23, // 16: permission.service.v1.PermissionService.List:input_type -> pagination.PagingRequest
+	23, // 17: permission.service.v1.PermissionService.Count:input_type -> pagination.PagingRequest
 	4,  // 18: permission.service.v1.PermissionService.Get:input_type -> permission.service.v1.GetPermissionRequest
 	5,  // 19: permission.service.v1.PermissionService.Create:input_type -> permission.service.v1.CreatePermissionRequest
 	6,  // 20: permission.service.v1.PermissionService.Update:input_type -> permission.service.v1.UpdatePermissionRequest
@@ -1258,18 +1353,20 @@ var file_permission_service_v1_permission_proto_depIdxs = []int32{
 	11, // 23: permission.service.v1.PermissionService.SyncPermissions:input_type -> permission.service.v1.SyncPermissionsRequest
 	14, // 24: permission.service.v1.PermissionService.ListPermissionResources:input_type -> permission.service.v1.ListPermissionResourcesRequest
 	12, // 25: permission.service.v1.PermissionService.ListPermissionCodesByIds:input_type -> permission.service.v1.ListPermissionCodesByIdsRequest
-	3,  // 26: permission.service.v1.PermissionService.List:output_type -> permission.service.v1.ListPermissionResponse
-	8,  // 27: permission.service.v1.PermissionService.Count:output_type -> permission.service.v1.CountPermissionResponse
-	2,  // 28: permission.service.v1.PermissionService.Get:output_type -> permission.service.v1.Permission
-	22, // 29: permission.service.v1.PermissionService.Create:output_type -> google.protobuf.Empty
-	22, // 30: permission.service.v1.PermissionService.Update:output_type -> google.protobuf.Empty
-	22, // 31: permission.service.v1.PermissionService.Delete:output_type -> google.protobuf.Empty
-	10, // 32: permission.service.v1.PermissionService.BatchCreate:output_type -> permission.service.v1.BatchCreatePermissionResponse
-	22, // 33: permission.service.v1.PermissionService.SyncPermissions:output_type -> google.protobuf.Empty
-	16, // 34: permission.service.v1.PermissionService.ListPermissionResources:output_type -> permission.service.v1.ListPermissionResourcesResponse
-	13, // 35: permission.service.v1.PermissionService.ListPermissionCodesByIds:output_type -> permission.service.v1.ListPermissionCodesByIdsResponse
-	26, // [26:36] is the sub-list for method output_type
-	16, // [16:26] is the sub-list for method input_type
+	17, // 26: permission.service.v1.PermissionService.GetHiddenFieldsByRoleIds:input_type -> permission.service.v1.GetHiddenFieldsByRoleIdsRequest
+	3,  // 27: permission.service.v1.PermissionService.List:output_type -> permission.service.v1.ListPermissionResponse
+	8,  // 28: permission.service.v1.PermissionService.Count:output_type -> permission.service.v1.CountPermissionResponse
+	2,  // 29: permission.service.v1.PermissionService.Get:output_type -> permission.service.v1.Permission
+	24, // 30: permission.service.v1.PermissionService.Create:output_type -> google.protobuf.Empty
+	24, // 31: permission.service.v1.PermissionService.Update:output_type -> google.protobuf.Empty
+	24, // 32: permission.service.v1.PermissionService.Delete:output_type -> google.protobuf.Empty
+	10, // 33: permission.service.v1.PermissionService.BatchCreate:output_type -> permission.service.v1.BatchCreatePermissionResponse
+	24, // 34: permission.service.v1.PermissionService.SyncPermissions:output_type -> google.protobuf.Empty
+	16, // 35: permission.service.v1.PermissionService.ListPermissionResources:output_type -> permission.service.v1.ListPermissionResourcesResponse
+	13, // 36: permission.service.v1.PermissionService.ListPermissionCodesByIds:output_type -> permission.service.v1.ListPermissionCodesByIdsResponse
+	18, // 37: permission.service.v1.PermissionService.GetHiddenFieldsByRoleIds:output_type -> permission.service.v1.GetHiddenFieldsByRoleIdsResponse
+	27, // [27:38] is the sub-list for method output_type
+	16, // [16:27] is the sub-list for method input_type
 	16, // [16:16] is the sub-list for extension type_name
 	16, // [16:16] is the sub-list for extension extendee
 	0,  // [0:16] is the sub-list for field type_name
@@ -1299,7 +1396,7 @@ func file_permission_service_v1_permission_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_permission_service_v1_permission_proto_rawDesc), len(file_permission_service_v1_permission_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   16,
+			NumMessages:   18,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

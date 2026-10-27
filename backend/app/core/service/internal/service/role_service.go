@@ -175,7 +175,7 @@ func (s *RoleService) Update(ctx context.Context, req *permissionV1.UpdateRoleRe
 
 	// 保护角色字段不可修改
 	if r.GetIsProtected() {
-		if len(req.GetUpdateMask().Paths) > 0 {
+		if req.GetUpdateMask() != nil && len(req.GetUpdateMask().Paths) > 0 {
 			req.GetUpdateMask().Paths = utils.FilterBlacklist(req.GetUpdateMask().Paths, []string{
 				"is_protected",
 				"type",

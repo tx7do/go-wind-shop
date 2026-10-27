@@ -19,6 +19,7 @@ import (
 
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/permission"
+	"go-wind-shop/app/core/service/internal/data/ent/role"
 	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
@@ -712,4 +713,37 @@ func (r *PermissionRepo) ListPermissionResources(ctx context.Context, req *permi
 	}
 
 	return resp, nil
+}
+
+// GetHiddenFieldsByRoleIDs 按角色集合聚合字段权限隐藏字段（"资源.字段" 串）。
+// 读 sys_roles.field_permissions JSON 列，多角色按资源并集。
+func (r *PermissionRepo) GetHiddenFieldsByRoleIDs(ctx context.Context, roleIDs []uint32) ([]string, error) {
+	if len(roleIDs) == 0 {
+		return nil, nil
+	}
+
+	rows, err := r.entClient.Client().Role.Query().
+		Where(role.IDIn(roleIDs...)).
+		Select(role.FieldFieldPermissions).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query role field permissions failed: %s", err.Error())
+		return nil, err
+	}
+
+	seen := map[string]struct{}{}
+	out := make([]string, 0)
+	for _, row := range rows {
+		for _, fp := range row.FieldPermissions {
+			for _, f := range fp.HiddenFields {
+				key := fp.Resource + "." + f
+				if _, ok := seen[key]; ok {
+					continue
+				}
+				seen[key] = struct{}{}
+				out = append(out, key)
+			}
+		}
+	}
+	return out, nil
 }

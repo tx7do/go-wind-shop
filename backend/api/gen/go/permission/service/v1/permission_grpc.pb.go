@@ -31,6 +31,7 @@ const (
 	PermissionService_SyncPermissions_FullMethodName          = "/permission.service.v1.PermissionService/SyncPermissions"
 	PermissionService_ListPermissionResources_FullMethodName  = "/permission.service.v1.PermissionService/ListPermissionResources"
 	PermissionService_ListPermissionCodesByIds_FullMethodName = "/permission.service.v1.PermissionService/ListPermissionCodesByIds"
+	PermissionService_GetHiddenFieldsByRoleIds_FullMethodName = "/permission.service.v1.PermissionService/GetHiddenFieldsByRoleIds"
 )
 
 // PermissionServiceClient is the client API for PermissionService service.
@@ -59,6 +60,8 @@ type PermissionServiceClient interface {
 	ListPermissionResources(ctx context.Context, in *ListPermissionResourcesRequest, opts ...grpc.CallOption) (*ListPermissionResourcesResponse, error)
 	// 根据权限ID列表获取权限值列表
 	ListPermissionCodesByIds(ctx context.Context, in *ListPermissionCodesByIdsRequest, opts ...grpc.CallOption) (*ListPermissionCodesByIdsResponse, error)
+	// GetHiddenFieldsByRoleIds 按角色集合聚合字段权限隐藏字段（"资源.字段" 串）。多角色取并集。
+	GetHiddenFieldsByRoleIds(ctx context.Context, in *GetHiddenFieldsByRoleIdsRequest, opts ...grpc.CallOption) (*GetHiddenFieldsByRoleIdsResponse, error)
 }
 
 type permissionServiceClient struct {
@@ -169,6 +172,16 @@ func (c *permissionServiceClient) ListPermissionCodesByIds(ctx context.Context, 
 	return out, nil
 }
 
+func (c *permissionServiceClient) GetHiddenFieldsByRoleIds(ctx context.Context, in *GetHiddenFieldsByRoleIdsRequest, opts ...grpc.CallOption) (*GetHiddenFieldsByRoleIdsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetHiddenFieldsByRoleIdsResponse)
+	err := c.cc.Invoke(ctx, PermissionService_GetHiddenFieldsByRoleIds_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PermissionServiceServer is the server API for PermissionService service.
 // All implementations must embed UnimplementedPermissionServiceServer
 // for forward compatibility.
@@ -195,6 +208,8 @@ type PermissionServiceServer interface {
 	ListPermissionResources(context.Context, *ListPermissionResourcesRequest) (*ListPermissionResourcesResponse, error)
 	// 根据权限ID列表获取权限值列表
 	ListPermissionCodesByIds(context.Context, *ListPermissionCodesByIdsRequest) (*ListPermissionCodesByIdsResponse, error)
+	// GetHiddenFieldsByRoleIds 按角色集合聚合字段权限隐藏字段（"资源.字段" 串）。多角色取并集。
+	GetHiddenFieldsByRoleIds(context.Context, *GetHiddenFieldsByRoleIdsRequest) (*GetHiddenFieldsByRoleIdsResponse, error)
 	mustEmbedUnimplementedPermissionServiceServer()
 }
 
@@ -234,6 +249,9 @@ func (UnimplementedPermissionServiceServer) ListPermissionResources(context.Cont
 }
 func (UnimplementedPermissionServiceServer) ListPermissionCodesByIds(context.Context, *ListPermissionCodesByIdsRequest) (*ListPermissionCodesByIdsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListPermissionCodesByIds not implemented")
+}
+func (UnimplementedPermissionServiceServer) GetHiddenFieldsByRoleIds(context.Context, *GetHiddenFieldsByRoleIdsRequest) (*GetHiddenFieldsByRoleIdsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetHiddenFieldsByRoleIds not implemented")
 }
 func (UnimplementedPermissionServiceServer) mustEmbedUnimplementedPermissionServiceServer() {}
 func (UnimplementedPermissionServiceServer) testEmbeddedByValue()                           {}
@@ -436,6 +454,24 @@ func _PermissionService_ListPermissionCodesByIds_Handler(srv interface{}, ctx co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PermissionService_GetHiddenFieldsByRoleIds_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetHiddenFieldsByRoleIdsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PermissionServiceServer).GetHiddenFieldsByRoleIds(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PermissionService_GetHiddenFieldsByRoleIds_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PermissionServiceServer).GetHiddenFieldsByRoleIds(ctx, req.(*GetHiddenFieldsByRoleIdsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PermissionService_ServiceDesc is the grpc.ServiceDesc for PermissionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -482,6 +518,10 @@ var PermissionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListPermissionCodesByIds",
 			Handler:    _PermissionService_ListPermissionCodesByIds_Handler,
+		},
+		{
+			MethodName: "GetHiddenFieldsByRoleIds",
+			Handler:    _PermissionService_GetHiddenFieldsByRoleIds_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

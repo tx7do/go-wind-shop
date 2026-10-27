@@ -222,26 +222,27 @@ func (RoleMetadata_Scope) EnumDescriptor() ([]byte, []int) {
 
 // 角色
 type Role struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                // 角色ID
-	Name          *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                             // 角色名称
-	Code          *string                `protobuf:"bytes,3,opt,name=code,proto3,oneof" json:"code,omitempty"`                                             // 角色标识码（如：ADMIN, VIEWER）
-	SortOrder     *uint32                `protobuf:"varint,4,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                 // 排序顺序，值越小越靠前
-	Status        *Role_Status           `protobuf:"varint,5,opt,name=status,proto3,enum=permission.service.v1.Role_Status,oneof" json:"status,omitempty"` // 状态
-	Description   *string                `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`                               // 描述
-	IsProtected   *bool                  `protobuf:"varint,7,opt,name=is_protected,json=isProtected,proto3,oneof" json:"is_protected,omitempty"`           // 受保护角色，仅平台管理员可修改
-	Type          *Role_Type             `protobuf:"varint,8,opt,name=type,proto3,enum=permission.service.v1.Role_Type,oneof" json:"type,omitempty"`       // 角色类型
-	Permissions   []uint32               `protobuf:"varint,10,rep,packed,name=permissions,proto3" json:"permissions,omitempty"`                            // 绑定的权限点ID列表
-	TenantId      *uint32                `protobuf:"varint,40,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                   // 租户ID，0代表系统全局角色
-	TenantName    *string                `protobuf:"bytes,41,opt,name=tenant_name,json=tenantName,proto3,oneof" json:"tenant_name,omitempty"`              // 租户名称
-	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`               // 创建者用户ID
-	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`               // 更新者用户ID
-	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`               // 删除者用户ID
-	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                // 创建时间
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                // 更新时间
-	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                // 删除时间
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               *uint32                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`                                                // 角色ID
+	Name             *string                `protobuf:"bytes,2,opt,name=name,proto3,oneof" json:"name,omitempty"`                                             // 角色名称
+	Code             *string                `protobuf:"bytes,3,opt,name=code,proto3,oneof" json:"code,omitempty"`                                             // 角色标识码（如：ADMIN, VIEWER）
+	SortOrder        *uint32                `protobuf:"varint,4,opt,name=sort_order,json=sortOrder,proto3,oneof" json:"sort_order,omitempty"`                 // 排序顺序，值越小越靠前
+	Status           *Role_Status           `protobuf:"varint,5,opt,name=status,proto3,enum=permission.service.v1.Role_Status,oneof" json:"status,omitempty"` // 状态
+	Description      *string                `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`                               // 描述
+	IsProtected      *bool                  `protobuf:"varint,7,opt,name=is_protected,json=isProtected,proto3,oneof" json:"is_protected,omitempty"`           // 受保护角色，仅平台管理员可修改
+	Type             *Role_Type             `protobuf:"varint,8,opt,name=type,proto3,enum=permission.service.v1.Role_Type,oneof" json:"type,omitempty"`       // 角色类型
+	Permissions      []uint32               `protobuf:"varint,10,rep,packed,name=permissions,proto3" json:"permissions,omitempty"`                            // 绑定的权限点ID列表
+	FieldPermissions []*RoleFieldPermission `protobuf:"bytes,12,rep,name=field_permissions,json=fieldPermissions,proto3" json:"field_permissions,omitempty"`  // 字段权限配置
+	TenantId         *uint32                `protobuf:"varint,40,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`                   // 租户ID，0代表系统全局角色
+	TenantName       *string                `protobuf:"bytes,41,opt,name=tenant_name,json=tenantName,proto3,oneof" json:"tenant_name,omitempty"`              // 租户名称
+	CreatedBy        *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`               // 创建者用户ID
+	UpdatedBy        *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`               // 更新者用户ID
+	DeletedBy        *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`               // 删除者用户ID
+	CreatedAt        *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`                // 创建时间
+	UpdatedAt        *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`                // 更新时间
+	DeletedAt        *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`                // 删除时间
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *Role) Reset() {
@@ -333,6 +334,13 @@ func (x *Role) GetType() Role_Type {
 func (x *Role) GetPermissions() []uint32 {
 	if x != nil {
 		return x.Permissions
+	}
+	return nil
+}
+
+func (x *Role) GetFieldPermissions() []*RoleFieldPermission {
+	if x != nil {
+		return x.FieldPermissions
 	}
 	return nil
 }
@@ -2497,6 +2505,58 @@ func (x *UnassignUsersFromRoleResponse) GetNotFoundUserIds() []uint32 {
 	return nil
 }
 
+type RoleFieldPermission struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Resource      string                 `protobuf:"bytes,1,opt,name=resource,proto3" json:"resource,omitempty"`                             // 资源名（proto 消息名，如 User）
+	HiddenFields  []string               `protobuf:"bytes,2,rep,name=hidden_fields,json=hiddenFields,proto3" json:"hidden_fields,omitempty"` // 隐藏字段列表（proto 字段 json_name，如 email）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RoleFieldPermission) Reset() {
+	*x = RoleFieldPermission{}
+	mi := &file_permission_service_v1_role_proto_msgTypes[34]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RoleFieldPermission) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RoleFieldPermission) ProtoMessage() {}
+
+func (x *RoleFieldPermission) ProtoReflect() protoreflect.Message {
+	mi := &file_permission_service_v1_role_proto_msgTypes[34]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RoleFieldPermission.ProtoReflect.Descriptor instead.
+func (*RoleFieldPermission) Descriptor() ([]byte, []int) {
+	return file_permission_service_v1_role_proto_rawDescGZIP(), []int{34}
+}
+
+func (x *RoleFieldPermission) GetResource() string {
+	if x != nil {
+		return x.Resource
+	}
+	return ""
+}
+
+func (x *RoleFieldPermission) GetHiddenFields() []string {
+	if x != nil {
+		return x.HiddenFields
+	}
+	return nil
+}
+
 // 权限点覆盖
 type RoleOverride_PermissionDelta struct {
 	state              protoimpl.MessageState `protogen:"open.v1"`
@@ -2508,7 +2568,7 @@ type RoleOverride_PermissionDelta struct {
 
 func (x *RoleOverride_PermissionDelta) Reset() {
 	*x = RoleOverride_PermissionDelta{}
-	mi := &file_permission_service_v1_role_proto_msgTypes[34]
+	mi := &file_permission_service_v1_role_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2520,7 +2580,7 @@ func (x *RoleOverride_PermissionDelta) String() string {
 func (*RoleOverride_PermissionDelta) ProtoMessage() {}
 
 func (x *RoleOverride_PermissionDelta) ProtoReflect() protoreflect.Message {
-	mi := &file_permission_service_v1_role_proto_msgTypes[34]
+	mi := &file_permission_service_v1_role_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2561,7 +2621,7 @@ type RoleOverride_SecurityPolicy struct {
 
 func (x *RoleOverride_SecurityPolicy) Reset() {
 	*x = RoleOverride_SecurityPolicy{}
-	mi := &file_permission_service_v1_role_proto_msgTypes[36]
+	mi := &file_permission_service_v1_role_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2573,7 +2633,7 @@ func (x *RoleOverride_SecurityPolicy) String() string {
 func (*RoleOverride_SecurityPolicy) ProtoMessage() {}
 
 func (x *RoleOverride_SecurityPolicy) ProtoReflect() protoreflect.Message {
-	mi := &file_permission_service_v1_role_proto_msgTypes[36]
+	mi := &file_permission_service_v1_role_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2607,7 +2667,7 @@ var File_permission_service_v1_role_proto protoreflect.FileDescriptor
 
 const file_permission_service_v1_role_proto_rawDesc = "" +
 	"\n" +
-	" permission/service/v1/role.proto\x12\x15permission.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a%permission/service/v1/user_role.proto\"\xc6\v\n" +
+	" permission/service/v1/role.proto\x12\x15permission.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\x1a%permission/service/v1/user_role.proto\"\xf9\f\n" +
 	"\x04Role\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b角色IDH\x00R\x02id\x88\x01\x01\x12+\n" +
 	"\x04name\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f角色名称H\x01R\x04name\x88\x01\x01\x12O\n" +
@@ -2619,7 +2679,8 @@ const file_permission_service_v1_role_proto_rawDesc = "" +
 	"\fis_protected\x18\a \x01(\bB3\xbaG0\x92\x02-受保护角色，仅平台管理员可修改H\x06R\visProtected\x88\x01\x01\x12M\n" +
 	"\x04type\x18\b \x01(\x0e2 .permission.service.v1.Role.TypeB\x12\xbaG\x0f\x92\x02\f角色类型H\aR\x04type\x88\x01\x01\x12B\n" +
 	"\vpermissions\x18\n" +
-	" \x03(\rB \xbaG\x1d\x92\x02\x1a绑定的权限点ID列表R\vpermissions\x12L\n" +
+	" \x03(\rB \xbaG\x1d\x92\x02\x1a绑定的权限点ID列表R\vpermissions\x12\xb0\x01\n" +
+	"\x11field_permissions\x18\f \x03(\v2*.permission.service.v1.RoleFieldPermissionBW\xbaGT\x92\x02Q字段权限配置（角色在各资源上隐藏的字段集，黑名单语义）R\x10fieldPermissions\x12L\n" +
 	"\ttenant_id\x18( \x01(\rB*\xbaG'\x92\x02$租户ID，0代表系统全局角色H\bR\btenantId\x88\x01\x01\x128\n" +
 	"\vtenant_name\x18) \x01(\tB\x12\xbaG\x0f\x92\x02\f租户名称H\tR\n" +
 	"tenantName\x88\x01\x01\x12;\n" +
@@ -2872,7 +2933,10 @@ const file_permission_service_v1_role_proto_rawDesc = "" +
 	"\a_reason\"\x8e\x02\n" +
 	"\x1dUnassignUsersFromRoleResponse\x12b\n" +
 	"\x10removed_user_ids\x18\x01 \x03(\rB8\xbaG5\x92\x022成功被移除的用户ID列表（可能为空）R\x0eremovedUserIds\x12\x88\x01\n" +
-	"\x12not_found_user_ids\x18\x02 \x03(\rB[\xbaGX\x92\x02U部分失败时返回每个失败项的详细信息（如 DB 锁、权限不足等）R\x0fnotFoundUserIds2\xe2\x0e\n" +
+	"\x12not_found_user_ids\x18\x02 \x03(\rB[\xbaGX\x92\x02U部分失败时返回每个失败项的详细信息（如 DB 锁、权限不足等）R\x0fnotFoundUserIds\"\xc9\x01\n" +
+	"\x13RoleFieldPermission\x12K\n" +
+	"\bresource\x18\x01 \x01(\tB/\xbaG,\x92\x02)资源名（proto 消息名，如 User）R\bresource\x12e\n" +
+	"\rhidden_fields\x18\x02 \x03(\tB@\xbaG=\x92\x02:隐藏字段列表（proto 字段 json_name，如 email）R\fhiddenFields2\xe2\x0e\n" +
 	"\vRoleService\x12L\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.permission.service.v1.ListRoleResponse\"\x00\x12N\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.permission.service.v1.CountRoleResponse\"\x00\x12K\n" +
@@ -2907,7 +2971,7 @@ func file_permission_service_v1_role_proto_rawDescGZIP() []byte {
 }
 
 var file_permission_service_v1_role_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_permission_service_v1_role_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
+var file_permission_service_v1_role_proto_msgTypes = make([]protoimpl.MessageInfo, 38)
 var file_permission_service_v1_role_proto_goTypes = []any{
 	(Role_Status)(0),                            // 0: permission.service.v1.Role.Status
 	(Role_Type)(0),                              // 1: permission.service.v1.Role.Type
@@ -2947,81 +3011,83 @@ var file_permission_service_v1_role_proto_goTypes = []any{
 	(*UnassignRolesFromUserResponse)(nil),       // 35: permission.service.v1.UnassignRolesFromUserResponse
 	(*UnassignUsersFromRoleRequest)(nil),        // 36: permission.service.v1.UnassignUsersFromRoleRequest
 	(*UnassignUsersFromRoleResponse)(nil),       // 37: permission.service.v1.UnassignUsersFromRoleResponse
-	(*RoleOverride_PermissionDelta)(nil),        // 38: permission.service.v1.RoleOverride.PermissionDelta
-	nil,                                         // 39: permission.service.v1.RoleOverride.ExtendedSettingsEntry
-	(*RoleOverride_SecurityPolicy)(nil),         // 40: permission.service.v1.RoleOverride.SecurityPolicy
-	(*timestamppb.Timestamp)(nil),               // 41: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),               // 42: google.protobuf.FieldMask
-	(*UserRole)(nil),                            // 43: permission.service.v1.UserRole
-	(*v1.PagingRequest)(nil),                    // 44: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                       // 45: google.protobuf.Empty
+	(*RoleFieldPermission)(nil),                 // 38: permission.service.v1.RoleFieldPermission
+	(*RoleOverride_PermissionDelta)(nil),        // 39: permission.service.v1.RoleOverride.PermissionDelta
+	nil,                                         // 40: permission.service.v1.RoleOverride.ExtendedSettingsEntry
+	(*RoleOverride_SecurityPolicy)(nil),         // 41: permission.service.v1.RoleOverride.SecurityPolicy
+	(*timestamppb.Timestamp)(nil),               // 42: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),               // 43: google.protobuf.FieldMask
+	(*UserRole)(nil),                            // 44: permission.service.v1.UserRole
+	(*v1.PagingRequest)(nil),                    // 45: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                       // 46: google.protobuf.Empty
 }
 var file_permission_service_v1_role_proto_depIdxs = []int32{
 	0,  // 0: permission.service.v1.Role.status:type_name -> permission.service.v1.Role.Status
 	1,  // 1: permission.service.v1.Role.type:type_name -> permission.service.v1.Role.Type
-	41, // 2: permission.service.v1.Role.created_at:type_name -> google.protobuf.Timestamp
-	41, // 3: permission.service.v1.Role.updated_at:type_name -> google.protobuf.Timestamp
-	41, // 4: permission.service.v1.Role.deleted_at:type_name -> google.protobuf.Timestamp
-	38, // 5: permission.service.v1.RoleOverride.permissions:type_name -> permission.service.v1.RoleOverride.PermissionDelta
-	39, // 6: permission.service.v1.RoleOverride.extended_settings:type_name -> permission.service.v1.RoleOverride.ExtendedSettingsEntry
-	40, // 7: permission.service.v1.RoleOverride.security_policy:type_name -> permission.service.v1.RoleOverride.SecurityPolicy
-	41, // 8: permission.service.v1.RoleMetadata.last_synced_at:type_name -> google.protobuf.Timestamp
-	2,  // 9: permission.service.v1.RoleMetadata.sync_policy:type_name -> permission.service.v1.RoleMetadata.SyncPolicy
-	3,  // 10: permission.service.v1.RoleMetadata.scope:type_name -> permission.service.v1.RoleMetadata.Scope
-	5,  // 11: permission.service.v1.RoleMetadata.custom_overrides:type_name -> permission.service.v1.RoleOverride
-	41, // 12: permission.service.v1.RoleMetadata.created_at:type_name -> google.protobuf.Timestamp
-	41, // 13: permission.service.v1.RoleMetadata.updated_at:type_name -> google.protobuf.Timestamp
-	41, // 14: permission.service.v1.RoleMetadata.deleted_at:type_name -> google.protobuf.Timestamp
-	4,  // 15: permission.service.v1.ListRoleResponse.items:type_name -> permission.service.v1.Role
-	42, // 16: permission.service.v1.GetRoleRequest.view_mask:type_name -> google.protobuf.FieldMask
-	4,  // 17: permission.service.v1.CreateRoleRequest.data:type_name -> permission.service.v1.Role
-	4,  // 18: permission.service.v1.UpdateRoleRequest.data:type_name -> permission.service.v1.Role
-	42, // 19: permission.service.v1.UpdateRoleRequest.update_mask:type_name -> google.protobuf.FieldMask
-	4,  // 20: permission.service.v1.BatchCreateRolesRequest.items:type_name -> permission.service.v1.Role
-	42, // 21: permission.service.v1.GetRolesByRoleCodesRequest.view_mask:type_name -> google.protobuf.FieldMask
-	42, // 22: permission.service.v1.GetRolesByRoleIdsRequest.view_mask:type_name -> google.protobuf.FieldMask
-	43, // 23: permission.service.v1.GetUserRolesResponse.bindings:type_name -> permission.service.v1.UserRole
-	44, // 24: permission.service.v1.RoleService.List:input_type -> pagination.PagingRequest
-	44, // 25: permission.service.v1.RoleService.Count:input_type -> pagination.PagingRequest
-	8,  // 26: permission.service.v1.RoleService.Get:input_type -> permission.service.v1.GetRoleRequest
-	9,  // 27: permission.service.v1.RoleService.Create:input_type -> permission.service.v1.CreateRoleRequest
-	12, // 28: permission.service.v1.RoleService.BatchCreate:input_type -> permission.service.v1.BatchCreateRolesRequest
-	10, // 29: permission.service.v1.RoleService.Update:input_type -> permission.service.v1.UpdateRoleRequest
-	11, // 30: permission.service.v1.RoleService.Delete:input_type -> permission.service.v1.DeleteRoleRequest
-	25, // 31: permission.service.v1.RoleService.CreateTenantRoleFromTemplate:input_type -> permission.service.v1.CreateTenantRoleFromTemplateRequest
-	23, // 32: permission.service.v1.RoleService.ListPermissionIds:input_type -> permission.service.v1.ListPermissionIdsRequest
-	19, // 33: permission.service.v1.RoleService.ListRoleCodesByIds:input_type -> permission.service.v1.ListRoleCodesByIdsRequest
-	21, // 34: permission.service.v1.RoleService.ListRoleIdsByCodes:input_type -> permission.service.v1.ListRoleIdsByCodesRequest
-	30, // 35: permission.service.v1.RoleService.ListUserRoleIDs:input_type -> permission.service.v1.ListUserRoleIDsRequest
-	32, // 36: permission.service.v1.RoleService.ListUserIDsByRoleIDs:input_type -> permission.service.v1.ListUserIDsByRoleIDsRequest
-	28, // 37: permission.service.v1.RoleService.GetUserRoles:input_type -> permission.service.v1.GetUserRolesRequest
-	26, // 38: permission.service.v1.RoleService.AssignRolesToUser:input_type -> permission.service.v1.AssignRolesToUserRequest
-	34, // 39: permission.service.v1.RoleService.UnassignRolesFromUser:input_type -> permission.service.v1.UnassignRolesFromUserRequest
-	27, // 40: permission.service.v1.RoleService.AssignUsersToRole:input_type -> permission.service.v1.AssignUsersToRoleRequest
-	36, // 41: permission.service.v1.RoleService.UnassignUsersFromRole:input_type -> permission.service.v1.UnassignUsersFromRoleRequest
-	7,  // 42: permission.service.v1.RoleService.List:output_type -> permission.service.v1.ListRoleResponse
-	18, // 43: permission.service.v1.RoleService.Count:output_type -> permission.service.v1.CountRoleResponse
-	4,  // 44: permission.service.v1.RoleService.Get:output_type -> permission.service.v1.Role
-	45, // 45: permission.service.v1.RoleService.Create:output_type -> google.protobuf.Empty
-	13, // 46: permission.service.v1.RoleService.BatchCreate:output_type -> permission.service.v1.BatchCreateRolesResponse
-	45, // 47: permission.service.v1.RoleService.Update:output_type -> google.protobuf.Empty
-	45, // 48: permission.service.v1.RoleService.Delete:output_type -> google.protobuf.Empty
-	4,  // 49: permission.service.v1.RoleService.CreateTenantRoleFromTemplate:output_type -> permission.service.v1.Role
-	24, // 50: permission.service.v1.RoleService.ListPermissionIds:output_type -> permission.service.v1.ListPermissionIdsResponse
-	20, // 51: permission.service.v1.RoleService.ListRoleCodesByIds:output_type -> permission.service.v1.ListRoleCodesByIdsResponse
-	22, // 52: permission.service.v1.RoleService.ListRoleIdsByCodes:output_type -> permission.service.v1.ListRoleIdsByCodesResponse
-	31, // 53: permission.service.v1.RoleService.ListUserRoleIDs:output_type -> permission.service.v1.ListUserRoleIDsResponse
-	33, // 54: permission.service.v1.RoleService.ListUserIDsByRoleIDs:output_type -> permission.service.v1.ListUserIDsResponse
-	29, // 55: permission.service.v1.RoleService.GetUserRoles:output_type -> permission.service.v1.GetUserRolesResponse
-	45, // 56: permission.service.v1.RoleService.AssignRolesToUser:output_type -> google.protobuf.Empty
-	35, // 57: permission.service.v1.RoleService.UnassignRolesFromUser:output_type -> permission.service.v1.UnassignRolesFromUserResponse
-	45, // 58: permission.service.v1.RoleService.AssignUsersToRole:output_type -> google.protobuf.Empty
-	37, // 59: permission.service.v1.RoleService.UnassignUsersFromRole:output_type -> permission.service.v1.UnassignUsersFromRoleResponse
-	42, // [42:60] is the sub-list for method output_type
-	24, // [24:42] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	38, // 2: permission.service.v1.Role.field_permissions:type_name -> permission.service.v1.RoleFieldPermission
+	42, // 3: permission.service.v1.Role.created_at:type_name -> google.protobuf.Timestamp
+	42, // 4: permission.service.v1.Role.updated_at:type_name -> google.protobuf.Timestamp
+	42, // 5: permission.service.v1.Role.deleted_at:type_name -> google.protobuf.Timestamp
+	39, // 6: permission.service.v1.RoleOverride.permissions:type_name -> permission.service.v1.RoleOverride.PermissionDelta
+	40, // 7: permission.service.v1.RoleOverride.extended_settings:type_name -> permission.service.v1.RoleOverride.ExtendedSettingsEntry
+	41, // 8: permission.service.v1.RoleOverride.security_policy:type_name -> permission.service.v1.RoleOverride.SecurityPolicy
+	42, // 9: permission.service.v1.RoleMetadata.last_synced_at:type_name -> google.protobuf.Timestamp
+	2,  // 10: permission.service.v1.RoleMetadata.sync_policy:type_name -> permission.service.v1.RoleMetadata.SyncPolicy
+	3,  // 11: permission.service.v1.RoleMetadata.scope:type_name -> permission.service.v1.RoleMetadata.Scope
+	5,  // 12: permission.service.v1.RoleMetadata.custom_overrides:type_name -> permission.service.v1.RoleOverride
+	42, // 13: permission.service.v1.RoleMetadata.created_at:type_name -> google.protobuf.Timestamp
+	42, // 14: permission.service.v1.RoleMetadata.updated_at:type_name -> google.protobuf.Timestamp
+	42, // 15: permission.service.v1.RoleMetadata.deleted_at:type_name -> google.protobuf.Timestamp
+	4,  // 16: permission.service.v1.ListRoleResponse.items:type_name -> permission.service.v1.Role
+	43, // 17: permission.service.v1.GetRoleRequest.view_mask:type_name -> google.protobuf.FieldMask
+	4,  // 18: permission.service.v1.CreateRoleRequest.data:type_name -> permission.service.v1.Role
+	4,  // 19: permission.service.v1.UpdateRoleRequest.data:type_name -> permission.service.v1.Role
+	43, // 20: permission.service.v1.UpdateRoleRequest.update_mask:type_name -> google.protobuf.FieldMask
+	4,  // 21: permission.service.v1.BatchCreateRolesRequest.items:type_name -> permission.service.v1.Role
+	43, // 22: permission.service.v1.GetRolesByRoleCodesRequest.view_mask:type_name -> google.protobuf.FieldMask
+	43, // 23: permission.service.v1.GetRolesByRoleIdsRequest.view_mask:type_name -> google.protobuf.FieldMask
+	44, // 24: permission.service.v1.GetUserRolesResponse.bindings:type_name -> permission.service.v1.UserRole
+	45, // 25: permission.service.v1.RoleService.List:input_type -> pagination.PagingRequest
+	45, // 26: permission.service.v1.RoleService.Count:input_type -> pagination.PagingRequest
+	8,  // 27: permission.service.v1.RoleService.Get:input_type -> permission.service.v1.GetRoleRequest
+	9,  // 28: permission.service.v1.RoleService.Create:input_type -> permission.service.v1.CreateRoleRequest
+	12, // 29: permission.service.v1.RoleService.BatchCreate:input_type -> permission.service.v1.BatchCreateRolesRequest
+	10, // 30: permission.service.v1.RoleService.Update:input_type -> permission.service.v1.UpdateRoleRequest
+	11, // 31: permission.service.v1.RoleService.Delete:input_type -> permission.service.v1.DeleteRoleRequest
+	25, // 32: permission.service.v1.RoleService.CreateTenantRoleFromTemplate:input_type -> permission.service.v1.CreateTenantRoleFromTemplateRequest
+	23, // 33: permission.service.v1.RoleService.ListPermissionIds:input_type -> permission.service.v1.ListPermissionIdsRequest
+	19, // 34: permission.service.v1.RoleService.ListRoleCodesByIds:input_type -> permission.service.v1.ListRoleCodesByIdsRequest
+	21, // 35: permission.service.v1.RoleService.ListRoleIdsByCodes:input_type -> permission.service.v1.ListRoleIdsByCodesRequest
+	30, // 36: permission.service.v1.RoleService.ListUserRoleIDs:input_type -> permission.service.v1.ListUserRoleIDsRequest
+	32, // 37: permission.service.v1.RoleService.ListUserIDsByRoleIDs:input_type -> permission.service.v1.ListUserIDsByRoleIDsRequest
+	28, // 38: permission.service.v1.RoleService.GetUserRoles:input_type -> permission.service.v1.GetUserRolesRequest
+	26, // 39: permission.service.v1.RoleService.AssignRolesToUser:input_type -> permission.service.v1.AssignRolesToUserRequest
+	34, // 40: permission.service.v1.RoleService.UnassignRolesFromUser:input_type -> permission.service.v1.UnassignRolesFromUserRequest
+	27, // 41: permission.service.v1.RoleService.AssignUsersToRole:input_type -> permission.service.v1.AssignUsersToRoleRequest
+	36, // 42: permission.service.v1.RoleService.UnassignUsersFromRole:input_type -> permission.service.v1.UnassignUsersFromRoleRequest
+	7,  // 43: permission.service.v1.RoleService.List:output_type -> permission.service.v1.ListRoleResponse
+	18, // 44: permission.service.v1.RoleService.Count:output_type -> permission.service.v1.CountRoleResponse
+	4,  // 45: permission.service.v1.RoleService.Get:output_type -> permission.service.v1.Role
+	46, // 46: permission.service.v1.RoleService.Create:output_type -> google.protobuf.Empty
+	13, // 47: permission.service.v1.RoleService.BatchCreate:output_type -> permission.service.v1.BatchCreateRolesResponse
+	46, // 48: permission.service.v1.RoleService.Update:output_type -> google.protobuf.Empty
+	46, // 49: permission.service.v1.RoleService.Delete:output_type -> google.protobuf.Empty
+	4,  // 50: permission.service.v1.RoleService.CreateTenantRoleFromTemplate:output_type -> permission.service.v1.Role
+	24, // 51: permission.service.v1.RoleService.ListPermissionIds:output_type -> permission.service.v1.ListPermissionIdsResponse
+	20, // 52: permission.service.v1.RoleService.ListRoleCodesByIds:output_type -> permission.service.v1.ListRoleCodesByIdsResponse
+	22, // 53: permission.service.v1.RoleService.ListRoleIdsByCodes:output_type -> permission.service.v1.ListRoleIdsByCodesResponse
+	31, // 54: permission.service.v1.RoleService.ListUserRoleIDs:output_type -> permission.service.v1.ListUserRoleIDsResponse
+	33, // 55: permission.service.v1.RoleService.ListUserIDsByRoleIDs:output_type -> permission.service.v1.ListUserIDsResponse
+	29, // 56: permission.service.v1.RoleService.GetUserRoles:output_type -> permission.service.v1.GetUserRolesResponse
+	46, // 57: permission.service.v1.RoleService.AssignRolesToUser:output_type -> google.protobuf.Empty
+	35, // 58: permission.service.v1.RoleService.UnassignRolesFromUser:output_type -> permission.service.v1.UnassignRolesFromUserResponse
+	46, // 59: permission.service.v1.RoleService.AssignUsersToRole:output_type -> google.protobuf.Empty
+	37, // 60: permission.service.v1.RoleService.UnassignUsersFromRole:output_type -> permission.service.v1.UnassignUsersFromRoleResponse
+	43, // [43:61] is the sub-list for method output_type
+	25, // [25:43] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_permission_service_v1_role_proto_init() }
@@ -3064,7 +3130,7 @@ func file_permission_service_v1_role_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_permission_service_v1_role_proto_rawDesc), len(file_permission_service_v1_role_proto_rawDesc)),
 			NumEnums:      4,
-			NumMessages:   37,
+			NumMessages:   38,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

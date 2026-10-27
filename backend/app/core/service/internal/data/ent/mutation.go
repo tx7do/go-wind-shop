@@ -97646,33 +97646,35 @@ func (m *ProductTranslationMutation) ResetEdge(name string) error {
 // RoleMutation represents an operation that mutates the Role nodes in the graph.
 type RoleMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *uint32
-	created_at    *time.Time
-	updated_at    *time.Time
-	deleted_at    *time.Time
-	created_by    *uint32
-	addcreated_by *int32
-	updated_by    *uint32
-	addupdated_by *int32
-	deleted_by    *uint32
-	adddeleted_by *int32
-	remark        *string
-	description   *string
-	sort_order    *uint32
-	addsort_order *int32
-	tenant_id     *uint32
-	addtenant_id  *int32
-	status        *role.Status
-	name          *string
-	code          *string
-	is_protected  *bool
-	_type         *role.Type
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Role, error)
-	predicates    []predicate.Role
+	op                      Op
+	typ                     string
+	id                      *uint32
+	created_at              *time.Time
+	updated_at              *time.Time
+	deleted_at              *time.Time
+	created_by              *uint32
+	addcreated_by           *int32
+	updated_by              *uint32
+	addupdated_by           *int32
+	deleted_by              *uint32
+	adddeleted_by           *int32
+	remark                  *string
+	description             *string
+	sort_order              *uint32
+	addsort_order           *int32
+	tenant_id               *uint32
+	addtenant_id            *int32
+	status                  *role.Status
+	name                    *string
+	code                    *string
+	is_protected            *bool
+	field_permissions       *[]permissionpb.RoleFieldPermission
+	appendfield_permissions []permissionpb.RoleFieldPermission
+	_type                   *role.Type
+	clearedFields           map[string]struct{}
+	done                    bool
+	oldValue                func(context.Context) (*Role, error)
+	predicates              []predicate.Role
 }
 
 var _ ent.Mutation = (*RoleMutation)(nil)
@@ -98544,6 +98546,71 @@ func (m *RoleMutation) ResetIsProtected() {
 	m.is_protected = nil
 }
 
+// SetFieldPermissions sets the "field_permissions" field.
+func (m *RoleMutation) SetFieldPermissions(pfp []permissionpb.RoleFieldPermission) {
+	m.field_permissions = &pfp
+	m.appendfield_permissions = nil
+}
+
+// FieldPermissions returns the value of the "field_permissions" field in the mutation.
+func (m *RoleMutation) FieldPermissions() (r []permissionpb.RoleFieldPermission, exists bool) {
+	v := m.field_permissions
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFieldPermissions returns the old "field_permissions" field's value of the Role entity.
+// If the Role object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *RoleMutation) OldFieldPermissions(ctx context.Context) (v []permissionpb.RoleFieldPermission, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFieldPermissions is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFieldPermissions requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFieldPermissions: %w", err)
+	}
+	return oldValue.FieldPermissions, nil
+}
+
+// AppendFieldPermissions adds pfp to the "field_permissions" field.
+func (m *RoleMutation) AppendFieldPermissions(pfp []permissionpb.RoleFieldPermission) {
+	m.appendfield_permissions = append(m.appendfield_permissions, pfp...)
+}
+
+// AppendedFieldPermissions returns the list of values that were appended to the "field_permissions" field in this mutation.
+func (m *RoleMutation) AppendedFieldPermissions() ([]permissionpb.RoleFieldPermission, bool) {
+	if len(m.appendfield_permissions) == 0 {
+		return nil, false
+	}
+	return m.appendfield_permissions, true
+}
+
+// ClearFieldPermissions clears the value of the "field_permissions" field.
+func (m *RoleMutation) ClearFieldPermissions() {
+	m.field_permissions = nil
+	m.appendfield_permissions = nil
+	m.clearedFields[role.FieldFieldPermissions] = struct{}{}
+}
+
+// FieldPermissionsCleared returns if the "field_permissions" field was cleared in this mutation.
+func (m *RoleMutation) FieldPermissionsCleared() bool {
+	_, ok := m.clearedFields[role.FieldFieldPermissions]
+	return ok
+}
+
+// ResetFieldPermissions resets all changes to the "field_permissions" field.
+func (m *RoleMutation) ResetFieldPermissions() {
+	m.field_permissions = nil
+	m.appendfield_permissions = nil
+	delete(m.clearedFields, role.FieldFieldPermissions)
+}
+
 // SetType sets the "type" field.
 func (m *RoleMutation) SetType(r role.Type) {
 	m._type = &r
@@ -98614,7 +98681,7 @@ func (m *RoleMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *RoleMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, role.FieldCreatedAt)
 	}
@@ -98657,6 +98724,9 @@ func (m *RoleMutation) Fields() []string {
 	if m.is_protected != nil {
 		fields = append(fields, role.FieldIsProtected)
 	}
+	if m.field_permissions != nil {
+		fields = append(fields, role.FieldFieldPermissions)
+	}
 	if m._type != nil {
 		fields = append(fields, role.FieldType)
 	}
@@ -98696,6 +98766,8 @@ func (m *RoleMutation) Field(name string) (ent.Value, bool) {
 		return m.Code()
 	case role.FieldIsProtected:
 		return m.IsProtected()
+	case role.FieldFieldPermissions:
+		return m.FieldPermissions()
 	case role.FieldType:
 		return m.GetType()
 	}
@@ -98735,6 +98807,8 @@ func (m *RoleMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCode(ctx)
 	case role.FieldIsProtected:
 		return m.OldIsProtected(ctx)
+	case role.FieldFieldPermissions:
+		return m.OldFieldPermissions(ctx)
 	case role.FieldType:
 		return m.OldType(ctx)
 	}
@@ -98843,6 +98917,13 @@ func (m *RoleMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetIsProtected(v)
+		return nil
+	case role.FieldFieldPermissions:
+		v, ok := value.([]permissionpb.RoleFieldPermission)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFieldPermissions(v)
 		return nil
 	case role.FieldType:
 		v, ok := value.(role.Type)
@@ -98980,6 +99061,9 @@ func (m *RoleMutation) ClearedFields() []string {
 	if m.FieldCleared(role.FieldCode) {
 		fields = append(fields, role.FieldCode)
 	}
+	if m.FieldCleared(role.FieldFieldPermissions) {
+		fields = append(fields, role.FieldFieldPermissions)
+	}
 	return fields
 }
 
@@ -99030,6 +99114,9 @@ func (m *RoleMutation) ClearField(name string) error {
 	case role.FieldCode:
 		m.ClearCode()
 		return nil
+	case role.FieldFieldPermissions:
+		m.ClearFieldPermissions()
+		return nil
 	}
 	return fmt.Errorf("unknown Role nullable field %s", name)
 }
@@ -99079,6 +99166,9 @@ func (m *RoleMutation) ResetField(name string) error {
 		return nil
 	case role.FieldIsProtected:
 		m.ResetIsProtected()
+		return nil
+	case role.FieldFieldPermissions:
+		m.ResetFieldPermissions()
 		return nil
 	case role.FieldType:
 		m.ResetType()
