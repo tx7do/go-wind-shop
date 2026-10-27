@@ -12109,6 +12109,616 @@ export type permissionservicev1_DeletePermissionGroupRequest = {
   id?: number;
 };
 
+// 套餐管理服务
+export interface PlanService {
+  // 分页查询套餐列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<identityservicev1_ListPlanResponse>;
+  // 查询套餐详情
+  Get(
+    request: identityservicev1_GetPlanRequest,
+  ): Promise<identityservicev1_Plan>;
+  // 创建套餐
+  Create(
+    request: identityservicev1_CreatePlanRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新套餐
+  Update(
+    request: identityservicev1_UpdatePlanRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除套餐
+  Delete(
+    request: identityservicev1_DeletePlanRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createPlanServiceClient(
+  transport: ClientTransport,
+): PlanService {
+  return {
+    List(request) {
+      const path = `/admin/v1/plans`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PlanService',
+        method: 'List',
+      }) as Promise<identityservicev1_ListPlanResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/plans/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PlanService',
+        method: 'Get',
+      }) as Promise<identityservicev1_Plan>;
+    },
+    Create(request) {
+      const path = `/admin/v1/plans`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PlanService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/plans/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'PlanService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      const path = `/admin/v1/plans`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'DELETE', body, {
+        service: 'PlanService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 套餐列表 - 答复
+export type identityservicev1_ListPlanResponse = {
+  items: identityservicev1_Plan[] | undefined;
+  total: number | undefined;
+};
+
+// 套餐
+export type identityservicev1_Plan = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  dataRetentionDays?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  description?: string;
+  expiryPolicy?: identityservicev1_Plan_ExpiryPolicy;
+  id?: number;
+  name?: string;
+  remark?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  version?: identityservicev1_Plan_Version;
+};
+
+// 套餐版本
+export type identityservicev1_Plan_Version =
+  | 'ENTERPRISE'
+  | 'FREE'
+  | 'PLAN_VERSION_UNSPECIFIED'
+  | 'STANDARD';
+// 到期处置策略
+export type identityservicev1_Plan_ExpiryPolicy =
+  | 'BLOCK_LOGIN'
+  | 'FREEZE'
+  | 'PLAN_EXPIRY_POLICY_UNSPECIFIED'
+  | 'READONLY';
+// 套餐数据 - 请求
+export type identityservicev1_GetPlanRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 创建套餐 - 请求
+export type identityservicev1_CreatePlanRequest = {
+  data: identityservicev1_Plan | undefined;
+};
+
+// 更新套餐 -请求
+export type identityservicev1_UpdatePlanRequest = {
+  allowMissing?: boolean;
+  data: identityservicev1_Plan | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除套餐 - 请求
+export type identityservicev1_DeletePlanRequest = {
+  id?: number;
+};
+
+// 套餐模块白名单管理服务
+export interface PlanModuleService {
+  // 分页查询套餐模块列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<identityservicev1_ListPlanModuleResponse>;
+  // 查询套餐模块详情
+  Get(
+    request: identityservicev1_GetPlanModuleRequest,
+  ): Promise<identityservicev1_PlanModule>;
+  // 创建套餐模块
+  Create(
+    request: identityservicev1_CreatePlanModuleRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新套餐模块
+  Update(
+    request: identityservicev1_UpdatePlanModuleRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除套餐模块
+  Delete(
+    request: identityservicev1_DeletePlanModuleRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createPlanModuleServiceClient(
+  transport: ClientTransport,
+): PlanModuleService {
+  return {
+    List(request) {
+      const path = `/admin/v1/plan-modules`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PlanModuleService',
+        method: 'List',
+      }) as Promise<identityservicev1_ListPlanModuleResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/plan-modules/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PlanModuleService',
+        method: 'Get',
+      }) as Promise<identityservicev1_PlanModule>;
+    },
+    Create(request) {
+      const path = `/admin/v1/plan-modules`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PlanModuleService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/plan-modules/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'PlanModuleService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      const path = `/admin/v1/plan-modules`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'DELETE', body, {
+        service: 'PlanModuleService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 套餐模块列表 - 答复
+export type identityservicev1_ListPlanModuleResponse = {
+  items: identityservicev1_PlanModule[] | undefined;
+  total: number | undefined;
+};
+
+// 套餐模块
+export type identityservicev1_PlanModule = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  module?: identityservicev1_Module;
+  planId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 业务功能模块
+export type identityservicev1_Module =
+  | 'AI'
+  | 'DASHBOARD'
+  | 'DICT'
+  | 'FILE'
+  | 'INTERNAL_MESSAGE'
+  | 'LOG'
+  | 'MODULE_UNSPECIFIED'
+  | 'OPM'
+  | 'PERMISSION'
+  | 'SYSTEM'
+  | 'TASK'
+  | 'TENANT';
+// 套餐模块数据 - 请求
+export type identityservicev1_GetPlanModuleRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 创建套餐模块 - 请求
+export type identityservicev1_CreatePlanModuleRequest = {
+  data: identityservicev1_PlanModule | undefined;
+};
+
+// 更新套餐模块 -请求
+export type identityservicev1_UpdatePlanModuleRequest = {
+  allowMissing?: boolean;
+  data: identityservicev1_PlanModule | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除套餐模块 - 请求
+export type identityservicev1_DeletePlanModuleRequest = {
+  id?: number;
+};
+
+// 套餐配额管理服务
+export interface PlanQuotaService {
+  // 分页查询套餐配额列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<identityservicev1_ListPlanQuotaResponse>;
+  // 创建套餐配额
+  Create(
+    request: identityservicev1_CreatePlanQuotaRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新套餐配额
+  Update(
+    request: identityservicev1_UpdatePlanQuotaRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除套餐配额
+  Delete(
+    request: identityservicev1_DeletePlanQuotaRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createPlanQuotaServiceClient(
+  transport: ClientTransport,
+): PlanQuotaService {
+  return {
+    List(request) {
+      const path = `/admin/v1/plan-quotas`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PlanQuotaService',
+        method: 'List',
+      }) as Promise<identityservicev1_ListPlanQuotaResponse>;
+    },
+    Create(request) {
+      const path = `/admin/v1/plan-quotas`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PlanQuotaService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/plan-quotas/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'PlanQuotaService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      const path = `/admin/v1/plan-quotas`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'DELETE', body, {
+        service: 'PlanQuotaService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 套餐配额列表 - 答复
+export type identityservicev1_ListPlanQuotaResponse = {
+  items: identityservicev1_PlanQuota[] | undefined;
+  total: number | undefined;
+};
+
+// 套餐配额
+export type identityservicev1_PlanQuota = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  planId?: number;
+  quotaType?: identityservicev1_PlanQuota_QuotaType;
+  quotaValue?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 配额类型
+export type identityservicev1_PlanQuota_QuotaType =
+  | 'AI_TOKENS'
+  | 'API_CALL'
+  | 'PLAN_QUOTA_TYPE_UNSPECIFIED'
+  | 'STORAGE'
+  | 'USER_LIMIT';
+// 创建套餐配额 - 请求
+export type identityservicev1_CreatePlanQuotaRequest = {
+  data: identityservicev1_PlanQuota | undefined;
+};
+
+// 更新套餐配额 -请求
+export type identityservicev1_UpdatePlanQuotaRequest = {
+  allowMissing?: boolean;
+  data: identityservicev1_PlanQuota | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除套餐配额 - 请求
+export type identityservicev1_DeletePlanQuotaRequest = {
+  id?: number;
+};
+
 // 策略评估日志服务
 export interface PolicyEvaluationLogService {
   // 查询策略评估日志列表
@@ -16944,6 +17554,13 @@ export interface TenantService {
   TenantExists(
     request: identityservicev1_TenantExistsRequest,
   ): Promise<identityservicev1_TenantExistsResponse>;
+  GetUsage(
+    request: identityservicev1_GetTenantUsageRequest,
+  ): Promise<identityservicev1_TenantUsage>;
+  // 清理租户数据
+  CleanupData(
+    request: identityservicev1_CleanupTenantDataRequest,
+  ): Promise<wellKnownEmpty>;
 }
 
 export function createTenantServiceClient(
@@ -17122,6 +17739,30 @@ export function createTenantServiceClient(
         method: 'TenantExists',
       }) as Promise<identityservicev1_TenantExistsResponse>;
     },
+    GetUsage(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/tenants/${request.id}/usage`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'TenantService',
+        method: 'GetUsage',
+      }) as Promise<identityservicev1_TenantUsage>;
+    },
+    CleanupData(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/tenants/${request.id}/cleanup`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'POST', body, {
+        service: 'TenantService',
+        method: 'CleanupData',
+      }) as Promise<wellKnownEmpty>;
+    },
   };
 }
 // 租户列表 - 答复
@@ -17147,6 +17788,7 @@ export type identityservicev1_Tenant = {
   logoUrl?: string;
   memberCount?: number;
   name?: string;
+  planId?: number;
   remark?: string;
   status?: identityservicev1_Tenant_Status;
   subscriptionAt?: wellKnownTimestamp;
@@ -17280,6 +17922,32 @@ export type identityservicev1_TenantExistsRequest = {
 // 租户是否存在 - 答复
 export type identityservicev1_TenantExistsResponse = {
   exist: boolean | undefined;
+};
+
+export type identityservicev1_GetTenantUsageRequest = {
+  id: number | undefined;
+};
+
+// 租户用量与配额
+export type identityservicev1_TenantUsage = {
+  apiCallCount: number | undefined;
+  planId?: number;
+  planName?: string;
+  quotas: identityservicev1_QuotaUsage[] | undefined;
+  storageUsedBytes: number | undefined;
+  tenantId: number | undefined;
+  userCount: number | undefined;
+};
+
+// 配额用量项
+export type identityservicev1_QuotaUsage = {
+  quotaType: identityservicev1_PlanQuota_QuotaType | undefined;
+  quotaValue: number | undefined;
+};
+
+// 清理租户数据 - 请求
+export type identityservicev1_CleanupTenantDataRequest = {
+  id: number | undefined;
 };
 
 // 用户管理服务
@@ -17814,6 +18482,9 @@ export class ApiClient {
   private _permissionAuditLogService?: PermissionAuditLogService;
   private _permissionGroupService?: PermissionGroupService;
   private _permissionService?: PermissionService;
+  private _planModuleService?: PlanModuleService;
+  private _planQuotaService?: PlanQuotaService;
+  private _planService?: PlanService;
   private _policyEvaluationLogService?: PolicyEvaluationLogService;
   private _positionService?: PositionService;
   private _productAttributeService?: ProductAttributeService;
@@ -18044,6 +18715,18 @@ export class ApiClient {
 
   get permissionService(): PermissionService {
     return this._permissionService ??= createPermissionServiceClient(this._transport);
+  }
+
+  get planModuleService(): PlanModuleService {
+    return this._planModuleService ??= createPlanModuleServiceClient(this._transport);
+  }
+
+  get planQuotaService(): PlanQuotaService {
+    return this._planQuotaService ??= createPlanQuotaServiceClient(this._transport);
+  }
+
+  get planService(): PlanService {
+    return this._planService ??= createPlanServiceClient(this._transport);
   }
 
   get policyEvaluationLogService(): PolicyEvaluationLogService {

@@ -115,6 +115,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	redisCacheMonitorServiceClient := data.NewRedisCacheMonitorServiceClient(ctx, discovery)
 	scriptServiceClient := data.NewScriptServiceClient(ctx, discovery)
 	scriptLogServiceClient := data.NewScriptLogServiceClient(ctx, discovery)
+	planServiceClient := data.NewPlanServiceClient(ctx, discovery)
+	planModuleServiceClient := data.NewPlanModuleServiceClient(ctx, discovery)
+	planQuotaServiceClient := data.NewPlanQuotaServiceClient(ctx, discovery)
 	aiAgentServiceClient := data.NewAiAgentServiceClient(ctx, discovery)
 	aiChatServiceClient := data.NewAiChatServiceClient(ctx, discovery)
 	aiConversationServiceClient := data.NewAiConversationServiceClient(ctx, discovery)
@@ -194,6 +197,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	redisCacheMonitorService := service.NewRedisCacheMonitorService(ctx, redisCacheMonitorServiceClient)
 	scriptService := service.NewScriptService(ctx, scriptServiceClient)
 	scriptLogService := service.NewScriptLogService(ctx, scriptLogServiceClient)
+	planService := service.NewPlanService(ctx, planServiceClient)
+	planModuleService := service.NewPlanModuleService(ctx, planModuleServiceClient)
+	planQuotaService := service.NewPlanQuotaService(ctx, planQuotaServiceClient)
 
 	// ── AI 域（移植自 go-wind-cms）──
 	aiAgentService := service.NewAiAgentService(ctx, aiAgentServiceClient)
@@ -277,6 +283,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		redisCacheMonitorService,
 		scriptService,
 		scriptLogService,
+		planService,
+		planModuleService,
+		planQuotaService,
 		aiAgentService,
 		aiProviderService,
 		aiChatService,

@@ -745,3 +745,30 @@ func NewScriptLogServiceClient(ctx *bootstrap.Context, r registry.Discovery) scr
 	}
 	return scriptV1.NewScriptLogServiceClient(cli)
 }
+
+func NewPlanServiceClient(ctx *bootstrap.Context, r registry.Discovery) identityV1.PlanServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return identityV1.NewPlanServiceClient(cli)
+}
+
+func NewPlanModuleServiceClient(ctx *bootstrap.Context, r registry.Discovery) identityV1.PlanModuleServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return identityV1.NewPlanModuleServiceClient(cli)
+}
+
+func NewPlanQuotaServiceClient(ctx *bootstrap.Context, r registry.Discovery) identityV1.PlanQuotaServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return identityV1.NewPlanQuotaServiceClient(cli)
+}

@@ -10,11 +10,11 @@ import type {
   identityservicev1_CreateTenantWithAdminUserRequest,
   identityservicev1_DeleteTenantRequest,
   identityservicev1_GetTenantRequest,
-  // 【缓行】随租户用量/数据清理一并停用：identityservicev1_GetTenantUsageRequest,
-  // identityservicev1_CleanupTenantDataRequest,
+  identityservicev1_GetTenantUsageRequest,
+  identityservicev1_CleanupTenantDataRequest,
   identityservicev1_ListTenantResponse,
   identityservicev1_Tenant,
-  // 【缓行】identityservicev1_TenantUsage,
+  identityservicev1_TenantUsage,
   identityservicev1_Tenant_AuditStatus as Tenant_AuditStatus,
   identityservicev1_Tenant_Status as Tenant_Status,
   identityservicev1_Tenant_Type as Tenant_Type,
@@ -117,38 +117,39 @@ export function useCreateTenantWithAdminUser(
 }
 
 // ==============================
-// 租户用量查询 / 清理租户数据
-// 【缓行】后端 GetUsage / CleanupData 接口无下游实现（上游 identity proto 有，
-// 本仓库 proto 未同步），接口落地后再放开以下实现。
+// 租户用量查询
 // ==============================
-// export function useGetTenantUsage(
-//   req: identityservicev1_GetTenantUsageRequest,
-//   options?: UseQueryOptions<identityservicev1_TenantUsage, Error>
-// ) {
-//   return useQuery({
-//     queryKey: ["getTenantUsage", req],
-//     queryFn: () => apiClient.tenantService.GetUsage(req),
-//     ...options,
-//   });
-// }
-//
-// export async function fetchTenantUsage(req: identityservicev1_GetTenantUsageRequest) {
-//   return queryClient.fetchQuery({
-//     queryKey: ["getTenantUsage", req],
-//     queryFn: () => apiClient.tenantService.GetUsage(req),
-//     staleTime: 0,
-//     retry: 0,
-//   });
-// }
-//
-// export function useCleanupTenantData(
-//   options?: UseMutationOptions<{}, Error, identityservicev1_CleanupTenantDataRequest>
-// ) {
-//   return useMutation({
-//     mutationFn: (req) => apiClient.tenantService.CleanupData(req),
-//     ...options,
-//   });
-// }
+export function useGetTenantUsage(
+  req: identityservicev1_GetTenantUsageRequest,
+  options?: UseQueryOptions<identityservicev1_TenantUsage, Error>
+) {
+  return useQuery({
+    queryKey: ["getTenantUsage", req],
+    queryFn: () => apiClient.tenantService.GetUsage(req),
+    ...options,
+  });
+}
+
+export async function fetchTenantUsage(req: identityservicev1_GetTenantUsageRequest) {
+  return queryClient.fetchQuery({
+    queryKey: ["getTenantUsage", req],
+    queryFn: () => apiClient.tenantService.GetUsage(req),
+    staleTime: 0,
+    retry: 0,
+  });
+}
+
+// ==============================
+// 清理租户数据
+// ==============================
+export function useCleanupTenantData(
+  options?: UseMutationOptions<{}, Error, identityservicev1_CleanupTenantDataRequest>
+) {
+  return useMutation({
+    mutationFn: (req) => apiClient.tenantService.CleanupData(req),
+    ...options,
+  });
+}
 
 // ==============================
 // 租户枚举与工具函数

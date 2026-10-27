@@ -72,7 +72,6 @@
         />
       </ElFormItem>
 
-      <!-- 【缓行】订阅套餐/到期时间：后端租户套餐域无下游实现，接入后恢复
       <ElFormItem :label="$t('pages.tenant.subscriptionPlan')" prop="subscriptionPlan">
         <ElSelect
           v-model="formData.subscriptionPlan"
@@ -98,9 +97,51 @@
           class="w-full"
         />
       </ElFormItem>
-      -->
 
-      <!-- 【缓行】编辑模式下用量与配额 + 清理数据按钮：后端 GetUsage/CleanupData 未实现 -->
+      <!-- 编辑模式下显示用量与配额 + 清理数据按钮 -->
+      <template v-if="!isCreate && usageData">
+        <ElDivider>{{ $t("pages.tenant.usageSection") }}</ElDivider>
+        <ElDescriptions :column="1" size="small" border>
+          <ElDescriptionsItem :label="$t('pages.tenant.usageUserCount')">
+            {{ usageData.userCount ?? 0 }}
+          </ElDescriptionsItem>
+          <ElDescriptionsItem :label="$t('pages.tenant.usageStorage')">
+            {{ usageData.storageUsedBytes ?? 0 }} bytes
+          </ElDescriptionsItem>
+          <ElDescriptionsItem :label="$t('pages.tenant.usageApiCalls')">
+            {{ usageData.apiCallCount ?? 0 }}
+          </ElDescriptionsItem>
+          <ElDescriptionsItem :label="$t('pages.tenant.usagePlan')">
+            {{ usageData.planName ?? $t("pages.tenant.usageNoPlan") }}
+          </ElDescriptionsItem>
+        </ElDescriptions>
+        <div v-if="usageData.quotas && usageData.quotas.length" style="margin-top: 16px">
+          <div v-for="(q, idx) in usageData.quotas" :key="idx" style="margin-bottom: 12px">
+            <div style="margin-bottom: 4px">
+              {{ getQuotaLabel(q.quotaType) }}: {{ getQuotaCurrent(q.quotaType) }} /
+              {{ q.quotaValue ?? 0 }}
+            </div>
+            <ElProgress
+              :percentage="getQuotaPercent(q.quotaType, q.quotaValue ?? 0)"
+              :stroke-width="6"
+            />
+          </div>
+        </div>
+        <div style="margin-top: 24px">
+          <ElPopconfirm
+            :title="$t('pages.tenant.cleanupConfirmTitle')"
+            :content="$t('pages.tenant.cleanupConfirmDesc')"
+            confirm-button-type="danger"
+            @confirm="handleCleanup"
+          >
+            <template #reference>
+              <ElButton type="danger" :loading="cleanupLoading">
+                {{ $t("pages.tenant.cleanupData") }}
+              </ElButton>
+            </template>
+          </ElPopconfirm>
+        </div>
+      </template>
 
       <!-- 管理员设置（仅创建时显示） -->
       <ElDivider v-if="isCreate">{{ $t("pages.tenant.adminSetting") }}</ElDivider>
@@ -191,11 +232,13 @@ import {
   tenantTypeList,
   useCreateTenantWithAdminUser,
   useUpdateTenant,
+  fetchTenantUsage,
+  useCleanupTenantData,
   fetchListTenants,
+  fetchListPlans,
 } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
-// 【缓行】租户套餐/用量/清理：后端 GetUsage/CleanupData/Plan 未实现
-// import type { identityservicev1_Plan as Plan } from "@/api/generated/admin/service/v1";
+import type { identityservicev1_Plan as Plan } from "@/api/generated/admin/service/v1";
 import type { identityservicev1_Tenant as Tenant } from "@/api/generated/admin/service/v1";
 import { $t } from "@/core/i18n";
 import { DRAWER_WIDTH } from "@/constants";
@@ -222,10 +265,54 @@ const visible = computed({
 const { mutateAsync: createTenantWithAdminUserMut } = useCreateTenantWithAdminUser();
 const { mutateAsync: updateTenantMut } = useUpdateTenant();
 
-// 【缓行】编辑模式下租户用量/配额/清理数据：后端 GetUsage/CleanupData 未实现，整段停用。
+// 编辑模式下按需加载租户用量数据（usageData）。
+// 不在 setup 顶层发起请求：仅当抽屉打开且选中真实租户行时，用 fetchTenantUsage 命令式拉取，
+// 避免 row.id 为空时以 id=0 发请求触发 400。与 vue-vben 实现保持一致。
+const usageData = ref<any>(null);
+const cleanupLoading = ref(false);
+const { mutateAsync: cleanupMut } = useCleanupTenantData();
+
+// 辅助函数：根据配额类型返回标签/当前值/百分比。
+
+function getQuotaLabel(qt: any): string {
+  if (qt === 1) return $t("pages.tenant.usageUserCount");
+  if (qt === 2) return $t("pages.tenant.usageStorage");
+  if (qt === 3) return $t("pages.tenant.usageApiCalls");
+  return $t("pages.tenant.quotaType");
+}
+function getQuotaCurrent(qt: any): number {
+  const ud = usageData.value as any;
+  if (!ud) return 0;
+  if (qt === 1) return ud.userCount ?? 0;
+  if (qt === 2) return ud.storageUsedBytes ?? 0;
+  if (qt === 3) return ud.apiCallCount ?? 0;
+  return 0;
+}
+function getQuotaPercent(qt: any, limit: number): number {
+  const current = getQuotaCurrent(qt);
+  if (limit <= 0) return 0;
+  return Math.min(100, (current / limit) * 100);
+}
+
+async function handleCleanup() {
+  if (!data.value.row?.id) return;
+  try {
+    cleanupLoading.value = true;
+    await cleanupMut({ id: data.value.row.id });
+    ElMessage.success($t("pages.tenant.cleanupSuccess"));
+    modalApi.close();
+  } catch (err: any) {
+    ElMessage.error(err?.message || $t("pages.tenant.cleanupFailed"));
+  } finally {
+    cleanupLoading.value = false;
+  }
+}
 
 // 加载状态
 const loading = ref(false);
+
+// 套餐下拉选项（订阅套餐）
+const planOptions = ref<(Plan & { id?: number; name?: string })[]>([]);
 
 // 表单数据
 const formData = ref({
@@ -235,6 +322,8 @@ const formData = ref({
   auditStatus: "APPROVED",
   status: "ON",
   remark: "",
+  subscriptionPlan: undefined as number | undefined,
+  expiredAt: "" as string,
   user: {
     username: "",
     mobile: "",
@@ -301,6 +390,8 @@ watch(visible, async (val) => {
         auditStatus: row.auditStatus || "APPROVED",
         status: row.status || "ON",
         remark: row.remark || "",
+        subscriptionPlan: row.planId,
+        expiredAt: "",
         user: {
           username: "",
           mobile: "",
@@ -310,13 +401,33 @@ watch(visible, async (val) => {
         passwordConfirm: "",
       };
 
-      // 【缓行】租户用量与配额加载：后端 GetUsage 未实现
+      // 加载该租户的用量与配额对比数据
+      // 仅当存在真实租户 ID 时按需拉取，避免 id=0 触发 400
+      const rowId = data.value.row?.id;
+      if (rowId) {
+        try {
+          const res = await fetchTenantUsage({ id: rowId });
+          usageData.value = res ?? null;
+        } catch {
+          usageData.value = null;
+        }
+      } else {
+        usageData.value = null;
+      }
     } else {
       // 创建模式
       resetForm();
+      usageData.value = null;
     }
 
-    // 【缓行】套餐下拉选项加载：后端 Plan 域未实现
+    // 加载套餐下拉选项（订阅套餐）
+    try {
+      const res = await fetchListPlans(new PaginationQuery({ paging: { page: 1, pageSize: 100 } }));
+      planOptions.value = (res.items || []) as (Plan & { id?: number; name?: string })[];
+    } catch (err) {
+      console.error("Failed to load plan options:", err);
+      planOptions.value = [];
+    }
 
     // 填充完成后记录基线快照（回填不算脏）
     guard.syncBaseline();
@@ -335,6 +446,8 @@ const resetForm = () => {
     auditStatus: "APPROVED",
     status: "ON",
     remark: "",
+    subscriptionPlan: undefined,
+    expiredAt: "",
     user: {
       username: "",
       mobile: "",
@@ -407,7 +520,9 @@ async function createTenantWithAdminUser() {
       auditStatus: formData.value.auditStatus as any,
       status: formData.value.status as any,
       remark: formData.value.remark,
-      // 【缓行】planId/expiredAt：租户套餐域未实现
+      // proto Timestamp 只接受 RFC3339；Date 经 toJSON 序列化即为 ISO 串
+      expiredAt: formData.value.expiredAt || undefined,
+      planId: formData.value.subscriptionPlan || undefined,
     },
     user: formData.value.user as any,
     password: formData.value.password,
@@ -432,7 +547,9 @@ async function updateTenant() {
       auditStatus: formData.value.auditStatus,
       status: formData.value.status,
       remark: formData.value.remark,
-      // 【缓行】planId/expiredAt：租户套餐域未实现
+      planId: formData.value.subscriptionPlan,
+      // proto Timestamp 只接受 RFC3339；空串会触发 protojson 400
+      expiredAt: formData.value.expiredAt || undefined,
     },
   });
 

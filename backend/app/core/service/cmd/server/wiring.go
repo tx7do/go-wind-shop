@@ -49,12 +49,21 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	userTokenCache := data.NewUserTokenCache(ctx, redisClient)
 	authenticator := data.NewAuthenticator(ctx, authenticatorOption, userTokenCache)
+
+
 	entClient, cleanupEnt, err := data.NewEntClient(ctx)
 	if err != nil {
 		rollback()
 		return nil, nil, err
 	}
 	cleanups = append(cleanups, cleanupEnt)
+
+	// ── Plan 租户套餐域（移植自 go-wind-admin）──
+	planRepo := data.NewPlanRepo(ctx, entClient)
+	planModuleRepo := data.NewPlanModuleRepo(ctx, entClient)
+	planQuotaRepo := data.NewPlanQuotaRepo(ctx, entClient)
+	tenantUsageRepo := data.NewTenantUsageRepo(ctx, entClient, authenticator)
+
 
 	crypto := data.NewPasswordCrypto()
 	minIOClient := data.NewMinIoClient(ctx)
@@ -143,7 +152,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	taskService := service.NewTaskService(ctx, taskRepo, userRepo)
 	fileService := service.NewFileService(ctx, fileRepo, minIOClient)
 	languageService := service.NewLanguageService(ctx, languageRepo)
-	tenantService := service.NewTenantService(ctx, tenantRepo, userRepo, userCredentialRepo, roleRepo)
+	tenantService := service.NewTenantService(ctx, tenantRepo, tenantUsageRepo, userRepo, userCredentialRepo, roleRepo)
 	userService := service.NewUserService(ctx, userRepo, roleRepo, userCredentialRepo, positionRepo, orgUnitRepo, tenantRepo, membershipRepo)
 	roleService := service.NewRoleService(ctx, roleRepo, tenantRepo, userRoleRepo)
 	positionService := service.NewPositionService(ctx, positionRepo, orgUnitRepo)
@@ -202,6 +211,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	scriptRepo := data.NewScriptRepo(ctx, entClient)
 	scriptLogRepo := data.NewScriptLogRepo(ctx, entClient)
 
+
 	// ── AI 域（移植自 go-wind-cms）──
 	aiProviderRepo := data.NewAiProviderRepo(ctx, entClient)
 	aiConversationRepo := data.NewAiConversationRepo(ctx, entClient)
@@ -251,6 +261,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiQueryService := service.NewAiQueryService(ctx, aiProviderRepo, aiUsageLogRepo, entClient, internalMessageRepo, internalMessageService)
 	scriptRuntime := service.NewScriptRuntime(ctx, scriptRepo, redisClient, minIOClient, scriptLogRepo, aiProviderRepo, aiUsageLogRepo)
 	scriptService := service.NewScriptService(ctx, scriptRepo, scriptRuntime)
+	planService := service.NewPlanService(ctx, planRepo)
+	planModuleService := service.NewPlanModuleService(ctx, planModuleRepo)
+	planQuotaService := service.NewPlanQuotaService(ctx, planQuotaRepo)
 	scriptLogService := service.NewScriptLogService(ctx, scriptLogRepo)
 
 
@@ -279,6 +292,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		aiProviderService, aiChatService, aiConversationService, aiMessageService,
 		aiKnowledgeService, aiUsageLogService, aiQueryService,
 		scriptService, scriptLogService,
+		planService, planModuleService, planQuotaService,
 		userCredentialService,
 		taskService,
 		fileService,

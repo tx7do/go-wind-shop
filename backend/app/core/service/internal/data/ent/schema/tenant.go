@@ -4,6 +4,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
@@ -167,5 +168,14 @@ func (Tenant) Indexes() []ent.Index {
 
 		// 创建时间索引，用于租户列表的时间区间查询与分页
 		index.Fields("created_at").StorageKey("idx_sys_tenant_created_at"),
+	}
+}
+
+// Edges of the Tenant.
+func (Tenant) Edges() []ent.Edge {
+	return []ent.Edge{
+		edge.From("plan", Plan.Type).
+			Ref("tenants").
+			Unique(),
 	}
 }

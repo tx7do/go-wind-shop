@@ -62,4 +62,18 @@ service TenantService {
       get: "/admin/v1/tenants:exists"
     };
   }
+
+  rpc GetUsage (identity.service.v1.GetTenantUsageRequest) returns (identity.service.v1.TenantUsage) {
+    option (google.api.http) = {
+      get: "/admin/v1/tenants/{id}/usage"
+    };
+  }
+
+  // 清理租户数据
+  rpc CleanupData (identity.service.v1.CleanupTenantDataRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/tenants/{id}/cleanup"
+      body: "*"
+    };
+  }
 }

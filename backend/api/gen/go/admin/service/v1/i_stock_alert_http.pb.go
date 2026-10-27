@@ -34,12 +34,12 @@ type StockAlertServiceHTTPServer interface {
 
 func RegisterStockAlertServiceHTTPServer(s *http.Server, srv StockAlertServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/stock-alerts", _StockAlertService_List49_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/stock-alerts/{id}", _StockAlertService_Get49_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/stock-alerts/{id}", _StockAlertService_Update39_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/stock-alerts", _StockAlertService_List52_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/stock-alerts/{id}", _StockAlertService_Get51_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/stock-alerts/{id}", _StockAlertService_Update42_HTTP_Handler(srv))
 }
 
-func _StockAlertService_List49_HTTP_Handler(srv StockAlertServiceHTTPServer) func(ctx http.Context) error {
+func _StockAlertService_List52_HTTP_Handler(srv StockAlertServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -58,7 +58,7 @@ func _StockAlertService_List49_HTTP_Handler(srv StockAlertServiceHTTPServer) fun
 	}
 }
 
-func _StockAlertService_Get49_HTTP_Handler(srv StockAlertServiceHTTPServer) func(ctx http.Context) error {
+func _StockAlertService_Get51_HTTP_Handler(srv StockAlertServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetStockAlertRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -80,7 +80,7 @@ func _StockAlertService_Get49_HTTP_Handler(srv StockAlertServiceHTTPServer) func
 	}
 }
 
-func _StockAlertService_Update39_HTTP_Handler(srv StockAlertServiceHTTPServer) func(ctx http.Context) error {
+func _StockAlertService_Update42_HTTP_Handler(srv StockAlertServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateStockAlertRequest
 		if err := ctx.Bind(&in); err != nil {

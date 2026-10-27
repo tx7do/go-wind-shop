@@ -156,6 +156,9 @@ func NewRestServer(
 	redisCacheMonitorService *service.RedisCacheMonitorService,
 	scriptService *service.ScriptService,
 	scriptLogService *service.ScriptLogService,
+	planService *service.PlanService,
+	planModuleService *service.PlanModuleService,
+	planQuotaService *service.PlanQuotaService,
 	aiAgentService *service.AiAgentService,
 	aiProviderService *service.AiProviderService,
 	aiChatService *service.AiChatService,
@@ -267,6 +270,9 @@ func NewRestServer(
 	adminV1.RegisterRedisCacheMonitorServiceHTTPServer(srv, redisCacheMonitorService)
 	adminV1.RegisterScriptServiceHTTPServer(srv, scriptService)
 	adminV1.RegisterScriptLogServiceHTTPServer(srv, scriptLogService)
+	adminV1.RegisterPlanServiceHTTPServer(srv, planService)
+	adminV1.RegisterPlanModuleServiceHTTPServer(srv, planModuleService)
+	adminV1.RegisterPlanQuotaServiceHTTPServer(srv, planQuotaService)
 	adminV1.RegisterAiAgentServiceHTTPServer(srv, aiAgentService)
 	adminV1.RegisterAiProviderServiceHTTPServer(srv, aiProviderService)
 	adminV1.RegisterAiChatServiceHTTPServer(srv, aiChatService)

@@ -208,6 +208,7 @@ type Tenant struct {
 	UnsubscribeAt    *timestamppb.Timestamp `protobuf:"bytes,21,opt,name=unsubscribe_at,json=unsubscribeAt,proto3,oneof" json:"unsubscribe_at,omitempty"`                                        // 取消订阅时间（NULL表示未取消）
 	ExpiredAt        *timestamppb.Timestamp `protobuf:"bytes,22,opt,name=expired_at,json=expiredAt,proto3,oneof" json:"expired_at,omitempty"`                                                    // 租户有效期（NULL表示永久，过期后状态自动改为“过期”）
 	SubscriptionPlan *string                `protobuf:"bytes,23,opt,name=subscription_plan,json=subscriptionPlan,proto3,oneof" json:"subscription_plan,omitempty"`                               // 订阅套餐（如“企业版1年”“基础版3个月”）
+	PlanId           *uint32                `protobuf:"varint,24,opt,name=plan_id,json=planId,proto3,oneof" json:"plan_id,omitempty"`                                                            // 订阅套餐ID（引用套餐目录）
 	MemberCount      *int32                 `protobuf:"varint,30,opt,name=member_count,json=memberCount,proto3,oneof" json:"member_count,omitempty"`                                             // 成员数量
 	Status           *Tenant_Status         `protobuf:"varint,31,opt,name=status,proto3,enum=identity.service.v1.Tenant_Status,oneof" json:"status,omitempty"`                                   // 租户状态
 	AuditStatus      *Tenant_AuditStatus    `protobuf:"varint,32,opt,name=audit_status,json=auditStatus,proto3,enum=identity.service.v1.Tenant_AuditStatus,oneof" json:"audit_status,omitempty"` // 审核状态
@@ -347,6 +348,13 @@ func (x *Tenant) GetSubscriptionPlan() string {
 		return *x.SubscriptionPlan
 	}
 	return ""
+}
+
+func (x *Tenant) GetPlanId() uint32 {
+	if x != nil && x.PlanId != nil {
+		return *x.PlanId
+	}
+	return 0
 }
 
 func (x *Tenant) GetMemberCount() int32 {
@@ -1120,11 +1128,246 @@ func (x *AssignTenantAdminRequest) GetUserId() uint32 {
 	return 0
 }
 
+type GetTenantUsageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 租户ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTenantUsageRequest) Reset() {
+	*x = GetTenantUsageRequest{}
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[13]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTenantUsageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTenantUsageRequest) ProtoMessage() {}
+
+func (x *GetTenantUsageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[13]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTenantUsageRequest.ProtoReflect.Descriptor instead.
+func (*GetTenantUsageRequest) Descriptor() ([]byte, []int) {
+	return file_identity_service_v1_tenant_proto_rawDescGZIP(), []int{13}
+}
+
+func (x *GetTenantUsageRequest) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+// 配额用量项
+type QuotaUsage struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	QuotaType     PlanQuota_QuotaType    `protobuf:"varint,1,opt,name=quota_type,json=quotaType,proto3,enum=identity.service.v1.PlanQuota_QuotaType" json:"quota_type,omitempty"` // 配额类型
+	QuotaValue    uint64                 `protobuf:"varint,2,opt,name=quota_value,json=quotaValue,proto3" json:"quota_value,omitempty"`                                           // 配额上限值
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *QuotaUsage) Reset() {
+	*x = QuotaUsage{}
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *QuotaUsage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*QuotaUsage) ProtoMessage() {}
+
+func (x *QuotaUsage) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use QuotaUsage.ProtoReflect.Descriptor instead.
+func (*QuotaUsage) Descriptor() ([]byte, []int) {
+	return file_identity_service_v1_tenant_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *QuotaUsage) GetQuotaType() PlanQuota_QuotaType {
+	if x != nil {
+		return x.QuotaType
+	}
+	return PlanQuota_PLAN_QUOTA_TYPE_UNSPECIFIED
+}
+
+func (x *QuotaUsage) GetQuotaValue() uint64 {
+	if x != nil {
+		return x.QuotaValue
+	}
+	return 0
+}
+
+// 租户用量与配额
+type TenantUsage struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	TenantId         uint32                 `protobuf:"varint,1,opt,name=tenant_id,json=tenantId,proto3" json:"tenant_id,omitempty"`                           // 租户ID
+	UserCount        uint64                 `protobuf:"varint,2,opt,name=user_count,json=userCount,proto3" json:"user_count,omitempty"`                        // 当前用户数
+	StorageUsedBytes uint64                 `protobuf:"varint,3,opt,name=storage_used_bytes,json=storageUsedBytes,proto3" json:"storage_used_bytes,omitempty"` // 存储占用字节数
+	ApiCallCount     uint64                 `protobuf:"varint,4,opt,name=api_call_count,json=apiCallCount,proto3" json:"api_call_count,omitempty"`             // API 调用次数
+	PlanId           *uint32                `protobuf:"varint,5,opt,name=plan_id,json=planId,proto3,oneof" json:"plan_id,omitempty"`                           // 订阅套餐ID
+	PlanName         *string                `protobuf:"bytes,6,opt,name=plan_name,json=planName,proto3,oneof" json:"plan_name,omitempty"`                      // 订阅套餐名称
+	Quotas           []*QuotaUsage          `protobuf:"bytes,7,rep,name=quotas,proto3" json:"quotas,omitempty"`                                                // 配额上限列表
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *TenantUsage) Reset() {
+	*x = TenantUsage{}
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TenantUsage) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TenantUsage) ProtoMessage() {}
+
+func (x *TenantUsage) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TenantUsage.ProtoReflect.Descriptor instead.
+func (*TenantUsage) Descriptor() ([]byte, []int) {
+	return file_identity_service_v1_tenant_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *TenantUsage) GetTenantId() uint32 {
+	if x != nil {
+		return x.TenantId
+	}
+	return 0
+}
+
+func (x *TenantUsage) GetUserCount() uint64 {
+	if x != nil {
+		return x.UserCount
+	}
+	return 0
+}
+
+func (x *TenantUsage) GetStorageUsedBytes() uint64 {
+	if x != nil {
+		return x.StorageUsedBytes
+	}
+	return 0
+}
+
+func (x *TenantUsage) GetApiCallCount() uint64 {
+	if x != nil {
+		return x.ApiCallCount
+	}
+	return 0
+}
+
+func (x *TenantUsage) GetPlanId() uint32 {
+	if x != nil && x.PlanId != nil {
+		return *x.PlanId
+	}
+	return 0
+}
+
+func (x *TenantUsage) GetPlanName() string {
+	if x != nil && x.PlanName != nil {
+		return *x.PlanName
+	}
+	return ""
+}
+
+func (x *TenantUsage) GetQuotas() []*QuotaUsage {
+	if x != nil {
+		return x.Quotas
+	}
+	return nil
+}
+
+// 清理租户数据 - 请求
+type CleanupTenantDataRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"` // 租户ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CleanupTenantDataRequest) Reset() {
+	*x = CleanupTenantDataRequest{}
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CleanupTenantDataRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CleanupTenantDataRequest) ProtoMessage() {}
+
+func (x *CleanupTenantDataRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_identity_service_v1_tenant_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CleanupTenantDataRequest.ProtoReflect.Descriptor instead.
+func (*CleanupTenantDataRequest) Descriptor() ([]byte, []int) {
+	return file_identity_service_v1_tenant_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *CleanupTenantDataRequest) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
 var File_identity_service_v1_tenant_proto protoreflect.FileDescriptor
 
 const file_identity_service_v1_tenant_proto_rawDesc = "" +
 	"\n" +
-	" identity/service/v1/tenant.proto\x12\x13identity.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1eidentity/service/v1/user.proto\"\xcd\x12\n" +
+	" identity/service/v1/tenant.proto\x12\x13identity.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a google/protobuf/field_mask.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1eidentity/service/v1/user.proto\x1a\x1eidentity/service/v1/plan.proto\x1a$identity/service/v1/plan_quota.proto\"\xa5\x13\n" +
 	"\x06Tenant\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\x00R\x02id\x88\x01\x01\x12+\n" +
 	"\x04name\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f租户名称H\x01R\x04name\x88\x01\x01\x12+\n" +
@@ -1142,22 +1385,23 @@ const file_identity_service_v1_tenant_proto_rawDesc = "" +
 	"\x0eunsubscribe_at\x18\x15 \x01(\v2\x1a.google.protobuf.TimestampB\x18\xbaG\x15\x92\x02\x12取消订阅时间H\vR\runsubscribeAt\x88\x01\x01\x12\x95\x01\n" +
 	"\n" +
 	"expired_at\x18\x16 \x01(\v2\x1a.google.protobuf.TimestampBU\xbaGR\x92\x02O租户有效期（NULL表示永久，过期后状态自动改为“过期”）H\fR\texpiredAt\x88\x01\x01\x12v\n" +
-	"\x11subscription_plan\x18\x17 \x01(\tBD\xbaGA\x92\x02>订阅套餐（如“企业版1年”“基础版3个月”）H\rR\x10subscriptionPlan\x88\x01\x01\x12:\n" +
-	"\fmember_count\x18\x1e \x01(\x05B\x12\xbaG\x0f\x92\x02\f成员数量H\x0eR\vmemberCount\x88\x01\x01\x12S\n" +
-	"\x06status\x18\x1f \x01(\x0e2\".identity.service.v1.Tenant.StatusB\x12\xbaG\x0f\x92\x02\f租户状态H\x0fR\x06status\x88\x01\x01\x12c\n" +
-	"\faudit_status\x18  \x01(\x0e2'.identity.service.v1.Tenant.AuditStatusB\x12\xbaG\x0f\x92\x02\f审核状态H\x10R\vauditStatus\x88\x01\x01\x12;\n" +
+	"\x11subscription_plan\x18\x17 \x01(\tBD\xbaGA\x92\x02>订阅套餐（如“企业版1年”“基础版3个月”）H\rR\x10subscriptionPlan\x88\x01\x01\x12J\n" +
+	"\aplan_id\x18\x18 \x01(\rB,\xbaG)\x92\x02&订阅套餐ID（引用套餐目录）H\x0eR\x06planId\x88\x01\x01\x12:\n" +
+	"\fmember_count\x18\x1e \x01(\x05B\x12\xbaG\x0f\x92\x02\f成员数量H\x0fR\vmemberCount\x88\x01\x01\x12S\n" +
+	"\x06status\x18\x1f \x01(\x0e2\".identity.service.v1.Tenant.StatusB\x12\xbaG\x0f\x92\x02\f租户状态H\x10R\x06status\x88\x01\x01\x12c\n" +
+	"\faudit_status\x18  \x01(\x0e2'.identity.service.v1.Tenant.AuditStatusB\x12\xbaG\x0f\x92\x02\f审核状态H\x11R\vauditStatus\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x11R\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\x12R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x12R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x13R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x13R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x14R\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x14R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x15R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x15R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x16R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x16R\tdeletedAt\x88\x01\x01\"2\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x17R\tdeletedAt\x88\x01\x01\"2\n" +
 	"\x06Status\x12\a\n" +
 	"\x03OFF\x10\x00\x12\x06\n" +
 	"\x02ON\x10\x01\x12\v\n" +
@@ -1190,7 +1434,9 @@ const file_identity_service_v1_tenant_proto_rawDesc = "" +
 	"\x10_subscription_atB\x11\n" +
 	"\x0f_unsubscribe_atB\r\n" +
 	"\v_expired_atB\x14\n" +
-	"\x12_subscription_planB\x0f\n" +
+	"\x12_subscription_planB\n" +
+	"\n" +
+	"\b_plan_idB\x0f\n" +
 	"\r_member_countB\t\n" +
 	"\a_statusB\x0f\n" +
 	"\r_audit_statusB\r\n" +
@@ -1248,7 +1494,30 @@ const file_identity_service_v1_tenant_proto_rawDesc = "" +
 	"\x05count\x18\x01 \x01(\x04R\x05count\"p\n" +
 	"\x18AssignTenantAdminRequest\x12+\n" +
 	"\ttenant_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDR\btenantId\x12'\n" +
-	"\auser_id\x18\x02 \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDR\x06userId2\xbe\x05\n" +
+	"\auser_id\x18\x02 \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDR\x06userId\"9\n" +
+	"\x15GetTenantUsageRequest\x12 \n" +
+	"\x02id\x18\x01 \x01(\rB\x10\xbaG\r\x18\x01\x92\x02\b租户IDR\x02id\"\xa1\x01\n" +
+	"\n" +
+	"QuotaUsage\x12[\n" +
+	"\n" +
+	"quota_type\x18\x01 \x01(\x0e2(.identity.service.v1.PlanQuota.QuotaTypeB\x12\xbaG\x0f\x92\x02\f配额类型R\tquotaType\x126\n" +
+	"\vquota_value\x18\x02 \x01(\x04B\x15\xbaG\x12\x92\x02\x0f配额上限值R\n" +
+	"quotaValue\"\xd6\x03\n" +
+	"\vTenantUsage\x12+\n" +
+	"\ttenant_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDR\btenantId\x124\n" +
+	"\n" +
+	"user_count\x18\x02 \x01(\x04B\x15\xbaG\x12\x92\x02\x0f当前用户数R\tuserCount\x12I\n" +
+	"\x12storage_used_bytes\x18\x03 \x01(\x04B\x1b\xbaG\x18\x92\x02\x15存储占用字节数R\x10storageUsedBytes\x12<\n" +
+	"\x0eapi_call_count\x18\x04 \x01(\x04B\x16\xbaG\x13\x92\x02\x10API 调用次数R\fapiCallCount\x122\n" +
+	"\aplan_id\x18\x05 \x01(\rB\x14\xbaG\x11\x92\x02\x0e订阅套餐IDH\x00R\x06planId\x88\x01\x01\x12:\n" +
+	"\tplan_name\x18\x06 \x01(\tB\x18\xbaG\x15\x92\x02\x12订阅套餐名称H\x01R\bplanName\x88\x01\x01\x12Q\n" +
+	"\x06quotas\x18\a \x03(\v2\x1f.identity.service.v1.QuotaUsageB\x18\xbaG\x15\x92\x02\x12配额上限列表R\x06quotasB\n" +
+	"\n" +
+	"\b_plan_idB\f\n" +
+	"\n" +
+	"_plan_name\"<\n" +
+	"\x18CleanupTenantDataRequest\x12 \n" +
+	"\x02id\x18\x01 \x01(\rB\x10\xbaG\r\x18\x01\x92\x02\b租户IDR\x02id2\xf2\x06\n" +
 	"\rTenantService\x12L\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.identity.service.v1.ListTenantResponse\"\x00\x12N\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.identity.service.v1.CountTenantResponse\"\x00\x12K\n" +
@@ -1257,7 +1526,9 @@ const file_identity_service_v1_tenant_proto_rawDesc = "" +
 	"\x06Update\x12(.identity.service.v1.UpdateTenantRequest\x1a\x16.google.protobuf.Empty\"\x00\x12L\n" +
 	"\x06Delete\x12(.identity.service.v1.DeleteTenantRequest\x1a\x16.google.protobuf.Empty\"\x00\x12e\n" +
 	"\fTenantExists\x12(.identity.service.v1.TenantExistsRequest\x1a).identity.service.v1.TenantExistsResponse\"\x00\x12l\n" +
-	"\x19CreateTenantWithAdminUser\x125.identity.service.v1.CreateTenantWithAdminUserRequest\x1a\x16.google.protobuf.Empty\"\x00B\xcc\x01\n" +
+	"\x19CreateTenantWithAdminUser\x125.identity.service.v1.CreateTenantWithAdminUserRequest\x1a\x16.google.protobuf.Empty\"\x00\x12Z\n" +
+	"\bGetUsage\x12*.identity.service.v1.GetTenantUsageRequest\x1a .identity.service.v1.TenantUsage\"\x00\x12V\n" +
+	"\vCleanupData\x12-.identity.service.v1.CleanupTenantDataRequest\x1a\x16.google.protobuf.Empty\"\x00B\xcc\x01\n" +
 	"\x17com.identity.service.v1B\vTenantProtoP\x01Z6go-wind-shop/api/gen/go/identity/service/v1;identitypb\xa2\x02\x03ISX\xaa\x02\x13Identity.Service.V1\xca\x02\x13Identity\\Service\\V1\xe2\x02\x1fIdentity\\Service\\V1\\GPBMetadata\xea\x02\x15Identity::Service::V1b\x06proto3"
 
 var (
@@ -1273,7 +1544,7 @@ func file_identity_service_v1_tenant_proto_rawDescGZIP() []byte {
 }
 
 var file_identity_service_v1_tenant_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_identity_service_v1_tenant_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_identity_service_v1_tenant_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_identity_service_v1_tenant_proto_goTypes = []any{
 	(Tenant_Status)(0),                       // 0: identity.service.v1.Tenant.Status
 	(Tenant_Type)(0),                         // 1: identity.service.v1.Tenant.Type
@@ -1291,51 +1562,62 @@ var file_identity_service_v1_tenant_proto_goTypes = []any{
 	(*CreateTenantWithAdminUserRequest)(nil), // 13: identity.service.v1.CreateTenantWithAdminUserRequest
 	(*CountTenantResponse)(nil),              // 14: identity.service.v1.CountTenantResponse
 	(*AssignTenantAdminRequest)(nil),         // 15: identity.service.v1.AssignTenantAdminRequest
-	(*timestamppb.Timestamp)(nil),            // 16: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),            // 17: google.protobuf.FieldMask
-	(*User)(nil),                             // 18: identity.service.v1.User
-	(*v1.PagingRequest)(nil),                 // 19: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                    // 20: google.protobuf.Empty
+	(*GetTenantUsageRequest)(nil),            // 16: identity.service.v1.GetTenantUsageRequest
+	(*QuotaUsage)(nil),                       // 17: identity.service.v1.QuotaUsage
+	(*TenantUsage)(nil),                      // 18: identity.service.v1.TenantUsage
+	(*CleanupTenantDataRequest)(nil),         // 19: identity.service.v1.CleanupTenantDataRequest
+	(*timestamppb.Timestamp)(nil),            // 20: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),            // 21: google.protobuf.FieldMask
+	(*User)(nil),                             // 22: identity.service.v1.User
+	(PlanQuota_QuotaType)(0),                 // 23: identity.service.v1.PlanQuota.QuotaType
+	(*v1.PagingRequest)(nil),                 // 24: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                    // 25: google.protobuf.Empty
 }
 var file_identity_service_v1_tenant_proto_depIdxs = []int32{
 	1,  // 0: identity.service.v1.Tenant.type:type_name -> identity.service.v1.Tenant.Type
-	16, // 1: identity.service.v1.Tenant.subscription_at:type_name -> google.protobuf.Timestamp
-	16, // 2: identity.service.v1.Tenant.unsubscribe_at:type_name -> google.protobuf.Timestamp
-	16, // 3: identity.service.v1.Tenant.expired_at:type_name -> google.protobuf.Timestamp
+	20, // 1: identity.service.v1.Tenant.subscription_at:type_name -> google.protobuf.Timestamp
+	20, // 2: identity.service.v1.Tenant.unsubscribe_at:type_name -> google.protobuf.Timestamp
+	20, // 3: identity.service.v1.Tenant.expired_at:type_name -> google.protobuf.Timestamp
 	0,  // 4: identity.service.v1.Tenant.status:type_name -> identity.service.v1.Tenant.Status
 	2,  // 5: identity.service.v1.Tenant.audit_status:type_name -> identity.service.v1.Tenant.AuditStatus
-	16, // 6: identity.service.v1.Tenant.created_at:type_name -> google.protobuf.Timestamp
-	16, // 7: identity.service.v1.Tenant.updated_at:type_name -> google.protobuf.Timestamp
-	16, // 8: identity.service.v1.Tenant.deleted_at:type_name -> google.protobuf.Timestamp
+	20, // 6: identity.service.v1.Tenant.created_at:type_name -> google.protobuf.Timestamp
+	20, // 7: identity.service.v1.Tenant.updated_at:type_name -> google.protobuf.Timestamp
+	20, // 8: identity.service.v1.Tenant.deleted_at:type_name -> google.protobuf.Timestamp
 	3,  // 9: identity.service.v1.ListTenantResponse.items:type_name -> identity.service.v1.Tenant
-	17, // 10: identity.service.v1.GetTenantRequest.view_mask:type_name -> google.protobuf.FieldMask
+	21, // 10: identity.service.v1.GetTenantRequest.view_mask:type_name -> google.protobuf.FieldMask
 	3,  // 11: identity.service.v1.CreateTenantRequest.data:type_name -> identity.service.v1.Tenant
 	3,  // 12: identity.service.v1.UpdateTenantRequest.data:type_name -> identity.service.v1.Tenant
-	17, // 13: identity.service.v1.UpdateTenantRequest.update_mask:type_name -> google.protobuf.FieldMask
+	21, // 13: identity.service.v1.UpdateTenantRequest.update_mask:type_name -> google.protobuf.FieldMask
 	3,  // 14: identity.service.v1.BatchCreateTenantsRequest.items:type_name -> identity.service.v1.Tenant
 	3,  // 15: identity.service.v1.CreateTenantWithAdminUserRequest.tenant:type_name -> identity.service.v1.Tenant
-	18, // 16: identity.service.v1.CreateTenantWithAdminUserRequest.user:type_name -> identity.service.v1.User
-	19, // 17: identity.service.v1.TenantService.List:input_type -> pagination.PagingRequest
-	19, // 18: identity.service.v1.TenantService.Count:input_type -> pagination.PagingRequest
-	5,  // 19: identity.service.v1.TenantService.Get:input_type -> identity.service.v1.GetTenantRequest
-	6,  // 20: identity.service.v1.TenantService.Create:input_type -> identity.service.v1.CreateTenantRequest
-	7,  // 21: identity.service.v1.TenantService.Update:input_type -> identity.service.v1.UpdateTenantRequest
-	8,  // 22: identity.service.v1.TenantService.Delete:input_type -> identity.service.v1.DeleteTenantRequest
-	11, // 23: identity.service.v1.TenantService.TenantExists:input_type -> identity.service.v1.TenantExistsRequest
-	13, // 24: identity.service.v1.TenantService.CreateTenantWithAdminUser:input_type -> identity.service.v1.CreateTenantWithAdminUserRequest
-	4,  // 25: identity.service.v1.TenantService.List:output_type -> identity.service.v1.ListTenantResponse
-	14, // 26: identity.service.v1.TenantService.Count:output_type -> identity.service.v1.CountTenantResponse
-	3,  // 27: identity.service.v1.TenantService.Get:output_type -> identity.service.v1.Tenant
-	3,  // 28: identity.service.v1.TenantService.Create:output_type -> identity.service.v1.Tenant
-	20, // 29: identity.service.v1.TenantService.Update:output_type -> google.protobuf.Empty
-	20, // 30: identity.service.v1.TenantService.Delete:output_type -> google.protobuf.Empty
-	12, // 31: identity.service.v1.TenantService.TenantExists:output_type -> identity.service.v1.TenantExistsResponse
-	20, // 32: identity.service.v1.TenantService.CreateTenantWithAdminUser:output_type -> google.protobuf.Empty
-	25, // [25:33] is the sub-list for method output_type
-	17, // [17:25] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	22, // 16: identity.service.v1.CreateTenantWithAdminUserRequest.user:type_name -> identity.service.v1.User
+	23, // 17: identity.service.v1.QuotaUsage.quota_type:type_name -> identity.service.v1.PlanQuota.QuotaType
+	17, // 18: identity.service.v1.TenantUsage.quotas:type_name -> identity.service.v1.QuotaUsage
+	24, // 19: identity.service.v1.TenantService.List:input_type -> pagination.PagingRequest
+	24, // 20: identity.service.v1.TenantService.Count:input_type -> pagination.PagingRequest
+	5,  // 21: identity.service.v1.TenantService.Get:input_type -> identity.service.v1.GetTenantRequest
+	6,  // 22: identity.service.v1.TenantService.Create:input_type -> identity.service.v1.CreateTenantRequest
+	7,  // 23: identity.service.v1.TenantService.Update:input_type -> identity.service.v1.UpdateTenantRequest
+	8,  // 24: identity.service.v1.TenantService.Delete:input_type -> identity.service.v1.DeleteTenantRequest
+	11, // 25: identity.service.v1.TenantService.TenantExists:input_type -> identity.service.v1.TenantExistsRequest
+	13, // 26: identity.service.v1.TenantService.CreateTenantWithAdminUser:input_type -> identity.service.v1.CreateTenantWithAdminUserRequest
+	16, // 27: identity.service.v1.TenantService.GetUsage:input_type -> identity.service.v1.GetTenantUsageRequest
+	19, // 28: identity.service.v1.TenantService.CleanupData:input_type -> identity.service.v1.CleanupTenantDataRequest
+	4,  // 29: identity.service.v1.TenantService.List:output_type -> identity.service.v1.ListTenantResponse
+	14, // 30: identity.service.v1.TenantService.Count:output_type -> identity.service.v1.CountTenantResponse
+	3,  // 31: identity.service.v1.TenantService.Get:output_type -> identity.service.v1.Tenant
+	3,  // 32: identity.service.v1.TenantService.Create:output_type -> identity.service.v1.Tenant
+	25, // 33: identity.service.v1.TenantService.Update:output_type -> google.protobuf.Empty
+	25, // 34: identity.service.v1.TenantService.Delete:output_type -> google.protobuf.Empty
+	12, // 35: identity.service.v1.TenantService.TenantExists:output_type -> identity.service.v1.TenantExistsResponse
+	25, // 36: identity.service.v1.TenantService.CreateTenantWithAdminUser:output_type -> google.protobuf.Empty
+	18, // 37: identity.service.v1.TenantService.GetUsage:output_type -> identity.service.v1.TenantUsage
+	25, // 38: identity.service.v1.TenantService.CleanupData:output_type -> google.protobuf.Empty
+	29, // [29:39] is the sub-list for method output_type
+	19, // [19:29] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_identity_service_v1_tenant_proto_init() }
@@ -1344,6 +1626,8 @@ func file_identity_service_v1_tenant_proto_init() {
 		return
 	}
 	file_identity_service_v1_user_proto_init()
+	file_identity_service_v1_plan_proto_init()
+	file_identity_service_v1_plan_quota_proto_init()
 	file_identity_service_v1_tenant_proto_msgTypes[0].OneofWrappers = []any{}
 	file_identity_service_v1_tenant_proto_msgTypes[2].OneofWrappers = []any{
 		(*GetTenantRequest_Id)(nil),
@@ -1356,13 +1640,14 @@ func file_identity_service_v1_tenant_proto_init() {
 		(*DeleteTenantRequest_Code)(nil),
 	}
 	file_identity_service_v1_tenant_proto_msgTypes[10].OneofWrappers = []any{}
+	file_identity_service_v1_tenant_proto_msgTypes[15].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_identity_service_v1_tenant_proto_rawDesc), len(file_identity_service_v1_tenant_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   13,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

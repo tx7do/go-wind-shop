@@ -82,6 +82,9 @@ func NewGrpcServer(
 	aiQueryService *service.AiQueryService,
 	scriptService *service.ScriptService,
 	scriptLogService *service.ScriptLogService,
+	planService *service.PlanService,
+	planModuleService *service.PlanModuleService,
+	planQuotaService *service.PlanQuotaService,
 	userCredentialService *service.UserCredentialService,
 
 	taskService *service.TaskService,
@@ -247,6 +250,9 @@ func NewGrpcServer(
 	aiV1.RegisterAiQueryServiceServer(srv, aiQueryService)
 	scriptV1.RegisterScriptServiceServer(srv, scriptService)
 	scriptV1.RegisterScriptLogServiceServer(srv, scriptLogService)
+	identityV1.RegisterPlanServiceServer(srv, planService)
+	identityV1.RegisterPlanModuleServiceServer(srv, planModuleService)
+	identityV1.RegisterPlanQuotaServiceServer(srv, planQuotaService)
 
 	// register:grpc-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 
