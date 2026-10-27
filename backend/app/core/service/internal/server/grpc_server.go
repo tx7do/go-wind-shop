@@ -23,6 +23,12 @@ import (
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	invoiceV1 "go-wind-shop/api/gen/go/invoice/service/v1"
 	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
+	configV1 "go-wind-shop/api/gen/go/config/service/v1"
+	monitorAlertV1 "go-wind-shop/api/gen/go/monitor_alert/service/v1"
+	onlineSessionV1 "go-wind-shop/api/gen/go/online_session/service/v1"
+	accessKeyV1 "go-wind-shop/api/gen/go/access_key/service/v1"
+	serverMonitorV1 "go-wind-shop/api/gen/go/server_monitor/service/v1"
+	redisCacheV1 "go-wind-shop/api/gen/go/redis_cache/service/v1"
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
@@ -55,6 +61,14 @@ func NewGrpcServer(
 	notificationRuleService *service.NotificationRuleService,
 	notificationTemplateService *service.NotificationTemplateService,
 	notificationPreferenceService *service.NotificationPreferenceService,
+	configService *service.ConfigService,
+	dictTypeService *service.DictTypeService,
+	dictEntryService *service.DictEntryService,
+	monitorAlertService *service.MonitorAlertService,
+	onlineSessionService *service.OnlineSessionService,
+	accessKeyService *service.AccessKeyService,
+	serverMonitorService *service.ServerMonitorService,
+	redisCacheMonitorService *service.RedisCacheMonitorService,
 	userCredentialService *service.UserCredentialService,
 
 	taskService *service.TaskService,
@@ -202,6 +216,14 @@ func NewGrpcServer(
 	notificationV1.RegisterNotificationRuleServiceServer(srv, notificationRuleService)
 	notificationV1.RegisterNotificationTemplateServiceServer(srv, notificationTemplateService)
 	notificationV1.RegisterNotificationPreferenceServiceServer(srv, notificationPreferenceService)
+	configV1.RegisterConfigServiceServer(srv, configService)
+	dictV1.RegisterDictTypeServiceServer(srv, dictTypeService)
+	dictV1.RegisterDictEntryServiceServer(srv, dictEntryService)
+	monitorAlertV1.RegisterMonitorAlertServiceServer(srv, monitorAlertService)
+	onlineSessionV1.RegisterOnlineSessionServiceServer(srv, onlineSessionService)
+	accessKeyV1.RegisterAccessKeyServiceServer(srv, accessKeyService)
+	serverMonitorV1.RegisterServerMonitorServiceServer(srv, serverMonitorService)
+	redisCacheV1.RegisterRedisCacheMonitorServiceServer(srv, redisCacheMonitorService)
 
 	// register:grpc-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 

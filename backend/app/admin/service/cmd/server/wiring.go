@@ -105,6 +105,14 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationRuleServiceClient := data.NewNotificationRuleServiceClient(ctx, discovery)
 	notificationTemplateServiceClient := data.NewNotificationTemplateServiceClient(ctx, discovery)
 	notificationPreferenceServiceClient := data.NewNotificationPreferenceServiceClient(ctx, discovery)
+	dictTypeServiceClient := data.NewDictTypeServiceClient(ctx, discovery)
+	dictEntryServiceClient := data.NewDictEntryServiceClient(ctx, discovery)
+	configServiceClient := data.NewConfigServiceClient(ctx, discovery)
+	accessKeyServiceClient := data.NewAccessKeyServiceClient(ctx, discovery)
+	onlineSessionServiceClient := data.NewOnlineSessionServiceClient(ctx, discovery)
+	monitorAlertServiceClient := data.NewMonitorAlertServiceClient(ctx, discovery)
+	serverMonitorServiceClient := data.NewServerMonitorServiceClient(ctx, discovery)
+	redisCacheMonitorServiceClient := data.NewRedisCacheMonitorServiceClient(ctx, discovery)
 	dataAccessAuditLogServiceClient := data.NewDataAccessAuditLogServiceClient(ctx, discovery)
 	policyEvaluationLogServiceClient := data.NewPolicyEvaluationLogServiceClient(ctx, discovery)
 	permissionAuditLogServiceClient := data.NewPermissionAuditLogServiceClient(ctx, discovery)
@@ -163,6 +171,14 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationRuleService := service.NewNotificationRuleService(ctx, notificationRuleServiceClient)
 	notificationTemplateService := service.NewNotificationTemplateService(ctx, notificationTemplateServiceClient)
 	notificationPreferenceService := service.NewNotificationPreferenceService(ctx, notificationPreferenceServiceClient)
+	dictTypeService := service.NewDictTypeService(ctx, dictTypeServiceClient)
+	dictEntryService := service.NewDictEntryService(ctx, dictEntryServiceClient)
+	configService := service.NewConfigService(ctx, configServiceClient)
+	accessKeyService := service.NewAccessKeyService(ctx, accessKeyServiceClient)
+	onlineSessionService := service.NewOnlineSessionService(ctx, onlineSessionServiceClient)
+	monitorAlertService := service.NewMonitorAlertService(ctx, monitorAlertServiceClient)
+	serverMonitorService := service.NewServerMonitorService(ctx, serverMonitorServiceClient)
+	redisCacheMonitorService := service.NewRedisCacheMonitorService(ctx, redisCacheMonitorServiceClient)
 	apiAuditLogService := service.NewApiAuditLogService(ctx, apiAuditLogServiceClient, apiServiceClient)
 	dataAccessAuditLogService := service.NewDataAccessAuditLogService(ctx, dataAccessAuditLogServiceClient)
 	loginAuditLogService := service.NewLoginAuditLogService(ctx, loginAuditLogServiceClient)
@@ -225,6 +241,14 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		notificationRuleService,
 		notificationTemplateService,
 		notificationPreferenceService,
+		dictTypeService,
+		dictEntryService,
+		configService,
+		accessKeyService,
+		onlineSessionService,
+		monitorAlertService,
+		serverMonitorService,
+		redisCacheMonitorService,
 		apiAuditLogService,
 		dataAccessAuditLogService,
 		loginAuditLogService,

@@ -64,13 +64,13 @@ type BrandServiceHTTPServer interface {
 
 func RegisterBrandServiceHTTPServer(s *http.Server, srv BrandServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/brands", _BrandService_List2_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/brands", _BrandService_List3_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/brands/count", _BrandService_Count0_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/brands/{id}", _BrandService_Get2_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/brands", _BrandService_Create1_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/brands/{id}", _BrandService_Get3_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/brands", _BrandService_Create2_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/brands/batch", _BrandService_BatchCreate0_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/brands/{id}", _BrandService_Update1_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/brands", _BrandService_Delete1_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/brands/{id}", _BrandService_Update2_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/brands", _BrandService_Delete2_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/brands/{brand_id}/translations/{language_code}", _BrandService_TranslationExists0_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/brands/{id}/translations", _BrandService_GetTranslation0_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/brands/translations", _BrandService_CreateTranslation0_HTTP_Handler(srv))
@@ -78,7 +78,7 @@ func RegisterBrandServiceHTTPServer(s *http.Server, srv BrandServiceHTTPServer) 
 	r.DELETE("/admin/v1/mall/brands/{id}/translations", _BrandService_DeleteTranslation0_HTTP_Handler(srv))
 }
 
-func _BrandService_List2_HTTP_Handler(srv BrandServiceHTTPServer) func(ctx http.Context) error {
+func _BrandService_List3_HTTP_Handler(srv BrandServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -116,7 +116,7 @@ func _BrandService_Count0_HTTP_Handler(srv BrandServiceHTTPServer) func(ctx http
 	}
 }
 
-func _BrandService_Get2_HTTP_Handler(srv BrandServiceHTTPServer) func(ctx http.Context) error {
+func _BrandService_Get3_HTTP_Handler(srv BrandServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetBrandRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -138,7 +138,7 @@ func _BrandService_Get2_HTTP_Handler(srv BrandServiceHTTPServer) func(ctx http.C
 	}
 }
 
-func _BrandService_Create1_HTTP_Handler(srv BrandServiceHTTPServer) func(ctx http.Context) error {
+func _BrandService_Create2_HTTP_Handler(srv BrandServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateBrandRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -182,7 +182,7 @@ func _BrandService_BatchCreate0_HTTP_Handler(srv BrandServiceHTTPServer) func(ct
 	}
 }
 
-func _BrandService_Update1_HTTP_Handler(srv BrandServiceHTTPServer) func(ctx http.Context) error {
+func _BrandService_Update2_HTTP_Handler(srv BrandServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateBrandRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -207,7 +207,7 @@ func _BrandService_Update1_HTTP_Handler(srv BrandServiceHTTPServer) func(ctx htt
 	}
 }
 
-func _BrandService_Delete1_HTTP_Handler(srv BrandServiceHTTPServer) func(ctx http.Context) error {
+func _BrandService_Delete2_HTTP_Handler(srv BrandServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteBrandRequest
 		if err := ctx.BindQuery(&in); err != nil {

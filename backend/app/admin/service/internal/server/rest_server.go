@@ -144,6 +144,14 @@ func NewRestServer(
 	notificationRuleService *service.NotificationRuleService,
 	notificationTemplateService *service.NotificationTemplateService,
 	notificationPreferenceService *service.NotificationPreferenceService,
+	dictTypeService *service.DictTypeService,
+	dictEntryService *service.DictEntryService,
+	configService *service.ConfigService,
+	accessKeyService *service.AccessKeyService,
+	onlineSessionService *service.OnlineSessionService,
+	monitorAlertService *service.MonitorAlertService,
+	serverMonitorService *service.ServerMonitorService,
+	redisCacheMonitorService *service.RedisCacheMonitorService,
 
 	apiAuditLogService *service.ApiAuditLogService,
 	dataAccessAuditLogService *service.DataAccessAuditLogService,
@@ -228,6 +236,14 @@ func NewRestServer(
 	adminV1.RegisterNotificationRuleServiceHTTPServer(srv, notificationRuleService)
 	adminV1.RegisterNotificationTemplateServiceHTTPServer(srv, notificationTemplateService)
 	adminV1.RegisterNotificationPreferenceServiceHTTPServer(srv, notificationPreferenceService)
+	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
+	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)
+	adminV1.RegisterConfigServiceHTTPServer(srv, configService)
+	adminV1.RegisterAccessKeyServiceHTTPServer(srv, accessKeyService)
+	adminV1.RegisterOnlineSessionServiceHTTPServer(srv, onlineSessionService)
+	adminV1.RegisterMonitorAlertServiceHTTPServer(srv, monitorAlertService)
+	adminV1.RegisterServerMonitorServiceHTTPServer(srv, serverMonitorService)
+	adminV1.RegisterRedisCacheMonitorServiceHTTPServer(srv, redisCacheMonitorService)
 
 	// 注册文件传输服务，用于处理文件上传下载等功能
 	// TODO 它不能够使用代码生成器生成的Handler，需要手动注册。代码生成器生成的Handler无法处理文件上传下载的请求。

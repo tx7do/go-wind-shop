@@ -125,6 +125,441 @@ export type AdminErrorReason =
   | 'USER_NOT_FOUND'
   // 506
   | 'VARIANT_ALSO_NEGOTIATES';
+// OpenAPI 访问凭证（AK/SK）管理 — BFF
+export interface AccessKeyService {
+  // 分页查询访问凭证列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<access_keyservicev1_ListAccessKeyResponse>;
+  // 查询访问凭证详情
+  Get(
+    request: access_keyservicev1_GetAccessKeyRequest,
+  ): Promise<access_keyservicev1_AccessKey>;
+  // 创建访问凭证（响应中的 secret 仅本次明文返回，服务端只存 SHA-256 摘要）
+  Create(
+    request: access_keyservicev1_CreateAccessKeyRequest,
+  ): Promise<access_keyservicev1_CreateAccessKeyResponse>;
+  // 更新访问凭证（名称/状态/过期时间）
+  Update(
+    request: access_keyservicev1_UpdateAccessKeyRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除访问凭证
+  Delete(
+    request: access_keyservicev1_DeleteAccessKeyRequest,
+  ): Promise<wellKnownEmpty>;
+  // 重置密钥：生成新 Secret（响应明文返回一次）
+  ResetSecret(
+    request: access_keyservicev1_ResetAccessKeySecretRequest,
+  ): Promise<access_keyservicev1_CreateAccessKeyResponse>;
+  // 令牌交换（机器对机器）：AK/SK 换短期 JWT。免鉴权端点——本身即是认证。
+  IssueToken(
+    request: access_keyservicev1_IssueTokenRequest,
+  ): Promise<access_keyservicev1_IssueTokenResponse>;
+}
+
+export function createAccessKeyServiceClient(
+  transport: ClientTransport,
+): AccessKeyService {
+  return {
+    List(request) {
+      const path = `/admin/v1/access-keys`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AccessKeyService',
+        method: 'List',
+      }) as Promise<access_keyservicev1_ListAccessKeyResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/access-keys/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.accessKey) {
+        queryParams.push(
+          `accessKey=${encodeURIComponent(request.accessKey.toString())}`,
+        );
+      }
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'AccessKeyService',
+        method: 'Get',
+      }) as Promise<access_keyservicev1_AccessKey>;
+    },
+    Create(request) {
+      const path = `/admin/v1/access-keys`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AccessKeyService',
+        method: 'Create',
+      }) as Promise<access_keyservicev1_CreateAccessKeyResponse>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/access-keys/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'AccessKeyService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/access-keys/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'AccessKeyService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    ResetSecret(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/access-keys/${request.id}/secret`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'AccessKeyService',
+        method: 'ResetSecret',
+      }) as Promise<access_keyservicev1_CreateAccessKeyResponse>;
+    },
+    IssueToken(request) {
+      const path = `/admin/v1/access-keys/token`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AccessKeyService',
+        method: 'IssueToken',
+      }) as Promise<access_keyservicev1_IssueTokenResponse>;
+    },
+  };
+}
+// ------------------------------
+// 分页通用请求
+// ------------------------------
+export type pagination_PagingRequest = {
+  // 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+  fieldMask?: wellKnownFieldMask;
+  // Google AIP规范字符串过滤条件
+  filter?: string;
+  // 复杂过滤表达式（优先使用）
+  filterExpr?: pagination_FilterExpr;
+  // 最多返回的记录数（默认10，建议设置上限如100）
+  limit?: number;
+  // 是否不分页，如果为true，则page和pageSize参数无效。
+  noPaging?: boolean;
+  // 跳过的记录数（从0开始，默认0）
+  offset?: number;
+  // 排序条件
+  orderBy?: string;
+  // 当前页码（从1开始，默认1）
+  page?: number;
+  // 每页条数（默认10，建议设置上限如100）
+  pageSize?: number;
+  // JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+  query?: string;
+  // 排序规则
+  sorting: pagination_Sorting[] | undefined;
+  // 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+  token?: string;
+};
+
+// 过滤表达式
+export type pagination_FilterExpr = {
+  // 条件列表
+  conditions: pagination_FilterCondition[] | undefined;
+  // 子表达式列表
+  groups: pagination_FilterExpr[] | undefined;
+  // 过滤表达式类型
+  type: pagination_ExprType | undefined;
+};
+
+// 过滤表达式类型
+export type pagination_ExprType =
+  | 'AND'
+  | 'EXPR_TYPE_UNSPECIFIED'
+  | 'OR';
+// 过滤条件
+export type pagination_FilterCondition = {
+  // 日期时间部分（可选，仅在字段为日期时间类型时使用）
+  datePart?: pagination_DatePart;
+  // 过滤字段名
+  field: string | undefined;
+  // 当字段为 JSON/JSONB 类型时，可指定要抽取的子路径（例如: "meta.user.name" 或 JSONPath）
+  // 服务端应把此路径用于 JSON_EXTRACT / -> 操作，再对抽取结果应用 op。
+  jsonPath?: string;
+  // 当需要使用非字符串类型的比较值（对象/数组/数字/布尔）时使用此字段，
+  // 使用 google.protobuf.Value 能表达任意 JSON 值。
+  jsonValue?: wellKnownValue;
+  // 过滤操作符
+  op: pagination_Operator | undefined;
+  // 过滤值（单值）
+  value?: string;
+  // 过滤值（多值，如IN操作符）
+  values: string[] | undefined;
+};
+
+// 操作符枚举
+export type pagination_Operator =
+  | 'ARRAY_CONTAINS'
+  // 范围与正则
+  | 'BETWEEN'
+  // 语义化的字符串操作
+  | 'CONTAINS'
+  | 'ENDS_WITH'
+  // 基本比较
+  | 'EQ'
+  | 'EXACT'
+  | 'EXISTS'
+  | 'GT'
+  | 'GTE'
+  | 'ICONTAINS'
+  | 'IENDS_WITH'
+  | 'IEXACT'
+  | 'ILIKE'
+  // 集合操作
+  | 'IN'
+  | 'IREGEXP'
+  | 'IS_NOT_NULL'
+  // 空值判断
+  | 'IS_NULL'
+  | 'ISTARTS_WITH'
+  // JSON / 数组 / 集合相关（按需在服务端映射为具体 DB 运算）
+  | 'JSON_CONTAINS'
+  // 模糊 / 大小写不敏感模糊 / 非模糊
+  | 'LIKE'
+  | 'LT'
+  | 'LTE'
+  | 'NEQ'
+  | 'NIN'
+  | 'NOT_LIKE'
+  // 未指定
+  | 'OPERATOR_UNSPECIFIED'
+  | 'REGEXP'
+  | 'SEARCH'
+  | 'STARTS_WITH';
+type wellKnownValue = unknown;
+
+// 日期时间部分枚举
+export type pagination_DatePart =
+  | 'DATE'
+  | 'DATE_PART_UNSPECIFIED'
+  | 'DAY'
+  | 'HOUR'
+  | 'ISO_WEEK_DAY'
+  | 'ISO_YEAR'
+  | 'MICROSECOND'
+  | 'MINUTE'
+  | 'MONTH'
+  | 'QUARTER'
+  | 'SECOND'
+  | 'TIME'
+  | 'WEEK'
+  | 'WEEK_DAY'
+  | 'YEAR';
+// 排序规则（分页场景通常需配合排序保证结果稳定）
+export type pagination_Sorting = {
+  // 排序方向
+  direction: pagination_Sorting_Direction | undefined;
+  // 排序字段（如"id"、"create_time"）
+  field: string | undefined;
+};
+
+// 排序方向（ASC/DESC，默认ASC）
+export type pagination_Sorting_Direction =
+  | 'ASC'
+  | 'DESC';
+// In JSON, a field mask is encoded as a single string where paths are
+// separated by a comma. Fields name in each path are converted
+// to/from lower-camel naming conventions.
+// As an example, consider the following message declarations:
+//
+//     message Profile {
+//       User user = 1;
+//       Photo photo = 2;
+//     }
+//     message User {
+//       string display_name = 1;
+//       string address = 2;
+//     }
+//
+// In proto a field mask for `Profile` may look as such:
+//
+//     mask {
+//       paths: "user.display_name"
+//       paths: "photo"
+//     }
+//
+// In JSON, the same mask is represented as below:
+//
+//     {
+//       mask: "user.displayName,photo"
+//     }
+type wellKnownFieldMask = string;
+
+// 查询访问凭证列表 - 回应
+export type access_keyservicev1_ListAccessKeyResponse = {
+  items: access_keyservicev1_AccessKey[] | undefined;
+  total: number | undefined;
+};
+
+// OpenAPI 访问凭证（AK/SK）
+export type access_keyservicev1_AccessKey = {
+  accessKey?: string;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  expiresAt?: wellKnownTimestamp;
+  id?: number;
+  lastUsedAt?: wellKnownTimestamp;
+  name?: string;
+  status?: access_keyservicev1_AccessKey_Status;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 凭证状态
+export type access_keyservicev1_AccessKey_Status =
+  | 'OFF'
+  | 'ON';
+// Encoded using RFC 3339, where generated output will always be Z-normalized
+// and uses 0, 3, 6 or 9 fractional digits.
+// Offsets other than "Z" are also accepted.
+type wellKnownTimestamp = string;
+
+// 查询访问凭证详情 - 请求
+export type access_keyservicev1_GetAccessKeyRequest = {
+  accessKey?: string;
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 创建访问凭证 - 请求
+export type access_keyservicev1_CreateAccessKeyRequest = {
+  data: access_keyservicev1_AccessKey | undefined;
+};
+
+// 创建访问凭证 - 回应（secret 仅本次明文返回，服务端只存 SHA-256 摘要）
+export type access_keyservicev1_CreateAccessKeyResponse = {
+  data: access_keyservicev1_AccessKey | undefined;
+  secret: string | undefined;
+};
+
+// 更新访问凭证 - 请求
+export type access_keyservicev1_UpdateAccessKeyRequest = {
+  allowMissing?: boolean;
+  data: access_keyservicev1_AccessKey | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// An empty JSON object
+type wellKnownEmpty = Record<never, never>;
+
+// 删除访问凭证 - 请求
+export type access_keyservicev1_DeleteAccessKeyRequest = {
+  id: number | undefined;
+};
+
+// 重置密钥 - 请求
+export type access_keyservicev1_ResetAccessKeySecretRequest = {
+  id: number | undefined;
+};
+
+// 令牌交换 - 请求（机器对机器：AK/SK 换取短期 JWT）
+export type access_keyservicev1_IssueTokenRequest = {
+  accessKey: string | undefined;
+  // 与上游不同：CMS 的 core 无法感知 HTTP 层，调用方 IP 由 admin BFF 从
+  // HTTP 请求解析后注入（ClientRealIP），用于交换端点的防爆破限流计数。
+  clientIp?: string;
+  secret: string | undefined;
+};
+
+// 令牌交换 - 回应
+export type access_keyservicev1_IssueTokenResponse = {
+  accessToken: string | undefined;
+  expiresIn: number | undefined;
+  tokenType: string | undefined;
+};
+
 // 查询路由列表 - 回应
 export type ListRouteResponse = {
   items: permissionservicev1_MenuRouteItem[] | undefined;
@@ -282,9 +717,6 @@ export function createAdminPortalServiceClient(
     },
   };
 }
-// An empty JSON object
-type wellKnownEmpty = Record<never, never>;
-
 // API资源管理服务
 export interface ApiService {
   // 查询API资源列表
@@ -460,169 +892,6 @@ export function createApiServiceClient(
     },
   };
 }
-// ------------------------------
-// 分页通用请求
-// ------------------------------
-export type pagination_PagingRequest = {
-  // 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
-  fieldMask?: wellKnownFieldMask;
-  // Google AIP规范字符串过滤条件
-  filter?: string;
-  // 复杂过滤表达式（优先使用）
-  filterExpr?: pagination_FilterExpr;
-  // 最多返回的记录数（默认10，建议设置上限如100）
-  limit?: number;
-  // 是否不分页，如果为true，则page和pageSize参数无效。
-  noPaging?: boolean;
-  // 跳过的记录数（从0开始，默认0）
-  offset?: number;
-  // 排序条件
-  orderBy?: string;
-  // 当前页码（从1开始，默认1）
-  page?: number;
-  // 每页条数（默认10，建议设置上限如100）
-  pageSize?: number;
-  // JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
-  query?: string;
-  // 排序规则
-  sorting: pagination_Sorting[] | undefined;
-  // 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
-  token?: string;
-};
-
-// 过滤表达式
-export type pagination_FilterExpr = {
-  // 条件列表
-  conditions: pagination_FilterCondition[] | undefined;
-  // 子表达式列表
-  groups: pagination_FilterExpr[] | undefined;
-  // 过滤表达式类型
-  type: pagination_ExprType | undefined;
-};
-
-// 过滤表达式类型
-export type pagination_ExprType =
-  | 'AND'
-  | 'EXPR_TYPE_UNSPECIFIED'
-  | 'OR';
-// 过滤条件
-export type pagination_FilterCondition = {
-  // 日期时间部分（可选，仅在字段为日期时间类型时使用）
-  datePart?: pagination_DatePart;
-  // 过滤字段名
-  field: string | undefined;
-  // 当字段为 JSON/JSONB 类型时，可指定要抽取的子路径（例如: "meta.user.name" 或 JSONPath）
-  // 服务端应把此路径用于 JSON_EXTRACT / -> 操作，再对抽取结果应用 op。
-  jsonPath?: string;
-  // 当需要使用非字符串类型的比较值（对象/数组/数字/布尔）时使用此字段，
-  // 使用 google.protobuf.Value 能表达任意 JSON 值。
-  jsonValue?: wellKnownValue;
-  // 过滤操作符
-  op: pagination_Operator | undefined;
-  // 过滤值（单值）
-  value?: string;
-  // 过滤值（多值，如IN操作符）
-  values: string[] | undefined;
-};
-
-// 操作符枚举
-export type pagination_Operator =
-  | 'ARRAY_CONTAINS'
-  // 范围与正则
-  | 'BETWEEN'
-  // 语义化的字符串操作
-  | 'CONTAINS'
-  | 'ENDS_WITH'
-  // 基本比较
-  | 'EQ'
-  | 'EXACT'
-  | 'EXISTS'
-  | 'GT'
-  | 'GTE'
-  | 'ICONTAINS'
-  | 'IENDS_WITH'
-  | 'IEXACT'
-  | 'ILIKE'
-  // 集合操作
-  | 'IN'
-  | 'IREGEXP'
-  | 'IS_NOT_NULL'
-  // 空值判断
-  | 'IS_NULL'
-  | 'ISTARTS_WITH'
-  // JSON / 数组 / 集合相关（按需在服务端映射为具体 DB 运算）
-  | 'JSON_CONTAINS'
-  // 模糊 / 大小写不敏感模糊 / 非模糊
-  | 'LIKE'
-  | 'LT'
-  | 'LTE'
-  | 'NEQ'
-  | 'NIN'
-  | 'NOT_LIKE'
-  // 未指定
-  | 'OPERATOR_UNSPECIFIED'
-  | 'REGEXP'
-  | 'SEARCH'
-  | 'STARTS_WITH';
-type wellKnownValue = unknown;
-
-// 日期时间部分枚举
-export type pagination_DatePart =
-  | 'DATE'
-  | 'DATE_PART_UNSPECIFIED'
-  | 'DAY'
-  | 'HOUR'
-  | 'ISO_WEEK_DAY'
-  | 'ISO_YEAR'
-  | 'MICROSECOND'
-  | 'MINUTE'
-  | 'MONTH'
-  | 'QUARTER'
-  | 'SECOND'
-  | 'TIME'
-  | 'WEEK'
-  | 'WEEK_DAY'
-  | 'YEAR';
-// 排序规则（分页场景通常需配合排序保证结果稳定）
-export type pagination_Sorting = {
-  // 排序方向
-  direction: pagination_Sorting_Direction | undefined;
-  // 排序字段（如"id"、"create_time"）
-  field: string | undefined;
-};
-
-// 排序方向（ASC/DESC，默认ASC）
-export type pagination_Sorting_Direction =
-  | 'ASC'
-  | 'DESC';
-// In JSON, a field mask is encoded as a single string where paths are
-// separated by a comma. Fields name in each path are converted
-// to/from lower-camel naming conventions.
-// As an example, consider the following message declarations:
-//
-//     message Profile {
-//       User user = 1;
-//       Photo photo = 2;
-//     }
-//     message User {
-//       string display_name = 1;
-//       string address = 2;
-//     }
-//
-// In proto a field mask for `Profile` may look as such:
-//
-//     mask {
-//       paths: "user.display_name"
-//       paths: "photo"
-//     }
-//
-// In JSON, the same mask is represented as below:
-//
-//     {
-//       mask: "user.displayName,photo"
-//     }
-type wellKnownFieldMask = string;
-
 // 查询列表 - 回应
 export type permissionservicev1_ListApiResponse = {
   items: permissionservicev1_Api[] | undefined;
@@ -657,11 +926,6 @@ export type permissionservicev1_Api_Scope =
 export type permissionservicev1_Api_Status =
   | 'OFF'
   | 'ON';
-// Encoded using RFC 3339, where generated output will always be Z-normalized
-// and uses 0, 3, 6 or 9 fractional digits.
-// Offsets other than "Z" are also accepted.
-type wellKnownTimestamp = string;
-
 // 查询 - 请求
 export type permissionservicev1_GetApiRequest = {
   id?: number;
@@ -2808,6 +3072,209 @@ export type commentservicev1_DeleteCommentRequest = {
   id?: number;
 };
 
+// 系统参数管理服务
+export interface ConfigService {
+  // 查询系统参数列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<configservicev1_ListConfigResponse>;
+  // 查询系统参数详情
+  Get(
+    request: configservicev1_GetConfigRequest,
+  ): Promise<configservicev1_Config>;
+  // 创建系统参数
+  Create(
+    request: configservicev1_CreateConfigRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新系统参数
+  Update(
+    request: configservicev1_UpdateConfigRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除系统参数
+  Delete(
+    request: configservicev1_DeleteConfigRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createConfigServiceClient(
+  transport: ClientTransport,
+): ConfigService {
+  return {
+    List(request) {
+      const path = `/admin/v1/configs`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ConfigService',
+        method: 'List',
+      }) as Promise<configservicev1_ListConfigResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/configs/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ConfigService',
+        method: 'Get',
+      }) as Promise<configservicev1_Config>;
+    },
+    Create(request) {
+      const path = `/admin/v1/configs`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'ConfigService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/configs/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'ConfigService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/configs/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'ConfigService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 查询系统参数列表 - 回应
+export type configservicev1_ListConfigResponse = {
+  items: configservicev1_Config[] | undefined;
+  total: number | undefined;
+};
+
+// 系统参数（动态 KV 运行时配置；区别于字典管理的业务枚举，本表只承载平台全局系统开关）
+export type configservicev1_Config = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  isBuiltIn?: boolean;
+  key?: string;
+  name?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  value?: string;
+  valueType?: configservicev1_Config_ConfigValueType;
+};
+
+// 参数值类型
+export type configservicev1_Config_ConfigValueType =
+  | 'BOOL'
+  | 'CONFIG_VALUE_TYPE_INVALID'
+  | 'INT'
+  | 'STRING';
+// 查询系统参数 - 请求
+export type configservicev1_GetConfigRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 创建系统参数 - 请求
+export type configservicev1_CreateConfigRequest = {
+  data: configservicev1_Config | undefined;
+};
+
+// 更新系统参数 - 请求
+export type configservicev1_UpdateConfigRequest = {
+  allowMissing?: boolean;
+  data: configservicev1_Config | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 删除系统参数 - 请求
+export type configservicev1_DeleteConfigRequest = {
+  id?: number;
+};
+
 // 优惠券模板管理服务（admin 全 CRUD）
 export interface CouponTemplateService {
   List(
@@ -3522,6 +3989,474 @@ export type auditservicev1_SensitiveLevel =
 export type auditservicev1_GetDataAccessAuditLogRequest = {
   id?: number;
   viewMask?: wellKnownFieldMask;
+};
+
+// 数据字典条目管理服务
+export interface DictEntryService {
+  // 分页查询字典条目列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<dictservicev1_ListDictEntryResponse>;
+  // 创建字典条目
+  Create(
+    request: dictservicev1_CreateDictEntryRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新字典条目
+  Update(
+    request: dictservicev1_UpdateDictEntryRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除字典条目
+  Delete(
+    request: dictservicev1_DeleteDictEntryRequest,
+  ): Promise<wellKnownEmpty>;
+  // 查询启用的字典条目
+  ListByTypeCode(
+    request: dictservicev1_ListDictEntryByTypeCodeRequest,
+  ): Promise<dictservicev1_ListDictEntryByTypeCodeResponse>;
+}
+
+export function createDictEntryServiceClient(
+  transport: ClientTransport,
+): DictEntryService {
+  return {
+    List(request) {
+      const path = `/admin/v1/dict/entries`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'DictEntryService',
+        method: 'List',
+      }) as Promise<dictservicev1_ListDictEntryResponse>;
+    },
+    Create(request) {
+      const path = `/admin/v1/dict/entries`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'DictEntryService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/dict/entries/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'DictEntryService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      const path = `/admin/v1/dict/entries`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.ids) {
+        request.ids.forEach((x) => {
+          queryParams.push(
+            `ids=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'DELETE', body, {
+        service: 'DictEntryService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    ListByTypeCode(request) {
+      const path = `/admin/v1/dict/entries/by-type-code`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.typeCode) {
+        queryParams.push(
+          `typeCode=${encodeURIComponent(request.typeCode.toString())}`,
+        );
+      }
+      if (request.local) {
+        queryParams.push(
+          `local=${encodeURIComponent(request.local.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'DictEntryService',
+        method: 'ListByTypeCode',
+      }) as Promise<dictservicev1_ListDictEntryByTypeCodeResponse>;
+    },
+  };
+}
+// 查询字典项列表 - 回应
+export type dictservicev1_ListDictEntryResponse = {
+  items: dictservicev1_DictEntry[] | undefined;
+  total: number | undefined;
+};
+
+// 字典项
+export type dictservicev1_DictEntry = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  currentI18n?: dictservicev1_DictEntryI18n;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  entryValue?: string;
+  i18n: { [key: string]: dictservicev1_DictEntryI18n } | undefined;
+  id?: number;
+  isEnabled?: boolean;
+  numericValue?: number;
+  sortOrder?: number;
+  tenantId?: number;
+  tenantName?: string;
+  typeId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 字典项多语言信息
+export type dictservicev1_DictEntryI18n = {
+  description?: string;
+  entryLabel: string | undefined;
+  languageCode?: string;
+  languageName?: string;
+};
+
+// 创建字典项 - 请求
+export type dictservicev1_CreateDictEntryRequest = {
+  data: dictservicev1_DictEntry | undefined;
+};
+
+// 更新字典项 - 请求
+export type dictservicev1_UpdateDictEntryRequest = {
+  allowMissing?: boolean;
+  data: dictservicev1_DictEntry | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 批量删除字典 - 请求
+export type dictservicev1_DeleteDictEntryRequest = {
+  ids: number[] | undefined;
+};
+
+export type dictservicev1_ListDictEntryByTypeCodeRequest = {
+  local?: string;
+  typeCode: string | undefined;
+};
+
+export type dictservicev1_ListDictEntryByTypeCodeResponse = {
+  items: dictservicev1_DictEntry[] | undefined;
+};
+
+// 数据字典分类管理服务
+export interface DictTypeService {
+  // 分页查询字典类型列表
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<dictservicev1_ListDictTypeResponse>;
+  // 查询字典类型详情
+  Get(
+    request: dictservicev1_GetDictTypeRequest,
+  ): Promise<dictservicev1_DictType>;
+  /** Alternate HTTP binding #1 of Get: GET /admin/v1/dict/types/code/{code} */
+  GetAlt1(
+    request: dictservicev1_GetDictTypeRequest,
+  ): Promise<dictservicev1_DictType>;
+  // 创建字典类型
+  Create(
+    request: dictservicev1_CreateDictTypeRequest,
+  ): Promise<wellKnownEmpty>;
+  // 更新字典类型
+  Update(
+    request: dictservicev1_UpdateDictTypeRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除字典类型
+  Delete(
+    request: dictservicev1_DeleteDictTypeRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createDictTypeServiceClient(
+  transport: ClientTransport,
+): DictTypeService {
+  return {
+    List(request) {
+      const path = `/admin/v1/dict/types`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'DictTypeService',
+        method: 'List',
+      }) as Promise<dictservicev1_ListDictTypeResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/dict/types/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.code) {
+        queryParams.push(
+          `code=${encodeURIComponent(request.code.toString())}`,
+        );
+      }
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'DictTypeService',
+        method: 'Get',
+      }) as Promise<dictservicev1_DictType>;
+    },
+
+    // Alternate HTTP binding #1 of Get: GET /admin/v1/dict/types/code/{code}
+    GetAlt1(request) {
+      if (request.code === undefined || request.code === null) {
+        throw new Error('missing required field request.code');
+      }
+      const path = `/admin/v1/dict/types/code/${request.code}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.id) {
+        queryParams.push(
+          `id=${encodeURIComponent(request.id.toString())}`,
+        );
+      }
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'DictTypeService',
+        method: 'Get',
+      }) as Promise<dictservicev1_DictType>;
+    },
+    Create(request) {
+      const path = `/admin/v1/dict/types`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'DictTypeService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/dict/types/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'DictTypeService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      const path = `/admin/v1/dict/types`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.ids) {
+        request.ids.forEach((x) => {
+          queryParams.push(
+            `ids=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'DELETE', body, {
+        service: 'DictTypeService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+// 查询字典类型列表 - 回应
+export type dictservicev1_ListDictTypeResponse = {
+  items: dictservicev1_DictType[] | undefined;
+  total: number | undefined;
+};
+
+// 字典类型
+export type dictservicev1_DictType = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  isEnabled?: boolean;
+  sortOrder?: number;
+  tenantId?: number;
+  tenantName?: string;
+  typeCode?: string;
+  typeName?: string;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 查询字典类型详情 - 请求
+export type dictservicev1_GetDictTypeRequest = {
+  code?: string;
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+// 创建字典类型 - 请求
+export type dictservicev1_CreateDictTypeRequest = {
+  data: dictservicev1_DictType | undefined;
+};
+
+// 更新字典类型 - 请求
+export type dictservicev1_UpdateDictTypeRequest = {
+  allowMissing?: boolean;
+  data: dictservicev1_DictType | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+// 批量删除字典 - 请求
+export type dictservicev1_DeleteDictTypeRequest = {
+  ids: number[] | undefined;
 };
 
 // 文件管理服务
@@ -5730,6 +6665,379 @@ export type permissionservicev1_DeleteMenuRequest = {
   operatorId?: number;
 };
 
+// 监控告警规则管理服务（平台级配置；只读 asynq 之外的采集在 core 进程内完成）。
+export interface MonitorAlertService {
+  // 查询告警规则列表
+  ListMonitorAlertRule(
+    request: pagination_PagingRequest,
+  ): Promise<monitor_alertservicev1_ListMonitorAlertRuleResponse>;
+  // 查询告警规则详情
+  GetMonitorAlertRule(
+    request: monitor_alertservicev1_GetMonitorAlertRuleRequest,
+  ): Promise<monitor_alertservicev1_MonitorAlertRule>;
+  // 创建告警规则
+  CreateMonitorAlertRule(
+    request: monitor_alertservicev1_CreateMonitorAlertRuleRequest,
+  ): Promise<monitor_alertservicev1_MonitorAlertRule>;
+  // 更新告警规则
+  UpdateMonitorAlertRule(
+    request: monitor_alertservicev1_UpdateMonitorAlertRuleRequest,
+  ): Promise<wellKnownEmpty>;
+  // 删除告警规则
+  DeleteMonitorAlertRule(
+    request: monitor_alertservicev1_DeleteMonitorAlertRuleRequest,
+  ): Promise<wellKnownEmpty>;
+  // 手动触发一轮评估（与周期扫描同一内核）
+  EvaluateMonitorAlerts(
+    request: monitor_alertservicev1_EvaluateMonitorAlertsRequest,
+  ): Promise<monitor_alertservicev1_EvaluateMonitorAlertsResponse>;
+}
+
+export function createMonitorAlertServiceClient(
+  transport: ClientTransport,
+): MonitorAlertService {
+  return {
+    ListMonitorAlertRule(request) {
+      const path = `/admin/v1/monitor-alert-rules`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'MonitorAlertService',
+        method: 'ListMonitorAlertRule',
+      }) as Promise<monitor_alertservicev1_ListMonitorAlertRuleResponse>;
+    },
+    GetMonitorAlertRule(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/monitor-alert-rules/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'MonitorAlertService',
+        method: 'GetMonitorAlertRule',
+      }) as Promise<monitor_alertservicev1_MonitorAlertRule>;
+    },
+    CreateMonitorAlertRule(request) {
+      const path = `/admin/v1/monitor-alert-rules`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MonitorAlertService',
+        method: 'CreateMonitorAlertRule',
+      }) as Promise<monitor_alertservicev1_MonitorAlertRule>;
+    },
+    UpdateMonitorAlertRule(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/monitor-alert-rules/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'MonitorAlertService',
+        method: 'UpdateMonitorAlertRule',
+      }) as Promise<wellKnownEmpty>;
+    },
+    DeleteMonitorAlertRule(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/monitor-alert-rules/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'MonitorAlertService',
+        method: 'DeleteMonitorAlertRule',
+      }) as Promise<wellKnownEmpty>;
+    },
+    EvaluateMonitorAlerts(request) {
+      const path = `/admin/v1/monitor-alert-rules:evaluate`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MonitorAlertService',
+        method: 'EvaluateMonitorAlerts',
+      }) as Promise<monitor_alertservicev1_EvaluateMonitorAlertsResponse>;
+    },
+  };
+}
+export type monitor_alertservicev1_ListMonitorAlertRuleResponse = {
+  items: monitor_alertservicev1_MonitorAlertRule[] | undefined;
+  total: number | undefined;
+};
+
+// 监控告警规则：指标阈值 → 触发通知。
+// 渠道与目标显式写在规则上（不经路由表）：告警是"点对点"的运营配置，
+// 路由表解决的是"事件该发去哪类渠道"，而这里要的是"这条告警发到这个邮箱"。
+export type monitor_alertservicev1_MonitorAlertRule = {
+  // 告警渠道（显式指定）
+  channel?: notificationservicev1_Channel;
+  // 重复告警冷却（分钟）：持续越限时按此间隔重发，默认 30
+  cooldownMinutes?: number;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  id?: number;
+  isEnabled?: boolean;
+  lastAlertedAt?: wellKnownTimestamp;
+  // —— 以下为评估器回写状态（只读） ——
+  lastFiring?: boolean;
+  lastValue?: number;
+  metric?: monitor_alertservicev1_MonitorMetric;
+  name?: string;
+  // DB_PING_FAIL 时忽略 op/threshold
+  op?: monitor_alertservicev1_AlertOp;
+  remark?: string;
+  // 投递目标：EMAIL 为收件地址，WEBHOOK 为回调 URL
+  target?: string;
+  threshold?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 监控指标（评估器支持的全集；新增指标 = 枚举加值 + evaluator 补取数分支）。
+// 采集全部在 core 进程内完成：GO_* 为 core 自身 runtime，DB_*/REDIS_* 为共享基础设施。
+export type monitor_alertservicev1_MonitorMetric =
+  // 数据库当前打开连接数
+  | 'DB_OPEN_CONNECTIONS'
+  // 数据库连通性失败（布尔指标：越限即 ping 失败，op/threshold 被忽略）
+  | 'DB_PING_FAIL'
+  // Go goroutine 数量（core 进程）
+  | 'GO_GOROUTINES'
+  // Go 堆内存分配（MB，core 进程）
+  | 'GO_MEM_ALLOC_MB'
+  | 'MONITOR_METRIC_UNSPECIFIED'
+  // Redis 逻辑库 key 总数（DBSIZE）
+  | 'REDIS_DB_SIZE';
+// 比较运算
+export type monitor_alertservicev1_AlertOp =
+  | 'ALERT_OP_UNSPECIFIED'
+  // 当前值 >= 阈值
+  | 'GE'
+  // 当前值 <= 阈值
+  | 'LE';
+// 投递渠道。成员名必须与 ent 列值逐字相同（EnumTypeConverter 按名字字符串配对）。
+export type notificationservicev1_Channel =
+  | 'CHANNEL_UNSPECIFIED'
+  | 'EMAIL'
+  | 'EXT'
+  | 'INTERNAL'
+  | 'SMS'
+  | 'WEBHOOK';
+export type monitor_alertservicev1_GetMonitorAlertRuleRequest = {
+  id: number | undefined;
+};
+
+export type monitor_alertservicev1_CreateMonitorAlertRuleRequest = {
+  data: monitor_alertservicev1_MonitorAlertRule | undefined;
+};
+
+export type monitor_alertservicev1_UpdateMonitorAlertRuleRequest = {
+  data: monitor_alertservicev1_MonitorAlertRule | undefined;
+  id: number | undefined;
+  updateMask?: wellKnownFieldMask;
+};
+
+export type monitor_alertservicev1_DeleteMonitorAlertRuleRequest = {
+  id: number | undefined;
+};
+
+// 手动触发一轮评估（管理页「立即评估」）；返回各启用规则的求值结论
+export type monitor_alertservicev1_EvaluateMonitorAlertsRequest = {
+};
+
+export type monitor_alertservicev1_EvaluateMonitorAlertsResponse = {
+  outcomes: monitor_alertservicev1_EvaluateMonitorAlertsResponse_RuleOutcome[] | undefined;
+};
+
+export type monitor_alertservicev1_EvaluateMonitorAlertsResponse_RuleOutcome = {
+  // 本次扫描实际读到的指标值（采集失败为空）
+  currentValue?: number;
+  // 本次扫描是否越限
+  firing: boolean | undefined;
+  name: string | undefined;
+  // 本轮是否发出了通知（首次触发 / 冷却到期重发 / 恢复）
+  notified: boolean | undefined;
+  // 未发通知的原因（未越限未恢复 / 冷却中 / 采集失败）
+  reason?: string;
+  ruleId: number | undefined;
+};
+
+// 服务监控查询服务（只读聚合视图；采集在 core 进程内完成）。
+export interface ServerMonitorService {
+  // 查询服务监控信息
+  Get(
+    request: server_monitorservicev1_GetServerMonitorRequest,
+  ): Promise<server_monitorservicev1_ServerMonitorInfo>;
+}
+
+export function createServerMonitorServiceClient(
+  transport: ClientTransport,
+): ServerMonitorService {
+  return {
+    Get(_request) {
+      const path = `/admin/v1/server-monitor`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'ServerMonitorService',
+        method: 'Get',
+      }) as Promise<server_monitorservicev1_ServerMonitorInfo>;
+    },
+  };
+}
+// 查询服务监控信息 - 请求（空）
+export type server_monitorservicev1_GetServerMonitorRequest = {
+};
+
+// 服务监控聚合信息
+export type server_monitorservicev1_ServerMonitorInfo = {
+  collectedAt: undefined | wellKnownTimestamp;
+  database: server_monitorservicev1_DatabaseInfo | undefined;
+  go: server_monitorservicev1_GoRuntimeInfo | undefined;
+  host: server_monitorservicev1_HostInfo | undefined;
+};
+
+// Go 运行时信息
+export type server_monitorservicev1_GoRuntimeInfo = {
+  gcCycles?: number;
+  memAllocBytes?: number;
+  memSysBytes?: number;
+  numGoroutine?: number;
+  startedAt?: wellKnownTimestamp;
+  uptimeSeconds?: number;
+  version?: string;
+};
+
+// 数据库信息
+export type server_monitorservicev1_DatabaseInfo = {
+  driver?: string;
+  idleConnections?: number;
+  inUseConnections?: number;
+  maxOpenConnections?: number;
+  openConnections?: number;
+  pingError?: string;
+  pingOk?: boolean;
+};
+
+// 主机信息
+export type server_monitorservicev1_HostInfo = {
+  arch?: string;
+  hostname?: string;
+  numCpu?: number;
+  os?: string;
+};
+
+// Redis 缓存监控查询服务（只读聚合视图）。
+export interface RedisCacheMonitorService {
+  // 查询 Redis 缓存监控信息
+  Get(
+    request: redis_cacheservicev1_GetRedisCacheMonitorRequest,
+  ): Promise<redis_cacheservicev1_RedisCacheMonitorInfo>;
+}
+
+export function createRedisCacheMonitorServiceClient(
+  transport: ClientTransport,
+): RedisCacheMonitorService {
+  return {
+    Get(_request) {
+      const path = `/admin/v1/redis-cache-monitor`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'RedisCacheMonitorService',
+        method: 'Get',
+      }) as Promise<redis_cacheservicev1_RedisCacheMonitorInfo>;
+    },
+  };
+}
+// 查询Redis缓存监控信息 - 请求（空）
+export type redis_cacheservicev1_GetRedisCacheMonitorRequest = {
+};
+
+// Redis缓存监控信息
+export type redis_cacheservicev1_RedisCacheMonitorInfo = {
+  dbSize: number | undefined;
+  sections: redis_cacheservicev1_InfoSection[] | undefined;
+  slowlog: redis_cacheservicev1_SlowLogEntry[] | undefined;
+};
+
+// INFO 输出的单个 section
+export type redis_cacheservicev1_InfoSection = {
+  entries: redis_cacheservicev1_InfoEntry[] | undefined;
+  name: string | undefined;
+};
+
+// INFO 输出的单个 key/value 对
+export type redis_cacheservicev1_InfoEntry = {
+  key: string | undefined;
+  value: string | undefined;
+};
+
+// SLOWLOG GET 返回的单条慢日志
+export type redis_cacheservicev1_SlowLogEntry = {
+  args: string[] | undefined;
+  clientAddr: string | undefined;
+  clientName: string | undefined;
+  createdAt: undefined | wellKnownTimestamp;
+  durationUsec: number | undefined;
+  id: number | undefined;
+};
+
 // 通知投递台账管理服务（平台级只读视图）。
 //
 // 本域不含"发一条通知"的通用 HTTP 路由：SendDirect 只由进程内的业务 service 经 Notifier 接口调用。
@@ -5878,15 +7186,9 @@ export type notificationservicev1_EventType =
   | 'EVENT_TYPE_UNSPECIFIED'
   // 站内信投递：一条站内信发给一个收件人 = 一行台账，related_id 指向 sys_internal_messages.id。
   | 'INTERNAL_MESSAGE'
+  // 监控告警：扫描任务对规则求值后触发
+  | 'MONITOR_ALERT'
   | 'PASSWORD_RESET_CODE';
-// 投递渠道。成员名必须与 ent 列值逐字相同（EnumTypeConverter 按名字字符串配对）。
-export type notificationservicev1_Channel =
-  | 'CHANNEL_UNSPECIFIED'
-  | 'EMAIL'
-  | 'EXT'
-  | 'INTERNAL'
-  | 'SMS'
-  | 'WEBHOOK';
 // 投递状态
 export type notificationservicev1_DeliveryStatus =
   | 'DELIVERY_STATUS_UNSPECIFIED'
@@ -6794,6 +8096,160 @@ export type notificationservicev1_RenderNotificationTemplateRequest = {
 export type notificationservicev1_RenderNotificationTemplateResponse = {
   content: string | undefined;
   title: string | undefined;
+};
+
+// 在线会话管理服务（平台管理员：全量列表 + 强制下线；当前用户：本人会话）。
+export interface OnlineSessionService {
+  // 查询在线会话列表
+  ListOnlineSession(
+    request: online_sessionservicev1_ListOnlineSessionRequest,
+  ): Promise<online_sessionservicev1_ListOnlineSessionResponse>;
+  // 强制下线指定会话
+  ForceLogoutSession(
+    request: online_sessionservicev1_ForceLogoutSessionRequest,
+  ): Promise<online_sessionservicev1_ForceLogoutSessionResponse>;
+  // 查询当前登录用户的在线会话
+  ListMyOnlineSession(
+    request: online_sessionservicev1_ListMyOnlineSessionRequest,
+  ): Promise<online_sessionservicev1_ListOnlineSessionResponse>;
+  // 当前用户强制下线自己的指定会话
+  RevokeMyOnlineSession(
+    request: online_sessionservicev1_RevokeMyOnlineSessionRequest,
+  ): Promise<online_sessionservicev1_RevokeMyOnlineSessionResponse>;
+}
+
+export function createOnlineSessionServiceClient(
+  transport: ClientTransport,
+): OnlineSessionService {
+  return {
+    ListOnlineSession(request) {
+      const path = `/admin/v1/online-session/sessions`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.keyword) {
+        queryParams.push(
+          `keyword=${encodeURIComponent(request.keyword.toString())}`,
+        );
+      }
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'OnlineSessionService',
+        method: 'ListOnlineSession',
+      }) as Promise<online_sessionservicev1_ListOnlineSessionResponse>;
+    },
+    ForceLogoutSession(request) {
+      const path = `/admin/v1/online-session/force-logout`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'OnlineSessionService',
+        method: 'ForceLogoutSession',
+      }) as Promise<online_sessionservicev1_ForceLogoutSessionResponse>;
+    },
+    ListMyOnlineSession(request) {
+      const path = `/admin/v1/online-session/my-sessions`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.userId) {
+        queryParams.push(
+          `userId=${encodeURIComponent(request.userId.toString())}`,
+        );
+      }
+      if (request.currentJti) {
+        queryParams.push(
+          `currentJti=${encodeURIComponent(request.currentJti.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'OnlineSessionService',
+        method: 'ListMyOnlineSession',
+      }) as Promise<online_sessionservicev1_ListOnlineSessionResponse>;
+    },
+    RevokeMyOnlineSession(request) {
+      const path = `/admin/v1/online-session/my-sessions/revoke`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'OnlineSessionService',
+        method: 'RevokeMyOnlineSession',
+      }) as Promise<online_sessionservicev1_RevokeMyOnlineSessionResponse>;
+    },
+  };
+}
+// 查询在线会话列表 - 请求
+export type online_sessionservicev1_ListOnlineSessionRequest = {
+  // 关键词过滤（模糊匹配用户名 / IP），留空返回全部
+  keyword?: string;
+  // 页码（从 1 开始）
+  page?: number;
+  // 每页数量
+  pageSize?: number;
+};
+
+// 查询在线会话列表 - 回应
+export type online_sessionservicev1_ListOnlineSessionResponse = {
+  items: online_sessionservicev1_OnlineSession[] | undefined;
+  total: number | undefined;
+};
+
+// 在线会话
+export type online_sessionservicev1_OnlineSession = {
+  clientType?: authenticationservicev1_ClientType;
+  // 是否为当前请求所属会话（仅 ListMy 场景有意义，由 BFF 按操作者 jti 标记）
+  current?: boolean;
+  ipAddress?: string;
+  // 会话令牌对 ID（JWT jti，唯一标识一次令牌签发）
+  jti?: string;
+  loginAt?: wellKnownTimestamp;
+  tenantId?: number;
+  userAgent?: string;
+  userId?: number;
+  username?: string;
+};
+
+// 强制下线指定会话 - 请求
+export type online_sessionservicev1_ForceLogoutSessionRequest = {
+  clientType?: authenticationservicev1_ClientType;
+  jti?: string;
+  userId?: number;
+};
+
+// 强制下线指定会话 - 回应
+export type online_sessionservicev1_ForceLogoutSessionResponse = {
+};
+
+// 查询当前登录用户的在线会话 - 请求。
+// 与上游不同：CMS 的用户身份不跨服务透传，admin BFF 从认证上下文取出
+// user_id 与当前 jti 显式传入（current_jti 用于标记"当前会话"）。
+export type online_sessionservicev1_ListMyOnlineSessionRequest = {
+  currentJti?: string;
+  userId?: number;
+};
+
+// 当前用户强制下线自己的指定会话 - 请求
+export type online_sessionservicev1_RevokeMyOnlineSessionRequest = {
+  clientType?: authenticationservicev1_ClientType;
+  jti?: string;
+  userId?: number;
+};
+
+// 当前用户强制下线自己的指定会话 - 回应
+export type online_sessionservicev1_RevokeMyOnlineSessionResponse = {
 };
 
 // 操作审计日志管理服务
@@ -14036,6 +15492,7 @@ export type identityservicev1_EmailVerification = {
 };
 
 export class ApiClient {
+  private _accessKeyService?: AccessKeyService;
   private _adminPortalService?: AdminPortalService;
   private _apiAuditLogService?: ApiAuditLogService;
   private _apiService?: ApiService;
@@ -14045,8 +15502,11 @@ export class ApiClient {
   private _cartService?: CartService;
   private _categoryService?: CategoryService;
   private _commentService?: CommentService;
+  private _configService?: ConfigService;
   private _couponTemplateService?: CouponTemplateService;
   private _dataAccessAuditLogService?: DataAccessAuditLogService;
+  private _dictEntryService?: DictEntryService;
+  private _dictTypeService?: DictTypeService;
   private _fileService?: FileService;
   private _fileTransferService?: FileTransferService;
   private _interactionAdminService?: InteractionAdminService;
@@ -14058,11 +15518,13 @@ export class ApiClient {
   private _loginAuditLogService?: LoginAuditLogService;
   private _loginPolicyService?: LoginPolicyService;
   private _menuService?: MenuService;
+  private _monitorAlertService?: MonitorAlertService;
   private _notificationChannelService?: NotificationChannelService;
   private _notificationPreferenceService?: NotificationPreferenceService;
   private _notificationRuleService?: NotificationRuleService;
   private _notificationService?: NotificationService;
   private _notificationTemplateService?: NotificationTemplateService;
+  private _onlineSessionService?: OnlineSessionService;
   private _operationAuditLogService?: OperationAuditLogService;
   private _orderItemService?: OrderItemService;
   private _orderService?: OrderService;
@@ -14077,7 +15539,9 @@ export class ApiClient {
   private _productAttributeService?: ProductAttributeService;
   private _productAttributeValueService?: ProductAttributeValueService;
   private _productService?: ProductService;
+  private _redisCacheMonitorService?: RedisCacheMonitorService;
   private _roleService?: RoleService;
+  private _serverMonitorService?: ServerMonitorService;
   private _shipmentService?: ShipmentService;
   private _shippingRateService?: ShippingRateService;
   private _skuAttributeCombinationService?: SkuAttributeCombinationService;
@@ -14094,6 +15558,10 @@ export class ApiClient {
 
   constructor(transport: ClientTransport) {
     this._transport = transport;
+  }
+
+  get accessKeyService(): AccessKeyService {
+    return this._accessKeyService ??= createAccessKeyServiceClient(this._transport);
   }
 
   get adminPortalService(): AdminPortalService {
@@ -14132,12 +15600,24 @@ export class ApiClient {
     return this._commentService ??= createCommentServiceClient(this._transport);
   }
 
+  get configService(): ConfigService {
+    return this._configService ??= createConfigServiceClient(this._transport);
+  }
+
   get couponTemplateService(): CouponTemplateService {
     return this._couponTemplateService ??= createCouponTemplateServiceClient(this._transport);
   }
 
   get dataAccessAuditLogService(): DataAccessAuditLogService {
     return this._dataAccessAuditLogService ??= createDataAccessAuditLogServiceClient(this._transport);
+  }
+
+  get dictEntryService(): DictEntryService {
+    return this._dictEntryService ??= createDictEntryServiceClient(this._transport);
+  }
+
+  get dictTypeService(): DictTypeService {
+    return this._dictTypeService ??= createDictTypeServiceClient(this._transport);
   }
 
   get fileService(): FileService {
@@ -14184,6 +15664,10 @@ export class ApiClient {
     return this._menuService ??= createMenuServiceClient(this._transport);
   }
 
+  get monitorAlertService(): MonitorAlertService {
+    return this._monitorAlertService ??= createMonitorAlertServiceClient(this._transport);
+  }
+
   get notificationChannelService(): NotificationChannelService {
     return this._notificationChannelService ??= createNotificationChannelServiceClient(this._transport);
   }
@@ -14202,6 +15686,10 @@ export class ApiClient {
 
   get notificationTemplateService(): NotificationTemplateService {
     return this._notificationTemplateService ??= createNotificationTemplateServiceClient(this._transport);
+  }
+
+  get onlineSessionService(): OnlineSessionService {
+    return this._onlineSessionService ??= createOnlineSessionServiceClient(this._transport);
   }
 
   get operationAuditLogService(): OperationAuditLogService {
@@ -14260,8 +15748,16 @@ export class ApiClient {
     return this._productService ??= createProductServiceClient(this._transport);
   }
 
+  get redisCacheMonitorService(): RedisCacheMonitorService {
+    return this._redisCacheMonitorService ??= createRedisCacheMonitorServiceClient(this._transport);
+  }
+
   get roleService(): RoleService {
     return this._roleService ??= createRoleServiceClient(this._transport);
+  }
+
+  get serverMonitorService(): ServerMonitorService {
+    return this._serverMonitorService ??= createServerMonitorServiceClient(this._transport);
   }
 
   get shipmentService(): ShipmentService {

@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"go-wind-shop/app/core/service/internal/data/ent/accesskey"
 	"go-wind-shop/app/core/service/internal/data/ent/api"
 	"go-wind-shop/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/brand"
@@ -18,6 +19,9 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/commentlike"
 	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/dataaccessauditlog"
+	"go-wind-shop/app/core/service/internal/data/ent/dictentry"
+	"go-wind-shop/app/core/service/internal/data/ent/dictentryi18n"
+	"go-wind-shop/app/core/service/internal/data/ent/dicttype"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
 	"go-wind-shop/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
@@ -32,6 +36,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-shop/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-shop/app/core/service/internal/data/ent/menu"
+	"go-wind-shop/app/core/service/internal/data/ent/monitoralertrule"
 	"go-wind-shop/app/core/service/internal/data/ent/notificationchannel"
 	"go-wind-shop/app/core/service/internal/data/ent/notificationdelivery"
 	"go-wind-shop/app/core/service/internal/data/ent/notificationpreference"
@@ -67,6 +72,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 	"go-wind-shop/app/core/service/internal/data/ent/stockalert"
+	"go-wind-shop/app/core/service/internal/data/ent/sysconfig"
 	"go-wind-shop/app/core/service/internal/data/ent/task"
 	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
 	"go-wind-shop/app/core/service/internal/data/ent/tenant"
@@ -143,6 +149,7 @@ var (
 func checkColumn(t, c string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
+			accesskey.Table:                        accesskey.ValidColumn,
 			api.Table:                              api.ValidColumn,
 			apiauditlog.Table:                      apiauditlog.ValidColumn,
 			brand.Table:                            brand.ValidColumn,
@@ -155,6 +162,9 @@ func checkColumn(t, c string) error {
 			commentlike.Table:                      commentlike.ValidColumn,
 			coupontemplate.Table:                   coupontemplate.ValidColumn,
 			dataaccessauditlog.Table:               dataaccessauditlog.ValidColumn,
+			dictentry.Table:                        dictentry.ValidColumn,
+			dictentryi18n.Table:                    dictentryi18n.ValidColumn,
+			dicttype.Table:                         dicttype.ValidColumn,
 			file.Table:                             file.ValidColumn,
 			interactioncounter.Table:               interactioncounter.ValidColumn,
 			internalmessage.Table:                  internalmessage.ValidColumn,
@@ -169,6 +179,7 @@ func checkColumn(t, c string) error {
 			membershipposition.Table:               membershipposition.ValidColumn,
 			membershiprole.Table:                   membershiprole.ValidColumn,
 			menu.Table:                             menu.ValidColumn,
+			monitoralertrule.Table:                 monitoralertrule.ValidColumn,
 			notificationchannel.Table:              notificationchannel.ValidColumn,
 			notificationdelivery.Table:             notificationdelivery.ValidColumn,
 			notificationpreference.Table:           notificationpreference.ValidColumn,
@@ -204,6 +215,7 @@ func checkColumn(t, c string) error {
 			skuattributecombination.Table:          skuattributecombination.ValidColumn,
 			skuprice.Table:                         skuprice.ValidColumn,
 			stockalert.Table:                       stockalert.ValidColumn,
+			sysconfig.Table:                        sysconfig.ValidColumn,
 			task.Table:                             task.ValidColumn,
 			taxrate.Table:                          taxrate.ValidColumn,
 			tenant.Table:                           tenant.ValidColumn,

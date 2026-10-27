@@ -248,7 +248,7 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 	}
 
 	// 生成令牌
-	accessToken, refreshToken, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)
+	accessToken, refreshToken, _, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)
 	if err != nil {
 		return nil, err
 	}
@@ -304,7 +304,7 @@ func (s *AuthenticationService) doGrantTypeRefreshToken(ctx context.Context, req
 	}
 
 	// 生成令牌
-	accessToken, refreshToken, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)
+	accessToken, refreshToken, _, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)
 	if err != nil {
 		return nil, authenticationV1.ErrorServiceUnavailable("generate token failed")
 	}

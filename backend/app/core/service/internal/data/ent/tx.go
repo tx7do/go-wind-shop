@@ -12,6 +12,8 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// AccessKey is the client for interacting with the AccessKey builders.
+	AccessKey *AccessKeyClient
 	// Api is the client for interacting with the Api builders.
 	Api *APIClient
 	// ApiAuditLog is the client for interacting with the ApiAuditLog builders.
@@ -36,6 +38,12 @@ type Tx struct {
 	CouponTemplate *CouponTemplateClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
+	// DictEntry is the client for interacting with the DictEntry builders.
+	DictEntry *DictEntryClient
+	// DictEntryI18n is the client for interacting with the DictEntryI18n builders.
+	DictEntryI18n *DictEntryI18nClient
+	// DictType is the client for interacting with the DictType builders.
+	DictType *DictTypeClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
 	// InteractionCounter is the client for interacting with the InteractionCounter builders.
@@ -64,6 +72,8 @@ type Tx struct {
 	MembershipRole *MembershipRoleClient
 	// Menu is the client for interacting with the Menu builders.
 	Menu *MenuClient
+	// MonitorAlertRule is the client for interacting with the MonitorAlertRule builders.
+	MonitorAlertRule *MonitorAlertRuleClient
 	// NotificationChannel is the client for interacting with the NotificationChannel builders.
 	NotificationChannel *NotificationChannelClient
 	// NotificationDelivery is the client for interacting with the NotificationDelivery builders.
@@ -134,6 +144,8 @@ type Tx struct {
 	SkuPrice *SkuPriceClient
 	// StockAlert is the client for interacting with the StockAlert builders.
 	StockAlert *StockAlertClient
+	// SysConfig is the client for interacting with the SysConfig builders.
+	SysConfig *SysConfigClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
 	// TaxRate is the client for interacting with the TaxRate builders.
@@ -285,6 +297,7 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.AccessKey = NewAccessKeyClient(tx.config)
 	tx.Api = NewAPIClient(tx.config)
 	tx.ApiAuditLog = NewApiAuditLogClient(tx.config)
 	tx.Brand = NewBrandClient(tx.config)
@@ -297,6 +310,9 @@ func (tx *Tx) init() {
 	tx.CommentLike = NewCommentLikeClient(tx.config)
 	tx.CouponTemplate = NewCouponTemplateClient(tx.config)
 	tx.DataAccessAuditLog = NewDataAccessAuditLogClient(tx.config)
+	tx.DictEntry = NewDictEntryClient(tx.config)
+	tx.DictEntryI18n = NewDictEntryI18nClient(tx.config)
+	tx.DictType = NewDictTypeClient(tx.config)
 	tx.File = NewFileClient(tx.config)
 	tx.InteractionCounter = NewInteractionCounterClient(tx.config)
 	tx.InternalMessage = NewInternalMessageClient(tx.config)
@@ -311,6 +327,7 @@ func (tx *Tx) init() {
 	tx.MembershipPosition = NewMembershipPositionClient(tx.config)
 	tx.MembershipRole = NewMembershipRoleClient(tx.config)
 	tx.Menu = NewMenuClient(tx.config)
+	tx.MonitorAlertRule = NewMonitorAlertRuleClient(tx.config)
 	tx.NotificationChannel = NewNotificationChannelClient(tx.config)
 	tx.NotificationDelivery = NewNotificationDeliveryClient(tx.config)
 	tx.NotificationPreference = NewNotificationPreferenceClient(tx.config)
@@ -346,6 +363,7 @@ func (tx *Tx) init() {
 	tx.SkuAttributeCombination = NewSkuAttributeCombinationClient(tx.config)
 	tx.SkuPrice = NewSkuPriceClient(tx.config)
 	tx.StockAlert = NewStockAlertClient(tx.config)
+	tx.SysConfig = NewSysConfigClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
 	tx.TaxRate = NewTaxRateClient(tx.config)
 	tx.Tenant = NewTenantClient(tx.config)
@@ -365,7 +383,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Api.QueryXXX(), the query will be executed
+// applies a query, for example: AccessKey.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

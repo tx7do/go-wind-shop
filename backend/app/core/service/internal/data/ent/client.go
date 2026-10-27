@@ -11,6 +11,7 @@ import (
 
 	"go-wind-shop/app/core/service/internal/data/ent/migrate"
 
+	"go-wind-shop/app/core/service/internal/data/ent/accesskey"
 	"go-wind-shop/app/core/service/internal/data/ent/api"
 	"go-wind-shop/app/core/service/internal/data/ent/apiauditlog"
 	"go-wind-shop/app/core/service/internal/data/ent/brand"
@@ -23,6 +24,9 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/commentlike"
 	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/dataaccessauditlog"
+	"go-wind-shop/app/core/service/internal/data/ent/dictentry"
+	"go-wind-shop/app/core/service/internal/data/ent/dictentryi18n"
+	"go-wind-shop/app/core/service/internal/data/ent/dicttype"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
 	"go-wind-shop/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
@@ -37,6 +41,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-shop/app/core/service/internal/data/ent/membershiprole"
 	"go-wind-shop/app/core/service/internal/data/ent/menu"
+	"go-wind-shop/app/core/service/internal/data/ent/monitoralertrule"
 	"go-wind-shop/app/core/service/internal/data/ent/notificationchannel"
 	"go-wind-shop/app/core/service/internal/data/ent/notificationdelivery"
 	"go-wind-shop/app/core/service/internal/data/ent/notificationpreference"
@@ -72,6 +77,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 	"go-wind-shop/app/core/service/internal/data/ent/stockalert"
+	"go-wind-shop/app/core/service/internal/data/ent/sysconfig"
 	"go-wind-shop/app/core/service/internal/data/ent/task"
 	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
 	"go-wind-shop/app/core/service/internal/data/ent/tenant"
@@ -94,6 +100,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
+	// AccessKey is the client for interacting with the AccessKey builders.
+	AccessKey *AccessKeyClient
 	// Api is the client for interacting with the Api builders.
 	Api *APIClient
 	// ApiAuditLog is the client for interacting with the ApiAuditLog builders.
@@ -118,6 +126,12 @@ type Client struct {
 	CouponTemplate *CouponTemplateClient
 	// DataAccessAuditLog is the client for interacting with the DataAccessAuditLog builders.
 	DataAccessAuditLog *DataAccessAuditLogClient
+	// DictEntry is the client for interacting with the DictEntry builders.
+	DictEntry *DictEntryClient
+	// DictEntryI18n is the client for interacting with the DictEntryI18n builders.
+	DictEntryI18n *DictEntryI18nClient
+	// DictType is the client for interacting with the DictType builders.
+	DictType *DictTypeClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
 	// InteractionCounter is the client for interacting with the InteractionCounter builders.
@@ -146,6 +160,8 @@ type Client struct {
 	MembershipRole *MembershipRoleClient
 	// Menu is the client for interacting with the Menu builders.
 	Menu *MenuClient
+	// MonitorAlertRule is the client for interacting with the MonitorAlertRule builders.
+	MonitorAlertRule *MonitorAlertRuleClient
 	// NotificationChannel is the client for interacting with the NotificationChannel builders.
 	NotificationChannel *NotificationChannelClient
 	// NotificationDelivery is the client for interacting with the NotificationDelivery builders.
@@ -216,6 +232,8 @@ type Client struct {
 	SkuPrice *SkuPriceClient
 	// StockAlert is the client for interacting with the StockAlert builders.
 	StockAlert *StockAlertClient
+	// SysConfig is the client for interacting with the SysConfig builders.
+	SysConfig *SysConfigClient
 	// Task is the client for interacting with the Task builders.
 	Task *TaskClient
 	// TaxRate is the client for interacting with the TaxRate builders.
@@ -247,6 +265,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
+	c.AccessKey = NewAccessKeyClient(c.config)
 	c.Api = NewAPIClient(c.config)
 	c.ApiAuditLog = NewApiAuditLogClient(c.config)
 	c.Brand = NewBrandClient(c.config)
@@ -259,6 +278,9 @@ func (c *Client) init() {
 	c.CommentLike = NewCommentLikeClient(c.config)
 	c.CouponTemplate = NewCouponTemplateClient(c.config)
 	c.DataAccessAuditLog = NewDataAccessAuditLogClient(c.config)
+	c.DictEntry = NewDictEntryClient(c.config)
+	c.DictEntryI18n = NewDictEntryI18nClient(c.config)
+	c.DictType = NewDictTypeClient(c.config)
 	c.File = NewFileClient(c.config)
 	c.InteractionCounter = NewInteractionCounterClient(c.config)
 	c.InternalMessage = NewInternalMessageClient(c.config)
@@ -273,6 +295,7 @@ func (c *Client) init() {
 	c.MembershipPosition = NewMembershipPositionClient(c.config)
 	c.MembershipRole = NewMembershipRoleClient(c.config)
 	c.Menu = NewMenuClient(c.config)
+	c.MonitorAlertRule = NewMonitorAlertRuleClient(c.config)
 	c.NotificationChannel = NewNotificationChannelClient(c.config)
 	c.NotificationDelivery = NewNotificationDeliveryClient(c.config)
 	c.NotificationPreference = NewNotificationPreferenceClient(c.config)
@@ -308,6 +331,7 @@ func (c *Client) init() {
 	c.SkuAttributeCombination = NewSkuAttributeCombinationClient(c.config)
 	c.SkuPrice = NewSkuPriceClient(c.config)
 	c.StockAlert = NewStockAlertClient(c.config)
+	c.SysConfig = NewSysConfigClient(c.config)
 	c.Task = NewTaskClient(c.config)
 	c.TaxRate = NewTaxRateClient(c.config)
 	c.Tenant = NewTenantClient(c.config)
@@ -410,6 +434,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:                              ctx,
 		config:                           cfg,
+		AccessKey:                        NewAccessKeyClient(cfg),
 		Api:                              NewAPIClient(cfg),
 		ApiAuditLog:                      NewApiAuditLogClient(cfg),
 		Brand:                            NewBrandClient(cfg),
@@ -422,6 +447,9 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		CommentLike:                      NewCommentLikeClient(cfg),
 		CouponTemplate:                   NewCouponTemplateClient(cfg),
 		DataAccessAuditLog:               NewDataAccessAuditLogClient(cfg),
+		DictEntry:                        NewDictEntryClient(cfg),
+		DictEntryI18n:                    NewDictEntryI18nClient(cfg),
+		DictType:                         NewDictTypeClient(cfg),
 		File:                             NewFileClient(cfg),
 		InteractionCounter:               NewInteractionCounterClient(cfg),
 		InternalMessage:                  NewInternalMessageClient(cfg),
@@ -436,6 +464,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		MembershipPosition:               NewMembershipPositionClient(cfg),
 		MembershipRole:                   NewMembershipRoleClient(cfg),
 		Menu:                             NewMenuClient(cfg),
+		MonitorAlertRule:                 NewMonitorAlertRuleClient(cfg),
 		NotificationChannel:              NewNotificationChannelClient(cfg),
 		NotificationDelivery:             NewNotificationDeliveryClient(cfg),
 		NotificationPreference:           NewNotificationPreferenceClient(cfg),
@@ -471,6 +500,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		SkuAttributeCombination:          NewSkuAttributeCombinationClient(cfg),
 		SkuPrice:                         NewSkuPriceClient(cfg),
 		StockAlert:                       NewStockAlertClient(cfg),
+		SysConfig:                        NewSysConfigClient(cfg),
 		Task:                             NewTaskClient(cfg),
 		TaxRate:                          NewTaxRateClient(cfg),
 		Tenant:                           NewTenantClient(cfg),
@@ -500,6 +530,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:                              ctx,
 		config:                           cfg,
+		AccessKey:                        NewAccessKeyClient(cfg),
 		Api:                              NewAPIClient(cfg),
 		ApiAuditLog:                      NewApiAuditLogClient(cfg),
 		Brand:                            NewBrandClient(cfg),
@@ -512,6 +543,9 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		CommentLike:                      NewCommentLikeClient(cfg),
 		CouponTemplate:                   NewCouponTemplateClient(cfg),
 		DataAccessAuditLog:               NewDataAccessAuditLogClient(cfg),
+		DictEntry:                        NewDictEntryClient(cfg),
+		DictEntryI18n:                    NewDictEntryI18nClient(cfg),
+		DictType:                         NewDictTypeClient(cfg),
 		File:                             NewFileClient(cfg),
 		InteractionCounter:               NewInteractionCounterClient(cfg),
 		InternalMessage:                  NewInternalMessageClient(cfg),
@@ -526,6 +560,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		MembershipPosition:               NewMembershipPositionClient(cfg),
 		MembershipRole:                   NewMembershipRoleClient(cfg),
 		Menu:                             NewMenuClient(cfg),
+		MonitorAlertRule:                 NewMonitorAlertRuleClient(cfg),
 		NotificationChannel:              NewNotificationChannelClient(cfg),
 		NotificationDelivery:             NewNotificationDeliveryClient(cfg),
 		NotificationPreference:           NewNotificationPreferenceClient(cfg),
@@ -561,6 +596,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		SkuAttributeCombination:          NewSkuAttributeCombinationClient(cfg),
 		SkuPrice:                         NewSkuPriceClient(cfg),
 		StockAlert:                       NewStockAlertClient(cfg),
+		SysConfig:                        NewSysConfigClient(cfg),
 		Task:                             NewTaskClient(cfg),
 		TaxRate:                          NewTaxRateClient(cfg),
 		Tenant:                           NewTenantClient(cfg),
@@ -577,7 +613,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Api.
+//		AccessKey.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -600,23 +636,24 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Api, c.ApiAuditLog, c.Brand, c.BrandTranslation, c.Cart, c.CartItem,
-		c.Category, c.CategoryTranslation, c.Comment, c.CommentLike, c.CouponTemplate,
-		c.DataAccessAuditLog, c.File, c.InteractionCounter, c.InternalMessage,
+		c.AccessKey, c.Api, c.ApiAuditLog, c.Brand, c.BrandTranslation, c.Cart,
+		c.CartItem, c.Category, c.CategoryTranslation, c.Comment, c.CommentLike,
+		c.CouponTemplate, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
+		c.DictType, c.File, c.InteractionCounter, c.InternalMessage,
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Invoice, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.NotificationChannel,
-		c.NotificationDelivery, c.NotificationPreference, c.NotificationRule,
-		c.NotificationTemplate, c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit,
-		c.PaymentRefund, c.PaymentTransaction, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PolicyEvaluationLog, c.Position, c.Product, c.ProductAttribute,
-		c.ProductAttributeTranslation, c.ProductAttributeValue,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.MonitorAlertRule,
+		c.NotificationChannel, c.NotificationDelivery, c.NotificationPreference,
+		c.NotificationRule, c.NotificationTemplate, c.OperationAuditLog, c.Order,
+		c.OrderItem, c.OrgUnit, c.PaymentRefund, c.PaymentTransaction, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Product,
+		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
 		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Role,
 		c.RoleMetadata, c.RolePermission, c.Shipment, c.ShippingAddress,
 		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.StockAlert,
-		c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
+		c.SysConfig, c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
 	} {
 		n.Use(hooks...)
 	}
@@ -626,23 +663,24 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Api, c.ApiAuditLog, c.Brand, c.BrandTranslation, c.Cart, c.CartItem,
-		c.Category, c.CategoryTranslation, c.Comment, c.CommentLike, c.CouponTemplate,
-		c.DataAccessAuditLog, c.File, c.InteractionCounter, c.InternalMessage,
+		c.AccessKey, c.Api, c.ApiAuditLog, c.Brand, c.BrandTranslation, c.Cart,
+		c.CartItem, c.Category, c.CategoryTranslation, c.Comment, c.CommentLike,
+		c.CouponTemplate, c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n,
+		c.DictType, c.File, c.InteractionCounter, c.InternalMessage,
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Invoice, c.Language,
 		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.NotificationChannel,
-		c.NotificationDelivery, c.NotificationPreference, c.NotificationRule,
-		c.NotificationTemplate, c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit,
-		c.PaymentRefund, c.PaymentTransaction, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.PolicyEvaluationLog, c.Position, c.Product, c.ProductAttribute,
-		c.ProductAttributeTranslation, c.ProductAttributeValue,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.MonitorAlertRule,
+		c.NotificationChannel, c.NotificationDelivery, c.NotificationPreference,
+		c.NotificationRule, c.NotificationTemplate, c.OperationAuditLog, c.Order,
+		c.OrderItem, c.OrgUnit, c.PaymentRefund, c.PaymentTransaction, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.PolicyEvaluationLog, c.Position, c.Product,
+		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
 		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Role,
 		c.RoleMetadata, c.RolePermission, c.Shipment, c.ShippingAddress,
 		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.StockAlert,
-		c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential,
-		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
+		c.SysConfig, c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon,
+		c.UserCredential, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -651,6 +689,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
+	case *AccessKeyMutation:
+		return c.AccessKey.mutate(ctx, m)
 	case *APIMutation:
 		return c.Api.mutate(ctx, m)
 	case *ApiAuditLogMutation:
@@ -675,6 +715,12 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.CouponTemplate.mutate(ctx, m)
 	case *DataAccessAuditLogMutation:
 		return c.DataAccessAuditLog.mutate(ctx, m)
+	case *DictEntryMutation:
+		return c.DictEntry.mutate(ctx, m)
+	case *DictEntryI18nMutation:
+		return c.DictEntryI18n.mutate(ctx, m)
+	case *DictTypeMutation:
+		return c.DictType.mutate(ctx, m)
 	case *FileMutation:
 		return c.File.mutate(ctx, m)
 	case *InteractionCounterMutation:
@@ -703,6 +749,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.MembershipRole.mutate(ctx, m)
 	case *MenuMutation:
 		return c.Menu.mutate(ctx, m)
+	case *MonitorAlertRuleMutation:
+		return c.MonitorAlertRule.mutate(ctx, m)
 	case *NotificationChannelMutation:
 		return c.NotificationChannel.mutate(ctx, m)
 	case *NotificationDeliveryMutation:
@@ -773,6 +821,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.SkuPrice.mutate(ctx, m)
 	case *StockAlertMutation:
 		return c.StockAlert.mutate(ctx, m)
+	case *SysConfigMutation:
+		return c.SysConfig.mutate(ctx, m)
 	case *TaskMutation:
 		return c.Task.mutate(ctx, m)
 	case *TaxRateMutation:
@@ -795,6 +845,140 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Wishlist.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
+	}
+}
+
+// AccessKeyClient is a client for the AccessKey schema.
+type AccessKeyClient struct {
+	config
+}
+
+// NewAccessKeyClient returns a client for the AccessKey from the given config.
+func NewAccessKeyClient(c config) *AccessKeyClient {
+	return &AccessKeyClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `accesskey.Hooks(f(g(h())))`.
+func (c *AccessKeyClient) Use(hooks ...Hook) {
+	c.hooks.AccessKey = append(c.hooks.AccessKey, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `accesskey.Intercept(f(g(h())))`.
+func (c *AccessKeyClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AccessKey = append(c.inters.AccessKey, interceptors...)
+}
+
+// Create returns a builder for creating a AccessKey entity.
+func (c *AccessKeyClient) Create() *AccessKeyCreate {
+	mutation := newAccessKeyMutation(c.config, OpCreate)
+	return &AccessKeyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AccessKey entities.
+func (c *AccessKeyClient) CreateBulk(builders ...*AccessKeyCreate) *AccessKeyCreateBulk {
+	return &AccessKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AccessKeyClient) MapCreateBulk(slice any, setFunc func(*AccessKeyCreate, int)) *AccessKeyCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AccessKeyCreateBulk{err: fmt.Errorf("calling to AccessKeyClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AccessKeyCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AccessKeyCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AccessKey.
+func (c *AccessKeyClient) Update() *AccessKeyUpdate {
+	mutation := newAccessKeyMutation(c.config, OpUpdate)
+	return &AccessKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AccessKeyClient) UpdateOne(_m *AccessKey) *AccessKeyUpdateOne {
+	mutation := newAccessKeyMutation(c.config, OpUpdateOne, withAccessKey(_m))
+	return &AccessKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AccessKeyClient) UpdateOneID(id uint32) *AccessKeyUpdateOne {
+	mutation := newAccessKeyMutation(c.config, OpUpdateOne, withAccessKeyID(id))
+	return &AccessKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AccessKey.
+func (c *AccessKeyClient) Delete() *AccessKeyDelete {
+	mutation := newAccessKeyMutation(c.config, OpDelete)
+	return &AccessKeyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AccessKeyClient) DeleteOne(_m *AccessKey) *AccessKeyDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AccessKeyClient) DeleteOneID(id uint32) *AccessKeyDeleteOne {
+	builder := c.Delete().Where(accesskey.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AccessKeyDeleteOne{builder}
+}
+
+// Query returns a query builder for AccessKey.
+func (c *AccessKeyClient) Query() *AccessKeyQuery {
+	return &AccessKeyQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAccessKey},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AccessKey entity by its id.
+func (c *AccessKeyClient) Get(ctx context.Context, id uint32) (*AccessKey, error) {
+	return c.Query().Where(accesskey.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AccessKeyClient) GetX(ctx context.Context, id uint32) *AccessKey {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *AccessKeyClient) Hooks() []Hook {
+	hooks := c.hooks.AccessKey
+	return append(hooks[:len(hooks):len(hooks)], accesskey.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *AccessKeyClient) Interceptors() []Interceptor {
+	return c.inters.AccessKey
+}
+
+func (c *AccessKeyClient) mutate(ctx context.Context, m *AccessKeyMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AccessKeyCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AccessKeyUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AccessKeyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AccessKeyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AccessKey mutation op: %q", m.Op())
 	}
 }
 
@@ -2462,6 +2646,472 @@ func (c *DataAccessAuditLogClient) mutate(ctx context.Context, m *DataAccessAudi
 		return (&DataAccessAuditLogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown DataAccessAuditLog mutation op: %q", m.Op())
+	}
+}
+
+// DictEntryClient is a client for the DictEntry schema.
+type DictEntryClient struct {
+	config
+}
+
+// NewDictEntryClient returns a client for the DictEntry from the given config.
+func NewDictEntryClient(c config) *DictEntryClient {
+	return &DictEntryClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `dictentry.Hooks(f(g(h())))`.
+func (c *DictEntryClient) Use(hooks ...Hook) {
+	c.hooks.DictEntry = append(c.hooks.DictEntry, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `dictentry.Intercept(f(g(h())))`.
+func (c *DictEntryClient) Intercept(interceptors ...Interceptor) {
+	c.inters.DictEntry = append(c.inters.DictEntry, interceptors...)
+}
+
+// Create returns a builder for creating a DictEntry entity.
+func (c *DictEntryClient) Create() *DictEntryCreate {
+	mutation := newDictEntryMutation(c.config, OpCreate)
+	return &DictEntryCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of DictEntry entities.
+func (c *DictEntryClient) CreateBulk(builders ...*DictEntryCreate) *DictEntryCreateBulk {
+	return &DictEntryCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *DictEntryClient) MapCreateBulk(slice any, setFunc func(*DictEntryCreate, int)) *DictEntryCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &DictEntryCreateBulk{err: fmt.Errorf("calling to DictEntryClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*DictEntryCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &DictEntryCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for DictEntry.
+func (c *DictEntryClient) Update() *DictEntryUpdate {
+	mutation := newDictEntryMutation(c.config, OpUpdate)
+	return &DictEntryUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *DictEntryClient) UpdateOne(_m *DictEntry) *DictEntryUpdateOne {
+	mutation := newDictEntryMutation(c.config, OpUpdateOne, withDictEntry(_m))
+	return &DictEntryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *DictEntryClient) UpdateOneID(id uint32) *DictEntryUpdateOne {
+	mutation := newDictEntryMutation(c.config, OpUpdateOne, withDictEntryID(id))
+	return &DictEntryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for DictEntry.
+func (c *DictEntryClient) Delete() *DictEntryDelete {
+	mutation := newDictEntryMutation(c.config, OpDelete)
+	return &DictEntryDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *DictEntryClient) DeleteOne(_m *DictEntry) *DictEntryDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *DictEntryClient) DeleteOneID(id uint32) *DictEntryDeleteOne {
+	builder := c.Delete().Where(dictentry.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &DictEntryDeleteOne{builder}
+}
+
+// Query returns a query builder for DictEntry.
+func (c *DictEntryClient) Query() *DictEntryQuery {
+	return &DictEntryQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeDictEntry},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a DictEntry entity by its id.
+func (c *DictEntryClient) Get(ctx context.Context, id uint32) (*DictEntry, error) {
+	return c.Query().Where(dictentry.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *DictEntryClient) GetX(ctx context.Context, id uint32) *DictEntry {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryDictType queries the dict_type edge of a DictEntry.
+func (c *DictEntryClient) QueryDictType(_m *DictEntry) *DictTypeQuery {
+	query := (&DictTypeClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(dictentry.Table, dictentry.FieldID, id),
+			sqlgraph.To(dicttype.Table, dicttype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, dictentry.DictTypeTable, dictentry.DictTypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryI18ns queries the i18ns edge of a DictEntry.
+func (c *DictEntryClient) QueryI18ns(_m *DictEntry) *DictEntryI18nQuery {
+	query := (&DictEntryI18nClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(dictentry.Table, dictentry.FieldID, id),
+			sqlgraph.To(dictentryi18n.Table, dictentryi18n.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, dictentry.I18nsTable, dictentry.I18nsColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *DictEntryClient) Hooks() []Hook {
+	hooks := c.hooks.DictEntry
+	return append(hooks[:len(hooks):len(hooks)], dictentry.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *DictEntryClient) Interceptors() []Interceptor {
+	return c.inters.DictEntry
+}
+
+func (c *DictEntryClient) mutate(ctx context.Context, m *DictEntryMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&DictEntryCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&DictEntryUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&DictEntryUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&DictEntryDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown DictEntry mutation op: %q", m.Op())
+	}
+}
+
+// DictEntryI18nClient is a client for the DictEntryI18n schema.
+type DictEntryI18nClient struct {
+	config
+}
+
+// NewDictEntryI18nClient returns a client for the DictEntryI18n from the given config.
+func NewDictEntryI18nClient(c config) *DictEntryI18nClient {
+	return &DictEntryI18nClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `dictentryi18n.Hooks(f(g(h())))`.
+func (c *DictEntryI18nClient) Use(hooks ...Hook) {
+	c.hooks.DictEntryI18n = append(c.hooks.DictEntryI18n, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `dictentryi18n.Intercept(f(g(h())))`.
+func (c *DictEntryI18nClient) Intercept(interceptors ...Interceptor) {
+	c.inters.DictEntryI18n = append(c.inters.DictEntryI18n, interceptors...)
+}
+
+// Create returns a builder for creating a DictEntryI18n entity.
+func (c *DictEntryI18nClient) Create() *DictEntryI18nCreate {
+	mutation := newDictEntryI18nMutation(c.config, OpCreate)
+	return &DictEntryI18nCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of DictEntryI18n entities.
+func (c *DictEntryI18nClient) CreateBulk(builders ...*DictEntryI18nCreate) *DictEntryI18nCreateBulk {
+	return &DictEntryI18nCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *DictEntryI18nClient) MapCreateBulk(slice any, setFunc func(*DictEntryI18nCreate, int)) *DictEntryI18nCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &DictEntryI18nCreateBulk{err: fmt.Errorf("calling to DictEntryI18nClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*DictEntryI18nCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &DictEntryI18nCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for DictEntryI18n.
+func (c *DictEntryI18nClient) Update() *DictEntryI18nUpdate {
+	mutation := newDictEntryI18nMutation(c.config, OpUpdate)
+	return &DictEntryI18nUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *DictEntryI18nClient) UpdateOne(_m *DictEntryI18n) *DictEntryI18nUpdateOne {
+	mutation := newDictEntryI18nMutation(c.config, OpUpdateOne, withDictEntryI18n(_m))
+	return &DictEntryI18nUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *DictEntryI18nClient) UpdateOneID(id uint32) *DictEntryI18nUpdateOne {
+	mutation := newDictEntryI18nMutation(c.config, OpUpdateOne, withDictEntryI18nID(id))
+	return &DictEntryI18nUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for DictEntryI18n.
+func (c *DictEntryI18nClient) Delete() *DictEntryI18nDelete {
+	mutation := newDictEntryI18nMutation(c.config, OpDelete)
+	return &DictEntryI18nDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *DictEntryI18nClient) DeleteOne(_m *DictEntryI18n) *DictEntryI18nDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *DictEntryI18nClient) DeleteOneID(id uint32) *DictEntryI18nDeleteOne {
+	builder := c.Delete().Where(dictentryi18n.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &DictEntryI18nDeleteOne{builder}
+}
+
+// Query returns a query builder for DictEntryI18n.
+func (c *DictEntryI18nClient) Query() *DictEntryI18nQuery {
+	return &DictEntryI18nQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeDictEntryI18n},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a DictEntryI18n entity by its id.
+func (c *DictEntryI18nClient) Get(ctx context.Context, id uint32) (*DictEntryI18n, error) {
+	return c.Query().Where(dictentryi18n.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *DictEntryI18nClient) GetX(ctx context.Context, id uint32) *DictEntryI18n {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryDictEntry queries the dict_entry edge of a DictEntryI18n.
+func (c *DictEntryI18nClient) QueryDictEntry(_m *DictEntryI18n) *DictEntryQuery {
+	query := (&DictEntryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(dictentryi18n.Table, dictentryi18n.FieldID, id),
+			sqlgraph.To(dictentry.Table, dictentry.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, dictentryi18n.DictEntryTable, dictentryi18n.DictEntryColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *DictEntryI18nClient) Hooks() []Hook {
+	hooks := c.hooks.DictEntryI18n
+	return append(hooks[:len(hooks):len(hooks)], dictentryi18n.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *DictEntryI18nClient) Interceptors() []Interceptor {
+	return c.inters.DictEntryI18n
+}
+
+func (c *DictEntryI18nClient) mutate(ctx context.Context, m *DictEntryI18nMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&DictEntryI18nCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&DictEntryI18nUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&DictEntryI18nUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&DictEntryI18nDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown DictEntryI18n mutation op: %q", m.Op())
+	}
+}
+
+// DictTypeClient is a client for the DictType schema.
+type DictTypeClient struct {
+	config
+}
+
+// NewDictTypeClient returns a client for the DictType from the given config.
+func NewDictTypeClient(c config) *DictTypeClient {
+	return &DictTypeClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `dicttype.Hooks(f(g(h())))`.
+func (c *DictTypeClient) Use(hooks ...Hook) {
+	c.hooks.DictType = append(c.hooks.DictType, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `dicttype.Intercept(f(g(h())))`.
+func (c *DictTypeClient) Intercept(interceptors ...Interceptor) {
+	c.inters.DictType = append(c.inters.DictType, interceptors...)
+}
+
+// Create returns a builder for creating a DictType entity.
+func (c *DictTypeClient) Create() *DictTypeCreate {
+	mutation := newDictTypeMutation(c.config, OpCreate)
+	return &DictTypeCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of DictType entities.
+func (c *DictTypeClient) CreateBulk(builders ...*DictTypeCreate) *DictTypeCreateBulk {
+	return &DictTypeCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *DictTypeClient) MapCreateBulk(slice any, setFunc func(*DictTypeCreate, int)) *DictTypeCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &DictTypeCreateBulk{err: fmt.Errorf("calling to DictTypeClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*DictTypeCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &DictTypeCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for DictType.
+func (c *DictTypeClient) Update() *DictTypeUpdate {
+	mutation := newDictTypeMutation(c.config, OpUpdate)
+	return &DictTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *DictTypeClient) UpdateOne(_m *DictType) *DictTypeUpdateOne {
+	mutation := newDictTypeMutation(c.config, OpUpdateOne, withDictType(_m))
+	return &DictTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *DictTypeClient) UpdateOneID(id uint32) *DictTypeUpdateOne {
+	mutation := newDictTypeMutation(c.config, OpUpdateOne, withDictTypeID(id))
+	return &DictTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for DictType.
+func (c *DictTypeClient) Delete() *DictTypeDelete {
+	mutation := newDictTypeMutation(c.config, OpDelete)
+	return &DictTypeDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *DictTypeClient) DeleteOne(_m *DictType) *DictTypeDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *DictTypeClient) DeleteOneID(id uint32) *DictTypeDeleteOne {
+	builder := c.Delete().Where(dicttype.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &DictTypeDeleteOne{builder}
+}
+
+// Query returns a query builder for DictType.
+func (c *DictTypeClient) Query() *DictTypeQuery {
+	return &DictTypeQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeDictType},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a DictType entity by its id.
+func (c *DictTypeClient) Get(ctx context.Context, id uint32) (*DictType, error) {
+	return c.Query().Where(dicttype.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *DictTypeClient) GetX(ctx context.Context, id uint32) *DictType {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryEntries queries the entries edge of a DictType.
+func (c *DictTypeClient) QueryEntries(_m *DictType) *DictEntryQuery {
+	query := (&DictEntryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := _m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(dicttype.Table, dicttype.FieldID, id),
+			sqlgraph.To(dictentry.Table, dictentry.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, dicttype.EntriesTable, dicttype.EntriesColumn),
+		)
+		fromV = sqlgraph.Neighbors(_m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *DictTypeClient) Hooks() []Hook {
+	hooks := c.hooks.DictType
+	return append(hooks[:len(hooks):len(hooks)], dicttype.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *DictTypeClient) Interceptors() []Interceptor {
+	return c.inters.DictType
+}
+
+func (c *DictTypeClient) mutate(ctx context.Context, m *DictTypeMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&DictTypeCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&DictTypeUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&DictTypeUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&DictTypeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown DictType mutation op: %q", m.Op())
 	}
 }
 
@@ -4368,6 +5018,139 @@ func (c *MenuClient) mutate(ctx context.Context, m *MenuMutation) (Value, error)
 		return (&MenuDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown Menu mutation op: %q", m.Op())
+	}
+}
+
+// MonitorAlertRuleClient is a client for the MonitorAlertRule schema.
+type MonitorAlertRuleClient struct {
+	config
+}
+
+// NewMonitorAlertRuleClient returns a client for the MonitorAlertRule from the given config.
+func NewMonitorAlertRuleClient(c config) *MonitorAlertRuleClient {
+	return &MonitorAlertRuleClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `monitoralertrule.Hooks(f(g(h())))`.
+func (c *MonitorAlertRuleClient) Use(hooks ...Hook) {
+	c.hooks.MonitorAlertRule = append(c.hooks.MonitorAlertRule, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `monitoralertrule.Intercept(f(g(h())))`.
+func (c *MonitorAlertRuleClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MonitorAlertRule = append(c.inters.MonitorAlertRule, interceptors...)
+}
+
+// Create returns a builder for creating a MonitorAlertRule entity.
+func (c *MonitorAlertRuleClient) Create() *MonitorAlertRuleCreate {
+	mutation := newMonitorAlertRuleMutation(c.config, OpCreate)
+	return &MonitorAlertRuleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MonitorAlertRule entities.
+func (c *MonitorAlertRuleClient) CreateBulk(builders ...*MonitorAlertRuleCreate) *MonitorAlertRuleCreateBulk {
+	return &MonitorAlertRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MonitorAlertRuleClient) MapCreateBulk(slice any, setFunc func(*MonitorAlertRuleCreate, int)) *MonitorAlertRuleCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MonitorAlertRuleCreateBulk{err: fmt.Errorf("calling to MonitorAlertRuleClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MonitorAlertRuleCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MonitorAlertRuleCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MonitorAlertRule.
+func (c *MonitorAlertRuleClient) Update() *MonitorAlertRuleUpdate {
+	mutation := newMonitorAlertRuleMutation(c.config, OpUpdate)
+	return &MonitorAlertRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MonitorAlertRuleClient) UpdateOne(_m *MonitorAlertRule) *MonitorAlertRuleUpdateOne {
+	mutation := newMonitorAlertRuleMutation(c.config, OpUpdateOne, withMonitorAlertRule(_m))
+	return &MonitorAlertRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MonitorAlertRuleClient) UpdateOneID(id uint32) *MonitorAlertRuleUpdateOne {
+	mutation := newMonitorAlertRuleMutation(c.config, OpUpdateOne, withMonitorAlertRuleID(id))
+	return &MonitorAlertRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MonitorAlertRule.
+func (c *MonitorAlertRuleClient) Delete() *MonitorAlertRuleDelete {
+	mutation := newMonitorAlertRuleMutation(c.config, OpDelete)
+	return &MonitorAlertRuleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MonitorAlertRuleClient) DeleteOne(_m *MonitorAlertRule) *MonitorAlertRuleDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MonitorAlertRuleClient) DeleteOneID(id uint32) *MonitorAlertRuleDeleteOne {
+	builder := c.Delete().Where(monitoralertrule.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MonitorAlertRuleDeleteOne{builder}
+}
+
+// Query returns a query builder for MonitorAlertRule.
+func (c *MonitorAlertRuleClient) Query() *MonitorAlertRuleQuery {
+	return &MonitorAlertRuleQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMonitorAlertRule},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MonitorAlertRule entity by its id.
+func (c *MonitorAlertRuleClient) Get(ctx context.Context, id uint32) (*MonitorAlertRule, error) {
+	return c.Query().Where(monitoralertrule.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MonitorAlertRuleClient) GetX(ctx context.Context, id uint32) *MonitorAlertRule {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *MonitorAlertRuleClient) Hooks() []Hook {
+	return c.hooks.MonitorAlertRule
+}
+
+// Interceptors returns the client interceptors.
+func (c *MonitorAlertRuleClient) Interceptors() []Interceptor {
+	return c.inters.MonitorAlertRule
+}
+
+func (c *MonitorAlertRuleClient) mutate(ctx context.Context, m *MonitorAlertRuleMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MonitorAlertRuleCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MonitorAlertRuleUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MonitorAlertRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MonitorAlertRuleDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown MonitorAlertRule mutation op: %q", m.Op())
 	}
 }
 
@@ -9105,6 +9888,139 @@ func (c *StockAlertClient) mutate(ctx context.Context, m *StockAlertMutation) (V
 	}
 }
 
+// SysConfigClient is a client for the SysConfig schema.
+type SysConfigClient struct {
+	config
+}
+
+// NewSysConfigClient returns a client for the SysConfig from the given config.
+func NewSysConfigClient(c config) *SysConfigClient {
+	return &SysConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `sysconfig.Hooks(f(g(h())))`.
+func (c *SysConfigClient) Use(hooks ...Hook) {
+	c.hooks.SysConfig = append(c.hooks.SysConfig, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `sysconfig.Intercept(f(g(h())))`.
+func (c *SysConfigClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SysConfig = append(c.inters.SysConfig, interceptors...)
+}
+
+// Create returns a builder for creating a SysConfig entity.
+func (c *SysConfigClient) Create() *SysConfigCreate {
+	mutation := newSysConfigMutation(c.config, OpCreate)
+	return &SysConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SysConfig entities.
+func (c *SysConfigClient) CreateBulk(builders ...*SysConfigCreate) *SysConfigCreateBulk {
+	return &SysConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SysConfigClient) MapCreateBulk(slice any, setFunc func(*SysConfigCreate, int)) *SysConfigCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SysConfigCreateBulk{err: fmt.Errorf("calling to SysConfigClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SysConfigCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SysConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SysConfig.
+func (c *SysConfigClient) Update() *SysConfigUpdate {
+	mutation := newSysConfigMutation(c.config, OpUpdate)
+	return &SysConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SysConfigClient) UpdateOne(_m *SysConfig) *SysConfigUpdateOne {
+	mutation := newSysConfigMutation(c.config, OpUpdateOne, withSysConfig(_m))
+	return &SysConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SysConfigClient) UpdateOneID(id uint32) *SysConfigUpdateOne {
+	mutation := newSysConfigMutation(c.config, OpUpdateOne, withSysConfigID(id))
+	return &SysConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SysConfig.
+func (c *SysConfigClient) Delete() *SysConfigDelete {
+	mutation := newSysConfigMutation(c.config, OpDelete)
+	return &SysConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SysConfigClient) DeleteOne(_m *SysConfig) *SysConfigDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SysConfigClient) DeleteOneID(id uint32) *SysConfigDeleteOne {
+	builder := c.Delete().Where(sysconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SysConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for SysConfig.
+func (c *SysConfigClient) Query() *SysConfigQuery {
+	return &SysConfigQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSysConfig},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SysConfig entity by its id.
+func (c *SysConfigClient) Get(ctx context.Context, id uint32) (*SysConfig, error) {
+	return c.Query().Where(sysconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SysConfigClient) GetX(ctx context.Context, id uint32) *SysConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SysConfigClient) Hooks() []Hook {
+	return c.hooks.SysConfig
+}
+
+// Interceptors returns the client interceptors.
+func (c *SysConfigClient) Interceptors() []Interceptor {
+	return c.inters.SysConfig
+}
+
+func (c *SysConfigClient) mutate(ctx context.Context, m *SysConfigMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SysConfigCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SysConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SysConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SysConfigDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SysConfig mutation op: %q", m.Op())
+	}
+}
+
 // TaskClient is a client for the Task schema.
 type TaskClient struct {
 	config
@@ -10447,39 +11363,41 @@ func (c *WishlistClient) mutate(ctx context.Context, m *WishlistMutation) (Value
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Api, ApiAuditLog, Brand, BrandTranslation, Cart, CartItem, Category,
+		AccessKey, Api, ApiAuditLog, Brand, BrandTranslation, Cart, CartItem, Category,
 		CategoryTranslation, Comment, CommentLike, CouponTemplate, DataAccessAuditLog,
-		File, InteractionCounter, InternalMessage, InternalMessageCategory,
-		InternalMessageRecipient, Invoice, Language, LoginAuditLog, LoginPolicy,
-		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
-		NotificationChannel, NotificationDelivery, NotificationPreference,
-		NotificationRule, NotificationTemplate, OperationAuditLog, Order, OrderItem,
-		OrgUnit, PaymentRefund, PaymentTransaction, Permission, PermissionApi,
+		DictEntry, DictEntryI18n, DictType, File, InteractionCounter, InternalMessage,
+		InternalMessageCategory, InternalMessageRecipient, Invoice, Language,
+		LoginAuditLog, LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition,
+		MembershipRole, Menu, MonitorAlertRule, NotificationChannel,
+		NotificationDelivery, NotificationPreference, NotificationRule,
+		NotificationTemplate, OperationAuditLog, Order, OrderItem, OrgUnit,
+		PaymentRefund, PaymentTransaction, Permission, PermissionApi,
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
 		PolicyEvaluationLog, Position, Product, ProductAttribute,
 		ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Role, RoleMetadata,
 		RolePermission, Shipment, ShippingAddress, ShippingRate, Sku,
-		SkuAttributeCombination, SkuPrice, StockAlert, Task, TaxRate, Tenant, User,
-		UserCoupon, UserCredential, UserOrgUnit, UserPosition, UserRole,
+		SkuAttributeCombination, SkuPrice, StockAlert, SysConfig, Task, TaxRate,
+		Tenant, User, UserCoupon, UserCredential, UserOrgUnit, UserPosition, UserRole,
 		Wishlist []ent.Hook
 	}
 	inters struct {
-		Api, ApiAuditLog, Brand, BrandTranslation, Cart, CartItem, Category,
+		AccessKey, Api, ApiAuditLog, Brand, BrandTranslation, Cart, CartItem, Category,
 		CategoryTranslation, Comment, CommentLike, CouponTemplate, DataAccessAuditLog,
-		File, InteractionCounter, InternalMessage, InternalMessageCategory,
-		InternalMessageRecipient, Invoice, Language, LoginAuditLog, LoginPolicy,
-		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
-		NotificationChannel, NotificationDelivery, NotificationPreference,
-		NotificationRule, NotificationTemplate, OperationAuditLog, Order, OrderItem,
-		OrgUnit, PaymentRefund, PaymentTransaction, Permission, PermissionApi,
+		DictEntry, DictEntryI18n, DictType, File, InteractionCounter, InternalMessage,
+		InternalMessageCategory, InternalMessageRecipient, Invoice, Language,
+		LoginAuditLog, LoginPolicy, Membership, MembershipOrgUnit, MembershipPosition,
+		MembershipRole, Menu, MonitorAlertRule, NotificationChannel,
+		NotificationDelivery, NotificationPreference, NotificationRule,
+		NotificationTemplate, OperationAuditLog, Order, OrderItem, OrgUnit,
+		PaymentRefund, PaymentTransaction, Permission, PermissionApi,
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy,
 		PolicyEvaluationLog, Position, Product, ProductAttribute,
 		ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Role, RoleMetadata,
 		RolePermission, Shipment, ShippingAddress, ShippingRate, Sku,
-		SkuAttributeCombination, SkuPrice, StockAlert, Task, TaxRate, Tenant, User,
-		UserCoupon, UserCredential, UserOrgUnit, UserPosition, UserRole,
+		SkuAttributeCombination, SkuPrice, StockAlert, SysConfig, Task, TaxRate,
+		Tenant, User, UserCoupon, UserCredential, UserOrgUnit, UserPosition, UserRole,
 		Wishlist []ent.Interceptor
 	}
 )

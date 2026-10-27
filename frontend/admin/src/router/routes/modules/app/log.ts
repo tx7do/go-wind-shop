@@ -8,7 +8,7 @@ const log: RouteRecordRaw[] = [
     component: Layout,
     redirect: "/log/login-audit-logs",
     meta: {
-      order: 13,
+      order: 2004,
       icon: "lucide:logs",
       title: "routes.log.moduleName",
       keepAlive: true,
@@ -85,6 +85,18 @@ const log: RouteRecordRaw[] = [
           authority: ["sys:platform_admin"],
         },
         component: () => import("@/pages/app/log/policy_evaluation_log/index.vue"),
+      },
+
+      {
+        path: "redis-cache-monitor",
+        name: "RedisCacheMonitor",
+        meta: {
+          order: 7,
+          icon: "lucide:database",
+          title: "routes.log.redisCacheMonitor",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/log/redis_cache_monitor/index.vue"),
       },
     ],
   },

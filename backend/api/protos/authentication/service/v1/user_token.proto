@@ -78,7 +78,17 @@ message UserTokenPayload {
     }
   ]; // 是否租户管理员
 
-  optional string jti = 100 [
+    optional string ip = 30 [
+    json_name = "ip",
+    (gnostic.openapi.v3.property) = { description: "登录IP" }
+  ]; // 登录IP
+
+  optional string user_agent = 31 [
+    json_name = "userAgent",
+    (gnostic.openapi.v3.property) = { description: "用户代理" }
+  ]; // 用户代理
+
+optional string jti = 100 [
     json_name = "jti",
     (gnostic.openapi.v3.property) = {
       description: "令牌唯一标识(JWT ID)"

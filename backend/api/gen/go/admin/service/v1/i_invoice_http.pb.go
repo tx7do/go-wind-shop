@@ -40,15 +40,15 @@ type InvoiceServiceHTTPServer interface {
 
 func RegisterInvoiceServiceHTTPServer(s *http.Server, srv InvoiceServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/invoices", _InvoiceService_List12_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/invoices", _InvoiceService_List16_HTTP_Handler(srv))
 	r.GET("/admin/v1/mall/invoices/count", _InvoiceService_Count7_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/invoices/{id}", _InvoiceService_Get12_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/invoices", _InvoiceService_Create10_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/invoices/{id}", _InvoiceService_Update9_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/invoices", _InvoiceService_Delete10_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/invoices/{id}", _InvoiceService_Get16_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/invoices", _InvoiceService_Create14_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/invoices/{id}", _InvoiceService_Update13_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/invoices", _InvoiceService_Delete14_HTTP_Handler(srv))
 }
 
-func _InvoiceService_List12_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx http.Context) error {
+func _InvoiceService_List16_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -86,7 +86,7 @@ func _InvoiceService_Count7_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx 
 	}
 }
 
-func _InvoiceService_Get12_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx http.Context) error {
+func _InvoiceService_Get16_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetInvoiceRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -108,7 +108,7 @@ func _InvoiceService_Get12_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx h
 	}
 }
 
-func _InvoiceService_Create10_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx http.Context) error {
+func _InvoiceService_Create14_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreateInvoiceRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -130,7 +130,7 @@ func _InvoiceService_Create10_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ct
 	}
 }
 
-func _InvoiceService_Update9_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx http.Context) error {
+func _InvoiceService_Update13_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdateInvoiceRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -155,7 +155,7 @@ func _InvoiceService_Update9_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx
 	}
 }
 
-func _InvoiceService_Delete10_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx http.Context) error {
+func _InvoiceService_Delete14_HTTP_Handler(srv InvoiceServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeleteInvoiceRequest
 		if err := ctx.BindQuery(&in); err != nil {

@@ -14,6 +14,216 @@ info:
         url: https://github.com/tx7do/go-wind-shop/blob/master/LICENSE
     version: "1.0"
 paths:
+    /admin/v1/access-keys:
+        get:
+            tags:
+                - AccessKeyService
+            description: 分页查询访问凭证列表
+            operationId: AccessKeyService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/access_key.service.v1.ListAccessKeyResponse'
+        post:
+            tags:
+                - AccessKeyService
+            description: 创建访问凭证（响应中的 secret 仅本次明文返回，服务端只存 SHA-256 摘要）
+            operationId: AccessKeyService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/access_key.service.v1.CreateAccessKeyRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/access_key.service.v1.CreateAccessKeyResponse'
+    /admin/v1/access-keys/token:
+        post:
+            tags:
+                - AccessKeyService
+            description: 令牌交换（机器对机器）：AK/SK 换短期 JWT。免鉴权端点——本身即是认证。
+            operationId: AccessKeyService_IssueToken
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/access_key.service.v1.IssueTokenRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/access_key.service.v1.IssueTokenResponse'
+            security:
+                - {}
+    /admin/v1/access-keys/{id}:
+        get:
+            tags:
+                - AccessKeyService
+            description: 查询访问凭证详情
+            operationId: AccessKeyService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: accessKey
+                  in: query
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/access_key.service.v1.AccessKey'
+        put:
+            tags:
+                - AccessKeyService
+            description: 更新访问凭证（名称/状态/过期时间）
+            operationId: AccessKeyService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/access_key.service.v1.UpdateAccessKeyRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - AccessKeyService
+            description: 删除访问凭证
+            operationId: AccessKeyService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/access-keys/{id}/secret:
+        put:
+            tags:
+                - AccessKeyService
+            description: 重置密钥：生成新 Secret（响应明文返回一次）
+            operationId: AccessKeyService_ResetSecret
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/access_key.service.v1.ResetAccessKeySecretRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/access_key.service.v1.CreateAccessKeyResponse'
     /admin/v1/api-audit-logs:
         get:
             tags:
@@ -336,6 +546,162 @@ paths:
                                 $ref: '#/components/schemas/authentication.service.v1.VerifyCaptchaResponse'
             security:
                 - {}
+    /admin/v1/configs:
+        get:
+            tags:
+                - ConfigService
+            description: 查询系统参数列表
+            operationId: ConfigService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/config.service.v1.ListConfigResponse'
+        post:
+            tags:
+                - ConfigService
+            description: 创建系统参数
+            operationId: ConfigService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/config.service.v1.CreateConfigRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/configs/{id}:
+        get:
+            tags:
+                - ConfigService
+            description: 查询系统参数详情
+            operationId: ConfigService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/config.service.v1.Config'
+        put:
+            tags:
+                - ConfigService
+            description: 更新系统参数
+            operationId: ConfigService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/config.service.v1.UpdateConfigRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - ConfigService
+            description: 删除系统参数
+            operationId: ConfigService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/data-access-audit-logs:
         get:
             tags:
@@ -439,6 +805,161 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/audit.service.v1.DataAccessAuditLog'
+    /admin/v1/dict/entries:
+        get:
+            tags:
+                - DictEntryService
+            description: 分页查询字典条目列表
+            operationId: DictEntryService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dict.service.v1.ListDictEntryResponse'
+        post:
+            tags:
+                - DictEntryService
+            description: 创建字典条目
+            operationId: DictEntryService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/dict.service.v1.CreateDictEntryRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - DictEntryService
+            description: 删除字典条目
+            operationId: DictEntryService_Delete
+            parameters:
+                - name: ids
+                  in: query
+                  schema:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/dict/entries/by-type-code:
+        get:
+            tags:
+                - DictEntryService
+            description: 查询启用的字典条目
+            operationId: DictEntryService_ListByTypeCode
+            parameters:
+                - name: typeCode
+                  in: query
+                  schema:
+                    type: string
+                - name: local
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dict.service.v1.ListDictEntryByTypeCodeResponse'
+    /admin/v1/dict/entries/{id}:
+        put:
+            tags:
+                - DictEntryService
+            description: 更新字典条目
+            operationId: DictEntryService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/dict.service.v1.UpdateDictEntryRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/dict/langs:
         get:
             tags:
@@ -609,6 +1130,196 @@ paths:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/dict.service.v1.UpdateLanguageRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/dict/types:
+        get:
+            tags:
+                - DictTypeService
+            description: 分页查询字典类型列表
+            operationId: DictTypeService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dict.service.v1.ListDictTypeResponse'
+        post:
+            tags:
+                - DictTypeService
+            description: 创建字典类型
+            operationId: DictTypeService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/dict.service.v1.CreateDictTypeRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - DictTypeService
+            description: 删除字典类型
+            operationId: DictTypeService_Delete
+            parameters:
+                - name: ids
+                  in: query
+                  schema:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/dict/types/code/{code}:
+        get:
+            tags:
+                - DictTypeService
+            description: 查询字典类型详情
+            operationId: DictTypeService_Get
+            parameters:
+                - name: code
+                  in: path
+                  required: true
+                  schema:
+                    type: string
+                - name: id
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dict.service.v1.DictType'
+    /admin/v1/dict/types/{id}:
+        get:
+            tags:
+                - DictTypeService
+            description: 查询字典类型详情
+            operationId: DictTypeService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: code
+                  in: query
+                  schema:
+                    type: string
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dict.service.v1.DictType'
+        put:
+            tags:
+                - DictTypeService
+            description: 更新字典类型
+            operationId: DictTypeService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/dict.service.v1.UpdateDictTypeRequest'
                 required: true
             responses:
                 "200":
@@ -7712,6 +8423,179 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/monitor-alert-rules:
+        get:
+            tags:
+                - MonitorAlertService
+            description: 查询告警规则列表
+            operationId: MonitorAlertService_ListMonitorAlertRule
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monitor_alert.service.v1.ListMonitorAlertRuleResponse'
+        post:
+            tags:
+                - MonitorAlertService
+            description: 创建告警规则
+            operationId: MonitorAlertService_CreateMonitorAlertRule
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monitor_alert.service.v1.CreateMonitorAlertRuleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monitor_alert.service.v1.MonitorAlertRule'
+    /admin/v1/monitor-alert-rules/{id}:
+        get:
+            tags:
+                - MonitorAlertService
+            description: 查询告警规则详情
+            operationId: MonitorAlertService_GetMonitorAlertRule
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monitor_alert.service.v1.MonitorAlertRule'
+        put:
+            tags:
+                - MonitorAlertService
+            description: 更新告警规则
+            operationId: MonitorAlertService_UpdateMonitorAlertRule
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monitor_alert.service.v1.UpdateMonitorAlertRuleRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - MonitorAlertService
+            description: 删除告警规则
+            operationId: MonitorAlertService_DeleteMonitorAlertRule
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/monitor-alert-rules:evaluate:
+        post:
+            tags:
+                - MonitorAlertService
+            description: 手动触发一轮评估（与周期扫描同一内核）
+            operationId: MonitorAlertService_EvaluateMonitorAlerts
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/monitor_alert.service.v1.EvaluateMonitorAlertsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/monitor_alert.service.v1.EvaluateMonitorAlertsResponse'
     /admin/v1/notification-channel-schemas:
         get:
             tags:
@@ -7730,7 +8614,7 @@ paths:
             tags:
                 - NotificationChannelService
             description: 查询通知渠道列表
-            operationId: NotificationChannelService_List
+            operationId: NotificationChannelService_ListNotificationChannel
             parameters:
                 - name: page
                   in: query
@@ -7807,7 +8691,7 @@ paths:
             tags:
                 - NotificationChannelService
             description: 创建通知渠道
-            operationId: NotificationChannelService_Create
+            operationId: NotificationChannelService_CreateNotificationChannel
             requestBody:
                 content:
                     application/json:
@@ -7826,7 +8710,7 @@ paths:
             tags:
                 - NotificationChannelService
             description: 查询通知渠道详情
-            operationId: NotificationChannelService_Get
+            operationId: NotificationChannelService_GetNotificationChannel
             parameters:
                 - name: id
                   in: path
@@ -7845,7 +8729,7 @@ paths:
             tags:
                 - NotificationChannelService
             description: 更新通知渠道
-            operationId: NotificationChannelService_Update
+            operationId: NotificationChannelService_UpdateNotificationChannel
             parameters:
                 - name: id
                   in: path
@@ -7870,7 +8754,7 @@ paths:
             tags:
                 - NotificationChannelService
             description: 删除通知渠道
-            operationId: NotificationChannelService_Delete
+            operationId: NotificationChannelService_DeleteNotificationChannel
             parameters:
                 - name: id
                   in: path
@@ -7878,6 +8762,28 @@ paths:
                   schema:
                     type: integer
                     format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/notification-channels/{id}/send-test:
+        post:
+            tags:
+                - NotificationChannelService
+            operationId: NotificationChannelService_SendTest
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/notification.service.v1.SendTestRequest'
+                required: true
             responses:
                 "200":
                     description: OK
@@ -7913,7 +8819,7 @@ paths:
             tags:
                 - NotificationService
             description: 查询投递台账列表
-            operationId: NotificationService_ListDelivery
+            operationId: NotificationService_ListNotificationDelivery
             parameters:
                 - name: page
                   in: query
@@ -7991,7 +8897,7 @@ paths:
             tags:
                 - NotificationService
             description: 查询投递台账详情
-            operationId: NotificationService_GetDelivery
+            operationId: NotificationService_GetNotificationDelivery
             parameters:
                 - name: id
                   in: path
@@ -8055,7 +8961,7 @@ paths:
             tags:
                 - NotificationRuleService
             description: 查询路由规则列表
-            operationId: NotificationRuleService_List
+            operationId: NotificationRuleService_ListNotificationRule
             parameters:
                 - name: page
                   in: query
@@ -8132,7 +9038,7 @@ paths:
             tags:
                 - NotificationRuleService
             description: 创建路由规则
-            operationId: NotificationRuleService_Create
+            operationId: NotificationRuleService_CreateNotificationRule
             requestBody:
                 content:
                     application/json:
@@ -8151,7 +9057,7 @@ paths:
             tags:
                 - NotificationRuleService
             description: 查询路由规则详情
-            operationId: NotificationRuleService_Get
+            operationId: NotificationRuleService_GetNotificationRule
             parameters:
                 - name: id
                   in: path
@@ -8170,7 +9076,7 @@ paths:
             tags:
                 - NotificationRuleService
             description: 更新路由规则
-            operationId: NotificationRuleService_Update
+            operationId: NotificationRuleService_UpdateNotificationRule
             parameters:
                 - name: id
                   in: path
@@ -8195,7 +9101,7 @@ paths:
             tags:
                 - NotificationRuleService
             description: 删除路由规则
-            operationId: NotificationRuleService_Delete
+            operationId: NotificationRuleService_DeleteNotificationRule
             parameters:
                 - name: id
                   in: path
@@ -8212,7 +9118,7 @@ paths:
             tags:
                 - NotificationRuleService
             description: 测试投递：按这条规则当场走一遍完整投递链
-            operationId: NotificationRuleService_TestDispatch
+            operationId: NotificationRuleService_TestDispatchNotification
             parameters:
                 - name: id
                   in: path
@@ -8238,7 +9144,7 @@ paths:
             tags:
                 - NotificationTemplateService
             description: 模板列表（分页，contains 搜索）
-            operationId: NotificationTemplateService_List
+            operationId: NotificationTemplateService_ListNotificationTemplate
             parameters:
                 - name: page
                   in: query
@@ -8315,7 +9221,7 @@ paths:
             tags:
                 - NotificationTemplateService
             description: 新建模板
-            operationId: NotificationTemplateService_Create
+            operationId: NotificationTemplateService_CreateNotificationTemplate
             requestBody:
                 content:
                     application/json:
@@ -8334,7 +9240,7 @@ paths:
             tags:
                 - NotificationTemplateService
             description: 模板详情
-            operationId: NotificationTemplateService_Get
+            operationId: NotificationTemplateService_GetNotificationTemplate
             parameters:
                 - name: id
                   in: path
@@ -8353,7 +9259,7 @@ paths:
             tags:
                 - NotificationTemplateService
             description: 更新模板（CRUD 请求体必须包 {data:{...}}，见仓铁律）
-            operationId: NotificationTemplateService_Update
+            operationId: NotificationTemplateService_UpdateNotificationTemplate
             parameters:
                 - name: id
                   in: path
@@ -8378,7 +9284,7 @@ paths:
             tags:
                 - NotificationTemplateService
             description: 删除模板
-            operationId: NotificationTemplateService_Delete
+            operationId: NotificationTemplateService_DeleteNotificationTemplate
             parameters:
                 - name: id
                   in: path
@@ -8395,7 +9301,7 @@ paths:
             tags:
                 - NotificationTemplateService
             description: 试渲染：按变量集渲染指定模板，返回标题与正文（管理页预览用，不产生投递）
-            operationId: NotificationTemplateService_Render
+            operationId: NotificationTemplateService_RenderNotificationTemplate
             parameters:
                 - name: id
                   in: path
@@ -8417,6 +9323,98 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/notification.service.v1.RenderNotificationTemplateResponse'
+    /admin/v1/online-session/force-logout:
+        post:
+            tags:
+                - OnlineSessionService
+            description: 强制下线指定会话
+            operationId: OnlineSessionService_ForceLogoutSession
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/online_session.service.v1.ForceLogoutSessionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/online_session.service.v1.ForceLogoutSessionResponse'
+    /admin/v1/online-session/my-sessions:
+        get:
+            tags:
+                - OnlineSessionService
+            description: 查询当前登录用户的在线会话
+            operationId: OnlineSessionService_ListMyOnlineSession
+            parameters:
+                - name: userId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: currentJti
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/online_session.service.v1.ListOnlineSessionResponse'
+    /admin/v1/online-session/my-sessions/revoke:
+        post:
+            tags:
+                - OnlineSessionService
+            description: 当前用户强制下线自己的指定会话
+            operationId: OnlineSessionService_RevokeMyOnlineSession
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/online_session.service.v1.RevokeMyOnlineSessionRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/online_session.service.v1.RevokeMyOnlineSessionResponse'
+    /admin/v1/online-session/sessions:
+        get:
+            tags:
+                - OnlineSessionService
+            description: 查询在线会话列表
+            operationId: OnlineSessionService_ListOnlineSession
+            parameters:
+                - name: keyword
+                  in: query
+                  description: 关键词过滤（模糊匹配用户名 / IP），留空返回全部
+                  schema:
+                    type: string
+                - name: page
+                  in: query
+                  description: 页码（从 1 开始）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页数量
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/online_session.service.v1.ListOnlineSessionResponse'
     /admin/v1/operation-audit-logs:
         get:
             tags:
@@ -9398,6 +10396,19 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/redis-cache-monitor:
+        get:
+            tags:
+                - RedisCacheMonitorService
+            description: 查询 Redis 缓存监控信息
+            operationId: RedisCacheMonitorService_Get
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/redis_cache.service.v1.RedisCacheMonitorInfo'
     /admin/v1/refresh-token:
         post:
             tags:
@@ -9603,6 +10614,19 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/admin.service.v1.ListRouteResponse'
+    /admin/v1/server-monitor:
+        get:
+            tags:
+                - ServerMonitorService
+            description: 查询服务监控信息
+            operationId: ServerMonitorService_Get
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/server_monitor.service.v1.ServerMonitorInfo'
     /admin/v1/tasks:
         get:
             tags:
@@ -10363,6 +11387,138 @@ components:
                     type: object
                     description: 元数据
             description: Kratos错误返回
+        access_key.service.v1.AccessKey:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 凭证ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 凭证名称（用途说明）
+                accessKey:
+                    type: string
+                    description: 访问键（AK，公开标识，调用时随令牌交换请求上送）
+                status:
+                    enum:
+                        - OFF
+                        - ON
+                    type: string
+                    description: 凭证状态（停用后令牌交换被拒绝）
+                    format: enum
+                expiresAt:
+                    type: string
+                    description: 过期时间（留空表示长期有效）
+                    format: date-time
+                lastUsedAt:
+                    type: string
+                    description: 最近一次令牌交换时间
+                    format: date-time
+                tenantId:
+                    type: integer
+                    description: 归属租户ID（机器令牌继承该租户的隔离）
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: OpenAPI 访问凭证（AK/SK）
+        access_key.service.v1.CreateAccessKeyRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/access_key.service.v1.AccessKey'
+            description: 创建访问凭证 - 请求
+        access_key.service.v1.CreateAccessKeyResponse:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/access_key.service.v1.AccessKey'
+                secret:
+                    type: string
+            description: 创建访问凭证 - 回应（secret 仅本次明文返回，服务端只存 SHA-256 摘要）
+        access_key.service.v1.IssueTokenRequest:
+            type: object
+            properties:
+                accessKey:
+                    type: string
+                    description: 访问键
+                secret:
+                    type: string
+                    description: 密钥（创建凭证时一次性下发）
+                clientIp:
+                    type: string
+                    description: 调用方IP（BFF 注入，仅用于限流计数）
+            description: 令牌交换 - 请求（机器对机器：AK/SK 换取短期 JWT）
+        access_key.service.v1.IssueTokenResponse:
+            type: object
+            properties:
+                accessToken:
+                    type: string
+                    description: 访问令牌（Bearer）
+                expiresIn:
+                    type: integer
+                    description: 有效期（秒）
+                    format: uint32
+                tokenType:
+                    type: string
+                    description: 令牌类型（bearer）
+            description: 令牌交换 - 回应
+        access_key.service.v1.ListAccessKeyResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/access_key.service.v1.AccessKey'
+                total:
+                    type: string
+            description: 查询访问凭证列表 - 回应
+        access_key.service.v1.ResetAccessKeySecretRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+            description: 重置密钥 - 请求
+        access_key.service.v1.UpdateAccessKeyRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/access_key.service.v1.AccessKey'
+                updateMask:
+                    example: id,name,status
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+            description: 更新访问凭证 - 请求
         admin.service.v1.InitialContextResponse:
             type: object
             properties:
@@ -12693,6 +13849,92 @@ components:
                     type: boolean
                     description: 允许缺失则插入
             description: 请求 - 更新评论
+        config.service.v1.Config:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 参数ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 参数名称（展示用）
+                key:
+                    type: string
+                    description: 参数键名，全局唯一，服务侧按键读取
+                value:
+                    type: string
+                    description: 参数键值
+                valueType:
+                    enum:
+                        - CONFIG_VALUE_TYPE_INVALID
+                        - STRING
+                        - BOOL
+                        - INT
+                    type: string
+                    description: 参数值类型（STRING/BOOL/INT），读取器按类型解析，类型不符回退默认值
+                    format: enum
+                isBuiltIn:
+                    type: boolean
+                    description: 是否系统内置参数，内置参数禁止删除
+                createdBy:
+                    type: integer
+                    description: 创建者ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 系统参数（动态 KV 运行时配置；区别于字典管理的业务枚举，本表只承载平台全局系统开关）
+        config.service.v1.CreateConfigRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/config.service.v1.Config'
+            description: 创建系统参数 - 请求
+        config.service.v1.ListConfigResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/config.service.v1.Config'
+                total:
+                    type: string
+            description: 查询系统参数列表 - 回应
+        config.service.v1.UpdateConfigRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/config.service.v1.Config'
+                updateMask:
+                    example: id,realname,username
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+            description: 更新系统参数 - 请求
         coupon.service.v1.CountCouponTemplateResponse:
             type: object
             properties:
@@ -12902,12 +14144,159 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/dict.service.v1.Language'
+        dict.service.v1.CreateDictEntryRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/dict.service.v1.DictEntry'
+            description: 创建字典项 - 请求
+        dict.service.v1.CreateDictTypeRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/dict.service.v1.DictType'
+            description: 创建字典类型 - 请求
         dict.service.v1.CreateLanguageRequest:
             type: object
             properties:
                 data:
                     $ref: '#/components/schemas/dict.service.v1.Language'
             description: 创建语言 - 请求
+        dict.service.v1.DictEntry:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 字典项ID
+                    format: uint32
+                typeId:
+                    type: integer
+                    description: 字典类型ID
+                    format: uint32
+                entryValue:
+                    example: MALE
+                    type: string
+                    description: 字典项的实际值（在字典类型内唯一）
+                numericValue:
+                    example: 1
+                    type: integer
+                    description: 可选的数值型值（用于排序、计算等）
+                    format: int32
+                isEnabled:
+                    type: boolean
+                    description: 是否启用
+                sortOrder:
+                    type: integer
+                    description: 排序顺序，值越小越靠前
+                    format: uint32
+                i18n:
+                    example: {"zh-CN": {"entryLabel": "男"}, "en-US": {"entryLabel": "Male"}}
+                    type: object
+                    additionalProperties:
+                        $ref: '#/components/schemas/dict.service.v1.DictEntryI18n'
+                    description: 多语言信息，key 为 BCP-47 语言标签（如 zh-CN、en-US）
+                currentI18n:
+                    $ref: '#/components/schemas/dict.service.v1.DictEntryI18n'
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局角色
+                    format: uint32
+                tenantName:
+                    type: string
+                    description: 租户名称
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 字典项
+        dict.service.v1.DictEntryI18n:
+            type: object
+            properties:
+                entryLabel:
+                    type: string
+                    description: 显示标签
+                description:
+                    type: string
+                    description: 描述信息
+                languageCode:
+                    type: string
+                    description: 语言代码，如 zh-CN、en-US 等
+                languageName:
+                    type: string
+                    description: 语言名称
+            description: 字典项多语言信息
+        dict.service.v1.DictType:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 字典类型ID
+                    format: uint32
+                typeCode:
+                    type: string
+                    description: 字典类型唯一编码，如 app_type、platform、risk_type
+                typeName:
+                    type: string
+                    description: 字典类型名称（中文，仅后台用）
+                isEnabled:
+                    type: boolean
+                    description: 是否启用
+                sortOrder:
+                    type: integer
+                    description: 排序号，越小越靠前
+                    format: uint32
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表系统全局角色
+                    format: uint32
+                tenantName:
+                    type: string
+                    description: 租户名称
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 字典类型
         dict.service.v1.Language:
             type: object
             properties:
@@ -12959,6 +14348,33 @@ components:
                     description: 删除时间
                     format: date-time
             description: 语言
+        dict.service.v1.ListDictEntryByTypeCodeResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/dict.service.v1.DictEntry'
+        dict.service.v1.ListDictEntryResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/dict.service.v1.DictEntry'
+                total:
+                    type: string
+            description: 查询字典项列表 - 回应
+        dict.service.v1.ListDictTypeResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/dict.service.v1.DictType'
+                total:
+                    type: string
+            description: 查询字典类型列表 - 回应
         dict.service.v1.ListLanguageResponse:
             type: object
             properties:
@@ -12969,6 +14385,40 @@ components:
                 total:
                     type: string
             description: 语言列表 - 答复
+        dict.service.v1.UpdateDictEntryRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/dict.service.v1.DictEntry'
+                updateMask:
+                    example: id,realname,username
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+            description: 更新字典项 - 请求
+        dict.service.v1.UpdateDictTypeRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/dict.service.v1.DictType'
+                updateMask:
+                    example: id,realname,username
+                    type: string
+                    description: 要更新的字段列表
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
+            description: 更新字典类型 - 请求
         dict.service.v1.UpdateLanguageRequest:
             type: object
             properties:
@@ -14314,6 +15764,139 @@ components:
                 allowMissing:
                     type: boolean
                     description: 允许缺失则插入
+        monitor_alert.service.v1.CreateMonitorAlertRuleRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/monitor_alert.service.v1.MonitorAlertRule'
+        monitor_alert.service.v1.EvaluateMonitorAlertsRequest:
+            type: object
+            properties: {}
+            description: 手动触发一轮评估（管理页「立即评估」）；返回各启用规则的求值结论
+        monitor_alert.service.v1.EvaluateMonitorAlertsResponse:
+            type: object
+            properties:
+                outcomes:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monitor_alert.service.v1.EvaluateMonitorAlertsResponse_RuleOutcome'
+        monitor_alert.service.v1.EvaluateMonitorAlertsResponse_RuleOutcome:
+            type: object
+            properties:
+                ruleId:
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                firing:
+                    type: boolean
+                    description: 本次扫描是否越限
+                currentValue:
+                    type: number
+                    description: 本次扫描实际读到的指标值（采集失败为空）
+                    format: double
+                notified:
+                    type: boolean
+                    description: 本轮是否发出了通知（首次触发 / 冷却到期重发 / 恢复）
+                reason:
+                    type: string
+                    description: 未发通知的原因（未越限未恢复 / 冷却中 / 采集失败）
+        monitor_alert.service.v1.ListMonitorAlertRuleResponse:
+            type: object
+            properties:
+                total:
+                    type: string
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/monitor_alert.service.v1.MonitorAlertRule'
+        monitor_alert.service.v1.MonitorAlertRule:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                metric:
+                    enum:
+                        - MONITOR_METRIC_UNSPECIFIED
+                        - GO_GOROUTINES
+                        - GO_MEM_ALLOC_MB
+                        - DB_OPEN_CONNECTIONS
+                        - DB_PING_FAIL
+                        - REDIS_DB_SIZE
+                    type: string
+                    format: enum
+                op:
+                    enum:
+                        - ALERT_OP_UNSPECIFIED
+                        - GE
+                        - LE
+                    type: string
+                    description: DB_PING_FAIL 时忽略 op/threshold
+                    format: enum
+                threshold:
+                    type: number
+                    format: double
+                cooldownMinutes:
+                    type: integer
+                    description: 重复告警冷却（分钟）：持续越限时按此间隔重发，默认 30
+                    format: uint32
+                channel:
+                    enum:
+                        - CHANNEL_UNSPECIFIED
+                        - EMAIL
+                        - WEBHOOK
+                        - INTERNAL
+                        - SMS
+                        - EXT
+                    type: string
+                    description: 告警渠道（显式指定）
+                    format: enum
+                target:
+                    type: string
+                    description: 投递目标：EMAIL 为收件地址，WEBHOOK 为回调 URL
+                isEnabled:
+                    type: boolean
+                remark:
+                    type: string
+                lastFiring:
+                    type: boolean
+                    description: —— 以下为评估器回写状态（只读） ——
+                lastValue:
+                    type: number
+                    format: double
+                lastAlertedAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+                createdBy:
+                    type: integer
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+            description: |-
+                监控告警规则：指标阈值 → 触发通知。
+                 渠道与目标显式写在规则上（不经路由表）：告警是"点对点"的运营配置，
+                 路由表解决的是"事件该发去哪类渠道"，而这里要的是"这条告警发到这个邮箱"。
+        monitor_alert.service.v1.UpdateMonitorAlertRuleRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/monitor_alert.service.v1.MonitorAlertRule'
+                updateMask:
+                    type: string
+                    format: field-mask
         notification.service.v1.ChannelField:
             type: object
             properties:
@@ -14607,13 +16190,12 @@ components:
                 eventType:
                     enum:
                         - EVENT_TYPE_UNSPECIFIED
-                        - INTERNAL_MESSAGE
-                        - CHANNEL_TEST_EMAIL
-                        - CHANNEL_TEST_EXT
-                        - CHANNEL_TEST_SMS
-                        - MONITOR_ALERT
                         - PASSWORD_RESET_CODE
-                        - SYSTEM_NOTIFY
+                        - CONTACT_BIND_CODE
+                        - CHANNEL_TEST_EMAIL
+                        - INTERNAL_MESSAGE
+                        - CHANNEL_TEST_SMS
+                        - CHANNEL_TEST_EXT
                     type: string
                     description: 业务事件类型
                     format: enum
@@ -14729,13 +16311,12 @@ components:
                 eventType:
                     enum:
                         - EVENT_TYPE_UNSPECIFIED
-                        - INTERNAL_MESSAGE
-                        - CHANNEL_TEST_EMAIL
-                        - CHANNEL_TEST_EXT
-                        - CHANNEL_TEST_SMS
-                        - MONITOR_ALERT
                         - PASSWORD_RESET_CODE
-                        - SYSTEM_NOTIFY
+                        - CONTACT_BIND_CODE
+                        - CHANNEL_TEST_EMAIL
+                        - INTERNAL_MESSAGE
+                        - CHANNEL_TEST_SMS
+                        - CHANNEL_TEST_EXT
                     type: string
                     description: 业务事件类型（一张表内唯一）
                     format: enum
@@ -14839,6 +16420,17 @@ components:
                 error:
                     type: string
             description: 发送测试邮件 - 回应
+        notification.service.v1.SendTestRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 渠道ID
+                    format: uint32
+                recipient:
+                    type: string
+                    description: 测试收件人（邮箱/手机号，按渠道类型）
+            description: 发送测试消息（扩展渠道/短信通用：按渠道类型解析收件人格式）
         notification.service.v1.TestDispatchNotificationRequest:
             type: object
             properties:
@@ -14945,6 +16537,98 @@ components:
                     type: string
                     description: 字段掩码：留空更新全部字段
                     format: field-mask
+        online_session.service.v1.ForceLogoutSessionRequest:
+            type: object
+            properties:
+                clientType:
+                    enum:
+                        - admin
+                        - app
+                    type: string
+                    description: 客户端类型
+                    format: enum
+                userId:
+                    type: integer
+                    description: 目标用户ID
+                    format: uint32
+                jti:
+                    type: string
+                    description: 会话令牌对ID
+            description: 强制下线指定会话 - 请求
+        online_session.service.v1.ForceLogoutSessionResponse:
+            type: object
+            properties: {}
+            description: 强制下线指定会话 - 回应
+        online_session.service.v1.ListOnlineSessionResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/online_session.service.v1.OnlineSession'
+                total:
+                    type: string
+            description: 查询在线会话列表 - 回应
+        online_session.service.v1.OnlineSession:
+            type: object
+            properties:
+                jti:
+                    type: string
+                    description: 会话令牌对ID
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
+                username:
+                    type: string
+                    description: 用户名
+                tenantId:
+                    type: integer
+                    description: 租户ID，0代表平台
+                    format: uint32
+                clientType:
+                    enum:
+                        - admin
+                        - app
+                    type: string
+                    description: 客户端类型
+                    format: enum
+                ipAddress:
+                    type: string
+                    description: 登录IP
+                userAgent:
+                    type: string
+                    description: 浏览器User-Agent
+                loginAt:
+                    type: string
+                    description: 登录时间（刷新轮换继承首次登录时间）
+                    format: date-time
+                current:
+                    type: boolean
+                    description: 是否为当前会话
+            description: 在线会话
+        online_session.service.v1.RevokeMyOnlineSessionRequest:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    description: 用户ID（BFF 注入）
+                    format: uint32
+                clientType:
+                    enum:
+                        - admin
+                        - app
+                    type: string
+                    description: 客户端类型
+                    format: enum
+                jti:
+                    type: string
+                    description: 会话令牌对ID
+            description: 当前用户强制下线自己的指定会话 - 请求
+        online_session.service.v1.RevokeMyOnlineSessionResponse:
+            type: object
+            properties: {}
+            description: 当前用户强制下线自己的指定会话 - 回应
         order.service.v1.BatchCreateOrderItemsRequest:
             type: object
             properties:
@@ -16103,6 +17787,145 @@ components:
                     type: boolean
                     description: 如果设置为true的时候，资源不存在则会新增(插入)，并且在这种情况下`updateMask`字段将会被忽略。
             description: 更新角色 - 请求
+        redis_cache.service.v1.InfoEntry:
+            type: object
+            properties:
+                key:
+                    type: string
+                value:
+                    type: string
+            description: INFO 输出的单个 key/value 对
+        redis_cache.service.v1.InfoSection:
+            type: object
+            properties:
+                name:
+                    type: string
+                entries:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/redis_cache.service.v1.InfoEntry'
+            description: INFO 输出的单个 section
+        redis_cache.service.v1.RedisCacheMonitorInfo:
+            type: object
+            properties:
+                sections:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/redis_cache.service.v1.InfoSection'
+                dbSize:
+                    type: string
+                slowlog:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/redis_cache.service.v1.SlowLogEntry'
+            description: Redis缓存监控信息
+        redis_cache.service.v1.SlowLogEntry:
+            type: object
+            properties:
+                id:
+                    type: string
+                createdAt:
+                    type: string
+                    format: date-time
+                durationUsec:
+                    type: string
+                args:
+                    type: array
+                    items:
+                        type: string
+                clientAddr:
+                    type: string
+                clientName:
+                    type: string
+            description: SLOWLOG GET 返回的单条慢日志
+        server_monitor.service.v1.DatabaseInfo:
+            type: object
+            properties:
+                driver:
+                    type: string
+                    description: 数据库类型
+                pingOk:
+                    type: boolean
+                    description: 连通性是否正常
+                pingError:
+                    type: string
+                    description: 连通性错误信息
+                maxOpenConnections:
+                    type: integer
+                    description: 最大打开连接数
+                    format: uint32
+                openConnections:
+                    type: integer
+                    description: 当前打开连接数
+                    format: uint32
+                inUseConnections:
+                    type: integer
+                    description: 使用中连接数
+                    format: uint32
+                idleConnections:
+                    type: integer
+                    description: 空闲连接数
+                    format: uint32
+            description: 数据库信息
+        server_monitor.service.v1.GoRuntimeInfo:
+            type: object
+            properties:
+                version:
+                    type: string
+                    description: Go 版本
+                numGoroutine:
+                    type: integer
+                    description: goroutine 数量
+                    format: uint32
+                memAllocBytes:
+                    type: string
+                    description: 堆内存分配字节数
+                memSysBytes:
+                    type: string
+                    description: 向系统申请的内存字节数
+                gcCycles:
+                    type: integer
+                    description: GC 完成次数
+                    format: uint32
+                uptimeSeconds:
+                    type: string
+                    description: 服务运行时长（秒）
+                startedAt:
+                    type: string
+                    description: 进程启动时间
+                    format: date-time
+            description: Go 运行时信息
+        server_monitor.service.v1.HostInfo:
+            type: object
+            properties:
+                os:
+                    type: string
+                    description: 操作系统
+                arch:
+                    type: string
+                    description: CPU 架构
+                numCpu:
+                    type: integer
+                    description: CPU 逻辑核数
+                    format: uint32
+                hostname:
+                    type: string
+                    description: 主机名
+            description: 主机信息
+        server_monitor.service.v1.ServerMonitorInfo:
+            type: object
+            properties:
+                go:
+                    $ref: '#/components/schemas/server_monitor.service.v1.GoRuntimeInfo'
+                database:
+                    $ref: '#/components/schemas/server_monitor.service.v1.DatabaseInfo'
+                host:
+                    $ref: '#/components/schemas/server_monitor.service.v1.HostInfo'
+                collectedAt:
+                    type: string
+                    description: 采集时间
+                    format: date-time
+            description: 服务监控聚合信息
         shipping.service.v1.CountShipmentResponse:
             type: object
             properties:
@@ -16789,6 +18612,8 @@ components:
 security:
     - OAuth2PasswordBearer: []
 tags:
+    - name: AccessKeyService
+      description: OpenAPI 访问凭证（AK/SK）管理 — BFF
     - name: AdminPortalService
       description: 后台前端初始化数据与配置服务
     - name: ApiAuditLogService
@@ -16807,10 +18632,16 @@ tags:
       description: 商品类目管理服务
     - name: CommentService
       description: 商品评论管理服务（admin 全 CRUD，含审核）
+    - name: ConfigService
+      description: 系统参数管理服务
     - name: CouponTemplateService
       description: 优惠券模板管理服务（admin 全 CRUD）
     - name: DataAccessAuditLogService
       description: 数据访问审计日志管理服务
+    - name: DictEntryService
+      description: 数据字典条目管理服务
+    - name: DictTypeService
+      description: 数据字典分类管理服务
     - name: FileService
       description: 文件管理服务
     - name: FileTransferService
@@ -16835,6 +18666,8 @@ tags:
       description: 登录策略管理服务
     - name: MenuService
       description: 后台菜单管理服务
+    - name: MonitorAlertService
+      description: 监控告警规则管理服务（平台级配置；只读 asynq 之外的采集在 core 进程内完成）。
     - name: NotificationChannelService
       description: 通知渠道管理服务（平台级配置）
     - name: NotificationPreferenceService
@@ -16851,6 +18684,8 @@ tags:
          渠道配置页的 send-test-email，与路由规则页的 notification-rules/{id}/test-dispatch。
     - name: NotificationTemplateService
       description: 通知模板管理服务（平台管理员；租户侧由 notification_platform_guard 拒绝）
+    - name: OnlineSessionService
+      description: 在线会话管理服务（平台管理员：全量列表 + 强制下线；当前用户：本人会话）。
     - name: OperationAuditLogService
       description: 操作审计日志管理服务
     - name: OrderItemService
@@ -16879,8 +18714,12 @@ tags:
       description: 商品属性值管理服务
     - name: ProductService
       description: 商品管理服务
+    - name: RedisCacheMonitorService
+      description: Redis 缓存监控查询服务（只读聚合视图）。
     - name: RoleService
       description: 角色管理服务
+    - name: ServerMonitorService
+      description: 服务监控查询服务（只读聚合视图；采集在 core 进程内完成）。
     - name: ShipmentService
       description: 物流单管理服务（admin 侧，卖家运营可读写）
     - name: ShippingRateService

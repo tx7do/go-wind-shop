@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// AccessKey is the predicate function for accesskey builders.
+type AccessKey func(*sql.Selector)
+
 // Api is the predicate function for api builders.
 type Api func(*sql.Selector)
 
@@ -41,6 +44,15 @@ type CouponTemplate func(*sql.Selector)
 
 // DataAccessAuditLog is the predicate function for dataaccessauditlog builders.
 type DataAccessAuditLog func(*sql.Selector)
+
+// DictEntry is the predicate function for dictentry builders.
+type DictEntry func(*sql.Selector)
+
+// DictEntryI18n is the predicate function for dictentryi18n builders.
+type DictEntryI18n func(*sql.Selector)
+
+// DictType is the predicate function for dicttype builders.
+type DictType func(*sql.Selector)
 
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
@@ -83,6 +95,9 @@ type MembershipRole func(*sql.Selector)
 
 // Menu is the predicate function for menu builders.
 type Menu func(*sql.Selector)
+
+// MonitorAlertRule is the predicate function for monitoralertrule builders.
+type MonitorAlertRule func(*sql.Selector)
 
 // NotificationChannel is the predicate function for notificationchannel builders.
 type NotificationChannel func(*sql.Selector)
@@ -188,6 +203,9 @@ type SkuPrice func(*sql.Selector)
 
 // StockAlert is the predicate function for stockalert builders.
 type StockAlert func(*sql.Selector)
+
+// SysConfig is the predicate function for sysconfig builders.
+type SysConfig func(*sql.Selector)
 
 // Task is the predicate function for task builders.
 type Task func(*sql.Selector)

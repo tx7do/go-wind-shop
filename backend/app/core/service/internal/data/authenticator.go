@@ -206,31 +206,52 @@ func (a *Authenticator) Authenticate(ctx context.Context, req *authenticationV1.
 	}
 }
 
+// GetSessionMeta 读取单个会话元数据（在线会话/刷新继承用）；不存在返回 nil。
+func (a *Authenticator) GetSessionMeta(ctx context.Context, clientType authenticationV1.ClientType, userId uint32, jti string) (*SessionMeta, error) {
+	return a.userTokenCache.GetSessionMeta(ctx, clientType, userId, jti)
+}
+
+// UpdateSessionLoginAt 回写会话元数据的登录时间（刷新轮换继承首次登录时间）。
+func (a *Authenticator) UpdateSessionLoginAt(ctx context.Context, clientType authenticationV1.ClientType, userId uint32, jti string, loginAt int64) error {
+	meta, err := a.userTokenCache.GetSessionMeta(ctx, clientType, userId, jti)
+	if err != nil || meta == nil {
+		return err
+	}
+	meta.LoginAt = loginAt
+	// TTL 未知（refresh TTL 随签发已定），这里按剩余 refresh 有效期近似不划算——
+	// 直接以原键重写并沿用原 TTL 会丢精度；取 refresh 过期时长即可（与签发同源）。
+	return a.userTokenCache.SaveSessionMeta(ctx, clientType, userId, jti, meta, a.GetRefreshTokenExpires(clientType))
+}
+
+// ListSessionEntries 扫描全部在线会话（平台管理员视图）。
+func (a *Authenticator) ListSessionEntries(ctx context.Context) ([]SessionEntry, error) {
+	return a.userTokenCache.ListSessionEntries(ctx)
+}
+
 // CreateUserToken 创建用户令牌对（访问令牌和刷新令牌）
 func (a *Authenticator) CreateUserToken(
 	ctx context.Context,
 	clientType authenticationV1.ClientType,
 	tokenPayload *authenticationV1.UserTokenPayload,
-) (accessToken, refreshToken string, err error) {
+) (accessToken, refreshToken, jti string, err error) {
 	if tokenPayload == nil {
-		return "", "", authenticationV1.ErrorBadRequest("token payload is nil")
+		return "", "", "", authenticationV1.ErrorBadRequest("token payload is nil")
 	}
 
-	var jti string
 	if jti = a.newJwtId(); jti == "" {
-		return "", "", authenticationV1.ErrorServiceUnavailable("create jwt id failed")
+		return "", "", "", authenticationV1.ErrorServiceUnavailable("create jwt id failed")
 	}
 
 	tokenPayload.Jti = trans.Ptr(jti)
 
 	// CreateTranslation Access Token
 	if accessToken, err = a.newAccessToken(clientType, tokenPayload); accessToken == "" || err != nil {
-		return "", "", authenticationV1.ErrorServiceUnavailable("create access token failed")
+		return "", "", "", authenticationV1.ErrorServiceUnavailable("create access token failed")
 	}
 
 	// CreateTranslation Refresh Token
 	if refreshToken, err = a.newRefreshToken(); refreshToken == "" || err != nil {
-		return "", "", authenticationV1.ErrorServiceUnavailable("create refresh token failed")
+		return "", "", "", authenticationV1.ErrorServiceUnavailable("create refresh token failed")
 	}
 
 	// Store tokens in cache
@@ -244,10 +265,53 @@ func (a *Authenticator) CreateUserToken(
 		a.GetAccessTokenExpires(clientType),
 		a.GetRefreshTokenExpires(clientType),
 	); err != nil {
-		return "", "", err
+		return "", "", "", err
+	}
+
+	// 会话元数据随签发写入，TTL 与 refresh token 一致（在线会话列表数据源）
+	if metaErr := a.userTokenCache.SaveSessionMeta(ctx, clientType, tokenPayload.GetUserId(), jti, &SessionMeta{
+		Username:  tokenPayload.GetUsername(),
+		TenantId:  tokenPayload.GetTenantId(),
+		Ip:        tokenPayload.GetIp(),
+		UserAgent: tokenPayload.GetUserAgent(),
+		DeviceId:  tokenPayload.GetDeviceId(),
+	}, a.GetRefreshTokenExpires(clientType)); metaErr != nil {
+		// 元数据写失败不阻断发令牌：会话列表缺一条的代价远小于登录失败的代价
+		a.log.Errorf("save session meta failed for user [%d]: [%v]", tokenPayload.GetUserId(), metaErr)
 	}
 
 	return
+}
+
+// CreateMachineToken 签发机器令牌（AK/SK 令牌交换专用）：
+// 仅签发 access token（短期、无 refresh、不写会话元数据——机器令牌无对应用户行，
+// 不出现在在线会话列表，走 CreateUserToken 的 userId 缓存键与 refresh 链路都不适用）。
+func (a *Authenticator) CreateMachineToken(
+	ctx context.Context,
+	tokenPayload *authenticationV1.UserTokenPayload,
+) (accessToken string, expires time.Duration, err error) {
+	if tokenPayload == nil {
+		return "", 0, authenticationV1.ErrorBadRequest("token payload is nil")
+	}
+
+	var jti string
+	if jti = a.newJwtId(); jti == "" {
+		return "", 0, authenticationV1.ErrorServiceUnavailable("create jwt id failed")
+	}
+	tokenPayload.Jti = trans.Ptr(jti)
+
+	if accessToken, err = a.newAccessToken(authenticationV1.ClientType_admin, tokenPayload); accessToken == "" || err != nil {
+		return "", 0, authenticationV1.ErrorServiceUnavailable("create access token failed")
+	}
+
+	// 访问令牌必须进 Redis 缓存：auth 中间件的校验器会核对缓存中的令牌，
+	// 未入缓存的令牌会被判为"已吊销/过期"。机器令牌 userId=0、admin 面签名。
+	expires = a.GetAccessTokenExpires(authenticationV1.ClientType_admin)
+	if err = a.userTokenCache.AddAccessToken(ctx, authenticationV1.ClientType_admin, tokenPayload.GetUserId(), jti, accessToken, expires); err != nil {
+		return "", 0, authenticationV1.ErrorServiceUnavailable("cache machine token failed")
+	}
+
+	return accessToken, expires, nil
 }
 
 // RevokeUserToken 撤销用户令牌

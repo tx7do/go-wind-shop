@@ -95,6 +95,14 @@ func (m *UserTokenPayload) validate(all bool) error {
 		// no validation rules for IsTenantAdmin
 	}
 
+	if m.Ip != nil {
+		// no validation rules for Ip
+	}
+
+	if m.UserAgent != nil {
+		// no validation rules for UserAgent
+	}
+
 	if m.Jti != nil {
 		// no validation rules for Jti
 	}

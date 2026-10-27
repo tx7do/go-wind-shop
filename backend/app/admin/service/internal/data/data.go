@@ -28,6 +28,12 @@ import (
 	interactionV1 "go-wind-shop/api/gen/go/interaction/service/v1"
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
+	configV1 "go-wind-shop/api/gen/go/config/service/v1"
+	accessKeyV1 "go-wind-shop/api/gen/go/access_key/service/v1"
+	onlineSessionV1 "go-wind-shop/api/gen/go/online_session/service/v1"
+	monitorAlertV1 "go-wind-shop/api/gen/go/monitor_alert/service/v1"
+	serverMonitorV1 "go-wind-shop/api/gen/go/server_monitor/service/v1"
+	redisCacheV1 "go-wind-shop/api/gen/go/redis_cache/service/v1"
 	invoiceV1 "go-wind-shop/api/gen/go/invoice/service/v1"
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
@@ -575,4 +581,76 @@ func NewNotificationPreferenceServiceClient(ctx *bootstrap.Context, r registry.D
 	}
 
 	return notificationV1.NewNotificationPreferenceServiceClient(cli)
+}
+
+func NewDictTypeServiceClient(ctx *bootstrap.Context, r registry.Discovery) dictV1.DictTypeServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return dictV1.NewDictTypeServiceClient(cli)
+}
+
+func NewDictEntryServiceClient(ctx *bootstrap.Context, r registry.Discovery) dictV1.DictEntryServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return dictV1.NewDictEntryServiceClient(cli)
+}
+
+func NewConfigServiceClient(ctx *bootstrap.Context, r registry.Discovery) configV1.ConfigServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return configV1.NewConfigServiceClient(cli)
+}
+
+func NewAccessKeyServiceClient(ctx *bootstrap.Context, r registry.Discovery) accessKeyV1.AccessKeyServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return accessKeyV1.NewAccessKeyServiceClient(cli)
+}
+
+func NewOnlineSessionServiceClient(ctx *bootstrap.Context, r registry.Discovery) onlineSessionV1.OnlineSessionServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return onlineSessionV1.NewOnlineSessionServiceClient(cli)
+}
+
+func NewMonitorAlertServiceClient(ctx *bootstrap.Context, r registry.Discovery) monitorAlertV1.MonitorAlertServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return monitorAlertV1.NewMonitorAlertServiceClient(cli)
+}
+
+func NewServerMonitorServiceClient(ctx *bootstrap.Context, r registry.Discovery) serverMonitorV1.ServerMonitorServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return serverMonitorV1.NewServerMonitorServiceClient(cli)
+}
+
+func NewRedisCacheMonitorServiceClient(ctx *bootstrap.Context, r registry.Discovery) redisCacheV1.RedisCacheMonitorServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return redisCacheV1.NewRedisCacheMonitorServiceClient(cli)
 }

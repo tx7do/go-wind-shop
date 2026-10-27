@@ -54,6 +54,9 @@ enum EventType {
   // 站内信投递：一条站内信发给一个收件人 = 一行台账，related_id 指向 sys_internal_messages.id。
   INTERNAL_MESSAGE = 4;
 
+  // 监控告警：扫描任务对规则求值后触发
+  MONITOR_ALERT = 5;
+
   // 渠道配置测试短信
   CHANNEL_TEST_SMS = 6;
 

@@ -36,6 +36,8 @@ type UserTokenPayload struct {
 	OrgUnitId       *uint32                `protobuf:"varint,12,opt,name=org_unit_id,json=ouid,proto3,oneof" json:"org_unit_id,omitempty"`                                // 当前组织单元ID
 	IsPlatformAdmin *bool                  `protobuf:"varint,20,opt,name=is_platform_admin,json=ipa,proto3,oneof" json:"is_platform_admin,omitempty"`                     // 是否平台超级管理员
 	IsTenantAdmin   *bool                  `protobuf:"varint,21,opt,name=is_tenant_admin,json=ita,proto3,oneof" json:"is_tenant_admin,omitempty"`                         // 是否租户管理员
+	Ip              *string                `protobuf:"bytes,30,opt,name=ip,proto3,oneof" json:"ip,omitempty"`                                                             // 登录IP
+	UserAgent       *string                `protobuf:"bytes,31,opt,name=user_agent,json=userAgent,proto3,oneof" json:"user_agent,omitempty"`                              // 用户代理
 	Jti             *string                `protobuf:"bytes,100,opt,name=jti,proto3,oneof" json:"jti,omitempty"`                                                          // 令牌唯一标识(JWT ID)
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
@@ -141,6 +143,20 @@ func (x *UserTokenPayload) GetIsTenantAdmin() bool {
 	return false
 }
 
+func (x *UserTokenPayload) GetIp() string {
+	if x != nil && x.Ip != nil {
+		return *x.Ip
+	}
+	return ""
+}
+
+func (x *UserTokenPayload) GetUserAgent() string {
+	if x != nil && x.UserAgent != nil {
+		return *x.UserAgent
+	}
+	return ""
+}
+
 func (x *UserTokenPayload) GetJti() string {
 	if x != nil && x.Jti != nil {
 		return *x.Jti
@@ -152,7 +168,7 @@ var File_authentication_service_v1_user_token_proto protoreflect.FileDescriptor
 
 const file_authentication_service_v1_user_token_proto_rawDesc = "" +
 	"\n" +
-	"*authentication/service/v1/user_token.proto\x12\x19authentication.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fidentity/service/v1/types.proto\"\xfc\x05\n" +
+	"*authentication/service/v1/user_token.proto\x12\x19authentication.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1fidentity/service/v1/types.proto\"\xef\x06\n" +
 	"\x10UserTokenPayload\x12$\n" +
 	"\auser_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDR\x03uid\x12+\n" +
 	"\ttenant_id\x18\x02 \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\x00R\x03tid\x88\x01\x01\x12.\n" +
@@ -165,8 +181,12 @@ const file_authentication_service_v1_user_token_proto_rawDesc = "" +
 	"data_scope\x18\v \x01(\x0e2\x1e.identity.service.v1.DataScopeB\x18\xbaG\x15\x92\x02\x12数据权限范围H\x04R\x02ds\x88\x01\x01\x12:\n" +
 	"\vorg_unit_id\x18\f \x01(\rB\x1a\xbaG\x17\x92\x02\x14当前组织单元IDH\x05R\x04ouid\x88\x01\x01\x12F\n" +
 	"\x11is_platform_admin\x18\x14 \x01(\bB!\xbaG\x1e\x92\x02\x1b是否平台超级管理员H\x06R\x03ipa\x88\x01\x01\x12>\n" +
-	"\x0fis_tenant_admin\x18\x15 \x01(\bB\x1b\xbaG\x18\x92\x02\x15是否租户管理员H\aR\x03ita\x88\x01\x01\x127\n" +
-	"\x03jti\x18d \x01(\tB \xbaG\x1d\x92\x02\x1a令牌唯一标识(JWT ID)H\bR\x03jti\x88\x01\x01B\f\n" +
+	"\x0fis_tenant_admin\x18\x15 \x01(\bB\x1b\xbaG\x18\x92\x02\x15是否租户管理员H\aR\x03ita\x88\x01\x01\x12#\n" +
+	"\x02ip\x18\x1e \x01(\tB\x0e\xbaG\v\x92\x02\b登录IPH\bR\x02ip\x88\x01\x01\x126\n" +
+	"\n" +
+	"user_agent\x18\x1f \x01(\tB\x12\xbaG\x0f\x92\x02\f用户代理H\tR\tuserAgent\x88\x01\x01\x127\n" +
+	"\x03jti\x18d \x01(\tB \xbaG\x1d\x92\x02\x1a令牌唯一标识(JWT ID)H\n" +
+	"R\x03jti\x88\x01\x01B\f\n" +
 	"\n" +
 	"_tenant_idB\f\n" +
 	"\n" +
@@ -177,7 +197,9 @@ const file_authentication_service_v1_user_token_proto_rawDesc = "" +
 	"\v_data_scopeB\x0e\n" +
 	"\f_org_unit_idB\x14\n" +
 	"\x12_is_platform_adminB\x12\n" +
-	"\x10_is_tenant_adminB\x06\n" +
+	"\x10_is_tenant_adminB\x05\n" +
+	"\x03_ipB\r\n" +
+	"\v_user_agentB\x06\n" +
 	"\x04_jtiB\xf9\x01\n" +
 	"\x1dcom.authentication.service.v1B\x0eUserTokenProtoP\x01ZBgo-wind-shop/api/gen/go/authentication/service/v1;authenticationpb\xa2\x02\x03ASX\xaa\x02\x19Authentication.Service.V1\xca\x02\x19Authentication\\Service\\V1\xe2\x02%Authentication\\Service\\V1\\GPBMetadata\xea\x02\x1bAuthentication::Service::V1b\x06proto3"
 

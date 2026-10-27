@@ -91,3 +91,11 @@ export * from "./invoice";
 // 商城分析仪表盘 (Mall / Analytics)
 // 复用上述各实体的 fetchList* 实现，无新增 RPC。
 export * from "./analytics";
+export * from "./dict";
+export * from "./config";
+export * from "./access_key";
+export * from "./online-session";
+export * from "./monitor-alert";
+export * from "./server-monitor";
+export * from "./redis-cache-monitor";
+export * from "./server-export";

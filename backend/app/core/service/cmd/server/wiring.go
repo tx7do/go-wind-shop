@@ -190,6 +190,14 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	invoiceService := service.NewInvoiceService(ctx, invoiceRepo)
 	stockAlertScannerService := service.NewStockAlertScannerService(ctx, skuRepo, internalMessageService, stockAlertRepo)
 
+	configRepo := data.NewConfigRepo(ctx, entClient, redisClient)
+	dictEntryI18nRepo := data.NewDictEntryI18nRepo(ctx, entClient)
+	dictEntryRepo := data.NewDictEntryRepo(ctx, entClient, dictEntryI18nRepo)
+	dictTypeRepo := data.NewDictTypeRepo(ctx, entClient, dictEntryRepo)
+	monitorAlertRuleRepo := data.NewMonitorAlertRuleRepo(ctx, entClient)
+	accessKeyRepo := data.NewAccessKeyRepo(ctx, entClient)
+	accessKeyRateLimiter := data.NewAccessKeyRateLimiter(ctx, redisClient)
+
 	// ── Notification 通知域（移植自 go-wind-cms）──
 	notificationChannelRepo := data.NewNotificationChannelRepo(ctx, entClient)
 	notificationDeliveryRepo := data.NewNotificationDeliveryRepo(ctx, entClient)
@@ -207,6 +215,16 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationRuleService := service.NewNotificationRuleService(ctx, notificationRuleRepo, notificationChannelRepo, notificationService)
 	notificationTemplateService := service.NewNotificationTemplateService(ctx, notificationTemplateRepo)
 	notificationPreferenceService := service.NewNotificationPreferenceService(ctx, notificationPreferenceRepo, internalMessageCategoryRepo)
+	configService := service.NewConfigService(ctx, configRepo)
+	dictTypeService := service.NewDictTypeService(ctx, dictTypeRepo)
+	dictEntryService := service.NewDictEntryService(ctx, dictEntryRepo)
+	monitorAlertService := service.NewMonitorAlertService(ctx, monitorAlertRuleRepo, entClient, redisClient)
+	onlineSessionService := service.NewOnlineSessionService(ctx, authenticator)
+	accessKeyService := service.NewAccessKeyService(ctx, accessKeyRepo, authenticator, accessKeyRateLimiter)
+	serverMonitorService := service.NewServerMonitorService(ctx, entClient)
+	redisCacheMonitorService := service.NewRedisCacheMonitorService(ctx, redisClient)
+	monitorAlertService.RegisterNotifier(notificationService)
+
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
@@ -222,6 +240,13 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		notificationRuleService,
 		notificationTemplateService,
 		notificationPreferenceService,
+		configService,
+		dictTypeService, dictEntryService,
+		monitorAlertService,
+		onlineSessionService,
+		accessKeyService,
+		serverMonitorService,
+		redisCacheMonitorService,
 		userCredentialService,
 		taskService,
 		fileService,

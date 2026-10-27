@@ -94,6 +94,8 @@ const (
 	EventType_CHANNEL_TEST_EMAIL     EventType = 3 // 渠道配置测试邮件
 	// 站内信投递：一条站内信发给一个收件人 = 一行台账，related_id 指向 sys_internal_messages.id。
 	EventType_INTERNAL_MESSAGE EventType = 4
+	// 监控告警：扫描任务对规则求值后触发
+	EventType_MONITOR_ALERT EventType = 5
 	// 渠道配置测试短信
 	EventType_CHANNEL_TEST_SMS EventType = 6
 	// 扩展渠道测试消息
@@ -108,6 +110,7 @@ var (
 		2: "CONTACT_BIND_CODE",
 		3: "CHANNEL_TEST_EMAIL",
 		4: "INTERNAL_MESSAGE",
+		5: "MONITOR_ALERT",
 		6: "CHANNEL_TEST_SMS",
 		8: "CHANNEL_TEST_EXT",
 	}
@@ -117,6 +120,7 @@ var (
 		"CONTACT_BIND_CODE":      2,
 		"CHANNEL_TEST_EMAIL":     3,
 		"INTERNAL_MESSAGE":       4,
+		"MONITOR_ALERT":          5,
 		"CHANNEL_TEST_SMS":       6,
 		"CHANNEL_TEST_EXT":       8,
 	}
@@ -788,13 +792,14 @@ const file_notification_service_v1_notification_proto_rawDesc = "" +
 	"\aWEBHOOK\x10\x02\x12\f\n" +
 	"\bINTERNAL\x10\x03\x12\a\n" +
 	"\x03SMS\x10\x04\x12\a\n" +
-	"\x03EXT\x10\x05*\xb1\x01\n" +
+	"\x03EXT\x10\x05*\xc4\x01\n" +
 	"\tEventType\x12\x1a\n" +
 	"\x16EVENT_TYPE_UNSPECIFIED\x10\x00\x12\x17\n" +
 	"\x13PASSWORD_RESET_CODE\x10\x01\x12\x15\n" +
 	"\x11CONTACT_BIND_CODE\x10\x02\x12\x16\n" +
 	"\x12CHANNEL_TEST_EMAIL\x10\x03\x12\x14\n" +
-	"\x10INTERNAL_MESSAGE\x10\x04\x12\x14\n" +
+	"\x10INTERNAL_MESSAGE\x10\x04\x12\x11\n" +
+	"\rMONITOR_ALERT\x10\x05\x12\x14\n" +
 	"\x10CHANNEL_TEST_SMS\x10\x06\x12\x14\n" +
 	"\x10CHANNEL_TEST_EXT\x10\b*a\n" +
 	"\x0eDeliveryStatus\x12\x1f\n" +

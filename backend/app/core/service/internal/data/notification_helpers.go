@@ -2,8 +2,10 @@ package data
 
 import (
 	"context"
+	"time"
 
 	"github.com/tx7do/go-crud/viewer"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 // viewerUserIDFromContext 从请求上下文的查看者身份中取用户 ID。
@@ -26,4 +28,13 @@ func derefString(s *string) string {
 		return ""
 	}
 	return *s
+}
+
+// tsOf proto Timestamp → *time.Time（nil 安全）。
+func tsOf(t *timestamppb.Timestamp) *time.Time {
+	if t == nil {
+		return nil
+	}
+	tm := t.AsTime()
+	return &tm
 }

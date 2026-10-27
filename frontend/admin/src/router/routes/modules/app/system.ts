@@ -6,9 +6,9 @@ const system: RouteRecordRaw[] = [
     path: "/system",
     name: "System",
     component: Layout,
-    redirect: "/system/files",
+    redirect: "/system/dict",
     meta: {
-      order: 14,
+      order: 2005,
       icon: "lucide:settings",
       title: "routes.system.moduleName",
       keepAlive: true,
@@ -16,10 +16,22 @@ const system: RouteRecordRaw[] = [
     },
     children: [
       {
+        path: "dict",
+        name: "DictManagement",
+        meta: {
+          order: 1,
+          icon: "lucide:library-big",
+          title: "routes.system.dict",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/system/dict/index.vue"),
+      },
+
+      {
         path: "files",
         name: "FileManagement",
         meta: {
-          order: 1,
+          order: 2,
           icon: "lucide:file-search",
           title: "routes.system.file",
           authority: ["sys:platform_admin", "sys:tenant_manager"],
@@ -31,7 +43,7 @@ const system: RouteRecordRaw[] = [
         path: "tasks",
         name: "TaskManagement",
         meta: {
-          order: 2,
+          order: 3,
           icon: "lucide:list-todo",
           title: "routes.system.task",
           authority: ["sys:platform_admin", "sys:tenant_manager"],
@@ -43,7 +55,7 @@ const system: RouteRecordRaw[] = [
         path: "login-policies",
         name: "LoginPolicyManagement",
         meta: {
-          order: 3,
+          order: 4,
           icon: "lucide:shield-x",
           title: "routes.system.loginPolicy",
           authority: ["sys:platform_admin"],
@@ -55,12 +67,86 @@ const system: RouteRecordRaw[] = [
         path: "languages",
         name: "LanguageManagement",
         meta: {
-          order: 4,
+          order: 5,
           icon: "lucide:globe",
           title: "routes.system.language",
           authority: ["sys:platform_admin"],
         },
         component: () => import("@/pages/app/system/language/index.vue"),
+      },
+
+      {
+        path: "online-sessions",
+        name: "OnlineSessionManagement",
+        meta: {
+          order: 6,
+          icon: "lucide:monitor",
+          title: "routes.system.onlineSessions",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/system/online_session/index.vue"),
+      },
+
+      {
+        path: "server-monitor",
+        name: "ServerMonitor",
+        meta: {
+          order: 7,
+          icon: "lucide:activity",
+          title: "routes.system.serverMonitor",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/system/server_monitor/index.vue"),
+      },
+
+      {
+        // 监控告警规则：指标阈值 → 触发通知（联动通知域，平台管理员）
+        path: "monitor-alerts",
+        name: "MonitorAlertRule",
+        meta: {
+          order: 8,
+          icon: "lucide:bell-plus",
+          title: "routes.system.monitorAlerts",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/system/monitor_alert/index.vue"),
+      },
+
+      // 【缓行】脚本管理：后端 script 域（go-wind-admin 源，gorm 架构）待适配 ent 后接入
+      // {
+      //   path: "scripts",
+      //   name: "ScriptManagement",
+      //   meta: {
+      //     order: 9,
+      //     icon: "lucide:file-code-2",
+      //     title: "routes.system.scripts",
+      //     authority: ["sys:platform_admin"],
+      //   },
+      //   component: () => import("@/pages/app/system/script/index.vue"),
+      // },
+
+      {
+        path: "configs",
+        name: "ConfigManagement",
+        meta: {
+          order: 10,
+          icon: "lucide:sliders-horizontal",
+          title: "routes.system.config",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/system/config/index.vue"),
+      },
+
+      {
+        path: "access-keys",
+        name: "AccessKeyManagement",
+        meta: {
+          order: 11,
+          icon: "lucide:key-round",
+          title: "routes.system.accessKeys",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/system/access_key/index.vue"),
       },
     ],
   },

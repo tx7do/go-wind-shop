@@ -468,3 +468,8 @@ func detectPlatformFromUA(ua string) string {
 
 	return PlatformOther
 }
+
+// ClientRealIP 对外导出的客户端真实 IP（访问密钥令牌交换等场景复用）。
+func ClientRealIP(request *http.Request) string {
+	return getClientRealIP(request)
+}

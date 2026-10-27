@@ -8,6 +8,18 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent"
 )
 
+// The AccessKeyFunc type is an adapter to allow the use of ordinary
+// function as AccessKey mutator.
+type AccessKeyFunc func(context.Context, *ent.AccessKeyMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AccessKeyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AccessKeyMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AccessKeyMutation", m)
+}
+
 // The ApiFunc type is an adapter to allow the use of ordinary
 // function as Api mutator.
 type ApiFunc func(context.Context, *ent.APIMutation) (ent.Value, error)
@@ -150,6 +162,42 @@ func (f DataAccessAuditLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DataAccessAuditLogMutation", m)
+}
+
+// The DictEntryFunc type is an adapter to allow the use of ordinary
+// function as DictEntry mutator.
+type DictEntryFunc func(context.Context, *ent.DictEntryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f DictEntryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.DictEntryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DictEntryMutation", m)
+}
+
+// The DictEntryI18nFunc type is an adapter to allow the use of ordinary
+// function as DictEntryI18n mutator.
+type DictEntryI18nFunc func(context.Context, *ent.DictEntryI18nMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f DictEntryI18nFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.DictEntryI18nMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DictEntryI18nMutation", m)
+}
+
+// The DictTypeFunc type is an adapter to allow the use of ordinary
+// function as DictType mutator.
+type DictTypeFunc func(context.Context, *ent.DictTypeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f DictTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.DictTypeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.DictTypeMutation", m)
 }
 
 // The FileFunc type is an adapter to allow the use of ordinary
@@ -318,6 +366,18 @@ func (f MenuFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MenuMutation", m)
+}
+
+// The MonitorAlertRuleFunc type is an adapter to allow the use of ordinary
+// function as MonitorAlertRule mutator.
+type MonitorAlertRuleFunc func(context.Context, *ent.MonitorAlertRuleMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MonitorAlertRuleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MonitorAlertRuleMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MonitorAlertRuleMutation", m)
 }
 
 // The NotificationChannelFunc type is an adapter to allow the use of ordinary
@@ -738,6 +798,18 @@ func (f StockAlertFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StockAlertMutation", m)
+}
+
+// The SysConfigFunc type is an adapter to allow the use of ordinary
+// function as SysConfig mutator.
+type SysConfigFunc func(context.Context, *ent.SysConfigMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SysConfigFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SysConfigMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SysConfigMutation", m)
 }
 
 // The TaskFunc type is an adapter to allow the use of ordinary
