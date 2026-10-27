@@ -1,12 +1,12 @@
 package data
 
 import (
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
 	"testing"
 	"time"
 
 	"github.com/alicebob/miniredis/v2"
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/redis/go-redis/v9"
 	"github.com/stretchr/testify/assert"
 
@@ -46,7 +46,7 @@ func TestUserTokenCache_BasicOperations(t *testing.T) {
 			},
 		},
 	}
-	bctx := bootstrap.NewContextWithParam(ctx, &conf.AppInfo{}, cfg, log.DefaultLogger)
+	bctx := bootstrap.NewContextWithParam(ctx, &conf.AppInfo{}, cfg, bLogger.GetLogger())
 
 	// 使用当前构造函数
 	repo := NewUserTokenCache(bctx, rdb)
@@ -151,7 +151,7 @@ func TestUserTokenCache_VerifyAndRevokeTokenPair(t *testing.T) {
 		},
 		Data: &conf.Data{Redis: &conf.Data_Redis{Addr: mr.Addr()}},
 	}
-	bctx := bootstrap.NewContextWithParam(ctx, &conf.AppInfo{}, cfg, log.DefaultLogger)
+	bctx := bootstrap.NewContextWithParam(ctx, &conf.AppInfo{}, cfg, bLogger.GetLogger())
 	repo := NewUserTokenCache(bctx, rdb)
 
 	clientType := authenticationV1.ClientType_app

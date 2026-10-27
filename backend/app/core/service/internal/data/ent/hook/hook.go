@@ -1052,6 +1052,18 @@ func (f UserCredentialFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserCredentialMutation", m)
 }
 
+// The UserMfaFactorFunc type is an adapter to allow the use of ordinary
+// function as UserMfaFactor mutator.
+type UserMfaFactorFunc func(context.Context, *ent.UserMfaFactorMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f UserMfaFactorFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.UserMfaFactorMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.UserMfaFactorMutation", m)
+}
+
 // The UserOrgUnitFunc type is an adapter to allow the use of ordinary
 // function as UserOrgUnit mutator.
 type UserOrgUnitFunc func(context.Context, *ent.UserOrgUnitMutation) (ent.Value, error)

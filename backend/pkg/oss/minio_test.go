@@ -1,10 +1,10 @@
 package oss
 
 import (
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"fmt"
 	"testing"
 
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/stretchr/testify/assert"
 	"github.com/tx7do/go-utils/trans"
 
@@ -24,7 +24,7 @@ func createTestClient() *MinIOClient {
 				SecretKey:    "*Abcd123456",
 			},
 		},
-	}, log.DefaultLogger)
+	}, bLogger.GetLogger())
 }
 
 func TestMinIoClient(t *testing.T) {

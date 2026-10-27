@@ -7,6 +7,7 @@ import { useAccessStore, useAppUserStore } from "@/stores";
 import { useAuth, NetworkError } from "@/composables/use-auth";
 
 import { generateAccess } from "@/router/route-generator";
+import { fetchAllDictEntries } from "@/composables/use-dict-cache";
 
 /**
  * 权限访问守卫配置
@@ -18,10 +19,21 @@ function setupAccessGuard(router: Router) {
     const userStore = useAppUserStore();
     const auth = useAuth();
 
+    // MFA 待验证态收敛：mfaOperationId 非空表示密码已通过但需二次验证。
+    // 此时用户无有效 token，唯一允许的目标是 MfaChallenge；其余一律强制跳过去。
+    if (accessStore.mfaOperationId && to.name !== "MfaChallenge") {
+      return { name: "MfaChallenge", replace: true } as any;
+    }
+
+    // 过期的 access token 视同无 token 统一跳登录，避免“仅未访问页面首次发请求
+    // 被 401 拦截才登出”的不一致。治标：dev 明文 HTTP 拒收 Secure cookie 致续期
+    // 链路断裂，token 过期无法刷新；此检查统一登出时机，不解决会话丢失根因。
+    const tokenExpired = accessStore.checkAccessTokenExpired();
+
     // 基本路由，这些路由不需要进入权限拦截
     if (coreRouteNames.includes(to.name as string)) {
-      // 如果已经登录且访问登录页面，重定向到首页
-      if (to.path === LOGIN_PATH && accessStore.accessToken) {
+      // 已经有效登录且访问登录页面，重定向到首页（token 过期则放行到登录页）
+      if (to.path === LOGIN_PATH && accessStore.accessToken && !tokenExpired) {
         return decodeURIComponent(
           (to.query?.redirect as string) || userStore.userInfo?.homePath || DEFAULT_HOME_PATH
         );
@@ -29,8 +41,8 @@ function setupAccessGuard(router: Router) {
       return true;
     }
 
-    // accessToken 检查
-    if (!accessStore.accessToken) {
+    // accessToken 检查（含过期判定：过期视同无 token，统一跳登录页）
+    if (!accessStore.accessToken || tokenExpired) {
       // 明确声明忽略权限访问权限，则可以访问
       if (to.meta.ignoreAccess) {
         return true;
@@ -41,9 +53,8 @@ function setupAccessGuard(router: Router) {
         return {
           path: LOGIN_PATH,
           // 如不需要，直接删除 query
-          // redirect 不手动 encodeURIComponent：vue-router 序列化 query 时会自动编码，
-          // 手动编一次会双重编码，登录页 decodeURIComponent 只解一层后仍带 %2F，跳转落空
-          query: to.fullPath === DEFAULT_HOME_PATH ? {} : { redirect: to.fullPath },
+          query:
+            to.fullPath === DEFAULT_HOME_PATH ? {} : { redirect: encodeURIComponent(to.fullPath) },
           // 携带当前跳转的页面，登录后重新跳转该页面
           replace: true,
         };
@@ -77,6 +88,14 @@ function setupAccessGuard(router: Router) {
       // 注意：此时 getUserPermissionCodes 内部已通过 logoutToLoginPage 处理了跳转
       // 返回 false 阻止当前导航即可
       return false;
+    }
+
+    // 预先加载字典数据，部分页面可能会用到字典数据，如果没有预先加载，可能会导致页面闪烁。
+    // 失败不阻断导航：页面退化为未翻译字典码（warn 带出原始错误便于排查）
+    try {
+      await fetchAllDictEntries();
+    } catch (error) {
+      console.warn("[Guard] 字典预加载失败，页面将以未翻译字典码降级渲染:", error);
     }
 
     // 生成菜单和路由

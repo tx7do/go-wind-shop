@@ -92,7 +92,7 @@ func (a *Authorizer) ResetPolicies(ctx context.Context) error {
 
 	default:
 		err = fmt.Errorf("unknown engine name: %s", a.engine.Name())
-		a.log.Warnf(err.Error())
+		a.log.Warn(err.Error())
 		return err
 	}
 

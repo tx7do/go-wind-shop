@@ -42,7 +42,10 @@ type AuthenticationService struct {
 
 	userCredentialRepo *data.UserCredentialRepo
 
-	authenticator *data.Authenticator
+	authenticator     *data.Authenticator
+	mfaFactorRepo     *data.UserMfaFactorRepo
+	mfaChallengeCache *data.MfaChallengeCache
+	rateLimiter       *data.LoginRateLimiter
 
 	log *logx.Helper
 }
@@ -50,6 +53,9 @@ type AuthenticationService struct {
 func NewAuthenticationService(
 	ctx *bootstrap.Context,
 	authenticator *data.Authenticator,
+	mfaFactorRepo *data.UserMfaFactorRepo,
+	mfaChallengeCache *data.MfaChallengeCache,
+	rateLimiter *data.LoginRateLimiter,
 	userCredentialRepo *data.UserCredentialRepo,
 	userRepo data.UserRepo,
 	roleRepo *data.RoleRepo,
@@ -65,6 +71,9 @@ func NewAuthenticationService(
 		roleRepo:           roleRepo,
 		permissionRepo:     permissionRepo,
 		authenticator:      authenticator,
+		mfaFactorRepo:      mfaFactorRepo,
+		mfaChallengeCache:  mfaChallengeCache,
+		rateLimiter:        rateLimiter,
 	}
 }
 
@@ -247,6 +256,28 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 	}
 
 	// 生成令牌
+	// ===== MFA 闸门：若该用户绑定了 ENABLED 的 TOTP 因子，则不签发 token， =====
+	// ===== 改为签发 operation_id，要求前端走二次验证（MfaService.VerifyMFAChallenge）。
+	if s.mfaFactorRepo != nil {
+		needMfa, merr := s.mfaFactorRepo.HasEnabledTotp(ctx, user.GetTenantId(), user.GetId())
+		if merr != nil {
+			s.log.Errorf("check mfa factor failed for user [%d]: %s", user.GetId(), merr.Error())
+			return nil, authenticationV1.ErrorInternalServerError("mfa check failed")
+		}
+		if needMfa && s.mfaChallengeCache != nil {
+			opId, cerr := s.mfaChallengeCache.SetLoginChallenge(ctx, tokenPayload, req.GetClientType())
+			if cerr != nil {
+				s.log.Errorf("set mfa login challenge failed for user [%d]: %s", user.GetId(), cerr.Error())
+				return nil, authenticationV1.ErrorInternalServerError("mfa challenge failed")
+			}
+			return &authenticationV1.LoginResponse{
+				TokenType:      authenticationV1.TokenType_bearer,
+				AccessToken:    "",
+				MfaOperationId: trans.Ptr(opId),
+			}, nil
+		}
+	}
+
 	accessToken, refreshToken, _, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)
 	if err != nil {
 		return nil, err

@@ -63,6 +63,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	planModuleRepo := data.NewPlanModuleRepo(ctx, entClient)
 	planQuotaRepo := data.NewPlanQuotaRepo(ctx, entClient)
 	tenantUsageRepo := data.NewTenantUsageRepo(ctx, entClient, authenticator)
+	mfaFactorRepo := data.NewUserMfaFactorRepo(ctx, entClient)
+	mfaChallengeCache := data.NewMfaChallengeCache(ctx, redisClient)
+	loginRateLimiter := data.NewLoginRateLimiter(ctx, redisClient)
 
 
 	crypto := data.NewPasswordCrypto()
@@ -146,13 +149,14 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
-	authenticationService := service.NewAuthenticationService(ctx, authenticator, userCredentialRepo, userRepo, roleRepo, tenantRepo, permissionRepo)
+	authenticationService := service.NewAuthenticationService(ctx, authenticator, mfaFactorRepo, mfaChallengeCache, loginRateLimiter, userCredentialRepo, userRepo, roleRepo, tenantRepo, permissionRepo)
 	loginPolicyService := service.NewLoginPolicyService(ctx, loginPolicyRepo)
 	userCredentialService := service.NewUserCredentialService(ctx, userCredentialRepo)
 	taskService := service.NewTaskService(ctx, taskRepo, userRepo)
 	fileService := service.NewFileService(ctx, fileRepo, minIOClient)
 	languageService := service.NewLanguageService(ctx, languageRepo)
 	tenantService := service.NewTenantService(ctx, tenantRepo, tenantUsageRepo, userRepo, userCredentialRepo, roleRepo)
+	mfaService := service.NewMfaService(ctx, mfaFactorRepo, mfaChallengeCache, authenticator, loginRateLimiter, userRepo)
 	userService := service.NewUserService(ctx, userRepo, roleRepo, userCredentialRepo, positionRepo, orgUnitRepo, tenantRepo, membershipRepo)
 	roleService := service.NewRoleService(ctx, roleRepo, tenantRepo, userRoleRepo)
 	positionService := service.NewPositionService(ctx, positionRepo, orgUnitRepo)
@@ -293,6 +297,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		aiKnowledgeService, aiUsageLogService, aiQueryService,
 		scriptService, scriptLogService,
 		planService, planModuleService, planQuotaService,
+		mfaService,
 		userCredentialService,
 		taskService,
 		fileService,

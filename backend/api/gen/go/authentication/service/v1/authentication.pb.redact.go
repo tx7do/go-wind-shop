@@ -238,6 +238,8 @@ func (x *LoginResponse) Redact() {
 
 	// Safe field: Scope
 
+	// Safe field: MfaOperationId
+
 	// Safe field: RefreshExpiresIn
 
 	// Safe field: IdToken

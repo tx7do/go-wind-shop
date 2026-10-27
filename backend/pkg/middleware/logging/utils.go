@@ -473,3 +473,8 @@ func detectPlatformFromUA(ua string) string {
 func ClientRealIP(request *http.Request) string {
 	return getClientRealIP(request)
 }
+
+// ClientIPFromContext 对外导出的客户端真实 IP（MFA 限流、会话元数据等场景复用）。
+func ClientIPFromContext(request *http.Request) string {
+	return getClientRealIP(request)
+}

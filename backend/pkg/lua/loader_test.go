@@ -1,16 +1,16 @@
 package lua
 
 import (
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
 	"os"
 	"path/filepath"
 	"testing"
 
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 func TestLoadScriptFile(t *testing.T) {
-	engine := NewEngine(DefaultConfig(), log.DefaultLogger)
+	engine := NewEngine(DefaultConfig(), bLogger.GetLogger())
 	defer engine.Close()
 
 	// Create a temporary script file
@@ -63,7 +63,7 @@ func TestLoadScriptFile(t *testing.T) {
 }
 
 func TestLoadScriptsFromDir(t *testing.T) {
-	engine := NewEngine(DefaultConfig(), log.DefaultLogger)
+	engine := NewEngine(DefaultConfig(), bLogger.GetLogger())
 	defer engine.Close()
 
 	// Create a temporary directory with multiple scripts
@@ -145,7 +145,7 @@ func TestLoadScriptsFromDir(t *testing.T) {
 }
 
 func TestLoadScriptsFromDir_NonExistent(t *testing.T) {
-	engine := NewEngine(DefaultConfig(), log.DefaultLogger)
+	engine := NewEngine(DefaultConfig(), bLogger.GetLogger())
 	defer engine.Close()
 
 	// Try to load from non-existent directory (should not error)
@@ -158,7 +158,7 @@ func TestLoadScriptsFromDir_NonExistent(t *testing.T) {
 }
 
 func TestLoadScriptString(t *testing.T) {
-	engine := NewEngine(DefaultConfig(), log.DefaultLogger)
+	engine := NewEngine(DefaultConfig(), bLogger.GetLogger())
 	defer engine.Close()
 
 	script := `

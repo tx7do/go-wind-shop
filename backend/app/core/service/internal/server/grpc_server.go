@@ -85,6 +85,7 @@ func NewGrpcServer(
 	planService *service.PlanService,
 	planModuleService *service.PlanModuleService,
 	planQuotaService *service.PlanQuotaService,
+	mfaService *service.MfaService,
 	userCredentialService *service.UserCredentialService,
 
 	taskService *service.TaskService,
@@ -253,6 +254,7 @@ func NewGrpcServer(
 	identityV1.RegisterPlanServiceServer(srv, planService)
 	identityV1.RegisterPlanModuleServiceServer(srv, planModuleService)
 	identityV1.RegisterPlanQuotaServiceServer(srv, planQuotaService)
+	authenticationV1.RegisterMFAServiceServer(srv, mfaService)
 
 	// register:grpc-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 

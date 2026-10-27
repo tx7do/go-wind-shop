@@ -1,17 +1,17 @@
 package lua
 
 import (
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
 	"testing"
 
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 func TestOnServerStartScript(t *testing.T) {
 	// Create engine
 	config := DefaultConfig()
 	config.ScriptDir = "" // Don't auto-load
-	engine := NewEngine(config, log.DefaultLogger)
+	engine := NewEngine(config, bLogger.GetLogger())
 	defer engine.Close()
 
 	// Load the on_server_start.lua script

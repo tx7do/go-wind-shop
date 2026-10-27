@@ -261,6 +261,10 @@ func (m *LoginResponse) validate(all bool) error {
 		// no validation rules for Scope
 	}
 
+	if m.MfaOperationId != nil {
+		// no validation rules for MfaOperationId
+	}
+
 	if m.RefreshExpiresIn != nil {
 		// no validation rules for RefreshExpiresIn
 	}

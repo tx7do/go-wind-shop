@@ -93,6 +93,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/user"
 	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
 	"go-wind-shop/app/core/service/internal/data/ent/usercredential"
+	"go-wind-shop/app/core/service/internal/data/ent/usermfafactor"
 	"go-wind-shop/app/core/service/internal/data/ent/userorgunit"
 	"go-wind-shop/app/core/service/internal/data/ent/userposition"
 	"go-wind-shop/app/core/service/internal/data/ent/userrole"
@@ -250,6 +251,7 @@ func checkColumn(t, c string) error {
 			user.Table:                             user.ValidColumn,
 			usercoupon.Table:                       usercoupon.ValidColumn,
 			usercredential.Table:                   usercredential.ValidColumn,
+			usermfafactor.Table:                    usermfafactor.ValidColumn,
 			userorgunit.Table:                      userorgunit.ValidColumn,
 			userposition.Table:                     userposition.ValidColumn,
 			userrole.Table:                         userrole.ValidColumn,

@@ -186,6 +186,8 @@ type Tx struct {
 	UserCoupon *UserCouponClient
 	// UserCredential is the client for interacting with the UserCredential builders.
 	UserCredential *UserCredentialClient
+	// UserMfaFactor is the client for interacting with the UserMfaFactor builders.
+	UserMfaFactor *UserMfaFactorClient
 	// UserOrgUnit is the client for interacting with the UserOrgUnit builders.
 	UserOrgUnit *UserOrgUnitClient
 	// UserPosition is the client for interacting with the UserPosition builders.
@@ -412,6 +414,7 @@ func (tx *Tx) init() {
 	tx.User = NewUserClient(tx.config)
 	tx.UserCoupon = NewUserCouponClient(tx.config)
 	tx.UserCredential = NewUserCredentialClient(tx.config)
+	tx.UserMfaFactor = NewUserMfaFactorClient(tx.config)
 	tx.UserOrgUnit = NewUserOrgUnitClient(tx.config)
 	tx.UserPosition = NewUserPositionClient(tx.config)
 	tx.UserRole = NewUserRoleClient(tx.config)

@@ -159,6 +159,7 @@ func NewRestServer(
 	planService *service.PlanService,
 	planModuleService *service.PlanModuleService,
 	planQuotaService *service.PlanQuotaService,
+	mfaService *service.MfaService,
 	aiAgentService *service.AiAgentService,
 	aiProviderService *service.AiProviderService,
 	aiChatService *service.AiChatService,
@@ -273,6 +274,7 @@ func NewRestServer(
 	adminV1.RegisterPlanServiceHTTPServer(srv, planService)
 	adminV1.RegisterPlanModuleServiceHTTPServer(srv, planModuleService)
 	adminV1.RegisterPlanQuotaServiceHTTPServer(srv, planQuotaService)
+	adminV1.RegisterMfaServiceHTTPServer(srv, mfaService)
 	adminV1.RegisterAiAgentServiceHTTPServer(srv, aiAgentService)
 	adminV1.RegisterAiProviderServiceHTTPServer(srv, aiProviderService)
 	adminV1.RegisterAiChatServiceHTTPServer(srv, aiChatService)

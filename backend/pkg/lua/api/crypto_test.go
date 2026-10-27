@@ -1,9 +1,10 @@
 package api
 
 import (
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
+	"go-wind-shop/pkg/logx"
 	"testing"
 
-	"github.com/go-kratos/kratos/v2/log"
 	"github.com/stretchr/testify/assert"
 	lua "github.com/yuin/gopher-lua"
 
@@ -14,7 +15,7 @@ func TestRegisterCrypto_Module(t *testing.T) {
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 
 	// Initialize global encryptor for testing
 	err := crypto.InitGlobalEncryptor("test-encryption-key-32-bytes-long!", true)
@@ -49,7 +50,7 @@ func TestCryptoAPI_EncryptDecrypt(t *testing.T) {
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 
 	// Initialize global encryptor
 	err := crypto.InitGlobalEncryptor("test-encryption-key-32-bytes-long!", true)
@@ -83,7 +84,7 @@ func TestCryptoAPI_EncryptPayload(t *testing.T) {
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 
 	// Initialize global encryptor
 	err := crypto.InitGlobalEncryptor("test-encryption-key-32-bytes-long!", true)
@@ -131,7 +132,7 @@ func TestCryptoAPI_EncryptJSON(t *testing.T) {
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 
 	// Initialize global encryptor
 	err := crypto.InitGlobalEncryptor("test-encryption-key-32-bytes-long!", true)
@@ -174,7 +175,7 @@ func TestCryptoAPI_SHA256Hash(t *testing.T) {
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 
 	// Note: Crypto encryptor initialization not required for hashing
 	RegisterCrypto(L, logger)
@@ -215,7 +216,7 @@ func TestCryptoAPI_EmptyStrings(t *testing.T) {
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 
 	// Initialize global encryptor
 	err := crypto.InitGlobalEncryptor("test-encryption-key-32-bytes-long!", true)

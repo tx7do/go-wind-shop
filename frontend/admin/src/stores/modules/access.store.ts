@@ -17,6 +17,10 @@ interface AccessState {
    */
   accessCodes: string[];
   /**
+   * 字段权限隐藏字段集（"资源.字段" 串，如 "User.email"，来自 GetMyPermissionCode）
+   */
+  hiddenFields: string[];
+  /**
    * 可访问的菜单列表
    */
   accessMenus: MenuRecordRaw[];
@@ -40,13 +44,9 @@ interface AccessState {
    * 登录是否过期
    */
   loginExpired: boolean;
-  /**
-   * 字段权限隐藏字段集（"资源.字段" 串，如 "User.email"，来自 GetMyPermissionCode）
-   */
-  hiddenFields: string[];
 
   /**
-   * 登录 accessToken
+   * 登录 refreshToken（仅存内存）
    */
   refreshToken: AccessToken;
 
@@ -54,6 +54,12 @@ interface AccessState {
    * refreshToken 过期时间戳
    */
   refreshTokenExpireTime?: number;
+
+  /**
+   * MFA 挑战操作标识：登录密码校验通过但需二次验证时，后端返回。
+   * 非空表示当前处于 MFA 挑战待验证阶段，前端据此跳挑战页。
+   */
+  mfaOperationId: string | null;
 }
 
 /**
@@ -63,15 +69,16 @@ export const useAccessStore = defineStore("core-access", {
   actions: {
     $reset() {
       this.accessToken = null;
-      this.refreshToken = null;
       this.accessCodes = [];
+      this.hiddenFields = [];
       this.accessMenus = [];
       this.accessRoutes = [];
       this.isAccessChecked = false;
       this.loginExpired = false;
-      this.hiddenFields = [];
-      this.accessTokenExpireTime = undefined;
+      this.mfaOperationId = null;
+      this.refreshToken = null;
       this.refreshTokenExpireTime = undefined;
+      this.accessTokenExpireTime = undefined;
     },
     /**
      * @zh_CN 检查 accessToken 是否过期
@@ -83,26 +90,21 @@ export const useAccessStore = defineStore("core-access", {
       const now = Date.now();
       return now >= this.accessTokenExpireTime;
     },
-    /**
-     * @zh_CN 检查 refreshToken 是否过期
-     */
-    checkRefreshTokenExpired(): boolean {
-      if (!this.refreshTokenExpireTime) {
-        return true;
-      }
-      const now = Date.now();
-      return now >= this.refreshTokenExpireTime;
-    },
     setAccessCodes(codes: string[]) {
       this.accessCodes = codes;
     },
-
-		/**
-		 * @zh_CN 设置字段权限隐藏字段集
-		 */
-		setHiddenFields(fields: string[]) {
-			this.hiddenFields = fields;
-		},
+    setHiddenFields(fields: string[]) {
+      this.hiddenFields = fields;
+    },
+    setMfaOperationId(operationId: string | null) {
+      this.mfaOperationId = operationId;
+    },
+    setRefreshToken(token: AccessToken) {
+      this.refreshToken = token;
+    },
+    setRefreshTokenExpireTime(refreshTokenExpireTime: number) {
+      this.refreshTokenExpireTime = refreshTokenExpireTime;
+    },
     setAccessMenus(menus: MenuRecordRaw[]) {
       this.accessMenus = menus;
     },
@@ -122,34 +124,23 @@ export const useAccessStore = defineStore("core-access", {
     setLoginExpired(loginExpired: boolean) {
       this.loginExpired = loginExpired;
     },
-
-    setRefreshToken(token: AccessToken) {
-      this.refreshToken = token;
-    },
-
-    setRefreshTokenExpireTime(refreshTokenExpireTime: number) {
-      this.refreshTokenExpireTime = refreshTokenExpireTime;
-    },
   },
   persist: {
-    // 持久化
-    pick: [
-      "accessToken",
-      "refreshToken",
-      "accessCodes",
-      "refreshTokenExpireTime",
-      "accessTokenExpireTime",
-    ],
+    // Token（access/refresh 及其过期时间）全部仅存内存，不落 localStorage。
+    // 刷新页面后 token 丢失 → 守卫看到 accessToken 为 null → 跳登录页。
+    // accessCodes 是权限码（非 secret），仍持久化以避免刷新后重新拉取。
+    pick: ["accessCodes", "hiddenFields"],
   },
   state: (): AccessState => ({
     accessCodes: [],
+    hiddenFields: [],
     accessMenus: [],
     accessRoutes: [],
     accessToken: null,
     accessTokenExpireTime: undefined,
     isAccessChecked: false,
     loginExpired: false,
-    hiddenFields: [],
+    mfaOperationId: null,
     refreshToken: null,
     refreshTokenExpireTime: undefined,
   }),

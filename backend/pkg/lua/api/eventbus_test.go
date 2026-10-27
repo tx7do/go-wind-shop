@@ -1,25 +1,26 @@
 package api
 
 import (
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
+	"go-wind-shop/pkg/logx"
 	"context"
 	"sync"
 	"testing"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/log"
 	lua "github.com/yuin/gopher-lua"
 
 	"go-wind-shop/pkg/eventbus"
 )
 
 func TestEventBusAPI_PublishSubscribe(t *testing.T) {
-	manager := eventbus.NewManager(log.DefaultLogger)
+	manager := eventbus.NewManager(bLogger.GetLogger())
 	defer manager.Close()
 
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 	RegisterLogger(L, logger)
 	RegisterEventBus(L, manager, logger)
 
@@ -65,13 +66,13 @@ func TestEventBusAPI_PublishSubscribe(t *testing.T) {
 }
 
 func TestEventBusAPI_MultipleSubscribers(t *testing.T) {
-	manager := eventbus.NewManager(log.DefaultLogger)
+	manager := eventbus.NewManager(bLogger.GetLogger())
 	defer manager.Close()
 
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 	RegisterLogger(L, logger)
 	RegisterEventBus(L, manager, logger)
 
@@ -114,13 +115,13 @@ func TestEventBusAPI_MultipleSubscribers(t *testing.T) {
 }
 
 func TestEventBusAPI_SubscribeOnce(t *testing.T) {
-	manager := eventbus.NewManager(log.DefaultLogger)
+	manager := eventbus.NewManager(bLogger.GetLogger())
 	defer manager.Close()
 
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 	RegisterLogger(L, logger)
 	RegisterEventBus(L, manager, logger)
 
@@ -158,13 +159,13 @@ func TestEventBusAPI_SubscribeOnce(t *testing.T) {
 }
 
 func TestEventBusAPI_EventData(t *testing.T) {
-	manager := eventbus.NewManager(log.DefaultLogger)
+	manager := eventbus.NewManager(bLogger.GetLogger())
 	defer manager.Close()
 
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 	RegisterLogger(L, logger)
 	RegisterEventBus(L, manager, logger)
 
@@ -211,13 +212,13 @@ func TestEventBusAPI_EventData(t *testing.T) {
 }
 
 func TestEventBusAPI_FullEventObject(t *testing.T) {
-	manager := eventbus.NewManager(log.DefaultLogger)
+	manager := eventbus.NewManager(bLogger.GetLogger())
 	defer manager.Close()
 
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 	RegisterLogger(L, logger)
 	RegisterEventBus(L, manager, logger)
 
@@ -274,13 +275,13 @@ func TestEventBusAPI_FullEventObject(t *testing.T) {
 }
 
 func TestEventBusAPI_NamedBuses(t *testing.T) {
-	manager := eventbus.NewManager(log.DefaultLogger)
+	manager := eventbus.NewManager(bLogger.GetLogger())
 	defer manager.Close()
 
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 	RegisterLogger(L, logger)
 	RegisterEventBus(L, manager, logger)
 
@@ -327,13 +328,13 @@ func TestEventBusAPI_NamedBuses(t *testing.T) {
 }
 
 func TestEventBusAPI_AsyncPublish(t *testing.T) {
-	manager := eventbus.NewManager(log.DefaultLogger)
+	manager := eventbus.NewManager(bLogger.GetLogger())
 	defer manager.Close()
 
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 	RegisterLogger(L, logger)
 	RegisterEventBus(L, manager, logger)
 
@@ -378,13 +379,13 @@ func TestEventBusAPI_AsyncPublish(t *testing.T) {
 }
 
 func TestEventBusAPI_CreateEvent(t *testing.T) {
-	manager := eventbus.NewManager(log.DefaultLogger)
+	manager := eventbus.NewManager(bLogger.GetLogger())
 	defer manager.Close()
 
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 	RegisterLogger(L, logger)
 	RegisterEventBus(L, manager, logger)
 
@@ -426,13 +427,13 @@ func TestEventBusAPI_CreateEvent(t *testing.T) {
 }
 
 func TestEventBusAPI_CrossBusIsolation(t *testing.T) {
-	manager := eventbus.NewManager(log.DefaultLogger)
+	manager := eventbus.NewManager(bLogger.GetLogger())
 	defer manager.Close()
 
 	L := lua.NewState()
 	defer L.Close()
 
-	logger := log.NewHelper(log.DefaultLogger)
+	logger := logx.NewFromLogger(bLogger.GetLogger())
 	RegisterLogger(L, logger)
 	RegisterEventBus(L, manager, logger)
 

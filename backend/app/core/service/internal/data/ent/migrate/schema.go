@@ -4365,6 +4365,39 @@ var (
 			},
 		},
 	}
+	// SysUserMfaFactorsColumns holds the columns for the "sys_user_mfa_factors" table.
+	SysUserMfaFactorsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "关联主表的用户ID"},
+		{Name: "method", Type: field.TypeEnum, Nullable: true, Comment: "MFA 方法", Enums: []string{"TOTP", "SMS", "EMAIL", "WEBAUTHN"}, Default: "TOTP"},
+		{Name: "secret_hash", Type: field.TypeString, Nullable: true, Size: 512, Comment: "MFA secret 密文（AES-GCM 加密，base64 编码；TOTP 校验需还原明文）"},
+		{Name: "display_name", Type: field.TypeString, Nullable: true, Size: 128, Comment: "设备/因子展示名（用户自定义）"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "因子状态", Enums: []string{"DISABLED", "ENABLED"}, Default: "ENABLED"},
+		{Name: "last_used_at", Type: field.TypeTime, Nullable: true, Comment: "最近一次用于验证的时间"},
+	}
+	// SysUserMfaFactorsTable holds the schema information for the "sys_user_mfa_factors" table.
+	SysUserMfaFactorsTable = &schema.Table{
+		Name:       "sys_user_mfa_factors",
+		Comment:    "用户 MFA 因子表",
+		Columns:    SysUserMfaFactorsColumns,
+		PrimaryKey: []*schema.Column{SysUserMfaFactorsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "idx_sys_user_mfa_tenant_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysUserMfaFactorsColumns[4], SysUserMfaFactorsColumns[5]},
+			},
+			{
+				Name:    "idx_sys_user_mfa_tenant_uid_method",
+				Unique:  true,
+				Columns: []*schema.Column{SysUserMfaFactorsColumns[4], SysUserMfaFactorsColumns[5], SysUserMfaFactorsColumns[6]},
+			},
+		},
+	}
 	// SysUserOrgUnitsColumns holds the columns for the "sys_user_org_units" table.
 	SysUserOrgUnitsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -4758,6 +4791,7 @@ var (
 		SysUsersTable,
 		MallUserCouponsTable,
 		SysUserCredentialsTable,
+		SysUserMfaFactorsTable,
 		SysUserOrgUnitsTable,
 		SysUserPositionsTable,
 		SysUserRolesTable,
@@ -5211,6 +5245,11 @@ func init() {
 	}
 	SysUserCredentialsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_user_credentials",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	SysUserMfaFactorsTable.Annotation = &entsql.Annotation{
+		Table:     "sys_user_mfa_factors",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

@@ -799,7 +799,10 @@ func toEntFieldPermissions(in []*permissionV1.RoleFieldPermission) []permissionV
 		if p == nil {
 			continue
 		}
-		out = append(out, *p)
+		out = append(out, permissionV1.RoleFieldPermission{
+				Resource:     p.Resource,
+				HiddenFields: p.HiddenFields,
+			})
 	}
 	return out
 }

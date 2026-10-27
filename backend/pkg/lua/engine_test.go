@@ -1,17 +1,17 @@
 package lua
 
 import (
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
 	"testing"
 
-	"github.com/go-kratos/kratos/v2/log"
 )
 
 func TestEngine_BasicExecution(t *testing.T) {
 	// Create engine
 	config := DefaultConfig()
 	config.PoolSize = 2
-	engine := NewEngine(config, log.DefaultLogger)
+	engine := NewEngine(config, bLogger.GetLogger())
 	defer engine.Close()
 
 	// Register hook
@@ -63,7 +63,7 @@ end
 }
 
 func TestEngine_ContextDataTransfer(t *testing.T) {
-	engine := NewEngine(nil, log.DefaultLogger)
+	engine := NewEngine(nil, bLogger.GetLogger())
 	defer engine.Close()
 
 	engine.RegisterHook("data_transfer", "Test data transfer")
@@ -102,7 +102,7 @@ end
 }
 
 func TestEngine_ScriptAbort(t *testing.T) {
-	engine := NewEngine(nil, log.DefaultLogger)
+	engine := NewEngine(nil, bLogger.GetLogger())
 	defer engine.Close()
 
 	engine.RegisterHook("abort_test", "Test script abort")
@@ -135,7 +135,7 @@ end
 }
 
 func TestEngine_MultipleScripts(t *testing.T) {
-	engine := NewEngine(nil, log.DefaultLogger)
+	engine := NewEngine(nil, bLogger.GetLogger())
 	defer engine.Close()
 
 	engine.RegisterHook("multi_test", "Test multiple scripts")

@@ -82,7 +82,7 @@ import type { ProTableColumn } from "@/components/Pro/ProTable/types";
 import UserDrawer from "./user-drawer.vue";
 
 import {
-  // 【缓行】MFA 未接入：disableMfa,
+  disableMfa,
   fetchListPositions,
   fetchListRoles,
   userStatusList,

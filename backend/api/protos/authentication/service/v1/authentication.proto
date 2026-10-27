@@ -234,6 +234,14 @@ message LoginResponse {
     }
   ]; // 以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。
 
+  // MFA 挑战操作标识。非空表示登录需二次验证，此时 access_token 为空。
+  optional string mfa_operation_id = 8 [
+    json_name = "mfa_operation_id",
+    (gnostic.openapi.v3.property) = {
+      description: "MFA 挑战操作标识。非空表示登录需二次验证，此时 access_token 为空。"
+    }
+  ];
+
   optional int64 refresh_expires_in = 6 [
     json_name = "refresh_expires_in",
     (gnostic.openapi.v3.property) = {

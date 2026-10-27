@@ -267,6 +267,9 @@ type UserCoupon func(*sql.Selector)
 // UserCredential is the predicate function for usercredential builders.
 type UserCredential func(*sql.Selector)
 
+// UserMfaFactor is the predicate function for usermfafactor builders.
+type UserMfaFactor func(*sql.Selector)
+
 // UserOrgUnit is the predicate function for userorgunit builders.
 type UserOrgUnit func(*sql.Selector)
 

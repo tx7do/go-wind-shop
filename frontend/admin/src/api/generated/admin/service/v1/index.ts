@@ -2914,6 +2914,8 @@ export type authenticationservicev1_LoginResponse = {
   access_token: string | undefined;
   expires_in: number | undefined;
   id_token?: string;
+  // MFA 挑战操作标识。非空表示登录需二次验证，此时 access_token 为空。
+  mfa_operation_id?: string;
   refresh_expires_in?: number;
   refresh_token?: string;
   scope?: string;
@@ -8340,6 +8342,268 @@ export type permissionservicev1_UpdateMenuRequest = {
 export type permissionservicev1_DeleteMenuRequest = {
   id?: number;
   operatorId?: number;
+};
+
+// MFA（多因素认证）服务 HTTP 桥接。
+// 管理侧 RPC（GetMFAStatus/ListEnrolledMethods/StartEnrollMethod/ConfirmEnrollMethod/
+// DisableMFA/RevokeMFADevice）需登录态，走正常 auth+authz 中间件，不加 security:{}。
+// 登录挑战侧 RPC（VerifyMFAChallenge）免鉴权，加 security:{} 并加入 rest_server 白名单。
+export interface MfaService {
+  // 查询当前登录用户 MFA 总览
+  GetMFAStatus(
+    request: authenticationservicev1_GetMFAStatusRequest,
+  ): Promise<authenticationservicev1_GetMFAStatusResponse>;
+  // 列出已注册的 MFA 凭证
+  ListEnrolledMethods(
+    request: authenticationservicev1_ListEnrolledMethodsRequest,
+  ): Promise<authenticationservicev1_ListEnrolledMethodsResponse>;
+  // 开始注册 MFA 方法（返回 secret/QR，仅 TOTP 本轮实现）
+  StartEnrollMethod(
+    request: authenticationservicev1_StartEnrollMethodRequest,
+  ): Promise<authenticationservicev1_StartEnrollMethodResponse>;
+  // 确认注册 MFA 方法（提交首码完成绑定）
+  ConfirmEnrollMethod(
+    request: authenticationservicev1_ConfirmEnrollMethodRequest,
+  ): Promise<authenticationservicev1_ConfirmEnrollMethodResponse>;
+  // 禁用/移除已注册 MFA 凭证。
+  // 注意：kratos http 生成器不支持 DELETE 请求体（handler 只 BindQuery），
+  // 而 TS 生成器默认把 message 序列化为 body——为两端一致改用 POST + body。
+  DisableMFA(
+    request: authenticationservicev1_DisableMFARequest,
+  ): Promise<wellKnownEmpty>;
+  // 撤销指定 MFA 凭证（按 id）。
+  // ⚠️ 当前无前端调用方：DELETE 请求体在 Go 生成器（恒 BindQuery）与 TS 生成器
+  // （发 body）之间不一致，贸然对接会静默丢参——需要时应改 POST（参见 DisableMFA）。
+  RevokeMFADevice(
+    request: authenticationservicev1_RevokeMFADeviceRequest,
+  ): Promise<wellKnownEmpty>;
+  // 验证登录 MFA 挑战。通过则返回 LoginResponse（含真 access_token）。
+  // 免鉴权：登录流程在密码校验通过、待二次验证阶段调用。
+  VerifyMFAChallenge(
+    request: authenticationservicev1_VerifyMFAChallengeRequest,
+  ): Promise<authenticationservicev1_LoginResponse>;
+}
+
+export function createMfaServiceClient(
+  transport: ClientTransport,
+): MfaService {
+  return {
+    GetMFAStatus(request) {
+      const path = `/admin/v1/mfa/status`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.userId) {
+        queryParams.push(
+          `userId=${encodeURIComponent(request.userId.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'MfaService',
+        method: 'GetMFAStatus',
+      }) as Promise<authenticationservicev1_GetMFAStatusResponse>;
+    },
+    ListEnrolledMethods(request) {
+      const path = `/admin/v1/mfa/methods`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.userId) {
+        queryParams.push(
+          `userId=${encodeURIComponent(request.userId.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'MfaService',
+        method: 'ListEnrolledMethods',
+      }) as Promise<authenticationservicev1_ListEnrolledMethodsResponse>;
+    },
+    StartEnrollMethod(request) {
+      const path = `/admin/v1/mfa/enroll/start`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MfaService',
+        method: 'StartEnrollMethod',
+      }) as Promise<authenticationservicev1_StartEnrollMethodResponse>;
+    },
+    ConfirmEnrollMethod(request) {
+      const path = `/admin/v1/mfa/enroll/confirm`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MfaService',
+        method: 'ConfirmEnrollMethod',
+      }) as Promise<authenticationservicev1_ConfirmEnrollMethodResponse>;
+    },
+    DisableMFA(request) {
+      const path = `/admin/v1/mfa/disable`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MfaService',
+        method: 'DisableMFA',
+      }) as Promise<wellKnownEmpty>;
+    },
+    RevokeMFADevice(request) {
+      if (request.credentialId === undefined || request.credentialId === null) {
+        throw new Error('missing required field request.credential_id');
+      }
+      const path = `/admin/v1/mfa/${request.credentialId}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'MfaService',
+        method: 'RevokeMFADevice',
+      }) as Promise<wellKnownEmpty>;
+    },
+    VerifyMFAChallenge(request) {
+      const path = `/admin/v1/mfa/verify`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MfaService',
+        method: 'VerifyMFAChallenge',
+      }) as Promise<authenticationservicev1_LoginResponse>;
+    },
+  };
+}
+export type authenticationservicev1_GetMFAStatusRequest = {
+  // 可选：若服务端通过上下文识别用户，可不传 user_id
+  userId?: string;
+};
+
+export type authenticationservicev1_GetMFAStatusResponse = {
+  enabled: boolean | undefined;
+  enforcement: authenticationservicev1_MFAEnforcement | undefined;
+  enrolled: authenticationservicev1_EnrolledMethod[] | undefined;
+};
+
+export type authenticationservicev1_EnrolledMethod = {
+  createdAt?: wellKnownTimestamp;
+  display: string | undefined;
+  enabled: boolean | undefined;
+  id: string | undefined;
+  lastUsedAt?: wellKnownTimestamp;
+  method: authenticationservicev1_MFAMethod | undefined;
+};
+
+// 多因素认证方法
+export type authenticationservicev1_MFAMethod =
+  | 'BACKUP_CODE'
+  | 'EMAIL'
+  | 'MFA_METHOD_UNSPECIFIED'
+  | 'OTHER'
+  | 'SMS'
+  | 'TOTP'
+  | 'U2F'
+  | 'WEBAUTHN';
+export type authenticationservicev1_MFAEnforcement =
+  | 'MFA_NOT_REQUIRED'
+  | 'MFA_OPTIONAL'
+  | 'MFA_REQUIRED';
+// 列表已注册凭证
+export type authenticationservicev1_ListEnrolledMethodsRequest = {
+  userId?: string;
+};
+
+export type authenticationservicev1_ListEnrolledMethodsResponse = {
+  items: authenticationservicev1_EnrolledMethod[] | undefined;
+};
+
+// Start enroll
+export type authenticationservicev1_StartEnrollMethodRequest = {
+  email?: string;
+  method: authenticationservicev1_MFAMethod | undefined;
+  // 根据 method 可能需要额外参数（例如 SMS 需要 phone）
+  phone?: string;
+};
+
+export type authenticationservicev1_StartEnrollMethodResponse = {
+  expiresAt?: wellKnownTimestamp;
+  // 临时操作 id，用于 ConfirmEnrollMethod / 后续验证
+  operationId: string | undefined;
+  sms?: authenticationservicev1_SMSResult;
+  totp?: authenticationservicev1_TOTPResult;
+  webauthn?: authenticationservicev1_WebAuthnResult;
+};
+
+export type authenticationservicev1_TOTPResult = {
+  otpAuthUrl: string | undefined;
+  qrCodeDataUri: string | undefined;
+  // base32 secret：仅在注册时返回一次，服务端应只存哈希/引用
+  secret: string | undefined;
+};
+
+export type authenticationservicev1_SMSResult = {
+  maskedPhone: string | undefined;
+  smsSent: boolean | undefined;
+  verificationId: string | undefined;
+};
+
+export type authenticationservicev1_WebAuthnResult = {
+  challenge: string | undefined;
+  optionsJson: string | undefined;
+  rpId: string | undefined;
+};
+
+// Confirm enroll
+export type authenticationservicev1_ConfirmEnrollMethodRequest = {
+  backupCode?: string;
+  // 可选：设备/显示名
+  display?: string;
+  method: authenticationservicev1_MFAMethod | undefined;
+  operationId: string | undefined;
+  sms?: authenticationservicev1_SMSVerification;
+  totpCode?: string;
+  webauthn?: authenticationservicev1_WebAuthnAssertion;
+};
+
+export type authenticationservicev1_SMSVerification = {
+  code: string | undefined;
+  verificationId: string | undefined;
+};
+
+export type authenticationservicev1_WebAuthnAssertion = {
+  authenticatorData: string | undefined;
+  clientDataJson: string | undefined;
+  id: string | undefined;
+  signature: string | undefined;
+  userHandle?: string;
+};
+
+export type authenticationservicev1_ConfirmEnrollMethodResponse = {
+  credentialId: string | undefined;
+  success: boolean | undefined;
+};
+
+// Disable / remove
+export type authenticationservicev1_DisableMFARequest = {
+  // 指定凭证 id 或仅按方法禁用全部
+  credentialId?: string;
+  method?: authenticationservicev1_MFAMethod;
+  password?: string;
+  reason?: string;
+  sms?: authenticationservicev1_SMSVerification;
+  totpCode?: string;
+  // 管理端重置：指定目标用户（不传=操作当前登录用户）。
+  // 仅平台管理员可指定他人，用于用户认证器丢失时的救援解绑（按 method 清空该用户全部因子）。
+  userId?: number;
+  webauthn?: authenticationservicev1_WebAuthnAssertion;
+};
+
+// 撤销设备/凭证
+export type authenticationservicev1_RevokeMFADeviceRequest = {
+  credentialId: string | undefined;
+};
+
+export type authenticationservicev1_VerifyMFAChallengeRequest = {
+  backupCode?: string;
+  operationId: string | undefined;
+  sms?: authenticationservicev1_SMSVerification;
+  totpCode?: string;
+  webauthn?: authenticationservicev1_WebAuthnAssertion;
 };
 
 // 监控告警规则管理服务（平台级配置；只读 asynq 之外的采集在 core 进程内完成）。
@@ -18466,6 +18730,7 @@ export class ApiClient {
   private _loginAuditLogService?: LoginAuditLogService;
   private _loginPolicyService?: LoginPolicyService;
   private _menuService?: MenuService;
+  private _mfaService?: MfaService;
   private _monitorAlertService?: MonitorAlertService;
   private _notificationChannelService?: NotificationChannelService;
   private _notificationPreferenceService?: NotificationPreferenceService;
@@ -18651,6 +18916,10 @@ export class ApiClient {
 
   get menuService(): MenuService {
     return this._menuService ??= createMenuServiceClient(this._transport);
+  }
+
+  get mfaService(): MfaService {
+    return this._mfaService ??= createMfaServiceClient(this._transport);
   }
 
   get monitorAlertService(): MonitorAlertService {

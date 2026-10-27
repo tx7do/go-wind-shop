@@ -734,7 +734,8 @@ func (r *PermissionRepo) GetHiddenFieldsByRoleIDs(ctx context.Context, roleIDs [
 	seen := map[string]struct{}{}
 	out := make([]string, 0)
 	for _, row := range rows {
-		for _, fp := range row.FieldPermissions {
+		for i := range row.FieldPermissions {
+		fp := &row.FieldPermissions[i]
 			for _, f := range fp.HiddenFields {
 				key := fp.Resource + "." + f
 				if _, ok := seen[key]; ok {

@@ -485,7 +485,7 @@ func (a *Authenticator) getAuthenticator(clientType authenticationV1.ClientType)
 	case authenticationV1.ClientType_app:
 		authenticator = a.AppAuthenticator
 	default:
-		a.log.Error("invalid client type: [%v]", clientType)
+		a.log.Errorf("invalid client type: [%v]", clientType)
 		return nil, authenticationV1.ErrorBadRequest("invalid client type")
 	}
 	return authenticator, nil
@@ -511,7 +511,7 @@ func (a *Authenticator) newAccessToken(
 
 	accessToken, err = authenticator.CreateIdentity(*authClaims)
 	if err != nil {
-		a.log.Error("create access token failed: [%v]", err)
+		a.log.Errorf("create access token failed: [%v]", err)
 		return "", authenticationV1.ErrorServiceUnavailable("create access token failed")
 	}
 
@@ -522,7 +522,7 @@ func (a *Authenticator) newAccessToken(
 func (a *Authenticator) newRefreshToken() (refreshToken string, err error) {
 	refreshToken, err = jwtutil.NewRefreshToken()
 	if err != nil {
-		a.log.Error("create refresh token failed: [%v]", err)
+		a.log.Errorf("create refresh token failed: [%v]", err)
 		return "", authenticationV1.ErrorServiceUnavailable("create refresh token failed")
 	}
 	return refreshToken, nil
@@ -531,4 +531,9 @@ func (a *Authenticator) newRefreshToken() (refreshToken string, err error) {
 // newJwtId 创建 JWT ID
 func (a *Authenticator) newJwtId() string {
 	return jwtutil.NewJWTId()
+}
+
+// SaveSessionMeta 记录会话元数据（在线会话列表展示用）。委托 userTokenCache。
+func (a *Authenticator) SaveSessionMeta(ctx context.Context, clientType authenticationV1.ClientType, userId uint32, jti string, meta *SessionMeta, expires time.Duration) {
+	a.userTokenCache.SaveSessionMeta(ctx, clientType, userId, jti, meta, expires)
 }

@@ -2199,6 +2199,30 @@ func (f UserCredentialMutationRuleFunc) EvalMutation(ctx context.Context, m ent.
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserCredentialMutation", m)
 }
 
+// The UserMfaFactorQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type UserMfaFactorQueryRuleFunc func(context.Context, *ent.UserMfaFactorQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f UserMfaFactorQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.UserMfaFactorQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.UserMfaFactorQuery", q)
+}
+
+// The UserMfaFactorMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type UserMfaFactorMutationRuleFunc func(context.Context, *ent.UserMfaFactorMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f UserMfaFactorMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.UserMfaFactorMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.UserMfaFactorMutation", m)
+}
+
 // The UserOrgUnitQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type UserOrgUnitQueryRuleFunc func(context.Context, *ent.UserOrgUnitQuery) error
@@ -2504,6 +2528,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.UserCredentialQuery:
 		return q.Filter(), nil
+	case *ent.UserMfaFactorQuery:
+		return q.Filter(), nil
 	case *ent.UserOrgUnitQuery:
 		return q.Filter(), nil
 	case *ent.UserPositionQuery:
@@ -2692,6 +2718,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.UserCouponMutation:
 		return m.Filter(), nil
 	case *ent.UserCredentialMutation:
+		return m.Filter(), nil
+	case *ent.UserMfaFactorMutation:
 		return m.Filter(), nil
 	case *ent.UserOrgUnitMutation:
 		return m.Filter(), nil

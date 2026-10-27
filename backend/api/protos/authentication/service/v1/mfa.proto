@@ -7,6 +7,7 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
 import "google/api/annotations.proto";
 import "google/api/field_behavior.proto";
+import "authentication/service/v1/authentication.proto";
 
 // 多因素认证（MFA）服务：分步注册、挑战/验证、管理已注册凭证与备份码
 service MFAService {
@@ -29,7 +30,7 @@ service MFAService {
   rpc StartMFAChallenge(StartMFAChallengeRequest) returns (StartMFAChallengeResponse) {}
 
   // 验证登录时的 MFA 挑战，返回是否通过及可选 session/token
-  rpc VerifyMFAChallenge(VerifyMFAChallengeRequest) returns (VerifyMFAChallengeResponse) {}
+  rpc VerifyMFAChallenge(VerifyMFAChallengeRequest) returns (LoginResponse) {}
 
   // 生成/刷新一次性备份码（返回明文备份码列表，调用方应仅展示一次并提示用户安全保存）
   rpc GenerateBackupCodes(GenerateBackupCodesRequest) returns (GenerateBackupCodesResponse) {}
@@ -159,6 +160,9 @@ message DisableMFARequest {
     WebAuthnAssertion webauthn = 13;
   }
   optional string reason = 20;
+  // 管理端重置：指定目标用户（不传=操作当前登录用户）。
+  // 仅平台管理员可指定他人，用于用户认证器丢失时的救援解绑（按 method 清空该用户全部因子）。
+  optional uint32 user_id = 21;
 }
 
 // Start authentication challenge
