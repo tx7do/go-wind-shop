@@ -171,6 +171,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	notificationRuleService := service.NewNotificationRuleService(ctx, notificationRuleServiceClient)
 	notificationTemplateService := service.NewNotificationTemplateService(ctx, notificationTemplateServiceClient)
 	notificationPreferenceService := service.NewNotificationPreferenceService(ctx, notificationPreferenceServiceClient)
+
+	// 审计日志服务端导出（XLSX，手动注册路由）
+	auditExportService := service.NewAuditExportService(ctx, loginAuditLogServiceClient, apiAuditLogServiceClient, operationAuditLogServiceClient, dataAccessAuditLogServiceClient, permissionAuditLogServiceClient, policyEvaluationLogServiceClient, accessTokenChecker)
 	dictTypeService := service.NewDictTypeService(ctx, dictTypeServiceClient)
 	dictEntryService := service.NewDictEntryService(ctx, dictEntryServiceClient)
 	configService := service.NewConfigService(ctx, configServiceClient)
@@ -241,6 +244,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		notificationRuleService,
 		notificationTemplateService,
 		notificationPreferenceService,
+		auditExportService,
 		dictTypeService,
 		dictEntryService,
 		configService,

@@ -144,6 +144,7 @@ func NewRestServer(
 	notificationRuleService *service.NotificationRuleService,
 	notificationTemplateService *service.NotificationTemplateService,
 	notificationPreferenceService *service.NotificationPreferenceService,
+	auditExportService *service.AuditExportService,
 	dictTypeService *service.DictTypeService,
 	dictEntryService *service.DictEntryService,
 	configService *service.ConfigService,
@@ -236,6 +237,12 @@ func NewRestServer(
 	adminV1.RegisterNotificationRuleServiceHTTPServer(srv, notificationRuleService)
 	adminV1.RegisterNotificationTemplateServiceHTTPServer(srv, notificationTemplateService)
 	adminV1.RegisterNotificationPreferenceServiceHTTPServer(srv, notificationPreferenceService)
+
+	// 审计日志服务端导出：手动注册（二进制文件响应 + Content-Disposition，
+	// proto 生成路由不支持）。鉴权在 handler 内显式做（验 Bearer + 重建操作者）。
+	srv.Route("/").GET("admin/v1/audit-logs:export", func(ctx http.Context) error {
+		return auditExportService.ServeExport(ctx.Response(), ctx.Request())
+	})
 	adminV1.RegisterDictTypeServiceHTTPServer(srv, dictTypeService)
 	adminV1.RegisterDictEntryServiceHTTPServer(srv, dictEntryService)
 	adminV1.RegisterConfigServiceHTTPServer(srv, configService)

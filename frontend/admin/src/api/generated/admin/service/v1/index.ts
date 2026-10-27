@@ -6438,6 +6438,9 @@ export interface MenuService {
     request: permissionservicev1_GetMenuRequest,
   ): Promise<permissionservicev1_Menu>;
   // 创建菜单
+  SyncMenus(
+    request: permissionservicev1_SyncMenusRequest,
+  ): Promise<wellKnownEmpty>;
   Create(
     request: permissionservicev1_CreateMenuRequest,
   ): Promise<wellKnownEmpty>;
@@ -6544,6 +6547,14 @@ export function createMenuServiceClient(
         method: 'Get',
       }) as Promise<permissionservicev1_Menu>;
     },
+    SyncMenus(request) {
+      const path = `/admin/v1/menus/sync`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MenuService',
+        method: 'SyncMenus',
+      }) as Promise<wellKnownEmpty>;
+    },
     Create(request) {
       const path = `/admin/v1/menus`;
       const body = JSON.stringify(request);
@@ -6646,6 +6657,15 @@ export type permissionservicev1_GetMenuRequest = {
   viewMask?: wellKnownFieldMask;
 };
 
+export type permissionservicev1_SyncMenusRequest = {
+  items: permissionservicev1_Menu[] | undefined;
+  mode?: permissionservicev1_SyncMenusRequest_Mode;
+};
+
+// 同步模式
+export type permissionservicev1_SyncMenusRequest_Mode =
+  | 'MERGE'
+  | 'REPLACE';
 // 创建菜单 - 请求
 export type permissionservicev1_CreateMenuRequest = {
   data: permissionservicev1_Menu | undefined;

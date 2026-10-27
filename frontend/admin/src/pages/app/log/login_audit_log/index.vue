@@ -73,7 +73,7 @@ import {
 } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
 // 【缓行】后端审计服务端导出接口无下游实现，接入后恢复：
-// import { exportAuditLogsServer } from "@/api/composables";
+import { exportAuditLogsServer } from "@/api/composables";
 import { $t } from "@/core/i18n";
 
 const pageRef = ref();
@@ -83,8 +83,20 @@ const latestFormValuesRef = ref<Record<string, unknown>>({});
 const exporting = ref(false);
 
 async function handleServerExport() {
-  // 【缓行】服务端导出接口未接入，先提示暂不支持
-  ElMessage.warning($t("pages.curd.message.notImplementedYet"));
+  if (exporting.value) return;
+  exporting.value = true;
+  try {
+    await exportAuditLogsServer(
+      "login",
+      new PaginationQuery({ formValues: latestFormValuesRef.value }),
+    );
+    ElMessage.success($t("pages.curd.message.exportSuccess"));
+  } catch (error: any) {
+    console.error("server-side audit export failed", error);
+    ElMessage.error(error?.message || $t("pages.curd.message.exportFailed"));
+  } finally {
+    exporting.value = false;
+  }
 }
 
 function handleOperate(data: { name: string; row: any }) {

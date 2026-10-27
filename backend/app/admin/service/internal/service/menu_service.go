@@ -98,3 +98,8 @@ func (s *MenuService) Delete(ctx context.Context, req *permissionV1.DeleteMenuRe
 
 	return s.menuServiceClient.Delete(ctx, req)
 }
+
+// SyncMenus 转发 core 菜单同步。
+func (s *MenuService) SyncMenus(ctx context.Context, req *permissionV1.SyncMenusRequest) (*emptypb.Empty, error) {
+	return s.menuServiceClient.SyncMenus(ctx, req)
+}

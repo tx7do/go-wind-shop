@@ -22,11 +22,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MenuService_List_FullMethodName   = "/admin.service.v1.MenuService/List"
-	MenuService_Get_FullMethodName    = "/admin.service.v1.MenuService/Get"
-	MenuService_Create_FullMethodName = "/admin.service.v1.MenuService/Create"
-	MenuService_Update_FullMethodName = "/admin.service.v1.MenuService/Update"
-	MenuService_Delete_FullMethodName = "/admin.service.v1.MenuService/Delete"
+	MenuService_List_FullMethodName      = "/admin.service.v1.MenuService/List"
+	MenuService_Get_FullMethodName       = "/admin.service.v1.MenuService/Get"
+	MenuService_SyncMenus_FullMethodName = "/admin.service.v1.MenuService/SyncMenus"
+	MenuService_Create_FullMethodName    = "/admin.service.v1.MenuService/Create"
+	MenuService_Update_FullMethodName    = "/admin.service.v1.MenuService/Update"
+	MenuService_Delete_FullMethodName    = "/admin.service.v1.MenuService/Delete"
 )
 
 // MenuServiceClient is the client API for MenuService service.
@@ -40,6 +41,7 @@ type MenuServiceClient interface {
 	// 查询菜单详情
 	Get(ctx context.Context, in *v11.GetMenuRequest, opts ...grpc.CallOption) (*v11.Menu, error)
 	// 创建菜单
+	SyncMenus(ctx context.Context, in *v11.SyncMenusRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Create(ctx context.Context, in *v11.CreateMenuRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 更新菜单
 	Update(ctx context.Context, in *v11.UpdateMenuRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -69,6 +71,16 @@ func (c *menuServiceClient) Get(ctx context.Context, in *v11.GetMenuRequest, opt
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(v11.Menu)
 	err := c.cc.Invoke(ctx, MenuService_Get_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *menuServiceClient) SyncMenus(ctx context.Context, in *v11.SyncMenusRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, MenuService_SyncMenus_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -116,6 +128,7 @@ type MenuServiceServer interface {
 	// 查询菜单详情
 	Get(context.Context, *v11.GetMenuRequest) (*v11.Menu, error)
 	// 创建菜单
+	SyncMenus(context.Context, *v11.SyncMenusRequest) (*emptypb.Empty, error)
 	Create(context.Context, *v11.CreateMenuRequest) (*emptypb.Empty, error)
 	// 更新菜单
 	Update(context.Context, *v11.UpdateMenuRequest) (*emptypb.Empty, error)
@@ -136,6 +149,9 @@ func (UnimplementedMenuServiceServer) List(context.Context, *v1.PagingRequest) (
 }
 func (UnimplementedMenuServiceServer) Get(context.Context, *v11.GetMenuRequest) (*v11.Menu, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedMenuServiceServer) SyncMenus(context.Context, *v11.SyncMenusRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method SyncMenus not implemented")
 }
 func (UnimplementedMenuServiceServer) Create(context.Context, *v11.CreateMenuRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
@@ -199,6 +215,24 @@ func _MenuService_Get_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MenuServiceServer).Get(ctx, req.(*v11.GetMenuRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MenuService_SyncMenus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.SyncMenusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MenuServiceServer).SyncMenus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MenuService_SyncMenus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MenuServiceServer).SyncMenus(ctx, req.(*v11.SyncMenusRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -271,6 +305,10 @@ var MenuService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Get",
 			Handler:    _MenuService_Get_Handler,
+		},
+		{
+			MethodName: "SyncMenus",
+			Handler:    _MenuService_SyncMenus_Handler,
 		},
 		{
 			MethodName: "Create",

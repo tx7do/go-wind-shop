@@ -10,7 +10,9 @@ import (
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	"github.com/tx7do/go-utils/copierutil"
+	protojson "google.golang.org/protobuf/encoding/protojson"
 	"github.com/tx7do/go-utils/mapper"
+	"github.com/tx7do/go-utils/trans"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -314,4 +316,259 @@ func (r *MenuRepo) Delete(ctx context.Context, req *permissionV1.DeleteMenuReque
 	}
 
 	return nil
+}
+// SyncMenus 事务化菜单同步，两种模式：
+//   - REPLACE（缺省，兼容旧客户端）：清空现有菜单后按传入树重建，菜单 ID 全部变化，角色-菜单授权失效；
+//   - MERGE：按全路径匹配，已存在则原位更新（保留 ID 与角色授权），缺失才新增；数据库多出的菜单保留不动。
+//     更新不触碰 status：管理端手工停用的菜单不会被同步重新启用。
+//
+// 整个同步在单个事务内执行，任一步失败整体回滚，不会把菜单表留在半空状态。
+func (r *MenuRepo) SyncMenus(ctx context.Context, items []*permissionV1.Menu, mode permissionV1.SyncMenusRequest_Mode, operatorId uint32) (count int, err error) {
+	tx, err := r.entClient.Client().Tx(ctx)
+	if err != nil {
+		r.log.Errorf("start transaction failed: %s", err.Error())
+		return 0, permissionV1.ErrorInternalServerError("start transaction failed")
+	}
+	defer func() {
+		if err != nil {
+			if rollbackErr := tx.Rollback(); rollbackErr != nil {
+				r.log.Errorf("transaction rollback failed: %s", rollbackErr.Error())
+			}
+			return
+		}
+		if commitErr := tx.Commit(); commitErr != nil {
+			r.log.Errorf("transaction commit failed: %s", commitErr.Error())
+			err = permissionV1.ErrorInternalServerError("transaction commit failed")
+		}
+	}()
+
+	client := tx.Client()
+
+	if mode == permissionV1.SyncMenusRequest_MERGE {
+		existing, mapErr := r.buildMenuFullPathMap(ctx, client)
+		if mapErr != nil {
+			return 0, mapErr
+		}
+		return r.syncMergeTree(ctx, client, items, nil, "", existing, operatorId)
+	}
+
+	if _, err = client.Menu.Delete().Exec(ctx); err != nil {
+		r.log.Errorf("truncate menus failed: %s", err.Error())
+		return 0, permissionV1.ErrorInternalServerError("truncate menus failed")
+	}
+	return r.syncInsertTree(ctx, client, items, nil, operatorId)
+}
+
+// syncInsertTree 递归插入菜单树：先插父节点拿 ID，再递归子节点（REPLACE 模式）
+func (r *MenuRepo) syncInsertTree(ctx context.Context, client *ent.Client, items []*permissionV1.Menu, parentID *uint32, operatorId uint32) (int, error) {
+	count := 0
+	for _, m := range items {
+		if m == nil {
+			continue
+		}
+
+		dto := deepCloneMenu(m)
+		dto.Children = nil
+		dto.Id = nil
+		if parentID != nil && *parentID > 0 {
+			dto.ParentId = parentID
+		} else {
+			dto.ParentId = nil
+		}
+		dto.CreatedBy = trans.Ptr(operatorId)
+		dto.UpdatedBy = nil
+
+		created, err := r.createMenuReturn(ctx, client, dto)
+		if err != nil {
+			return count, err
+		}
+		count++
+
+		if len(m.Children) > 0 {
+			childCount, err := r.syncInsertTree(ctx, client, m.Children, created.Id, operatorId)
+			if err != nil {
+				return count, err
+			}
+			count += childCount
+		}
+	}
+	return count, nil
+}
+
+// syncMergeTree 增量合并：按全路径匹配，已存在则原位更新（保 ID、不动 status），缺失才新增
+func (r *MenuRepo) syncMergeTree(
+	ctx context.Context,
+	client *ent.Client,
+	items []*permissionV1.Menu,
+	parentID *uint32,
+	parentFullPath string,
+	existing map[string]*ent.Menu,
+	operatorId uint32,
+) (int, error) {
+	count := 0
+	for _, m := range items {
+		if m == nil {
+			continue
+		}
+
+		fullPath := joinMenuFullPath(parentFullPath, m.GetPath())
+		if fullPath == "" {
+			continue
+		}
+
+		exist := existing[fullPath]
+		var rowID uint32
+		if exist != nil {
+			builder := client.Menu.Update().
+				Where(menu.IDEQ(exist.ID)).
+				SetNillableType(r.typeConverter.ToEntity(m.Type)).
+				SetNillablePath(m.Path).
+				SetNillableRedirect(m.Redirect).
+				SetNillableComponent(m.Component).
+				SetNillableUpdatedBy(trans.Ptr(operatorId)).
+				SetUpdatedAt(time.Now())
+			if parentID != nil && *parentID > 0 {
+				builder.SetParentID(*parentID)
+			} else {
+				builder.ClearParentID()
+			}
+			if m.Meta != nil {
+				builder.SetMeta(m.Meta)
+			}
+			if err := builder.Exec(ctx); err != nil {
+				r.log.Errorf("merge update menu failed, path: %s, err: %s", fullPath, err.Error())
+				return count, permissionV1.ErrorInternalServerError("merge update menu failed")
+			}
+			rowID = exist.ID
+		} else {
+			dto := deepCloneMenu(m)
+			dto.Children = nil
+			dto.Id = nil
+			if parentID != nil && *parentID > 0 {
+				dto.ParentId = parentID
+			} else {
+				dto.ParentId = nil
+			}
+			dto.CreatedBy = trans.Ptr(operatorId)
+			dto.UpdatedBy = nil
+
+			created, err := r.createMenuReturn(ctx, client, dto)
+			if err != nil {
+				return count, err
+			}
+			rowID = created.GetId()
+		}
+		count++
+
+		if len(m.Children) > 0 {
+			childCount, err := r.syncMergeTree(ctx, client, m.Children, &rowID, fullPath, existing, operatorId)
+			if err != nil {
+				return count, err
+			}
+			count += childCount
+		}
+	}
+	return count, nil
+}
+
+// joinMenuFullPath 计算菜单全路径：子节点相对路径拼在父全路径后，绝对路径子节点按绝对处理
+func joinMenuFullPath(parentFullPath, path string) string {
+	path = strings.TrimSpace(path)
+	if path == "" {
+		return parentFullPath
+	}
+	if strings.HasPrefix(path, "/") {
+		return path
+	}
+	if parentFullPath == "" || parentFullPath == "/" {
+		return "/" + path
+	}
+	return strings.TrimRight(parentFullPath, "/") + "/" + path
+}
+
+// buildMenuFullPathMap 加载现有菜单并建立 全路径 → 实体 映射（MERGE 匹配用）
+func (r *MenuRepo) buildMenuFullPathMap(ctx context.Context, client *ent.Client) (map[string]*ent.Menu, error) {
+	rows, err := client.Menu.Query().All(ctx)
+	if err != nil {
+		r.log.Errorf("query existing menus failed: %s", err.Error())
+		return nil, permissionV1.ErrorInternalServerError("query existing menus failed")
+	}
+
+	childrenOf := make(map[uint32][]*ent.Menu, len(rows))
+	var roots []*ent.Menu
+	for _, row := range rows {
+		if row.ParentID == nil || *row.ParentID == 0 {
+			roots = append(roots, row)
+		} else {
+			childrenOf[*row.ParentID] = append(childrenOf[*row.ParentID], row)
+		}
+	}
+
+	existing := make(map[string]*ent.Menu, len(rows))
+	visited := make(map[uint32]bool, len(rows))
+	var walk func(rows []*ent.Menu, parentFullPath string)
+	walk = func(rows []*ent.Menu, parentFullPath string) {
+		for _, row := range rows {
+			if visited[row.ID] {
+				continue // 脏数据成环防护
+			}
+			visited[row.ID] = true
+			fullPath := joinMenuFullPath(parentFullPath, derefString(row.Path))
+			existing[fullPath] = row
+			walk(childrenOf[row.ID], fullPath)
+		}
+	}
+	walk(roots, "")
+
+	return existing, nil
+}
+
+
+func (r *MenuRepo) createMenuReturn(ctx context.Context, client *ent.Client, data *permissionV1.Menu) (*permissionV1.Menu, error) {
+	entity, err := r.newMenuCreate(client, data).Save(ctx)
+	if err != nil {
+		r.log.Errorf("insert menu failed: %s", err.Error())
+		return nil, permissionV1.ErrorInternalServerError("insert menu failed")
+	}
+
+	return r.mapper.ToDTO(entity), nil
+}
+
+func (r *MenuRepo) newMenuCreate(client *ent.Client, data *permissionV1.Menu) *ent.MenuCreate {
+	builder := client.Menu.Create().
+		SetNillableType(r.typeConverter.ToEntity(data.Type)).
+		SetNillablePath(data.Path).
+		SetNillableRedirect(data.Redirect).
+		SetNillableAlias(data.Alias).
+		SetNillableName(data.Name).
+		SetNillableComponent(data.Component).
+		SetNillableStatus(r.statusConverter.ToEntity(data.Status)).
+		SetNillableCreatedBy(data.CreatedBy).
+		SetCreatedAt(time.Now())
+
+	// parent_id=0 表示挂根节点；proto optional 会把显式 0 当作"已设置"，
+	// SetParentID(0) 指向不存在的行触发自引用外键违约，必须按无父级处理。
+	if data.ParentId != nil && *data.ParentId > 0 {
+		builder.SetParentID(*data.ParentId)
+	}
+
+
+	if data.Meta != nil {
+		builder.SetMeta(data.Meta)
+	}
+
+	if data.Id != nil {
+		builder.SetID(data.GetId())
+	}
+
+	return builder
+}
+
+
+// deepCloneMenu protojson 往返深拷贝（proto.Clone 等价，避免引 proto 依赖）。
+func deepCloneMenu(m *permissionV1.Menu) *permissionV1.Menu {
+	b, _ := protojson.Marshal(m)
+	out := &permissionV1.Menu{}
+	_ = protojson.Unmarshal(b, out)
+	return out
 }

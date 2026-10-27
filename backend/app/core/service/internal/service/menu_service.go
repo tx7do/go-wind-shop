@@ -102,3 +102,17 @@ func (s *MenuService) createDefaultMenus(ctx context.Context) error {
 	}
 	return nil
 }
+
+// SyncMenus 事务化菜单同步（REPLACE 全量重建 / MERGE 增量合并）。
+func (s *MenuService) SyncMenus(ctx context.Context, req *permissionV1.SyncMenusRequest) (*emptypb.Empty, error) {
+	if req == nil {
+		return nil, permissionV1.ErrorBadRequest("invalid parameter")
+	}
+	// BFF gRPC 转发链路无 auth 中间件注入操作者，created_by/updated_by 留空（menu repo 字段可空）。
+	count, err := s.menuRepo.SyncMenus(ctx, req.GetItems(), req.GetMode(), 0)
+	if err != nil {
+		return nil, err
+	}
+	s.log.Infof("sync menus success, mode: %s, total: %d", req.GetMode().String(), count)
+	return &emptypb.Empty{}, nil
+}

@@ -18,6 +18,8 @@ service MenuService {
   // 查询菜单列表
   rpc List (pagination.PagingRequest) returns (ListMenuResponse) {}
 
+  rpc SyncMenus (SyncMenusRequest) returns (google.protobuf.Empty) {}
+
   // 统计菜单数量
   rpc Count (pagination.PagingRequest) returns (CountMenuResponse) {}
 
@@ -432,4 +434,18 @@ message DeleteMenuRequest {
 
 message CountMenuResponse {
   uint64 count = 1;
+}
+message SyncMenusRequest {
+  // 同步模式
+  enum Mode {
+    REPLACE = 0; // 全量重建：清空现有菜单后按传入树重建（菜单 ID 全部变化，角色-菜单授权失效）
+    MERGE = 1; // 增量合并：按全路径匹配，已存在则原位更新（保留 ID 与角色授权），缺失才新增；数据库多出的菜单保留
+  }
+
+  repeated Menu items = 1;
+
+  optional Mode mode = 2 [
+    json_name = "mode",
+    (gnostic.openapi.v3.property) = {description: "同步模式，缺省为 REPLACE（兼容旧客户端）"}
+  ]; // 同步模式
 }

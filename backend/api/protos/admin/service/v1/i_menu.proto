@@ -26,6 +26,13 @@ service MenuService {
   }
 
   // 创建菜单
+  rpc SyncMenus (permission.service.v1.SyncMenusRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/menus/sync"
+      body: "*"
+    };
+  }
+
   rpc Create (permission.service.v1.CreateMenuRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/admin/v1/menus"
