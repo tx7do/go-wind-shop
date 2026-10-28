@@ -178,9 +178,9 @@ func (s *AiChatService) Chat(req *aiV1.ChatRequest, stream grpc.ServerStreamingS
 	runner := &aiToolLoop{
 		client:    client,
 		model:     ptrStrOr(provider.ModelName, "gpt-4o-mini"),
-		tools:     append(aiBuiltinToolDefs(), cmsToolDefs()...),
+		tools:     append(aiBuiltinToolDefs(), shopToolDefs()...),
 		exec: func(tctx context.Context, name, args string) (string, error) {
-			if out, handled, err := s.execCMSTool(tctx, tenantId, name, args); handled {
+			if out, handled, err := s.execShopTool(tctx, userId, tenantId, name, args); handled {
 				return out, err
 			}
 			return execAiTool(tctx, name, args)

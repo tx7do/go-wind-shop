@@ -43,3 +43,6 @@ export * from './interaction';
 
 // 发票查看（仅本人，只读）
 export * from './invoice';
+
+// AI 导购对话
+export * from './assistant';

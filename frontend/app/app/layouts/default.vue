@@ -29,5 +29,7 @@ const isAuthPage = computed(() => {
       <LayoutFooter />
     </template>
     <LayoutBackToTop v-if="!isAuthPage" />
+    <!-- AI 导购悬浮助手（登录后可用，未登录点击跳登录页） -->
+    <AssistantChat v-if="!isAuthPage" />
   </div>
 </template>

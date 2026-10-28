@@ -86,6 +86,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	commentServiceClient := data.NewCommentServiceClient(ctx, discovery)
 	interactionServiceClient := data.NewInteractionServiceClient(ctx, discovery)
 	invoiceServiceClient := data.NewInvoiceServiceClient(ctx, discovery)
+	aiChatServiceClient := data.NewAiChatServiceClient(ctx, discovery)
 
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
 
@@ -117,6 +118,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	commentService := service.NewCommentService(ctx, commentServiceClient)
 	interactionService := service.NewInteractionService(ctx, interactionServiceClient)
 	invoiceService := service.NewInvoiceService(ctx, invoiceServiceClient)
+	aiChatService := service.NewAiChatService(ctx, aiChatServiceClient)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
@@ -151,6 +153,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		commentService,
 		interactionService,
 		invoiceService,
+		aiChatService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
 	)
 

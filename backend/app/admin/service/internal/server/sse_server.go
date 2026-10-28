@@ -13,6 +13,7 @@ import (
 func NewSseServer(
 	ctx *bootstrap.Context,
 	internalMessageService *service.InternalMessageService,
+	aiChatService *service.AiChatService,
 ) *sseServer.Server {
 	cfg := ctx.GetConfig()
 
@@ -26,6 +27,10 @@ func NewSseServer(
 	)
 
 	internalMessageService.RegisterInternalMessagePublisher(srv)
+
+	// AI chat chunk/tool 帧经同一 SSE 网关推送（此前漏接线，admin 对话一直
+	// 运行在无流式的降级模式）。
+	aiChatService.RegisterAiChatPublisher(srv)
 
 	//srv.CreateStream("test")
 

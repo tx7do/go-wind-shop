@@ -124,6 +124,7 @@ func NewRestServer(
 		commentService *service.CommentService,
 		interactionService *service.InteractionService,
 		invoiceService *service.InvoiceService,
+		aiChatService *service.AiChatService,
 	) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -164,6 +165,7 @@ func NewRestServer(
 	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
 	appV1.RegisterInteractionServiceHTTPServer(srv, interactionService)
 	appV1.RegisterInvoiceServiceHTTPServer(srv, invoiceService)
+	appV1.RegisterAiChatServiceHTTPServer(srv, aiChatService)
 
 	// register:rest-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
