@@ -139,7 +139,9 @@
     "operation_success": "Operation successful",
     "operation_failed": "Operation failed",
     "update_status_failed": "Status update failed",
-    "confirmTitle": "Confirm"
+    "confirmTitle": "Confirm",
+    "operationSuccess": "Operation successful",
+    "operationFailed": "Operation failed"
   },
   "title": {
     "confirm": "Confirm",

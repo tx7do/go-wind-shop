@@ -89,5 +89,8 @@
   "promotion": {
     "specialPriceTag": "限时专价",
     "fullReductionTag": "满 {threshold} 减 {reduction}"
+  },
+  "orders": {
+    "title": "我的订单"
   }
 }

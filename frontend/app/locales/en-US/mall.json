@@ -89,5 +89,8 @@
   "promotion": {
     "specialPriceTag": "Special Price",
     "fullReductionTag": "Spend {threshold}, save {reduction}"
+  },
+  "orders": {
+    "title": "My Orders"
   }
 }

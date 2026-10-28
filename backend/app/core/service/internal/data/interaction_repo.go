@@ -401,15 +401,24 @@ func (r *InteractionRepo) GetCounts(ctx context.Context, targetType interactionV
 }
 
 // GetInteractionStatus 批量查询当前 viewer 对指定评论的点赞状态。
+//
+// 平台身份浏览 C 端（登录有效但 tid=0，无租户归属）返回全 false 的空状态而非
+// 401：与 GetCounts 的匿名行为一致——查询类接口不打断页面渲染；tid=0 用户
+// 本就不属于任何店铺租户，Like/Unlike 写操作仍按无租户拒绝（401）。
 func (r *InteractionRepo) GetInteractionStatus(ctx context.Context, viewerUserID uint32, targetType interactionV1.TargetType, targetIDs []uint32) (map[uint32]*interactionV1.InteractionStatus, error) {
 	tid, hasTenant := maybeTenantFromViewer(ctx)
-	if !hasTenant || viewerUserID == 0 {
+	if viewerUserID == 0 {
 		return nil, interactionV1.ErrorUnauthorized("viewer identity required")
 	}
 
 	result := make(map[uint32]*interactionV1.InteractionStatus, len(targetIDs))
 	for _, id := range targetIDs {
 		result[id] = &interactionV1.InteractionStatus{Liked: false}
+	}
+
+	if !hasTenant {
+		// tid=0（平台身份浏览 C 端）：无租户归属，无点赞记录可查，返回全 false。
+		return result, nil
 	}
 
 	switch targetType {

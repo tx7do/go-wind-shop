@@ -139,7 +139,9 @@
     "operation_success": "操作成功",
     "operation_failed": "操作失败",
     "update_status_failed": "状态更新失败",
-    "confirmTitle": "确认操作"
+    "confirmTitle": "确认操作",
+    "operationSuccess": "操作成功",
+    "operationFailed": "操作失败"
   },
   "title": {
     "confirm": "确认",
