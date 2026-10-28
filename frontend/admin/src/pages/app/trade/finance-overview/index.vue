@@ -16,6 +16,13 @@
       class="mb-5"
     />
 
+    <!-- 订单导出（服务端 XLSX，突破客户端聚合上限） -->
+    <div class="mb-5 flex justify-end">
+      <el-button type="primary" plain :loading="exporting" @click="handleExportOrders">
+        {{ $t("pages.mall.financeOverview.exportOrders") }}
+      </el-button>
+    </div>
+
     <!-- 金额概览卡片 -->
     <div class="metric-grid mb-5">
       <el-card v-for="(card, index) in metricCards" :key="index" shadow="hover" class="metric-card">
@@ -93,7 +100,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
+import { ElMessage } from "element-plus";
 import { useQuery } from "@tanstack/vue-query";
 
 import { $t } from "@/core/i18n";
@@ -106,6 +114,7 @@ import {
   fetchListPaymentRefunds,
 } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
+import { serverExportFile } from "@/api/composables";
 
 // ============================================================
 // 数据拉取（pageSize=100 近期样本，非全量）。
@@ -295,6 +304,24 @@ const metricCards = computed(() => {
     },
   ];
 });
+
+// ---------- 订单导出 ----------
+// 服务端 XLSX 导出（/admin/v1/orders:export）：金额以元输出，
+// 不带过滤条件导出全量（服务端上限 5 万行）。
+const exporting = ref(false);
+
+async function handleExportOrders() {
+  exporting.value = true;
+  try {
+    await serverExportFile("admin/v1/orders:export", new PaginationQuery({}));
+    ElMessage.success($t("common.notification.operationSuccess"));
+  } catch {
+    ElMessage.error($t("common.notification.operationFailed"));
+  } finally {
+    exporting.value = false;
+  }
+}
+
 </script>
 
 <style lang="scss" scoped>

@@ -175,7 +175,8 @@
     "chartTrendTitle": "交易额趋势",
     "chartTrendDesc": "按日聚合的成功支付流水金额",
     "chartTxStatusTitle": "支付状态金额分布",
-    "chartTxStatusDesc": "按支付流水状态聚合的金额占比"
+    "chartTxStatusDesc": "按支付流水状态聚合的金额占比",
+    "exportOrders": "导出订单明细 (XLSX)"
   },
   "shipment": {
     "moduleName": "物流管理",

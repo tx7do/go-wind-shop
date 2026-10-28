@@ -18,6 +18,7 @@ import (
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 
 	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
+	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
 	auditV1 "go-wind-shop/api/gen/go/audit/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
@@ -51,6 +52,7 @@ type AuditExportService struct {
 	permissionClient       auditV1.PermissionAuditLogServiceClient
 	policyEvaluationClient permissionV1.PolicyEvaluationLogServiceClient
 	usageClient            aiV1.AiUsageLogServiceClient
+	orderClient            orderV1.OrderServiceClient
 	log *logx.Helper
 
 	// tokenChecker 手动路由的鉴权锚：导出端点未设 Operation，auth 中间件的
@@ -67,6 +69,7 @@ func NewAuditExportService(
 	permissionClient auditV1.PermissionAuditLogServiceClient,
 	policyEvaluationClient permissionV1.PolicyEvaluationLogServiceClient,
 	usageClient aiV1.AiUsageLogServiceClient,
+	orderClient orderV1.OrderServiceClient,
 	tokenChecker auth.AccessTokenChecker,
 ) *AuditExportService {
 	return &AuditExportService{
@@ -77,6 +80,7 @@ func NewAuditExportService(
 		permissionClient:       permissionClient,
 		policyEvaluationClient: policyEvaluationClient,
 		usageClient:            usageClient,
+		orderClient:            orderClient,
 		log:                    logx.New(ctx.NewLoggerHelper("audit-export/service/admin-service")),
 		tokenChecker:           tokenChecker,
 	}
@@ -242,6 +246,42 @@ func (s *AuditExportService) ServeAiUsageExport(w http.ResponseWriter, r *http.R
 	return nil
 }
 
+// ServeOrdersExport 订单导出（财务对账用）：GET /admin/v1/orders:export
+// ?format=xlsx|csv&query=<列表同源条件>&maxRows=
+// 金额列以元（两位小数）输出，后端分值自动换算。
+func (s *AuditExportService) ServeOrdersExport(w http.ResponseWriter, r *http.Request) error {
+	ctx, ok := s.authorize(w, r)
+	if !ok {
+		return nil
+	}
+	q := r.URL.Query()
+	s.exportType(ctx, w, q, "orders",
+		func(ctx context.Context, page int64) ([]any, uint64, error) {
+			resp, err := s.orderClient.List(ctx, pagingReq(page, q.Get("query")))
+			if err != nil {
+				return nil, 0, err
+			}
+			return toAnySlice(resp.GetItems()), resp.GetTotal(), nil
+		},
+		[]colDef{
+			{"订单ID", func(v any) string { return strconv.FormatUint(uint64(v.(*orderV1.Order).GetId()), 10) }},
+			{"用户ID", func(v any) string { return strconv.FormatUint(uint64(v.(*orderV1.Order).GetUserId()), 10) }},
+			{"状态", func(v any) string { return v.(*orderV1.Order).GetStatus().String() }},
+			{"折前总额", func(v any) string { return fenYuanStr(v.(*orderV1.Order).OriginalAmount) }},
+			{"优惠抵扣", func(v any) string { return fenYuanStr(v.(*orderV1.Order).DiscountAmount) }},
+			{"运费", func(v any) string { return fenYuanStr(v.(*orderV1.Order).ShippingFee) }},
+			{"税费", func(v any) string { return fenYuanStr(v.(*orderV1.Order).TaxAmount) }},
+			{"应付总额", func(v any) string { return fenYuanStr(v.(*orderV1.Order).TotalAmount) }},
+			{"币种", func(v any) string { return v.(*orderV1.Order).GetCurrency() }},
+			{"收件人", func(v any) string { return v.(*orderV1.Order).GetRecipientName() }},
+			{"收件电话", func(v any) string { return v.(*orderV1.Order).GetRecipientPhone() }},
+			{"收货地区", func(v any) string { return v.(*orderV1.Order).GetShippingRegion() }},
+			{"下单时间", func(v any) string { return tsStr(v.(*orderV1.Order).CreatedAt) }},
+		},
+	)
+	return nil
+}
+
 // ── 公共样板 ────────────────────────────────────────────────────────
 
 // authorize 手动路由的鉴权：验 Bearer token 并把操作者身份写入出站上下文
@@ -382,6 +422,14 @@ func boolStr(p *bool) string {
 		return "否"
 	}
 	return "是"
+}
+
+// fenYuanStr 最小货币单位（分）→ 元（两位小数字符串）。
+func fenYuanStr(p *int64) string {
+	if p == nil {
+		return ""
+	}
+	return fmt.Sprintf("%.2f", float64(*p)/100)
 }
 
 func tsStr(t *timestamppb.Timestamp) string {

@@ -175,7 +175,8 @@
     "chartTrendTitle": "Transaction Volume Trend",
     "chartTrendDesc": "Daily aggregated succeeded payment amount",
     "chartTxStatusTitle": "Payment Status Volume Distribution",
-    "chartTxStatusDesc": "Amount share by payment transaction status"
+    "chartTxStatusDesc": "Amount share by payment transaction status",
+    "exportOrders": "Export Orders (XLSX)"
   },
   "shipment": {
     "moduleName": "Shipment Management",
