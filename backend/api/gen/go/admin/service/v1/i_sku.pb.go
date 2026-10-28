@@ -28,7 +28,7 @@ var File_admin_service_v1_i_sku_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_sku_proto_rawDesc = "" +
 	"\n" +
-	"\x1cadmin/service/v1/i_sku.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1ccatalog/service/v1/sku.proto2\xf6\x05\n" +
+	"\x1cadmin/service/v1/i_sku.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1ccatalog/service/v1/sku.proto2\xfb\x06\n" +
 	"\n" +
 	"SkuService\x12c\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a#.catalog.service.v1.ListSkuResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/admin/v1/mall/skus\x12k\n" +
@@ -37,7 +37,8 @@ const file_admin_service_v1_i_sku_proto_rawDesc = "" +
 	"\x06Create\x12$.catalog.service.v1.CreateSkuRequest\x1a\x16.google.protobuf.Empty\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/admin/v1/mall/skus\x12w\n" +
 	"\vBatchCreate\x12*.catalog.service.v1.BatchCreateSkusRequest\x1a\x16.google.protobuf.Empty\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/admin/v1/mall/skus/batch\x12k\n" +
 	"\x06Update\x12$.catalog.service.v1.UpdateSkuRequest\x1a\x16.google.protobuf.Empty\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\x1a\x18/admin/v1/mall/skus/{id}\x12c\n" +
-	"\x06Delete\x12$.catalog.service.v1.DeleteSkuRequest\x1a\x16.google.protobuf.Empty\"\x1b\x82\xd3\xe4\x93\x02\x15*\x13/admin/v1/mall/skus2\xc9\x06\n" +
+	"\x06Delete\x12$.catalog.service.v1.DeleteSkuRequest\x1a\x16.google.protobuf.Empty\"\x1b\x82\xd3\xe4\x93\x02\x15*\x13/admin/v1/mall/skus\x12\x82\x01\n" +
+	"\vAdjustStock\x12).catalog.service.v1.AdjustSkuStockRequest\x1a\x16.google.protobuf.Empty\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/admin/v1/mall/skus/{id}:adjust-stock2\xc9\x06\n" +
 	"\x0fSkuPriceService\x12n\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a(.catalog.service.v1.ListSkuPriceResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/admin/v1/mall/sku-prices\x12q\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a$.catalog.service.v1.CountSkuResponse\"'\x82\xd3\xe4\x93\x02!\x12\x1f/admin/v1/mall/sku-prices/count\x12s\n" +
@@ -63,25 +64,26 @@ var file_admin_service_v1_i_sku_proto_goTypes = []any{
 	(*v11.BatchCreateSkusRequest)(nil),                     // 3: catalog.service.v1.BatchCreateSkusRequest
 	(*v11.UpdateSkuRequest)(nil),                           // 4: catalog.service.v1.UpdateSkuRequest
 	(*v11.DeleteSkuRequest)(nil),                           // 5: catalog.service.v1.DeleteSkuRequest
-	(*v11.GetSkuPriceRequest)(nil),                         // 6: catalog.service.v1.GetSkuPriceRequest
-	(*v11.CreateSkuPriceRequest)(nil),                      // 7: catalog.service.v1.CreateSkuPriceRequest
-	(*v11.BatchCreateSkuPricesRequest)(nil),                // 8: catalog.service.v1.BatchCreateSkuPricesRequest
-	(*v11.UpdateSkuPriceRequest)(nil),                      // 9: catalog.service.v1.UpdateSkuPriceRequest
-	(*v11.DeleteSkuPriceRequest)(nil),                      // 10: catalog.service.v1.DeleteSkuPriceRequest
-	(*v11.GetSkuAttributeCombinationRequest)(nil),          // 11: catalog.service.v1.GetSkuAttributeCombinationRequest
-	(*v11.CreateSkuAttributeCombinationRequest)(nil),       // 12: catalog.service.v1.CreateSkuAttributeCombinationRequest
-	(*v11.BatchCreateSkuAttributeCombinationsRequest)(nil), // 13: catalog.service.v1.BatchCreateSkuAttributeCombinationsRequest
-	(*v11.UpdateSkuAttributeCombinationRequest)(nil),       // 14: catalog.service.v1.UpdateSkuAttributeCombinationRequest
-	(*v11.DeleteSkuAttributeCombinationRequest)(nil),       // 15: catalog.service.v1.DeleteSkuAttributeCombinationRequest
-	(*v11.ListSkuResponse)(nil),                            // 16: catalog.service.v1.ListSkuResponse
-	(*v11.CountSkuResponse)(nil),                           // 17: catalog.service.v1.CountSkuResponse
-	(*v11.Sku)(nil),                                        // 18: catalog.service.v1.Sku
-	(*emptypb.Empty)(nil),                                  // 19: google.protobuf.Empty
-	(*v11.ListSkuPriceResponse)(nil),                       // 20: catalog.service.v1.ListSkuPriceResponse
-	(*v11.SkuPrice)(nil),                                   // 21: catalog.service.v1.SkuPrice
-	(*v11.ListSkuAttributeCombinationResponse)(nil),        // 22: catalog.service.v1.ListSkuAttributeCombinationResponse
-	(*v11.CountSkuAttributeCombinationResponse)(nil),       // 23: catalog.service.v1.CountSkuAttributeCombinationResponse
-	(*v11.SkuAttributeCombination)(nil),                    // 24: catalog.service.v1.SkuAttributeCombination
+	(*v11.AdjustSkuStockRequest)(nil),                      // 6: catalog.service.v1.AdjustSkuStockRequest
+	(*v11.GetSkuPriceRequest)(nil),                         // 7: catalog.service.v1.GetSkuPriceRequest
+	(*v11.CreateSkuPriceRequest)(nil),                      // 8: catalog.service.v1.CreateSkuPriceRequest
+	(*v11.BatchCreateSkuPricesRequest)(nil),                // 9: catalog.service.v1.BatchCreateSkuPricesRequest
+	(*v11.UpdateSkuPriceRequest)(nil),                      // 10: catalog.service.v1.UpdateSkuPriceRequest
+	(*v11.DeleteSkuPriceRequest)(nil),                      // 11: catalog.service.v1.DeleteSkuPriceRequest
+	(*v11.GetSkuAttributeCombinationRequest)(nil),          // 12: catalog.service.v1.GetSkuAttributeCombinationRequest
+	(*v11.CreateSkuAttributeCombinationRequest)(nil),       // 13: catalog.service.v1.CreateSkuAttributeCombinationRequest
+	(*v11.BatchCreateSkuAttributeCombinationsRequest)(nil), // 14: catalog.service.v1.BatchCreateSkuAttributeCombinationsRequest
+	(*v11.UpdateSkuAttributeCombinationRequest)(nil),       // 15: catalog.service.v1.UpdateSkuAttributeCombinationRequest
+	(*v11.DeleteSkuAttributeCombinationRequest)(nil),       // 16: catalog.service.v1.DeleteSkuAttributeCombinationRequest
+	(*v11.ListSkuResponse)(nil),                            // 17: catalog.service.v1.ListSkuResponse
+	(*v11.CountSkuResponse)(nil),                           // 18: catalog.service.v1.CountSkuResponse
+	(*v11.Sku)(nil),                                        // 19: catalog.service.v1.Sku
+	(*emptypb.Empty)(nil),                                  // 20: google.protobuf.Empty
+	(*v11.ListSkuPriceResponse)(nil),                       // 21: catalog.service.v1.ListSkuPriceResponse
+	(*v11.SkuPrice)(nil),                                   // 22: catalog.service.v1.SkuPrice
+	(*v11.ListSkuAttributeCombinationResponse)(nil),        // 23: catalog.service.v1.ListSkuAttributeCombinationResponse
+	(*v11.CountSkuAttributeCombinationResponse)(nil),       // 24: catalog.service.v1.CountSkuAttributeCombinationResponse
+	(*v11.SkuAttributeCombination)(nil),                    // 25: catalog.service.v1.SkuAttributeCombination
 }
 var file_admin_service_v1_i_sku_proto_depIdxs = []int32{
 	0,  // 0: admin.service.v1.SkuService.List:input_type -> pagination.PagingRequest
@@ -91,43 +93,45 @@ var file_admin_service_v1_i_sku_proto_depIdxs = []int32{
 	3,  // 4: admin.service.v1.SkuService.BatchCreate:input_type -> catalog.service.v1.BatchCreateSkusRequest
 	4,  // 5: admin.service.v1.SkuService.Update:input_type -> catalog.service.v1.UpdateSkuRequest
 	5,  // 6: admin.service.v1.SkuService.Delete:input_type -> catalog.service.v1.DeleteSkuRequest
-	0,  // 7: admin.service.v1.SkuPriceService.List:input_type -> pagination.PagingRequest
-	0,  // 8: admin.service.v1.SkuPriceService.Count:input_type -> pagination.PagingRequest
-	6,  // 9: admin.service.v1.SkuPriceService.Get:input_type -> catalog.service.v1.GetSkuPriceRequest
-	7,  // 10: admin.service.v1.SkuPriceService.Create:input_type -> catalog.service.v1.CreateSkuPriceRequest
-	8,  // 11: admin.service.v1.SkuPriceService.BatchCreate:input_type -> catalog.service.v1.BatchCreateSkuPricesRequest
-	9,  // 12: admin.service.v1.SkuPriceService.Update:input_type -> catalog.service.v1.UpdateSkuPriceRequest
-	10, // 13: admin.service.v1.SkuPriceService.Delete:input_type -> catalog.service.v1.DeleteSkuPriceRequest
-	0,  // 14: admin.service.v1.SkuAttributeCombinationService.List:input_type -> pagination.PagingRequest
-	0,  // 15: admin.service.v1.SkuAttributeCombinationService.Count:input_type -> pagination.PagingRequest
-	11, // 16: admin.service.v1.SkuAttributeCombinationService.Get:input_type -> catalog.service.v1.GetSkuAttributeCombinationRequest
-	12, // 17: admin.service.v1.SkuAttributeCombinationService.Create:input_type -> catalog.service.v1.CreateSkuAttributeCombinationRequest
-	13, // 18: admin.service.v1.SkuAttributeCombinationService.BatchCreate:input_type -> catalog.service.v1.BatchCreateSkuAttributeCombinationsRequest
-	14, // 19: admin.service.v1.SkuAttributeCombinationService.Update:input_type -> catalog.service.v1.UpdateSkuAttributeCombinationRequest
-	15, // 20: admin.service.v1.SkuAttributeCombinationService.Delete:input_type -> catalog.service.v1.DeleteSkuAttributeCombinationRequest
-	16, // 21: admin.service.v1.SkuService.List:output_type -> catalog.service.v1.ListSkuResponse
-	17, // 22: admin.service.v1.SkuService.Count:output_type -> catalog.service.v1.CountSkuResponse
-	18, // 23: admin.service.v1.SkuService.Get:output_type -> catalog.service.v1.Sku
-	19, // 24: admin.service.v1.SkuService.Create:output_type -> google.protobuf.Empty
-	19, // 25: admin.service.v1.SkuService.BatchCreate:output_type -> google.protobuf.Empty
-	19, // 26: admin.service.v1.SkuService.Update:output_type -> google.protobuf.Empty
-	19, // 27: admin.service.v1.SkuService.Delete:output_type -> google.protobuf.Empty
-	20, // 28: admin.service.v1.SkuPriceService.List:output_type -> catalog.service.v1.ListSkuPriceResponse
-	17, // 29: admin.service.v1.SkuPriceService.Count:output_type -> catalog.service.v1.CountSkuResponse
-	21, // 30: admin.service.v1.SkuPriceService.Get:output_type -> catalog.service.v1.SkuPrice
-	19, // 31: admin.service.v1.SkuPriceService.Create:output_type -> google.protobuf.Empty
-	19, // 32: admin.service.v1.SkuPriceService.BatchCreate:output_type -> google.protobuf.Empty
-	19, // 33: admin.service.v1.SkuPriceService.Update:output_type -> google.protobuf.Empty
-	19, // 34: admin.service.v1.SkuPriceService.Delete:output_type -> google.protobuf.Empty
-	22, // 35: admin.service.v1.SkuAttributeCombinationService.List:output_type -> catalog.service.v1.ListSkuAttributeCombinationResponse
-	23, // 36: admin.service.v1.SkuAttributeCombinationService.Count:output_type -> catalog.service.v1.CountSkuAttributeCombinationResponse
-	24, // 37: admin.service.v1.SkuAttributeCombinationService.Get:output_type -> catalog.service.v1.SkuAttributeCombination
-	19, // 38: admin.service.v1.SkuAttributeCombinationService.Create:output_type -> google.protobuf.Empty
-	19, // 39: admin.service.v1.SkuAttributeCombinationService.BatchCreate:output_type -> google.protobuf.Empty
-	19, // 40: admin.service.v1.SkuAttributeCombinationService.Update:output_type -> google.protobuf.Empty
-	19, // 41: admin.service.v1.SkuAttributeCombinationService.Delete:output_type -> google.protobuf.Empty
-	21, // [21:42] is the sub-list for method output_type
-	0,  // [0:21] is the sub-list for method input_type
+	6,  // 7: admin.service.v1.SkuService.AdjustStock:input_type -> catalog.service.v1.AdjustSkuStockRequest
+	0,  // 8: admin.service.v1.SkuPriceService.List:input_type -> pagination.PagingRequest
+	0,  // 9: admin.service.v1.SkuPriceService.Count:input_type -> pagination.PagingRequest
+	7,  // 10: admin.service.v1.SkuPriceService.Get:input_type -> catalog.service.v1.GetSkuPriceRequest
+	8,  // 11: admin.service.v1.SkuPriceService.Create:input_type -> catalog.service.v1.CreateSkuPriceRequest
+	9,  // 12: admin.service.v1.SkuPriceService.BatchCreate:input_type -> catalog.service.v1.BatchCreateSkuPricesRequest
+	10, // 13: admin.service.v1.SkuPriceService.Update:input_type -> catalog.service.v1.UpdateSkuPriceRequest
+	11, // 14: admin.service.v1.SkuPriceService.Delete:input_type -> catalog.service.v1.DeleteSkuPriceRequest
+	0,  // 15: admin.service.v1.SkuAttributeCombinationService.List:input_type -> pagination.PagingRequest
+	0,  // 16: admin.service.v1.SkuAttributeCombinationService.Count:input_type -> pagination.PagingRequest
+	12, // 17: admin.service.v1.SkuAttributeCombinationService.Get:input_type -> catalog.service.v1.GetSkuAttributeCombinationRequest
+	13, // 18: admin.service.v1.SkuAttributeCombinationService.Create:input_type -> catalog.service.v1.CreateSkuAttributeCombinationRequest
+	14, // 19: admin.service.v1.SkuAttributeCombinationService.BatchCreate:input_type -> catalog.service.v1.BatchCreateSkuAttributeCombinationsRequest
+	15, // 20: admin.service.v1.SkuAttributeCombinationService.Update:input_type -> catalog.service.v1.UpdateSkuAttributeCombinationRequest
+	16, // 21: admin.service.v1.SkuAttributeCombinationService.Delete:input_type -> catalog.service.v1.DeleteSkuAttributeCombinationRequest
+	17, // 22: admin.service.v1.SkuService.List:output_type -> catalog.service.v1.ListSkuResponse
+	18, // 23: admin.service.v1.SkuService.Count:output_type -> catalog.service.v1.CountSkuResponse
+	19, // 24: admin.service.v1.SkuService.Get:output_type -> catalog.service.v1.Sku
+	20, // 25: admin.service.v1.SkuService.Create:output_type -> google.protobuf.Empty
+	20, // 26: admin.service.v1.SkuService.BatchCreate:output_type -> google.protobuf.Empty
+	20, // 27: admin.service.v1.SkuService.Update:output_type -> google.protobuf.Empty
+	20, // 28: admin.service.v1.SkuService.Delete:output_type -> google.protobuf.Empty
+	20, // 29: admin.service.v1.SkuService.AdjustStock:output_type -> google.protobuf.Empty
+	21, // 30: admin.service.v1.SkuPriceService.List:output_type -> catalog.service.v1.ListSkuPriceResponse
+	18, // 31: admin.service.v1.SkuPriceService.Count:output_type -> catalog.service.v1.CountSkuResponse
+	22, // 32: admin.service.v1.SkuPriceService.Get:output_type -> catalog.service.v1.SkuPrice
+	20, // 33: admin.service.v1.SkuPriceService.Create:output_type -> google.protobuf.Empty
+	20, // 34: admin.service.v1.SkuPriceService.BatchCreate:output_type -> google.protobuf.Empty
+	20, // 35: admin.service.v1.SkuPriceService.Update:output_type -> google.protobuf.Empty
+	20, // 36: admin.service.v1.SkuPriceService.Delete:output_type -> google.protobuf.Empty
+	23, // 37: admin.service.v1.SkuAttributeCombinationService.List:output_type -> catalog.service.v1.ListSkuAttributeCombinationResponse
+	24, // 38: admin.service.v1.SkuAttributeCombinationService.Count:output_type -> catalog.service.v1.CountSkuAttributeCombinationResponse
+	25, // 39: admin.service.v1.SkuAttributeCombinationService.Get:output_type -> catalog.service.v1.SkuAttributeCombination
+	20, // 40: admin.service.v1.SkuAttributeCombinationService.Create:output_type -> google.protobuf.Empty
+	20, // 41: admin.service.v1.SkuAttributeCombinationService.BatchCreate:output_type -> google.protobuf.Empty
+	20, // 42: admin.service.v1.SkuAttributeCombinationService.Update:output_type -> google.protobuf.Empty
+	20, // 43: admin.service.v1.SkuAttributeCombinationService.Delete:output_type -> google.protobuf.Empty
+	22, // [22:44] is the sub-list for method output_type
+	0,  // [0:22] is the sub-list for method input_type
 	0,  // [0:0] is the sub-list for extension type_name
 	0,  // [0:0] is the sub-list for extension extendee
 	0,  // [0:0] is the sub-list for field type_name

@@ -347,5 +347,34 @@
       "create": "Create Promotion",
       "update": "Edit Promotion"
     }
+  },
+  "stockOpLog": {
+    "alert": "Stock operation logs are append-only audit records: order deductions, cancel/refund restorations and manual adjustments are all traced here. Read-only.",
+    "skuId": "SKU ID",
+    "productId": "Product ID",
+    "delta": "Delta",
+    "stockBefore": "Before",
+    "stockAfter": "After",
+    "reason": "Reason",
+    "reasonLabel": {
+      "ORDER_DEDUCT": "Order Deduct",
+      "CANCEL_RESTORE": "Cancel Restore",
+      "REFUND_RESTORE": "Refund Restore",
+      "MANUAL_ADJUST": "Manual Adjust"
+    },
+    "refId": "Ref",
+    "remark": "Remark",
+    "createdBy": "Operator",
+    "createdAt": "Time"
+  },
+  "stockAdjust": {
+    "title": "Adjust Stock",
+    "button": "Adjust",
+    "skuId": "SKU ID",
+    "currentStock": "Current Stock",
+    "delta": "Delta",
+    "deltaTip": "Positive for inbound, negative for outbound; rejected if resulting stock would be negative",
+    "deltaZero": "Delta must not be zero",
+    "remark": "Remark"
   }
 }

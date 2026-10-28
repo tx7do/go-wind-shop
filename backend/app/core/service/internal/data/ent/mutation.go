@@ -91,6 +91,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 	"go-wind-shop/app/core/service/internal/data/ent/stockalert"
+	"go-wind-shop/app/core/service/internal/data/ent/stockoplog"
 	"go-wind-shop/app/core/service/internal/data/ent/sysconfig"
 	"go-wind-shop/app/core/service/internal/data/ent/task"
 	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
@@ -200,6 +201,7 @@ const (
 	TypeSkuAttributeCombination          = "SkuAttributeCombination"
 	TypeSkuPrice                         = "SkuPrice"
 	TypeStockAlert                       = "StockAlert"
+	TypeStockOpLog                       = "StockOpLog"
 	TypeSysConfig                        = "SysConfig"
 	TypeTask                             = "Task"
 	TypeTaxRate                          = "TaxRate"
@@ -119453,6 +119455,1618 @@ func (m *StockAlertMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *StockAlertMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown StockAlert edge %s", name)
+}
+
+// StockOpLogMutation represents an operation that mutates the StockOpLog nodes in the graph.
+type StockOpLogMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *uint32
+	created_at      *time.Time
+	updated_at      *time.Time
+	deleted_at      *time.Time
+	created_by      *uint32
+	addcreated_by   *int32
+	updated_by      *uint32
+	addupdated_by   *int32
+	deleted_by      *uint32
+	adddeleted_by   *int32
+	sku_id          *uint32
+	addsku_id       *int32
+	product_id      *uint32
+	addproduct_id   *int32
+	delta           *int32
+	adddelta        *int32
+	stock_before    *int32
+	addstock_before *int32
+	stock_after     *int32
+	addstock_after  *int32
+	reason          *stockoplog.Reason
+	ref_id          *uint32
+	addref_id       *int32
+	remark          *string
+	clearedFields   map[string]struct{}
+	done            bool
+	oldValue        func(context.Context) (*StockOpLog, error)
+	predicates      []predicate.StockOpLog
+}
+
+var _ ent.Mutation = (*StockOpLogMutation)(nil)
+
+// stockoplogOption allows management of the mutation configuration using functional options.
+type stockoplogOption func(*StockOpLogMutation)
+
+// newStockOpLogMutation creates new mutation for the StockOpLog entity.
+func newStockOpLogMutation(c config, op Op, opts ...stockoplogOption) *StockOpLogMutation {
+	m := &StockOpLogMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeStockOpLog,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withStockOpLogID sets the ID field of the mutation.
+func withStockOpLogID(id uint32) stockoplogOption {
+	return func(m *StockOpLogMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *StockOpLog
+		)
+		m.oldValue = func(ctx context.Context) (*StockOpLog, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().StockOpLog.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withStockOpLog sets the old StockOpLog of the mutation.
+func withStockOpLog(node *StockOpLog) stockoplogOption {
+	return func(m *StockOpLogMutation) {
+		m.oldValue = func(context.Context) (*StockOpLog, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m StockOpLogMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m StockOpLogMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of StockOpLog entities.
+func (m *StockOpLogMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *StockOpLogMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *StockOpLogMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().StockOpLog.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *StockOpLogMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *StockOpLogMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *StockOpLogMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[stockoplog.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *StockOpLogMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *StockOpLogMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, stockoplog.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *StockOpLogMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *StockOpLogMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *StockOpLogMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[stockoplog.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *StockOpLogMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *StockOpLogMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, stockoplog.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *StockOpLogMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *StockOpLogMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *StockOpLogMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[stockoplog.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *StockOpLogMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *StockOpLogMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, stockoplog.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *StockOpLogMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *StockOpLogMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *StockOpLogMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *StockOpLogMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *StockOpLogMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[stockoplog.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *StockOpLogMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *StockOpLogMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, stockoplog.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *StockOpLogMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *StockOpLogMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *StockOpLogMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *StockOpLogMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *StockOpLogMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[stockoplog.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *StockOpLogMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *StockOpLogMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, stockoplog.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *StockOpLogMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *StockOpLogMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *StockOpLogMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *StockOpLogMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *StockOpLogMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[stockoplog.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *StockOpLogMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *StockOpLogMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, stockoplog.FieldDeletedBy)
+}
+
+// SetSkuID sets the "sku_id" field.
+func (m *StockOpLogMutation) SetSkuID(u uint32) {
+	m.sku_id = &u
+	m.addsku_id = nil
+}
+
+// SkuID returns the value of the "sku_id" field in the mutation.
+func (m *StockOpLogMutation) SkuID() (r uint32, exists bool) {
+	v := m.sku_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSkuID returns the old "sku_id" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldSkuID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSkuID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSkuID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSkuID: %w", err)
+	}
+	return oldValue.SkuID, nil
+}
+
+// AddSkuID adds u to the "sku_id" field.
+func (m *StockOpLogMutation) AddSkuID(u int32) {
+	if m.addsku_id != nil {
+		*m.addsku_id += u
+	} else {
+		m.addsku_id = &u
+	}
+}
+
+// AddedSkuID returns the value that was added to the "sku_id" field in this mutation.
+func (m *StockOpLogMutation) AddedSkuID() (r int32, exists bool) {
+	v := m.addsku_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearSkuID clears the value of the "sku_id" field.
+func (m *StockOpLogMutation) ClearSkuID() {
+	m.sku_id = nil
+	m.addsku_id = nil
+	m.clearedFields[stockoplog.FieldSkuID] = struct{}{}
+}
+
+// SkuIDCleared returns if the "sku_id" field was cleared in this mutation.
+func (m *StockOpLogMutation) SkuIDCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldSkuID]
+	return ok
+}
+
+// ResetSkuID resets all changes to the "sku_id" field.
+func (m *StockOpLogMutation) ResetSkuID() {
+	m.sku_id = nil
+	m.addsku_id = nil
+	delete(m.clearedFields, stockoplog.FieldSkuID)
+}
+
+// SetProductID sets the "product_id" field.
+func (m *StockOpLogMutation) SetProductID(u uint32) {
+	m.product_id = &u
+	m.addproduct_id = nil
+}
+
+// ProductID returns the value of the "product_id" field in the mutation.
+func (m *StockOpLogMutation) ProductID() (r uint32, exists bool) {
+	v := m.product_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldProductID returns the old "product_id" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldProductID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldProductID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldProductID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldProductID: %w", err)
+	}
+	return oldValue.ProductID, nil
+}
+
+// AddProductID adds u to the "product_id" field.
+func (m *StockOpLogMutation) AddProductID(u int32) {
+	if m.addproduct_id != nil {
+		*m.addproduct_id += u
+	} else {
+		m.addproduct_id = &u
+	}
+}
+
+// AddedProductID returns the value that was added to the "product_id" field in this mutation.
+func (m *StockOpLogMutation) AddedProductID() (r int32, exists bool) {
+	v := m.addproduct_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearProductID clears the value of the "product_id" field.
+func (m *StockOpLogMutation) ClearProductID() {
+	m.product_id = nil
+	m.addproduct_id = nil
+	m.clearedFields[stockoplog.FieldProductID] = struct{}{}
+}
+
+// ProductIDCleared returns if the "product_id" field was cleared in this mutation.
+func (m *StockOpLogMutation) ProductIDCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldProductID]
+	return ok
+}
+
+// ResetProductID resets all changes to the "product_id" field.
+func (m *StockOpLogMutation) ResetProductID() {
+	m.product_id = nil
+	m.addproduct_id = nil
+	delete(m.clearedFields, stockoplog.FieldProductID)
+}
+
+// SetDelta sets the "delta" field.
+func (m *StockOpLogMutation) SetDelta(i int32) {
+	m.delta = &i
+	m.adddelta = nil
+}
+
+// Delta returns the value of the "delta" field in the mutation.
+func (m *StockOpLogMutation) Delta() (r int32, exists bool) {
+	v := m.delta
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDelta returns the old "delta" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldDelta(ctx context.Context) (v *int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDelta is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDelta requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDelta: %w", err)
+	}
+	return oldValue.Delta, nil
+}
+
+// AddDelta adds i to the "delta" field.
+func (m *StockOpLogMutation) AddDelta(i int32) {
+	if m.adddelta != nil {
+		*m.adddelta += i
+	} else {
+		m.adddelta = &i
+	}
+}
+
+// AddedDelta returns the value that was added to the "delta" field in this mutation.
+func (m *StockOpLogMutation) AddedDelta() (r int32, exists bool) {
+	v := m.adddelta
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDelta clears the value of the "delta" field.
+func (m *StockOpLogMutation) ClearDelta() {
+	m.delta = nil
+	m.adddelta = nil
+	m.clearedFields[stockoplog.FieldDelta] = struct{}{}
+}
+
+// DeltaCleared returns if the "delta" field was cleared in this mutation.
+func (m *StockOpLogMutation) DeltaCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldDelta]
+	return ok
+}
+
+// ResetDelta resets all changes to the "delta" field.
+func (m *StockOpLogMutation) ResetDelta() {
+	m.delta = nil
+	m.adddelta = nil
+	delete(m.clearedFields, stockoplog.FieldDelta)
+}
+
+// SetStockBefore sets the "stock_before" field.
+func (m *StockOpLogMutation) SetStockBefore(i int32) {
+	m.stock_before = &i
+	m.addstock_before = nil
+}
+
+// StockBefore returns the value of the "stock_before" field in the mutation.
+func (m *StockOpLogMutation) StockBefore() (r int32, exists bool) {
+	v := m.stock_before
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStockBefore returns the old "stock_before" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldStockBefore(ctx context.Context) (v *int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStockBefore is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStockBefore requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStockBefore: %w", err)
+	}
+	return oldValue.StockBefore, nil
+}
+
+// AddStockBefore adds i to the "stock_before" field.
+func (m *StockOpLogMutation) AddStockBefore(i int32) {
+	if m.addstock_before != nil {
+		*m.addstock_before += i
+	} else {
+		m.addstock_before = &i
+	}
+}
+
+// AddedStockBefore returns the value that was added to the "stock_before" field in this mutation.
+func (m *StockOpLogMutation) AddedStockBefore() (r int32, exists bool) {
+	v := m.addstock_before
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearStockBefore clears the value of the "stock_before" field.
+func (m *StockOpLogMutation) ClearStockBefore() {
+	m.stock_before = nil
+	m.addstock_before = nil
+	m.clearedFields[stockoplog.FieldStockBefore] = struct{}{}
+}
+
+// StockBeforeCleared returns if the "stock_before" field was cleared in this mutation.
+func (m *StockOpLogMutation) StockBeforeCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldStockBefore]
+	return ok
+}
+
+// ResetStockBefore resets all changes to the "stock_before" field.
+func (m *StockOpLogMutation) ResetStockBefore() {
+	m.stock_before = nil
+	m.addstock_before = nil
+	delete(m.clearedFields, stockoplog.FieldStockBefore)
+}
+
+// SetStockAfter sets the "stock_after" field.
+func (m *StockOpLogMutation) SetStockAfter(i int32) {
+	m.stock_after = &i
+	m.addstock_after = nil
+}
+
+// StockAfter returns the value of the "stock_after" field in the mutation.
+func (m *StockOpLogMutation) StockAfter() (r int32, exists bool) {
+	v := m.stock_after
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStockAfter returns the old "stock_after" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldStockAfter(ctx context.Context) (v *int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStockAfter is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStockAfter requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStockAfter: %w", err)
+	}
+	return oldValue.StockAfter, nil
+}
+
+// AddStockAfter adds i to the "stock_after" field.
+func (m *StockOpLogMutation) AddStockAfter(i int32) {
+	if m.addstock_after != nil {
+		*m.addstock_after += i
+	} else {
+		m.addstock_after = &i
+	}
+}
+
+// AddedStockAfter returns the value that was added to the "stock_after" field in this mutation.
+func (m *StockOpLogMutation) AddedStockAfter() (r int32, exists bool) {
+	v := m.addstock_after
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearStockAfter clears the value of the "stock_after" field.
+func (m *StockOpLogMutation) ClearStockAfter() {
+	m.stock_after = nil
+	m.addstock_after = nil
+	m.clearedFields[stockoplog.FieldStockAfter] = struct{}{}
+}
+
+// StockAfterCleared returns if the "stock_after" field was cleared in this mutation.
+func (m *StockOpLogMutation) StockAfterCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldStockAfter]
+	return ok
+}
+
+// ResetStockAfter resets all changes to the "stock_after" field.
+func (m *StockOpLogMutation) ResetStockAfter() {
+	m.stock_after = nil
+	m.addstock_after = nil
+	delete(m.clearedFields, stockoplog.FieldStockAfter)
+}
+
+// SetReason sets the "reason" field.
+func (m *StockOpLogMutation) SetReason(s stockoplog.Reason) {
+	m.reason = &s
+}
+
+// Reason returns the value of the "reason" field in the mutation.
+func (m *StockOpLogMutation) Reason() (r stockoplog.Reason, exists bool) {
+	v := m.reason
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReason returns the old "reason" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldReason(ctx context.Context) (v *stockoplog.Reason, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReason is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReason requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReason: %w", err)
+	}
+	return oldValue.Reason, nil
+}
+
+// ClearReason clears the value of the "reason" field.
+func (m *StockOpLogMutation) ClearReason() {
+	m.reason = nil
+	m.clearedFields[stockoplog.FieldReason] = struct{}{}
+}
+
+// ReasonCleared returns if the "reason" field was cleared in this mutation.
+func (m *StockOpLogMutation) ReasonCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldReason]
+	return ok
+}
+
+// ResetReason resets all changes to the "reason" field.
+func (m *StockOpLogMutation) ResetReason() {
+	m.reason = nil
+	delete(m.clearedFields, stockoplog.FieldReason)
+}
+
+// SetRefID sets the "ref_id" field.
+func (m *StockOpLogMutation) SetRefID(u uint32) {
+	m.ref_id = &u
+	m.addref_id = nil
+}
+
+// RefID returns the value of the "ref_id" field in the mutation.
+func (m *StockOpLogMutation) RefID() (r uint32, exists bool) {
+	v := m.ref_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRefID returns the old "ref_id" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldRefID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRefID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRefID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRefID: %w", err)
+	}
+	return oldValue.RefID, nil
+}
+
+// AddRefID adds u to the "ref_id" field.
+func (m *StockOpLogMutation) AddRefID(u int32) {
+	if m.addref_id != nil {
+		*m.addref_id += u
+	} else {
+		m.addref_id = &u
+	}
+}
+
+// AddedRefID returns the value that was added to the "ref_id" field in this mutation.
+func (m *StockOpLogMutation) AddedRefID() (r int32, exists bool) {
+	v := m.addref_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearRefID clears the value of the "ref_id" field.
+func (m *StockOpLogMutation) ClearRefID() {
+	m.ref_id = nil
+	m.addref_id = nil
+	m.clearedFields[stockoplog.FieldRefID] = struct{}{}
+}
+
+// RefIDCleared returns if the "ref_id" field was cleared in this mutation.
+func (m *StockOpLogMutation) RefIDCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldRefID]
+	return ok
+}
+
+// ResetRefID resets all changes to the "ref_id" field.
+func (m *StockOpLogMutation) ResetRefID() {
+	m.ref_id = nil
+	m.addref_id = nil
+	delete(m.clearedFields, stockoplog.FieldRefID)
+}
+
+// SetRemark sets the "remark" field.
+func (m *StockOpLogMutation) SetRemark(s string) {
+	m.remark = &s
+}
+
+// Remark returns the value of the "remark" field in the mutation.
+func (m *StockOpLogMutation) Remark() (r string, exists bool) {
+	v := m.remark
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRemark returns the old "remark" field's value of the StockOpLog entity.
+// If the StockOpLog object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *StockOpLogMutation) OldRemark(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRemark is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRemark requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRemark: %w", err)
+	}
+	return oldValue.Remark, nil
+}
+
+// ClearRemark clears the value of the "remark" field.
+func (m *StockOpLogMutation) ClearRemark() {
+	m.remark = nil
+	m.clearedFields[stockoplog.FieldRemark] = struct{}{}
+}
+
+// RemarkCleared returns if the "remark" field was cleared in this mutation.
+func (m *StockOpLogMutation) RemarkCleared() bool {
+	_, ok := m.clearedFields[stockoplog.FieldRemark]
+	return ok
+}
+
+// ResetRemark resets all changes to the "remark" field.
+func (m *StockOpLogMutation) ResetRemark() {
+	m.remark = nil
+	delete(m.clearedFields, stockoplog.FieldRemark)
+}
+
+// Where appends a list predicates to the StockOpLogMutation builder.
+func (m *StockOpLogMutation) Where(ps ...predicate.StockOpLog) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the StockOpLogMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *StockOpLogMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.StockOpLog, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *StockOpLogMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *StockOpLogMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (StockOpLog).
+func (m *StockOpLogMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *StockOpLogMutation) Fields() []string {
+	fields := make([]string, 0, 14)
+	if m.created_at != nil {
+		fields = append(fields, stockoplog.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, stockoplog.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, stockoplog.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, stockoplog.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, stockoplog.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, stockoplog.FieldDeletedBy)
+	}
+	if m.sku_id != nil {
+		fields = append(fields, stockoplog.FieldSkuID)
+	}
+	if m.product_id != nil {
+		fields = append(fields, stockoplog.FieldProductID)
+	}
+	if m.delta != nil {
+		fields = append(fields, stockoplog.FieldDelta)
+	}
+	if m.stock_before != nil {
+		fields = append(fields, stockoplog.FieldStockBefore)
+	}
+	if m.stock_after != nil {
+		fields = append(fields, stockoplog.FieldStockAfter)
+	}
+	if m.reason != nil {
+		fields = append(fields, stockoplog.FieldReason)
+	}
+	if m.ref_id != nil {
+		fields = append(fields, stockoplog.FieldRefID)
+	}
+	if m.remark != nil {
+		fields = append(fields, stockoplog.FieldRemark)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *StockOpLogMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case stockoplog.FieldCreatedAt:
+		return m.CreatedAt()
+	case stockoplog.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case stockoplog.FieldDeletedAt:
+		return m.DeletedAt()
+	case stockoplog.FieldCreatedBy:
+		return m.CreatedBy()
+	case stockoplog.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case stockoplog.FieldDeletedBy:
+		return m.DeletedBy()
+	case stockoplog.FieldSkuID:
+		return m.SkuID()
+	case stockoplog.FieldProductID:
+		return m.ProductID()
+	case stockoplog.FieldDelta:
+		return m.Delta()
+	case stockoplog.FieldStockBefore:
+		return m.StockBefore()
+	case stockoplog.FieldStockAfter:
+		return m.StockAfter()
+	case stockoplog.FieldReason:
+		return m.Reason()
+	case stockoplog.FieldRefID:
+		return m.RefID()
+	case stockoplog.FieldRemark:
+		return m.Remark()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *StockOpLogMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case stockoplog.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case stockoplog.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case stockoplog.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case stockoplog.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case stockoplog.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case stockoplog.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case stockoplog.FieldSkuID:
+		return m.OldSkuID(ctx)
+	case stockoplog.FieldProductID:
+		return m.OldProductID(ctx)
+	case stockoplog.FieldDelta:
+		return m.OldDelta(ctx)
+	case stockoplog.FieldStockBefore:
+		return m.OldStockBefore(ctx)
+	case stockoplog.FieldStockAfter:
+		return m.OldStockAfter(ctx)
+	case stockoplog.FieldReason:
+		return m.OldReason(ctx)
+	case stockoplog.FieldRefID:
+		return m.OldRefID(ctx)
+	case stockoplog.FieldRemark:
+		return m.OldRemark(ctx)
+	}
+	return nil, fmt.Errorf("unknown StockOpLog field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *StockOpLogMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case stockoplog.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case stockoplog.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case stockoplog.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case stockoplog.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case stockoplog.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case stockoplog.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case stockoplog.FieldSkuID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSkuID(v)
+		return nil
+	case stockoplog.FieldProductID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetProductID(v)
+		return nil
+	case stockoplog.FieldDelta:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDelta(v)
+		return nil
+	case stockoplog.FieldStockBefore:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStockBefore(v)
+		return nil
+	case stockoplog.FieldStockAfter:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStockAfter(v)
+		return nil
+	case stockoplog.FieldReason:
+		v, ok := value.(stockoplog.Reason)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReason(v)
+		return nil
+	case stockoplog.FieldRefID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRefID(v)
+		return nil
+	case stockoplog.FieldRemark:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRemark(v)
+		return nil
+	}
+	return fmt.Errorf("unknown StockOpLog field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *StockOpLogMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, stockoplog.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, stockoplog.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, stockoplog.FieldDeletedBy)
+	}
+	if m.addsku_id != nil {
+		fields = append(fields, stockoplog.FieldSkuID)
+	}
+	if m.addproduct_id != nil {
+		fields = append(fields, stockoplog.FieldProductID)
+	}
+	if m.adddelta != nil {
+		fields = append(fields, stockoplog.FieldDelta)
+	}
+	if m.addstock_before != nil {
+		fields = append(fields, stockoplog.FieldStockBefore)
+	}
+	if m.addstock_after != nil {
+		fields = append(fields, stockoplog.FieldStockAfter)
+	}
+	if m.addref_id != nil {
+		fields = append(fields, stockoplog.FieldRefID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *StockOpLogMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case stockoplog.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case stockoplog.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case stockoplog.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case stockoplog.FieldSkuID:
+		return m.AddedSkuID()
+	case stockoplog.FieldProductID:
+		return m.AddedProductID()
+	case stockoplog.FieldDelta:
+		return m.AddedDelta()
+	case stockoplog.FieldStockBefore:
+		return m.AddedStockBefore()
+	case stockoplog.FieldStockAfter:
+		return m.AddedStockAfter()
+	case stockoplog.FieldRefID:
+		return m.AddedRefID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *StockOpLogMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case stockoplog.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case stockoplog.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case stockoplog.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case stockoplog.FieldSkuID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSkuID(v)
+		return nil
+	case stockoplog.FieldProductID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddProductID(v)
+		return nil
+	case stockoplog.FieldDelta:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDelta(v)
+		return nil
+	case stockoplog.FieldStockBefore:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStockBefore(v)
+		return nil
+	case stockoplog.FieldStockAfter:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStockAfter(v)
+		return nil
+	case stockoplog.FieldRefID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRefID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown StockOpLog numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *StockOpLogMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(stockoplog.FieldCreatedAt) {
+		fields = append(fields, stockoplog.FieldCreatedAt)
+	}
+	if m.FieldCleared(stockoplog.FieldUpdatedAt) {
+		fields = append(fields, stockoplog.FieldUpdatedAt)
+	}
+	if m.FieldCleared(stockoplog.FieldDeletedAt) {
+		fields = append(fields, stockoplog.FieldDeletedAt)
+	}
+	if m.FieldCleared(stockoplog.FieldCreatedBy) {
+		fields = append(fields, stockoplog.FieldCreatedBy)
+	}
+	if m.FieldCleared(stockoplog.FieldUpdatedBy) {
+		fields = append(fields, stockoplog.FieldUpdatedBy)
+	}
+	if m.FieldCleared(stockoplog.FieldDeletedBy) {
+		fields = append(fields, stockoplog.FieldDeletedBy)
+	}
+	if m.FieldCleared(stockoplog.FieldSkuID) {
+		fields = append(fields, stockoplog.FieldSkuID)
+	}
+	if m.FieldCleared(stockoplog.FieldProductID) {
+		fields = append(fields, stockoplog.FieldProductID)
+	}
+	if m.FieldCleared(stockoplog.FieldDelta) {
+		fields = append(fields, stockoplog.FieldDelta)
+	}
+	if m.FieldCleared(stockoplog.FieldStockBefore) {
+		fields = append(fields, stockoplog.FieldStockBefore)
+	}
+	if m.FieldCleared(stockoplog.FieldStockAfter) {
+		fields = append(fields, stockoplog.FieldStockAfter)
+	}
+	if m.FieldCleared(stockoplog.FieldReason) {
+		fields = append(fields, stockoplog.FieldReason)
+	}
+	if m.FieldCleared(stockoplog.FieldRefID) {
+		fields = append(fields, stockoplog.FieldRefID)
+	}
+	if m.FieldCleared(stockoplog.FieldRemark) {
+		fields = append(fields, stockoplog.FieldRemark)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *StockOpLogMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *StockOpLogMutation) ClearField(name string) error {
+	switch name {
+	case stockoplog.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case stockoplog.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case stockoplog.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case stockoplog.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case stockoplog.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case stockoplog.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case stockoplog.FieldSkuID:
+		m.ClearSkuID()
+		return nil
+	case stockoplog.FieldProductID:
+		m.ClearProductID()
+		return nil
+	case stockoplog.FieldDelta:
+		m.ClearDelta()
+		return nil
+	case stockoplog.FieldStockBefore:
+		m.ClearStockBefore()
+		return nil
+	case stockoplog.FieldStockAfter:
+		m.ClearStockAfter()
+		return nil
+	case stockoplog.FieldReason:
+		m.ClearReason()
+		return nil
+	case stockoplog.FieldRefID:
+		m.ClearRefID()
+		return nil
+	case stockoplog.FieldRemark:
+		m.ClearRemark()
+		return nil
+	}
+	return fmt.Errorf("unknown StockOpLog nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *StockOpLogMutation) ResetField(name string) error {
+	switch name {
+	case stockoplog.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case stockoplog.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case stockoplog.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case stockoplog.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case stockoplog.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case stockoplog.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case stockoplog.FieldSkuID:
+		m.ResetSkuID()
+		return nil
+	case stockoplog.FieldProductID:
+		m.ResetProductID()
+		return nil
+	case stockoplog.FieldDelta:
+		m.ResetDelta()
+		return nil
+	case stockoplog.FieldStockBefore:
+		m.ResetStockBefore()
+		return nil
+	case stockoplog.FieldStockAfter:
+		m.ResetStockAfter()
+		return nil
+	case stockoplog.FieldReason:
+		m.ResetReason()
+		return nil
+	case stockoplog.FieldRefID:
+		m.ResetRefID()
+		return nil
+	case stockoplog.FieldRemark:
+		m.ResetRemark()
+		return nil
+	}
+	return fmt.Errorf("unknown StockOpLog field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *StockOpLogMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *StockOpLogMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *StockOpLogMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *StockOpLogMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *StockOpLogMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *StockOpLogMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *StockOpLogMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown StockOpLog unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *StockOpLogMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown StockOpLog edge %s", name)
 }
 
 // SysConfigMutation represents an operation that mutates the SysConfig nodes in the graph.

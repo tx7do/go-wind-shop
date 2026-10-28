@@ -980,6 +980,18 @@ func (f StockAlertFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StockAlertMutation", m)
 }
 
+// The StockOpLogFunc type is an adapter to allow the use of ordinary
+// function as StockOpLog mutator.
+type StockOpLogFunc func(context.Context, *ent.StockOpLogMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f StockOpLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.StockOpLogMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StockOpLogMutation", m)
+}
+
 // The SysConfigFunc type is an adapter to allow the use of ordinary
 // function as SysConfig mutator.
 type SysConfigFunc func(context.Context, *ent.SysConfigMutation) (ent.Value, error)

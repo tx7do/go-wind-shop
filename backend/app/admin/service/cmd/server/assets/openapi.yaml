@@ -9019,6 +9019,29 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/mall/skus/{id}:adjust-stock:
+        post:
+            tags:
+                - SkuService
+            description: 手动调整库存（事务内行锁改写 + 追加操作流水）
+            operationId: SkuService_AdjustStock
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/catalog.service.v1.AdjustSkuStockRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/mall/stock-alerts:
         get:
             tags:
@@ -9141,6 +9164,184 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/mall/stock-op-logs:
+        get:
+            tags:
+                - StockOpLogService
+            operationId: StockOpLogService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.ListStockOpLogResponse'
+    /admin/v1/mall/stock-op-logs/count:
+        get:
+            tags:
+                - StockOpLogService
+            operationId: StockOpLogService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.CountStockOpLogResponse'
+    /admin/v1/mall/stock-op-logs/{id}:
+        get:
+            tags:
+                - StockOpLogService
+            operationId: StockOpLogService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.StockOpLog'
     /admin/v1/mall/tax-rates:
         get:
             tags:
@@ -16272,6 +16473,21 @@ components:
                 allowMissing:
                     type: boolean
                     description: 允许缺失则插入
+        catalog.service.v1.AdjustSkuStockRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: SKU ID
+                    format: uint32
+                delta:
+                    type: integer
+                    description: 变动量（正=入库，负=出库）
+                    format: int32
+                remark:
+                    type: string
+                    description: 备注
+            description: 手动调整库存 - 请求
         catalog.service.v1.BatchCreateBrandsRequest:
             type: object
             properties:
@@ -16595,6 +16811,11 @@ components:
             properties:
                 count:
                     type: string
+        catalog.service.v1.CountStockOpLogResponse:
+            type: object
+            properties:
+                count:
+                    type: string
         catalog.service.v1.CreateBrandRequest:
             type: object
             properties:
@@ -16759,6 +16980,15 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/catalog.service.v1.StockAlert'
+                total:
+                    type: string
+        catalog.service.v1.ListStockOpLogResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.StockOpLog'
                 total:
                     type: string
         catalog.service.v1.Product:
@@ -17328,6 +17558,59 @@ components:
                     description: 更新时间
                     format: date-time
             description: 库存预警记录
+        catalog.service.v1.StockOpLog:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 流水ID
+                    format: uint32
+                skuId:
+                    type: integer
+                    description: SKU ID
+                    format: uint32
+                productId:
+                    type: integer
+                    description: 所属商品ID（冗余）
+                    format: uint32
+                delta:
+                    type: integer
+                    description: 变动量（正=回补，负=扣减）
+                    format: int32
+                stockBefore:
+                    type: integer
+                    description: 变动前库存
+                    format: int32
+                stockAfter:
+                    type: integer
+                    description: 变动后库存
+                    format: int32
+                reason:
+                    enum:
+                        - REASON_UNSPECIFIED
+                        - ORDER_DEDUCT
+                        - CANCEL_RESTORE
+                        - REFUND_RESTORE
+                        - MANUAL_ADJUST
+                    type: string
+                    description: 变动原因
+                    format: enum
+                refId:
+                    type: integer
+                    description: 关联业务ID（订单ID等；手动调整为 0）
+                    format: uint32
+                remark:
+                    type: string
+                    description: 备注
+                createdBy:
+                    type: integer
+                    description: 操作者用户ID（0=系统）
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 操作时间
+                    format: date-time
+            description: 库存操作流水
         catalog.service.v1.UpdateBrandRequest:
             type: object
             properties:
@@ -23176,6 +23459,8 @@ tags:
       description: SKU 管理服务
     - name: StockAlertService
       description: 库存预警记录管理服务（admin 裁剪：仅 List/Get/Update，Update 唯一允许标记 RESOLVED）
+    - name: StockOpLogService
+      description: 库存操作流水查询服务（admin 只读，append-only 审计）
     - name: TaskService
       description: 调度任务管理服务
     - name: TaxRateService

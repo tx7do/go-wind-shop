@@ -28,6 +28,7 @@ const (
 	SkuService_BatchCreate_FullMethodName = "/catalog.service.v1.SkuService/BatchCreate"
 	SkuService_Update_FullMethodName      = "/catalog.service.v1.SkuService/Update"
 	SkuService_Delete_FullMethodName      = "/catalog.service.v1.SkuService/Delete"
+	SkuService_AdjustStock_FullMethodName = "/catalog.service.v1.SkuService/AdjustStock"
 )
 
 // SkuServiceClient is the client API for SkuService service.
@@ -43,6 +44,9 @@ type SkuServiceClient interface {
 	BatchCreate(ctx context.Context, in *BatchCreateSkusRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Update(ctx context.Context, in *UpdateSkuRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Delete(ctx context.Context, in *DeleteSkuRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 手动调整库存（admin）：事务内行锁读改写，并追加库存操作流水（MANUAL_ADJUST）。
+	// delta 可正可负；调整后库存 < 0 拒绝。
+	AdjustStock(ctx context.Context, in *AdjustSkuStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type skuServiceClient struct {
@@ -123,6 +127,16 @@ func (c *skuServiceClient) Delete(ctx context.Context, in *DeleteSkuRequest, opt
 	return out, nil
 }
 
+func (c *skuServiceClient) AdjustStock(ctx context.Context, in *AdjustSkuStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, SkuService_AdjustStock_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SkuServiceServer is the server API for SkuService service.
 // All implementations must embed UnimplementedSkuServiceServer
 // for forward compatibility.
@@ -136,6 +150,9 @@ type SkuServiceServer interface {
 	BatchCreate(context.Context, *BatchCreateSkusRequest) (*emptypb.Empty, error)
 	Update(context.Context, *UpdateSkuRequest) (*emptypb.Empty, error)
 	Delete(context.Context, *DeleteSkuRequest) (*emptypb.Empty, error)
+	// 手动调整库存（admin）：事务内行锁读改写，并追加库存操作流水（MANUAL_ADJUST）。
+	// delta 可正可负；调整后库存 < 0 拒绝。
+	AdjustStock(context.Context, *AdjustSkuStockRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedSkuServiceServer()
 }
 
@@ -166,6 +183,9 @@ func (UnimplementedSkuServiceServer) Update(context.Context, *UpdateSkuRequest) 
 }
 func (UnimplementedSkuServiceServer) Delete(context.Context, *DeleteSkuRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedSkuServiceServer) AdjustStock(context.Context, *AdjustSkuStockRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdjustStock not implemented")
 }
 func (UnimplementedSkuServiceServer) mustEmbedUnimplementedSkuServiceServer() {}
 func (UnimplementedSkuServiceServer) testEmbeddedByValue()                    {}
@@ -314,6 +334,24 @@ func _SkuService_Delete_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SkuService_AdjustStock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdjustSkuStockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SkuServiceServer).AdjustStock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SkuService_AdjustStock_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SkuServiceServer).AdjustStock(ctx, req.(*AdjustSkuStockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SkuService_ServiceDesc is the grpc.ServiceDesc for SkuService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -348,6 +386,10 @@ var SkuService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _SkuService_Delete_Handler,
+		},
+		{
+			MethodName: "AdjustStock",
+			Handler:    _SkuService_AdjustStock_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -87,6 +87,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 	"go-wind-shop/app/core/service/internal/data/ent/stockalert"
+	"go-wind-shop/app/core/service/internal/data/ent/stockoplog"
 	"go-wind-shop/app/core/service/internal/data/ent/sysconfig"
 	"go-wind-shop/app/core/service/internal/data/ent/task"
 	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
@@ -2158,6 +2159,31 @@ func init() {
 	stockalertDescID := stockalertMixinFields0[0].Descriptor()
 	// stockalert.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	stockalert.IDValidator = stockalertDescID.Validators[0].(func(uint32) error)
+	stockoplogMixin := schema.StockOpLog{}.Mixin()
+	stockoplogMixinFields0 := stockoplogMixin[0].Fields()
+	_ = stockoplogMixinFields0
+	stockoplogFields := schema.StockOpLog{}.Fields()
+	_ = stockoplogFields
+	// stockoplogDescDelta is the schema descriptor for delta field.
+	stockoplogDescDelta := stockoplogFields[2].Descriptor()
+	// stockoplog.DefaultDelta holds the default value on creation for the delta field.
+	stockoplog.DefaultDelta = stockoplogDescDelta.Default.(int32)
+	// stockoplogDescStockBefore is the schema descriptor for stock_before field.
+	stockoplogDescStockBefore := stockoplogFields[3].Descriptor()
+	// stockoplog.DefaultStockBefore holds the default value on creation for the stock_before field.
+	stockoplog.DefaultStockBefore = stockoplogDescStockBefore.Default.(int32)
+	// stockoplogDescStockAfter is the schema descriptor for stock_after field.
+	stockoplogDescStockAfter := stockoplogFields[4].Descriptor()
+	// stockoplog.DefaultStockAfter holds the default value on creation for the stock_after field.
+	stockoplog.DefaultStockAfter = stockoplogDescStockAfter.Default.(int32)
+	// stockoplogDescRefID is the schema descriptor for ref_id field.
+	stockoplogDescRefID := stockoplogFields[6].Descriptor()
+	// stockoplog.DefaultRefID holds the default value on creation for the ref_id field.
+	stockoplog.DefaultRefID = stockoplogDescRefID.Default.(uint32)
+	// stockoplogDescID is the schema descriptor for id field.
+	stockoplogDescID := stockoplogMixinFields0[0].Descriptor()
+	// stockoplog.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	stockoplog.IDValidator = stockoplogDescID.Validators[0].(func(uint32) error)
 	sysconfigMixin := schema.SysConfig{}.Mixin()
 	sysconfigMixinFields0 := sysconfigMixin[0].Fields()
 	_ = sysconfigMixinFields0

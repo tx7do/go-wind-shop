@@ -2055,6 +2055,30 @@ func (f StockAlertMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Muta
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.StockAlertMutation", m)
 }
 
+// The StockOpLogQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type StockOpLogQueryRuleFunc func(context.Context, *ent.StockOpLogQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f StockOpLogQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.StockOpLogQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.StockOpLogQuery", q)
+}
+
+// The StockOpLogMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type StockOpLogMutationRuleFunc func(context.Context, *ent.StockOpLogMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f StockOpLogMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.StockOpLogMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.StockOpLogMutation", m)
+}
+
 // The SysConfigQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type SysConfigQueryRuleFunc func(context.Context, *ent.SysConfigQuery) error
@@ -2540,6 +2564,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.StockAlertQuery:
 		return q.Filter(), nil
+	case *ent.StockOpLogQuery:
+		return q.Filter(), nil
 	case *ent.SysConfigQuery:
 		return q.Filter(), nil
 	case *ent.TaskQuery:
@@ -2732,6 +2758,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.SkuPriceMutation:
 		return m.Filter(), nil
 	case *ent.StockAlertMutation:
+		return m.Filter(), nil
+	case *ent.StockOpLogMutation:
 		return m.Filter(), nil
 	case *ent.SysConfigMutation:
 		return m.Filter(), nil

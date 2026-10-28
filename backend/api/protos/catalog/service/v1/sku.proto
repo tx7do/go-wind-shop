@@ -21,6 +21,10 @@ service SkuService {
   rpc BatchCreate (BatchCreateSkusRequest) returns (google.protobuf.Empty) {}
   rpc Update (UpdateSkuRequest) returns (google.protobuf.Empty) {}
   rpc Delete (DeleteSkuRequest) returns (google.protobuf.Empty) {}
+
+  // 手动调整库存（admin）：事务内行锁读改写，并追加库存操作流水（MANUAL_ADJUST）。
+  // delta 可正可负；调整后库存 < 0 拒绝。
+  rpc AdjustStock (AdjustSkuStockRequest) returns (google.protobuf.Empty) {}
 }
 
 // SKU 价格服务
@@ -80,6 +84,13 @@ message DeleteSkuRequest {
   oneof query_by {
     uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
   }
+}
+
+// 手动调整库存 - 请求
+message AdjustSkuStockRequest {
+  uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "SKU ID"}, json_name = "id"];
+  int32 delta = 2 [(gnostic.openapi.v3.property) = {description: "变动量（正=入库，负=出库）"}];
+  optional string remark = 3 [json_name = "remark", (gnostic.openapi.v3.property) = {description: "备注"}];
 }
 message BatchCreateSkusRequest { repeated Sku items = 1; }
 message BatchCreateSkusResponse { repeated int32 created_ids = 1 [json_name = "createdIds", (gnostic.openapi.v3.property) = {description: "创建成功的 SKU ID 列表"}]; }

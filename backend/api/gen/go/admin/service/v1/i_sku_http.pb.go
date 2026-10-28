@@ -22,6 +22,7 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationSkuServiceAdjustStock = "/admin.service.v1.SkuService/AdjustStock"
 const OperationSkuServiceBatchCreate = "/admin.service.v1.SkuService/BatchCreate"
 const OperationSkuServiceCount = "/admin.service.v1.SkuService/Count"
 const OperationSkuServiceCreate = "/admin.service.v1.SkuService/Create"
@@ -31,6 +32,8 @@ const OperationSkuServiceList = "/admin.service.v1.SkuService/List"
 const OperationSkuServiceUpdate = "/admin.service.v1.SkuService/Update"
 
 type SkuServiceHTTPServer interface {
+	// AdjustStock 手动调整库存（事务内行锁改写 + 追加操作流水）
+	AdjustStock(context.Context, *v11.AdjustSkuStockRequest) (*emptypb.Empty, error)
 	// BatchCreate 批量创建 SKU
 	BatchCreate(context.Context, *v11.BatchCreateSkusRequest) (*emptypb.Empty, error)
 	// Count 统计 SKU 数量
@@ -56,6 +59,7 @@ func RegisterSkuServiceHTTPServer(s *http.Server, srv SkuServiceHTTPServer) {
 	r.POST("/admin/v1/mall/skus/batch", _SkuService_BatchCreate9_HTTP_Handler(srv))
 	r.PUT("/admin/v1/mall/skus/{id}", _SkuService_Update40_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/mall/skus", _SkuService_Delete42_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/skus/{id}:adjust-stock", _SkuService_AdjustStock0_HTTP_Handler(srv))
 }
 
 func _SkuService_List50_HTTP_Handler(srv SkuServiceHTTPServer) func(ctx http.Context) error {
@@ -206,7 +210,34 @@ func _SkuService_Delete42_HTTP_Handler(srv SkuServiceHTTPServer) func(ctx http.C
 	}
 }
 
+func _SkuService_AdjustStock0_HTTP_Handler(srv SkuServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.AdjustSkuStockRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationSkuServiceAdjustStock)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.AdjustStock(ctx, req.(*v11.AdjustSkuStockRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type SkuServiceHTTPClient interface {
+	// AdjustStock 手动调整库存（事务内行锁改写 + 追加操作流水）
+	AdjustStock(ctx context.Context, req *v11.AdjustSkuStockRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// BatchCreate 批量创建 SKU
 	BatchCreate(ctx context.Context, req *v11.BatchCreateSkusRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	// Count 统计 SKU 数量
@@ -229,6 +260,20 @@ type SkuServiceHTTPClientImpl struct {
 
 func NewSkuServiceHTTPClient(client *http.Client) SkuServiceHTTPClient {
 	return &SkuServiceHTTPClientImpl{client}
+}
+
+// AdjustStock 手动调整库存（事务内行锁改写 + 追加操作流水）
+func (c *SkuServiceHTTPClientImpl) AdjustStock(ctx context.Context, in *v11.AdjustSkuStockRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/admin/v1/mall/skus/{id}:adjust-stock"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationSkuServiceAdjustStock))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // BatchCreate 批量创建 SKU

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/stock_op_log.proto";
+
+// 库存操作流水查询服务（admin 只读，append-only 审计）
+service StockOpLogService {
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListStockOpLogResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/stock-op-logs"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountStockOpLogResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/stock-op-logs/count"
+    };
+  }
+
+  rpc Get (catalog.service.v1.GetStockOpLogRequest) returns (catalog.service.v1.StockOpLog) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/stock-op-logs/{id}"
+    };
+  }
+}

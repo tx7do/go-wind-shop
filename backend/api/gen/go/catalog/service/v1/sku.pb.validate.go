@@ -968,6 +968,116 @@ var _ interface {
 	ErrorName() string
 } = DeleteSkuRequestValidationError{}
 
+// Validate checks the field values on AdjustSkuStockRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AdjustSkuStockRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AdjustSkuStockRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AdjustSkuStockRequestMultiError, or nil if none found.
+func (m *AdjustSkuStockRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AdjustSkuStockRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for Delta
+
+	if m.Remark != nil {
+		// no validation rules for Remark
+	}
+
+	if len(errors) > 0 {
+		return AdjustSkuStockRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AdjustSkuStockRequestMultiError is an error wrapping multiple validation
+// errors returned by AdjustSkuStockRequest.ValidateAll() if the designated
+// constraints aren't met.
+type AdjustSkuStockRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AdjustSkuStockRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AdjustSkuStockRequestMultiError) AllErrors() []error { return m }
+
+// AdjustSkuStockRequestValidationError is the validation error returned by
+// AdjustSkuStockRequest.Validate if the designated constraints aren't met.
+type AdjustSkuStockRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AdjustSkuStockRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AdjustSkuStockRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AdjustSkuStockRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AdjustSkuStockRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AdjustSkuStockRequestValidationError) ErrorName() string {
+	return "AdjustSkuStockRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AdjustSkuStockRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAdjustSkuStockRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AdjustSkuStockRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AdjustSkuStockRequestValidationError{}
+
 // Validate checks the field values on BatchCreateSkusRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

@@ -4,8 +4,8 @@ import (
 	"github.com/go-kratos/kratos/v2"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"go-wind-shop/app/core/service/internal/data"
-	"go-wind-shop/app/core/service/internal/server"
 	"go-wind-shop/app/core/service/internal/data/channel"
+	"go-wind-shop/app/core/service/internal/server"
 	"go-wind-shop/app/core/service/internal/service"
 )
 
@@ -50,7 +50,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	userTokenCache := data.NewUserTokenCache(ctx, redisClient)
 	authenticator := data.NewAuthenticator(ctx, authenticatorOption, userTokenCache)
 
-
 	entClient, cleanupEnt, err := data.NewEntClient(ctx)
 	if err != nil {
 		rollback()
@@ -66,7 +65,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	mfaFactorRepo := data.NewUserMfaFactorRepo(ctx, entClient)
 	mfaChallengeCache := data.NewMfaChallengeCache(ctx, redisClient)
 	loginRateLimiter := data.NewLoginRateLimiter(ctx, redisClient)
-
 
 	crypto := data.NewPasswordCrypto()
 	minIOClient := data.NewMinIoClient(ctx)
@@ -139,6 +137,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	shipmentRepo := data.NewShipmentRepo(ctx, entClient)
 	couponTemplateRepo := data.NewCouponTemplateRepo(ctx, entClient)
 	promotionRepo := data.NewPromotionRepo(ctx, entClient)
+	stockOpLogRepo := data.NewStockOpLogRepo(ctx, entClient)
 	userCouponRepo := data.NewUserCouponRepo(ctx, entClient)
 	shippingRateRepo := data.NewShippingRateRepo(ctx, entClient)
 	taxRateRepo := data.NewTaxRateRepo(ctx, entClient)
@@ -181,7 +180,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	productService := service.NewProductService(ctx, productRepo, productSearchService, taskService)
 	productAttributeService := service.NewProductAttributeService(ctx, productAttributeRepo)
 	productAttributeValueService := service.NewProductAttributeValueService(ctx, productAttributeValueRepo)
-	skuService := service.NewSkuService(ctx, skuRepo)
+	skuService := service.NewSkuService(ctx, skuRepo, entClient)
+	stockOpLogService := service.NewStockOpLogService(ctx, stockOpLogRepo)
 	skuPriceService := service.NewSkuPriceService(ctx, skuPriceRepo)
 	skuAttributeCombinationService := service.NewSkuAttributeCombinationService(ctx, skuAttributeCombinationRepo)
 	stockAlertService := service.NewStockAlertService(ctx, stockAlertRepo)
@@ -215,7 +215,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	// ── Script 脚本域（移植自 go-wind-admin，ent 同构）──
 	scriptRepo := data.NewScriptRepo(ctx, entClient)
 	scriptLogRepo := data.NewScriptLogRepo(ctx, entClient)
-
 
 	// ── AI 域（移植自 go-wind-cms）──
 	aiProviderRepo := data.NewAiProviderRepo(ctx, entClient)
@@ -276,7 +275,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	planModuleService := service.NewPlanModuleService(ctx, planModuleRepo)
 	planQuotaService := service.NewPlanQuotaService(ctx, planQuotaRepo)
 	scriptLogService := service.NewScriptLogService(ctx, scriptLogRepo)
-
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
@@ -346,7 +344,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		shippingAddressService,
 		shipmentService,
 		couponTemplateService,
-		promotionService,		userCouponService,
+		promotionService,
+		stockOpLogService,
+		userCouponService,
 		shippingRateService,
 		taxRateService,
 		commentService,

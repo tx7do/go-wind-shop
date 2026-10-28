@@ -174,6 +174,8 @@ type Tx struct {
 	SkuPrice *SkuPriceClient
 	// StockAlert is the client for interacting with the StockAlert builders.
 	StockAlert *StockAlertClient
+	// StockOpLog is the client for interacting with the StockOpLog builders.
+	StockOpLog *StockOpLogClient
 	// SysConfig is the client for interacting with the SysConfig builders.
 	SysConfig *SysConfigClient
 	// Task is the client for interacting with the Task builders.
@@ -410,6 +412,7 @@ func (tx *Tx) init() {
 	tx.SkuAttributeCombination = NewSkuAttributeCombinationClient(tx.config)
 	tx.SkuPrice = NewSkuPriceClient(tx.config)
 	tx.StockAlert = NewStockAlertClient(tx.config)
+	tx.StockOpLog = NewStockOpLogClient(tx.config)
 	tx.SysConfig = NewSysConfigClient(tx.config)
 	tx.Task = NewTaskClient(tx.config)
 	tx.TaxRate = NewTaxRateClient(tx.config)

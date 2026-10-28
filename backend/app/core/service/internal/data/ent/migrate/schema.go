@@ -4019,6 +4019,48 @@ var (
 			},
 		},
 	}
+	// MallStockOpLogsColumns holds the columns for the "mall_stock_op_logs" table.
+	MallStockOpLogsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "sku_id", Type: field.TypeUint32, Nullable: true, Comment: "SKU ID"},
+		{Name: "product_id", Type: field.TypeUint32, Nullable: true, Comment: "所属商品ID（冗余，便于按商品聚合查询）"},
+		{Name: "delta", Type: field.TypeInt32, Nullable: true, Comment: "变动量（正=回补/入库，负=扣减/出库）", Default: 0},
+		{Name: "stock_before", Type: field.TypeInt32, Nullable: true, Comment: "变动前库存", Default: 0},
+		{Name: "stock_after", Type: field.TypeInt32, Nullable: true, Comment: "变动后库存", Default: 0},
+		{Name: "reason", Type: field.TypeEnum, Nullable: true, Comment: "变动原因", Enums: []string{"ORDER_DEDUCT", "CANCEL_RESTORE", "REFUND_RESTORE", "MANUAL_ADJUST"}},
+		{Name: "ref_id", Type: field.TypeUint32, Nullable: true, Comment: "关联业务ID（订单ID等，手动调整为 0）", Default: 0},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注（手动调整时填写）"},
+	}
+	// MallStockOpLogsTable holds the schema information for the "mall_stock_op_logs" table.
+	MallStockOpLogsTable = &schema.Table{
+		Name:       "mall_stock_op_logs",
+		Comment:    "库存操作流水表",
+		Columns:    MallStockOpLogsColumns,
+		PrimaryKey: []*schema.Column{MallStockOpLogsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "stockoplog_sku_id_created_at",
+				Unique:  false,
+				Columns: []*schema.Column{MallStockOpLogsColumns[7], MallStockOpLogsColumns[1]},
+			},
+			{
+				Name:    "stockoplog_product_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallStockOpLogsColumns[8]},
+			},
+			{
+				Name:    "stockoplog_reason",
+				Unique:  false,
+				Columns: []*schema.Column{MallStockOpLogsColumns[12]},
+			},
+		},
+	}
 	// SysConfigsColumns holds the columns for the "sys_configs" table.
 	SysConfigsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -4831,6 +4873,7 @@ var (
 		MallSkuAttributeCombinationsTable,
 		MallSkuPricesTable,
 		MallStockAlertsTable,
+		MallStockOpLogsTable,
 		SysConfigsTable,
 		SysTasksTable,
 		MallTaxRatesTable,
@@ -5261,6 +5304,11 @@ func init() {
 	}
 	MallStockAlertsTable.Annotation = &entsql.Annotation{
 		Table:     "mall_stock_alerts",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallStockOpLogsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_stock_op_logs",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

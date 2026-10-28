@@ -1,6 +1,9 @@
 <template>
   <div class="app-container h-full flex flex-1 flex-col">
-    <ProPage ref="pageRef" :config="pageConfig" @add="handleAdd" @edit="handleEdit"></ProPage>
+    <ProPage ref="pageRef" :config="pageConfig" @add="handleAdd" @edit="handleEdit" @operate="handleOperate">
+    </ProPage>
+
+    <StockAdjustDrawer ref="stockAdjustRef" @success="handleSuccess" />
 
     <!-- 新增/编辑抽屉 -->
     <SkuDrawer ref="drawerRef" @success="handleSuccess" />
@@ -13,6 +16,7 @@ import { ref, computed } from "vue";
 import ProPage from "@/components/Pro/ProPage/index.vue";
 import type { ProPageConfig } from "@/components/Pro/ProPage/types";
 import SkuDrawer from "./sku-drawer.vue";
+import StockAdjustDrawer from "./stock-adjust-drawer.vue";
 
 import { fetchListSkus, useDeleteSku } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
@@ -22,6 +26,7 @@ const { mutateAsync: deleteSku } = useDeleteSku();
 
 const pageRef = ref();
 const drawerRef = ref();
+const stockAdjustRef = ref();
 
 const pageConfig = computed<ProPageConfig>(() => ({
   skeleton: true,
@@ -95,6 +100,7 @@ const pageConfig = computed<ProPageConfig>(() => ({
         cellType: "tool",
         buttons: [
           { name: "edit", label: $t("common.button.edit"), icon: "lucide:pen-line" },
+          { name: "adjust", label: $t("pages.mall.stockAdjust.button"), icon: "lucide:package-plus" },
           {
             name: "delete",
             label: $t("common.button.delete"),
@@ -113,6 +119,12 @@ function handleAdd() {
 
 function handleEdit(row: any) {
   drawerRef.value?.open(row);
+}
+
+function handleOperate(data: { name: string; row: any }) {
+  if (data.name === "adjust") {
+    stockAdjustRef.value?.open(data.row);
+  }
 }
 
 function handleSuccess() {

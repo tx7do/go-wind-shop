@@ -463,6 +463,67 @@ type DeleteSkuRequest_Id struct {
 
 func (*DeleteSkuRequest_Id) isDeleteSkuRequest_QueryBy() {}
 
+// 手动调整库存 - 请求
+type AdjustSkuStockRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Delta         int32                  `protobuf:"varint,2,opt,name=delta,proto3" json:"delta,omitempty"`
+	Remark        *string                `protobuf:"bytes,3,opt,name=remark,proto3,oneof" json:"remark,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdjustSkuStockRequest) Reset() {
+	*x = AdjustSkuStockRequest{}
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdjustSkuStockRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdjustSkuStockRequest) ProtoMessage() {}
+
+func (x *AdjustSkuStockRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdjustSkuStockRequest.ProtoReflect.Descriptor instead.
+func (*AdjustSkuStockRequest) Descriptor() ([]byte, []int) {
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *AdjustSkuStockRequest) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *AdjustSkuStockRequest) GetDelta() int32 {
+	if x != nil {
+		return x.Delta
+	}
+	return 0
+}
+
+func (x *AdjustSkuStockRequest) GetRemark() string {
+	if x != nil && x.Remark != nil {
+		return *x.Remark
+	}
+	return ""
+}
+
 type BatchCreateSkusRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Items         []*Sku                 `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
@@ -472,7 +533,7 @@ type BatchCreateSkusRequest struct {
 
 func (x *BatchCreateSkusRequest) Reset() {
 	*x = BatchCreateSkusRequest{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[6]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -484,7 +545,7 @@ func (x *BatchCreateSkusRequest) String() string {
 func (*BatchCreateSkusRequest) ProtoMessage() {}
 
 func (x *BatchCreateSkusRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[6]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -497,7 +558,7 @@ func (x *BatchCreateSkusRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchCreateSkusRequest.ProtoReflect.Descriptor instead.
 func (*BatchCreateSkusRequest) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{6}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *BatchCreateSkusRequest) GetItems() []*Sku {
@@ -516,7 +577,7 @@ type BatchCreateSkusResponse struct {
 
 func (x *BatchCreateSkusResponse) Reset() {
 	*x = BatchCreateSkusResponse{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[7]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -528,7 +589,7 @@ func (x *BatchCreateSkusResponse) String() string {
 func (*BatchCreateSkusResponse) ProtoMessage() {}
 
 func (x *BatchCreateSkusResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[7]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -541,7 +602,7 @@ func (x *BatchCreateSkusResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchCreateSkusResponse.ProtoReflect.Descriptor instead.
 func (*BatchCreateSkusResponse) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{7}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *BatchCreateSkusResponse) GetCreatedIds() []int32 {
@@ -560,7 +621,7 @@ type CountSkuResponse struct {
 
 func (x *CountSkuResponse) Reset() {
 	*x = CountSkuResponse{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[8]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -572,7 +633,7 @@ func (x *CountSkuResponse) String() string {
 func (*CountSkuResponse) ProtoMessage() {}
 
 func (x *CountSkuResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[8]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -585,7 +646,7 @@ func (x *CountSkuResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CountSkuResponse.ProtoReflect.Descriptor instead.
 func (*CountSkuResponse) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{8}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *CountSkuResponse) GetCount() uint64 {
@@ -613,7 +674,7 @@ type SkuPrice struct {
 
 func (x *SkuPrice) Reset() {
 	*x = SkuPrice{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[9]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -625,7 +686,7 @@ func (x *SkuPrice) String() string {
 func (*SkuPrice) ProtoMessage() {}
 
 func (x *SkuPrice) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[9]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -638,7 +699,7 @@ func (x *SkuPrice) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SkuPrice.ProtoReflect.Descriptor instead.
 func (*SkuPrice) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{9}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *SkuPrice) GetId() uint32 {
@@ -721,7 +782,7 @@ type ListSkuPriceResponse struct {
 
 func (x *ListSkuPriceResponse) Reset() {
 	*x = ListSkuPriceResponse{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[10]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -733,7 +794,7 @@ func (x *ListSkuPriceResponse) String() string {
 func (*ListSkuPriceResponse) ProtoMessage() {}
 
 func (x *ListSkuPriceResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[10]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -746,7 +807,7 @@ func (x *ListSkuPriceResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSkuPriceResponse.ProtoReflect.Descriptor instead.
 func (*ListSkuPriceResponse) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{10}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *ListSkuPriceResponse) GetItems() []*SkuPrice {
@@ -776,7 +837,7 @@ type GetSkuPriceRequest struct {
 
 func (x *GetSkuPriceRequest) Reset() {
 	*x = GetSkuPriceRequest{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[11]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -788,7 +849,7 @@ func (x *GetSkuPriceRequest) String() string {
 func (*GetSkuPriceRequest) ProtoMessage() {}
 
 func (x *GetSkuPriceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[11]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -801,7 +862,7 @@ func (x *GetSkuPriceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetSkuPriceRequest.ProtoReflect.Descriptor instead.
 func (*GetSkuPriceRequest) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{11}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *GetSkuPriceRequest) GetQueryBy() isGetSkuPriceRequest_QueryBy {
@@ -846,7 +907,7 @@ type CreateSkuPriceRequest struct {
 
 func (x *CreateSkuPriceRequest) Reset() {
 	*x = CreateSkuPriceRequest{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[12]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -858,7 +919,7 @@ func (x *CreateSkuPriceRequest) String() string {
 func (*CreateSkuPriceRequest) ProtoMessage() {}
 
 func (x *CreateSkuPriceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[12]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -871,7 +932,7 @@ func (x *CreateSkuPriceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateSkuPriceRequest.ProtoReflect.Descriptor instead.
 func (*CreateSkuPriceRequest) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{12}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *CreateSkuPriceRequest) GetData() *SkuPrice {
@@ -893,7 +954,7 @@ type UpdateSkuPriceRequest struct {
 
 func (x *UpdateSkuPriceRequest) Reset() {
 	*x = UpdateSkuPriceRequest{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[13]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -905,7 +966,7 @@ func (x *UpdateSkuPriceRequest) String() string {
 func (*UpdateSkuPriceRequest) ProtoMessage() {}
 
 func (x *UpdateSkuPriceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[13]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -918,7 +979,7 @@ func (x *UpdateSkuPriceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateSkuPriceRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSkuPriceRequest) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{13}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *UpdateSkuPriceRequest) GetId() uint32 {
@@ -961,7 +1022,7 @@ type DeleteSkuPriceRequest struct {
 
 func (x *DeleteSkuPriceRequest) Reset() {
 	*x = DeleteSkuPriceRequest{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[14]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -973,7 +1034,7 @@ func (x *DeleteSkuPriceRequest) String() string {
 func (*DeleteSkuPriceRequest) ProtoMessage() {}
 
 func (x *DeleteSkuPriceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[14]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -986,7 +1047,7 @@ func (x *DeleteSkuPriceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteSkuPriceRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSkuPriceRequest) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{14}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *DeleteSkuPriceRequest) GetQueryBy() isDeleteSkuPriceRequest_QueryBy {
@@ -1024,7 +1085,7 @@ type BatchCreateSkuPricesRequest struct {
 
 func (x *BatchCreateSkuPricesRequest) Reset() {
 	*x = BatchCreateSkuPricesRequest{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[15]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1036,7 +1097,7 @@ func (x *BatchCreateSkuPricesRequest) String() string {
 func (*BatchCreateSkuPricesRequest) ProtoMessage() {}
 
 func (x *BatchCreateSkuPricesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[15]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1049,7 +1110,7 @@ func (x *BatchCreateSkuPricesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchCreateSkuPricesRequest.ProtoReflect.Descriptor instead.
 func (*BatchCreateSkuPricesRequest) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{15}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *BatchCreateSkuPricesRequest) GetItems() []*SkuPrice {
@@ -1068,7 +1129,7 @@ type BatchCreateSkuPricesResponse struct {
 
 func (x *BatchCreateSkuPricesResponse) Reset() {
 	*x = BatchCreateSkuPricesResponse{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[16]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1080,7 +1141,7 @@ func (x *BatchCreateSkuPricesResponse) String() string {
 func (*BatchCreateSkuPricesResponse) ProtoMessage() {}
 
 func (x *BatchCreateSkuPricesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[16]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1093,7 +1154,7 @@ func (x *BatchCreateSkuPricesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use BatchCreateSkuPricesResponse.ProtoReflect.Descriptor instead.
 func (*BatchCreateSkuPricesResponse) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{16}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *BatchCreateSkuPricesResponse) GetCreatedIds() []int32 {
@@ -1121,7 +1182,7 @@ type SkuAttributeCombination struct {
 
 func (x *SkuAttributeCombination) Reset() {
 	*x = SkuAttributeCombination{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[17]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1133,7 +1194,7 @@ func (x *SkuAttributeCombination) String() string {
 func (*SkuAttributeCombination) ProtoMessage() {}
 
 func (x *SkuAttributeCombination) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[17]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1146,7 +1207,7 @@ func (x *SkuAttributeCombination) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SkuAttributeCombination.ProtoReflect.Descriptor instead.
 func (*SkuAttributeCombination) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{17}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *SkuAttributeCombination) GetId() uint32 {
@@ -1229,7 +1290,7 @@ type ListSkuAttributeCombinationResponse struct {
 
 func (x *ListSkuAttributeCombinationResponse) Reset() {
 	*x = ListSkuAttributeCombinationResponse{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[18]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1241,7 +1302,7 @@ func (x *ListSkuAttributeCombinationResponse) String() string {
 func (*ListSkuAttributeCombinationResponse) ProtoMessage() {}
 
 func (x *ListSkuAttributeCombinationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[18]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1254,7 +1315,7 @@ func (x *ListSkuAttributeCombinationResponse) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use ListSkuAttributeCombinationResponse.ProtoReflect.Descriptor instead.
 func (*ListSkuAttributeCombinationResponse) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{18}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *ListSkuAttributeCombinationResponse) GetItems() []*SkuAttributeCombination {
@@ -1284,7 +1345,7 @@ type GetSkuAttributeCombinationRequest struct {
 
 func (x *GetSkuAttributeCombinationRequest) Reset() {
 	*x = GetSkuAttributeCombinationRequest{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[19]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1296,7 +1357,7 @@ func (x *GetSkuAttributeCombinationRequest) String() string {
 func (*GetSkuAttributeCombinationRequest) ProtoMessage() {}
 
 func (x *GetSkuAttributeCombinationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[19]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1309,7 +1370,7 @@ func (x *GetSkuAttributeCombinationRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use GetSkuAttributeCombinationRequest.ProtoReflect.Descriptor instead.
 func (*GetSkuAttributeCombinationRequest) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{19}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GetSkuAttributeCombinationRequest) GetQueryBy() isGetSkuAttributeCombinationRequest_QueryBy {
@@ -1354,7 +1415,7 @@ type CreateSkuAttributeCombinationRequest struct {
 
 func (x *CreateSkuAttributeCombinationRequest) Reset() {
 	*x = CreateSkuAttributeCombinationRequest{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[20]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1366,7 +1427,7 @@ func (x *CreateSkuAttributeCombinationRequest) String() string {
 func (*CreateSkuAttributeCombinationRequest) ProtoMessage() {}
 
 func (x *CreateSkuAttributeCombinationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[20]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1379,7 +1440,7 @@ func (x *CreateSkuAttributeCombinationRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use CreateSkuAttributeCombinationRequest.ProtoReflect.Descriptor instead.
 func (*CreateSkuAttributeCombinationRequest) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{20}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *CreateSkuAttributeCombinationRequest) GetData() *SkuAttributeCombination {
@@ -1401,7 +1462,7 @@ type UpdateSkuAttributeCombinationRequest struct {
 
 func (x *UpdateSkuAttributeCombinationRequest) Reset() {
 	*x = UpdateSkuAttributeCombinationRequest{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[21]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1413,7 +1474,7 @@ func (x *UpdateSkuAttributeCombinationRequest) String() string {
 func (*UpdateSkuAttributeCombinationRequest) ProtoMessage() {}
 
 func (x *UpdateSkuAttributeCombinationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[21]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1426,7 +1487,7 @@ func (x *UpdateSkuAttributeCombinationRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use UpdateSkuAttributeCombinationRequest.ProtoReflect.Descriptor instead.
 func (*UpdateSkuAttributeCombinationRequest) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{21}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *UpdateSkuAttributeCombinationRequest) GetId() uint32 {
@@ -1469,7 +1530,7 @@ type DeleteSkuAttributeCombinationRequest struct {
 
 func (x *DeleteSkuAttributeCombinationRequest) Reset() {
 	*x = DeleteSkuAttributeCombinationRequest{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[22]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1481,7 +1542,7 @@ func (x *DeleteSkuAttributeCombinationRequest) String() string {
 func (*DeleteSkuAttributeCombinationRequest) ProtoMessage() {}
 
 func (x *DeleteSkuAttributeCombinationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[22]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1494,7 +1555,7 @@ func (x *DeleteSkuAttributeCombinationRequest) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use DeleteSkuAttributeCombinationRequest.ProtoReflect.Descriptor instead.
 func (*DeleteSkuAttributeCombinationRequest) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{22}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *DeleteSkuAttributeCombinationRequest) GetQueryBy() isDeleteSkuAttributeCombinationRequest_QueryBy {
@@ -1532,7 +1593,7 @@ type BatchCreateSkuAttributeCombinationsRequest struct {
 
 func (x *BatchCreateSkuAttributeCombinationsRequest) Reset() {
 	*x = BatchCreateSkuAttributeCombinationsRequest{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[23]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1544,7 +1605,7 @@ func (x *BatchCreateSkuAttributeCombinationsRequest) String() string {
 func (*BatchCreateSkuAttributeCombinationsRequest) ProtoMessage() {}
 
 func (x *BatchCreateSkuAttributeCombinationsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[23]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1557,7 +1618,7 @@ func (x *BatchCreateSkuAttributeCombinationsRequest) ProtoReflect() protoreflect
 
 // Deprecated: Use BatchCreateSkuAttributeCombinationsRequest.ProtoReflect.Descriptor instead.
 func (*BatchCreateSkuAttributeCombinationsRequest) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{23}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *BatchCreateSkuAttributeCombinationsRequest) GetItems() []*SkuAttributeCombination {
@@ -1576,7 +1637,7 @@ type BatchCreateSkuAttributeCombinationsResponse struct {
 
 func (x *BatchCreateSkuAttributeCombinationsResponse) Reset() {
 	*x = BatchCreateSkuAttributeCombinationsResponse{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[24]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1588,7 +1649,7 @@ func (x *BatchCreateSkuAttributeCombinationsResponse) String() string {
 func (*BatchCreateSkuAttributeCombinationsResponse) ProtoMessage() {}
 
 func (x *BatchCreateSkuAttributeCombinationsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[24]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1601,7 +1662,7 @@ func (x *BatchCreateSkuAttributeCombinationsResponse) ProtoReflect() protoreflec
 
 // Deprecated: Use BatchCreateSkuAttributeCombinationsResponse.ProtoReflect.Descriptor instead.
 func (*BatchCreateSkuAttributeCombinationsResponse) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{24}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *BatchCreateSkuAttributeCombinationsResponse) GetCreatedIds() []int32 {
@@ -1620,7 +1681,7 @@ type CountSkuAttributeCombinationResponse struct {
 
 func (x *CountSkuAttributeCombinationResponse) Reset() {
 	*x = CountSkuAttributeCombinationResponse{}
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[25]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1632,7 +1693,7 @@ func (x *CountSkuAttributeCombinationResponse) String() string {
 func (*CountSkuAttributeCombinationResponse) ProtoMessage() {}
 
 func (x *CountSkuAttributeCombinationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_sku_proto_msgTypes[25]
+	mi := &file_catalog_service_v1_sku_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1645,7 +1706,7 @@ func (x *CountSkuAttributeCombinationResponse) ProtoReflect() protoreflect.Messa
 
 // Deprecated: Use CountSkuAttributeCombinationResponse.ProtoReflect.Descriptor instead.
 func (*CountSkuAttributeCombinationResponse) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{25}
+	return file_catalog_service_v1_sku_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *CountSkuAttributeCombinationResponse) GetCount() uint64 {
@@ -1714,7 +1775,12 @@ const file_catalog_service_v1_sku_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\rB\n" +
 	"\xbaG\a\x18\x01\x92\x02\x02IDH\x00R\x02idB\n" +
 	"\n" +
-	"\bquery_by\"G\n" +
+	"\bquery_by\"\xaf\x01\n" +
+	"\x15AdjustSkuStockRequest\x12\x1c\n" +
+	"\x02id\x18\x01 \x01(\rB\f\xbaG\t\x92\x02\x06SKU IDR\x02id\x12B\n" +
+	"\x05delta\x18\x02 \x01(\x05B,\xbaG)\x92\x02&变动量（正=入库，负=出库）R\x05delta\x12)\n" +
+	"\x06remark\x18\x03 \x01(\tB\f\xbaG\t\x92\x02\x06备注H\x00R\x06remark\x88\x01\x01B\t\n" +
+	"\a_remark\"G\n" +
 	"\x16BatchCreateSkusRequest\x12-\n" +
 	"\x05items\x18\x01 \x03(\v2\x17.catalog.service.v1.SkuR\x05items\"_\n" +
 	"\x17BatchCreateSkusResponse\x12D\n" +
@@ -1837,7 +1903,7 @@ const file_catalog_service_v1_sku_proto_rawDesc = "" +
 	"\vcreated_ids\x18\x01 \x03(\x05B)\xbaG&\x92\x02#创建成功的组合记录ID列表R\n" +
 	"createdIds\"<\n" +
 	"$CountSkuAttributeCombinationResponse\x12\x14\n" +
-	"\x05count\x18\x01 \x01(\x04R\x05count2\x9a\x04\n" +
+	"\x05count\x18\x01 \x01(\x04R\x05count2\xee\x04\n" +
 	"\n" +
 	"SkuService\x12H\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a#.catalog.service.v1.ListSkuResponse\"\x00\x12J\n" +
@@ -1846,7 +1912,8 @@ const file_catalog_service_v1_sku_proto_rawDesc = "" +
 	"\x06Create\x12$.catalog.service.v1.CreateSkuRequest\x1a\x16.google.protobuf.Empty\"\x00\x12S\n" +
 	"\vBatchCreate\x12*.catalog.service.v1.BatchCreateSkusRequest\x1a\x16.google.protobuf.Empty\"\x00\x12H\n" +
 	"\x06Update\x12$.catalog.service.v1.UpdateSkuRequest\x1a\x16.google.protobuf.Empty\"\x00\x12H\n" +
-	"\x06Delete\x12$.catalog.service.v1.DeleteSkuRequest\x1a\x16.google.protobuf.Empty\"\x002\xc2\x04\n" +
+	"\x06Delete\x12$.catalog.service.v1.DeleteSkuRequest\x1a\x16.google.protobuf.Empty\"\x00\x12R\n" +
+	"\vAdjustStock\x12).catalog.service.v1.AdjustSkuStockRequest\x1a\x16.google.protobuf.Empty\"\x002\xc2\x04\n" +
 	"\x0fSkuPriceService\x12M\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a(.catalog.service.v1.ListSkuPriceResponse\"\x00\x12J\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a$.catalog.service.v1.CountSkuResponse\"\x00\x12M\n" +
@@ -1877,7 +1944,7 @@ func file_catalog_service_v1_sku_proto_rawDescGZIP() []byte {
 	return file_catalog_service_v1_sku_proto_rawDescData
 }
 
-var file_catalog_service_v1_sku_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
+var file_catalog_service_v1_sku_proto_msgTypes = make([]protoimpl.MessageInfo, 27)
 var file_catalog_service_v1_sku_proto_goTypes = []any{
 	(*Sku)(nil),                                         // 0: catalog.service.v1.Sku
 	(*ListSkuResponse)(nil),                             // 1: catalog.service.v1.ListSkuResponse
@@ -1885,103 +1952,106 @@ var file_catalog_service_v1_sku_proto_goTypes = []any{
 	(*CreateSkuRequest)(nil),                            // 3: catalog.service.v1.CreateSkuRequest
 	(*UpdateSkuRequest)(nil),                            // 4: catalog.service.v1.UpdateSkuRequest
 	(*DeleteSkuRequest)(nil),                            // 5: catalog.service.v1.DeleteSkuRequest
-	(*BatchCreateSkusRequest)(nil),                      // 6: catalog.service.v1.BatchCreateSkusRequest
-	(*BatchCreateSkusResponse)(nil),                     // 7: catalog.service.v1.BatchCreateSkusResponse
-	(*CountSkuResponse)(nil),                            // 8: catalog.service.v1.CountSkuResponse
-	(*SkuPrice)(nil),                                    // 9: catalog.service.v1.SkuPrice
-	(*ListSkuPriceResponse)(nil),                        // 10: catalog.service.v1.ListSkuPriceResponse
-	(*GetSkuPriceRequest)(nil),                          // 11: catalog.service.v1.GetSkuPriceRequest
-	(*CreateSkuPriceRequest)(nil),                       // 12: catalog.service.v1.CreateSkuPriceRequest
-	(*UpdateSkuPriceRequest)(nil),                       // 13: catalog.service.v1.UpdateSkuPriceRequest
-	(*DeleteSkuPriceRequest)(nil),                       // 14: catalog.service.v1.DeleteSkuPriceRequest
-	(*BatchCreateSkuPricesRequest)(nil),                 // 15: catalog.service.v1.BatchCreateSkuPricesRequest
-	(*BatchCreateSkuPricesResponse)(nil),                // 16: catalog.service.v1.BatchCreateSkuPricesResponse
-	(*SkuAttributeCombination)(nil),                     // 17: catalog.service.v1.SkuAttributeCombination
-	(*ListSkuAttributeCombinationResponse)(nil),         // 18: catalog.service.v1.ListSkuAttributeCombinationResponse
-	(*GetSkuAttributeCombinationRequest)(nil),           // 19: catalog.service.v1.GetSkuAttributeCombinationRequest
-	(*CreateSkuAttributeCombinationRequest)(nil),        // 20: catalog.service.v1.CreateSkuAttributeCombinationRequest
-	(*UpdateSkuAttributeCombinationRequest)(nil),        // 21: catalog.service.v1.UpdateSkuAttributeCombinationRequest
-	(*DeleteSkuAttributeCombinationRequest)(nil),        // 22: catalog.service.v1.DeleteSkuAttributeCombinationRequest
-	(*BatchCreateSkuAttributeCombinationsRequest)(nil),  // 23: catalog.service.v1.BatchCreateSkuAttributeCombinationsRequest
-	(*BatchCreateSkuAttributeCombinationsResponse)(nil), // 24: catalog.service.v1.BatchCreateSkuAttributeCombinationsResponse
-	(*CountSkuAttributeCombinationResponse)(nil),        // 25: catalog.service.v1.CountSkuAttributeCombinationResponse
-	(*timestamppb.Timestamp)(nil),                       // 26: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),                       // 27: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),                            // 28: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                               // 29: google.protobuf.Empty
+	(*AdjustSkuStockRequest)(nil),                       // 6: catalog.service.v1.AdjustSkuStockRequest
+	(*BatchCreateSkusRequest)(nil),                      // 7: catalog.service.v1.BatchCreateSkusRequest
+	(*BatchCreateSkusResponse)(nil),                     // 8: catalog.service.v1.BatchCreateSkusResponse
+	(*CountSkuResponse)(nil),                            // 9: catalog.service.v1.CountSkuResponse
+	(*SkuPrice)(nil),                                    // 10: catalog.service.v1.SkuPrice
+	(*ListSkuPriceResponse)(nil),                        // 11: catalog.service.v1.ListSkuPriceResponse
+	(*GetSkuPriceRequest)(nil),                          // 12: catalog.service.v1.GetSkuPriceRequest
+	(*CreateSkuPriceRequest)(nil),                       // 13: catalog.service.v1.CreateSkuPriceRequest
+	(*UpdateSkuPriceRequest)(nil),                       // 14: catalog.service.v1.UpdateSkuPriceRequest
+	(*DeleteSkuPriceRequest)(nil),                       // 15: catalog.service.v1.DeleteSkuPriceRequest
+	(*BatchCreateSkuPricesRequest)(nil),                 // 16: catalog.service.v1.BatchCreateSkuPricesRequest
+	(*BatchCreateSkuPricesResponse)(nil),                // 17: catalog.service.v1.BatchCreateSkuPricesResponse
+	(*SkuAttributeCombination)(nil),                     // 18: catalog.service.v1.SkuAttributeCombination
+	(*ListSkuAttributeCombinationResponse)(nil),         // 19: catalog.service.v1.ListSkuAttributeCombinationResponse
+	(*GetSkuAttributeCombinationRequest)(nil),           // 20: catalog.service.v1.GetSkuAttributeCombinationRequest
+	(*CreateSkuAttributeCombinationRequest)(nil),        // 21: catalog.service.v1.CreateSkuAttributeCombinationRequest
+	(*UpdateSkuAttributeCombinationRequest)(nil),        // 22: catalog.service.v1.UpdateSkuAttributeCombinationRequest
+	(*DeleteSkuAttributeCombinationRequest)(nil),        // 23: catalog.service.v1.DeleteSkuAttributeCombinationRequest
+	(*BatchCreateSkuAttributeCombinationsRequest)(nil),  // 24: catalog.service.v1.BatchCreateSkuAttributeCombinationsRequest
+	(*BatchCreateSkuAttributeCombinationsResponse)(nil), // 25: catalog.service.v1.BatchCreateSkuAttributeCombinationsResponse
+	(*CountSkuAttributeCombinationResponse)(nil),        // 26: catalog.service.v1.CountSkuAttributeCombinationResponse
+	(*timestamppb.Timestamp)(nil),                       // 27: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),                       // 28: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),                            // 29: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                               // 30: google.protobuf.Empty
 }
 var file_catalog_service_v1_sku_proto_depIdxs = []int32{
-	26, // 0: catalog.service.v1.Sku.created_at:type_name -> google.protobuf.Timestamp
-	26, // 1: catalog.service.v1.Sku.updated_at:type_name -> google.protobuf.Timestamp
-	26, // 2: catalog.service.v1.Sku.deleted_at:type_name -> google.protobuf.Timestamp
+	27, // 0: catalog.service.v1.Sku.created_at:type_name -> google.protobuf.Timestamp
+	27, // 1: catalog.service.v1.Sku.updated_at:type_name -> google.protobuf.Timestamp
+	27, // 2: catalog.service.v1.Sku.deleted_at:type_name -> google.protobuf.Timestamp
 	0,  // 3: catalog.service.v1.ListSkuResponse.items:type_name -> catalog.service.v1.Sku
-	27, // 4: catalog.service.v1.GetSkuRequest.view_mask:type_name -> google.protobuf.FieldMask
+	28, // 4: catalog.service.v1.GetSkuRequest.view_mask:type_name -> google.protobuf.FieldMask
 	0,  // 5: catalog.service.v1.CreateSkuRequest.data:type_name -> catalog.service.v1.Sku
 	0,  // 6: catalog.service.v1.UpdateSkuRequest.data:type_name -> catalog.service.v1.Sku
-	27, // 7: catalog.service.v1.UpdateSkuRequest.update_mask:type_name -> google.protobuf.FieldMask
+	28, // 7: catalog.service.v1.UpdateSkuRequest.update_mask:type_name -> google.protobuf.FieldMask
 	0,  // 8: catalog.service.v1.BatchCreateSkusRequest.items:type_name -> catalog.service.v1.Sku
-	26, // 9: catalog.service.v1.SkuPrice.created_at:type_name -> google.protobuf.Timestamp
-	26, // 10: catalog.service.v1.SkuPrice.updated_at:type_name -> google.protobuf.Timestamp
-	26, // 11: catalog.service.v1.SkuPrice.deleted_at:type_name -> google.protobuf.Timestamp
-	9,  // 12: catalog.service.v1.ListSkuPriceResponse.items:type_name -> catalog.service.v1.SkuPrice
-	27, // 13: catalog.service.v1.GetSkuPriceRequest.view_mask:type_name -> google.protobuf.FieldMask
-	9,  // 14: catalog.service.v1.CreateSkuPriceRequest.data:type_name -> catalog.service.v1.SkuPrice
-	9,  // 15: catalog.service.v1.UpdateSkuPriceRequest.data:type_name -> catalog.service.v1.SkuPrice
-	27, // 16: catalog.service.v1.UpdateSkuPriceRequest.update_mask:type_name -> google.protobuf.FieldMask
-	9,  // 17: catalog.service.v1.BatchCreateSkuPricesRequest.items:type_name -> catalog.service.v1.SkuPrice
-	26, // 18: catalog.service.v1.SkuAttributeCombination.created_at:type_name -> google.protobuf.Timestamp
-	26, // 19: catalog.service.v1.SkuAttributeCombination.updated_at:type_name -> google.protobuf.Timestamp
-	26, // 20: catalog.service.v1.SkuAttributeCombination.deleted_at:type_name -> google.protobuf.Timestamp
-	17, // 21: catalog.service.v1.ListSkuAttributeCombinationResponse.items:type_name -> catalog.service.v1.SkuAttributeCombination
-	27, // 22: catalog.service.v1.GetSkuAttributeCombinationRequest.view_mask:type_name -> google.protobuf.FieldMask
-	17, // 23: catalog.service.v1.CreateSkuAttributeCombinationRequest.data:type_name -> catalog.service.v1.SkuAttributeCombination
-	17, // 24: catalog.service.v1.UpdateSkuAttributeCombinationRequest.data:type_name -> catalog.service.v1.SkuAttributeCombination
-	27, // 25: catalog.service.v1.UpdateSkuAttributeCombinationRequest.update_mask:type_name -> google.protobuf.FieldMask
-	17, // 26: catalog.service.v1.BatchCreateSkuAttributeCombinationsRequest.items:type_name -> catalog.service.v1.SkuAttributeCombination
-	28, // 27: catalog.service.v1.SkuService.List:input_type -> pagination.PagingRequest
-	28, // 28: catalog.service.v1.SkuService.Count:input_type -> pagination.PagingRequest
+	27, // 9: catalog.service.v1.SkuPrice.created_at:type_name -> google.protobuf.Timestamp
+	27, // 10: catalog.service.v1.SkuPrice.updated_at:type_name -> google.protobuf.Timestamp
+	27, // 11: catalog.service.v1.SkuPrice.deleted_at:type_name -> google.protobuf.Timestamp
+	10, // 12: catalog.service.v1.ListSkuPriceResponse.items:type_name -> catalog.service.v1.SkuPrice
+	28, // 13: catalog.service.v1.GetSkuPriceRequest.view_mask:type_name -> google.protobuf.FieldMask
+	10, // 14: catalog.service.v1.CreateSkuPriceRequest.data:type_name -> catalog.service.v1.SkuPrice
+	10, // 15: catalog.service.v1.UpdateSkuPriceRequest.data:type_name -> catalog.service.v1.SkuPrice
+	28, // 16: catalog.service.v1.UpdateSkuPriceRequest.update_mask:type_name -> google.protobuf.FieldMask
+	10, // 17: catalog.service.v1.BatchCreateSkuPricesRequest.items:type_name -> catalog.service.v1.SkuPrice
+	27, // 18: catalog.service.v1.SkuAttributeCombination.created_at:type_name -> google.protobuf.Timestamp
+	27, // 19: catalog.service.v1.SkuAttributeCombination.updated_at:type_name -> google.protobuf.Timestamp
+	27, // 20: catalog.service.v1.SkuAttributeCombination.deleted_at:type_name -> google.protobuf.Timestamp
+	18, // 21: catalog.service.v1.ListSkuAttributeCombinationResponse.items:type_name -> catalog.service.v1.SkuAttributeCombination
+	28, // 22: catalog.service.v1.GetSkuAttributeCombinationRequest.view_mask:type_name -> google.protobuf.FieldMask
+	18, // 23: catalog.service.v1.CreateSkuAttributeCombinationRequest.data:type_name -> catalog.service.v1.SkuAttributeCombination
+	18, // 24: catalog.service.v1.UpdateSkuAttributeCombinationRequest.data:type_name -> catalog.service.v1.SkuAttributeCombination
+	28, // 25: catalog.service.v1.UpdateSkuAttributeCombinationRequest.update_mask:type_name -> google.protobuf.FieldMask
+	18, // 26: catalog.service.v1.BatchCreateSkuAttributeCombinationsRequest.items:type_name -> catalog.service.v1.SkuAttributeCombination
+	29, // 27: catalog.service.v1.SkuService.List:input_type -> pagination.PagingRequest
+	29, // 28: catalog.service.v1.SkuService.Count:input_type -> pagination.PagingRequest
 	2,  // 29: catalog.service.v1.SkuService.Get:input_type -> catalog.service.v1.GetSkuRequest
 	3,  // 30: catalog.service.v1.SkuService.Create:input_type -> catalog.service.v1.CreateSkuRequest
-	6,  // 31: catalog.service.v1.SkuService.BatchCreate:input_type -> catalog.service.v1.BatchCreateSkusRequest
+	7,  // 31: catalog.service.v1.SkuService.BatchCreate:input_type -> catalog.service.v1.BatchCreateSkusRequest
 	4,  // 32: catalog.service.v1.SkuService.Update:input_type -> catalog.service.v1.UpdateSkuRequest
 	5,  // 33: catalog.service.v1.SkuService.Delete:input_type -> catalog.service.v1.DeleteSkuRequest
-	28, // 34: catalog.service.v1.SkuPriceService.List:input_type -> pagination.PagingRequest
-	28, // 35: catalog.service.v1.SkuPriceService.Count:input_type -> pagination.PagingRequest
-	11, // 36: catalog.service.v1.SkuPriceService.Get:input_type -> catalog.service.v1.GetSkuPriceRequest
-	12, // 37: catalog.service.v1.SkuPriceService.Create:input_type -> catalog.service.v1.CreateSkuPriceRequest
-	15, // 38: catalog.service.v1.SkuPriceService.BatchCreate:input_type -> catalog.service.v1.BatchCreateSkuPricesRequest
-	13, // 39: catalog.service.v1.SkuPriceService.Update:input_type -> catalog.service.v1.UpdateSkuPriceRequest
-	14, // 40: catalog.service.v1.SkuPriceService.Delete:input_type -> catalog.service.v1.DeleteSkuPriceRequest
-	28, // 41: catalog.service.v1.SkuAttributeCombinationService.List:input_type -> pagination.PagingRequest
-	28, // 42: catalog.service.v1.SkuAttributeCombinationService.Count:input_type -> pagination.PagingRequest
-	19, // 43: catalog.service.v1.SkuAttributeCombinationService.Get:input_type -> catalog.service.v1.GetSkuAttributeCombinationRequest
-	20, // 44: catalog.service.v1.SkuAttributeCombinationService.Create:input_type -> catalog.service.v1.CreateSkuAttributeCombinationRequest
-	23, // 45: catalog.service.v1.SkuAttributeCombinationService.BatchCreate:input_type -> catalog.service.v1.BatchCreateSkuAttributeCombinationsRequest
-	21, // 46: catalog.service.v1.SkuAttributeCombinationService.Update:input_type -> catalog.service.v1.UpdateSkuAttributeCombinationRequest
-	22, // 47: catalog.service.v1.SkuAttributeCombinationService.Delete:input_type -> catalog.service.v1.DeleteSkuAttributeCombinationRequest
-	1,  // 48: catalog.service.v1.SkuService.List:output_type -> catalog.service.v1.ListSkuResponse
-	8,  // 49: catalog.service.v1.SkuService.Count:output_type -> catalog.service.v1.CountSkuResponse
-	0,  // 50: catalog.service.v1.SkuService.Get:output_type -> catalog.service.v1.Sku
-	29, // 51: catalog.service.v1.SkuService.Create:output_type -> google.protobuf.Empty
-	29, // 52: catalog.service.v1.SkuService.BatchCreate:output_type -> google.protobuf.Empty
-	29, // 53: catalog.service.v1.SkuService.Update:output_type -> google.protobuf.Empty
-	29, // 54: catalog.service.v1.SkuService.Delete:output_type -> google.protobuf.Empty
-	10, // 55: catalog.service.v1.SkuPriceService.List:output_type -> catalog.service.v1.ListSkuPriceResponse
-	8,  // 56: catalog.service.v1.SkuPriceService.Count:output_type -> catalog.service.v1.CountSkuResponse
-	9,  // 57: catalog.service.v1.SkuPriceService.Get:output_type -> catalog.service.v1.SkuPrice
-	29, // 58: catalog.service.v1.SkuPriceService.Create:output_type -> google.protobuf.Empty
-	29, // 59: catalog.service.v1.SkuPriceService.BatchCreate:output_type -> google.protobuf.Empty
-	29, // 60: catalog.service.v1.SkuPriceService.Update:output_type -> google.protobuf.Empty
-	29, // 61: catalog.service.v1.SkuPriceService.Delete:output_type -> google.protobuf.Empty
-	18, // 62: catalog.service.v1.SkuAttributeCombinationService.List:output_type -> catalog.service.v1.ListSkuAttributeCombinationResponse
-	25, // 63: catalog.service.v1.SkuAttributeCombinationService.Count:output_type -> catalog.service.v1.CountSkuAttributeCombinationResponse
-	17, // 64: catalog.service.v1.SkuAttributeCombinationService.Get:output_type -> catalog.service.v1.SkuAttributeCombination
-	29, // 65: catalog.service.v1.SkuAttributeCombinationService.Create:output_type -> google.protobuf.Empty
-	29, // 66: catalog.service.v1.SkuAttributeCombinationService.BatchCreate:output_type -> google.protobuf.Empty
-	29, // 67: catalog.service.v1.SkuAttributeCombinationService.Update:output_type -> google.protobuf.Empty
-	29, // 68: catalog.service.v1.SkuAttributeCombinationService.Delete:output_type -> google.protobuf.Empty
-	48, // [48:69] is the sub-list for method output_type
-	27, // [27:48] is the sub-list for method input_type
+	6,  // 34: catalog.service.v1.SkuService.AdjustStock:input_type -> catalog.service.v1.AdjustSkuStockRequest
+	29, // 35: catalog.service.v1.SkuPriceService.List:input_type -> pagination.PagingRequest
+	29, // 36: catalog.service.v1.SkuPriceService.Count:input_type -> pagination.PagingRequest
+	12, // 37: catalog.service.v1.SkuPriceService.Get:input_type -> catalog.service.v1.GetSkuPriceRequest
+	13, // 38: catalog.service.v1.SkuPriceService.Create:input_type -> catalog.service.v1.CreateSkuPriceRequest
+	16, // 39: catalog.service.v1.SkuPriceService.BatchCreate:input_type -> catalog.service.v1.BatchCreateSkuPricesRequest
+	14, // 40: catalog.service.v1.SkuPriceService.Update:input_type -> catalog.service.v1.UpdateSkuPriceRequest
+	15, // 41: catalog.service.v1.SkuPriceService.Delete:input_type -> catalog.service.v1.DeleteSkuPriceRequest
+	29, // 42: catalog.service.v1.SkuAttributeCombinationService.List:input_type -> pagination.PagingRequest
+	29, // 43: catalog.service.v1.SkuAttributeCombinationService.Count:input_type -> pagination.PagingRequest
+	20, // 44: catalog.service.v1.SkuAttributeCombinationService.Get:input_type -> catalog.service.v1.GetSkuAttributeCombinationRequest
+	21, // 45: catalog.service.v1.SkuAttributeCombinationService.Create:input_type -> catalog.service.v1.CreateSkuAttributeCombinationRequest
+	24, // 46: catalog.service.v1.SkuAttributeCombinationService.BatchCreate:input_type -> catalog.service.v1.BatchCreateSkuAttributeCombinationsRequest
+	22, // 47: catalog.service.v1.SkuAttributeCombinationService.Update:input_type -> catalog.service.v1.UpdateSkuAttributeCombinationRequest
+	23, // 48: catalog.service.v1.SkuAttributeCombinationService.Delete:input_type -> catalog.service.v1.DeleteSkuAttributeCombinationRequest
+	1,  // 49: catalog.service.v1.SkuService.List:output_type -> catalog.service.v1.ListSkuResponse
+	9,  // 50: catalog.service.v1.SkuService.Count:output_type -> catalog.service.v1.CountSkuResponse
+	0,  // 51: catalog.service.v1.SkuService.Get:output_type -> catalog.service.v1.Sku
+	30, // 52: catalog.service.v1.SkuService.Create:output_type -> google.protobuf.Empty
+	30, // 53: catalog.service.v1.SkuService.BatchCreate:output_type -> google.protobuf.Empty
+	30, // 54: catalog.service.v1.SkuService.Update:output_type -> google.protobuf.Empty
+	30, // 55: catalog.service.v1.SkuService.Delete:output_type -> google.protobuf.Empty
+	30, // 56: catalog.service.v1.SkuService.AdjustStock:output_type -> google.protobuf.Empty
+	11, // 57: catalog.service.v1.SkuPriceService.List:output_type -> catalog.service.v1.ListSkuPriceResponse
+	9,  // 58: catalog.service.v1.SkuPriceService.Count:output_type -> catalog.service.v1.CountSkuResponse
+	10, // 59: catalog.service.v1.SkuPriceService.Get:output_type -> catalog.service.v1.SkuPrice
+	30, // 60: catalog.service.v1.SkuPriceService.Create:output_type -> google.protobuf.Empty
+	30, // 61: catalog.service.v1.SkuPriceService.BatchCreate:output_type -> google.protobuf.Empty
+	30, // 62: catalog.service.v1.SkuPriceService.Update:output_type -> google.protobuf.Empty
+	30, // 63: catalog.service.v1.SkuPriceService.Delete:output_type -> google.protobuf.Empty
+	19, // 64: catalog.service.v1.SkuAttributeCombinationService.List:output_type -> catalog.service.v1.ListSkuAttributeCombinationResponse
+	26, // 65: catalog.service.v1.SkuAttributeCombinationService.Count:output_type -> catalog.service.v1.CountSkuAttributeCombinationResponse
+	18, // 66: catalog.service.v1.SkuAttributeCombinationService.Get:output_type -> catalog.service.v1.SkuAttributeCombination
+	30, // 67: catalog.service.v1.SkuAttributeCombinationService.Create:output_type -> google.protobuf.Empty
+	30, // 68: catalog.service.v1.SkuAttributeCombinationService.BatchCreate:output_type -> google.protobuf.Empty
+	30, // 69: catalog.service.v1.SkuAttributeCombinationService.Update:output_type -> google.protobuf.Empty
+	30, // 70: catalog.service.v1.SkuAttributeCombinationService.Delete:output_type -> google.protobuf.Empty
+	49, // [49:71] is the sub-list for method output_type
+	27, // [27:49] is the sub-list for method input_type
 	27, // [27:27] is the sub-list for extension type_name
 	27, // [27:27] is the sub-list for extension extendee
 	0,  // [0:27] is the sub-list for field type_name
@@ -2001,20 +2071,21 @@ func file_catalog_service_v1_sku_proto_init() {
 	file_catalog_service_v1_sku_proto_msgTypes[5].OneofWrappers = []any{
 		(*DeleteSkuRequest_Id)(nil),
 	}
-	file_catalog_service_v1_sku_proto_msgTypes[9].OneofWrappers = []any{}
-	file_catalog_service_v1_sku_proto_msgTypes[11].OneofWrappers = []any{
+	file_catalog_service_v1_sku_proto_msgTypes[6].OneofWrappers = []any{}
+	file_catalog_service_v1_sku_proto_msgTypes[10].OneofWrappers = []any{}
+	file_catalog_service_v1_sku_proto_msgTypes[12].OneofWrappers = []any{
 		(*GetSkuPriceRequest_Id)(nil),
 	}
-	file_catalog_service_v1_sku_proto_msgTypes[13].OneofWrappers = []any{}
-	file_catalog_service_v1_sku_proto_msgTypes[14].OneofWrappers = []any{
+	file_catalog_service_v1_sku_proto_msgTypes[14].OneofWrappers = []any{}
+	file_catalog_service_v1_sku_proto_msgTypes[15].OneofWrappers = []any{
 		(*DeleteSkuPriceRequest_Id)(nil),
 	}
-	file_catalog_service_v1_sku_proto_msgTypes[17].OneofWrappers = []any{}
-	file_catalog_service_v1_sku_proto_msgTypes[19].OneofWrappers = []any{
+	file_catalog_service_v1_sku_proto_msgTypes[18].OneofWrappers = []any{}
+	file_catalog_service_v1_sku_proto_msgTypes[20].OneofWrappers = []any{
 		(*GetSkuAttributeCombinationRequest_Id)(nil),
 	}
-	file_catalog_service_v1_sku_proto_msgTypes[21].OneofWrappers = []any{}
-	file_catalog_service_v1_sku_proto_msgTypes[22].OneofWrappers = []any{
+	file_catalog_service_v1_sku_proto_msgTypes[22].OneofWrappers = []any{}
+	file_catalog_service_v1_sku_proto_msgTypes[23].OneofWrappers = []any{
 		(*DeleteSkuAttributeCombinationRequest_Id)(nil),
 	}
 	type x struct{}
@@ -2023,7 +2094,7 @@ func file_catalog_service_v1_sku_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_catalog_service_v1_sku_proto_rawDesc), len(file_catalog_service_v1_sku_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   26,
+			NumMessages:   27,
 			NumExtensions: 0,
 			NumServices:   3,
 		},

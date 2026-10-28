@@ -96,3 +96,8 @@ func (s *SkuService) Update(ctx context.Context, req *catalogV1.UpdateSkuRequest
 func (s *SkuService) Delete(ctx context.Context, req *catalogV1.DeleteSkuRequest) (*emptypb.Empty, error) {
 	return s.skuServiceClient.Delete(ctx, req)
 }
+
+// AdjustStock 手动调整库存（事务/流水由 core 处理）。
+func (s *SkuService) AdjustStock(ctx context.Context, req *catalogV1.AdjustSkuStockRequest) (*emptypb.Empty, error) {
+	return s.skuServiceClient.AdjustStock(ctx, req)
+}

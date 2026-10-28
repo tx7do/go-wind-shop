@@ -487,6 +487,15 @@ func NewPromotionServiceClient(ctx *bootstrap.Context, r registry.Discovery) cat
 	return catalogV1.NewPromotionServiceClient(cli)
 }
 
+func NewStockOpLogServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.StockOpLogServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return catalogV1.NewStockOpLogServiceClient(cli)
+}
+
 func NewUserCouponServiceClient(ctx *bootstrap.Context, r registry.Discovery) couponV1.UserCouponServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

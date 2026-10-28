@@ -347,5 +347,34 @@
       "create": "新建促销活动",
       "update": "编辑促销活动"
     }
+  },
+  "stockOpLog": {
+    "alert": "库存操作流水为 append-only 审计记录：下单扣减、取消/退款回补、手动调整均在此留痕，仅供查询。",
+    "skuId": "SKU ID",
+    "productId": "商品 ID",
+    "delta": "变动量",
+    "stockBefore": "变动前",
+    "stockAfter": "变动后",
+    "reason": "原因",
+    "reasonLabel": {
+      "ORDER_DEDUCT": "下单扣减",
+      "CANCEL_RESTORE": "取消回补",
+      "REFUND_RESTORE": "退款回补",
+      "MANUAL_ADJUST": "手动调整"
+    },
+    "refId": "关联单据",
+    "remark": "备注",
+    "createdBy": "操作人",
+    "createdAt": "操作时间"
+  },
+  "stockAdjust": {
+    "title": "调整库存",
+    "button": "调库存",
+    "skuId": "SKU ID",
+    "currentStock": "当前库存",
+    "delta": "变动量",
+    "deltaTip": "正数入库、负数出库；服务端行锁校验后库存不足将拒绝",
+    "deltaZero": "变动量不能为 0",
+    "remark": "备注"
   }
 }

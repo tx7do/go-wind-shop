@@ -249,6 +249,9 @@ type SkuPrice func(*sql.Selector)
 // StockAlert is the predicate function for stockalert builders.
 type StockAlert func(*sql.Selector)
 
+// StockOpLog is the predicate function for stockoplog builders.
+type StockOpLog func(*sql.Selector)
+
 // SysConfig is the predicate function for sysconfig builders.
 type SysConfig func(*sql.Selector)
 

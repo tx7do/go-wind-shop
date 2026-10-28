@@ -92,6 +92,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 	"go-wind-shop/app/core/service/internal/data/ent/stockalert"
+	"go-wind-shop/app/core/service/internal/data/ent/stockoplog"
 	"go-wind-shop/app/core/service/internal/data/ent/sysconfig"
 	"go-wind-shop/app/core/service/internal/data/ent/task"
 	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
@@ -278,6 +279,8 @@ type Client struct {
 	SkuPrice *SkuPriceClient
 	// StockAlert is the client for interacting with the StockAlert builders.
 	StockAlert *StockAlertClient
+	// StockOpLog is the client for interacting with the StockOpLog builders.
+	StockOpLog *StockOpLogClient
 	// SysConfig is the client for interacting with the SysConfig builders.
 	SysConfig *SysConfigClient
 	// Task is the client for interacting with the Task builders.
@@ -394,6 +397,7 @@ func (c *Client) init() {
 	c.SkuAttributeCombination = NewSkuAttributeCombinationClient(c.config)
 	c.SkuPrice = NewSkuPriceClient(c.config)
 	c.StockAlert = NewStockAlertClient(c.config)
+	c.StockOpLog = NewStockOpLogClient(c.config)
 	c.SysConfig = NewSysConfigClient(c.config)
 	c.Task = NewTaskClient(c.config)
 	c.TaxRate = NewTaxRateClient(c.config)
@@ -579,6 +583,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		SkuAttributeCombination:          NewSkuAttributeCombinationClient(cfg),
 		SkuPrice:                         NewSkuPriceClient(cfg),
 		StockAlert:                       NewStockAlertClient(cfg),
+		StockOpLog:                       NewStockOpLogClient(cfg),
 		SysConfig:                        NewSysConfigClient(cfg),
 		Task:                             NewTaskClient(cfg),
 		TaxRate:                          NewTaxRateClient(cfg),
@@ -691,6 +696,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		SkuAttributeCombination:          NewSkuAttributeCombinationClient(cfg),
 		SkuPrice:                         NewSkuPriceClient(cfg),
 		StockAlert:                       NewStockAlertClient(cfg),
+		StockOpLog:                       NewStockOpLogClient(cfg),
 		SysConfig:                        NewSysConfigClient(cfg),
 		Task:                             NewTaskClient(cfg),
 		TaxRate:                          NewTaxRateClient(cfg),
@@ -750,9 +756,9 @@ func (c *Client) Use(hooks ...Hook) {
 		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
 		c.ProductTranslation, c.Promotion, c.Role, c.RoleMetadata, c.RolePermission,
 		c.Script, c.ScriptLog, c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
-		c.SkuAttributeCombination, c.SkuPrice, c.StockAlert, c.SysConfig, c.Task,
-		c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential, c.UserMfaFactor,
-		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
+		c.SkuAttributeCombination, c.SkuPrice, c.StockAlert, c.StockOpLog, c.SysConfig,
+		c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential,
+		c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
 	} {
 		n.Use(hooks...)
 	}
@@ -780,9 +786,9 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
 		c.ProductTranslation, c.Promotion, c.Role, c.RoleMetadata, c.RolePermission,
 		c.Script, c.ScriptLog, c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
-		c.SkuAttributeCombination, c.SkuPrice, c.StockAlert, c.SysConfig, c.Task,
-		c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential, c.UserMfaFactor,
-		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
+		c.SkuAttributeCombination, c.SkuPrice, c.StockAlert, c.StockOpLog, c.SysConfig,
+		c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential,
+		c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -953,6 +959,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.SkuPrice.mutate(ctx, m)
 	case *StockAlertMutation:
 		return c.StockAlert.mutate(ctx, m)
+	case *StockOpLogMutation:
+		return c.StockOpLog.mutate(ctx, m)
 	case *SysConfigMutation:
 		return c.SysConfig.mutate(ctx, m)
 	case *TaskMutation:
@@ -12202,6 +12210,139 @@ func (c *StockAlertClient) mutate(ctx context.Context, m *StockAlertMutation) (V
 	}
 }
 
+// StockOpLogClient is a client for the StockOpLog schema.
+type StockOpLogClient struct {
+	config
+}
+
+// NewStockOpLogClient returns a client for the StockOpLog from the given config.
+func NewStockOpLogClient(c config) *StockOpLogClient {
+	return &StockOpLogClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `stockoplog.Hooks(f(g(h())))`.
+func (c *StockOpLogClient) Use(hooks ...Hook) {
+	c.hooks.StockOpLog = append(c.hooks.StockOpLog, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `stockoplog.Intercept(f(g(h())))`.
+func (c *StockOpLogClient) Intercept(interceptors ...Interceptor) {
+	c.inters.StockOpLog = append(c.inters.StockOpLog, interceptors...)
+}
+
+// Create returns a builder for creating a StockOpLog entity.
+func (c *StockOpLogClient) Create() *StockOpLogCreate {
+	mutation := newStockOpLogMutation(c.config, OpCreate)
+	return &StockOpLogCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of StockOpLog entities.
+func (c *StockOpLogClient) CreateBulk(builders ...*StockOpLogCreate) *StockOpLogCreateBulk {
+	return &StockOpLogCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *StockOpLogClient) MapCreateBulk(slice any, setFunc func(*StockOpLogCreate, int)) *StockOpLogCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &StockOpLogCreateBulk{err: fmt.Errorf("calling to StockOpLogClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*StockOpLogCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &StockOpLogCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for StockOpLog.
+func (c *StockOpLogClient) Update() *StockOpLogUpdate {
+	mutation := newStockOpLogMutation(c.config, OpUpdate)
+	return &StockOpLogUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *StockOpLogClient) UpdateOne(_m *StockOpLog) *StockOpLogUpdateOne {
+	mutation := newStockOpLogMutation(c.config, OpUpdateOne, withStockOpLog(_m))
+	return &StockOpLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *StockOpLogClient) UpdateOneID(id uint32) *StockOpLogUpdateOne {
+	mutation := newStockOpLogMutation(c.config, OpUpdateOne, withStockOpLogID(id))
+	return &StockOpLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for StockOpLog.
+func (c *StockOpLogClient) Delete() *StockOpLogDelete {
+	mutation := newStockOpLogMutation(c.config, OpDelete)
+	return &StockOpLogDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *StockOpLogClient) DeleteOne(_m *StockOpLog) *StockOpLogDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *StockOpLogClient) DeleteOneID(id uint32) *StockOpLogDeleteOne {
+	builder := c.Delete().Where(stockoplog.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &StockOpLogDeleteOne{builder}
+}
+
+// Query returns a query builder for StockOpLog.
+func (c *StockOpLogClient) Query() *StockOpLogQuery {
+	return &StockOpLogQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeStockOpLog},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a StockOpLog entity by its id.
+func (c *StockOpLogClient) Get(ctx context.Context, id uint32) (*StockOpLog, error) {
+	return c.Query().Where(stockoplog.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *StockOpLogClient) GetX(ctx context.Context, id uint32) *StockOpLog {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *StockOpLogClient) Hooks() []Hook {
+	return c.hooks.StockOpLog
+}
+
+// Interceptors returns the client interceptors.
+func (c *StockOpLogClient) Interceptors() []Interceptor {
+	return c.inters.StockOpLog
+}
+
+func (c *StockOpLogClient) mutate(ctx context.Context, m *StockOpLogMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&StockOpLogCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&StockOpLogUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&StockOpLogUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&StockOpLogDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown StockOpLog mutation op: %q", m.Op())
+	}
+}
+
 // SysConfigClient is a client for the SysConfig schema.
 type SysConfigClient struct {
 	config
@@ -13843,9 +13984,9 @@ type (
 		ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Promotion, Role,
 		RoleMetadata, RolePermission, Script, ScriptLog, Shipment, ShippingAddress,
-		ShippingRate, Sku, SkuAttributeCombination, SkuPrice, StockAlert, SysConfig,
-		Task, TaxRate, Tenant, User, UserCoupon, UserCredential, UserMfaFactor,
-		UserOrgUnit, UserPosition, UserRole, Wishlist []ent.Hook
+		ShippingRate, Sku, SkuAttributeCombination, SkuPrice, StockAlert, StockOpLog,
+		SysConfig, Task, TaxRate, Tenant, User, UserCoupon, UserCredential,
+		UserMfaFactor, UserOrgUnit, UserPosition, UserRole, Wishlist []ent.Hook
 	}
 	inters struct {
 		AccessKey, AiAgentApp, AiAgentRun, AiChunk, AiConversation, AiDoc,
@@ -13864,8 +14005,8 @@ type (
 		ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Promotion, Role,
 		RoleMetadata, RolePermission, Script, ScriptLog, Shipment, ShippingAddress,
-		ShippingRate, Sku, SkuAttributeCombination, SkuPrice, StockAlert, SysConfig,
-		Task, TaxRate, Tenant, User, UserCoupon, UserCredential, UserMfaFactor,
-		UserOrgUnit, UserPosition, UserRole, Wishlist []ent.Interceptor
+		ShippingRate, Sku, SkuAttributeCombination, SkuPrice, StockAlert, StockOpLog,
+		SysConfig, Task, TaxRate, Tenant, User, UserCoupon, UserCredential,
+		UserMfaFactor, UserOrgUnit, UserPosition, UserRole, Wishlist []ent.Interceptor
 	}
 )

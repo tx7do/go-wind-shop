@@ -98,6 +98,7 @@
     "invoice": "Invoice",
     "lowStock": "Low-Stock Management",
     "stockAlert": "Stock Alert Management",
-    "promotion": "Promotion Management"
+    "promotion": "Promotion Management",
+    "stockOpLog": "Stock Op Logs"
   }
 }

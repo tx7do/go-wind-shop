@@ -87,6 +87,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/skuattributecombination"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 	"go-wind-shop/app/core/service/internal/data/ent/stockalert"
+	"go-wind-shop/app/core/service/internal/data/ent/stockoplog"
 	"go-wind-shop/app/core/service/internal/data/ent/sysconfig"
 	"go-wind-shop/app/core/service/internal/data/ent/task"
 	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
@@ -246,6 +247,7 @@ func checkColumn(t, c string) error {
 			skuattributecombination.Table:          skuattributecombination.ValidColumn,
 			skuprice.Table:                         skuprice.ValidColumn,
 			stockalert.Table:                       stockalert.ValidColumn,
+			stockoplog.Table:                       stockoplog.ValidColumn,
 			sysconfig.Table:                        sysconfig.ValidColumn,
 			task.Table:                             task.ValidColumn,
 			taxrate.Table:                          taxrate.ValidColumn,

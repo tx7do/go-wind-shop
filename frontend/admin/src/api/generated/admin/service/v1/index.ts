@@ -16424,6 +16424,10 @@ export interface SkuService {
   Delete(
     request: catalogservicev1_DeleteSkuRequest,
   ): Promise<wellKnownEmpty>;
+  // 手动调整库存（事务内行锁改写 + 追加操作流水）
+  AdjustStock(
+    request: catalogservicev1_AdjustSkuStockRequest,
+  ): Promise<wellKnownEmpty>;
 }
 
 export function createSkuServiceClient(
@@ -16639,6 +16643,19 @@ export function createSkuServiceClient(
         method: 'Delete',
       }) as Promise<wellKnownEmpty>;
     },
+    AdjustStock(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/skus/${request.id}:adjust-stock`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'POST', body, {
+        service: 'SkuService',
+        method: 'AdjustStock',
+      }) as Promise<wellKnownEmpty>;
+    },
   };
 }
 export type catalogservicev1_ListSkuResponse = {
@@ -16686,6 +16703,13 @@ export type catalogservicev1_UpdateSkuRequest = {
 
 export type catalogservicev1_DeleteSkuRequest = {
   id?: number;
+};
+
+// 手动调整库存 - 请求
+export type catalogservicev1_AdjustSkuStockRequest = {
+  delta: number | undefined;
+  id: number | undefined;
+  remark?: string;
 };
 
 // SKU 价格管理服务
@@ -17414,6 +17438,218 @@ export type catalogservicev1_UpdateStockAlertRequest = {
   data: catalogservicev1_StockAlert | undefined;
   id: number | undefined;
   updateMask: undefined | wellKnownFieldMask;
+};
+
+// 库存操作流水查询服务（admin 只读，append-only 审计）
+export interface StockOpLogService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_ListStockOpLogResponse>;
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_CountStockOpLogResponse>;
+  Get(
+    request: catalogservicev1_GetStockOpLogRequest,
+  ): Promise<catalogservicev1_StockOpLog>;
+}
+
+export function createStockOpLogServiceClient(
+  transport: ClientTransport,
+): StockOpLogService {
+  return {
+    List(request) {
+      const path = `/admin/v1/mall/stock-op-logs`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'StockOpLogService',
+        method: 'List',
+      }) as Promise<catalogservicev1_ListStockOpLogResponse>;
+    },
+    Count(request) {
+      const path = `/admin/v1/mall/stock-op-logs/count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'StockOpLogService',
+        method: 'Count',
+      }) as Promise<catalogservicev1_CountStockOpLogResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/stock-op-logs/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'StockOpLogService',
+        method: 'Get',
+      }) as Promise<catalogservicev1_StockOpLog>;
+    },
+  };
+}
+export type catalogservicev1_ListStockOpLogResponse = {
+  items: catalogservicev1_StockOpLog[] | undefined;
+  total: number | undefined;
+};
+
+// 库存操作流水
+export type catalogservicev1_StockOpLog = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  delta?: number;
+  id?: number;
+  productId?: number;
+  reason?: catalogservicev1_StockOpLog_Reason;
+  refId?: number;
+  remark?: string;
+  skuId?: number;
+  stockAfter?: number;
+  stockBefore?: number;
+};
+
+// 变动原因
+export type catalogservicev1_StockOpLog_Reason =
+  | 'CANCEL_RESTORE'
+  | 'MANUAL_ADJUST'
+  | 'ORDER_DEDUCT'
+  | 'REASON_UNSPECIFIED'
+  | 'REFUND_RESTORE';
+export type catalogservicev1_CountStockOpLogResponse = {
+  count: number | undefined;
+};
+
+export type catalogservicev1_GetStockOpLogRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
 };
 
 // 调度任务管理服务
@@ -19046,6 +19282,7 @@ export class ApiClient {
   private _skuPriceService?: SkuPriceService;
   private _skuService?: SkuService;
   private _stockAlertService?: StockAlertService;
+  private _stockOpLogService?: StockOpLogService;
   private _taskService?: TaskService;
   private _taxRateService?: TaxRateService;
   private _tenantService?: TenantService;
@@ -19344,6 +19581,10 @@ export class ApiClient {
 
   get stockAlertService(): StockAlertService {
     return this._stockAlertService ??= createStockAlertServiceClient(this._transport);
+  }
+
+  get stockOpLogService(): StockOpLogService {
+    return this._stockOpLogService ??= createStockOpLogServiceClient(this._transport);
   }
 
   get taskService(): TaskService {

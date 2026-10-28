@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+package catalog.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 库存操作流水服务（append-only 审计）
+//
+// 每次库存变更（下单扣减/取消回补/退款回补/手动调整）追加一条流水，
+// 记录变动前后值与原因。只读：不提供 Update/Delete。
+service StockOpLogService {
+  rpc List (pagination.PagingRequest) returns (ListStockOpLogResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountStockOpLogResponse) {}
+  rpc Get (GetStockOpLogRequest) returns (StockOpLog) {}
+}
+
+// 库存操作流水
+message StockOpLog {
+  // 变动原因
+  enum Reason {
+    REASON_UNSPECIFIED = 0;
+    ORDER_DEDUCT = 1;     // 下单扣减
+    CANCEL_RESTORE = 2;   // 订单取消回补（超时/买家取消）
+    REFUND_RESTORE = 3;   // 退款回补
+    MANUAL_ADJUST = 4;    // 手动调整（admin）
+  }
+
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "流水ID"}];
+
+  optional uint32 sku_id = 2 [
+    json_name = "skuId",
+    (gnostic.openapi.v3.property) = {description: "SKU ID"}
+  ];
+
+  optional uint32 product_id = 3 [
+    json_name = "productId",
+    (gnostic.openapi.v3.property) = {description: "所属商品ID（冗余）"}
+  ];
+
+  optional int32 delta = 4 [
+    json_name = "delta",
+    (gnostic.openapi.v3.property) = {description: "变动量（正=回补，负=扣减）"}
+  ];
+
+  optional int32 stock_before = 5 [
+    json_name = "stockBefore",
+    (gnostic.openapi.v3.property) = {description: "变动前库存"}
+  ];
+
+  optional int32 stock_after = 6 [
+    json_name = "stockAfter",
+    (gnostic.openapi.v3.property) = {description: "变动后库存"}
+  ];
+
+  optional Reason reason = 7 [
+    json_name = "reason",
+    (gnostic.openapi.v3.property) = {description: "变动原因"}
+  ];
+
+  optional uint32 ref_id = 8 [
+    json_name = "refId",
+    (gnostic.openapi.v3.property) = {description: "关联业务ID（订单ID等；手动调整为 0）"}
+  ];
+
+  optional string remark = 9 [
+    json_name = "remark",
+    (gnostic.openapi.v3.property) = {description: "备注"}
+  ];
+
+  // ===== 以下是 infra mixin 注入字段（高编号） =====
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "操作者用户ID（0=系统）"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "操作时间"}];
+}
+
+message ListStockOpLogResponse { repeated StockOpLog items = 1; uint64 total = 2; }
+message CountStockOpLogResponse { uint64 count = 1; }
+
+message GetStockOpLogRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}
+  ];
+}

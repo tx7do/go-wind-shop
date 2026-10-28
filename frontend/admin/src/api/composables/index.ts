@@ -108,3 +108,5 @@ export * from "./script";
 export * from "./plan";
 export * from "./mfa";
 export * from "./promotion";
+export * from "./sku-stock";
+export * from "./stock-op-log";

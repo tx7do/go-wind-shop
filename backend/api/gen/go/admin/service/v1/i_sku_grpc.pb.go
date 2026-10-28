@@ -29,6 +29,7 @@ const (
 	SkuService_BatchCreate_FullMethodName = "/admin.service.v1.SkuService/BatchCreate"
 	SkuService_Update_FullMethodName      = "/admin.service.v1.SkuService/Update"
 	SkuService_Delete_FullMethodName      = "/admin.service.v1.SkuService/Delete"
+	SkuService_AdjustStock_FullMethodName = "/admin.service.v1.SkuService/AdjustStock"
 )
 
 // SkuServiceClient is the client API for SkuService service.
@@ -51,6 +52,8 @@ type SkuServiceClient interface {
 	Update(ctx context.Context, in *v11.UpdateSkuRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 删除 SKU
 	Delete(ctx context.Context, in *v11.DeleteSkuRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 手动调整库存（事务内行锁改写 + 追加操作流水）
+	AdjustStock(ctx context.Context, in *v11.AdjustSkuStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type skuServiceClient struct {
@@ -131,6 +134,16 @@ func (c *skuServiceClient) Delete(ctx context.Context, in *v11.DeleteSkuRequest,
 	return out, nil
 }
 
+func (c *skuServiceClient) AdjustStock(ctx context.Context, in *v11.AdjustSkuStockRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, SkuService_AdjustStock_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SkuServiceServer is the server API for SkuService service.
 // All implementations must embed UnimplementedSkuServiceServer
 // for forward compatibility.
@@ -151,6 +164,8 @@ type SkuServiceServer interface {
 	Update(context.Context, *v11.UpdateSkuRequest) (*emptypb.Empty, error)
 	// 删除 SKU
 	Delete(context.Context, *v11.DeleteSkuRequest) (*emptypb.Empty, error)
+	// 手动调整库存（事务内行锁改写 + 追加操作流水）
+	AdjustStock(context.Context, *v11.AdjustSkuStockRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedSkuServiceServer()
 }
 
@@ -181,6 +196,9 @@ func (UnimplementedSkuServiceServer) Update(context.Context, *v11.UpdateSkuReque
 }
 func (UnimplementedSkuServiceServer) Delete(context.Context, *v11.DeleteSkuRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedSkuServiceServer) AdjustStock(context.Context, *v11.AdjustSkuStockRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdjustStock not implemented")
 }
 func (UnimplementedSkuServiceServer) mustEmbedUnimplementedSkuServiceServer() {}
 func (UnimplementedSkuServiceServer) testEmbeddedByValue()                    {}
@@ -329,6 +347,24 @@ func _SkuService_Delete_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SkuService_AdjustStock_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.AdjustSkuStockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SkuServiceServer).AdjustStock(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SkuService_AdjustStock_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SkuServiceServer).AdjustStock(ctx, req.(*v11.AdjustSkuStockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // SkuService_ServiceDesc is the grpc.ServiceDesc for SkuService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -363,6 +399,10 @@ var SkuService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _SkuService_Delete_Handler,
+		},
+		{
+			MethodName: "AdjustStock",
+			Handler:    _SkuService_AdjustStock_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

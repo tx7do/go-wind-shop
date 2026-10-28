@@ -23,6 +23,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/orderitem"
 	"go-wind-shop/app/core/service/internal/data/ent/paymenttransaction"
 	"go-wind-shop/app/core/service/internal/data/ent/sku"
+	"go-wind-shop/app/core/service/internal/data/ent/stockoplog"
 	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingrate"
 	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
@@ -395,7 +396,7 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 			return nil, err
 		}
 
-		// 2d. 扣减 SKU 库存（行锁内）。
+		// 2d. 扣减 SKU 库存（行锁内）+ 追加库存操作流水（同事务原子落账）。
 		newStock := *skuEnt.StockQty - qty
 		if uErr := tx.Sku.UpdateOneID(*skuId).
 			SetStockQty(newStock).
@@ -403,6 +404,24 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 			s.log.Errorf("deduct sku [%d] stock failed: %v", *skuId, uErr)
 			err = orderV1.ErrorInternalServerError("create order failed")
 			return nil, err
+		}
+		var skuProductId uint32
+		if skuEnt.ProductID != nil {
+			skuProductId = *skuEnt.ProductID
+		}
+		logOp, _ := viewerUserIDFromContext(ctx)
+		if lErr := tx.StockOpLog.Create().
+			SetNillableSkuID(skuId).
+			SetNillableProductID(&skuProductId).
+			SetDelta(int32(-qty)).
+			SetNillableStockBefore(skuEnt.StockQty).
+			SetNillableStockAfter(&newStock).
+			SetReason(stockoplog.ReasonStockOpReasonOrderDeduct).
+			SetNillableRefID(&orderId).
+			SetNillableCreatedBy(&logOp).
+			SetCreatedAt(time.Now()).
+			Exec(ctx); lErr != nil {
+			s.log.Errorf("insert stock op log for sku [%d] deduct failed: %v", *skuId, lErr)
 		}
 	}
 
@@ -651,13 +670,44 @@ func (s *OrderService) ExpireOrderByTimeout(ctx context.Context, req *orderV1.Ex
 		if qty == nil || *qty <= 0 {
 			continue
 		}
-		// 释放库存（事务内）。
+		// 释放库存（事务内，行锁读改写以取前后值）+ 追加库存操作流水。
+		skuEnt, sErr := tx.Sku.Query().
+			Where(sku.IDEQ(*skuId)).
+			ForUpdate().
+			Only(ctx)
+		if sErr != nil || skuEnt == nil {
+			_ = tx.Rollback()
+			return nil, fmt.Errorf("lock sku [%d] for release failed: %w", *skuId, sErr)
+		}
+		before := int32(0)
+		if skuEnt.StockQty != nil {
+			before = *skuEnt.StockQty
+		}
+		after := before + *qty
 		if rErr := tx.Sku.UpdateOneID(*skuId).
-			AddStockQty(*qty).
+			SetStockQty(after).
 			Exec(ctx); rErr != nil {
 			s.log.Errorf("release stock for sku [%d] during order [%d] expire failed: %v", *skuId, orderId, rErr)
 			_ = tx.Rollback()
 			return nil, fmt.Errorf("release stock for sku [%d] failed: %w", *skuId, rErr)
+		}
+		var skuProductId uint32
+		if skuEnt.ProductID != nil {
+			skuProductId = *skuEnt.ProductID
+		}
+		sysOp := uint32(0)
+		if lErr := tx.StockOpLog.Create().
+			SetNillableSkuID(skuId).
+			SetNillableProductID(&skuProductId).
+			SetNillableDelta(qty).
+			SetNillableStockBefore(&before).
+			SetNillableStockAfter(&after).
+			SetReason(stockoplog.ReasonStockOpReasonCancelRestore).
+			SetNillableRefID(&orderId).
+			SetNillableCreatedBy(&sysOp).
+			SetCreatedAt(time.Now()).
+			Exec(ctx); lErr != nil {
+			s.log.Errorf("insert stock op log for sku [%d] cancel-restore failed: %v", *skuId, lErr)
 		}
 	}
 
@@ -925,13 +975,44 @@ func (s *OrderService) RestoreStockForRefund(ctx context.Context, orderId uint32
 		if qty == nil || *qty <= 0 {
 			continue
 		}
-		// 回补库存（事务内）。
+		// 回补库存（事务内，行锁读改写以取前后值）+ 追加库存操作流水。
+		skuEnt, sErr := tx.Sku.Query().
+			Where(sku.IDEQ(*skuId)).
+			ForUpdate().
+			Only(ctx)
+		if sErr != nil || skuEnt == nil {
+			err = sErr
+			return fmt.Errorf("lock sku [%d] for restore failed: %w", *skuId, sErr)
+		}
+		before := int32(0)
+		if skuEnt.StockQty != nil {
+			before = *skuEnt.StockQty
+		}
+		after := before + *qty
 		if rErr := tx.Sku.UpdateOneID(*skuId).
-			AddStockQty(*qty).
+			SetStockQty(after).
 			Exec(ctx); rErr != nil {
 			s.log.Errorf("restore stock for sku [%d] during refund of order [%d] failed: %v", *skuId, orderId, rErr)
 			err = rErr
 			return fmt.Errorf("restore stock for sku [%d] failed: %w", *skuId, rErr)
+		}
+		var skuProductId uint32
+		if skuEnt.ProductID != nil {
+			skuProductId = *skuEnt.ProductID
+		}
+		sysOp := uint32(0)
+		if lErr := tx.StockOpLog.Create().
+			SetNillableSkuID(skuId).
+			SetNillableProductID(&skuProductId).
+			SetNillableDelta(qty).
+			SetNillableStockBefore(&before).
+			SetNillableStockAfter(&after).
+			SetReason(stockoplog.ReasonStockOpReasonRefundRestore).
+			SetNillableRefID(&orderId).
+			SetNillableCreatedBy(&sysOp).
+			SetCreatedAt(time.Now()).
+			Exec(ctx); lErr != nil {
+			s.log.Errorf("insert stock op log for sku [%d] refund-restore failed: %v", *skuId, lErr)
 		}
 	}
 

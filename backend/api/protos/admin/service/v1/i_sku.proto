@@ -61,6 +61,14 @@ service SkuService {
       delete: "/admin/v1/mall/skus"
     };
   }
+
+  // 手动调整库存（事务内行锁改写 + 追加操作流水）
+  rpc AdjustStock (catalog.service.v1.AdjustSkuStockRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/skus/{id}:adjust-stock"
+      body: "*"
+    };
+  }
 }
 
 // SKU 价格管理服务

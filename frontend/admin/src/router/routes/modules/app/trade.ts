@@ -169,6 +169,17 @@ const trade: RouteRecordRaw[] = [
         },
         component: () => import("@/pages/app/trade/promotion/index.vue"),
       },
+      {
+        path: "stock-op-logs",
+        name: "TradeStockOpLogManagement",
+        meta: {
+          order: 15,
+          icon: "lucide:scroll-text",
+          title: "routes.trade.stockOpLog",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/stock-op-log/index.vue"),
+      },
     ],
   },
 ];
