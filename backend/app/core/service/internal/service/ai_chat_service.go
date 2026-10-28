@@ -3,6 +3,7 @@ package service
 import (
 	"go-wind-shop/pkg/logx"
 	"context"
+	"database/sql"
 	"fmt"
 	"strings"
 	"time"
@@ -19,6 +20,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/aimessage"
 	entmw "go-wind-shop/pkg/middleware/ent"
+	"go-wind-shop/pkg/constants"
 )
 
 const (
@@ -30,6 +32,12 @@ const (
 
 	// chatCallTimeout 单轮流式对话的兜底时长：覆盖整轮（历史拼装 + 模型生成 + 落库）。
 	chatCallTimeout = 5 * time.Minute
+
+	// generateCallTimeout Generate 单次非流式调用的兜底时长。
+	generateCallTimeout = 90 * time.Second
+
+	// channelApp C端导购渠道标识（BFF 注入 req.Channel；其余值按 admin 处理）。
+	channelApp = "app"
 )
 
 // AiChatService AI 对话：core 侧 server-streaming——逐帧吐 chunk/tool，
@@ -42,6 +50,7 @@ type AiChatService struct {
 	providerRepo     *data.AiProviderRepo
 	usageLogRepo     *data.AiUsageLogRepo
 	knowledgeRepo    *data.AiKnowledgeRepo
+	configRepo       *data.ConfigRepo
 	entClient        *entCrud.EntClient[*ent.Client]
 }
 
@@ -52,6 +61,7 @@ func NewAiChatService(
 	providerRepo *data.AiProviderRepo,
 	usageLogRepo *data.AiUsageLogRepo,
 	knowledgeRepo *data.AiKnowledgeRepo,
+	configRepo *data.ConfigRepo,
 	entClient *entCrud.EntClient[*ent.Client],
 ) *AiChatService {
 	return &AiChatService{
@@ -61,6 +71,7 @@ func NewAiChatService(
 		providerRepo:     providerRepo,
 		usageLogRepo:     usageLogRepo,
 		knowledgeRepo:    knowledgeRepo,
+		configRepo:       configRepo,
 		entClient:        entClient,
 	}
 }
@@ -93,6 +104,18 @@ func (s *AiChatService) Chat(req *aiV1.ChatRequest, stream grpc.ServerStreamingS
 		return aiV1.ErrorBadRequest("content is required")
 	}
 
+	// 渠道策略：app（C端导购）生效每日 token 限额与默认知识库绑定；admin 不受限。
+	isAppChannel := req.GetChannel() == channelApp
+	if isAppChannel {
+		if err := s.enforceDailyTokenLimit(ctx, userId); err != nil {
+			return err
+		}
+	}
+	knowledgeBaseId := req.GetKnowledgeBaseId()
+	if knowledgeBaseId == 0 && isAppChannel && s.configRepo != nil {
+		knowledgeBaseId = uint32(s.configRepo.GetConfigInt(ctx, constants.ConfigKeyAiAssistantKnowledgeBaseId, 0))
+	}
+
 	// 1. 解析提供商（显式指定或默认）
 	provider, err := s.resolveProvider(ctx, req.GetProviderId())
 	if err != nil {
@@ -118,14 +141,19 @@ func (s *AiChatService) Chat(req *aiV1.ChatRequest, stream grpc.ServerStreamingS
 		return err
 	}
 
-	// 4. LLM 上下文：system（知识库检索注入 RAG + 提供商 system prompt）+ 历史 + 本轮。
+	// 4. LLM 上下文：system（商品上下文 + 知识库检索注入 RAG + 提供商 system prompt）+ 历史 + 本轮。
 	messages := make([]openai.ChatCompletionMessage, 0, chatContextMaxMessages+2)
-	systemParts := make([]string, 0, 2)
-	if req.GetKnowledgeBaseId() > 0 && s.knowledgeRepo != nil {
-		hits, searchErr := searchKnowledgeBase(ctx, s.knowledgeRepo, s.providerRepo, s.usageLogRepo, s.log, userId, tenantId, req.GetKnowledgeBaseId(), content, ragTopK)
+	systemParts := make([]string, 0, 3)
+	if pid := req.GetContextProductId(); pid > 0 {
+		if summary := s.productContextSummary(ctx, pid); summary != "" {
+			systemParts = append(systemParts, "用户当前正在浏览以下商品，回答应围绕该商品展开；用户问题与商品无关时正常回答：\n"+summary)
+		}
+	}
+	if knowledgeBaseId > 0 && s.knowledgeRepo != nil {
+		hits, searchErr := searchKnowledgeBase(ctx, s.knowledgeRepo, s.providerRepo, s.usageLogRepo, s.log, userId, tenantId, knowledgeBaseId, content, ragTopK)
 		if searchErr != nil {
 			// 检索失败不阻断对话：降级为无知识库上下文
-			s.log.Errorf("knowledge search failed, degrade to plain chat: base=%d: %v", req.GetKnowledgeBaseId(), searchErr)
+			s.log.Errorf("knowledge search failed, degrade to plain chat: base=%d: %v", knowledgeBaseId, searchErr)
 		} else if len(hits) > 0 {
 			var kb strings.Builder
 			kb.WriteString("请优先依据以下知识库片段回答用户问题，片段无关时可忽略：\n")
@@ -282,6 +310,149 @@ func (s *AiChatService) resolveProvider(ctx context.Context, providerId uint32) 
 		return entity, nil
 	}
 	return s.providerRepo.GetEnabledDefault(ctx)
+}
+
+// enforceDailyTokenLimit C端单用户每日 token 限额闸门
+// （sys_configs: ai.chat.daily_token_limit，<=0 不限）。聚合当日零点以来该用户
+// 全部 AI 调用（对话 + Generate）的用量流水；聚合失败 fail-open 放行（只影响
+// 限额精度，不应阻断对话）。
+func (s *AiChatService) enforceDailyTokenLimit(ctx context.Context, userId uint32) error {
+	if s.configRepo == nil || s.usageLogRepo == nil || userId == 0 {
+		return nil
+	}
+	limit := s.configRepo.GetConfigInt(ctx, constants.ConfigKeyAiChatDailyTokenLimit, constants.DefaultAiChatDailyTokenLimit)
+	if limit <= 0 {
+		return nil
+	}
+	now := time.Now()
+	dayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	used, err := s.usageLogRepo.UserTokensSince(ctx, userId, dayStart)
+	if err != nil {
+		s.log.Errorf("sum daily usage failed, fail-open: user=%d: %v", userId, err)
+		return nil
+	}
+	if used >= uint64(limit) {
+		return aiV1.ErrorForbidden("今日 AI 助手使用额度已用完，请明天再来")
+	}
+	return nil
+}
+
+// productContextSummary 拉取商品上下文摘要（名称/状态 + 在售 SKU 与价格），
+// 注入 system prompt 让导购围绕当前浏览商品作答。查询失败返回空串——
+// 降级为无商品上下文，不阻断对话。
+func (s *AiChatService) productContextSummary(ctx context.Context, productId uint32) string {
+	if s.entClient == nil {
+		return ""
+	}
+	db := s.entClient.DB()
+
+	var name, shortDesc string
+	row := db.QueryRowContext(ctx, `
+		SELECT COALESCE(t.name, ''), COALESCE(t.short_description, '')
+		FROM mall_products p
+		LEFT JOIN mall_product_translations t ON t.product_id = p.id AND t.language_code = 'zh-CN'
+		WHERE p.id = $1`, productId)
+	if err := row.Scan(&name, &shortDesc); err != nil {
+		if err != sql.ErrNoRows {
+			s.log.Errorf("product context query failed: product=%d: %v", productId, err)
+		}
+		return ""
+	}
+
+	var sb strings.Builder
+	sb.WriteString(fmt.Sprintf("商品ID：%d；名称：%s", productId, name))
+	if shortDesc != "" {
+		sb.WriteString("；简介：" + shortDesc)
+	}
+	skuTable, err := s.queryRowsAsString(ctx, db, `
+		SELECT s.sku_code, s.stock_qty AS stock,
+			COALESCE(pr.amount, '0') AS price_fen,
+			ROUND(COALESCE(pr.amount, '0')::numeric/100, 2) AS price_yuan
+		FROM mall_skus s
+		LEFT JOIN mall_sku_prices pr ON pr.sku_id = s.id AND pr.currency = 'CNY'
+		WHERE s.product_id = $1`, productId)
+	if err == nil && skuTable != "" {
+		sb.WriteString("\n在售规格（价格单位：元）：\n" + skuTable)
+	}
+	return sb.String()
+}
+
+// Generate 通用单轮文本生成（非会话、不落库）：BFF 层组装 prompt，core 负责
+// 解析默认提供商、调用模型、记录用量流水（与对话共用同一套记账）。
+func (s *AiChatService) Generate(ctx context.Context, req *aiV1.GenerateRequest) (*aiV1.GenerateResponse, error) {
+	// BFF 注入的 operator 字段优先；缺失时回落 viewer 上下文。
+	var userId, tenantId uint32
+	if uid := req.GetOperatorUserId(); uid > 0 {
+		userId = uid
+		tenantId = req.GetOperatorTenantId()
+	} else if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
+		tenantId = uint32(vc.TenantID())
+		if uid, hasUser := viewerUserIDFromContext(ctx); hasUser {
+			userId = uid
+		}
+	}
+
+	prompt := req.GetPrompt()
+	if prompt == "" {
+		return nil, aiV1.ErrorBadRequest("prompt is required")
+	}
+
+	provider, err := s.resolveProvider(ctx, 0)
+	if err != nil {
+		return nil, err
+	}
+	client, err := newOpenAIClientForProvider(provider)
+	if err != nil {
+		return nil, err
+	}
+
+	messages := make([]openai.ChatCompletionMessage, 0, 2)
+	if sys := req.GetSystem(); sys != "" {
+		messages = append(messages, openai.ChatCompletionMessage{Role: openai.ChatMessageRoleSystem, Content: sys})
+	}
+	messages = append(messages, openai.ChatCompletionMessage{Role: openai.ChatMessageRoleUser, Content: prompt})
+
+	completionReq := openai.ChatCompletionRequest{
+		Model:    ptrStrOr(provider.ModelName, "gpt-4o-mini"),
+		Messages: messages,
+	}
+	if mt := req.GetMaxTokens(); mt > 0 {
+		completionReq.MaxTokens = int(mt)
+	}
+
+	gctx, cancel := context.WithTimeout(ctx, generateCallTimeout)
+	defer cancel()
+
+	resp, err := client.CreateChatCompletion(gctx, completionReq)
+	if err != nil {
+		s.log.Errorf("ai generate failed: user=%d: %v", userId, err)
+		return nil, aiV1.ErrorInternalServerError("ai generate failed: %v", err)
+	}
+
+	// 用量流水（记账失败不阻断返回，与对话同口径）。
+	modelName := completionReq.Model
+	if err = s.usageLogRepo.Create(ctx, &data.UsageRecord{
+		ProviderID:       provider.ID,
+		UserID:           userId,
+		TenantID:         tenantId,
+		ModelName:        modelName,
+		PromptTokens:     uint32(resp.Usage.PromptTokens),
+		CompletionTokens: uint32(resp.Usage.CompletionTokens),
+		TotalTokens:      uint32(resp.Usage.TotalTokens),
+		DurationMs:       0,
+	}); err != nil {
+		s.log.Errorf("record ai generate usage failed: user=%d: %v", userId, err)
+	}
+
+	text := ""
+	if len(resp.Choices) > 0 {
+		text = resp.Choices[0].Message.Content
+	}
+	return &aiV1.GenerateResponse{
+		Text:        text,
+		ModelName:   modelName,
+		TotalTokens: uint32(resp.Usage.TotalTokens),
+	}, nil
 }
 
 // resolveConversation 会话复用或新建（新建时标题取首条消息摘要）。

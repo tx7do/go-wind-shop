@@ -120,7 +120,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	commentService := service.NewCommentService(ctx, commentServiceClient)
 	interactionService := service.NewInteractionService(ctx, interactionServiceClient)
 	invoiceService := service.NewInvoiceService(ctx, invoiceServiceClient)
-	aiChatService := service.NewAiChatService(ctx, aiChatServiceClient)
+	aiChatService := service.NewAiChatService(ctx, aiChatServiceClient, authenticationServiceClient)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
 
@@ -167,7 +167,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	sseServer := server.NewSseServer(ctx)
+	sseServer := server.NewSseServer(ctx, aiChatService)
 
 	return newApp(ctx, httpServer, grpcServer, sseServer), rollback, nil
 }

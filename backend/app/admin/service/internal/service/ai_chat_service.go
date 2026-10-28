@@ -89,8 +89,10 @@ func (s *AiChatService) Chat(ctx context.Context, req *aiV1.ChatRequest) (*aiV1.
 
 	// 流式 gRPC 调用不走 unary 客户端中间件，operator 元数据不会自动随请求转发，
 	// 显式把操作者身份写进请求体（core 信任内部跳，前端传入值在此被覆盖）。
+	// 渠道固定 admin：C端策略（每日限额/默认知识库）不作用于后台助手。
 	req.OperatorUserId = trans.Ptr(operator.UserId)
 	req.OperatorTenantId = trans.Ptr(operator.GetTenantId())
+	req.Channel = trans.Ptr("admin")
 
 	stream, err := s.aiChatServiceClient.Chat(ctx, req)
 	if err != nil {
@@ -114,6 +116,18 @@ func (s *AiChatService) Chat(ctx context.Context, req *aiV1.ChatRequest) (*aiV1.
 			return f.Done, nil
 		}
 	}
+}
+
+// Generate 通用单轮文本生成（商品文案等表单场景）：透传 core Generate，
+// operator 身份同对话一样由 BFF 注入。
+func (s *AiChatService) Generate(ctx context.Context, req *aiV1.GenerateRequest) (*aiV1.GenerateResponse, error) {
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	req.OperatorUserId = trans.Ptr(operator.UserId)
+	req.OperatorTenantId = trans.Ptr(operator.GetTenantId())
+	return s.aiChatServiceClient.Generate(ctx, req)
 }
 
 // publishToUserStreams 向用户全部流推送一帧事件（protojson、camelCase 键）。

@@ -49,3 +49,19 @@ export async function sendAiChat(req: {
     knowledgeBaseId: req.knowledgeBaseId || 0,
   } as any);
 }
+
+/**
+ * 通用单轮文本生成（商品文案等表单场景）。
+ * 非会话、不落库，同步返回 { text, modelName, totalTokens }。
+ */
+export async function generateAiText(req: {
+  system?: string;
+  prompt: string;
+  maxTokens?: number;
+}) {
+  return apiClient.aiChatService.Generate({
+    system: req.system || "",
+    prompt: req.prompt,
+    maxTokens: req.maxTokens || 0,
+  } as any);
+}

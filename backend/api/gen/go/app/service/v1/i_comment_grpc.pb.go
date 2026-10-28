@@ -22,12 +22,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	CommentService_List_FullMethodName             = "/app.service.v1.CommentService/List"
-	CommentService_Get_FullMethodName              = "/app.service.v1.CommentService/Get"
-	CommentService_Create_FullMethodName           = "/app.service.v1.CommentService/Create"
-	CommentService_Update_FullMethodName           = "/app.service.v1.CommentService/Update"
-	CommentService_Delete_FullMethodName           = "/app.service.v1.CommentService/Delete"
-	CommentService_GetProductRating_FullMethodName = "/app.service.v1.CommentService/GetProductRating"
+	CommentService_List_FullMethodName                    = "/app.service.v1.CommentService/List"
+	CommentService_Get_FullMethodName                     = "/app.service.v1.CommentService/Get"
+	CommentService_Create_FullMethodName                  = "/app.service.v1.CommentService/Create"
+	CommentService_Update_FullMethodName                  = "/app.service.v1.CommentService/Update"
+	CommentService_Delete_FullMethodName                  = "/app.service.v1.CommentService/Delete"
+	CommentService_GetProductRating_FullMethodName        = "/app.service.v1.CommentService/GetProductRating"
+	CommentService_GetProductReviewSummary_FullMethodName = "/app.service.v1.CommentService/GetProductReviewSummary"
 )
 
 // CommentServiceClient is the client API for CommentService service.
@@ -47,6 +48,8 @@ type CommentServiceClient interface {
 	Delete(ctx context.Context, in *v11.DeleteCommentRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 商品评分聚合（只读，匿名可读——白名单登记）。
 	GetProductRating(ctx context.Context, in *v11.GetProductRatingRequest, opts ...grpc.CallOption) (*v11.ProductRatingSummary, error)
+	// 评论 AI 摘要（只读，匿名可读——白名单登记；LLM 生成，服务端有缓存）。
+	GetProductReviewSummary(ctx context.Context, in *GetProductReviewSummaryRequest, opts ...grpc.CallOption) (*ProductReviewSummaryResponse, error)
 }
 
 type commentServiceClient struct {
@@ -117,6 +120,16 @@ func (c *commentServiceClient) GetProductRating(ctx context.Context, in *v11.Get
 	return out, nil
 }
 
+func (c *commentServiceClient) GetProductReviewSummary(ctx context.Context, in *GetProductReviewSummaryRequest, opts ...grpc.CallOption) (*ProductReviewSummaryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ProductReviewSummaryResponse)
+	err := c.cc.Invoke(ctx, CommentService_GetProductReviewSummary_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CommentServiceServer is the server API for CommentService service.
 // All implementations must embed UnimplementedCommentServiceServer
 // for forward compatibility.
@@ -134,6 +147,8 @@ type CommentServiceServer interface {
 	Delete(context.Context, *v11.DeleteCommentRequest) (*emptypb.Empty, error)
 	// 商品评分聚合（只读，匿名可读——白名单登记）。
 	GetProductRating(context.Context, *v11.GetProductRatingRequest) (*v11.ProductRatingSummary, error)
+	// 评论 AI 摘要（只读，匿名可读——白名单登记；LLM 生成，服务端有缓存）。
+	GetProductReviewSummary(context.Context, *GetProductReviewSummaryRequest) (*ProductReviewSummaryResponse, error)
 	mustEmbedUnimplementedCommentServiceServer()
 }
 
@@ -161,6 +176,9 @@ func (UnimplementedCommentServiceServer) Delete(context.Context, *v11.DeleteComm
 }
 func (UnimplementedCommentServiceServer) GetProductRating(context.Context, *v11.GetProductRatingRequest) (*v11.ProductRatingSummary, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetProductRating not implemented")
+}
+func (UnimplementedCommentServiceServer) GetProductReviewSummary(context.Context, *GetProductReviewSummaryRequest) (*ProductReviewSummaryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetProductReviewSummary not implemented")
 }
 func (UnimplementedCommentServiceServer) mustEmbedUnimplementedCommentServiceServer() {}
 func (UnimplementedCommentServiceServer) testEmbeddedByValue()                        {}
@@ -291,6 +309,24 @@ func _CommentService_GetProductRating_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CommentService_GetProductReviewSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProductReviewSummaryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CommentServiceServer).GetProductReviewSummary(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CommentService_GetProductReviewSummary_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CommentServiceServer).GetProductReviewSummary(ctx, req.(*GetProductReviewSummaryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CommentService_ServiceDesc is the grpc.ServiceDesc for CommentService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -321,6 +357,10 @@ var CommentService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProductRating",
 			Handler:    _CommentService_GetProductRating_Handler,
+		},
+		{
+			MethodName: "GetProductReviewSummary",
+			Handler:    _CommentService_GetProductReviewSummary_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

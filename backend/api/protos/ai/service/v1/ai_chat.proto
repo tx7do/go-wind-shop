@@ -18,6 +18,9 @@ import "ai/service/v1/ai_message.proto";
 service AiChatService {
   // 发起一轮对话
   rpc Chat (ChatRequest) returns (stream ChatStreamFrame) {}
+
+  // 通用单轮文本生成（非会话、不落库）
+  rpc Generate (GenerateRequest) returns (GenerateResponse) {}
 }
 
 // 发起对话 - 请求
@@ -39,11 +42,67 @@ message ChatRequest {
 
   optional uint32 knowledge_base_id = 4 [
     json_name = "knowledgeBaseId",
-    (gnostic.openapi.v3.property) = {description: "知识库ID；RAG 未移植前该字段被忽略"}
-  ]; // 知识库ID（暂未启用）
+    (gnostic.openapi.v3.property) = {description: "知识库ID；0 时 C端渠道回落到系统参数 ai.assistant.knowledge_base_id 绑定的默认知识库"}
+  ]; // 知识库ID，0=默认绑定
 
-  // ── 以下由 admin BFF 注入（两服务拓扑下流式 RPC 的 unary 客户端中间件
+  // 上下文商品ID：用户当前正在浏览的商品（C端商品页"问AI"入口携带）。
+  // core 将商品摘要注入 system prompt，让回答围绕该商品展开；0=无上下文。
+  optional uint32 context_product_id = 5 [
+    json_name = "contextProductId",
+    (gnostic.openapi.v3.property) = {description: "上下文商品ID（商品页提问时携带）"}
+  ];
+
+  // ── 以下由 BFF 注入（两服务拓扑下流式 RPC 的 unary 客户端中间件
   // 不转发 operator 元数据），前端传入的值一律被 BFF 覆盖；core 信任内部跳。──
+
+  optional uint32 operator_user_id = 10 [
+    json_name = "operatorUserId",
+    (gnostic.openapi.v3.property) = {description: "操作者用户ID（BFF 注入）"}
+  ];
+
+  optional uint32 operator_tenant_id = 11 [
+    json_name = "operatorTenantId",
+    (gnostic.openapi.v3.property) = {description: "操作者租户ID（BFF 注入）"}
+  ];
+
+  // 发起渠道："app"（C端导购）/ "admin"（后台助手）。core 据此区分渠道策略：
+  // C端生效每日 token 限额与默认知识库绑定，admin 不受限。
+  optional string channel = 12 [
+    json_name = "channel",
+    (gnostic.openapi.v3.property) = {description: "发起渠道（BFF 注入）：app / admin"}
+  ];
+}
+
+// 发起对话 - 回应
+message ChatResponse {
+  // 会话（新建时返回新建的会话）
+  AiConversation conversation = 1;
+
+  // 模型回复消息（含 token 用量与模型名）
+  AiMessage message = 2;
+}
+
+// 通用单轮文本生成（非会话、不落库）：商品文案、评论摘要等业务场景共用。
+// prompt 组装在 BFF 层完成，core 只负责解析提供商、调用模型、记录用量；
+// 调用方只有 admin/app 两个 BFF（内网）。
+message GenerateRequest {
+  // 系统提示（角色/风格约束），可空
+  optional string system = 1 [
+    json_name = "system",
+    (gnostic.openapi.v3.property) = {description: "系统提示词（可空）"}
+  ];
+
+  // 用户提示（任务描述 + 素材文本）
+  optional string prompt = 2 [
+    json_name = "prompt",
+    (gnostic.openapi.v3.property) = {description: "用户提示词"}
+  ];
+
+  // 最大生成 token 数；0=用模型默认
+  optional uint32 max_tokens = 3 [
+    json_name = "maxTokens",
+    (gnostic.openapi.v3.property) = {description: "最大生成token数，0=默认"}
+  ];
 
   optional uint32 operator_user_id = 10 [
     json_name = "operatorUserId",
@@ -56,13 +115,15 @@ message ChatRequest {
   ];
 }
 
-// 发起对话 - 回应
-message ChatResponse {
-  // 会话（新建时返回新建的会话）
-  AiConversation conversation = 1;
+message GenerateResponse {
+  // 生成的文本
+  string text = 1;
 
-  // 模型回复消息（含 token 用量与模型名）
-  AiMessage message = 2;
+  // 实际使用的模型名
+  string model_name = 2 [json_name = "modelName"];
+
+  // 本次总 token 消耗
+  uint32 total_tokens = 3 [json_name = "totalTokens"];
 }
 
 // SSE `ai_chat_chunk` 事件 data 形状（protojson，camelCase 键）。

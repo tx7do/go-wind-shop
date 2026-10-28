@@ -8,6 +8,18 @@ import "pagination/v1/pagination.proto";
 
 import "comment/service/v1/comment.proto";
 
+// 评论 AI 摘要响应：AI 消化已审核评论后的购物洞察（一段短文）。
+message ProductReviewSummaryResponse {
+  // 摘要文本；商品评论不足（< minComments）时为空串且 available=false
+  string summary = 1;
+
+  // 参与摘要的评论条数
+  uint32 comment_count = 2 [json_name = "commentCount"];
+
+  // 是否有可用摘要（评论数不足/生成失败时 false，前端不渲染区块）
+  bool available = 3;
+}
+
 // 商品评论前台服务。
 // List/Get 在 BFF 层过滤 STATUS_APPROVED（未审核/拒绝/垃圾对前台不可见）；
 // Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）。
@@ -52,4 +64,16 @@ service CommentService {
       get: "/app/v1/mall/products/{product_id}/rating"
     };
   }
+
+  // 评论 AI 摘要（只读，匿名可读——白名单登记；LLM 生成，服务端有缓存）。
+  rpc GetProductReviewSummary (GetProductReviewSummaryRequest) returns (ProductReviewSummaryResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/products/{product_id}/review-summary"
+    };
+  }
+}
+
+// 评论 AI 摘要 - 请求
+message GetProductReviewSummaryRequest {
+  uint32 product_id = 1 [json_name = "productId"]; // 商品ID
 }

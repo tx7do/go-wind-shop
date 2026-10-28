@@ -211,6 +211,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiAgentService := service.NewAiAgentService(ctx, aiAgentServiceClient)
 	aiProviderService := service.NewAiProviderService(ctx, aiProviderServiceClient)
 	aiChatService := service.NewAiChatService(ctx, aiChatServiceClient, authenticationServiceClient)
+	taskMonitorService := service.NewTaskMonitorService(ctx)
 	aiConversationService := service.NewAiConversationService(ctx, aiConversationServiceClient)
 	aiMessageService := service.NewAiMessageService(ctx, aiMessageServiceClient)
 	aiKnowledgeService := service.NewAiKnowledgeService(ctx, aiKnowledgeBaseServiceClient)
@@ -298,6 +299,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		aiAgentService,
 		aiProviderService,
 		aiChatService,
+		taskMonitorService,
 		aiConversationService,
 		aiMessageService,
 		aiKnowledgeService,

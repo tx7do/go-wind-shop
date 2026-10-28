@@ -34,3 +34,217 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 )
+
+// Validate checks the field values on ProductReviewSummaryResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ProductReviewSummaryResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ProductReviewSummaryResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ProductReviewSummaryResponseMultiError, or nil if none found.
+func (m *ProductReviewSummaryResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ProductReviewSummaryResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Summary
+
+	// no validation rules for CommentCount
+
+	// no validation rules for Available
+
+	if len(errors) > 0 {
+		return ProductReviewSummaryResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ProductReviewSummaryResponseMultiError is an error wrapping multiple
+// validation errors returned by ProductReviewSummaryResponse.ValidateAll() if
+// the designated constraints aren't met.
+type ProductReviewSummaryResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ProductReviewSummaryResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ProductReviewSummaryResponseMultiError) AllErrors() []error { return m }
+
+// ProductReviewSummaryResponseValidationError is the validation error returned
+// by ProductReviewSummaryResponse.Validate if the designated constraints
+// aren't met.
+type ProductReviewSummaryResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ProductReviewSummaryResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ProductReviewSummaryResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ProductReviewSummaryResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ProductReviewSummaryResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ProductReviewSummaryResponseValidationError) ErrorName() string {
+	return "ProductReviewSummaryResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ProductReviewSummaryResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sProductReviewSummaryResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ProductReviewSummaryResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ProductReviewSummaryResponseValidationError{}
+
+// Validate checks the field values on GetProductReviewSummaryRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetProductReviewSummaryRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetProductReviewSummaryRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// GetProductReviewSummaryRequestMultiError, or nil if none found.
+func (m *GetProductReviewSummaryRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetProductReviewSummaryRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ProductId
+
+	if len(errors) > 0 {
+		return GetProductReviewSummaryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetProductReviewSummaryRequestMultiError is an error wrapping multiple
+// validation errors returned by GetProductReviewSummaryRequest.ValidateAll()
+// if the designated constraints aren't met.
+type GetProductReviewSummaryRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetProductReviewSummaryRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetProductReviewSummaryRequestMultiError) AllErrors() []error { return m }
+
+// GetProductReviewSummaryRequestValidationError is the validation error
+// returned by GetProductReviewSummaryRequest.Validate if the designated
+// constraints aren't met.
+type GetProductReviewSummaryRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetProductReviewSummaryRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetProductReviewSummaryRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetProductReviewSummaryRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetProductReviewSummaryRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetProductReviewSummaryRequestValidationError) ErrorName() string {
+	return "GetProductReviewSummaryRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetProductReviewSummaryRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetProductReviewSummaryRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetProductReviewSummaryRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetProductReviewSummaryRequestValidationError{}

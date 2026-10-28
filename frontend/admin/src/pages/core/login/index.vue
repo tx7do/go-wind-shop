@@ -1,11 +1,7 @@
 <template>
   <div class="login-layout">
-    <!-- 顶部 Logo 区域 -->
+    <!-- 顶部工具栏（对齐基座 vue-element/react：仅右上角主题/语言，不放品牌信息） -->
     <div class="login-header">
-      <div class="header-left">
-        <el-image :src="logo" class="header-logo" fit="contain" />
-        <span class="header-title">{{ t("core.login.headerTitle") }}</span>
-      </div>
       <div class="header-right">
         <ThemeSwitch class="header-icon" />
         <LangSelect class="header-icon" size="text-20px" />
@@ -18,7 +14,7 @@
       <div class="login-brand">
         <div class="brand-content">
           <div class="brand-illustration">
-            <SloganIcon class="slogan-icon" />
+            <MallIcon class="slogan-icon" />
           </div>
           <div class="brand-info">
             <h2 class="brand-title">{{ t("core.login.brandTitle") }}</h2>
@@ -31,16 +27,35 @@
       <div class="login-form-wrapper">
         <div class="login-form-container">
           <div class="form-header">
-            <h2 class="form-title">
-              {{ t("core.login.welcomeTitle") }}
-              <span class="wave">👋</span>
-            </h2>
-            <p class="form-subtitle">{{ t("core.login.welcomeSubtitle") }}</p>
+            <template v-if="tenantBranding">
+              <img
+                v-if="tenantBranding.logoUrl"
+                :src="tenantBranding.logoUrl"
+                :alt="tenantBranding.name"
+                class="tenant-logo"
+              />
+              <h2 class="form-title">{{ tenantBranding.name }}</h2>
+              <p class="form-subtitle">{{ t("core.login.welcomeTitle") }}</p>
+            </template>
+            <template v-else>
+              <h2 class="form-title">
+                {{ t("core.login.welcomeTitle") }}
+                <span class="wave">👋</span>
+              </h2>
+              <p class="form-subtitle">{{ t("core.login.welcomeSubtitle") }}</p>
+            </template>
           </div>
 
-          <transition name="fade-slide" mode="out-in">
-            <component :is="formComponents[component]" class="auth-panel__form" />
-          </transition>
+          <!-- 登录表单卡片（对齐基座：实底表面色 + 24px 大圆角 + 主色柔影） -->
+          <div class="form-card">
+            <transition name="fade-slide" mode="out-in">
+              <component
+                :is="formComponents[component]"
+                class="auth-panel__form"
+                @tenant-branding="tenantBranding = $event"
+              />
+            </transition>
+          </div>
         </div>
 
         <!-- 版权信息 - 放在右侧面板最底部 -->
@@ -53,15 +68,18 @@
 </template>
 
 <script setup lang="ts">
-import logo from "@/assets/images/logo.png";
 import ThemeSwitch from "@/components/ThemeSwitch/index.vue";
-import SloganIcon from "./icons/slogan.vue";
+import MallIcon from "./icons/mall.vue";
 
 const { t } = useI18n();
 
 type LayoutMap = "login";
 
 const component = ref<LayoutMap>("login");
+
+// 租户白标两态表头（对齐基座）：由 Login 子组件在租户编号失焦时上报；
+// 子组件暂未实现上报时恒为 null，走默认「欢迎回来」分支。
+const tenantBranding = ref<{ found: boolean; name: string; logoUrl: string } | null>(null);
 
 const formComponents = {
   login: defineAsyncComponent(() => import("./components/Login.vue")),
@@ -74,7 +92,7 @@ const formComponents = {
   flex-direction: column;
   width: 100%;
   min-height: 100vh;
-  background-color: #f5f7ff;
+  background-color: #0b0f19;
 
   html:not(.dark) & {
     background-color: #f5f7ff;
@@ -85,39 +103,18 @@ const formComponents = {
 .login-header {
   position: absolute;
   top: 0;
-  right: 0;
   left: 0;
+  right: 0;
   z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding: 20px 40px;
-
-  .header-left {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-
-    .header-logo {
-      width: 24px;
-      height: 24px;
-    }
-
-    .header-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #1a1d28;
-
-      html:not(.dark) & {
-        color: #1a1d28;
-      }
-    }
-  }
 
   .header-right {
     display: flex;
-    gap: 12px;
     align-items: center;
+    gap: 12px;
 
     .header-icon {
       cursor: pointer;
@@ -139,50 +136,58 @@ const formComponents = {
 
 // 左侧品牌展示
 .login-brand {
-  position: relative;
-  display: flex;
   flex: 1;
+  display: flex;
   align-items: center;
   justify-content: center;
   padding: 40px;
+  background: radial-gradient(ellipse at center, #111827 0%, #0b0f19 70%);
+  position: relative;
   overflow: hidden;
-  background: radial-gradient(ellipse at center, #e8f0ff 0%, #f5f7ff 70%);
 
   html:not(.dark) & {
     background: radial-gradient(ellipse at center, #e8f0ff 0%, #f5f7ff 70%);
   }
 
   &::before {
+    content: "";
     position: absolute;
     top: 30%;
     left: 20%;
     width: 250px;
     height: 250px;
-    content: "";
-    background: radial-gradient(circle, rgba(64, 158, 255, 0.08) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--el-color-primary) 8%, transparent) 0%,
+      transparent 70%
+    );
     border-radius: 50%;
     filter: blur(60px);
   }
 
   &::after {
+    content: "";
     position: absolute;
-    right: 15%;
     bottom: 25%;
+    right: 15%;
     width: 180px;
     height: 180px;
-    content: "";
-    background: radial-gradient(circle, rgba(64, 158, 255, 0.06) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      color-mix(in srgb, var(--el-color-primary) 6%, transparent) 0%,
+      transparent 70%
+    );
     border-radius: 50%;
     filter: blur(50px);
   }
 
   .brand-content {
-    position: relative;
-    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    position: relative;
+    z-index: 1;
   }
 
   .brand-illustration {
@@ -191,111 +196,113 @@ const formComponents = {
     .slogan-icon {
       width: 360px;
       height: 360px;
-      filter: drop-shadow(0 8px 32px rgba(0, 107, 230, 0.3));
-      animation: slogan-float 5s linear infinite;
+      filter: drop-shadow(0 8px 32px color-mix(in srgb, var(--el-color-primary) 30%, transparent));
+
+      /* 外层不做整体浮动：上下跳动与 SVG 内部 24s~70s 慢速旋转体系不搭；
+         生命感由 SVG 内环流旋转/风痕漂移/星光闪烁承担。 */
 
       html:not(.dark) & {
-        filter: drop-shadow(0 8px 32px rgba(0, 107, 230, 0.2));
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        animation: none;
+        filter: drop-shadow(
+          0 8px 32px color-mix(in srgb, var(--el-color-primary) 20%, transparent)
+        );
       }
     }
   }
 
   .brand-info {
     .brand-title {
-      margin: 0 0 8px 0;
-      font-size: 20px;
-      font-weight: 600;
-      color: #1a1d28;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--el-text-color-primary);
+      margin: 0 0 14px 0;
     }
 
+    // 两态都写死过灰阶（暗 #9ca3af / 浅 #6b7280），浅色那支实测 4.22 < 4.5。
+    // 暗色回到次要档（#8B949E，实测 5.90）；浅色这块面板的底是
+    // radial #E8F0FF→#F5F7FF，比次要档 #676E7C 的四处浅底都亮，
+    // 实测只有 4.48——所以浅色取常规档 #606266（实测 5.34），不动面板色相。
     .brand-desc {
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--el-text-color-secondary);
       margin: 0;
-      font-size: 13px;
-      color: #6b7280;
+
+      html:not(.dark) & {
+        color: var(--el-text-color-regular);
+      }
     }
   }
 }
 
-// 右侧登录表单
+// 右侧登录表单（对齐基座：面板占 48% 宽、表单内容居中，避免大屏下贴右缘）
 .login-form-wrapper {
-  position: relative;
+  width: 48%;
+  min-width: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 520px;
-  min-width: 480px;
-  padding: 60px 40px;
-  // 用 EP 语义背景变量，浅色为白、暗色自动跟随，避免硬编码 #141927/#ffffff 两套
-  background-color: var(--el-bg-color);
+  padding: 64px 56px;
+  background-color: #111827;
+  position: relative;
+
+  html:not(.dark) & {
+    background-color: #ffffff;
+  }
 
   .login-form-container {
-    display: flex;
+    width: 100%;
+    max-width: 420px;
     flex: 1;
+    display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 100%;
-    max-width: 380px;
 
     .form-header {
       margin-bottom: 24px;
 
+      .tenant-logo {
+        max-height: 48px;
+        max-width: 200px;
+        object-fit: contain;
+        margin-bottom: 12px;
+      }
+
       .form-title {
-        margin: 0 0 8px 0;
         font-size: 22px;
         font-weight: 600;
         color: var(--el-text-color-primary);
+        margin: 0 0 8px 0;
 
         .wave {
           display: inline-block;
-          transform-origin: 70% 70%;
           animation: wave 2.5s infinite;
+          transform-origin: 70% 70%;
         }
       }
 
+      // 次要档统一吃 token：原两态写死 #6b7a8d / #6b7280，暗色实测 4.05 < 4.5
       .form-subtitle {
-        margin: 0;
         font-size: 13px;
         color: var(--el-text-color-secondary);
+        margin: 0;
       }
     }
 
-    .form-section-title {
-      margin: 24px 0 20px 0;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--el-text-color-primary);
-      text-align: center;
-    }
+    // 登录表单卡片（对齐基座：实底表面色 + 24px 大圆角 + 主色柔影）
+    .form-card {
+      padding: 32px;
+      border-radius: 24px;
+      background-color: #111827;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 12px 40px -8px color-mix(in srgb, var(--el-color-primary) 18%, transparent);
 
-    .form-footer {
-      padding-top: 16px;
-      margin-top: 24px;
-      text-align: center;
-      border-top: 1px solid var(--el-border-color-lighter);
-
-      > .el-text {
-        display: block;
-        color: var(--el-text-color-secondary);
+      html:not(.dark) & {
+        background-color: #ffffff;
+        border-color: rgba(0, 0, 0, 0.08);
       }
     }
-  }
-}
-
-// 品牌插画：vben 同款浮动动效（float 5s，translateY -20px 循环）
-@keyframes slogan-float {
-  0% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-20px);
-  }
-  100% {
-    transform: translateY(0);
   }
 }
 
@@ -344,31 +351,32 @@ const formComponents = {
 }
 
 // 覆盖表单样式
-// 统一使用 EP 语义变量：浅色/暗色自动跟随主题，不再维护两套硬编码色板。
-// 主色用 var(--el-color-primary)，用户在偏好设置改主题色后这里会同步生效。
 .auth-panel__form {
   :deep(.el-form-item) {
     margin-bottom: 16px;
   }
 
+  // 暗色模式下的表单样式（对齐设计语言：输入框与表面同层 + 白 α 边框）
   :deep(.el-input__wrapper) {
-    background-color: var(--el-input-bg-color, var(--el-fill-color-blank)) !important;
-    border: 1px solid var(--el-border-color) !important;
+    background-color: #111827 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
     box-shadow: none !important;
     transition: all 0.2s ease;
 
     &:hover {
-      border-color: var(--el-color-primary) !important;
+      border-color: rgba(255, 255, 255, 0.2) !important;
     }
 
     &.is-focus {
       border-color: var(--el-color-primary) !important;
-      box-shadow: 0 0 0 1px var(--el-color-primary) inset !important;
+      box-shadow:
+        0 0 0 1px var(--el-color-primary) inset,
+        0 0 12px color-mix(in srgb, var(--el-color-primary) 15%, transparent) !important;
     }
 
     .el-input__inner {
+      color: var(--el-text-color-primary) !important;
       font-weight: 400;
-      color: var(--el-input-text-color, var(--el-text-color-regular)) !important;
 
       &::placeholder {
         color: var(--el-text-color-placeholder) !important;
@@ -391,13 +399,13 @@ const formComponents = {
   }
 
   :deep(.el-checkbox__label) {
+    color: var(--el-text-color-primary) !important;
     font-weight: 400;
-    color: var(--el-text-color-regular) !important;
   }
 
   :deep(.el-checkbox__inner) {
-    background-color: var(--el-checkbox-bg-color, var(--el-fill-color-blank)) !important;
-    border-color: var(--el-border-color) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    background-color: #111827 !important;
   }
 
   :deep(.el-checkbox.is-checked .el-checkbox__inner) {
@@ -406,15 +414,70 @@ const formComponents = {
   }
 
   :deep(.el-link) {
+    color: var(--el-color-primary-light-3) !important;
     font-weight: 500;
-    color: var(--el-color-primary) !important;
     text-decoration: underline;
-    text-decoration-color: var(--el-color-primary-light-5);
+    text-decoration-color: color-mix(in srgb, var(--el-color-primary) 30%, transparent);
     text-underline-offset: 2px;
 
     &:hover {
-      color: var(--el-color-primary-light-3) !important;
-      text-decoration-color: var(--el-color-primary-light-3);
+      color: var(--el-color-primary-light-5) !important;
+      text-decoration-color: var(--el-color-primary-light-5);
+    }
+  }
+}
+
+// 亮色模式下的表单样式
+html:not(.dark) {
+  .auth-panel__form {
+    :deep(.el-input__wrapper) {
+      background-color: #ffffff !important;
+      border: 1px solid #c0c4cc !important;
+      box-shadow: none !important;
+
+      &:hover {
+        border-color: var(--el-color-primary) !important;
+      }
+
+      &.is-focus {
+        border-color: var(--el-color-primary) !important;
+        box-shadow: 0 0 0 1px var(--el-color-primary) inset !important;
+      }
+
+      .el-input__inner {
+        color: #1a1d28 !important;
+
+        &::placeholder {
+          color: var(--el-text-color-placeholder) !important;
+        }
+      }
+    }
+
+    // 输入框前缀图标颜色
+    :deep(.el-input__prefix) {
+      .el-icon {
+        color: #c0c4cc !important;
+      }
+    }
+
+    // 输入框后缀图标颜色
+    :deep(.el-input__suffix) {
+      .el-icon {
+        color: #c0c4cc !important;
+      }
+    }
+
+    :deep(.el-checkbox__label) {
+      color: var(--el-text-color-regular) !important;
+    }
+
+    :deep(.el-checkbox__inner) {
+      border-color: #c0c4cc !important;
+      background-color: #ffffff !important;
+    }
+
+    :deep(.el-link) {
+      color: var(--gowind-primary-text) !important;
     }
   }
 }
@@ -422,14 +485,15 @@ const formComponents = {
 // 版权信息 - 固定在右侧面板底部
 .form-copyright {
   position: absolute;
-  right: 0;
   bottom: 20px;
   left: 0;
+  right: 0;
   text-align: center;
 
+  // 版权属次要文字：原写 #5a6a80 / #9ca3af 两态对比度都不达标，统一吃 token
   :deep(.el-text) {
+    color: var(--el-text-color-secondary);
     font-weight: 300;
-    color: var(--el-text-color-placeholder);
   }
 }
 </style>

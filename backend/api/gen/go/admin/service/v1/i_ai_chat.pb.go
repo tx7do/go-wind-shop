@@ -26,20 +26,25 @@ var File_admin_service_v1_i_ai_chat_proto protoreflect.FileDescriptor
 
 const file_admin_service_v1_i_ai_chat_proto_rawDesc = "" +
 	"\n" +
-	" admin/service/v1/i_ai_chat.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bai/service/v1/ai_chat.proto2z\n" +
+	" admin/service/v1/i_ai_chat.proto\x12\x10admin.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bai/service/v1/ai_chat.proto2\xe9\x01\n" +
 	"\rAiChatService\x12i\n" +
-	"\x04Chat\x12\x1a.ai.service.v1.ChatRequest\x1a\x1b.ai.service.v1.ChatResponse\"(\x82\xd3\xe4\x93\x02\":\x01*\"\x1d/admin/v1/ai/chat/completionsB\xb8\x01\n" +
+	"\x04Chat\x12\x1a.ai.service.v1.ChatRequest\x1a\x1b.ai.service.v1.ChatResponse\"(\x82\xd3\xe4\x93\x02\":\x01*\"\x1d/admin/v1/ai/chat/completions\x12m\n" +
+	"\bGenerate\x12\x1e.ai.service.v1.GenerateRequest\x1a\x1f.ai.service.v1.GenerateResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/admin/v1/ai/generateB\xb8\x01\n" +
 	"\x14com.admin.service.v1B\fIAiChatProtoP\x01Z0go-wind-shop/api/gen/go/admin/service/v1;adminpb\xa2\x02\x03ASX\xaa\x02\x10Admin.Service.V1\xca\x02\x10Admin\\Service\\V1\xe2\x02\x1cAdmin\\Service\\V1\\GPBMetadata\xea\x02\x12Admin::Service::V1b\x06proto3"
 
 var file_admin_service_v1_i_ai_chat_proto_goTypes = []any{
-	(*v1.ChatRequest)(nil),  // 0: ai.service.v1.ChatRequest
-	(*v1.ChatResponse)(nil), // 1: ai.service.v1.ChatResponse
+	(*v1.ChatRequest)(nil),      // 0: ai.service.v1.ChatRequest
+	(*v1.GenerateRequest)(nil),  // 1: ai.service.v1.GenerateRequest
+	(*v1.ChatResponse)(nil),     // 2: ai.service.v1.ChatResponse
+	(*v1.GenerateResponse)(nil), // 3: ai.service.v1.GenerateResponse
 }
 var file_admin_service_v1_i_ai_chat_proto_depIdxs = []int32{
 	0, // 0: admin.service.v1.AiChatService.Chat:input_type -> ai.service.v1.ChatRequest
-	1, // 1: admin.service.v1.AiChatService.Chat:output_type -> ai.service.v1.ChatResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	1, // 1: admin.service.v1.AiChatService.Generate:input_type -> ai.service.v1.GenerateRequest
+	2, // 2: admin.service.v1.AiChatService.Chat:output_type -> ai.service.v1.ChatResponse
+	3, // 3: admin.service.v1.AiChatService.Generate:output_type -> ai.service.v1.GenerateResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

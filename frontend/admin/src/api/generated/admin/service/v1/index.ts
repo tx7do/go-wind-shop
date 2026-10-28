@@ -1092,6 +1092,10 @@ export interface AiChatService {
   Chat(
     request: aiservicev1_ChatRequest,
   ): Promise<aiservicev1_ChatResponse>;
+  // 通用单轮文本生成（商品文案等表单场景；非会话、不落库，同步返回）
+  Generate(
+    request: aiservicev1_GenerateRequest,
+  ): Promise<aiservicev1_GenerateResponse>;
 }
 
 export function createAiChatServiceClient(
@@ -1106,11 +1110,25 @@ export function createAiChatServiceClient(
         method: 'Chat',
       }) as Promise<aiservicev1_ChatResponse>;
     },
+    Generate(request) {
+      const path = `/admin/v1/ai/generate`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiChatService',
+        method: 'Generate',
+      }) as Promise<aiservicev1_GenerateResponse>;
+    },
   };
 }
 // 发起对话 - 请求
 export type aiservicev1_ChatRequest = {
+  // 发起渠道："app"（C端导购）/ "admin"（后台助手）。core 据此区分渠道策略：
+  // C端生效每日 token 限额与默认知识库绑定，admin 不受限。
+  channel?: string;
   content?: string;
+  // 上下文商品ID：用户当前正在浏览的商品（C端商品页"问AI"入口携带）。
+  // core 将商品摘要注入 system prompt，让回答围绕该商品展开；0=无上下文。
+  contextProductId?: number;
   conversationId?: number;
   knowledgeBaseId?: number;
   operatorTenantId?: number;
@@ -1169,6 +1187,29 @@ export type aiservicev1_AiRole =
   | 'ASSISTANT'
   | 'SYSTEM'
   | 'USER';
+// 通用单轮文本生成（非会话、不落库）：商品文案、评论摘要等业务场景共用。
+// prompt 组装在 BFF 层完成，core 只负责解析提供商、调用模型、记录用量；
+// 调用方只有 admin/app 两个 BFF（内网）。
+export type aiservicev1_GenerateRequest = {
+  // 最大生成 token 数；0=用模型默认
+  maxTokens?: number;
+  operatorTenantId?: number;
+  operatorUserId?: number;
+  // 用户提示（任务描述 + 素材文本）
+  prompt?: string;
+  // 系统提示（角色/风格约束），可空
+  system?: string;
+};
+
+export type aiservicev1_GenerateResponse = {
+  // 实际使用的模型名
+  modelName: string | undefined;
+  // 生成的文本
+  text: string | undefined;
+  // 本次总 token 消耗
+  totalTokens: number | undefined;
+};
+
 // AI 内容生成服务（表单助手）
 export interface AiContentService {
   // 生成内容
@@ -18029,6 +18070,77 @@ export type taskservicev1_ControlTaskRequest_ControlType =
   | 'Restart'
   | 'Start'
   | 'Stop';
+// 系统级常驻任务监控服务（平台管理员；只读 asynq Inspector，无副作用）。
+export interface TaskMonitorService {
+  // 一站式巡检：调度条目（cron/上次/下次入队）+ 各任务类型的队列状态与失败明细
+  InspectSystemTasks(
+    request: taskservicev1_InspectSystemTasksRequest,
+  ): Promise<taskservicev1_InspectSystemTasksResponse>;
+}
+
+export function createTaskMonitorServiceClient(
+  transport: ClientTransport,
+): TaskMonitorService {
+  return {
+    InspectSystemTasks(request) {
+      const path = `/admin/v1/system-tasks:inspect`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'TaskMonitorService',
+        method: 'InspectSystemTasks',
+      }) as Promise<taskservicev1_InspectSystemTasksResponse>;
+    },
+  };
+}
+// 手动触发巡检（系统级常驻任务可视化，只读 asynq，无副作用）
+export type taskservicev1_InspectSystemTasksRequest = {
+};
+
+export type taskservicev1_InspectSystemTasksResponse = {
+  // asynq 队列名（当前配置）
+  queue: string | undefined;
+  schedules: taskservicev1_SystemTaskScheduleEntry[] | undefined;
+  // 只汇总系统级常驻任务涉及的任务类型；无任何记录时不出现在结果里
+  summaries: taskservicev1_SystemTaskStateSummary[] | undefined;
+};
+
+// 系统级常驻任务的调度条目（asynq SchedulerEntries 的只读投影）。
+// Prev 为零值时间表示从未入队过（调度注册后还没到第一个触发点）。
+export type taskservicev1_SystemTaskScheduleEntry = {
+  // cron 表达式
+  cronSpec: string | undefined;
+  nextEnqueueAt: undefined | wellKnownTimestamp;
+  // 上次入队时间；从未入队为空
+  prevEnqueueAt: undefined | wellKnownTimestamp;
+  // 任务类型名（载荷里的 handler/类型，如 tenant_expiry_scan）
+  taskType: string | undefined;
+};
+
+// 单任务类型在队列里的状态摘要
+export type taskservicev1_SystemTaskStateSummary = {
+  active: number | undefined;
+  archived: number | undefined;
+  pending: number | undefined;
+  // 最近失败明细（retry + archived 合并、按失败时间倒序、截断）
+  recentFailures: taskservicev1_SystemTaskFailure[] | undefined;
+  retry: number | undefined;
+  taskType: string | undefined;
+};
+
+// 失败任务明细（retry/archived 里的单条）
+export type taskservicev1_SystemTaskFailure = {
+  lastError: string | undefined;
+  lastFailedAt: undefined | wellKnownTimestamp;
+  maxRetry: number | undefined;
+  // 下次重试时间（archived 无）
+  nextProcessAt: undefined | wellKnownTimestamp;
+  queue: string | undefined;
+  retried: number | undefined;
+  // retry 或 archived
+  state: string | undefined;
+  taskType: string | undefined;
+};
+
 // 税率规则管理服务（admin 全 CRUD）
 export interface TaxRateService {
   List(
@@ -19283,6 +19395,7 @@ export class ApiClient {
   private _skuService?: SkuService;
   private _stockAlertService?: StockAlertService;
   private _stockOpLogService?: StockOpLogService;
+  private _taskMonitorService?: TaskMonitorService;
   private _taskService?: TaskService;
   private _taxRateService?: TaxRateService;
   private _tenantService?: TenantService;
@@ -19585,6 +19698,10 @@ export class ApiClient {
 
   get stockOpLogService(): StockOpLogService {
     return this._stockOpLogService ??= createStockOpLogServiceClient(this._transport);
+  }
+
+  get taskMonitorService(): TaskMonitorService {
+    return this._taskMonitorService ??= createTaskMonitorServiceClient(this._transport);
   }
 
   get taskService(): TaskService {

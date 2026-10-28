@@ -287,6 +287,45 @@ func (r *CommentRepo) GetProductRating(ctx context.Context, productID uint32) (*
 	return summary, nil
 }
 
+// ApprovedReviewForProduct 商品已批准评论的只读视图（AI 摘要消费）。
+type ApprovedReviewForProduct struct {
+	Content string
+	Rating  int32
+}
+
+// ListApprovedCommentsForProduct 拉取商品最近 limit 条已批准评论（内容+星级），
+// 供评论 AI 摘要组装 prompt。
+func (r *CommentRepo) ListApprovedCommentsForProduct(ctx context.Context, productId uint32, limit int) ([]ApprovedReviewForProduct, error) {
+	if limit <= 0 || limit > 100 {
+		limit = 50
+	}
+	entities, err := r.entClient.Client().Comment.Query().
+		Where(
+			comment.ContentTypeEQ(comment.ContentTypeCommentContentTypeProduct),
+			comment.ObjectIDEQ(productId),
+			comment.StatusEQ(comment.StatusCommentStatusApproved),
+		).
+		Order(ent.Desc(comment.FieldID)).
+		Limit(limit).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("query approved comments for summary failed: %s", err.Error())
+		return nil, commentV1.ErrorInternalServerError("query comments failed")
+	}
+	out := make([]ApprovedReviewForProduct, 0, len(entities))
+	for _, e := range entities {
+		item := ApprovedReviewForProduct{}
+		if e.Content != nil {
+			item.Content = *e.Content
+		}
+		if e.Rating != nil {
+			item.Rating = int32(*e.Rating)
+		}
+		out = append(out, item)
+	}
+	return out, nil
+}
+
 // ratingPtrToUint8 将 *uint32（proto optional uint32）转为 *uint8（ent rating 列类型）。
 // nil 透传。值范围校验由 BFF 层负责（1-5），此处仅做类型转换。
 func ratingPtrToUint8(p *uint32) *uint8 {

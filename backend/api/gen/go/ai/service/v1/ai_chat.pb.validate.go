@@ -73,12 +73,20 @@ func (m *ChatRequest) validate(all bool) error {
 		// no validation rules for KnowledgeBaseId
 	}
 
+	if m.ContextProductId != nil {
+		// no validation rules for ContextProductId
+	}
+
 	if m.OperatorUserId != nil {
 		// no validation rules for OperatorUserId
 	}
 
 	if m.OperatorTenantId != nil {
 		// no validation rules for OperatorTenantId
+	}
+
+	if m.Channel != nil {
+		// no validation rules for Channel
 	}
 
 	if len(errors) > 0 {
@@ -314,6 +322,232 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ChatResponseValidationError{}
+
+// Validate checks the field values on GenerateRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GenerateRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GenerateRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GenerateRequestMultiError, or nil if none found.
+func (m *GenerateRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GenerateRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.System != nil {
+		// no validation rules for System
+	}
+
+	if m.Prompt != nil {
+		// no validation rules for Prompt
+	}
+
+	if m.MaxTokens != nil {
+		// no validation rules for MaxTokens
+	}
+
+	if m.OperatorUserId != nil {
+		// no validation rules for OperatorUserId
+	}
+
+	if m.OperatorTenantId != nil {
+		// no validation rules for OperatorTenantId
+	}
+
+	if len(errors) > 0 {
+		return GenerateRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GenerateRequestMultiError is an error wrapping multiple validation errors
+// returned by GenerateRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GenerateRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GenerateRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GenerateRequestMultiError) AllErrors() []error { return m }
+
+// GenerateRequestValidationError is the validation error returned by
+// GenerateRequest.Validate if the designated constraints aren't met.
+type GenerateRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GenerateRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GenerateRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GenerateRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GenerateRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GenerateRequestValidationError) ErrorName() string { return "GenerateRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GenerateRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGenerateRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GenerateRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GenerateRequestValidationError{}
+
+// Validate checks the field values on GenerateResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GenerateResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GenerateResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GenerateResponseMultiError, or nil if none found.
+func (m *GenerateResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GenerateResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Text
+
+	// no validation rules for ModelName
+
+	// no validation rules for TotalTokens
+
+	if len(errors) > 0 {
+		return GenerateResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GenerateResponseMultiError is an error wrapping multiple validation errors
+// returned by GenerateResponse.ValidateAll() if the designated constraints
+// aren't met.
+type GenerateResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GenerateResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GenerateResponseMultiError) AllErrors() []error { return m }
+
+// GenerateResponseValidationError is the validation error returned by
+// GenerateResponse.Validate if the designated constraints aren't met.
+type GenerateResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GenerateResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GenerateResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GenerateResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GenerateResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GenerateResponseValidationError) ErrorName() string { return "GenerateResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GenerateResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGenerateResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GenerateResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GenerateResponseValidationError{}
 
 // Validate checks the field values on ChatChunkEvent with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

@@ -21,15 +21,19 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationAiChatServiceChat = "/admin.service.v1.AiChatService/Chat"
+const OperationAiChatServiceGenerate = "/admin.service.v1.AiChatService/Generate"
 
 type AiChatServiceHTTPServer interface {
 	// Chat 发起一轮对话
 	Chat(context.Context, *v1.ChatRequest) (*v1.ChatResponse, error)
+	// Generate 通用单轮文本生成（商品文案等表单场景；非会话、不落库，同步返回）
+	Generate(context.Context, *v1.GenerateRequest) (*v1.GenerateResponse, error)
 }
 
 func RegisterAiChatServiceHTTPServer(s *http.Server, srv AiChatServiceHTTPServer) {
 	r := s.Route("/")
 	r.POST("/admin/v1/ai/chat/completions", _AiChatService_Chat0_HTTP_Handler(srv))
+	r.POST("/admin/v1/ai/generate", _AiChatService_Generate0_HTTP_Handler(srv))
 }
 
 func _AiChatService_Chat0_HTTP_Handler(srv AiChatServiceHTTPServer) func(ctx http.Context) error {
@@ -54,9 +58,33 @@ func _AiChatService_Chat0_HTTP_Handler(srv AiChatServiceHTTPServer) func(ctx htt
 	}
 }
 
+func _AiChatService_Generate0_HTTP_Handler(srv AiChatServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.GenerateRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAiChatServiceGenerate)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.Generate(ctx, req.(*v1.GenerateRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.GenerateResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AiChatServiceHTTPClient interface {
 	// Chat 发起一轮对话
 	Chat(ctx context.Context, req *v1.ChatRequest, opts ...http.CallOption) (rsp *v1.ChatResponse, err error)
+	// Generate 通用单轮文本生成（商品文案等表单场景；非会话、不落库，同步返回）
+	Generate(ctx context.Context, req *v1.GenerateRequest, opts ...http.CallOption) (rsp *v1.GenerateResponse, err error)
 }
 
 type AiChatServiceHTTPClientImpl struct {
@@ -73,6 +101,20 @@ func (c *AiChatServiceHTTPClientImpl) Chat(ctx context.Context, in *v1.ChatReque
 	pattern := "/admin/v1/ai/chat/completions"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAiChatServiceChat))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// Generate 通用单轮文本生成（商品文案等表单场景；非会话、不落库，同步返回）
+func (c *AiChatServiceHTTPClientImpl) Generate(ctx context.Context, in *v1.GenerateRequest, opts ...http.CallOption) (*v1.GenerateResponse, error) {
+	var out v1.GenerateResponse
+	pattern := "/admin/v1/ai/generate"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAiChatServiceGenerate))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

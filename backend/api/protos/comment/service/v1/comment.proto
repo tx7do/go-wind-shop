@@ -34,6 +34,9 @@ service CommentService {
 
   // 获取商品评分聚合（AVG + COUNT over 已批准评论）
   rpc GetProductRating (GetProductRatingRequest) returns (ProductRatingSummary) {}
+
+  // 评论 AI 摘要（LLM 消化已批准评论生成购物洞察；评论不足时 available=false）
+  rpc GetProductReviewSummary (GetProductReviewSummaryRequest) returns (ProductReviewSummary) {}
 }
 
 // 商品评论
@@ -169,4 +172,16 @@ message GetProductRatingRequest {
 message ProductRatingSummary {
   double average = 1 [json_name = "average", (gnostic.openapi.v3.property) = {description: "平均评分（0-5，无评分时为0）"}];
   uint64 count = 2 [json_name = "count", (gnostic.openapi.v3.property) = {description: "已批准评分数（含无评分的评论）"}];
+}
+
+// 请求 - 评论 AI 摘要
+message GetProductReviewSummaryRequest {
+  uint32 product_id = 1 [json_name = "productId", (gnostic.openapi.v3.property) = {description: "商品ID"}];
+}
+
+// 响应 - 评论 AI 摘要（LLM 生成，服务端缓存）
+message ProductReviewSummary {
+  string summary = 1 [json_name = "summary", (gnostic.openapi.v3.property) = {description: "摘要文本"}];
+  uint32 comment_count = 2 [json_name = "commentCount", (gnostic.openapi.v3.property) = {description: "参与摘要的评论条数"}];
+  bool available = 3 [json_name = "available", (gnostic.openapi.v3.property) = {description: "是否有可用摘要"}];
 }

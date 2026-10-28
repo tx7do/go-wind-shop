@@ -23,6 +23,9 @@ const (
 	ClaimFieldRoleCodes = "roc"                   // 角色码列表
 	ClaimFieldDataScope = "ds"                    // 数据范围
 	ClaimFieldOrgUnitID = "ouid"                  // 组织单元 ID
+
+	ClaimFieldIsPlatformAdmin = "ipa" // 是否平台管理员
+	ClaimFieldIsTenantAdmin   = "ita" // 是否租户管理员
 )
 
 const (
@@ -94,6 +97,12 @@ func NewUserTokenAuthClaims(
 	}
 	if tokenPayload.OrgUnitId != nil {
 		authClaims[ClaimFieldOrgUnitID] = tokenPayload.GetOrgUnitId()
+	}
+	if tokenPayload.IsPlatformAdmin != nil {
+		authClaims[ClaimFieldIsPlatformAdmin] = tokenPayload.GetIsPlatformAdmin()
+	}
+	if tokenPayload.IsTenantAdmin != nil {
+		authClaims[ClaimFieldIsTenantAdmin] = tokenPayload.GetIsTenantAdmin()
 	}
 
 	return &authClaims
@@ -178,6 +187,13 @@ func NewUserTokenPayloadWithClaims(claims *authn.AuthClaims) (*authenticationV1.
 		payload.OrgUnitId = trans.Ptr(orgUnitID)
 	}
 
+	if ipa, ok := (*claims)[ClaimFieldIsPlatformAdmin].(bool); ok && ipa {
+		payload.IsPlatformAdmin = trans.Ptr(true)
+	}
+	if ita, ok := (*claims)[ClaimFieldIsTenantAdmin].(bool); ok && ita {
+		payload.IsTenantAdmin = trans.Ptr(true)
+	}
+
 	return payload, nil
 }
 
@@ -239,6 +255,13 @@ func NewUserTokenPayloadWithJwtMapClaims(claims jwt.MapClaims) (*authenticationV
 		default:
 			return nil, errors.New("invalid roleCodes type")
 		}
+	}
+
+	if ipa, ok := claims[ClaimFieldIsPlatformAdmin].(bool); ok && ipa {
+		payload.IsPlatformAdmin = trans.Ptr(true)
+	}
+	if ita, ok := claims[ClaimFieldIsTenantAdmin].(bool); ok && ita {
+		payload.IsTenantAdmin = trans.Ptr(true)
 	}
 
 	return payload, nil

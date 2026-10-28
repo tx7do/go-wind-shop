@@ -66,6 +66,7 @@ func NewRestMiddleware(
 		appV1.OperationInteractionServiceGetCounts,
 
 		appV1.OperationCommentServiceGetProductRating,
+		appV1.OperationCommentServiceGetProductReviewSummary,
 		appV1.OperationCouponTemplateServiceList,
 	)
 

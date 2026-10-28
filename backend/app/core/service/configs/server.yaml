@@ -1,7 +1,8 @@
 server:
   grpc:
     addr: "0.0.0.0:0"
-    timeout: 10s
+    # LLM 链路（对话/问数/生成）单轮可达数十秒，全局超时放宽
+    timeout: 300s
     middleware:
       enable_logging: true
       enable_recovery: true

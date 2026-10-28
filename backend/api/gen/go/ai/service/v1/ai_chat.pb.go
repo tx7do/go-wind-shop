@@ -24,15 +24,21 @@ const (
 
 // 发起对话 - 请求
 type ChatRequest struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	ConversationId   *uint32                `protobuf:"varint,1,opt,name=conversation_id,json=conversationId,proto3,oneof" json:"conversation_id,omitempty"`      // 会话ID，0=新建
-	ProviderId       *uint32                `protobuf:"varint,2,opt,name=provider_id,json=providerId,proto3,oneof" json:"provider_id,omitempty"`                  // 提供商ID，0=默认
-	Content          *string                `protobuf:"bytes,3,opt,name=content,proto3,oneof" json:"content,omitempty"`                                           // 用户输入内容
-	KnowledgeBaseId  *uint32                `protobuf:"varint,4,opt,name=knowledge_base_id,json=knowledgeBaseId,proto3,oneof" json:"knowledge_base_id,omitempty"` // 知识库ID（暂未启用）
-	OperatorUserId   *uint32                `protobuf:"varint,10,opt,name=operator_user_id,json=operatorUserId,proto3,oneof" json:"operator_user_id,omitempty"`
-	OperatorTenantId *uint32                `protobuf:"varint,11,opt,name=operator_tenant_id,json=operatorTenantId,proto3,oneof" json:"operator_tenant_id,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	ConversationId  *uint32                `protobuf:"varint,1,opt,name=conversation_id,json=conversationId,proto3,oneof" json:"conversation_id,omitempty"`      // 会话ID，0=新建
+	ProviderId      *uint32                `protobuf:"varint,2,opt,name=provider_id,json=providerId,proto3,oneof" json:"provider_id,omitempty"`                  // 提供商ID，0=默认
+	Content         *string                `protobuf:"bytes,3,opt,name=content,proto3,oneof" json:"content,omitempty"`                                           // 用户输入内容
+	KnowledgeBaseId *uint32                `protobuf:"varint,4,opt,name=knowledge_base_id,json=knowledgeBaseId,proto3,oneof" json:"knowledge_base_id,omitempty"` // 知识库ID，0=默认绑定
+	// 上下文商品ID：用户当前正在浏览的商品（C端商品页"问AI"入口携带）。
+	// core 将商品摘要注入 system prompt，让回答围绕该商品展开；0=无上下文。
+	ContextProductId *uint32 `protobuf:"varint,5,opt,name=context_product_id,json=contextProductId,proto3,oneof" json:"context_product_id,omitempty"`
+	OperatorUserId   *uint32 `protobuf:"varint,10,opt,name=operator_user_id,json=operatorUserId,proto3,oneof" json:"operator_user_id,omitempty"`
+	OperatorTenantId *uint32 `protobuf:"varint,11,opt,name=operator_tenant_id,json=operatorTenantId,proto3,oneof" json:"operator_tenant_id,omitempty"`
+	// 发起渠道："app"（C端导购）/ "admin"（后台助手）。core 据此区分渠道策略：
+	// C端生效每日 token 限额与默认知识库绑定，admin 不受限。
+	Channel       *string `protobuf:"bytes,12,opt,name=channel,proto3,oneof" json:"channel,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *ChatRequest) Reset() {
@@ -93,6 +99,13 @@ func (x *ChatRequest) GetKnowledgeBaseId() uint32 {
 	return 0
 }
 
+func (x *ChatRequest) GetContextProductId() uint32 {
+	if x != nil && x.ContextProductId != nil {
+		return *x.ContextProductId
+	}
+	return 0
+}
+
 func (x *ChatRequest) GetOperatorUserId() uint32 {
 	if x != nil && x.OperatorUserId != nil {
 		return *x.OperatorUserId
@@ -105,6 +118,13 @@ func (x *ChatRequest) GetOperatorTenantId() uint32 {
 		return *x.OperatorTenantId
 	}
 	return 0
+}
+
+func (x *ChatRequest) GetChannel() string {
+	if x != nil && x.Channel != nil {
+		return *x.Channel
+	}
+	return ""
 }
 
 // 发起对话 - 回应
@@ -162,6 +182,151 @@ func (x *ChatResponse) GetMessage() *AiMessage {
 	return nil
 }
 
+// 通用单轮文本生成（非会话、不落库）：商品文案、评论摘要等业务场景共用。
+// prompt 组装在 BFF 层完成，core 只负责解析提供商、调用模型、记录用量；
+// 调用方只有 admin/app 两个 BFF（内网）。
+type GenerateRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 系统提示（角色/风格约束），可空
+	System *string `protobuf:"bytes,1,opt,name=system,proto3,oneof" json:"system,omitempty"`
+	// 用户提示（任务描述 + 素材文本）
+	Prompt *string `protobuf:"bytes,2,opt,name=prompt,proto3,oneof" json:"prompt,omitempty"`
+	// 最大生成 token 数；0=用模型默认
+	MaxTokens        *uint32 `protobuf:"varint,3,opt,name=max_tokens,json=maxTokens,proto3,oneof" json:"max_tokens,omitempty"`
+	OperatorUserId   *uint32 `protobuf:"varint,10,opt,name=operator_user_id,json=operatorUserId,proto3,oneof" json:"operator_user_id,omitempty"`
+	OperatorTenantId *uint32 `protobuf:"varint,11,opt,name=operator_tenant_id,json=operatorTenantId,proto3,oneof" json:"operator_tenant_id,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *GenerateRequest) Reset() {
+	*x = GenerateRequest{}
+	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GenerateRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GenerateRequest) ProtoMessage() {}
+
+func (x *GenerateRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GenerateRequest.ProtoReflect.Descriptor instead.
+func (*GenerateRequest) Descriptor() ([]byte, []int) {
+	return file_ai_service_v1_ai_chat_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GenerateRequest) GetSystem() string {
+	if x != nil && x.System != nil {
+		return *x.System
+	}
+	return ""
+}
+
+func (x *GenerateRequest) GetPrompt() string {
+	if x != nil && x.Prompt != nil {
+		return *x.Prompt
+	}
+	return ""
+}
+
+func (x *GenerateRequest) GetMaxTokens() uint32 {
+	if x != nil && x.MaxTokens != nil {
+		return *x.MaxTokens
+	}
+	return 0
+}
+
+func (x *GenerateRequest) GetOperatorUserId() uint32 {
+	if x != nil && x.OperatorUserId != nil {
+		return *x.OperatorUserId
+	}
+	return 0
+}
+
+func (x *GenerateRequest) GetOperatorTenantId() uint32 {
+	if x != nil && x.OperatorTenantId != nil {
+		return *x.OperatorTenantId
+	}
+	return 0
+}
+
+type GenerateResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 生成的文本
+	Text string `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
+	// 实际使用的模型名
+	ModelName string `protobuf:"bytes,2,opt,name=model_name,json=modelName,proto3" json:"model_name,omitempty"`
+	// 本次总 token 消耗
+	TotalTokens   uint32 `protobuf:"varint,3,opt,name=total_tokens,json=totalTokens,proto3" json:"total_tokens,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GenerateResponse) Reset() {
+	*x = GenerateResponse{}
+	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GenerateResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GenerateResponse) ProtoMessage() {}
+
+func (x *GenerateResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GenerateResponse.ProtoReflect.Descriptor instead.
+func (*GenerateResponse) Descriptor() ([]byte, []int) {
+	return file_ai_service_v1_ai_chat_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GenerateResponse) GetText() string {
+	if x != nil {
+		return x.Text
+	}
+	return ""
+}
+
+func (x *GenerateResponse) GetModelName() string {
+	if x != nil {
+		return x.ModelName
+	}
+	return ""
+}
+
+func (x *GenerateResponse) GetTotalTokens() uint32 {
+	if x != nil {
+		return x.TotalTokens
+	}
+	return 0
+}
+
 // SSE `ai_chat_chunk` 事件 data 形状（protojson，camelCase 键）。
 type ChatChunkEvent struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
@@ -174,7 +339,7 @@ type ChatChunkEvent struct {
 
 func (x *ChatChunkEvent) Reset() {
 	*x = ChatChunkEvent{}
-	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[2]
+	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -186,7 +351,7 @@ func (x *ChatChunkEvent) String() string {
 func (*ChatChunkEvent) ProtoMessage() {}
 
 func (x *ChatChunkEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[2]
+	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -199,7 +364,7 @@ func (x *ChatChunkEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatChunkEvent.ProtoReflect.Descriptor instead.
 func (*ChatChunkEvent) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_chat_proto_rawDescGZIP(), []int{2}
+	return file_ai_service_v1_ai_chat_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ChatChunkEvent) GetConversationId() uint32 {
@@ -238,7 +403,7 @@ type ChatToolEvent struct {
 
 func (x *ChatToolEvent) Reset() {
 	*x = ChatToolEvent{}
-	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[3]
+	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -250,7 +415,7 @@ func (x *ChatToolEvent) String() string {
 func (*ChatToolEvent) ProtoMessage() {}
 
 func (x *ChatToolEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[3]
+	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -263,7 +428,7 @@ func (x *ChatToolEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatToolEvent.ProtoReflect.Descriptor instead.
 func (*ChatToolEvent) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_chat_proto_rawDescGZIP(), []int{3}
+	return file_ai_service_v1_ai_chat_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *ChatToolEvent) GetConversationId() uint32 {
@@ -309,7 +474,7 @@ type ChatStreamFrame struct {
 
 func (x *ChatStreamFrame) Reset() {
 	*x = ChatStreamFrame{}
-	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[4]
+	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -321,7 +486,7 @@ func (x *ChatStreamFrame) String() string {
 func (*ChatStreamFrame) ProtoMessage() {}
 
 func (x *ChatStreamFrame) ProtoReflect() protoreflect.Message {
-	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[4]
+	mi := &file_ai_service_v1_ai_chat_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -334,7 +499,7 @@ func (x *ChatStreamFrame) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ChatStreamFrame.ProtoReflect.Descriptor instead.
 func (*ChatStreamFrame) Descriptor() ([]byte, []int) {
-	return file_ai_service_v1_ai_chat_proto_rawDescGZIP(), []int{4}
+	return file_ai_service_v1_ai_chat_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ChatStreamFrame) GetFrame() isChatStreamFrame_Frame {
@@ -397,26 +562,49 @@ var File_ai_service_v1_ai_chat_proto protoreflect.FileDescriptor
 
 const file_ai_service_v1_ai_chat_proto_rawDesc = "" +
 	"\n" +
-	"\x1bai/service/v1/ai_chat.proto\x12\rai.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a#ai/service/v1/ai_conversation.proto\x1a\x1eai/service/v1/ai_message.proto\"\x83\x05\n" +
+	"\x1bai/service/v1/ai_chat.proto\x12\rai.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a#ai/service/v1/ai_conversation.proto\x1a\x1eai/service/v1/ai_message.proto\"\x9d\a\n" +
 	"\vChatRequest\x12S\n" +
 	"\x0fconversation_id\x18\x01 \x01(\rB%\xbaG\"\x92\x02\x1f会话ID；0 表示新建会话H\x00R\x0econversationId\x88\x01\x01\x12W\n" +
 	"\vprovider_id\x18\x02 \x01(\rB1\xbaG.\x92\x02+提供商ID；0 表示使用默认提供商H\x01R\n" +
 	"providerId\x88\x01\x01\x127\n" +
-	"\acontent\x18\x03 \x01(\tB\x18\xbaG\x15\x92\x02\x12用户输入内容H\x02R\acontent\x88\x01\x01\x12g\n" +
-	"\x11knowledge_base_id\x18\x04 \x01(\rB6\xbaG3\x92\x020知识库ID；RAG 未移植前该字段被忽略H\x03R\x0fknowledgeBaseId\x88\x01\x01\x12V\n" +
+	"\acontent\x18\x03 \x01(\tB\x18\xbaG\x15\x92\x02\x12用户输入内容H\x02R\acontent\x88\x01\x01\x12\xa2\x01\n" +
+	"\x11knowledge_base_id\x18\x04 \x01(\rBq\xbaGn\x92\x02k知识库ID；0 时 C端渠道回落到系统参数 ai.assistant.knowledge_base_id 绑定的默认知识库H\x03R\x0fknowledgeBaseId\x88\x01\x01\x12h\n" +
+	"\x12context_product_id\x18\x05 \x01(\rB5\xbaG2\x92\x02/上下文商品ID（商品页提问时携带）H\x04R\x10contextProductId\x88\x01\x01\x12V\n" +
 	"\x10operator_user_id\x18\n" +
-	" \x01(\rB'\xbaG$\x92\x02!操作者用户ID（BFF 注入）H\x04R\x0eoperatorUserId\x88\x01\x01\x12Z\n" +
-	"\x12operator_tenant_id\x18\v \x01(\rB'\xbaG$\x92\x02!操作者租户ID（BFF 注入）H\x05R\x10operatorTenantId\x88\x01\x01B\x12\n" +
+	" \x01(\rB'\xbaG$\x92\x02!操作者用户ID（BFF 注入）H\x05R\x0eoperatorUserId\x88\x01\x01\x12Z\n" +
+	"\x12operator_tenant_id\x18\v \x01(\rB'\xbaG$\x92\x02!操作者租户ID（BFF 注入）H\x06R\x10operatorTenantId\x88\x01\x01\x12O\n" +
+	"\achannel\x18\f \x01(\tB0\xbaG-\x92\x02*发起渠道（BFF 注入）：app / adminH\aR\achannel\x88\x01\x01B\x12\n" +
 	"\x10_conversation_idB\x0e\n" +
 	"\f_provider_idB\n" +
 	"\n" +
 	"\b_contentB\x14\n" +
-	"\x12_knowledge_base_idB\x13\n" +
+	"\x12_knowledge_base_idB\x15\n" +
+	"\x13_context_product_idB\x13\n" +
 	"\x11_operator_user_idB\x15\n" +
-	"\x13_operator_tenant_id\"\x85\x01\n" +
+	"\x13_operator_tenant_idB\n" +
+	"\n" +
+	"\b_channel\"\x85\x01\n" +
 	"\fChatResponse\x12A\n" +
 	"\fconversation\x18\x01 \x01(\v2\x1d.ai.service.v1.AiConversationR\fconversation\x122\n" +
-	"\amessage\x18\x02 \x01(\v2\x18.ai.service.v1.AiMessageR\amessage\"a\n" +
+	"\amessage\x18\x02 \x01(\v2\x18.ai.service.v1.AiMessageR\amessage\"\xd5\x03\n" +
+	"\x0fGenerateRequest\x12>\n" +
+	"\x06system\x18\x01 \x01(\tB!\xbaG\x1e\x92\x02\x1b系统提示词（可空）H\x00R\x06system\x88\x01\x01\x122\n" +
+	"\x06prompt\x18\x02 \x01(\tB\x15\xbaG\x12\x92\x02\x0f用户提示词H\x01R\x06prompt\x88\x01\x01\x12I\n" +
+	"\n" +
+	"max_tokens\x18\x03 \x01(\rB%\xbaG\"\x92\x02\x1f最大生成token数，0=默认H\x02R\tmaxTokens\x88\x01\x01\x12V\n" +
+	"\x10operator_user_id\x18\n" +
+	" \x01(\rB'\xbaG$\x92\x02!操作者用户ID（BFF 注入）H\x03R\x0eoperatorUserId\x88\x01\x01\x12Z\n" +
+	"\x12operator_tenant_id\x18\v \x01(\rB'\xbaG$\x92\x02!操作者租户ID（BFF 注入）H\x04R\x10operatorTenantId\x88\x01\x01B\t\n" +
+	"\a_systemB\t\n" +
+	"\a_promptB\r\n" +
+	"\v_max_tokensB\x13\n" +
+	"\x11_operator_user_idB\x15\n" +
+	"\x13_operator_tenant_id\"h\n" +
+	"\x10GenerateResponse\x12\x12\n" +
+	"\x04text\x18\x01 \x01(\tR\x04text\x12\x1d\n" +
+	"\n" +
+	"model_name\x18\x02 \x01(\tR\tmodelName\x12!\n" +
+	"\ftotal_tokens\x18\x03 \x01(\rR\vtotalTokens\"a\n" +
 	"\x0eChatChunkEvent\x12'\n" +
 	"\x0fconversation_id\x18\x01 \x01(\rR\x0econversationId\x12\x10\n" +
 	"\x03seq\x18\x02 \x01(\rR\x03seq\x12\x14\n" +
@@ -430,9 +618,10 @@ const file_ai_service_v1_ai_chat_proto_rawDesc = "" +
 	"\x05chunk\x18\x01 \x01(\v2\x1d.ai.service.v1.ChatChunkEventH\x00R\x05chunk\x122\n" +
 	"\x04tool\x18\x02 \x01(\v2\x1c.ai.service.v1.ChatToolEventH\x00R\x04tool\x121\n" +
 	"\x04done\x18\x03 \x01(\v2\x1b.ai.service.v1.ChatResponseH\x00R\x04doneB\a\n" +
-	"\x05frame2W\n" +
+	"\x05frame2\xa6\x01\n" +
 	"\rAiChatService\x12F\n" +
-	"\x04Chat\x12\x1a.ai.service.v1.ChatRequest\x1a\x1e.ai.service.v1.ChatStreamFrame\"\x000\x01B\xa7\x01\n" +
+	"\x04Chat\x12\x1a.ai.service.v1.ChatRequest\x1a\x1e.ai.service.v1.ChatStreamFrame\"\x000\x01\x12M\n" +
+	"\bGenerate\x12\x1e.ai.service.v1.GenerateRequest\x1a\x1f.ai.service.v1.GenerateResponse\"\x00B\xa7\x01\n" +
 	"\x11com.ai.service.v1B\vAiChatProtoP\x01Z/go-wind-shop/api/gen/go/ai/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\rAi.Service.V1\xca\x02\rAi\\Service\\V1\xe2\x02\x19Ai\\Service\\V1\\GPBMetadata\xea\x02\x0fAi::Service::V1b\x06proto3"
 
 var (
@@ -447,26 +636,30 @@ func file_ai_service_v1_ai_chat_proto_rawDescGZIP() []byte {
 	return file_ai_service_v1_ai_chat_proto_rawDescData
 }
 
-var file_ai_service_v1_ai_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_ai_service_v1_ai_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_ai_service_v1_ai_chat_proto_goTypes = []any{
-	(*ChatRequest)(nil),     // 0: ai.service.v1.ChatRequest
-	(*ChatResponse)(nil),    // 1: ai.service.v1.ChatResponse
-	(*ChatChunkEvent)(nil),  // 2: ai.service.v1.ChatChunkEvent
-	(*ChatToolEvent)(nil),   // 3: ai.service.v1.ChatToolEvent
-	(*ChatStreamFrame)(nil), // 4: ai.service.v1.ChatStreamFrame
-	(*AiConversation)(nil),  // 5: ai.service.v1.AiConversation
-	(*AiMessage)(nil),       // 6: ai.service.v1.AiMessage
+	(*ChatRequest)(nil),      // 0: ai.service.v1.ChatRequest
+	(*ChatResponse)(nil),     // 1: ai.service.v1.ChatResponse
+	(*GenerateRequest)(nil),  // 2: ai.service.v1.GenerateRequest
+	(*GenerateResponse)(nil), // 3: ai.service.v1.GenerateResponse
+	(*ChatChunkEvent)(nil),   // 4: ai.service.v1.ChatChunkEvent
+	(*ChatToolEvent)(nil),    // 5: ai.service.v1.ChatToolEvent
+	(*ChatStreamFrame)(nil),  // 6: ai.service.v1.ChatStreamFrame
+	(*AiConversation)(nil),   // 7: ai.service.v1.AiConversation
+	(*AiMessage)(nil),        // 8: ai.service.v1.AiMessage
 }
 var file_ai_service_v1_ai_chat_proto_depIdxs = []int32{
-	5, // 0: ai.service.v1.ChatResponse.conversation:type_name -> ai.service.v1.AiConversation
-	6, // 1: ai.service.v1.ChatResponse.message:type_name -> ai.service.v1.AiMessage
-	2, // 2: ai.service.v1.ChatStreamFrame.chunk:type_name -> ai.service.v1.ChatChunkEvent
-	3, // 3: ai.service.v1.ChatStreamFrame.tool:type_name -> ai.service.v1.ChatToolEvent
+	7, // 0: ai.service.v1.ChatResponse.conversation:type_name -> ai.service.v1.AiConversation
+	8, // 1: ai.service.v1.ChatResponse.message:type_name -> ai.service.v1.AiMessage
+	4, // 2: ai.service.v1.ChatStreamFrame.chunk:type_name -> ai.service.v1.ChatChunkEvent
+	5, // 3: ai.service.v1.ChatStreamFrame.tool:type_name -> ai.service.v1.ChatToolEvent
 	1, // 4: ai.service.v1.ChatStreamFrame.done:type_name -> ai.service.v1.ChatResponse
 	0, // 5: ai.service.v1.AiChatService.Chat:input_type -> ai.service.v1.ChatRequest
-	4, // 6: ai.service.v1.AiChatService.Chat:output_type -> ai.service.v1.ChatStreamFrame
-	6, // [6:7] is the sub-list for method output_type
-	5, // [5:6] is the sub-list for method input_type
+	2, // 6: ai.service.v1.AiChatService.Generate:input_type -> ai.service.v1.GenerateRequest
+	6, // 7: ai.service.v1.AiChatService.Chat:output_type -> ai.service.v1.ChatStreamFrame
+	3, // 8: ai.service.v1.AiChatService.Generate:output_type -> ai.service.v1.GenerateResponse
+	7, // [7:9] is the sub-list for method output_type
+	5, // [5:7] is the sub-list for method input_type
 	5, // [5:5] is the sub-list for extension type_name
 	5, // [5:5] is the sub-list for extension extendee
 	0, // [0:5] is the sub-list for field type_name
@@ -480,7 +673,8 @@ func file_ai_service_v1_ai_chat_proto_init() {
 	file_ai_service_v1_ai_conversation_proto_init()
 	file_ai_service_v1_ai_message_proto_init()
 	file_ai_service_v1_ai_chat_proto_msgTypes[0].OneofWrappers = []any{}
-	file_ai_service_v1_ai_chat_proto_msgTypes[4].OneofWrappers = []any{
+	file_ai_service_v1_ai_chat_proto_msgTypes[2].OneofWrappers = []any{}
+	file_ai_service_v1_ai_chat_proto_msgTypes[6].OneofWrappers = []any{
 		(*ChatStreamFrame_Chunk)(nil),
 		(*ChatStreamFrame_Tool)(nil),
 		(*ChatStreamFrame_Done)(nil),
@@ -491,7 +685,7 @@ func file_ai_service_v1_ai_chat_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_ai_service_v1_ai_chat_proto_rawDesc), len(file_ai_service_v1_ai_chat_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

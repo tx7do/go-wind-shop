@@ -2670,6 +2670,68 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/catalog.service.v1.ProductAttribute'
+    /app/v1/mall/product-search:
+        get:
+            tags:
+                - ProductService
+            description: 搜索商品（Elasticsearch 全文检索）
+            operationId: ProductService_SearchProducts
+            parameters:
+                - name: query
+                  in: query
+                  schema:
+                    type: string
+                - name: language
+                  in: query
+                  schema:
+                    type: string
+                - name: page
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+                - name: pageSize
+                  in: query
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.SearchProductsResponse'
+    /app/v1/mall/product-suggest:
+        get:
+            tags:
+                - ProductService
+            description: 搜索建议（输入联想，免鉴权）
+            operationId: ProductService_SearchProductSuggestions
+            parameters:
+                - name: query
+                  in: query
+                  description: 搜索关键词（前缀短语匹配）
+                  schema:
+                    type: string
+                - name: language
+                  in: query
+                  description: 语言代码（缺省 zh-CN）
+                  schema:
+                    type: string
+                - name: size
+                  in: query
+                  description: 返回条数（缺省 8，最大 20）
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.SearchProductSuggestionsResponse'
     /app/v1/mall/products:
         get:
             tags:
@@ -2748,68 +2810,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/catalog.service.v1.ListProductResponse'
-    /app/v1/mall/products/search:
-        get:
-            tags:
-                - ProductService
-            description: 搜索商品（Elasticsearch 全文检索）
-            operationId: ProductService_SearchProducts
-            parameters:
-                - name: query
-                  in: query
-                  schema:
-                    type: string
-                - name: language
-                  in: query
-                  schema:
-                    type: string
-                - name: page
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
-                - name: pageSize
-                  in: query
-                  schema:
-                    type: integer
-                    format: int32
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/catalog.service.v1.SearchProductsResponse'
-    /app/v1/mall/products/suggest:
-        get:
-            tags:
-                - ProductService
-            description: 搜索建议（输入联想，免鉴权）
-            operationId: ProductService_SearchProductSuggestions
-            parameters:
-                - name: query
-                  in: query
-                  description: 搜索关键词（前缀短语匹配）
-                  schema:
-                    type: string
-                - name: language
-                  in: query
-                  description: 语言代码（缺省 zh-CN）
-                  schema:
-                    type: string
-                - name: size
-                  in: query
-                  description: 返回条数（缺省 8，最大 20）
-                  schema:
-                    type: integer
-                    format: int32
-            responses:
-                "200":
-                    description: OK
-                    content:
-                        application/json:
-                            schema:
-                                $ref: '#/components/schemas/catalog.service.v1.SearchProductSuggestionsResponse'
     /app/v1/mall/products/{id}:
         get:
             tags:
@@ -2863,6 +2863,26 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/comment.service.v1.ProductRatingSummary'
+    /app/v1/mall/products/{productId}/review-summary:
+        get:
+            tags:
+                - CommentService
+            description: 评论 AI 摘要（只读，匿名可读——白名单登记；LLM 生成，服务端有缓存）。
+            operationId: CommentService_GetProductReviewSummary
+            parameters:
+                - name: productId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/app.service.v1.ProductReviewSummaryResponse'
     /app/v1/mall/promotions/active:
         get:
             tags:
@@ -4004,7 +4024,11 @@ components:
                     description: 用户输入内容
                 knowledgeBaseId:
                     type: integer
-                    description: 知识库ID；RAG 未移植前该字段被忽略
+                    description: 知识库ID；0 时 C端渠道回落到系统参数 ai.assistant.knowledge_base_id 绑定的默认知识库
+                    format: uint32
+                contextProductId:
+                    type: integer
+                    description: 上下文商品ID（商品页提问时携带）
                     format: uint32
                 operatorUserId:
                     type: integer
@@ -4014,6 +4038,9 @@ components:
                     type: integer
                     description: 操作者租户ID（BFF 注入）
                     format: uint32
+                channel:
+                    type: string
+                    description: 发起渠道（BFF 注入）：app / admin
             description: 发起对话 - 请求
         ai.service.v1.ChatResponse:
             type: object
@@ -4027,6 +4054,20 @@ components:
                         - $ref: '#/components/schemas/ai.service.v1.AiMessage'
                     description: 模型回复消息（含 token 用量与模型名）
             description: 发起对话 - 回应
+        app.service.v1.ProductReviewSummaryResponse:
+            type: object
+            properties:
+                summary:
+                    type: string
+                    description: 摘要文本；商品评论不足（< minComments）时为空串且 available=false
+                commentCount:
+                    type: integer
+                    description: 参与摘要的评论条数
+                    format: uint32
+                available:
+                    type: boolean
+                    description: 是否有可用摘要（评论数不足/生成失败时 false，前端不渲染区块）
+            description: 评论 AI 摘要响应：AI 消化已审核评论后的购物洞察（一段短文）。
         app.service.v1.ResetPasswordRequest:
             type: object
             properties:

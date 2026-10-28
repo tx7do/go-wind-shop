@@ -155,7 +155,13 @@ export function createAiChatServiceClient(
 }
 // 发起对话 - 请求
 export type aiservicev1_ChatRequest = {
+  // 发起渠道："app"（C端导购）/ "admin"（后台助手）。core 据此区分渠道策略：
+  // C端生效每日 token 限额与默认知识库绑定，admin 不受限。
+  channel?: string;
   content?: string;
+  // 上下文商品ID：用户当前正在浏览的商品（C端商品页"问AI"入口携带）。
+  // core 将商品摘要注入 system prompt，让回答围绕该商品展开；0=无上下文。
+  contextProductId?: number;
   conversationId?: number;
   knowledgeBaseId?: number;
   operatorTenantId?: number;
@@ -1454,6 +1460,21 @@ export type catalogservicev1_GetCategoryRequest = {
   viewMask?: wellKnownFieldMask;
 };
 
+// 评论 AI 摘要响应：AI 消化已审核评论后的购物洞察（一段短文）。
+export type ProductReviewSummaryResponse = {
+  // 是否有可用摘要（评论数不足/生成失败时 false，前端不渲染区块）
+  available: boolean | undefined;
+  // 参与摘要的评论条数
+  commentCount: number | undefined;
+  // 摘要文本；商品评论不足（< minComments）时为空串且 available=false
+  summary: string | undefined;
+};
+
+// 评论 AI 摘要 - 请求
+export type GetProductReviewSummaryRequest = {
+  productId: number | undefined;
+};
+
 // 商品评论前台服务。
 // List/Get 在 BFF 层过滤 STATUS_APPROVED（未审核/拒绝/垃圾对前台不可见）；
 // Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）。
@@ -1479,6 +1500,10 @@ export interface CommentService {
   GetProductRating(
     request: commentservicev1_GetProductRatingRequest,
   ): Promise<commentservicev1_ProductRatingSummary>;
+  // 评论 AI 摘要（只读，匿名可读——白名单登记；LLM 生成，服务端有缓存）。
+  GetProductReviewSummary(
+    request: GetProductReviewSummaryRequest,
+  ): Promise<ProductReviewSummaryResponse>;
 }
 
 export function createCommentServiceClient(
@@ -1623,6 +1648,17 @@ export function createCommentServiceClient(
         service: 'CommentService',
         method: 'GetProductRating',
       }) as Promise<commentservicev1_ProductRatingSummary>;
+    },
+    GetProductReviewSummary(request) {
+      if (request.productId === undefined || request.productId === null) {
+        throw new Error('missing required field request.product_id');
+      }
+      const path = `/app/v1/mall/products/${request.productId}/review-summary`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'CommentService',
+        method: 'GetProductReviewSummary',
+      }) as Promise<ProductReviewSummaryResponse>;
     },
   };
 }

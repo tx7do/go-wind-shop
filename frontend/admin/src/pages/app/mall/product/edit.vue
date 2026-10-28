@@ -28,7 +28,19 @@
       <ElCol :xl="17" :lg="16" :md="24">
         <ElCard shadow="never" class="edit-card">
           <template #header>
-            <span>{{ $t("common.section.basic") }}</span>
+            <div class="flex w-full items-center justify-between">
+              <span>{{ $t("common.section.basic") }}</span>
+              <ElButton
+                size="small"
+                type="primary"
+                plain
+                :loading="aiCopyLoading"
+                @click="handleAiGenerateCopy"
+              >
+                <IconifyIcon icon="lucide:sparkles" class="mr-1 h-4 w-4" />
+                {{ $t("pages.mall.product.aiGenerate") }}
+              </ElButton>
+            </div>
           </template>
           <ElForm
             ref="formRef"
@@ -173,7 +185,7 @@
 <script lang="ts" setup>
 import { computed, reactive, ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { ElMessage, type FormInstance, type FormRules } from "element-plus";
+import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from "element-plus";
 
 import {
   useCreateProduct,
@@ -186,6 +198,7 @@ import { $t, useI18n } from "@/core/i18n";
 import TranslationTabs from "@/components/Pro/TranslationTabs/index.vue";
 import type { TranslationFieldConfig } from "@/components/Pro/TranslationTabs/types";
 import { PaginationQuery } from "@/core/transport/rest";
+import { generateAiText } from "@/api/composables/ai-chat";
 import { Icon as IconifyIcon } from "@iconify/vue";
 
 defineOptions({ name: "MallProductEdit" });
@@ -242,6 +255,61 @@ const formRules: FormRules = {
   name: [{ required: true, message: $t("common.validation.required"), trigger: "blur" }],
   status: [{ required: true, message: $t("common.validation.selectRequired"), trigger: "change" }],
 };
+
+// ── AI 文案生成：据名称/分类/品牌生成简述与详情，填入表单 ──
+const aiCopyLoading = ref(false);
+
+async function handleAiGenerateCopy() {
+  const name = formData.name.trim();
+  const shortDescription = formData.shortDescription.trim();
+  const longDescription = formData.longDescription.trim();
+  if (!name && !shortDescription) {
+    ElMessage.warning($t("pages.mall.product.aiNeedName"));
+    return;
+  }
+  if ((shortDescription || longDescription) &&
+      !(await ElMessageBox.confirm($t("pages.mall.product.aiOverwriteConfirm"), { type: "warning" }).catch(() => false))) {
+    return;
+  }
+
+  const categoryLabel = categoryOptions.value.find((c) => c.value === formData.categoryId)?.label ?? "";
+  const brandLabel = brandOptions.value.find((b) => b.value === formData.brandId)?.label ?? "";
+
+  aiCopyLoading.value = true;
+  try {
+    const resp: any = await generateAiText({
+      system:
+        "你是电商文案专家。根据商品信息输出 JSON 对象：" +
+        '{"shortDescription": "60字左右的中文卖点简述", "longDescription": "300字左右的中文商品详情，可用短段落"}。' +
+        "只输出 JSON 本身，不要 Markdown 代码块标记或任何解释。",
+      prompt:
+        `商品名称：${name || "（未命名，参考下方提示）"}
+` +
+        (categoryLabel ? `分类：${categoryLabel}
+` : "") +
+        (brandLabel ? `品牌：${brandLabel}
+` : "") +
+        (shortDescription ? `已有简述（可参考扩展）：${shortDescription}
+` : ""),
+      maxTokens: 1200,
+    });
+
+    const text = String(resp?.text ?? "");
+    const begin = text.indexOf("{");
+    const end = text.lastIndexOf("}");
+    if (!text || begin < 0 || end <= begin) {
+      throw new Error("invalid ai output");
+    }
+    const parsed = JSON.parse(text.slice(begin, end + 1));
+    if (parsed.shortDescription) formData.shortDescription = String(parsed.shortDescription);
+    if (parsed.longDescription) formData.longDescription = String(parsed.longDescription);
+    ElMessage.success($t("pages.mall.product.aiGenerateSuccess"));
+  } catch {
+    ElMessage.error($t("pages.mall.product.aiGenerateFailed"));
+  } finally {
+    aiCopyLoading.value = false;
+  }
+}
 
 const translationFields: TranslationFieldConfig[] = [
   { prop: "name", label: $t("pages.mall.product.name"), type: "input" },

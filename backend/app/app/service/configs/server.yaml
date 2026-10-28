@@ -2,7 +2,8 @@ server:
   rest:
     # 10700/10701：避免与兄妹项目（go-wind-cms/erp/oa/kanban/ledger 默认 6700/6701）冲突
     addr: "0.0.0.0:10700"
-    timeout: 10s
+    # LLM 链路（对话/问数/生成）单轮可达数十秒，全局超时放宽
+    timeout: 300s
     enable_swagger: true
     cors:
       headers:
@@ -33,7 +34,8 @@ server:
 
   grpc:
     addr: "0.0.0.0:0"
-    timeout: 10s
+    # LLM 链路（对话/问数/生成）单轮可达数十秒，全局超时放宽
+    timeout: 300s
     middleware:
       enable_logging: true
       enable_recovery: true

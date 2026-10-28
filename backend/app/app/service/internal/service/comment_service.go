@@ -144,6 +144,22 @@ func (s *CommentService) GetProductRating(ctx context.Context, req *commentV1.Ge
 	return s.commentClient.GetProductRating(ctx, req)
 }
 
+// GetProductReviewSummary 评论 AI 摘要（只读，匿名可读——白名单登记）。
+// LLM 生成在 core 完成（含缓存），本层只做形状转换。
+func (s *CommentService) GetProductReviewSummary(ctx context.Context, req *appV1.GetProductReviewSummaryRequest) (*appV1.ProductReviewSummaryResponse, error) {
+	resp, err := s.commentClient.GetProductReviewSummary(ctx, &commentV1.GetProductReviewSummaryRequest{
+		ProductId: req.GetProductId(),
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &appV1.ProductReviewSummaryResponse{
+		Summary:      resp.GetSummary(),
+		CommentCount: resp.GetCommentCount(),
+		Available:    resp.GetAvailable(),
+	}, nil
+}
+
 // ensureCommentOwner 校验指定评论的 created_by 是否等于操作者 userID，不等返回 Forbidden。
 func (s *CommentService) ensureCommentOwner(ctx context.Context, commentID uint32, userID uint32) error {
 	resp, err := s.commentClient.Get(ctx, &commentV1.GetCommentRequest{

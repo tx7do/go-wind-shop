@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@iconify/vue": "^5.0.0",
+    "@microsoft/fetch-event-source": "^2.0.1",
     "@nuxtjs/i18n": "^10.3.0",
     "@pinia/nuxt": "^1.0.1",
     "@tanstack/vue-query": "^5.100.14",

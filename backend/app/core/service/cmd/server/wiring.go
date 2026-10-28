@@ -263,7 +263,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	internalMessageRecipientService.RegisterNotifier(notificationService)
 	aiAgentService := service.NewAiAgentService(ctx, aiAgentAppRepo, aiAgentRunRepo, aiProviderRepo, aiKnowledgeRepo, aiUsageLogRepo, redisClient)
 	aiProviderService := service.NewAiProviderService(ctx, aiProviderRepo)
-	aiChatService := service.NewAiChatService(ctx, aiConversationRepo, aiMessageRepo, aiProviderRepo, aiUsageLogRepo, aiKnowledgeRepo, entClient)
+	aiChatService := service.NewAiChatService(ctx, aiConversationRepo, aiMessageRepo, aiProviderRepo, aiUsageLogRepo, aiKnowledgeRepo, configRepo, entClient)
 	aiConversationService := service.NewAiConversationService(ctx, aiConversationRepo)
 	aiMessageService := service.NewAiMessageService(ctx, aiMessageRepo)
 	aiKnowledgeService := service.NewAiKnowledgeService(ctx, aiKnowledgeRepo, aiProviderRepo, aiUsageLogRepo, taskService)

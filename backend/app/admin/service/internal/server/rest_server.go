@@ -170,6 +170,7 @@ func NewRestServer(
 	aiAgentService *service.AiAgentService,
 	aiProviderService *service.AiProviderService,
 	aiChatService *service.AiChatService,
+	taskMonitorService *service.TaskMonitorService,
 	aiConversationService *service.AiConversationService,
 	aiMessageService *service.AiMessageService,
 	aiKnowledgeService *service.AiKnowledgeService,
@@ -290,6 +291,7 @@ func NewRestServer(
 	adminV1.RegisterAiAgentServiceHTTPServer(srv, aiAgentService)
 	adminV1.RegisterAiProviderServiceHTTPServer(srv, aiProviderService)
 	adminV1.RegisterAiChatServiceHTTPServer(srv, aiChatService)
+	adminV1.RegisterTaskMonitorServiceHTTPServer(srv, taskMonitorService)
 	adminV1.RegisterAiConversationServiceHTTPServer(srv, aiConversationService)
 	adminV1.RegisterAiMessageServiceHTTPServer(srv, aiMessageService)
 	adminV1.RegisterAiKnowledgeBaseServiceHTTPServer(srv, aiKnowledgeService)

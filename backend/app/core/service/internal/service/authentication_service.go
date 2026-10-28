@@ -176,6 +176,20 @@ func (s *AuthenticationService) authorizeAndEnrichUserTokenPayload(ctx context.C
 	return s.authorizeAndEnrichUserTokenPayloadUserTenantRelationOneToOne(ctx, userID, tenantID, tokenPayload)
 }
 
+// fillAdminFlags 按角色码填充 token 的平台/租户管理员标志。
+// 该标志此前从未被赋值（仅消费无生产），导致下游 GetIsPlatformAdmin 判定
+// （任务监控守卫、MFA 重置、用户管理越权校验等）形同虚设。（对齐上游）
+func fillAdminFlags(tokenPayload *authenticationV1.UserTokenPayload, roleCodes []string) {
+	for _, rc := range roleCodes {
+		if rc == constants.PlatformAdminRoleCode {
+			tokenPayload.IsPlatformAdmin = trans.Ptr(true)
+		}
+		if rc == constants.TenantAdminRoleCode {
+			tokenPayload.IsTenantAdmin = trans.Ptr(true)
+		}
+	}
+}
+
 // resolveUserAuthority 解析用户权限信息
 func (s *AuthenticationService) resolveUserAuthority(ctx context.Context, user *identityV1.User, tokenPayload *authenticationV1.UserTokenPayload) error {
 	if user.GetStatus() != identityV1.User_NORMAL {
@@ -254,6 +268,7 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 	if roleCodes != nil {
 		user.Roles = roleCodes
 	}
+	fillAdminFlags(tokenPayload, roleCodes)
 
 	// 生成令牌
 	// ===== MFA 闸门：若该用户绑定了 ENABLED 的 TOTP 因子，则不签发 token， =====
@@ -340,6 +355,7 @@ func (s *AuthenticationService) doGrantTypeRefreshToken(ctx context.Context, req
 	if roleCodes != nil {
 		user.Roles = roleCodes
 	}
+	fillAdminFlags(tokenPayload, roleCodes)
 
 	// 生成令牌
 	accessToken, refreshToken, _, err := s.authenticator.CreateUserToken(ctx, req.GetClientType(), tokenPayload)

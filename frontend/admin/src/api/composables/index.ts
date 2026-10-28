@@ -42,6 +42,7 @@ export * from "./api";
 export * from "./file";
 export * from "./file-transfer";
 export * from "./task";
+export * from "./task-monitor";
 export * from "./login-policy";
 export * from "./language";
 

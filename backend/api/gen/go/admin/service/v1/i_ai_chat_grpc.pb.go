@@ -20,7 +20,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AiChatService_Chat_FullMethodName = "/admin.service.v1.AiChatService/Chat"
+	AiChatService_Chat_FullMethodName     = "/admin.service.v1.AiChatService/Chat"
+	AiChatService_Generate_FullMethodName = "/admin.service.v1.AiChatService/Generate"
 )
 
 // AiChatServiceClient is the client API for AiChatService service.
@@ -37,6 +38,8 @@ const (
 type AiChatServiceClient interface {
 	// 发起一轮对话
 	Chat(ctx context.Context, in *v1.ChatRequest, opts ...grpc.CallOption) (*v1.ChatResponse, error)
+	// 通用单轮文本生成（商品文案等表单场景；非会话、不落库，同步返回）
+	Generate(ctx context.Context, in *v1.GenerateRequest, opts ...grpc.CallOption) (*v1.GenerateResponse, error)
 }
 
 type aiChatServiceClient struct {
@@ -57,6 +60,16 @@ func (c *aiChatServiceClient) Chat(ctx context.Context, in *v1.ChatRequest, opts
 	return out, nil
 }
 
+func (c *aiChatServiceClient) Generate(ctx context.Context, in *v1.GenerateRequest, opts ...grpc.CallOption) (*v1.GenerateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.GenerateResponse)
+	err := c.cc.Invoke(ctx, AiChatService_Generate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AiChatServiceServer is the server API for AiChatService service.
 // All implementations must embed UnimplementedAiChatServiceServer
 // for forward compatibility.
@@ -71,6 +84,8 @@ func (c *aiChatServiceClient) Chat(ctx context.Context, in *v1.ChatRequest, opts
 type AiChatServiceServer interface {
 	// 发起一轮对话
 	Chat(context.Context, *v1.ChatRequest) (*v1.ChatResponse, error)
+	// 通用单轮文本生成（商品文案等表单场景；非会话、不落库，同步返回）
+	Generate(context.Context, *v1.GenerateRequest) (*v1.GenerateResponse, error)
 	mustEmbedUnimplementedAiChatServiceServer()
 }
 
@@ -83,6 +98,9 @@ type UnimplementedAiChatServiceServer struct{}
 
 func (UnimplementedAiChatServiceServer) Chat(context.Context, *v1.ChatRequest) (*v1.ChatResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Chat not implemented")
+}
+func (UnimplementedAiChatServiceServer) Generate(context.Context, *v1.GenerateRequest) (*v1.GenerateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Generate not implemented")
 }
 func (UnimplementedAiChatServiceServer) mustEmbedUnimplementedAiChatServiceServer() {}
 func (UnimplementedAiChatServiceServer) testEmbeddedByValue()                       {}
@@ -123,6 +141,24 @@ func _AiChatService_Chat_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AiChatService_Generate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.GenerateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AiChatServiceServer).Generate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AiChatService_Generate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AiChatServiceServer).Generate(ctx, req.(*v1.GenerateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AiChatService_ServiceDesc is the grpc.ServiceDesc for AiChatService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -133,6 +169,10 @@ var AiChatService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Chat",
 			Handler:    _AiChatService_Chat_Handler,
+		},
+		{
+			MethodName: "Generate",
+			Handler:    _AiChatService_Generate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

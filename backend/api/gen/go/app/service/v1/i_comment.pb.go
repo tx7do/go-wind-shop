@@ -14,6 +14,7 @@ import (
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	emptypb "google.golang.org/protobuf/types/known/emptypb"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -24,50 +25,184 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// 评论 AI 摘要响应：AI 消化已审核评论后的购物洞察（一段短文）。
+type ProductReviewSummaryResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 摘要文本；商品评论不足（< minComments）时为空串且 available=false
+	Summary string `protobuf:"bytes,1,opt,name=summary,proto3" json:"summary,omitempty"`
+	// 参与摘要的评论条数
+	CommentCount uint32 `protobuf:"varint,2,opt,name=comment_count,json=commentCount,proto3" json:"comment_count,omitempty"`
+	// 是否有可用摘要（评论数不足/生成失败时 false，前端不渲染区块）
+	Available     bool `protobuf:"varint,3,opt,name=available,proto3" json:"available,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProductReviewSummaryResponse) Reset() {
+	*x = ProductReviewSummaryResponse{}
+	mi := &file_app_service_v1_i_comment_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProductReviewSummaryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProductReviewSummaryResponse) ProtoMessage() {}
+
+func (x *ProductReviewSummaryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_service_v1_i_comment_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProductReviewSummaryResponse.ProtoReflect.Descriptor instead.
+func (*ProductReviewSummaryResponse) Descriptor() ([]byte, []int) {
+	return file_app_service_v1_i_comment_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ProductReviewSummaryResponse) GetSummary() string {
+	if x != nil {
+		return x.Summary
+	}
+	return ""
+}
+
+func (x *ProductReviewSummaryResponse) GetCommentCount() uint32 {
+	if x != nil {
+		return x.CommentCount
+	}
+	return 0
+}
+
+func (x *ProductReviewSummaryResponse) GetAvailable() bool {
+	if x != nil {
+		return x.Available
+	}
+	return false
+}
+
+// 评论 AI 摘要 - 请求
+type GetProductReviewSummaryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductId     uint32                 `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"` // 商品ID
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetProductReviewSummaryRequest) Reset() {
+	*x = GetProductReviewSummaryRequest{}
+	mi := &file_app_service_v1_i_comment_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetProductReviewSummaryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetProductReviewSummaryRequest) ProtoMessage() {}
+
+func (x *GetProductReviewSummaryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_service_v1_i_comment_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetProductReviewSummaryRequest.ProtoReflect.Descriptor instead.
+func (*GetProductReviewSummaryRequest) Descriptor() ([]byte, []int) {
+	return file_app_service_v1_i_comment_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *GetProductReviewSummaryRequest) GetProductId() uint32 {
+	if x != nil {
+		return x.ProductId
+	}
+	return 0
+}
+
 var File_app_service_v1_i_comment_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_comment_proto_rawDesc = "" +
 	"\n" +
-	"\x1eapp/service/v1/i_comment.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a comment/service/v1/comment.proto2\xd5\x05\n" +
+	"\x1eapp/service/v1/i_comment.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1epagination/v1/pagination.proto\x1a comment/service/v1/comment.proto\"{\n" +
+	"\x1cProductReviewSummaryResponse\x12\x18\n" +
+	"\asummary\x18\x01 \x01(\tR\asummary\x12#\n" +
+	"\rcomment_count\x18\x02 \x01(\rR\fcommentCount\x12\x1c\n" +
+	"\tavailable\x18\x03 \x01(\bR\tavailable\"?\n" +
+	"\x1eGetProductReviewSummaryRequest\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\rR\tproductId2\x8a\a\n" +
 	"\x0eCommentService\x12i\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.comment.service.v1.ListCommentResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/app/v1/mall/comments\x12m\n" +
 	"\x03Get\x12%.comment.service.v1.GetCommentRequest\x1a\x1b.comment.service.v1.Comment\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/app/v1/mall/comments/{id}\x12l\n" +
 	"\x06Create\x12(.comment.service.v1.CreateCommentRequest\x1a\x16.google.protobuf.Empty\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/app/v1/mall/comments\x12q\n" +
 	"\x06Update\x12(.comment.service.v1.UpdateCommentRequest\x1a\x16.google.protobuf.Empty\"%\x82\xd3\xe4\x93\x02\x1f:\x01*\x1a\x1a/app/v1/mall/comments/{id}\x12i\n" +
 	"\x06Delete\x12(.comment.service.v1.DeleteCommentRequest\x1a\x16.google.protobuf.Empty\"\x1d\x82\xd3\xe4\x93\x02\x17*\x15/app/v1/mall/comments\x12\x9c\x01\n" +
-	"\x10GetProductRating\x12+.comment.service.v1.GetProductRatingRequest\x1a(.comment.service.v1.ProductRatingSummary\"1\x82\xd3\xe4\x93\x02+\x12)/app/v1/mall/products/{product_id}/ratingB\xaf\x01\n" +
+	"\x10GetProductRating\x12+.comment.service.v1.GetProductRatingRequest\x1a(.comment.service.v1.ProductRatingSummary\"1\x82\xd3\xe4\x93\x02+\x12)/app/v1/mall/products/{product_id}/rating\x12\xb2\x01\n" +
+	"\x17GetProductReviewSummary\x12..app.service.v1.GetProductReviewSummaryRequest\x1a,.app.service.v1.ProductReviewSummaryResponse\"9\x82\xd3\xe4\x93\x023\x121/app/v1/mall/products/{product_id}/review-summaryB\xaf\x01\n" +
 	"\x12com.app.service.v1B\rICommentProtoP\x01Z0go-wind-shop/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
+var (
+	file_app_service_v1_i_comment_proto_rawDescOnce sync.Once
+	file_app_service_v1_i_comment_proto_rawDescData []byte
+)
+
+func file_app_service_v1_i_comment_proto_rawDescGZIP() []byte {
+	file_app_service_v1_i_comment_proto_rawDescOnce.Do(func() {
+		file_app_service_v1_i_comment_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_service_v1_i_comment_proto_rawDesc), len(file_app_service_v1_i_comment_proto_rawDesc)))
+	})
+	return file_app_service_v1_i_comment_proto_rawDescData
+}
+
+var file_app_service_v1_i_comment_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_app_service_v1_i_comment_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),            // 0: pagination.PagingRequest
-	(*v11.GetCommentRequest)(nil),       // 1: comment.service.v1.GetCommentRequest
-	(*v11.CreateCommentRequest)(nil),    // 2: comment.service.v1.CreateCommentRequest
-	(*v11.UpdateCommentRequest)(nil),    // 3: comment.service.v1.UpdateCommentRequest
-	(*v11.DeleteCommentRequest)(nil),    // 4: comment.service.v1.DeleteCommentRequest
-	(*v11.GetProductRatingRequest)(nil), // 5: comment.service.v1.GetProductRatingRequest
-	(*v11.ListCommentResponse)(nil),     // 6: comment.service.v1.ListCommentResponse
-	(*v11.Comment)(nil),                 // 7: comment.service.v1.Comment
-	(*emptypb.Empty)(nil),               // 8: google.protobuf.Empty
-	(*v11.ProductRatingSummary)(nil),    // 9: comment.service.v1.ProductRatingSummary
+	(*ProductReviewSummaryResponse)(nil),   // 0: app.service.v1.ProductReviewSummaryResponse
+	(*GetProductReviewSummaryRequest)(nil), // 1: app.service.v1.GetProductReviewSummaryRequest
+	(*v1.PagingRequest)(nil),               // 2: pagination.PagingRequest
+	(*v11.GetCommentRequest)(nil),          // 3: comment.service.v1.GetCommentRequest
+	(*v11.CreateCommentRequest)(nil),       // 4: comment.service.v1.CreateCommentRequest
+	(*v11.UpdateCommentRequest)(nil),       // 5: comment.service.v1.UpdateCommentRequest
+	(*v11.DeleteCommentRequest)(nil),       // 6: comment.service.v1.DeleteCommentRequest
+	(*v11.GetProductRatingRequest)(nil),    // 7: comment.service.v1.GetProductRatingRequest
+	(*v11.ListCommentResponse)(nil),        // 8: comment.service.v1.ListCommentResponse
+	(*v11.Comment)(nil),                    // 9: comment.service.v1.Comment
+	(*emptypb.Empty)(nil),                  // 10: google.protobuf.Empty
+	(*v11.ProductRatingSummary)(nil),       // 11: comment.service.v1.ProductRatingSummary
 }
 var file_app_service_v1_i_comment_proto_depIdxs = []int32{
-	0, // 0: app.service.v1.CommentService.List:input_type -> pagination.PagingRequest
-	1, // 1: app.service.v1.CommentService.Get:input_type -> comment.service.v1.GetCommentRequest
-	2, // 2: app.service.v1.CommentService.Create:input_type -> comment.service.v1.CreateCommentRequest
-	3, // 3: app.service.v1.CommentService.Update:input_type -> comment.service.v1.UpdateCommentRequest
-	4, // 4: app.service.v1.CommentService.Delete:input_type -> comment.service.v1.DeleteCommentRequest
-	5, // 5: app.service.v1.CommentService.GetProductRating:input_type -> comment.service.v1.GetProductRatingRequest
-	6, // 6: app.service.v1.CommentService.List:output_type -> comment.service.v1.ListCommentResponse
-	7, // 7: app.service.v1.CommentService.Get:output_type -> comment.service.v1.Comment
-	8, // 8: app.service.v1.CommentService.Create:output_type -> google.protobuf.Empty
-	8, // 9: app.service.v1.CommentService.Update:output_type -> google.protobuf.Empty
-	8, // 10: app.service.v1.CommentService.Delete:output_type -> google.protobuf.Empty
-	9, // 11: app.service.v1.CommentService.GetProductRating:output_type -> comment.service.v1.ProductRatingSummary
-	6, // [6:12] is the sub-list for method output_type
-	0, // [0:6] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2,  // 0: app.service.v1.CommentService.List:input_type -> pagination.PagingRequest
+	3,  // 1: app.service.v1.CommentService.Get:input_type -> comment.service.v1.GetCommentRequest
+	4,  // 2: app.service.v1.CommentService.Create:input_type -> comment.service.v1.CreateCommentRequest
+	5,  // 3: app.service.v1.CommentService.Update:input_type -> comment.service.v1.UpdateCommentRequest
+	6,  // 4: app.service.v1.CommentService.Delete:input_type -> comment.service.v1.DeleteCommentRequest
+	7,  // 5: app.service.v1.CommentService.GetProductRating:input_type -> comment.service.v1.GetProductRatingRequest
+	1,  // 6: app.service.v1.CommentService.GetProductReviewSummary:input_type -> app.service.v1.GetProductReviewSummaryRequest
+	8,  // 7: app.service.v1.CommentService.List:output_type -> comment.service.v1.ListCommentResponse
+	9,  // 8: app.service.v1.CommentService.Get:output_type -> comment.service.v1.Comment
+	10, // 9: app.service.v1.CommentService.Create:output_type -> google.protobuf.Empty
+	10, // 10: app.service.v1.CommentService.Update:output_type -> google.protobuf.Empty
+	10, // 11: app.service.v1.CommentService.Delete:output_type -> google.protobuf.Empty
+	11, // 12: app.service.v1.CommentService.GetProductRating:output_type -> comment.service.v1.ProductRatingSummary
+	0,  // 13: app.service.v1.CommentService.GetProductReviewSummary:output_type -> app.service.v1.ProductReviewSummaryResponse
+	7,  // [7:14] is the sub-list for method output_type
+	0,  // [0:7] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_app_service_v1_i_comment_proto_init() }
@@ -81,12 +216,13 @@ func file_app_service_v1_i_comment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_service_v1_i_comment_proto_rawDesc), len(file_app_service_v1_i_comment_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_app_service_v1_i_comment_proto_goTypes,
 		DependencyIndexes: file_app_service_v1_i_comment_proto_depIdxs,
+		MessageInfos:      file_app_service_v1_i_comment_proto_msgTypes,
 	}.Build()
 	File_app_service_v1_i_comment_proto = out.File
 	file_app_service_v1_i_comment_proto_goTypes = nil

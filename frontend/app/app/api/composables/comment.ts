@@ -55,9 +55,25 @@ export function useCreateComment(
 // ==============================
 // 商品评分聚合（Query，匿名可读）
 // ==============================
-export async function fetchGetProductRating(params: any) {
-  return await apiClient.commentService.GetProductRating(params);
+
+// ==============================
+// 评论 AI 摘要（匿名可读；LLM 生成，服务端缓存）
+// ==============================
+export async function fetchGetProductReviewSummary(params: { productId: number }) {
+  return await apiClient.commentService.GetProductReviewSummary(params);
 }
+
+export function useGetProductReviewSummary(
+  productId: MaybeRefOrGetter<number>,
+  options?: UseQueryOptions<any, Error>,
+) {
+  return useQuery({
+    queryKey: ['productReviewSummary', productId],
+    queryFn: () => fetchGetProductReviewSummary({ productId: toValue(productId) }),
+    ...options,
+  });
+}
+
 export function useGetProductRating(
   params: any,
   options?: UseQueryOptions<commentservicev1_ProductRatingSummary, Error>,

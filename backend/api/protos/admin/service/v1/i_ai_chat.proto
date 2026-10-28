@@ -21,4 +21,12 @@ service AiChatService {
       body: "*"
     };
   }
+
+  // 通用单轮文本生成（商品文案等表单场景；非会话、不落库，同步返回）
+  rpc Generate (ai.service.v1.GenerateRequest) returns (ai.service.v1.GenerateResponse) {
+    option (google.api.http) = {
+      post: "/admin/v1/ai/generate"
+      body: "*"
+    };
+  }
 }

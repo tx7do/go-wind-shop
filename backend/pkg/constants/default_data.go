@@ -878,4 +878,20 @@ var DefaultConfigs = []*configV1.Config{
 		ValueType: configV1.Config_BOOL.Enum(),
 		IsBuiltIn: trans.Ptr(true),
 	},
+	{
+		// C端导购助手默认知识库ID（空=不注入 RAG；建好售后知识库后填库ID）。
+		Key:       trans.Ptr(ConfigKeyAiAssistantKnowledgeBaseId),
+		Name:      trans.Ptr("AI assistant default knowledge base ID (app channel)"),
+		Value:     trans.Ptr(""),
+		ValueType: configV1.Config_STRING.Enum(),
+		IsBuiltIn: trans.Ptr(true),
+	},
+	{
+		// C端单用户每日对话 token 限额（<=0 不限）。
+		Key:       trans.Ptr(ConfigKeyAiChatDailyTokenLimit),
+		Name:      trans.Ptr("AI chat daily token limit per app user (0 disables)"),
+		Value:     trans.Ptr(strconv.Itoa(DefaultAiChatDailyTokenLimit)),
+		ValueType: configV1.Config_INT.Enum(),
+		IsBuiltIn: trans.Ptr(true),
+	},
 }

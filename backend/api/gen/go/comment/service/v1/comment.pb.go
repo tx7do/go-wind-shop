@@ -738,6 +738,112 @@ func (x *ProductRatingSummary) GetCount() uint64 {
 	return 0
 }
 
+// 请求 - 评论 AI 摘要
+type GetProductReviewSummaryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductId     uint32                 `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetProductReviewSummaryRequest) Reset() {
+	*x = GetProductReviewSummaryRequest{}
+	mi := &file_comment_service_v1_comment_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetProductReviewSummaryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetProductReviewSummaryRequest) ProtoMessage() {}
+
+func (x *GetProductReviewSummaryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_comment_service_v1_comment_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetProductReviewSummaryRequest.ProtoReflect.Descriptor instead.
+func (*GetProductReviewSummaryRequest) Descriptor() ([]byte, []int) {
+	return file_comment_service_v1_comment_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetProductReviewSummaryRequest) GetProductId() uint32 {
+	if x != nil {
+		return x.ProductId
+	}
+	return 0
+}
+
+// 响应 - 评论 AI 摘要（LLM 生成，服务端缓存）
+type ProductReviewSummary struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Summary       string                 `protobuf:"bytes,1,opt,name=summary,proto3" json:"summary,omitempty"`
+	CommentCount  uint32                 `protobuf:"varint,2,opt,name=comment_count,json=commentCount,proto3" json:"comment_count,omitempty"`
+	Available     bool                   `protobuf:"varint,3,opt,name=available,proto3" json:"available,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ProductReviewSummary) Reset() {
+	*x = ProductReviewSummary{}
+	mi := &file_comment_service_v1_comment_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ProductReviewSummary) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ProductReviewSummary) ProtoMessage() {}
+
+func (x *ProductReviewSummary) ProtoReflect() protoreflect.Message {
+	mi := &file_comment_service_v1_comment_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ProductReviewSummary.ProtoReflect.Descriptor instead.
+func (*ProductReviewSummary) Descriptor() ([]byte, []int) {
+	return file_comment_service_v1_comment_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ProductReviewSummary) GetSummary() string {
+	if x != nil {
+		return x.Summary
+	}
+	return ""
+}
+
+func (x *ProductReviewSummary) GetCommentCount() uint32 {
+	if x != nil {
+		return x.CommentCount
+	}
+	return 0
+}
+
+func (x *ProductReviewSummary) GetAvailable() bool {
+	if x != nil {
+		return x.Available
+	}
+	return false
+}
+
 var File_comment_service_v1_comment_proto protoreflect.FileDescriptor
 
 const file_comment_service_v1_comment_proto_rawDesc = "" +
@@ -826,7 +932,14 @@ const file_comment_service_v1_comment_proto_rawDesc = "" +
 	"product_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b商品IDR\tproductId\"\xab\x01\n" +
 	"\x14ProductRatingSummary\x12H\n" +
 	"\aaverage\x18\x01 \x01(\x01B.\xbaG+\x92\x02(平均评分（0-5，无评分时为0）R\aaverage\x12I\n" +
-	"\x05count\x18\x02 \x01(\x04B3\xbaG0\x92\x02-已批准评分数（含无评分的评论）R\x05count2\xd2\x04\n" +
+	"\x05count\x18\x02 \x01(\x04B3\xbaG0\x92\x02-已批准评分数（含无评分的评论）R\x05count\"O\n" +
+	"\x1eGetProductReviewSummaryRequest\x12-\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b商品IDR\tproductId\"\xc7\x01\n" +
+	"\x14ProductReviewSummary\x12,\n" +
+	"\asummary\x18\x01 \x01(\tB\x12\xbaG\x0f\x92\x02\f摘要文本R\asummary\x12F\n" +
+	"\rcomment_count\x18\x02 \x01(\rB!\xbaG\x1e\x92\x02\x1b参与摘要的评论条数R\fcommentCount\x129\n" +
+	"\tavailable\x18\x03 \x01(\bB\x1b\xbaG\x18\x92\x02\x15是否有可用摘要R\tavailable2\xcd\x05\n" +
 	"\x0eCommentService\x12L\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.comment.service.v1.ListCommentResponse\"\x00\x12N\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.comment.service.v1.CountCommentResponse\"\x00\x12K\n" +
@@ -834,7 +947,8 @@ const file_comment_service_v1_comment_proto_rawDesc = "" +
 	"\x06Create\x12(.comment.service.v1.CreateCommentRequest\x1a\x16.google.protobuf.Empty\"\x00\x12L\n" +
 	"\x06Update\x12(.comment.service.v1.UpdateCommentRequest\x1a\x16.google.protobuf.Empty\"\x00\x12L\n" +
 	"\x06Delete\x12(.comment.service.v1.DeleteCommentRequest\x1a\x16.google.protobuf.Empty\"\x00\x12k\n" +
-	"\x10GetProductRating\x12+.comment.service.v1.GetProductRatingRequest\x1a(.comment.service.v1.ProductRatingSummary\"\x00B\xc6\x01\n" +
+	"\x10GetProductRating\x12+.comment.service.v1.GetProductRatingRequest\x1a(.comment.service.v1.ProductRatingSummary\"\x00\x12y\n" +
+	"\x17GetProductReviewSummary\x122.comment.service.v1.GetProductReviewSummaryRequest\x1a(.comment.service.v1.ProductReviewSummary\"\x00B\xc6\x01\n" +
 	"\x16com.comment.service.v1B\fCommentProtoP\x01Z4go-wind-shop/api/gen/go/comment/service/v1;commentpb\xa2\x02\x03CSX\xaa\x02\x12Comment.Service.V1\xca\x02\x12Comment\\Service\\V1\xe2\x02\x1eComment\\Service\\V1\\GPBMetadata\xea\x02\x14Comment::Service::V1b\x06proto3"
 
 var (
@@ -850,52 +964,56 @@ func file_comment_service_v1_comment_proto_rawDescGZIP() []byte {
 }
 
 var file_comment_service_v1_comment_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_comment_service_v1_comment_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_comment_service_v1_comment_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_comment_service_v1_comment_proto_goTypes = []any{
-	(Comment_Status)(0),             // 0: comment.service.v1.Comment.Status
-	(Comment_ContentType)(0),        // 1: comment.service.v1.Comment.ContentType
-	(*Comment)(nil),                 // 2: comment.service.v1.Comment
-	(*ListCommentResponse)(nil),     // 3: comment.service.v1.ListCommentResponse
-	(*GetCommentRequest)(nil),       // 4: comment.service.v1.GetCommentRequest
-	(*CreateCommentRequest)(nil),    // 5: comment.service.v1.CreateCommentRequest
-	(*UpdateCommentRequest)(nil),    // 6: comment.service.v1.UpdateCommentRequest
-	(*DeleteCommentRequest)(nil),    // 7: comment.service.v1.DeleteCommentRequest
-	(*CountCommentResponse)(nil),    // 8: comment.service.v1.CountCommentResponse
-	(*GetProductRatingRequest)(nil), // 9: comment.service.v1.GetProductRatingRequest
-	(*ProductRatingSummary)(nil),    // 10: comment.service.v1.ProductRatingSummary
-	(*timestamppb.Timestamp)(nil),   // 11: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),   // 12: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),        // 13: pagination.PagingRequest
-	(*emptypb.Empty)(nil),           // 14: google.protobuf.Empty
+	(Comment_Status)(0),                    // 0: comment.service.v1.Comment.Status
+	(Comment_ContentType)(0),               // 1: comment.service.v1.Comment.ContentType
+	(*Comment)(nil),                        // 2: comment.service.v1.Comment
+	(*ListCommentResponse)(nil),            // 3: comment.service.v1.ListCommentResponse
+	(*GetCommentRequest)(nil),              // 4: comment.service.v1.GetCommentRequest
+	(*CreateCommentRequest)(nil),           // 5: comment.service.v1.CreateCommentRequest
+	(*UpdateCommentRequest)(nil),           // 6: comment.service.v1.UpdateCommentRequest
+	(*DeleteCommentRequest)(nil),           // 7: comment.service.v1.DeleteCommentRequest
+	(*CountCommentResponse)(nil),           // 8: comment.service.v1.CountCommentResponse
+	(*GetProductRatingRequest)(nil),        // 9: comment.service.v1.GetProductRatingRequest
+	(*ProductRatingSummary)(nil),           // 10: comment.service.v1.ProductRatingSummary
+	(*GetProductReviewSummaryRequest)(nil), // 11: comment.service.v1.GetProductReviewSummaryRequest
+	(*ProductReviewSummary)(nil),           // 12: comment.service.v1.ProductReviewSummary
+	(*timestamppb.Timestamp)(nil),          // 13: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),          // 14: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),               // 15: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                  // 16: google.protobuf.Empty
 }
 var file_comment_service_v1_comment_proto_depIdxs = []int32{
 	1,  // 0: comment.service.v1.Comment.content_type:type_name -> comment.service.v1.Comment.ContentType
 	0,  // 1: comment.service.v1.Comment.status:type_name -> comment.service.v1.Comment.Status
 	2,  // 2: comment.service.v1.Comment.children:type_name -> comment.service.v1.Comment
-	11, // 3: comment.service.v1.Comment.created_at:type_name -> google.protobuf.Timestamp
-	11, // 4: comment.service.v1.Comment.updated_at:type_name -> google.protobuf.Timestamp
-	11, // 5: comment.service.v1.Comment.deleted_at:type_name -> google.protobuf.Timestamp
+	13, // 3: comment.service.v1.Comment.created_at:type_name -> google.protobuf.Timestamp
+	13, // 4: comment.service.v1.Comment.updated_at:type_name -> google.protobuf.Timestamp
+	13, // 5: comment.service.v1.Comment.deleted_at:type_name -> google.protobuf.Timestamp
 	2,  // 6: comment.service.v1.ListCommentResponse.items:type_name -> comment.service.v1.Comment
-	12, // 7: comment.service.v1.GetCommentRequest.view_mask:type_name -> google.protobuf.FieldMask
+	14, // 7: comment.service.v1.GetCommentRequest.view_mask:type_name -> google.protobuf.FieldMask
 	2,  // 8: comment.service.v1.CreateCommentRequest.data:type_name -> comment.service.v1.Comment
 	2,  // 9: comment.service.v1.UpdateCommentRequest.data:type_name -> comment.service.v1.Comment
-	12, // 10: comment.service.v1.UpdateCommentRequest.update_mask:type_name -> google.protobuf.FieldMask
-	13, // 11: comment.service.v1.CommentService.List:input_type -> pagination.PagingRequest
-	13, // 12: comment.service.v1.CommentService.Count:input_type -> pagination.PagingRequest
+	14, // 10: comment.service.v1.UpdateCommentRequest.update_mask:type_name -> google.protobuf.FieldMask
+	15, // 11: comment.service.v1.CommentService.List:input_type -> pagination.PagingRequest
+	15, // 12: comment.service.v1.CommentService.Count:input_type -> pagination.PagingRequest
 	4,  // 13: comment.service.v1.CommentService.Get:input_type -> comment.service.v1.GetCommentRequest
 	5,  // 14: comment.service.v1.CommentService.Create:input_type -> comment.service.v1.CreateCommentRequest
 	6,  // 15: comment.service.v1.CommentService.Update:input_type -> comment.service.v1.UpdateCommentRequest
 	7,  // 16: comment.service.v1.CommentService.Delete:input_type -> comment.service.v1.DeleteCommentRequest
 	9,  // 17: comment.service.v1.CommentService.GetProductRating:input_type -> comment.service.v1.GetProductRatingRequest
-	3,  // 18: comment.service.v1.CommentService.List:output_type -> comment.service.v1.ListCommentResponse
-	8,  // 19: comment.service.v1.CommentService.Count:output_type -> comment.service.v1.CountCommentResponse
-	2,  // 20: comment.service.v1.CommentService.Get:output_type -> comment.service.v1.Comment
-	14, // 21: comment.service.v1.CommentService.Create:output_type -> google.protobuf.Empty
-	14, // 22: comment.service.v1.CommentService.Update:output_type -> google.protobuf.Empty
-	14, // 23: comment.service.v1.CommentService.Delete:output_type -> google.protobuf.Empty
-	10, // 24: comment.service.v1.CommentService.GetProductRating:output_type -> comment.service.v1.ProductRatingSummary
-	18, // [18:25] is the sub-list for method output_type
-	11, // [11:18] is the sub-list for method input_type
+	11, // 18: comment.service.v1.CommentService.GetProductReviewSummary:input_type -> comment.service.v1.GetProductReviewSummaryRequest
+	3,  // 19: comment.service.v1.CommentService.List:output_type -> comment.service.v1.ListCommentResponse
+	8,  // 20: comment.service.v1.CommentService.Count:output_type -> comment.service.v1.CountCommentResponse
+	2,  // 21: comment.service.v1.CommentService.Get:output_type -> comment.service.v1.Comment
+	16, // 22: comment.service.v1.CommentService.Create:output_type -> google.protobuf.Empty
+	16, // 23: comment.service.v1.CommentService.Update:output_type -> google.protobuf.Empty
+	16, // 24: comment.service.v1.CommentService.Delete:output_type -> google.protobuf.Empty
+	10, // 25: comment.service.v1.CommentService.GetProductRating:output_type -> comment.service.v1.ProductRatingSummary
+	12, // 26: comment.service.v1.CommentService.GetProductReviewSummary:output_type -> comment.service.v1.ProductReviewSummary
+	19, // [19:27] is the sub-list for method output_type
+	11, // [11:19] is the sub-list for method input_type
 	11, // [11:11] is the sub-list for extension type_name
 	11, // [11:11] is the sub-list for extension extendee
 	0,  // [0:11] is the sub-list for field type_name
@@ -920,7 +1038,7 @@ func file_comment_service_v1_comment_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_comment_service_v1_comment_proto_rawDesc), len(file_comment_service_v1_comment_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

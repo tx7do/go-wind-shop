@@ -21,3 +21,18 @@ const (
 	// 评论 AI 反垃圾开关键（AI 域接入后启用对应默认配置行）
 	ConfigKeyCommentAIModeration = "comment.ai_moderation.enabled"
 )
+
+// AI 导购/生成域平台参数（sys_configs 内置种子，参数管理页可改、即时生效）。
+const (
+	// ConfigKeyAiAssistantKnowledgeBaseId C端导购助手默认绑定的知识库ID；
+	// 空/0 表示不注入知识库上下文。ChatRequest.knowledgeBaseId=0 时（仅 app 渠道）
+	// 回落到该值——售后政策/FAQ 知识库建好后把库ID填进来即可让助手答政策题。
+	ConfigKeyAiAssistantKnowledgeBaseId = "ai.assistant.knowledge_base_id"
+
+	// ConfigKeyAiChatDailyTokenLimit C端单用户每日对话 token 总限额；
+	// <=0 表示不限。超额返回 429 语义的错误文本。
+	ConfigKeyAiChatDailyTokenLimit = "ai.chat.daily_token_limit"
+
+	// DefaultAiChatDailyTokenLimit 默认限额（20 万 token/人/天，防滥用兜底）。
+	DefaultAiChatDailyTokenLimit = 200000
+)

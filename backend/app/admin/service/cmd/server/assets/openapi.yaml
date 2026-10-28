@@ -740,6 +740,25 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/ai/generate:
+        post:
+            tags:
+                - AiChatService
+            description: 通用单轮文本生成（商品文案等表单场景；非会话、不落库，同步返回）
+            operationId: AiChatService_Generate
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ai.service.v1.GenerateRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ai.service.v1.GenerateResponse'
     /admin/v1/ai/insights:
         post:
             tags:
@@ -13311,6 +13330,25 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/server_monitor.service.v1.ServerMonitorInfo'
+    /admin/v1/system-tasks:inspect:
+        post:
+            tags:
+                - TaskMonitorService
+            description: 一站式巡检：调度条目（cron/上次/下次入队）+ 各任务类型的队列状态与失败明细
+            operationId: TaskMonitorService_InspectSystemTasks
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/task.service.v1.InspectSystemTasksRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/task.service.v1.InspectSystemTasksResponse'
     /admin/v1/tasks:
         get:
             tags:
@@ -14824,7 +14862,11 @@ components:
                     description: 用户输入内容
                 knowledgeBaseId:
                     type: integer
-                    description: 知识库ID；RAG 未移植前该字段被忽略
+                    description: 知识库ID；0 时 C端渠道回落到系统参数 ai.assistant.knowledge_base_id 绑定的默认知识库
+                    format: uint32
+                contextProductId:
+                    type: integer
+                    description: 上下文商品ID（商品页提问时携带）
                     format: uint32
                 operatorUserId:
                     type: integer
@@ -14834,6 +14876,9 @@ components:
                     type: integer
                     description: 操作者租户ID（BFF 注入）
                     format: uint32
+                channel:
+                    type: string
+                    description: 发起渠道（BFF 注入）：app / admin
             description: 发起对话 - 请求
         ai.service.v1.ChatResponse:
             type: object
@@ -14905,6 +14950,44 @@ components:
                     type: integer
                     format: uint32
             description: 内容生成 - 回应
+        ai.service.v1.GenerateRequest:
+            type: object
+            properties:
+                system:
+                    type: string
+                    description: 系统提示词（可空）
+                prompt:
+                    type: string
+                    description: 用户提示词
+                maxTokens:
+                    type: integer
+                    description: 最大生成token数，0=默认
+                    format: uint32
+                operatorUserId:
+                    type: integer
+                    description: 操作者用户ID（BFF 注入）
+                    format: uint32
+                operatorTenantId:
+                    type: integer
+                    description: 操作者租户ID（BFF 注入）
+                    format: uint32
+            description: |-
+                通用单轮文本生成（非会话、不落库）：商品文案、评论摘要等业务场景共用。
+                 prompt 组装在 BFF 层完成，core 只负责解析提供商、调用模型、记录用量；
+                 调用方只有 admin/app 两个 BFF（内网）。
+        ai.service.v1.GenerateResponse:
+            type: object
+            properties:
+                text:
+                    type: string
+                    description: 生成的文本
+                modelName:
+                    type: string
+                    description: 实际使用的模型名
+                totalTokens:
+                    type: integer
+                    description: 本次总 token 消耗
+                    format: uint32
         ai.service.v1.KnowledgeHit:
             type: object
             properties:
@@ -23046,6 +23129,25 @@ components:
                 data:
                     $ref: '#/components/schemas/task.service.v1.Task'
             description: 创建调度任务 - 请求
+        task.service.v1.InspectSystemTasksRequest:
+            type: object
+            properties: {}
+            description: 手动触发巡检（系统级常驻任务可视化，只读 asynq，无副作用）
+        task.service.v1.InspectSystemTasksResponse:
+            type: object
+            properties:
+                queue:
+                    type: string
+                    description: asynq 队列名（当前配置）
+                schedules:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/task.service.v1.SystemTaskScheduleEntry'
+                summaries:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/task.service.v1.SystemTaskStateSummary'
+                    description: 只汇总系统级常驻任务涉及的任务类型；无任何记录时不出现在结果里
         task.service.v1.ListTaskResponse:
             type: object
             properties:
@@ -23072,6 +23174,74 @@ components:
                     type: integer
                     format: int32
             description: 重启调度任务 - 回应
+        task.service.v1.SystemTaskFailure:
+            type: object
+            properties:
+                taskType:
+                    type: string
+                queue:
+                    type: string
+                state:
+                    type: string
+                    description: retry 或 archived
+                lastError:
+                    type: string
+                lastFailedAt:
+                    type: string
+                    format: date-time
+                retried:
+                    type: integer
+                    format: uint32
+                maxRetry:
+                    type: integer
+                    format: uint32
+                nextProcessAt:
+                    type: string
+                    description: 下次重试时间（archived 无）
+                    format: date-time
+            description: 失败任务明细（retry/archived 里的单条）
+        task.service.v1.SystemTaskScheduleEntry:
+            type: object
+            properties:
+                taskType:
+                    type: string
+                    description: 任务类型名（载荷里的 handler/类型，如 tenant_expiry_scan）
+                cronSpec:
+                    type: string
+                    description: cron 表达式
+                nextEnqueueAt:
+                    type: string
+                    format: date-time
+                prevEnqueueAt:
+                    type: string
+                    description: 上次入队时间；从未入队为空
+                    format: date-time
+            description: |-
+                系统级常驻任务的调度条目（asynq SchedulerEntries 的只读投影）。
+                 Prev 为零值时间表示从未入队过（调度注册后还没到第一个触发点）。
+        task.service.v1.SystemTaskStateSummary:
+            type: object
+            properties:
+                taskType:
+                    type: string
+                active:
+                    type: integer
+                    format: uint32
+                pending:
+                    type: integer
+                    format: uint32
+                retry:
+                    type: integer
+                    format: uint32
+                archived:
+                    type: integer
+                    format: uint32
+                recentFailures:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/task.service.v1.SystemTaskFailure'
+                    description: 最近失败明细（retry + archived 合并、按失败时间倒序、截断）
+            description: 单任务类型在队列里的状态摘要
         task.service.v1.Task:
             type: object
             properties:
@@ -23461,6 +23631,8 @@ tags:
       description: 库存预警记录管理服务（admin 裁剪：仅 List/Get/Update，Update 唯一允许标记 RESOLVED）
     - name: StockOpLogService
       description: 库存操作流水查询服务（admin 只读，append-only 审计）
+    - name: TaskMonitorService
+      description: 系统级常驻任务监控服务（平台管理员；只读 asynq Inspector，无副作用）。
     - name: TaskService
       description: 调度任务管理服务
     - name: TaxRateService

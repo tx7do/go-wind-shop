@@ -186,6 +186,25 @@ func (r *AiUsageLogRepo) MonthStats(ctx context.Context, tenantId uint32, monthS
 	return 0, 0, nil
 }
 
+// UserTokensSince 聚合某用户自 since 起消耗的 token 总量（C端每日限额闸门用）。
+// 查询失败按 0 处理由调用方决策（fail-open，不因记账问题阻断对话）。
+func (r *AiUsageLogRepo) UserTokensSince(ctx context.Context, userId uint32, since time.Time) (uint64, error) {
+	var rows []struct {
+		Total uint64 `sql:"total"`
+	}
+	err := r.entClient.Client().AiUsageLog.Query().
+		Where(aiusagelog.UserIDEQ(userId), aiusagelog.CreatedAtGTE(since)).
+		Aggregate(ent.As(ent.Sum(aiusagelog.FieldTotalTokens), "total")).
+		Scan(ctx, &rows)
+	if err != nil {
+		return 0, err
+	}
+	if len(rows) > 0 {
+		return rows[0].Total, nil
+	}
+	return 0, nil
+}
+
 // MonthBreakdown 当月用量按 provider×模型 聚合（tokens 三项 + 调用次数）。
 // 返回行含 ProviderID 供服务层解析 provider 名。
 func (r *AiUsageLogRepo) MonthBreakdown(ctx context.Context, tenantId uint32, monthStart time.Time) ([]*aiV1.UsageBreakdown, error) {

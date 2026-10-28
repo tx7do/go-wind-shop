@@ -26,6 +26,7 @@ const OperationCommentServiceCreate = "/app.service.v1.CommentService/Create"
 const OperationCommentServiceDelete = "/app.service.v1.CommentService/Delete"
 const OperationCommentServiceGet = "/app.service.v1.CommentService/Get"
 const OperationCommentServiceGetProductRating = "/app.service.v1.CommentService/GetProductRating"
+const OperationCommentServiceGetProductReviewSummary = "/app.service.v1.CommentService/GetProductReviewSummary"
 const OperationCommentServiceList = "/app.service.v1.CommentService/List"
 const OperationCommentServiceUpdate = "/app.service.v1.CommentService/Update"
 
@@ -35,6 +36,8 @@ type CommentServiceHTTPServer interface {
 	Get(context.Context, *v11.GetCommentRequest) (*v11.Comment, error)
 	// GetProductRating 商品评分聚合（只读，匿名可读——白名单登记）。
 	GetProductRating(context.Context, *v11.GetProductRatingRequest) (*v11.ProductRatingSummary, error)
+	// GetProductReviewSummary 评论 AI 摘要（只读，匿名可读——白名单登记；LLM 生成，服务端有缓存）。
+	GetProductReviewSummary(context.Context, *GetProductReviewSummaryRequest) (*ProductReviewSummaryResponse, error)
 	List(context.Context, *v1.PagingRequest) (*v11.ListCommentResponse, error)
 	Update(context.Context, *v11.UpdateCommentRequest) (*emptypb.Empty, error)
 }
@@ -47,6 +50,7 @@ func RegisterCommentServiceHTTPServer(s *http.Server, srv CommentServiceHTTPServ
 	r.PUT("/app/v1/mall/comments/{id}", _CommentService_Update2_HTTP_Handler(srv))
 	r.DELETE("/app/v1/mall/comments", _CommentService_Delete2_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/products/{product_id}/rating", _CommentService_GetProductRating0_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/products/{product_id}/review-summary", _CommentService_GetProductReviewSummary0_HTTP_Handler(srv))
 }
 
 func _CommentService_List4_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
@@ -178,12 +182,36 @@ func _CommentService_GetProductRating0_HTTP_Handler(srv CommentServiceHTTPServer
 	}
 }
 
+func _CommentService_GetProductReviewSummary0_HTTP_Handler(srv CommentServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in GetProductReviewSummaryRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationCommentServiceGetProductReviewSummary)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetProductReviewSummary(ctx, req.(*GetProductReviewSummaryRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*ProductReviewSummaryResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type CommentServiceHTTPClient interface {
 	Create(ctx context.Context, req *v11.CreateCommentRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	Delete(ctx context.Context, req *v11.DeleteCommentRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	Get(ctx context.Context, req *v11.GetCommentRequest, opts ...http.CallOption) (rsp *v11.Comment, err error)
 	// GetProductRating 商品评分聚合（只读，匿名可读——白名单登记）。
 	GetProductRating(ctx context.Context, req *v11.GetProductRatingRequest, opts ...http.CallOption) (rsp *v11.ProductRatingSummary, err error)
+	// GetProductReviewSummary 评论 AI 摘要（只读，匿名可读——白名单登记；LLM 生成，服务端有缓存）。
+	GetProductReviewSummary(ctx context.Context, req *GetProductReviewSummaryRequest, opts ...http.CallOption) (rsp *ProductReviewSummaryResponse, err error)
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListCommentResponse, err error)
 	Update(ctx context.Context, req *v11.UpdateCommentRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 }
@@ -241,6 +269,20 @@ func (c *CommentServiceHTTPClientImpl) GetProductRating(ctx context.Context, in 
 	pattern := "/app/v1/mall/products/{product_id}/rating"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationCommentServiceGetProductRating))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetProductReviewSummary 评论 AI 摘要（只读，匿名可读——白名单登记；LLM 生成，服务端有缓存）。
+func (c *CommentServiceHTTPClientImpl) GetProductReviewSummary(ctx context.Context, in *GetProductReviewSummaryRequest, opts ...http.CallOption) (*ProductReviewSummaryResponse, error) {
+	var out ProductReviewSummaryResponse
+	pattern := "/app/v1/mall/products/{product_id}/review-summary"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationCommentServiceGetProductReviewSummary))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {
