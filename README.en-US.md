@@ -164,6 +164,8 @@ cd frontend/app && pnpm dev
 | **Stock Operation Logs** (append-only audit) | **Message Center** (order notifications · unread marks) |
 | ![Order Management](gui-test-screenshots/admin-orders.png) | ![My Orders](gui-test-screenshots/app-orders.png) |
 | **Order Management** (state machine + cancel/close) | **My Orders** (full lifecycle states) |
+| ![Product Detail](gui-test-screenshots/app-product-promo.png) |  |
+| **Product Detail** (special-price strike-through · promo badge · reviews) |  |
 
 ### Commerce
 

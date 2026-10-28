@@ -164,6 +164,8 @@ cd frontend/app && pnpm dev
 | **库存操作流水**（append-only 审计） | **消息中心**（订单状态通知 · 未读标记） |
 | ![订单管理](gui-test-screenshots/admin-orders.png) | ![我的订单](gui-test-screenshots/app-orders.png) |
 | **订单管理**（状态机 + 取消/关闭） | **我的订单**（全生命周期状态） |
+| ![商品详情](gui-test-screenshots/app-product-promo.png) |  |
+| **商品详情**（专价划线价 · 活动角标 · 评论区） |  |
 
 ### 商品与交易
 

@@ -164,6 +164,8 @@ cd frontend/app && pnpm dev
 | **在庫操作ログ**（append-only 監査） | **メッセージセンター**（注文通知 · 未読マーク） |
 | ![注文管理](gui-test-screenshots/admin-orders.png) | ![マイ注文](gui-test-screenshots/app-orders.png) |
 | **注文管理**（状態機械 + キャンセル/クローズ） | **マイ注文**（ライフサイクル全体の状態） |
+| ![商品詳細](gui-test-screenshots/app-product-promo.png) |  |
+| **商品詳細**（特価取り消し線 · プロモバッジ · レビュー） |  |
 
 ### コマース
 
