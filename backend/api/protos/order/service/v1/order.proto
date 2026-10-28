@@ -24,6 +24,13 @@ service OrderService {
   // 超时过期订单（由 Task Service 的 Asynq 延时任务调用）
   // 内含幂等校验、状态置 CANCELLED、释放库存，无需调用方关心
   rpc ExpireOrderByTimeout (ExpireOrderByTimeoutRequest) returns (ExpireOrderByTimeoutResponse) {}
+
+  // 买家主动取消订单（仅限本人 PENDING_PAYMENT 订单）
+  // 语义与超时过期一致：释放库存、清理孤儿支付、返还优惠券
+  rpc CancelOrder (CancelOrderRequest) returns (google.protobuf.Empty) {}
+
+  // 买家确认收货（仅限本人 FULFILLED 订单，推进到 CLOSED）
+  rpc ConfirmReceipt (ConfirmReceiptRequest) returns (google.protobuf.Empty) {}
 }
 
 // 订单项服务
@@ -281,4 +288,16 @@ message ExpireOrderByTimeoutRequest {
 // 超时过期订单 - 回应
 message ExpireOrderByTimeoutResponse {
   optional bool expired = 1 [json_name = "expired", (gnostic.openapi.v3.property) = {description: "是否执行了过期（false 表示订单已非 PENDING_PAYMENT 状态，跳过）"}];
+}
+
+// 买家取消订单 - 请求
+message CancelOrderRequest {
+  uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "订单ID"}, json_name = "id"];
+  // 取消原因（可选，仅记录用途，不影响状态机）
+  optional string reason = 2 [json_name = "reason", (gnostic.openapi.v3.property) = {description: "取消原因"}];
+}
+
+// 买家确认收货 - 请求
+message ConfirmReceiptRequest {
+  uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "订单ID"}, json_name = "id"];
 }

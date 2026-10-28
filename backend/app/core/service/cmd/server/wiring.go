@@ -187,7 +187,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cartService := service.NewCartService(ctx, cartRepo)
 	cartItemService := service.NewCartItemService(ctx, cartItemRepo)
 	wishlistService := service.NewWishlistService(ctx, wishlistRepo)
-	orderService := service.NewOrderService(ctx, orderRepo, orderItemRepo, skuRepo, cartItemRepo, entClient)
+	orderService := service.NewOrderService(ctx, orderRepo, orderItemRepo, skuRepo, cartItemRepo, entClient, internalMessageService)
 	orderItemService := service.NewOrderItemService(ctx, orderItemRepo)
 	paymentTransactionService := service.NewPaymentTransactionService(ctx, paymentTransactionRepo, orderService)
 	paymentRefundService := service.NewPaymentRefundService(ctx, paymentRefundRepo, paymentTransactionRepo, paymentTransactionService)

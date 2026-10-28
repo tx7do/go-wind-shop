@@ -2883,3 +2883,215 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ExpireOrderByTimeoutResponseValidationError{}
+
+// Validate checks the field values on CancelOrderRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CancelOrderRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CancelOrderRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CancelOrderRequestMultiError, or nil if none found.
+func (m *CancelOrderRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CancelOrderRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if m.Reason != nil {
+		// no validation rules for Reason
+	}
+
+	if len(errors) > 0 {
+		return CancelOrderRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CancelOrderRequestMultiError is an error wrapping multiple validation errors
+// returned by CancelOrderRequest.ValidateAll() if the designated constraints
+// aren't met.
+type CancelOrderRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CancelOrderRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CancelOrderRequestMultiError) AllErrors() []error { return m }
+
+// CancelOrderRequestValidationError is the validation error returned by
+// CancelOrderRequest.Validate if the designated constraints aren't met.
+type CancelOrderRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CancelOrderRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CancelOrderRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CancelOrderRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CancelOrderRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CancelOrderRequestValidationError) ErrorName() string {
+	return "CancelOrderRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CancelOrderRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCancelOrderRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CancelOrderRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CancelOrderRequestValidationError{}
+
+// Validate checks the field values on ConfirmReceiptRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ConfirmReceiptRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ConfirmReceiptRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ConfirmReceiptRequestMultiError, or nil if none found.
+func (m *ConfirmReceiptRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ConfirmReceiptRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return ConfirmReceiptRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ConfirmReceiptRequestMultiError is an error wrapping multiple validation
+// errors returned by ConfirmReceiptRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ConfirmReceiptRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ConfirmReceiptRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ConfirmReceiptRequestMultiError) AllErrors() []error { return m }
+
+// ConfirmReceiptRequestValidationError is the validation error returned by
+// ConfirmReceiptRequest.Validate if the designated constraints aren't met.
+type ConfirmReceiptRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ConfirmReceiptRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ConfirmReceiptRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ConfirmReceiptRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ConfirmReceiptRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ConfirmReceiptRequestValidationError) ErrorName() string {
+	return "ConfirmReceiptRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ConfirmReceiptRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sConfirmReceiptRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ConfirmReceiptRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ConfirmReceiptRequestValidationError{}

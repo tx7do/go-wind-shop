@@ -5,6 +5,7 @@ import component from './component.json'
 import enum_ from './enum.json'
 import mall from './mall.json'
 import menu from './menu.json'
+import assistant from './assistant.json'
 import navbar from './navbar.json'
 import preferences from './preferences.json'
 import settings from './settings.json'
@@ -28,6 +29,8 @@ export default {
     enum: enum_,
     mall,
     menu,
+
+    assistant,
     navbar,
     preferences,
     settings,

@@ -4,7 +4,7 @@ import { usePreferences } from '@/core/preferences/use-preferences'
 import { useAccessStore } from '@/stores/modules/core/access.state'
 import { useAuthStore } from '@/stores/modules/app/auth.state'
 import { useUserStore } from '@/stores/modules/core/user.state'
-import { useListCarts, useListCartItems } from '@/api/composables'
+import { useListCarts, useListCartItems, useListUserInbox } from '@/api/composables'
 
 const { t } = useI18n()
 const { themePreferences: themePref, setTheme: setThemeMode } = usePreferences()
@@ -56,6 +56,25 @@ const cartCount = computed(() => {
   )
 })
 
+// 消息未读徽标：拉取本人站内信收件箱（SENT/RECEIVED 视为未读，与 messages 页
+// 同口径），60s 轮询。仅登录后启用；未登录不请求。
+const inboxQuery = useListUserInbox(
+  computed(() => ({
+    page: 1,
+    pageSize: 50,
+    noPaging: false,
+    sorting: [{ field: 'id', direction: 'DESC' }],
+  })),
+  { enabled: isLogin, refetchInterval: 60_000 },
+)
+const unreadCount = computed(() => {
+  const items = ((inboxQuery.data?.value as any)?.items ?? []) as Array<{
+    status?: string
+  }>
+  return items.filter((m) => m.status === 'SENT' || m.status === 'RECEIVED')
+    .length
+})
+
 const handleClickLogo = () => navigateTo(localePath('/'))
 const handleClickSettings = () => navigateTo(localePath('/user'))
 const handleClickLogin = () => navigateTo(localePath('/login'))
@@ -84,6 +103,22 @@ const handleClickLogout = async () => {
 
       <!-- 功能按钮区 -->
       <div class="flex shrink-0 items-center gap-1">
+        <!-- 消息中心入口（带未读徽标，仅登录后展示） -->
+        <NuxtLink
+          v-if="isLogin"
+          :to="localePath('/messages')"
+          class="relative flex h-9 w-9 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-primary/10"
+          :aria-label="t('menu.my_messages')"
+        >
+          <XIcon icon="lucide:bell" width="18" height="18" />
+          <span
+            v-if="unreadCount > 0"
+            class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground"
+          >
+            {{ unreadCount > 99 ? '99+' : unreadCount }}
+          </span>
+        </NuxtLink>
+
         <!-- 购物车入口（带数量徽标） -->
         <NuxtLink
           :to="localePath('/cart')"

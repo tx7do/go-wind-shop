@@ -9,7 +9,8 @@ import { XIcon } from '@/plugins/xicon';
 import {
   useGetOrder,
   useListOrderItems,
-  useUpdateOrder,
+  useCancelOrder,
+  useConfirmReceipt,
   useCreatePaymentTransaction,
   useListPaymentTransactions,
   useCreatePaymentRefund,
@@ -19,7 +20,6 @@ import {
 import { queryClient } from '@/plugins/vue-query';
 import { useAccessStore } from '@/stores/modules/core/access.state';
 import type {
-  orderservicev1_Order_Status,
   paymentservicev1_PaymentTransaction,
   paymentservicev1_PaymentMethod,
   paymentservicev1_BusinessType,
@@ -245,13 +245,15 @@ const hasActiveRefund = computed(() =>
   existingRefunds.value.some((r) => r.status === 'PENDING' || r.status === 'SUCCEEDED'),
 );
 
-const updateOrderMutation = useUpdateOrder();
+const cancelOrderMutation = useCancelOrder();
+const confirmReceiptMutation = useConfirmReceipt();
 const payMutation = useCreatePaymentTransaction();
 const refundMutation = useCreatePaymentRefund();
 
 const anyActionPending = computed(
   () =>
-    updateOrderMutation.isPending.value ||
+    cancelOrderMutation.isPending.value ||
+    confirmReceiptMutation.isPending.value ||
     payMutation.isPending.value ||
     refundMutation.isPending.value,
 );
@@ -263,17 +265,13 @@ function refreshOrderAndList() {
   queryClient.invalidateQueries({ queryKey: ['listPaymentRefunds'] });
 }
 
-// 取消订单：PENDING_PAYMENT → CANCELLED（乐观锁 expectedStatus）
+// 取消订单：专用 RPC，服务端事务内释放库存/清理孤儿支付/返还优惠券
 async function handleCancel() {
   if (!order.value?.id) return;
   if (anyActionPending.value) return;
   if (!window.confirm(t('orderDetail.confirm.cancel'))) return;
   try {
-    await updateOrderMutation.mutateAsync({
-      id: order.value.id,
-      values: { status: 'CANCELLED' },
-      expectedStatus: ['PENDING_PAYMENT'] as orderservicev1_Order_Status[],
-    });
+    await cancelOrderMutation.mutateAsync({ id: order.value.id });
     toast.success(t('orderDetail.result.cancelled'));
     refreshOrderAndList();
   } catch (err: any) {
@@ -281,17 +279,13 @@ async function handleCancel() {
   }
 }
 
-// 确认收货：FULFILLED → CLOSED
+// 确认收货：专用 RPC（FULFILLED → CLOSED）
 async function handleConfirmReceipt() {
   if (!order.value?.id) return;
   if (anyActionPending.value) return;
   if (!window.confirm(t('orderDetail.confirm.confirmReceipt'))) return;
   try {
-    await updateOrderMutation.mutateAsync({
-      id: order.value.id,
-      values: { status: 'CLOSED' },
-      expectedStatus: ['FULFILLED'] as orderservicev1_Order_Status[],
-    });
+    await confirmReceiptMutation.mutateAsync({ id: order.value.id });
     toast.success(t('orderDetail.result.confirmed'));
     refreshOrderAndList();
   } catch (err: any) {

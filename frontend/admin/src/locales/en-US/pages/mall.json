@@ -102,6 +102,8 @@
     "updatedAt": "Updated At",
     "statusTransition": "Status Action",
     "close": "Close Order",
+    "cancel": "Cancel Order",
+    "cancelConfirm": "Cancel this unpaid order? Reserved stock will be released.",
     "orderItems": {
       "id": "Order Item ID",
       "skuId": "SKU ID",

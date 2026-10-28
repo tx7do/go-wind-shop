@@ -22,6 +22,8 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationOrderServiceCancelOrder = "/app.service.v1.OrderService/CancelOrder"
+const OperationOrderServiceConfirmReceipt = "/app.service.v1.OrderService/ConfirmReceipt"
 const OperationOrderServiceCount = "/app.service.v1.OrderService/Count"
 const OperationOrderServiceCreate = "/app.service.v1.OrderService/Create"
 const OperationOrderServiceGet = "/app.service.v1.OrderService/Get"
@@ -29,6 +31,8 @@ const OperationOrderServiceList = "/app.service.v1.OrderService/List"
 const OperationOrderServiceUpdate = "/app.service.v1.OrderService/Update"
 
 type OrderServiceHTTPServer interface {
+	CancelOrder(context.Context, *v11.CancelOrderRequest) (*emptypb.Empty, error)
+	ConfirmReceipt(context.Context, *v11.ConfirmReceiptRequest) (*emptypb.Empty, error)
 	Count(context.Context, *v1.PagingRequest) (*v11.CountOrderResponse, error)
 	Create(context.Context, *v11.CreateOrderRequest) (*emptypb.Empty, error)
 	Get(context.Context, *v11.GetOrderRequest) (*v11.Order, error)
@@ -43,6 +47,8 @@ func RegisterOrderServiceHTTPServer(s *http.Server, srv OrderServiceHTTPServer) 
 	r.GET("/app/v1/mall/orders/{id}", _OrderService_Get6_HTTP_Handler(srv))
 	r.POST("/app/v1/mall/orders", _OrderService_Create3_HTTP_Handler(srv))
 	r.PUT("/app/v1/mall/orders/{id}", _OrderService_Update3_HTTP_Handler(srv))
+	r.POST("/app/v1/mall/orders/{id}:cancel", _OrderService_CancelOrder0_HTTP_Handler(srv))
+	r.POST("/app/v1/mall/orders/{id}:confirm-receipt", _OrderService_ConfirmReceipt0_HTTP_Handler(srv))
 }
 
 func _OrderService_List7_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
@@ -152,7 +158,59 @@ func _OrderService_Update3_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx htt
 	}
 }
 
+func _OrderService_CancelOrder0_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.CancelOrderRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationOrderServiceCancelOrder)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CancelOrder(ctx, req.(*v11.CancelOrderRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _OrderService_ConfirmReceipt0_HTTP_Handler(srv OrderServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ConfirmReceiptRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindVars(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationOrderServiceConfirmReceipt)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ConfirmReceipt(ctx, req.(*v11.ConfirmReceiptRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*emptypb.Empty)
+		return ctx.Result(200, reply)
+	}
+}
+
 type OrderServiceHTTPClient interface {
+	CancelOrder(ctx context.Context, req *v11.CancelOrderRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	ConfirmReceipt(ctx context.Context, req *v11.ConfirmReceiptRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	Count(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.CountOrderResponse, err error)
 	Create(ctx context.Context, req *v11.CreateOrderRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
 	Get(ctx context.Context, req *v11.GetOrderRequest, opts ...http.CallOption) (rsp *v11.Order, err error)
@@ -166,6 +224,32 @@ type OrderServiceHTTPClientImpl struct {
 
 func NewOrderServiceHTTPClient(client *http.Client) OrderServiceHTTPClient {
 	return &OrderServiceHTTPClientImpl{client}
+}
+
+func (c *OrderServiceHTTPClientImpl) CancelOrder(ctx context.Context, in *v11.CancelOrderRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/app/v1/mall/orders/{id}:cancel"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationOrderServiceCancelOrder))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+func (c *OrderServiceHTTPClientImpl) ConfirmReceipt(ctx context.Context, in *v11.ConfirmReceiptRequest, opts ...http.CallOption) (*emptypb.Empty, error) {
+	var out emptypb.Empty
+	pattern := "/app/v1/mall/orders/{id}:confirm-receipt"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationOrderServiceConfirmReceipt))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 func (c *OrderServiceHTTPClientImpl) Count(ctx context.Context, in *v1.PagingRequest, opts ...http.CallOption) (*v11.CountOrderResponse, error) {

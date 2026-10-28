@@ -28,6 +28,8 @@ const (
 	OrderService_Update_FullMethodName               = "/order.service.v1.OrderService/Update"
 	OrderService_Delete_FullMethodName               = "/order.service.v1.OrderService/Delete"
 	OrderService_ExpireOrderByTimeout_FullMethodName = "/order.service.v1.OrderService/ExpireOrderByTimeout"
+	OrderService_CancelOrder_FullMethodName          = "/order.service.v1.OrderService/CancelOrder"
+	OrderService_ConfirmReceipt_FullMethodName       = "/order.service.v1.OrderService/ConfirmReceipt"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -45,6 +47,11 @@ type OrderServiceClient interface {
 	// 超时过期订单（由 Task Service 的 Asynq 延时任务调用）
 	// 内含幂等校验、状态置 CANCELLED、释放库存，无需调用方关心
 	ExpireOrderByTimeout(ctx context.Context, in *ExpireOrderByTimeoutRequest, opts ...grpc.CallOption) (*ExpireOrderByTimeoutResponse, error)
+	// 买家主动取消订单（仅限本人 PENDING_PAYMENT 订单）
+	// 语义与超时过期一致：释放库存、清理孤儿支付、返还优惠券
+	CancelOrder(ctx context.Context, in *CancelOrderRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 买家确认收货（仅限本人 FULFILLED 订单，推进到 CLOSED）
+	ConfirmReceipt(ctx context.Context, in *ConfirmReceiptRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type orderServiceClient struct {
@@ -125,6 +132,26 @@ func (c *orderServiceClient) ExpireOrderByTimeout(ctx context.Context, in *Expir
 	return out, nil
 }
 
+func (c *orderServiceClient) CancelOrder(ctx context.Context, in *CancelOrderRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, OrderService_CancelOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) ConfirmReceipt(ctx context.Context, in *ConfirmReceiptRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, OrderService_ConfirmReceipt_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrderServiceServer is the server API for OrderService service.
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility.
@@ -140,6 +167,11 @@ type OrderServiceServer interface {
 	// 超时过期订单（由 Task Service 的 Asynq 延时任务调用）
 	// 内含幂等校验、状态置 CANCELLED、释放库存，无需调用方关心
 	ExpireOrderByTimeout(context.Context, *ExpireOrderByTimeoutRequest) (*ExpireOrderByTimeoutResponse, error)
+	// 买家主动取消订单（仅限本人 PENDING_PAYMENT 订单）
+	// 语义与超时过期一致：释放库存、清理孤儿支付、返还优惠券
+	CancelOrder(context.Context, *CancelOrderRequest) (*emptypb.Empty, error)
+	// 买家确认收货（仅限本人 FULFILLED 订单，推进到 CLOSED）
+	ConfirmReceipt(context.Context, *ConfirmReceiptRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -170,6 +202,12 @@ func (UnimplementedOrderServiceServer) Delete(context.Context, *DeleteOrderReque
 }
 func (UnimplementedOrderServiceServer) ExpireOrderByTimeout(context.Context, *ExpireOrderByTimeoutRequest) (*ExpireOrderByTimeoutResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ExpireOrderByTimeout not implemented")
+}
+func (UnimplementedOrderServiceServer) CancelOrder(context.Context, *CancelOrderRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method CancelOrder not implemented")
+}
+func (UnimplementedOrderServiceServer) ConfirmReceipt(context.Context, *ConfirmReceiptRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method ConfirmReceipt not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
 func (UnimplementedOrderServiceServer) testEmbeddedByValue()                      {}
@@ -318,6 +356,42 @@ func _OrderService_ExpireOrderByTimeout_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_CancelOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).CancelOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_CancelOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).CancelOrder(ctx, req.(*CancelOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_ConfirmReceipt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfirmReceiptRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).ConfirmReceipt(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_ConfirmReceipt_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).ConfirmReceipt(ctx, req.(*ConfirmReceiptRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrderService_ServiceDesc is the grpc.ServiceDesc for OrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -352,6 +426,14 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExpireOrderByTimeout",
 			Handler:    _OrderService_ExpireOrderByTimeout_Handler,
+		},
+		{
+			MethodName: "CancelOrder",
+			Handler:    _OrderService_CancelOrder_Handler,
+		},
+		{
+			MethodName: "ConfirmReceipt",
+			Handler:    _OrderService_ConfirmReceipt_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -65,6 +65,12 @@ func (s *PaymentTransactionService) RestoreOrderStockForRefund(ctx context.Conte
 	return s.orderService.RestoreStockForRefund(ctx, orderId)
 }
 
+// NotifyOrderRefundSuccess 转发到 OrderService 发送退款成功站内通知（best-effort，
+// 通知失败不影响退款状态）。amount 为最小货币单位（分）。
+func (s *PaymentTransactionService) NotifyOrderRefundSuccess(ctx context.Context, orderId uint32, amount int64) {
+	s.orderService.notifyOrderRefundSuccess(ctx, orderId, amount)
+}
+
 // Create 创建支付流水。
 //
 // MVP 阶段支付网关为 STUB：创建即"成功"——流水状态直接置 SUCCEEDED，

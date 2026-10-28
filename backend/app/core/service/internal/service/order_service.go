@@ -9,6 +9,7 @@ import (
 	"time"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/hibiken/asynq"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -37,16 +38,20 @@ import (
 // OrderPendingTTL 订单待支付超时时间，超时后自动取消并释放库存。
 const OrderPendingTTL = 30 * time.Minute
 
+// OrderAutoConfirmTTL 发货后自动确认收货窗口，超时由清扫任务推进 CLOSED。
+const OrderAutoConfirmTTL = 7 * 24 * time.Hour
+
 type OrderService struct {
 	orderV1.UnimplementedOrderServiceServer
 
 	log *logx.Helper
 
-	orderRepo     *data.OrderRepo
-	orderItemRepo *data.OrderItemRepo
-	skuRepo       *data.SkuRepo
-	cartItemRepo  *data.CartItemRepo
-	entClient     *entCrud.EntClient[*ent.Client]
+	orderRepo             *data.OrderRepo
+	orderItemRepo         *data.OrderItemRepo
+	skuRepo               *data.SkuRepo
+	cartItemRepo          *data.CartItemRepo
+	entClient             *entCrud.EntClient[*ent.Client]
+	internalMessageService *InternalMessageService
 
 	taskScheduler TaskScheduler
 }
@@ -58,14 +63,16 @@ func NewOrderService(
 	skuRepo *data.SkuRepo,
 	cartItemRepo *data.CartItemRepo,
 	entClient *entCrud.EntClient[*ent.Client],
+	internalMessageService *InternalMessageService,
 ) *OrderService {
 	return &OrderService{
-		log:           logx.New(ctx.NewLoggerHelper("order/service/core-service")),
-		orderRepo:     orderRepo,
-		orderItemRepo: orderItemRepo,
-		skuRepo:       skuRepo,
-		cartItemRepo:  cartItemRepo,
-		entClient:     entClient,
+		log:                    logx.New(ctx.NewLoggerHelper("order/service/core-service")),
+		orderRepo:              orderRepo,
+		orderItemRepo:          orderItemRepo,
+		skuRepo:                skuRepo,
+		cartItemRepo:           cartItemRepo,
+		entClient:              entClient,
+		internalMessageService: internalMessageService,
 	}
 }
 
@@ -132,10 +139,35 @@ func (s *OrderService) Update(ctx context.Context, req *orderV1.UpdateOrderReque
 				return nil, orderV1.ErrorBadRequest("illegal order status transition: %v -> %v", from, target)
 			}
 		}
+		// 取消订单统一委托 ExpireOrderByTimeout：它以 PENDING_PAYMENT 条件更新
+		// 翻转状态，并在同一事务内释放库存、清理孤儿支付、返还优惠券——直接
+		// repo.Update 翻 CANCELLED 会留下"库存已扣但订单已取消"的不一致。
+		// （状态机已保证 CANCELLED 只能来自 PENDING_PAYMENT。）
+		if target == orderV1.Order_CANCELLED {
+			if _, err := s.ExpireOrderByTimeout(ctx, &orderV1.ExpireOrderByTimeoutRequest{
+				OrderId: trans.Ptr(req.GetId()),
+				TraceId: trans.Ptr("update_cancel"),
+			}); err != nil {
+				return nil, err
+			}
+			// ExpireOrderByTimeout 内部已发送取消通知，此处直接返回。
+			return &emptypb.Empty{}, nil
+		}
 	}
 
 	if err := s.orderRepo.Update(ctx, req); err != nil {
 		return nil, err
+	}
+
+	// 状态变更成功后向买家发送站内通知（best-effort，不阻塞响应）。
+	// PAID 由支付 stub / 真实网关触发，FULFILLED 由发货触发；CANCELLED 在上方
+	// 委托 ExpireOrderByTimeout 时通知；CLOSED 不发通用文案（确认收货/自动确认
+	// 路径有专属文案，见 order_notification.go 的文案映射）。
+	if req.Data.Status != nil && req.Data.GetStatus() != orderV1.Order_STATUS_UNSPECIFIED {
+		switch req.Data.GetStatus() {
+		case orderV1.Order_PAID, orderV1.Order_FULFILLED:
+			s.notifyOrderStatus(ctx, req.GetId(), req.Data.GetStatus())
+		}
 	}
 
 	return &emptypb.Empty{}, nil
@@ -671,7 +703,158 @@ func (s *OrderService) ExpireOrderByTimeout(ctx context.Context, req *orderV1.Ex
 		"order_id", orderId,
 	)
 
+	// 事务提交成功后通知买家订单已取消（best-effort）。
+	// 超时自动取消与买家主动取消（CancelOrder）共用本入口，故用通用文案。
+	s.notifyOrderStatus(ctx, orderId, orderV1.Order_CANCELLED)
+
 	return &orderV1.ExpireOrderByTimeoutResponse{Expired: boolPtr(true)}, nil
+}
+
+// CancelOrder 买家主动取消订单。
+//
+// 仅限本人 PENDING_PAYMENT 订单（归属校验与 Get 同模式：普通用户 viewer 强制
+// 比对 user_id，系统/平台视图放行）。取消语义与超时过期完全一致——复用
+// ExpireOrderByTimeout 的幂等事务（释放库存、清理孤儿支付、返还优惠券），
+// 并发安全由其 PENDING_PAYMENT 条件更新保证（与支付 MarkPaid 竞态时后到者失败）。
+func (s *OrderService) CancelOrder(ctx context.Context, req *orderV1.CancelOrderRequest) (*emptypb.Empty, error) {
+	orderId := req.GetId()
+	if orderId == 0 {
+		return nil, orderV1.ErrorBadRequest("order id is required")
+	}
+
+	orderEnt, err := s.orderRepo.Get(ctx, &orderV1.GetOrderRequest{
+		QueryBy: &orderV1.GetOrderRequest_Id{Id: orderId},
+	})
+	if err != nil {
+		return nil, err
+	}
+	if viewerUid, ok := viewerUserIDFromContext(ctx); ok && orderEnt.GetUserId() != viewerUid {
+		s.log.Warnf("user [%d] attempted to cancel order [%d] belonging to user [%d]", viewerUid, orderId, orderEnt.GetUserId())
+		return nil, orderV1.ErrorForbidden("order not found")
+	}
+	if orderEnt.GetStatus() != orderV1.Order_PENDING_PAYMENT {
+		return nil, orderV1.ErrorBadRequest("only pending-payment orders can be cancelled")
+	}
+
+	expiredReq := &orderV1.ExpireOrderByTimeoutRequest{OrderId: &orderId}
+	if req.GetReason() != "" {
+		expiredReq.TraceId = trans.Ptr(fmt.Sprintf("cancel_by_buyer:%s", req.GetReason()))
+	}
+	if _, err := s.ExpireOrderByTimeout(ctx, expiredReq); err != nil {
+		return nil, err
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+// ConfirmReceipt 买家确认收货。
+//
+// 仅限本人 FULFILLED 订单，推进 CLOSED（expected_status=[FULFILLED] 乐观并发）。
+// 成功后发送确认收货专属通知（Update 通用钩子对 CLOSED 静默，不会重复发送）。
+func (s *OrderService) ConfirmReceipt(ctx context.Context, req *orderV1.ConfirmReceiptRequest) (*emptypb.Empty, error) {
+	orderId := req.GetId()
+	if orderId == 0 {
+		return nil, orderV1.ErrorBadRequest("order id is required")
+	}
+
+	orderEnt, err := s.orderRepo.Get(ctx, &orderV1.GetOrderRequest{
+		QueryBy: &orderV1.GetOrderRequest_Id{Id: orderId},
+	})
+	if err != nil {
+		return nil, err
+	}
+	if viewerUid, ok := viewerUserIDFromContext(ctx); ok && orderEnt.GetUserId() != viewerUid {
+		s.log.Warnf("user [%d] attempted to confirm receipt of order [%d] belonging to user [%d]", viewerUid, orderId, orderEnt.GetUserId())
+		return nil, orderV1.ErrorForbidden("order not found")
+	}
+
+	closed := orderV1.Order_CLOSED
+	if _, err := s.Update(ctx, &orderV1.UpdateOrderRequest{
+		Id:             orderId,
+		Data:           &orderV1.Order{Status: &closed},
+		ExpectedStatus: []orderV1.Order_Status{orderV1.Order_FULFILLED},
+	}); err != nil {
+		return nil, err
+	}
+
+	s.notifyOrderCustom(ctx, orderId, "订单已确认收货",
+		fmt.Sprintf("您的订单 #%d 已确认收货，感谢您的购物，欢迎再次光临！", orderId))
+
+	return &emptypb.Empty{}, nil
+}
+
+// HandleOrderSweep 订单兜底清扫周期任务处理器（asynq 周期触发，SystemViewer 上下文）。
+//
+// Phase 1：兜底取消——扫描超过 TTL 仍 PENDING_PAYMENT 的订单逐单走
+// ExpireOrderByTimeout。覆盖延时任务丢失的场景（Redis 清空、worker 宕机跨过
+// TTL、Create 后投递失败）；ExpireOrderByTimeout 幂等，重复扫描无副作用。
+//
+// Phase 2：自动确认收货——扫描超过 OrderAutoConfirmTTL 仍 FULFILLED 的订单，
+// 条件更新推进 CLOSED（FULFILLED 条件更新，绕过 service.Update 避免触发通用
+// 通知钩子）并发送"自动确认收货"专属通知。
+func (s *OrderService) HandleOrderSweep(taskType string, taskData *task.OrderSweepTaskData) error {
+	ctx := appViewer.NewSystemViewerContext(context.Background())
+	s.log.Infow("msg", "HandleOrderSweep started", "task_type", taskType, "name", taskData.GetName())
+
+	// Phase 1: 兜底取消超时未支付订单。
+	pendingCutoff := time.Now().Add(-OrderPendingTTL)
+	stalePending, qErr := s.entClient.Client().Order.Query().
+		Where(
+			order.StatusEQ(order.StatusOrderStatusPendingPayment),
+			order.CreatedAtLT(pendingCutoff),
+		).
+		All(ctx)
+	if qErr != nil {
+		return fmt.Errorf("query stale pending-payment orders failed: %w", qErr)
+	}
+	for _, o := range stalePending {
+		if _, eErr := s.ExpireOrderByTimeout(ctx, &orderV1.ExpireOrderByTimeoutRequest{OrderId: &o.ID}); eErr != nil {
+			s.log.Errorf("sweep expire order [%d] failed: %v", o.ID, eErr)
+			continue
+		}
+	}
+
+	// Phase 2: 自动确认收货。
+	confirmCutoff := time.Now().Add(-OrderAutoConfirmTTL)
+	staleFulfilled, qErr := s.entClient.Client().Order.Query().
+		Where(
+			order.StatusEQ(order.StatusOrderStatusFulfilled),
+			order.UpdatedAtLT(confirmCutoff),
+		).
+		All(ctx)
+	if qErr != nil {
+		return fmt.Errorf("query stale fulfilled orders failed: %w", qErr)
+	}
+	closedEnt := order.StatusOrderStatusClosed
+	fulfilledEnt := order.StatusOrderStatusFulfilled
+	autoConfirmDays := int(OrderAutoConfirmTTL.Hours() / 24)
+	for _, o := range staleFulfilled {
+		uErr := s.entClient.Client().Order.Update().
+			SetNillableStatus(&closedEnt).
+			SetUpdatedAt(time.Now()).
+			Where(
+				order.IDEQ(o.ID),
+				order.StatusIn(fulfilledEnt),
+			).
+			Exec(ctx)
+		if uErr != nil {
+			if ent.IsNotFound(uErr) {
+				continue // 状态已被并发推进，跳过
+			}
+			s.log.Errorf("sweep auto-confirm order [%d] failed: %v", o.ID, uErr)
+			continue
+		}
+		s.notifyOrderCustom(ctx, o.ID, "订单已自动确认收货",
+			fmt.Sprintf("您的订单 #%d 已发货超过 %d 天，系统已自动确认收货。如商品有问题请在账户中心联系客服。", o.ID, autoConfirmDays))
+	}
+
+	if len(stalePending) > 0 || len(staleFulfilled) > 0 {
+		s.log.Infow("msg", "HandleOrderSweep finished",
+			"expired_pending", len(stalePending),
+			"auto_confirmed", len(staleFulfilled),
+		)
+	}
+	return nil
 }
 
 // RestoreStockForRefund 退款成功后回补库存。

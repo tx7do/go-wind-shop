@@ -1472,6 +1472,105 @@ func (x *ExpireOrderByTimeoutResponse) GetExpired() bool {
 	return false
 }
 
+// 买家取消订单 - 请求
+type CancelOrderRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Id    uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	// 取消原因（可选，仅记录用途，不影响状态机）
+	Reason        *string `protobuf:"bytes,2,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CancelOrderRequest) Reset() {
+	*x = CancelOrderRequest{}
+	mi := &file_order_service_v1_order_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CancelOrderRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CancelOrderRequest) ProtoMessage() {}
+
+func (x *CancelOrderRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_order_service_v1_order_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CancelOrderRequest.ProtoReflect.Descriptor instead.
+func (*CancelOrderRequest) Descriptor() ([]byte, []int) {
+	return file_order_service_v1_order_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *CancelOrderRequest) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *CancelOrderRequest) GetReason() string {
+	if x != nil && x.Reason != nil {
+		return *x.Reason
+	}
+	return ""
+}
+
+// 买家确认收货 - 请求
+type ConfirmReceiptRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            uint32                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ConfirmReceiptRequest) Reset() {
+	*x = ConfirmReceiptRequest{}
+	mi := &file_order_service_v1_order_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmReceiptRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmReceiptRequest) ProtoMessage() {}
+
+func (x *ConfirmReceiptRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_order_service_v1_order_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmReceiptRequest.ProtoReflect.Descriptor instead.
+func (*ConfirmReceiptRequest) Descriptor() ([]byte, []int) {
+	return file_order_service_v1_order_proto_rawDescGZIP(), []int{21}
+}
+
+func (x *ConfirmReceiptRequest) GetId() uint32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
 var File_order_service_v1_order_proto protoreflect.FileDescriptor
 
 const file_order_service_v1_order_proto_rawDesc = "" +
@@ -1657,7 +1756,13 @@ const file_order_service_v1_order_proto_rawDesc = "" +
 	"\x1cExpireOrderByTimeoutResponse\x12x\n" +
 	"\aexpired\x18\x01 \x01(\bBY\xbaGV\x92\x02S是否执行了过期（false 表示订单已非 PENDING_PAYMENT 状态，跳过）H\x00R\aexpired\x88\x01\x01B\n" +
 	"\n" +
-	"\b_expired2\xc0\x04\n" +
+	"\b_expired\"p\n" +
+	"\x12CancelOrderRequest\x12\x1e\n" +
+	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b订单IDR\x02id\x12/\n" +
+	"\x06reason\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f取消原因H\x00R\x06reason\x88\x01\x01B\t\n" +
+	"\a_reason\"7\n" +
+	"\x15ConfirmReceiptRequest\x12\x1e\n" +
+	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b订单IDR\x02id2\xe4\x05\n" +
 	"\fOrderService\x12H\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a#.order.service.v1.ListOrderResponse\"\x00\x12J\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a$.order.service.v1.CountOrderResponse\"\x00\x12C\n" +
@@ -1665,7 +1770,9 @@ const file_order_service_v1_order_proto_rawDesc = "" +
 	"\x06Create\x12$.order.service.v1.CreateOrderRequest\x1a\x16.google.protobuf.Empty\"\x00\x12H\n" +
 	"\x06Update\x12$.order.service.v1.UpdateOrderRequest\x1a\x16.google.protobuf.Empty\"\x00\x12H\n" +
 	"\x06Delete\x12$.order.service.v1.DeleteOrderRequest\x1a\x16.google.protobuf.Empty\"\x00\x12w\n" +
-	"\x14ExpireOrderByTimeout\x12-.order.service.v1.ExpireOrderByTimeoutRequest\x1a..order.service.v1.ExpireOrderByTimeoutResponse\"\x002\xc0\x04\n" +
+	"\x14ExpireOrderByTimeout\x12-.order.service.v1.ExpireOrderByTimeoutRequest\x1a..order.service.v1.ExpireOrderByTimeoutResponse\"\x00\x12M\n" +
+	"\vCancelOrder\x12$.order.service.v1.CancelOrderRequest\x1a\x16.google.protobuf.Empty\"\x00\x12S\n" +
+	"\x0eConfirmReceipt\x12'.order.service.v1.ConfirmReceiptRequest\x1a\x16.google.protobuf.Empty\"\x002\xc0\x04\n" +
 	"\x10OrderItemService\x12L\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.order.service.v1.ListOrderItemResponse\"\x00\x12N\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.order.service.v1.CountOrderItemResponse\"\x00\x12K\n" +
@@ -1690,7 +1797,7 @@ func file_order_service_v1_order_proto_rawDescGZIP() []byte {
 }
 
 var file_order_service_v1_order_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_order_service_v1_order_proto_msgTypes = make([]protoimpl.MessageInfo, 20)
+var file_order_service_v1_order_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_order_service_v1_order_proto_goTypes = []any{
 	(Order_Status)(0),                     // 0: order.service.v1.Order.Status
 	(*Order)(nil),                         // 1: order.service.v1.Order
@@ -1713,62 +1820,68 @@ var file_order_service_v1_order_proto_goTypes = []any{
 	(*CountOrderItemResponse)(nil),        // 18: order.service.v1.CountOrderItemResponse
 	(*ExpireOrderByTimeoutRequest)(nil),   // 19: order.service.v1.ExpireOrderByTimeoutRequest
 	(*ExpireOrderByTimeoutResponse)(nil),  // 20: order.service.v1.ExpireOrderByTimeoutResponse
-	(*timestamppb.Timestamp)(nil),         // 21: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),         // 22: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),              // 23: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                 // 24: google.protobuf.Empty
+	(*CancelOrderRequest)(nil),            // 21: order.service.v1.CancelOrderRequest
+	(*ConfirmReceiptRequest)(nil),         // 22: order.service.v1.ConfirmReceiptRequest
+	(*timestamppb.Timestamp)(nil),         // 23: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),         // 24: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),              // 25: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                 // 26: google.protobuf.Empty
 }
 var file_order_service_v1_order_proto_depIdxs = []int32{
 	0,  // 0: order.service.v1.Order.status:type_name -> order.service.v1.Order.Status
-	21, // 1: order.service.v1.Order.created_at:type_name -> google.protobuf.Timestamp
-	21, // 2: order.service.v1.Order.updated_at:type_name -> google.protobuf.Timestamp
-	21, // 3: order.service.v1.Order.deleted_at:type_name -> google.protobuf.Timestamp
-	21, // 4: order.service.v1.OrderItem.created_at:type_name -> google.protobuf.Timestamp
-	21, // 5: order.service.v1.OrderItem.updated_at:type_name -> google.protobuf.Timestamp
-	21, // 6: order.service.v1.OrderItem.deleted_at:type_name -> google.protobuf.Timestamp
+	23, // 1: order.service.v1.Order.created_at:type_name -> google.protobuf.Timestamp
+	23, // 2: order.service.v1.Order.updated_at:type_name -> google.protobuf.Timestamp
+	23, // 3: order.service.v1.Order.deleted_at:type_name -> google.protobuf.Timestamp
+	23, // 4: order.service.v1.OrderItem.created_at:type_name -> google.protobuf.Timestamp
+	23, // 5: order.service.v1.OrderItem.updated_at:type_name -> google.protobuf.Timestamp
+	23, // 6: order.service.v1.OrderItem.deleted_at:type_name -> google.protobuf.Timestamp
 	1,  // 7: order.service.v1.ListOrderResponse.items:type_name -> order.service.v1.Order
 	2,  // 8: order.service.v1.ListOrderItemResponse.items:type_name -> order.service.v1.OrderItem
-	22, // 9: order.service.v1.GetOrderRequest.view_mask:type_name -> google.protobuf.FieldMask
-	22, // 10: order.service.v1.GetOrderItemRequest.view_mask:type_name -> google.protobuf.FieldMask
+	24, // 9: order.service.v1.GetOrderRequest.view_mask:type_name -> google.protobuf.FieldMask
+	24, // 10: order.service.v1.GetOrderItemRequest.view_mask:type_name -> google.protobuf.FieldMask
 	1,  // 11: order.service.v1.CreateOrderRequest.data:type_name -> order.service.v1.Order
 	1,  // 12: order.service.v1.UpdateOrderRequest.data:type_name -> order.service.v1.Order
-	22, // 13: order.service.v1.UpdateOrderRequest.update_mask:type_name -> google.protobuf.FieldMask
+	24, // 13: order.service.v1.UpdateOrderRequest.update_mask:type_name -> google.protobuf.FieldMask
 	0,  // 14: order.service.v1.UpdateOrderRequest.expected_status:type_name -> order.service.v1.Order.Status
 	1,  // 15: order.service.v1.BatchCreateOrdersRequest.items:type_name -> order.service.v1.Order
 	2,  // 16: order.service.v1.CreateOrderItemRequest.data:type_name -> order.service.v1.OrderItem
 	2,  // 17: order.service.v1.UpdateOrderItemRequest.data:type_name -> order.service.v1.OrderItem
-	22, // 18: order.service.v1.UpdateOrderItemRequest.update_mask:type_name -> google.protobuf.FieldMask
+	24, // 18: order.service.v1.UpdateOrderItemRequest.update_mask:type_name -> google.protobuf.FieldMask
 	2,  // 19: order.service.v1.BatchCreateOrderItemsRequest.items:type_name -> order.service.v1.OrderItem
-	23, // 20: order.service.v1.OrderService.List:input_type -> pagination.PagingRequest
-	23, // 21: order.service.v1.OrderService.Count:input_type -> pagination.PagingRequest
+	25, // 20: order.service.v1.OrderService.List:input_type -> pagination.PagingRequest
+	25, // 21: order.service.v1.OrderService.Count:input_type -> pagination.PagingRequest
 	5,  // 22: order.service.v1.OrderService.Get:input_type -> order.service.v1.GetOrderRequest
 	7,  // 23: order.service.v1.OrderService.Create:input_type -> order.service.v1.CreateOrderRequest
 	8,  // 24: order.service.v1.OrderService.Update:input_type -> order.service.v1.UpdateOrderRequest
 	9,  // 25: order.service.v1.OrderService.Delete:input_type -> order.service.v1.DeleteOrderRequest
 	19, // 26: order.service.v1.OrderService.ExpireOrderByTimeout:input_type -> order.service.v1.ExpireOrderByTimeoutRequest
-	23, // 27: order.service.v1.OrderItemService.List:input_type -> pagination.PagingRequest
-	23, // 28: order.service.v1.OrderItemService.Count:input_type -> pagination.PagingRequest
-	6,  // 29: order.service.v1.OrderItemService.Get:input_type -> order.service.v1.GetOrderItemRequest
-	13, // 30: order.service.v1.OrderItemService.Create:input_type -> order.service.v1.CreateOrderItemRequest
-	16, // 31: order.service.v1.OrderItemService.BatchCreate:input_type -> order.service.v1.BatchCreateOrderItemsRequest
-	14, // 32: order.service.v1.OrderItemService.Update:input_type -> order.service.v1.UpdateOrderItemRequest
-	15, // 33: order.service.v1.OrderItemService.Delete:input_type -> order.service.v1.DeleteOrderItemRequest
-	3,  // 34: order.service.v1.OrderService.List:output_type -> order.service.v1.ListOrderResponse
-	12, // 35: order.service.v1.OrderService.Count:output_type -> order.service.v1.CountOrderResponse
-	1,  // 36: order.service.v1.OrderService.Get:output_type -> order.service.v1.Order
-	24, // 37: order.service.v1.OrderService.Create:output_type -> google.protobuf.Empty
-	24, // 38: order.service.v1.OrderService.Update:output_type -> google.protobuf.Empty
-	24, // 39: order.service.v1.OrderService.Delete:output_type -> google.protobuf.Empty
-	20, // 40: order.service.v1.OrderService.ExpireOrderByTimeout:output_type -> order.service.v1.ExpireOrderByTimeoutResponse
-	4,  // 41: order.service.v1.OrderItemService.List:output_type -> order.service.v1.ListOrderItemResponse
-	18, // 42: order.service.v1.OrderItemService.Count:output_type -> order.service.v1.CountOrderItemResponse
-	2,  // 43: order.service.v1.OrderItemService.Get:output_type -> order.service.v1.OrderItem
-	24, // 44: order.service.v1.OrderItemService.Create:output_type -> google.protobuf.Empty
-	24, // 45: order.service.v1.OrderItemService.BatchCreate:output_type -> google.protobuf.Empty
-	24, // 46: order.service.v1.OrderItemService.Update:output_type -> google.protobuf.Empty
-	24, // 47: order.service.v1.OrderItemService.Delete:output_type -> google.protobuf.Empty
-	34, // [34:48] is the sub-list for method output_type
-	20, // [20:34] is the sub-list for method input_type
+	21, // 27: order.service.v1.OrderService.CancelOrder:input_type -> order.service.v1.CancelOrderRequest
+	22, // 28: order.service.v1.OrderService.ConfirmReceipt:input_type -> order.service.v1.ConfirmReceiptRequest
+	25, // 29: order.service.v1.OrderItemService.List:input_type -> pagination.PagingRequest
+	25, // 30: order.service.v1.OrderItemService.Count:input_type -> pagination.PagingRequest
+	6,  // 31: order.service.v1.OrderItemService.Get:input_type -> order.service.v1.GetOrderItemRequest
+	13, // 32: order.service.v1.OrderItemService.Create:input_type -> order.service.v1.CreateOrderItemRequest
+	16, // 33: order.service.v1.OrderItemService.BatchCreate:input_type -> order.service.v1.BatchCreateOrderItemsRequest
+	14, // 34: order.service.v1.OrderItemService.Update:input_type -> order.service.v1.UpdateOrderItemRequest
+	15, // 35: order.service.v1.OrderItemService.Delete:input_type -> order.service.v1.DeleteOrderItemRequest
+	3,  // 36: order.service.v1.OrderService.List:output_type -> order.service.v1.ListOrderResponse
+	12, // 37: order.service.v1.OrderService.Count:output_type -> order.service.v1.CountOrderResponse
+	1,  // 38: order.service.v1.OrderService.Get:output_type -> order.service.v1.Order
+	26, // 39: order.service.v1.OrderService.Create:output_type -> google.protobuf.Empty
+	26, // 40: order.service.v1.OrderService.Update:output_type -> google.protobuf.Empty
+	26, // 41: order.service.v1.OrderService.Delete:output_type -> google.protobuf.Empty
+	20, // 42: order.service.v1.OrderService.ExpireOrderByTimeout:output_type -> order.service.v1.ExpireOrderByTimeoutResponse
+	26, // 43: order.service.v1.OrderService.CancelOrder:output_type -> google.protobuf.Empty
+	26, // 44: order.service.v1.OrderService.ConfirmReceipt:output_type -> google.protobuf.Empty
+	4,  // 45: order.service.v1.OrderItemService.List:output_type -> order.service.v1.ListOrderItemResponse
+	18, // 46: order.service.v1.OrderItemService.Count:output_type -> order.service.v1.CountOrderItemResponse
+	2,  // 47: order.service.v1.OrderItemService.Get:output_type -> order.service.v1.OrderItem
+	26, // 48: order.service.v1.OrderItemService.Create:output_type -> google.protobuf.Empty
+	26, // 49: order.service.v1.OrderItemService.BatchCreate:output_type -> google.protobuf.Empty
+	26, // 50: order.service.v1.OrderItemService.Update:output_type -> google.protobuf.Empty
+	26, // 51: order.service.v1.OrderItemService.Delete:output_type -> google.protobuf.Empty
+	36, // [36:52] is the sub-list for method output_type
+	20, // [20:36] is the sub-list for method input_type
 	20, // [20:20] is the sub-list for extension type_name
 	20, // [20:20] is the sub-list for extension extendee
 	0,  // [0:20] is the sub-list for field type_name
@@ -1799,13 +1912,14 @@ func file_order_service_v1_order_proto_init() {
 	}
 	file_order_service_v1_order_proto_msgTypes[18].OneofWrappers = []any{}
 	file_order_service_v1_order_proto_msgTypes[19].OneofWrappers = []any{}
+	file_order_service_v1_order_proto_msgTypes[20].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_order_service_v1_order_proto_rawDesc), len(file_order_service_v1_order_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   20,
+			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   2,
 		},

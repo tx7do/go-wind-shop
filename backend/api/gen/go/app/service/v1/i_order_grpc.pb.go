@@ -22,11 +22,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	OrderService_List_FullMethodName   = "/app.service.v1.OrderService/List"
-	OrderService_Count_FullMethodName  = "/app.service.v1.OrderService/Count"
-	OrderService_Get_FullMethodName    = "/app.service.v1.OrderService/Get"
-	OrderService_Create_FullMethodName = "/app.service.v1.OrderService/Create"
-	OrderService_Update_FullMethodName = "/app.service.v1.OrderService/Update"
+	OrderService_List_FullMethodName           = "/app.service.v1.OrderService/List"
+	OrderService_Count_FullMethodName          = "/app.service.v1.OrderService/Count"
+	OrderService_Get_FullMethodName            = "/app.service.v1.OrderService/Get"
+	OrderService_Create_FullMethodName         = "/app.service.v1.OrderService/Create"
+	OrderService_Update_FullMethodName         = "/app.service.v1.OrderService/Update"
+	OrderService_CancelOrder_FullMethodName    = "/app.service.v1.OrderService/CancelOrder"
+	OrderService_ConfirmReceipt_FullMethodName = "/app.service.v1.OrderService/ConfirmReceipt"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -40,6 +42,8 @@ type OrderServiceClient interface {
 	Get(ctx context.Context, in *v11.GetOrderRequest, opts ...grpc.CallOption) (*v11.Order, error)
 	Create(ctx context.Context, in *v11.CreateOrderRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Update(ctx context.Context, in *v11.UpdateOrderRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	CancelOrder(ctx context.Context, in *v11.CancelOrderRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ConfirmReceipt(ctx context.Context, in *v11.ConfirmReceiptRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type orderServiceClient struct {
@@ -100,6 +104,26 @@ func (c *orderServiceClient) Update(ctx context.Context, in *v11.UpdateOrderRequ
 	return out, nil
 }
 
+func (c *orderServiceClient) CancelOrder(ctx context.Context, in *v11.CancelOrderRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, OrderService_CancelOrder_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderServiceClient) ConfirmReceipt(ctx context.Context, in *v11.ConfirmReceiptRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, OrderService_ConfirmReceipt_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrderServiceServer is the server API for OrderService service.
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility.
@@ -111,6 +135,8 @@ type OrderServiceServer interface {
 	Get(context.Context, *v11.GetOrderRequest) (*v11.Order, error)
 	Create(context.Context, *v11.CreateOrderRequest) (*emptypb.Empty, error)
 	Update(context.Context, *v11.UpdateOrderRequest) (*emptypb.Empty, error)
+	CancelOrder(context.Context, *v11.CancelOrderRequest) (*emptypb.Empty, error)
+	ConfirmReceipt(context.Context, *v11.ConfirmReceiptRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -135,6 +161,12 @@ func (UnimplementedOrderServiceServer) Create(context.Context, *v11.CreateOrderR
 }
 func (UnimplementedOrderServiceServer) Update(context.Context, *v11.UpdateOrderRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedOrderServiceServer) CancelOrder(context.Context, *v11.CancelOrderRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method CancelOrder not implemented")
+}
+func (UnimplementedOrderServiceServer) ConfirmReceipt(context.Context, *v11.ConfirmReceiptRequest) (*emptypb.Empty, error) {
+	return nil, status.Error(codes.Unimplemented, "method ConfirmReceipt not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
 func (UnimplementedOrderServiceServer) testEmbeddedByValue()                      {}
@@ -247,6 +279,42 @@ func _OrderService_Update_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_CancelOrder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.CancelOrderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).CancelOrder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_CancelOrder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).CancelOrder(ctx, req.(*v11.CancelOrderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _OrderService_ConfirmReceipt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ConfirmReceiptRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).ConfirmReceipt(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_ConfirmReceipt_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).ConfirmReceipt(ctx, req.(*v11.ConfirmReceiptRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrderService_ServiceDesc is the grpc.ServiceDesc for OrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -273,6 +341,14 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Update",
 			Handler:    _OrderService_Update_Handler,
+		},
+		{
+			MethodName: "CancelOrder",
+			Handler:    _OrderService_CancelOrder_Handler,
+		},
+		{
+			MethodName: "ConfirmReceipt",
+			Handler:    _OrderService_ConfirmReceipt_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -11,6 +11,7 @@ import (
 
 	appV1 "go-wind-shop/api/gen/go/app/service/v1"
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
+	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
 	"go-wind-shop/pkg/middleware/auth"
 )
@@ -74,12 +75,36 @@ func (s *OrderService) Update(ctx context.Context, req *orderV1.UpdateOrderReque
 		return nil, err
 	}
 
-	req.Data.Id = trans.Ptr(req.GetId())
-
-	req.Data.UpdatedBy = trans.Ptr(operator.GetUserId())
-	if req.UpdateMask != nil {
-		req.UpdateMask.Paths = append(req.UpdateMask.Paths, "updated_by")
+	// 前台买家不允许通过通用 PATCH 推进订单状态：取消/确认收货走专用 RPC
+	// （CancelOrder 会释放库存/清理孤儿支付/返还优惠券，ConfirmReceipt 有专属
+	// 通知），通用路径推进状态会绕过这些联动。
+	if req.Data.Status != nil && req.Data.GetStatus() != orderV1.Order_STATUS_UNSPECIFIED {
+		return nil, appV1.ErrorBadRequest("order status change via generic update is not allowed; use cancel / confirm-receipt endpoints")
 	}
 
+	// 金额/地址等持久字段是下单事务计算的单一真相源，不接受客户端改写——
+	// 仅放行 updated_by（审计），update_mask 同步收紧，防"下单后 PATCH
+	// total_amount=0"类篡改。
+	req.Data.Id = trans.Ptr(req.GetId())
+	req.Data.UpdatedBy = trans.Ptr(operator.GetUserId())
+	req.UpdateMask = &fieldmaskpb.FieldMask{Paths: []string{"updated_by"}}
+
 	return s.orderServiceClient.Update(ctx, req)
+}
+
+// CancelOrder 买家取消本人 PENDING_PAYMENT 订单。
+// 归属校验与状态机由 core 强制（UserPrivacy + viewer 比对），BFF 仅要求登录。
+func (s *OrderService) CancelOrder(ctx context.Context, req *orderV1.CancelOrderRequest) (*emptypb.Empty, error) {
+	if _, err := auth.FromContext(ctx); err != nil {
+		return nil, err
+	}
+	return s.orderServiceClient.CancelOrder(ctx, req)
+}
+
+// ConfirmReceipt 买家确认收货（本人 FULFILLED 订单 → CLOSED）。
+func (s *OrderService) ConfirmReceipt(ctx context.Context, req *orderV1.ConfirmReceiptRequest) (*emptypb.Empty, error) {
+	if _, err := auth.FromContext(ctx); err != nil {
+		return nil, err
+	}
+	return s.orderServiceClient.ConfirmReceipt(ctx, req)
 }

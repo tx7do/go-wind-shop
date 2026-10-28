@@ -145,6 +145,13 @@ const pageConfig = computed<ProPageConfig>(() => ({
             attrs: { type: "danger" },
             visible: (row: any) => row.status === "PAID" || row.status === "FULFILLED",
           },
+          {
+            name: "cancel",
+            label: $t("pages.mall.order.cancel"),
+            icon: "lucide:ban",
+            attrs: { type: "warning" },
+            visible: (row: any) => row.status === "PENDING_PAYMENT",
+          },
         ],
       },
     ],
@@ -172,6 +179,30 @@ async function handleOperate(data: { name: string; row: any }) {
       await updateOrder({
         id: row.id,
         values: { status: "CLOSED" },
+        expectedStatus: [row.status],
+      });
+      ElMessage.success($t("common.notification.updateSuccess"));
+      pageRef.value?.refresh();
+    } catch {
+      ElMessage.error($t("common.notification.updateFailed"));
+    }
+  }
+
+  if (name === "cancel") {
+    // 取消未支付订单：core 将 PENDING_PAYMENT → CANCELLED 的通用更新统一委托
+    // 超时取消事务，库存释放/孤儿支付清理/优惠券返还同事务完成，管理端无需关心。
+    try {
+      await ElMessageBox.confirm($t("pages.mall.order.cancelConfirm"), $t("common.notification.confirmTitle"), {
+        type: "warning",
+      });
+    } catch {
+      return;
+    }
+
+    try {
+      await updateOrder({
+        id: row.id,
+        values: { status: "CANCELLED" },
         expectedStatus: [row.status],
       });
       ElMessage.success($t("common.notification.updateSuccess"));

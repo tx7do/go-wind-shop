@@ -133,7 +133,8 @@ INSERT INTO public.sys_tasks(type, type_name, task_payload, cron_spec, enable, c
 VALUES
     ('PERIODIC', 'backup', '{ "name": "test"}', '0 * * * *', true, now()),
     ('PERIODIC', 'coupon_expire_sweep', '{ "name": "sweep"}', '0 */6 * * *', true, now()),
-    ('PERIODIC', 'stock_alert', '{ "name": "scan"}', '0 2 * * *', true, now())
+    ('PERIODIC', 'stock_alert', '{ "name": "scan"}', '0 2 * * *', true, now()),
+    ('PERIODIC', 'order_sweep', '{ "name": "sweep"}', '*/15 * * * *', true, now())
 ;
 SELECT setval('sys_tasks_id_seq', (SELECT MAX(id) FROM sys_tasks));
 

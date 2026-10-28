@@ -13,6 +13,8 @@ import type {
   orderservicev1_Order,
   orderservicev1_Order_Status,
   orderservicev1_CreateOrderRequest,
+  orderservicev1_CancelOrderRequest,
+  orderservicev1_ConfirmReceiptRequest,
 } from '@/api/generated/app/service/v1';
 
 // ==============================
@@ -150,6 +152,44 @@ export async function fetchUpdateOrderStore(
     queryKey: ['updateOrder', id, values, expectedStatus],
     queryFn: () => updateOrder(id, values, expectedStatus),
     retry: 0,
+  });
+}
+
+// ==============================
+// 取消订单（Mutation）
+// 专用 RPC：服务端事务内释放库存、清理孤儿支付、返还优惠券（与超时自动取消
+// 同语义），仅限本人 PENDING_PAYMENT 订单。不要用通用 Update 推进状态。
+// ==============================
+export async function cancelOrder(id: number, reason?: string) {
+  const request: orderservicev1_CancelOrderRequest = { id };
+  if (reason !== undefined && reason !== '') {
+    request.reason = reason;
+  }
+  return await apiClient.orderService.CancelOrder(request);
+}
+export function useCancelOrder(
+  options?: UseMutationOptions<{}, Error, { id: number; reason?: string }>,
+) {
+  return useMutation({
+    mutationFn: ({ id, reason }) => cancelOrder(id, reason),
+    ...options,
+  });
+}
+
+// ==============================
+// 确认收货（Mutation）
+// 专用 RPC：本人 FULFILLED 订单推进 CLOSED，服务端发送确认收货通知。
+// ==============================
+export async function confirmReceipt(id: number) {
+  const request: orderservicev1_ConfirmReceiptRequest = { id };
+  return await apiClient.orderService.ConfirmReceipt(request);
+}
+export function useConfirmReceipt(
+  options?: UseMutationOptions<{}, Error, { id: number }>,
+) {
+  return useMutation({
+    mutationFn: ({ id }) => confirmReceipt(id),
+    ...options,
   });
 }
 

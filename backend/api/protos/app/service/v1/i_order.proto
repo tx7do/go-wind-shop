@@ -41,6 +41,20 @@ service OrderService {
       body: "*"
     };
   }
+
+  rpc CancelOrder (order.service.v1.CancelOrderRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/orders/{id}:cancel"
+      body: "*"
+    };
+  }
+
+  rpc ConfirmReceipt (order.service.v1.ConfirmReceiptRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/orders/{id}:confirm-receipt"
+      body: "*"
+    };
+  }
 }
 
 // 订单项前台服务

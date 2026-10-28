@@ -104,6 +104,8 @@ INSERT INTO sys_tasks(type, type_name, task_payload, cron_spec, enable, created_
 VALUES ('PERIODIC', 'coupon_expire_sweep', '{ "name": "sweep"}', '0 */6 * * *', true, NOW());
 INSERT INTO sys_tasks(type, type_name, task_payload, cron_spec, enable, created_at)
 VALUES ('PERIODIC', 'stock_alert', '{ "name": "scan"}', '0 2 * * *', true, NOW());
+INSERT INTO sys_tasks(type, type_name, task_payload, cron_spec, enable, created_at)
+VALUES ('PERIODIC', 'order_sweep', '{ "name": "sweep"}', '*/15 * * * *', true, NOW());
 ALTER TABLE sys_tasks AUTO_INCREMENT = (SELECT COALESCE(MAX(id) + 1, 1) FROM sys_tasks);
 
 -- 登录策略

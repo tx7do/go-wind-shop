@@ -41,6 +41,10 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, or
 	if err = asynq.RegisterSubscriber(srv, task.OrderTimeoutTaskType, orderService.HandleOrderTimeout); err != nil {
 		log.Error(err)
 	}
+	// 注册订单兜底清扫周期任务处理器（扫描超时未支付订单兜底取消 + 发货超窗自动确认收货）
+	if err = asynq.RegisterSubscriber(srv, task.OrderSweepTaskType, orderService.HandleOrderSweep); err != nil {
+		log.Error(err)
+	}
 	// 注册优惠券过期清扫周期任务处理器（按 cron 周期触发 SweepExpiredCoupons，
 	// 扫描全库过期券批量翻 EXPIRED）。仿 BackupTask 的 periodic 模式。
 	if err = asynq.RegisterSubscriber(srv, task.CouponExpireSweepTaskType, userCouponService.HandleCouponSweep); err != nil {

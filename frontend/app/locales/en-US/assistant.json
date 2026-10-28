@@ -1,0 +1,13 @@
+{
+  "title": "AI Shopping Assistant",
+  "subtitle": "Ask anything",
+  "welcome": "Hi! I'm your AI shopping assistant. I can help you find products, check prices & stock, and look up your orders and coupons.",
+  "placeholder": "Type a question, e.g. Any good budget headphones?",
+  "send": "Send",
+  "thinking": "Thinking…",
+  "emptyReply": "(The model returned no content)",
+  "errorReply": "Sorry, the service is temporarily unavailable. Please try again later.",
+  "suggest1": "Recommend best-selling products",
+  "suggest2": "What coupons can I claim?",
+  "suggest3": "Show me my orders"
+}

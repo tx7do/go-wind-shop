@@ -226,6 +226,9 @@ func (s *PaymentRefundService) Update(ctx context.Context, req *paymentV1.Update
 					}
 					return nil, rErr
 				}
+
+				// 退款成功通知（best-effort）：站内信告知买家退款已处理。
+				s.transactionService.NotifyOrderRefundSuccess(ctx, orderId, tx.GetAmount())
 			}
 		}
 	}

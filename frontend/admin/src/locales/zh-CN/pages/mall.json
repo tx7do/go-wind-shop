@@ -102,6 +102,8 @@
     "updatedAt": "更新时间",
     "statusTransition": "状态操作",
     "close": "关闭订单",
+    "cancel": "取消订单",
+    "cancelConfirm": "确定取消该未支付订单吗？取消后将释放占用的库存。",
     "orderItems": {
       "id": "订单项ID",
       "skuId": "SKU ID",
