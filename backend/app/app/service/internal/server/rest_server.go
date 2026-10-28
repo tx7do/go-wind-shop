@@ -121,6 +121,7 @@ func NewRestServer(
 	// register:rest-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
 		userCouponService *service.UserCouponService,
 		couponTemplateService *service.CouponTemplateService,
+		promotionService *service.PromotionService,
 		commentService *service.CommentService,
 		interactionService *service.InteractionService,
 		invoiceService *service.InvoiceService,
@@ -162,6 +163,7 @@ func NewRestServer(
 	appV1.RegisterInternalMessageRecipientServiceHTTPServer(srv, internalMessageRecipientService)
 	appV1.RegisterUserCouponServiceHTTPServer(srv, userCouponService)
 	appV1.RegisterCouponTemplateServiceHTTPServer(srv, couponTemplateService)
+	appV1.RegisterPromotionServiceHTTPServer(srv, promotionService)
 	appV1.RegisterCommentServiceHTTPServer(srv, commentService)
 	appV1.RegisterInteractionServiceHTTPServer(srv, interactionService)
 	appV1.RegisterInvoiceServiceHTTPServer(srv, invoiceService)

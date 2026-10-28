@@ -3454,6 +3454,52 @@ var (
 			},
 		},
 	}
+	// MallPromotionsColumns holds the columns for the "mall_promotions" table.
+	MallPromotionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "currency", Type: field.TypeString, Nullable: true, Comment: "币种（ISO 4217，当前仅支持CNY）", Default: "CNY"},
+		{Name: "name", Type: field.TypeString, Nullable: true, Comment: "活动名称"},
+		{Name: "promo_type", Type: field.TypeEnum, Nullable: true, Comment: "促销类型", Enums: []string{"SPECIAL_PRICE", "FULL_REDUCTION"}},
+		{Name: "product_id", Type: field.TypeUint32, Nullable: true, Comment: "生效商品ID（仅 SPECIAL_PRICE；0 表示店铺级活动）", Default: 0},
+		{Name: "special_price", Type: field.TypeInt64, Nullable: true, Comment: "专价（最小货币单位，分；promo_type=SPECIAL_PRICE 时生效）", Default: 0},
+		{Name: "threshold_amount", Type: field.TypeInt64, Nullable: true, Comment: "满减门槛（最小货币单位，分；promo_type=FULL_REDUCTION 时生效）", Default: 0},
+		{Name: "reduction_amount", Type: field.TypeInt64, Nullable: true, Comment: "满减让利（最小货币单位，分；promo_type=FULL_REDUCTION 时生效）", Default: 0},
+		{Name: "priority", Type: field.TypeInt32, Nullable: true, Comment: "优先级（同商品同类型多活动并发时取最大者）", Default: 0},
+		{Name: "valid_from", Type: field.TypeTime, Nullable: true, Comment: "有效期起始时间"},
+		{Name: "valid_until", Type: field.TypeTime, Nullable: true, Comment: "有效期截止时间"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "活动状态", Enums: []string{"ACTIVE", "INACTIVE"}},
+	}
+	// MallPromotionsTable holds the schema information for the "mall_promotions" table.
+	MallPromotionsTable = &schema.Table{
+		Name:       "mall_promotions",
+		Comment:    "促销活动表",
+		Columns:    MallPromotionsColumns,
+		PrimaryKey: []*schema.Column{MallPromotionsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "promotion_tenant_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallPromotionsColumns[7]},
+			},
+			{
+				Name:    "promotion_tenant_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{MallPromotionsColumns[7], MallPromotionsColumns[18]},
+			},
+			{
+				Name:    "promotion_product_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallPromotionsColumns[11]},
+			},
+		},
+	}
 	// SysRolesColumns holds the columns for the "sys_roles" table.
 	SysRolesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -4772,6 +4818,7 @@ var (
 		MallProductAttributeValuesTable,
 		MallProductAttributeValueTranslationsTable,
 		MallProductTranslationsTable,
+		MallPromotionsTable,
 		SysRolesTable,
 		SysRoleMetadataTable,
 		SysRolePermissionsTable,
@@ -5149,6 +5196,11 @@ func init() {
 	}
 	MallProductTranslationsTable.Annotation = &entsql.Annotation{
 		Table:     "mall_product_translations",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallPromotionsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_promotions",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

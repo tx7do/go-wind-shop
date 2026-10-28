@@ -158,6 +158,17 @@ const trade: RouteRecordRaw[] = [
         },
         component: () => import("@/pages/app/trade/stock-alert/index.vue"),
       },
+      {
+        path: "promotions",
+        name: "TradePromotionManagement",
+        meta: {
+          order: 14,
+          icon: "lucide:badge-percent",
+          title: "routes.trade.promotion",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/promotion/index.vue"),
+      },
     ],
   },
 ];

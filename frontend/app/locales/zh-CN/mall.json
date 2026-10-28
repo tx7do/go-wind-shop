@@ -85,5 +85,9 @@
     "cancelled": "已取消",
     "fulfilled": "已履约",
     "closed": "已关闭"
+  },
+  "promotion": {
+    "specialPriceTag": "限时专价",
+    "fullReductionTag": "满 {threshold} 减 {reduction}"
   }
 }

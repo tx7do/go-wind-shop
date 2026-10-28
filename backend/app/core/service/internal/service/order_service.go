@@ -352,6 +352,16 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 			err = orderV1.ErrorBadRequest("sku [%d] has invalid price", *skuId)
 			return nil, err
 		}
+
+		// 2b-2. 专价覆盖：取该商品当前生效、优先级最高的 SPECIAL_PRICE 活动
+		//       （与 PromotionService.QuoteOrderPromotions 试算同语义），仅当专价
+		//       低于现价时生效（不抬价）。订单项快照 unit_price 记录生效后价格。
+		if skuEnt.ProductID != nil {
+			if sp, spOk := activeSpecialPriceInTx(ctx, tx, tenantId, *skuEnt.ProductID, currency, time.Now()); spOk && sp < unitPrice {
+				unitPrice = sp
+				s.log.Infof("special price applied for product [%d]: %d", *skuEnt.ProductID, sp)
+			}
+		}
 		subtotal := unitPrice * int64(qty)
 		totalAmount += subtotal
 
@@ -431,6 +441,19 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	// ===== 促销满减（事务内）=====
+	// 满减门槛按折前总额判定，窗口内命中者取减让最大的一条（不叠加）；
+	// 再与"券后余额"取 min 保证应付额 ≥ 0。discount_amount 语义为
+	// 「优惠抵扣合计（优惠券 + 促销）」审计值。
+	promoDiscount := computeFullReductionInTx(ctx, tx, tenantId, req.Data.GetCurrency(), originalAmount)
+	if promoDiscount > originalAmount-discount {
+		promoDiscount = originalAmount - discount
+	}
+	if promoDiscount > 0 {
+		discount += promoDiscount
+		s.log.Infof("promotion full-reduction applied for order [%d]: -%d", orderId, promoDiscount)
 	}
 
 	// 运费计算：按 (viewer tenant_id, shipping_region, currency) 查询运费模板。

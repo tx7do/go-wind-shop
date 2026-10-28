@@ -14,6 +14,25 @@ info:
         url: https://github.com/tx7do/go-wind-shop/blob/master/LICENSE
     version: "1.0"
 paths:
+    /app/v1/ai/chat/completions:
+        post:
+            tags:
+                - AiChatService
+            description: 发起一轮导购对话
+            operationId: AiChatService_Chat
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ai.service.v1.ChatRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ai.service.v1.ChatResponse'
     /app/v1/file/download:
         get:
             tags:
@@ -1311,6 +1330,83 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /app/v1/mall/coupon-templates:
+        get:
+            tags:
+                - CouponTemplateService
+            operationId: CouponTemplateService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/coupon.service.v1.ListCouponTemplateResponse'
     /app/v1/mall/invoices:
         get:
             tags:
@@ -1918,6 +2014,50 @@ paths:
                     application/json:
                         schema:
                             $ref: '#/components/schemas/order.service.v1.UpdateOrderRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/mall/orders/{id}:cancel:
+        post:
+            tags:
+                - OrderService
+            operationId: OrderService_CancelOrder
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/order.service.v1.CancelOrderRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /app/v1/mall/orders/{id}:confirm-receipt:
+        post:
+            tags:
+                - OrderService
+            operationId: OrderService_ConfirmReceipt
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/order.service.v1.ConfirmReceiptRequest'
                 required: true
             responses:
                 "200":
@@ -2693,6 +2833,47 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/comment.service.v1.ProductRatingSummary'
+    /app/v1/mall/promotions/active:
+        get:
+            tags:
+                - PromotionService
+            description: 当前生效中的活动列表（商品页角标 / 首页活动位）
+            operationId: PromotionService_ListActivePromotions
+            parameters:
+                - name: productIds
+                  in: query
+                  description: 可选商品过滤（服务端仍会返回全量，C端可自行按商品过滤；预留字段）
+                  schema:
+                    type: array
+                    items:
+                        type: integer
+                        format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.ListPromotionResponse'
+    /app/v1/mall/promotions/quote:
+        post:
+            tags:
+                - PromotionService
+            description: 促销试算（结算页展示满减让利；最终金额以下单事务为准）
+            operationId: PromotionService_QuoteOrderPromotions
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/catalog.service.v1.QuoteOrderPromotionsRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.QuoteOrderPromotionsResponse'
     /app/v1/mall/shipments:
         get:
             tags:
@@ -3184,6 +3365,22 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/coupon.service.v1.ListUserCouponResponse'
+    /app/v1/mall/user-coupons/claim:
+        post:
+            tags:
+                - UserCouponService
+            description: 领取公开可领模板。强制 auth（不入白名单）。
+            operationId: UserCouponService_Claim
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/coupon.service.v1.ClaimCouponRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /app/v1/mall/user-coupons/quote:
         post:
             tags:
@@ -3636,6 +3833,170 @@ components:
                 allowMissing:
                     type: boolean
                     description: 允许缺失则插入
+        ai.service.v1.AiConversation:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 会话ID
+                    format: uint32
+                title:
+                    type: string
+                    description: 会话标题（默认取首条消息摘要）
+                providerId:
+                    type: integer
+                    description: 会话使用的提供商ID（0 表示未指定）
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 归属用户ID
+                    format: uint32
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                lastMessageAt:
+                    type: string
+                    description: 最近一条消息时间
+                    format: date-time
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: AI 对话会话
+        ai.service.v1.AiMessage:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 消息ID
+                    format: uint32
+                conversationId:
+                    type: integer
+                    description: 所属会话ID
+                    format: uint32
+                role:
+                    enum:
+                        - AI_ROLE_UNSPECIFIED
+                        - USER
+                        - ASSISTANT
+                        - SYSTEM
+                    type: string
+                    description: 消息角色
+                    format: enum
+                content:
+                    type: string
+                    description: 消息正文（Markdown）
+                modelName:
+                    type: string
+                    description: 生成该回复的模型名称快照
+                promptTokens:
+                    type: integer
+                    description: 输入 token 数
+                    format: uint32
+                completionTokens:
+                    type: integer
+                    description: 输出 token 数
+                    format: uint32
+                durationMs:
+                    type: integer
+                    description: 生成耗时（毫秒）
+                    format: uint32
+                errorMessage:
+                    type: string
+                    description: 生成失败原因（仅失败记录）
+                userId:
+                    type: integer
+                    description: 归属用户ID
+                    format: uint32
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: AI 对话消息
+        ai.service.v1.ChatRequest:
+            type: object
+            properties:
+                conversationId:
+                    type: integer
+                    description: 会话ID；0 表示新建会话
+                    format: uint32
+                providerId:
+                    type: integer
+                    description: 提供商ID；0 表示使用默认提供商
+                    format: uint32
+                content:
+                    type: string
+                    description: 用户输入内容
+                knowledgeBaseId:
+                    type: integer
+                    description: 知识库ID；RAG 未移植前该字段被忽略
+                    format: uint32
+                operatorUserId:
+                    type: integer
+                    description: 操作者用户ID（BFF 注入）
+                    format: uint32
+                operatorTenantId:
+                    type: integer
+                    description: 操作者租户ID（BFF 注入）
+                    format: uint32
+            description: 发起对话 - 请求
+        ai.service.v1.ChatResponse:
+            type: object
+            properties:
+                conversation:
+                    allOf:
+                        - $ref: '#/components/schemas/ai.service.v1.AiConversation'
+                    description: 会话（新建时返回新建的会话）
+                message:
+                    allOf:
+                        - $ref: '#/components/schemas/ai.service.v1.AiMessage'
+                    description: 模型回复消息（含 token 用量与模型名）
+            description: 发起对话 - 回应
         app.service.v1.ResetPasswordRequest:
             type: object
             properties:
@@ -3760,6 +4121,9 @@ components:
                 scope:
                     type: string
                     description: 以空格分隔的用户授予范围列表。如果未提供，scope则授权任何范围，默认为空列表。
+                mfa_operation_id:
+                    type: string
+                    description: MFA 挑战操作标识。非空表示登录需二次验证，此时 access_token 为空。
                 refresh_expires_in:
                     type: string
                     description: 刷新令牌过期时间（秒）
@@ -4229,6 +4593,15 @@ components:
                 total:
                     type: string
             description: 商品列表 - 答复
+        catalog.service.v1.ListPromotionResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.Promotion'
+                total:
+                    type: string
         catalog.service.v1.ListSkuAttributeCombinationResponse:
             type: object
             properties:
@@ -4552,6 +4925,122 @@ components:
                     description: 删除时间
                     format: date-time
             description: 商品翻译
+        catalog.service.v1.Promotion:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 活动ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 活动名称
+                promoType:
+                    enum:
+                        - PROMO_TYPE_UNSPECIFIED
+                        - SPECIAL_PRICE
+                        - FULL_REDUCTION
+                    type: string
+                    description: 促销类型
+                    format: enum
+                productId:
+                    type: integer
+                    description: 生效商品ID（仅 SPECIAL_PRICE；留空表示店铺级活动）
+                    format: uint32
+                specialPrice:
+                    type: string
+                    description: 专价（最小货币单位，分；SPECIAL_PRICE 时生效）
+                thresholdAmount:
+                    type: string
+                    description: 满减门槛（最小货币单位，分；FULL_REDUCTION 时生效）
+                reductionAmount:
+                    type: string
+                    description: 满减让利（最小货币单位，分；FULL_REDUCTION 时生效）
+                priority:
+                    type: integer
+                    description: 优先级（同商品同类型多活动并发时取最大者）
+                    format: int32
+                validFrom:
+                    type: string
+                    description: 有效期起始时间
+                    format: date-time
+                validUntil:
+                    type: string
+                    description: 有效期截止时间
+                    format: date-time
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - ACTIVE
+                        - INACTIVE
+                    type: string
+                    description: 活动状态
+                    format: enum
+                currency:
+                    type: string
+                    description: 币种（ISO 4217）
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 促销活动
+        catalog.service.v1.QuoteOrderPromotionsRequest:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.QuoteOrderPromotionsRequest_QuoteOrderItem'
+                currency:
+                    type: string
+                    description: 结算币种（缺省 CNY）
+        catalog.service.v1.QuoteOrderPromotionsRequest_QuoteOrderItem:
+            type: object
+            properties:
+                skuId:
+                    type: integer
+                    format: uint32
+                quantity:
+                    type: integer
+                    format: int32
+        catalog.service.v1.QuoteOrderPromotionsResponse:
+            type: object
+            properties:
+                originalAmount:
+                    type: string
+                    description: 折前总额（按专价重算后的各 SKU 小计之和，分）
+                promoDiscount:
+                    type: string
+                    description: 满减让利合计（取减让最大的一条，分）
+                matchedPromotions:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.Promotion'
+                    description: 命中的满减活动（供前端展示"已满减"文案）
         catalog.service.v1.SearchProductHit:
             type: object
             properties:
@@ -4820,6 +5309,108 @@ components:
                     type: boolean
                     description: 允许缺失则插入
             description: 请求 - 更新评论
+        coupon.service.v1.ClaimCouponRequest:
+            type: object
+            properties:
+                couponTemplateId:
+                    type: integer
+                    description: 要领取的优惠券模板ID
+                    format: uint32
+            description: "请求 - 领取优惠券（买家自助）\r\n 仅带模板 ID；user_id 由 core 从 viewer 强制，客户端不可伪造。"
+        coupon.service.v1.CouponTemplate:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 模板ID
+                    format: uint32
+                discountType:
+                    enum:
+                        - DISCOUNT_TYPE_UNSPECIFIED
+                        - FIXED_AMOUNT
+                        - PERCENTAGE
+                    type: string
+                    description: 抵扣类型
+                    format: enum
+                discountValue:
+                    type: string
+                    description: 固定金额抵扣值（最小货币单位，分；FIXED_AMOUNT 时生效）
+                discountPercentage:
+                    type: integer
+                    description: 百分比抵扣值（0-100；PERCENTAGE 时生效）
+                    format: int32
+                validFrom:
+                    type: string
+                    description: 有效期起始时间
+                    format: date-time
+                validUntil:
+                    type: string
+                    description: 有效期截止时间
+                    format: date-time
+                maxRedemptions:
+                    type: integer
+                    description: 全局核销上限（0=不限量）
+                    format: int32
+                maxRedemptionsPerUser:
+                    type: integer
+                    description: 每人核销上限（0=不限量；>0 为该模板下每用户累计可核销次数）
+                    format: int32
+                redeemedCount:
+                    type: integer
+                    description: 已核销次数
+                    format: int32
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - ACTIVE
+                        - INACTIVE
+                    type: string
+                    description: 模板状态
+                    format: enum
+                currency:
+                    type: string
+                    description: 币种（ISO 4217）
+                claimable:
+                    type: boolean
+                    description: 是否公开可领取（领券中心仅展示 true 的模板）
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                deletedBy:
+                    type: integer
+                    description: 删除者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+                deletedAt:
+                    type: string
+                    description: 删除时间
+                    format: date-time
+            description: 优惠券模板
+        coupon.service.v1.ListCouponTemplateResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/coupon.service.v1.CouponTemplate'
+                total:
+                    type: string
         coupon.service.v1.ListUserCouponResponse:
             type: object
             properties:
@@ -5492,6 +6083,25 @@ components:
                         $ref: '#/components/schemas/invoice.service.v1.Invoice'
                 total:
                     type: string
+        order.service.v1.CancelOrderRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 订单ID
+                    format: uint32
+                reason:
+                    type: string
+                    description: 取消原因
+            description: 买家取消订单 - 请求
+        order.service.v1.ConfirmReceiptRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 订单ID
+                    format: uint32
+            description: 买家确认收货 - 请求
         order.service.v1.CountOrderItemResponse:
             type: object
             properties:
@@ -6146,6 +6756,15 @@ components:
 security:
     - OAuth2PasswordBearer: []
 tags:
+    - name: AiChatService
+      description: |-
+        AI 导购对话服务（C端）
+
+         流式语义：本 RPC 是普通 POST（body 为扁平请求体，不包 data）。
+         BFF 消费 core 的 ChatStreamFrame 流：C端当前以同步响应为主——done 帧
+         （完整回复）作为 POST 响应返回；chunk/tool 帧经 SSE 网关的
+         `ai_chat_chunk` / `ai_chat_tool` 事件推给在线用户（未连接 SSE 时静默丢弃，
+         不影响对话完整性）。
     - name: AuthenticationService
       description: 用户前台登录认证服务
     - name: BrandService
@@ -6163,6 +6782,13 @@ tags:
          Create 注入 CreatedBy（防作者伪造）；Update/Delete 做 ensureCommentOwner（IDOR 防护）。
          评论为公开内容，仅由 TenantPrivacy 做租户隔离（同租户内可见），
          不挂 UserPrivacy（详见 core Comment schema 文档）。
+    - name: CouponTemplateService
+      description: |-
+        优惠券模板前台服务（裁剪版：仅 List，无 Create/Update/Delete/Get/Count）。
+         领券中心浏览公开可领模板。core 侧 ListClaimable 在 repo 层用
+         claimable=true AND status=ACTIVE 谓词过滤 + service 层后过滤有效窗口，
+         故前端无需带过滤参数——返回的均为当前可领模板。
+         匿名可读（rest_server 白名单登记），仿商品 List。
     - name: FileTransferService
       description: 文件传输服务
     - name: InteractionService
@@ -6194,6 +6820,8 @@ tags:
       description: 商品属性值前台服务
     - name: ProductService
       description: 商品前台服务
+    - name: PromotionService
+      description: 促销活动前台服务（C端只读）
     - name: ShipmentService
       description: |-
         物流单前台服务（app 侧，买家只读查询自己订单的物流轨迹）
@@ -6209,7 +6837,7 @@ tags:
     - name: SkuService
       description: SKU 前台服务
     - name: UserCouponService
-      description: "用户优惠券前台服务（裁剪写 RPC：仅 List/Get/Quote，无 Create/Update/Delete）。\r\n 用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。\r\n Quote 试算不持锁不落库，最终抵扣以下单时事务内校验为准。"
+      description: "用户优惠券前台服务（裁剪版：仅 List/Get/Quote + Claim 领取）。\r\n 无 Create/Update/Delete（admin 分配制不可对买家暴露）。\r\n List 由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。\r\n Claim 的 user_id 由 core 从 viewer 强制（BFF 只透传 template_id），事务内 ForUpdate 原子校验限领。\r\n Quote 试算不持锁不落库，最终抵扣以下单时事务内校验为准。"
     - name: UserProfileService
       description: 用户个人资料服务
     - name: WishlistService

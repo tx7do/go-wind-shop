@@ -18,6 +18,7 @@ import {
   useListShippingAddresses,
   useListUserCoupons,
   useQuoteUserCoupon,
+  quoteOrderPromotions,
 } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { useAccessStore } from '@/stores/modules/core/access.state';
@@ -299,6 +300,35 @@ const totalAmount = computed(() => {
 });
 const totalLabel = computed(() => `${t('mall.product.currencyCny')}${totalAmount.value}`);
 
+// ---------- 促销满减试算 ----------
+// 以勾选项 (skuId, quantity) 调服务端试算：专价重算 + 满减让利。
+// 预览非预留，最终金额以下单事务内校验为准。
+const promoDiscount = ref(0); // 满减让利（元，展示用）
+const promoMatchedName = ref('');
+
+const promoItems = computed(() =>
+  cartItems.value
+    .filter((it) => it.skuId !== undefined)
+    .map((it) => ({ skuId: it.skuId as number, quantity: it.quantity ?? 0 }))
+    .filter((it) => it.quantity > 0),
+);
+
+watch(promoItems, async (items) => {
+  if (items.length === 0) {
+    promoDiscount.value = 0;
+    promoMatchedName.value = '';
+    return;
+  }
+  try {
+    const resp = await quoteOrderPromotions(items);
+    promoDiscount.value = (Number(resp.promoDiscount) || 0) / 100;
+    promoMatchedName.value = resp.matchedPromotions?.[0]?.name ?? '';
+  } catch {
+    promoDiscount.value = 0;
+    promoMatchedName.value = '';
+  }
+}, { deep: true, immediate: true });
+
 // ---------- 优惠券选择与试算 ----------
 // 用户可选择一张本人 UNUSED 券，选中后调 Quote 试算预览折后金额。
 // 预览非预留，最终抵扣以下单时事务内校验为准。
@@ -306,10 +336,11 @@ const selectedCouponId = ref<number | undefined>(undefined);
 const quoteDiscount = ref(0); // 试算返回的抵扣额（元，展示用）
 const quoteApplicable = ref(false);
 
-// 折后金额预览 = max(0, 折前总额 - 抵扣额)
+// 折后金额预览 = max(0, 折前总额 - 促销满减 - 优惠券抵扣)
+// （与后端下单事务同序：原价 → 满减 → 券；最终以下单为准）
 const discountedTotal = computed(() => {
   const before = parseFloat(totalAmount.value) || 0;
-  const after = Math.max(0, before - quoteDiscount.value);
+  const after = Math.max(0, before - promoDiscount.value - quoteDiscount.value);
   return after.toFixed(2);
 });
 const discountedTotalLabel = computed(() => `${t('mall.product.currencyCny')}${discountedTotal.value}`);
@@ -743,6 +774,14 @@ async function placeOrder() {
           </UiSelect>
         </div>
 
+        <!-- 促销满减行（仅当试算命中时显示） -->
+        <div v-if="promoDiscount > 0" class="flex items-center justify-between">
+          <span class="text-sm text-muted-foreground">
+            {{ promoMatchedName || t('checkout.promotion') }}
+          </span>
+          <span class="text-sm tabular-nums text-red-500">-{{ t('mall.product.currencyCny') }}{{ promoDiscount.toFixed(2) }}</span>
+        </div>
+
         <!-- 折扣行（仅当试算适用时显示） -->
         <div v-if="quoteApplicable" class="flex items-center justify-between">
           <span class="text-sm text-muted-foreground">{{ t('checkout.discount') }}</span>
@@ -751,7 +790,7 @@ async function placeOrder() {
 
         <div class="flex items-center justify-between">
           <span class="text-sm text-muted-foreground">{{ t('cart.total') }}</span>
-          <span class="text-xl font-bold text-primary">{{ quoteApplicable ? discountedTotalLabel : totalLabel }}</span>
+          <span class="text-xl font-bold text-primary">{{ quoteApplicable || promoDiscount > 0 ? discountedTotalLabel : totalLabel }}</span>
         </div>
         <p class="mt-1 text-[10px] text-muted-foreground">{{ t('cart.totalNote') }}</p>
 

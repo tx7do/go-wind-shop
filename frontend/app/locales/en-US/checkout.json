@@ -30,5 +30,6 @@
   "couponPlaceholder": "Select a coupon",
   "couponNone": "No coupon",
   "couponItem": "Coupon #{{id}}",
-  "discount": "Discount"
+  "discount": "Discount",
+  "promotion": "Promotion"
 }

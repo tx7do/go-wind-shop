@@ -73,6 +73,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/productattributevalue"
 	"go-wind-shop/app/core/service/internal/data/ent/productattributevaluetranslation"
 	"go-wind-shop/app/core/service/internal/data/ent/producttranslation"
+	"go-wind-shop/app/core/service/internal/data/ent/promotion"
 	"go-wind-shop/app/core/service/internal/data/ent/role"
 	"go-wind-shop/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
@@ -1801,6 +1802,56 @@ func init() {
 	producttranslationDescID := producttranslationMixinFields0[0].Descriptor()
 	// producttranslation.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	producttranslation.IDValidator = producttranslationDescID.Validators[0].(func(uint32) error)
+	promotionMixin := schema.Promotion{}.Mixin()
+	promotion.Policy = privacy.NewPolicies(promotionMixin[3], schema.Promotion{})
+	promotion.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := promotion.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	promotionMixinFields0 := promotionMixin[0].Fields()
+	_ = promotionMixinFields0
+	promotionMixinFields3 := promotionMixin[3].Fields()
+	_ = promotionMixinFields3
+	promotionMixinFields4 := promotionMixin[4].Fields()
+	_ = promotionMixinFields4
+	promotionFields := schema.Promotion{}.Fields()
+	_ = promotionFields
+	// promotionDescTenantID is the schema descriptor for tenant_id field.
+	promotionDescTenantID := promotionMixinFields3[0].Descriptor()
+	// promotion.DefaultTenantID holds the default value on creation for the tenant_id field.
+	promotion.DefaultTenantID = promotionDescTenantID.Default.(uint32)
+	// promotionDescCurrency is the schema descriptor for currency field.
+	promotionDescCurrency := promotionMixinFields4[0].Descriptor()
+	// promotion.DefaultCurrency holds the default value on creation for the currency field.
+	promotion.DefaultCurrency = promotionDescCurrency.Default.(string)
+	// promotionDescProductID is the schema descriptor for product_id field.
+	promotionDescProductID := promotionFields[2].Descriptor()
+	// promotion.DefaultProductID holds the default value on creation for the product_id field.
+	promotion.DefaultProductID = promotionDescProductID.Default.(uint32)
+	// promotionDescSpecialPrice is the schema descriptor for special_price field.
+	promotionDescSpecialPrice := promotionFields[3].Descriptor()
+	// promotion.DefaultSpecialPrice holds the default value on creation for the special_price field.
+	promotion.DefaultSpecialPrice = promotionDescSpecialPrice.Default.(int64)
+	// promotionDescThresholdAmount is the schema descriptor for threshold_amount field.
+	promotionDescThresholdAmount := promotionFields[4].Descriptor()
+	// promotion.DefaultThresholdAmount holds the default value on creation for the threshold_amount field.
+	promotion.DefaultThresholdAmount = promotionDescThresholdAmount.Default.(int64)
+	// promotionDescReductionAmount is the schema descriptor for reduction_amount field.
+	promotionDescReductionAmount := promotionFields[5].Descriptor()
+	// promotion.DefaultReductionAmount holds the default value on creation for the reduction_amount field.
+	promotion.DefaultReductionAmount = promotionDescReductionAmount.Default.(int64)
+	// promotionDescPriority is the schema descriptor for priority field.
+	promotionDescPriority := promotionFields[6].Descriptor()
+	// promotion.DefaultPriority holds the default value on creation for the priority field.
+	promotion.DefaultPriority = promotionDescPriority.Default.(int32)
+	// promotionDescID is the schema descriptor for id field.
+	promotionDescID := promotionMixinFields0[0].Descriptor()
+	// promotion.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	promotion.IDValidator = promotionDescID.Validators[0].(func(uint32) error)
 	roleMixin := schema.Role{}.Mixin()
 	role.Policy = privacy.NewPolicies(roleMixin[6], schema.Role{})
 	role.Hooks[0] = func(next ent.Mutator) ent.Mutator {

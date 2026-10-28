@@ -315,5 +315,37 @@
       "create": "Create Invoice",
       "update": "Edit Invoice"
     }
+  },
+  "promotion": {
+    "moduleName": "Promotion Management",
+    "title": "Promotion Management",
+    "name": "Name",
+    "promoType": "Type",
+    "promoTypeLabel": {
+      "SPECIAL_PRICE": "Special Price",
+      "FULL_REDUCTION": "Full Reduction"
+    },
+    "productId": "Product",
+    "productIdTip": "Special-price promotions require a product ID; the product sells at the special price during the window",
+    "storeWide": "Store-wide",
+    "specialPrice": "Special Price",
+    "thresholdAmount": "Threshold",
+    "reductionAmount": "Reduction",
+    "currency": "Currency",
+    "validity": "Validity",
+    "validFrom": "From",
+    "validUntil": "Until",
+    "priority": "Priority",
+    "priorityTip": "When multiple special-price promotions overlap on one product, the highest priority wins",
+    "status": "Status",
+    "statusLabel": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
+    },
+    "amountUnitTip": "Unit: yuan (stored in cents server-side, auto-converted)",
+    "button": {
+      "create": "Create Promotion",
+      "update": "Edit Promotion"
+    }
   }
 }

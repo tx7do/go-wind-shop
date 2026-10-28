@@ -210,6 +210,9 @@ type ProductAttributeValueTranslation func(*sql.Selector)
 // ProductTranslation is the predicate function for producttranslation builders.
 type ProductTranslation func(*sql.Selector)
 
+// Promotion is the predicate function for promotion builders.
+type Promotion func(*sql.Selector)
+
 // Role is the predicate function for role builders.
 type Role func(*sql.Selector)
 

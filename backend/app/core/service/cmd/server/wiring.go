@@ -138,6 +138,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	shippingAddressRepo := data.NewShippingAddressRepo(ctx, entClient)
 	shipmentRepo := data.NewShipmentRepo(ctx, entClient)
 	couponTemplateRepo := data.NewCouponTemplateRepo(ctx, entClient)
+	promotionRepo := data.NewPromotionRepo(ctx, entClient)
 	userCouponRepo := data.NewUserCouponRepo(ctx, entClient)
 	shippingRateRepo := data.NewShippingRateRepo(ctx, entClient)
 	taxRateRepo := data.NewTaxRateRepo(ctx, entClient)
@@ -194,6 +195,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	shippingAddressService := service.NewShippingAddressService(ctx, shippingAddressRepo)
 	shipmentService := service.NewShipmentService(ctx, shipmentRepo, entClient)
 	couponTemplateService := service.NewCouponTemplateService(ctx, couponTemplateRepo)
+	promotionService := service.NewPromotionService(ctx, promotionRepo, entClient)
 	userCouponService := service.NewUserCouponService(ctx, userCouponRepo, couponTemplateRepo, entClient)
 	shippingRateService := service.NewShippingRateService(ctx, shippingRateRepo)
 	taxRateService := service.NewTaxRateService(ctx, taxRateRepo)
@@ -344,7 +346,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		shippingAddressService,
 		shipmentService,
 		couponTemplateService,
-		userCouponService,
+		promotionService,		userCouponService,
 		shippingRateService,
 		taxRateService,
 		commentService,

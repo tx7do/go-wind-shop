@@ -1743,6 +1743,30 @@ func (f ProductTranslationMutationRuleFunc) EvalMutation(ctx context.Context, m 
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ProductTranslationMutation", m)
 }
 
+// The PromotionQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PromotionQueryRuleFunc func(context.Context, *ent.PromotionQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PromotionQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PromotionQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PromotionQuery", q)
+}
+
+// The PromotionMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PromotionMutationRuleFunc func(context.Context, *ent.PromotionMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PromotionMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PromotionMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PromotionMutation", m)
+}
+
 // The RoleQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type RoleQueryRuleFunc func(context.Context, *ent.RoleQuery) error
@@ -2490,6 +2514,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.ProductTranslationQuery:
 		return q.Filter(), nil
+	case *ent.PromotionQuery:
+		return q.Filter(), nil
 	case *ent.RoleQuery:
 		return q.Filter(), nil
 	case *ent.RoleMetadataQuery:
@@ -2680,6 +2706,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.ProductAttributeValueTranslationMutation:
 		return m.Filter(), nil
 	case *ent.ProductTranslationMutation:
+		return m.Filter(), nil
+	case *ent.PromotionMutation:
 		return m.Filter(), nil
 	case *ent.RoleMutation:
 		return m.Filter(), nil

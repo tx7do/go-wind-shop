@@ -824,6 +824,18 @@ func (f ProductTranslationFunc) Mutate(ctx context.Context, m ent.Mutation) (ent
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProductTranslationMutation", m)
 }
 
+// The PromotionFunc type is an adapter to allow the use of ordinary
+// function as Promotion mutator.
+type PromotionFunc func(context.Context, *ent.PromotionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PromotionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PromotionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PromotionMutation", m)
+}
+
 // The RoleFunc type is an adapter to allow the use of ordinary
 // function as Role mutator.
 type RoleFunc func(context.Context, *ent.RoleMutation) (ent.Value, error)

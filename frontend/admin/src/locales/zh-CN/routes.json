@@ -97,6 +97,7 @@
     "comment": "评论审核",
     "invoice": "发票",
     "lowStock": "低库存管理台",
-    "stockAlert": "库存预警管理"
+    "stockAlert": "库存预警管理",
+    "promotion": "促销活动管理"
   }
 }

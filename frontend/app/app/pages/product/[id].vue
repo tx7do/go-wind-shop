@@ -17,6 +17,7 @@ import {
   useCreateWishlist,
   useDeleteWishlist,
   useGetProductRating,
+  useListActivePromotions,
 } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { useAccessStore } from '@/stores/modules/core/access.state';
@@ -376,6 +377,58 @@ const displayPrice = computed(() => {
   return price.amount;
 });
 
+// ---------- 促销活动（专价划线价/满减角标） ----------
+// ListActivePromotions 返回当前租户全部生效活动，这里按当前商品过滤。
+type PromotionEntity = {
+  id?: number;
+  name?: string;
+  promoType?: string;
+  productId?: number;
+  specialPrice?: number;
+  thresholdAmount?: number;
+  reductionAmount?: number;
+  priority?: number;
+};
+
+const promotionsQuery = useListActivePromotions();
+
+const productPromotions = computed(() => {
+  const items = ((promotionsQuery.data?.value as any)?.items ?? []) as PromotionEntity[];
+  return items.filter((p) => p.productId === productId);
+});
+
+// 专价活动：priority 最大者优先；仅当专价低于现价时生效（与服务端同语义）。
+const specialPricePromo = computed(() => {
+  const list = productPromotions.value.filter(
+    (p) => p.promoType === 'SPECIAL_PRICE' && (p.specialPrice ?? 0) > 0,
+  );
+  return list.reduce<PromotionEntity | undefined>(
+    (best, p) => (!best || (p.priority ?? 0) > (best.priority ?? 0) ? p : best),
+    undefined,
+  );
+});
+
+const promoPrice = computed(() => {
+  const base = displayPrice.value;
+  const sp = specialPricePromo.value;
+  if (!base || !sp?.specialPrice) return null;
+  const special = String(sp.specialPrice);
+  return Number(special) < Number(base) ? special : null;
+});
+
+// 满减角标：取减让最大的店铺级活动展示「满 X 减 Y」。
+const fullReductionPromo = computed(() => {
+  const list = productPromotions.value.filter((p) => p.promoType === 'FULL_REDUCTION');
+  return list.reduce<PromotionEntity | undefined>(
+    (best, p) => (!best || (p.reductionAmount ?? 0) > (best.reductionAmount ?? 0) ? p : best),
+    undefined,
+  );
+});
+
+function yuan(fen?: number) {
+  return ((fen ?? 0) / 100).toFixed(2);
+}
+
 // ---------- 当前用户的购物车（与 cart.vue 同样的按 userId 过滤逻辑） ----------
 type CartEntity = { id?: number; userId?: number };
 
@@ -589,15 +642,27 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
           {{ productTranslation.shortDescription }}
         </p>
 
-        <!-- 价格区（高亮，无删除线，无原价） -->
+        <!-- 价格区（有专价时展示划线原价 + 促销价 + 活动标签） -->
         <div
           v-if="displayPrice !== null"
           class="rounded-xl border border-primary/40 bg-primary/5 p-5"
         >
           <p class="text-xs text-muted-foreground">{{ t('mall.product.price') }}</p>
-          <p class="mt-1 text-3xl font-extrabold text-primary">
+          <p v-if="promoPrice !== null" class="mt-1 text-3xl font-extrabold text-primary">
+            {{ t('mall.product.currencyCny') }}{{ promoPrice }}
+            <span class="ml-2 text-base font-medium text-muted-foreground line-through">
+              {{ t('mall.product.currencyCny') }}{{ displayPrice }}
+            </span>
+          </p>
+          <p v-else class="mt-1 text-3xl font-extrabold text-primary">
             {{ t('mall.product.currencyCny') }}{{ displayPrice }}
           </p>
+          <div v-if="specialPricePromo" class="mt-2 inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+            {{ specialPricePromo.name || t('mall.promotion.specialPriceTag') }}
+          </div>
+          <div v-else-if="fullReductionPromo" class="mt-2 inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+            {{ t('mall.promotion.fullReductionTag', { threshold: yuan(fullReductionPromo.thresholdAmount), reduction: yuan(fullReductionPromo.reductionAmount) }) }}
+          </div>
         </div>
 
         <!-- 商品评分聚合（只读展示） -->

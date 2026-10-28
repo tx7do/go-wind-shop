@@ -148,6 +148,8 @@ type Tx struct {
 	ProductAttributeValueTranslation *ProductAttributeValueTranslationClient
 	// ProductTranslation is the client for interacting with the ProductTranslation builders.
 	ProductTranslation *ProductTranslationClient
+	// Promotion is the client for interacting with the Promotion builders.
+	Promotion *PromotionClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// RoleMetadata is the client for interacting with the RoleMetadata builders.
@@ -395,6 +397,7 @@ func (tx *Tx) init() {
 	tx.ProductAttributeValue = NewProductAttributeValueClient(tx.config)
 	tx.ProductAttributeValueTranslation = NewProductAttributeValueTranslationClient(tx.config)
 	tx.ProductTranslation = NewProductTranslationClient(tx.config)
+	tx.Promotion = NewPromotionClient(tx.config)
 	tx.Role = NewRoleClient(tx.config)
 	tx.RoleMetadata = NewRoleMetadataClient(tx.config)
 	tx.RolePermission = NewRolePermissionClient(tx.config)

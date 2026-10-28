@@ -89,6 +89,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	paymentRefundServiceClient := data.NewPaymentRefundServiceClient(ctx, discovery)
 	shipmentServiceClient := data.NewShipmentServiceClient(ctx, discovery)
 	couponTemplateServiceClient := data.NewCouponTemplateServiceClient(ctx, discovery)
+	promotionServiceClient := data.NewPromotionServiceClient(ctx, discovery)
 	userCouponServiceClient := data.NewUserCouponServiceClient(ctx, discovery)
 	shippingRateServiceClient := data.NewShippingRateServiceClient(ctx, discovery)
 	stockAlertServiceClient := data.NewStockAlertServiceClient(ctx, discovery)
@@ -166,6 +167,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	paymentRefundService := service.NewPaymentRefundService(ctx, paymentRefundServiceClient)
 	shipmentService := service.NewShipmentService(ctx, shipmentServiceClient)
 	couponTemplateService := service.NewCouponTemplateService(ctx, couponTemplateServiceClient)
+	promotionService := service.NewPromotionService(ctx, promotionServiceClient)
 	userCouponService := service.NewUserCouponService(ctx, userCouponServiceClient)
 	shippingRateService := service.NewShippingRateService(ctx, shippingRateServiceClient)
 	stockAlertService := service.NewStockAlertService(ctx, stockAlertServiceClient)
@@ -257,7 +259,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		paymentRefundService,
 		shipmentService,
 		couponTemplateService,
-		userCouponService,
+		promotionService,		userCouponService,
 		shippingRateService,
 		stockAlertService,
 		taxRateService,

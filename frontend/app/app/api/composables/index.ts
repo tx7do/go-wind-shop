@@ -46,3 +46,6 @@ export * from './invoice';
 
 // AI 导购对话
 export * from './assistant';
+
+// 促销活动（C端只读 + 试算）
+export * from './promotion';

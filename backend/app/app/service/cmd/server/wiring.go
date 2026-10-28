@@ -83,6 +83,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	internalMessageRecipientServiceClient := data.NewInternalMessageRecipientServiceClient(ctx, discovery)
 	userCouponServiceClient := data.NewUserCouponServiceClient(ctx, discovery)
 	couponTemplateServiceClient := data.NewCouponTemplateServiceClient(ctx, discovery)
+	promotionServiceClient := data.NewPromotionServiceClient(ctx, discovery)
 	commentServiceClient := data.NewCommentServiceClient(ctx, discovery)
 	interactionServiceClient := data.NewInteractionServiceClient(ctx, discovery)
 	invoiceServiceClient := data.NewInvoiceServiceClient(ctx, discovery)
@@ -115,6 +116,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	internalMessageRecipientService := service.NewInternalMessageRecipientService(ctx, internalMessageRecipientServiceClient)
 	userCouponService := service.NewUserCouponService(ctx, userCouponServiceClient)
 	couponTemplateService := service.NewCouponTemplateService(ctx, couponTemplateServiceClient)
+	promotionService := service.NewPromotionService(ctx, promotionServiceClient)
 	commentService := service.NewCommentService(ctx, commentServiceClient)
 	interactionService := service.NewInteractionService(ctx, interactionServiceClient)
 	invoiceService := service.NewInvoiceService(ctx, invoiceServiceClient)
@@ -150,7 +152,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		internalMessageRecipientService,
 		userCouponService,
 		couponTemplateService,
-		commentService,
+		promotionService,		commentService,
 		interactionService,
 		invoiceService,
 		aiChatService,

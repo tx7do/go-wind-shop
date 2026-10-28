@@ -124,6 +124,7 @@ func NewRestServer(
 	shipmentService *service.ShipmentService,
 
 	couponTemplateService *service.CouponTemplateService,
+	promotionService *service.PromotionService,
 	userCouponService *service.UserCouponService,
 
 		shippingRateService *service.ShippingRateService,
@@ -222,6 +223,7 @@ func NewRestServer(
 	adminV1.RegisterShipmentServiceHTTPServer(srv, shipmentService)
 
 	adminV1.RegisterCouponTemplateServiceHTTPServer(srv, couponTemplateService)
+	adminV1.RegisterPromotionServiceHTTPServer(srv, promotionService)
 	adminV1.RegisterUserCouponServiceHTTPServer(srv, userCouponService)
 
 	adminV1.RegisterShippingRateServiceHTTPServer(srv, shippingRateService)

@@ -1,0 +1,180 @@
+syntax = "proto3";
+
+package catalog.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/api/field_behavior.proto";
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+import "pagination/v1/pagination.proto";
+
+// 促销活动服务
+//
+// 两种玩法（v1）：
+//   - SPECIAL_PRICE 专价：商品级限时专价，下单/试算时按 priority 最高者覆盖 SKU 单价；
+//   - FULL_REDUCTION 满减：店铺级满 X 减 Y（同一时间窗内取减让最大的一条，不叠加）。
+// 有效窗口 [valid_from, valid_until) 为开闭由调用方保证（SQL 双侧闭区间近似）。
+service PromotionService {
+  rpc List (pagination.PagingRequest) returns (ListPromotionResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountPromotionResponse) {}
+  rpc Get (GetPromotionRequest) returns (Promotion) {}
+  rpc Create (CreatePromotionRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdatePromotionRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeletePromotionRequest) returns (google.protobuf.Empty) {}
+
+  // 当前生效中的活动（status=ACTIVE 且处于有效窗口；租户由隐私层自动注入）。
+  // 供 C端商品页角标/活动列表使用。
+  rpc ListActivePromotions (ListActivePromotionsRequest) returns (ListPromotionResponse) {}
+
+  // 促销试算：给定 (sku_id, quantity) 列表，按服务端价格与专价活动重算折前总额，
+  // 并计算满减让利。不持锁、不落库；最终金额以下单事务内校验为准。
+  rpc QuoteOrderPromotions (QuoteOrderPromotionsRequest) returns (QuoteOrderPromotionsResponse) {}
+}
+
+// 促销活动
+message Promotion {
+  // 促销类型
+  enum PromoType {
+    PROMO_TYPE_UNSPECIFIED = 0;
+    SPECIAL_PRICE = 1;    // 商品专价
+    FULL_REDUCTION = 2;   // 满减（店铺级）
+  }
+
+  // 活动状态
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    ACTIVE = 1;           // 生效
+    INACTIVE = 2;         // 停用（运营 kill-switch）
+  }
+
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "活动ID"}];
+
+  optional string name = 2 [
+    json_name = "name",
+    (gnostic.openapi.v3.property) = {description: "活动名称"}
+  ];
+
+  optional PromoType promo_type = 3 [
+    json_name = "promoType",
+    (gnostic.openapi.v3.property) = {description: "促销类型"}
+  ];
+
+  optional uint32 product_id = 4 [
+    json_name = "productId",
+    (gnostic.openapi.v3.property) = {description: "生效商品ID（仅 SPECIAL_PRICE；留空表示店铺级活动）"}
+  ];
+
+  optional int64 special_price = 5 [
+    json_name = "specialPrice",
+    (gnostic.openapi.v3.property) = {description: "专价（最小货币单位，分；SPECIAL_PRICE 时生效）"}
+  ];
+
+  optional int64 threshold_amount = 6 [
+    json_name = "thresholdAmount",
+    (gnostic.openapi.v3.property) = {description: "满减门槛（最小货币单位，分；FULL_REDUCTION 时生效）"}
+  ];
+
+  optional int64 reduction_amount = 7 [
+    json_name = "reductionAmount",
+    (gnostic.openapi.v3.property) = {description: "满减让利（最小货币单位，分；FULL_REDUCTION 时生效）"}
+  ];
+
+  optional int32 priority = 8 [
+    json_name = "priority",
+    (gnostic.openapi.v3.property) = {description: "优先级（同商品同类型多活动并发时取最大者）"}
+  ];
+
+  optional google.protobuf.Timestamp valid_from = 9 [
+    json_name = "validFrom",
+    (gnostic.openapi.v3.property) = {description: "有效期起始时间"}
+  ];
+
+  optional google.protobuf.Timestamp valid_until = 10 [
+    json_name = "validUntil",
+    (gnostic.openapi.v3.property) = {description: "有效期截止时间"}
+  ];
+
+  optional Status status = 11 [
+    json_name = "status",
+    (gnostic.openapi.v3.property) = {description: "活动状态"}
+  ];
+
+  // ===== 以下为 mixin 注入字段（低编号，业务字段区间） =====
+
+  optional string currency = 12 [
+    json_name = "currency",
+    (gnostic.openapi.v3.property) = {description: "币种（ISO 4217）"}
+  ];
+
+  // ===== 以下是 infra mixin 注入字段（高编号） =====
+
+  optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
+
+  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
+  optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
+}
+
+message ListPromotionResponse { repeated Promotion items = 1; uint64 total = 2; }
+message CountPromotionResponse { uint64 count = 1; }
+
+message GetPromotionRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+  optional google.protobuf.FieldMask view_mask = 100 [
+    json_name = "viewMask",
+    (gnostic.openapi.v3.property) = {description: "视图字段过滤器"}
+  ];
+}
+
+message CreatePromotionRequest { Promotion data = 1; }
+message UpdatePromotionRequest {
+  uint32 id = 1;
+  Promotion data = 2;
+  google.protobuf.FieldMask update_mask = 3 [
+    (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
+    json_name = "updateMask"
+  ];
+  optional bool allow_missing = 4 [
+    (gnostic.openapi.v3.property) = {description: "允许缺失则插入"},
+    json_name = "allowMissing"
+  ];
+}
+message DeletePromotionRequest {
+  oneof query_by {
+    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  }
+}
+
+message ListActivePromotionsRequest {
+  // 可选商品过滤（服务端仍会返回全量，C端可自行按商品过滤；预留字段）
+  repeated uint32 product_ids = 1 [json_name = "productIds"];
+}
+
+message QuoteOrderPromotionsRequest {
+  message QuoteOrderItem {
+    uint32 sku_id = 1 [json_name = "skuId"];
+    int32 quantity = 2;
+  }
+  repeated QuoteOrderItem items = 1;
+  // 结算币种（缺省 CNY）
+  optional string currency = 2 [json_name = "currency"];
+}
+
+message QuoteOrderPromotionsResponse {
+  // 折前总额（按专价重算后的各 SKU 小计之和，分）
+  int64 original_amount = 1 [json_name = "originalAmount"];
+  // 满减让利合计（取减让最大的一条，分）
+  int64 promo_discount = 2 [json_name = "promoDiscount"];
+  // 命中的满减活动（供前端展示"已满减"文案）
+  repeated Promotion matched_promotions = 3 [json_name = "matchedPromotions"];
+}

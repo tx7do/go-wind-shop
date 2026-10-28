@@ -14720,6 +14720,285 @@ export type catalogservicev1_ProductAttributeValueTranslationIdentifier = {
   valueId: number | undefined;
 };
 
+// 促销活动管理服务（admin 全 CRUD）
+export interface PromotionService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_ListPromotionResponse>;
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_CountPromotionResponse>;
+  Get(
+    request: catalogservicev1_GetPromotionRequest,
+  ): Promise<catalogservicev1_Promotion>;
+  Create(
+    request: catalogservicev1_CreatePromotionRequest,
+  ): Promise<wellKnownEmpty>;
+  Update(
+    request: catalogservicev1_UpdatePromotionRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: catalogservicev1_DeletePromotionRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createPromotionServiceClient(
+  transport: ClientTransport,
+): PromotionService {
+  return {
+    List(request) {
+      const path = `/admin/v1/mall/promotions`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PromotionService',
+        method: 'List',
+      }) as Promise<catalogservicev1_ListPromotionResponse>;
+    },
+    Count(request) {
+      const path = `/admin/v1/mall/promotions/count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PromotionService',
+        method: 'Count',
+      }) as Promise<catalogservicev1_CountPromotionResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/promotions/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PromotionService',
+        method: 'Get',
+      }) as Promise<catalogservicev1_Promotion>;
+    },
+    Create(request) {
+      const path = `/admin/v1/mall/promotions`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PromotionService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/promotions/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'PromotionService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/promotions/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'PromotionService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type catalogservicev1_ListPromotionResponse = {
+  items: catalogservicev1_Promotion[] | undefined;
+  total: number | undefined;
+};
+
+// 促销活动
+export type catalogservicev1_Promotion = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  currency?: string;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  name?: string;
+  priority?: number;
+  productId?: number;
+  promoType?: catalogservicev1_Promotion_PromoType;
+  reductionAmount?: number;
+  specialPrice?: number;
+  status?: catalogservicev1_Promotion_Status;
+  tenantId?: number;
+  thresholdAmount?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  validFrom?: wellKnownTimestamp;
+  validUntil?: wellKnownTimestamp;
+};
+
+// 促销类型
+export type catalogservicev1_Promotion_PromoType =
+  | 'FULL_REDUCTION'
+  | 'PROMO_TYPE_UNSPECIFIED'
+  | 'SPECIAL_PRICE';
+// 活动状态
+export type catalogservicev1_Promotion_Status =
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'STATUS_UNSPECIFIED';
+export type catalogservicev1_CountPromotionResponse = {
+  count: number | undefined;
+};
+
+export type catalogservicev1_GetPromotionRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type catalogservicev1_CreatePromotionRequest = {
+  data: catalogservicev1_Promotion | undefined;
+};
+
+export type catalogservicev1_UpdatePromotionRequest = {
+  allowMissing?: boolean;
+  data: catalogservicev1_Promotion | undefined;
+  id: number | undefined;
+  updateMask: undefined | wellKnownFieldMask;
+};
+
+export type catalogservicev1_DeletePromotionRequest = {
+  id?: number;
+};
+
 // 角色管理服务
 export interface RoleService {
   // 查询角色列表
@@ -18755,6 +19034,7 @@ export class ApiClient {
   private _productAttributeService?: ProductAttributeService;
   private _productAttributeValueService?: ProductAttributeValueService;
   private _productService?: ProductService;
+  private _promotionService?: PromotionService;
   private _redisCacheMonitorService?: RedisCacheMonitorService;
   private _roleService?: RoleService;
   private _scriptLogService?: ScriptLogService;
@@ -19016,6 +19296,10 @@ export class ApiClient {
 
   get productService(): ProductService {
     return this._productService ??= createProductServiceClient(this._transport);
+  }
+
+  get promotionService(): PromotionService {
+    return this._promotionService ??= createPromotionServiceClient(this._transport);
   }
 
   get redisCacheMonitorService(): RedisCacheMonitorService {

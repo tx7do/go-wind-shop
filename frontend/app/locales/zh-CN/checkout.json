@@ -30,5 +30,6 @@
   "couponPlaceholder": "选择优惠券",
   "couponNone": "不使用优惠券",
   "couponItem": "优惠券 #{{id}}",
-  "discount": "优惠抵扣"
+  "discount": "优惠抵扣",
+  "promotion": "促销优惠"
 }

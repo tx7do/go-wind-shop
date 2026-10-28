@@ -3975,6 +3975,115 @@ export type catalogservicev1_GetProductAttributeValueRequest = {
   viewMask?: wellKnownFieldMask;
 };
 
+// 促销活动前台服务（C端只读）
+export interface PromotionService {
+  // 当前生效中的活动列表（商品页角标 / 首页活动位）
+  ListActivePromotions(
+    request: catalogservicev1_ListActivePromotionsRequest,
+  ): Promise<catalogservicev1_ListPromotionResponse>;
+  // 促销试算（结算页展示满减让利；最终金额以下单事务为准）
+  QuoteOrderPromotions(
+    request: catalogservicev1_QuoteOrderPromotionsRequest,
+  ): Promise<catalogservicev1_QuoteOrderPromotionsResponse>;
+}
+
+export function createPromotionServiceClient(
+  transport: ClientTransport,
+): PromotionService {
+  return {
+    ListActivePromotions(request) {
+      const path = `/app/v1/mall/promotions/active`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.productIds) {
+        request.productIds.forEach((x) => {
+          queryParams.push(
+            `productIds=${encodeURIComponent(x.toString())}`,
+          );
+        });
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PromotionService',
+        method: 'ListActivePromotions',
+      }) as Promise<catalogservicev1_ListPromotionResponse>;
+    },
+    QuoteOrderPromotions(request) {
+      const path = `/app/v1/mall/promotions/quote`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PromotionService',
+        method: 'QuoteOrderPromotions',
+      }) as Promise<catalogservicev1_QuoteOrderPromotionsResponse>;
+    },
+  };
+}
+export type catalogservicev1_ListActivePromotionsRequest = {
+  // 可选商品过滤（服务端仍会返回全量，C端可自行按商品过滤；预留字段）
+  productIds: number[] | undefined;
+};
+
+export type catalogservicev1_ListPromotionResponse = {
+  items: catalogservicev1_Promotion[] | undefined;
+  total: number | undefined;
+};
+
+// 促销活动
+export type catalogservicev1_Promotion = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  currency?: string;
+  deletedAt?: wellKnownTimestamp;
+  deletedBy?: number;
+  id?: number;
+  name?: string;
+  priority?: number;
+  productId?: number;
+  promoType?: catalogservicev1_Promotion_PromoType;
+  reductionAmount?: number;
+  specialPrice?: number;
+  status?: catalogservicev1_Promotion_Status;
+  tenantId?: number;
+  thresholdAmount?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  validFrom?: wellKnownTimestamp;
+  validUntil?: wellKnownTimestamp;
+};
+
+// 促销类型
+export type catalogservicev1_Promotion_PromoType =
+  | 'FULL_REDUCTION'
+  | 'PROMO_TYPE_UNSPECIFIED'
+  | 'SPECIAL_PRICE';
+// 活动状态
+export type catalogservicev1_Promotion_Status =
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'STATUS_UNSPECIFIED';
+export type catalogservicev1_QuoteOrderPromotionsRequest = {
+  // 结算币种（缺省 CNY）
+  currency?: string;
+  items: catalogservicev1_QuoteOrderPromotionsRequest_QuoteOrderItem[] | undefined;
+};
+
+export type catalogservicev1_QuoteOrderPromotionsRequest_QuoteOrderItem = {
+  quantity: number | undefined;
+  skuId: number | undefined;
+};
+
+export type catalogservicev1_QuoteOrderPromotionsResponse = {
+  // 命中的满减活动（供前端展示"已满减"文案）
+  matchedPromotions: catalogservicev1_Promotion[] | undefined;
+  // 折前总额（按专价重算后的各 SKU 小计之和，分）
+  originalAmount: number | undefined;
+  // 满减让利合计（取减让最大的一条，分）
+  promoDiscount: number | undefined;
+};
+
 // 物流单前台服务（app 侧，买家只读查询自己订单的物流轨迹）
 // 仅暴露 List/Get，无 Create/Update/Delete。
 export interface ShipmentService {
@@ -5352,6 +5461,7 @@ export class ApiClient {
   private _productAttributeService?: ProductAttributeService;
   private _productAttributeValueService?: ProductAttributeValueService;
   private _productService?: ProductService;
+  private _promotionService?: PromotionService;
   private _shipmentService?: ShipmentService;
   private _shippingAddressService?: ShippingAddressService;
   private _skuAttributeCombinationService?: SkuAttributeCombinationService;
@@ -5440,6 +5550,10 @@ export class ApiClient {
 
   get productService(): ProductService {
     return this._productService ??= createProductServiceClient(this._transport);
+  }
+
+  get promotionService(): PromotionService {
+    return this._promotionService ??= createPromotionServiceClient(this._transport);
   }
 
   get shipmentService(): ShipmentService {

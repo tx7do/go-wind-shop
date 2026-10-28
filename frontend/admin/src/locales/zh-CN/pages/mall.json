@@ -315,5 +315,37 @@
       "create": "创建发票",
       "update": "编辑发票"
     }
+  },
+  "promotion": {
+    "moduleName": "促销活动管理",
+    "title": "促销活动管理",
+    "name": "活动名称",
+    "promoType": "促销类型",
+    "promoTypeLabel": {
+      "SPECIAL_PRICE": "商品专价",
+      "FULL_REDUCTION": "满减"
+    },
+    "productId": "生效商品",
+    "productIdTip": "仅专价活动需要填写商品ID，填写后该商品在活动期内按专价售出",
+    "storeWide": "全店",
+    "specialPrice": "专价",
+    "thresholdAmount": "满减门槛",
+    "reductionAmount": "减让金额",
+    "currency": "币种",
+    "validity": "有效窗口",
+    "validFrom": "开始时间",
+    "validUntil": "结束时间",
+    "priority": "优先级",
+    "priorityTip": "同商品多个专价活动并发时取优先级最高者",
+    "status": "状态",
+    "statusLabel": {
+      "ACTIVE": "生效中",
+      "INACTIVE": "已停用"
+    },
+    "amountUnitTip": "单位：元（后端以分存储，自动换算）",
+    "button": {
+      "create": "新建促销活动",
+      "update": "编辑促销活动"
+    }
   }
 }

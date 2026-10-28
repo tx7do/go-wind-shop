@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/promotion.proto";
+
+// 促销活动管理服务（admin 全 CRUD）
+service PromotionService {
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListPromotionResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/promotions"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountPromotionResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/promotions/count"
+    };
+  }
+
+  rpc Get (catalog.service.v1.GetPromotionRequest) returns (catalog.service.v1.Promotion) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/promotions/{id}"
+    };
+  }
+
+  rpc Create (catalog.service.v1.CreatePromotionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/promotions"
+      body: "*"
+    };
+  }
+
+  rpc Update (catalog.service.v1.UpdatePromotionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/promotions/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (catalog.service.v1.DeletePromotionRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/promotions/{id}"
+    };
+  }
+}

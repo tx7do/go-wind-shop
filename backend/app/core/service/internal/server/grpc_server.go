@@ -139,6 +139,7 @@ func NewGrpcServer(
 		shipmentService *service.ShipmentService,
 
 		couponTemplateService *service.CouponTemplateService,
+		promotionService *service.PromotionService,
 		userCouponService *service.UserCouponService,
 
 		shippingRateService *service.ShippingRateService,
@@ -216,6 +217,7 @@ func NewGrpcServer(
 	shippingV1.RegisterShipmentServiceServer(srv, shipmentService)
 
 	couponV1.RegisterCouponTemplateServiceServer(srv, couponTemplateService)
+	catalogV1.RegisterPromotionServiceServer(srv, promotionService)
 	couponV1.RegisterUserCouponServiceServer(srv, userCouponService)
 
 	shippingV1.RegisterShippingRateServiceServer(srv, shippingRateService)

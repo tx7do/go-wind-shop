@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+
+import "catalog/service/v1/promotion.proto";
+
+// 促销活动前台服务（C端只读）
+service PromotionService {
+  // 当前生效中的活动列表（商品页角标 / 首页活动位）
+  rpc ListActivePromotions (catalog.service.v1.ListActivePromotionsRequest) returns (catalog.service.v1.ListPromotionResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/promotions/active"
+    };
+  }
+
+  // 促销试算（结算页展示满减让利；最终金额以下单事务为准）
+  rpc QuoteOrderPromotions (catalog.service.v1.QuoteOrderPromotionsRequest) returns (catalog.service.v1.QuoteOrderPromotionsResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/promotions/quote"
+      body: "*"
+    };
+  }
+}

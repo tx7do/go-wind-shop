@@ -74,6 +74,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/productattributevalue"
 	"go-wind-shop/app/core/service/internal/data/ent/productattributevaluetranslation"
 	"go-wind-shop/app/core/service/internal/data/ent/producttranslation"
+	"go-wind-shop/app/core/service/internal/data/ent/promotion"
 	"go-wind-shop/app/core/service/internal/data/ent/role"
 	"go-wind-shop/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
@@ -232,6 +233,7 @@ func checkColumn(t, c string) error {
 			productattributevalue.Table:            productattributevalue.ValidColumn,
 			productattributevaluetranslation.Table: productattributevaluetranslation.ValidColumn,
 			producttranslation.Table:               producttranslation.ValidColumn,
+			promotion.Table:                        promotion.ValidColumn,
 			role.Table:                             role.ValidColumn,
 			rolemetadata.Table:                     rolemetadata.ValidColumn,
 			rolepermission.Table:                   rolepermission.ValidColumn,

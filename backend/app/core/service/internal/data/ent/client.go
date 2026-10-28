@@ -79,6 +79,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/productattributevalue"
 	"go-wind-shop/app/core/service/internal/data/ent/productattributevaluetranslation"
 	"go-wind-shop/app/core/service/internal/data/ent/producttranslation"
+	"go-wind-shop/app/core/service/internal/data/ent/promotion"
 	"go-wind-shop/app/core/service/internal/data/ent/role"
 	"go-wind-shop/app/core/service/internal/data/ent/rolemetadata"
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
@@ -251,6 +252,8 @@ type Client struct {
 	ProductAttributeValueTranslation *ProductAttributeValueTranslationClient
 	// ProductTranslation is the client for interacting with the ProductTranslation builders.
 	ProductTranslation *ProductTranslationClient
+	// Promotion is the client for interacting with the Promotion builders.
+	Promotion *PromotionClient
 	// Role is the client for interacting with the Role builders.
 	Role *RoleClient
 	// RoleMetadata is the client for interacting with the RoleMetadata builders.
@@ -378,6 +381,7 @@ func (c *Client) init() {
 	c.ProductAttributeValue = NewProductAttributeValueClient(c.config)
 	c.ProductAttributeValueTranslation = NewProductAttributeValueTranslationClient(c.config)
 	c.ProductTranslation = NewProductTranslationClient(c.config)
+	c.Promotion = NewPromotionClient(c.config)
 	c.Role = NewRoleClient(c.config)
 	c.RoleMetadata = NewRoleMetadataClient(c.config)
 	c.RolePermission = NewRolePermissionClient(c.config)
@@ -562,6 +566,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ProductAttributeValue:            NewProductAttributeValueClient(cfg),
 		ProductAttributeValueTranslation: NewProductAttributeValueTranslationClient(cfg),
 		ProductTranslation:               NewProductTranslationClient(cfg),
+		Promotion:                        NewPromotionClient(cfg),
 		Role:                             NewRoleClient(cfg),
 		RoleMetadata:                     NewRoleMetadataClient(cfg),
 		RolePermission:                   NewRolePermissionClient(cfg),
@@ -673,6 +678,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ProductAttributeValue:            NewProductAttributeValueClient(cfg),
 		ProductAttributeValueTranslation: NewProductAttributeValueTranslationClient(cfg),
 		ProductTranslation:               NewProductTranslationClient(cfg),
+		Promotion:                        NewPromotionClient(cfg),
 		Role:                             NewRoleClient(cfg),
 		RoleMetadata:                     NewRoleMetadataClient(cfg),
 		RolePermission:                   NewRolePermissionClient(cfg),
@@ -742,8 +748,8 @@ func (c *Client) Use(hooks ...Hook) {
 		c.Plan, c.PlanModule, c.PlanQuota, c.PolicyEvaluationLog, c.Position,
 		c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
 		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
-		c.ProductTranslation, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
-		c.ScriptLog, c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
+		c.ProductTranslation, c.Promotion, c.Role, c.RoleMetadata, c.RolePermission,
+		c.Script, c.ScriptLog, c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
 		c.SkuAttributeCombination, c.SkuPrice, c.StockAlert, c.SysConfig, c.Task,
 		c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential, c.UserMfaFactor,
 		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
@@ -772,8 +778,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.Plan, c.PlanModule, c.PlanQuota, c.PolicyEvaluationLog, c.Position,
 		c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
 		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
-		c.ProductTranslation, c.Role, c.RoleMetadata, c.RolePermission, c.Script,
-		c.ScriptLog, c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
+		c.ProductTranslation, c.Promotion, c.Role, c.RoleMetadata, c.RolePermission,
+		c.Script, c.ScriptLog, c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
 		c.SkuAttributeCombination, c.SkuPrice, c.StockAlert, c.SysConfig, c.Task,
 		c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential, c.UserMfaFactor,
 		c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
@@ -921,6 +927,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ProductAttributeValueTranslation.mutate(ctx, m)
 	case *ProductTranslationMutation:
 		return c.ProductTranslation.mutate(ctx, m)
+	case *PromotionMutation:
+		return c.Promotion.mutate(ctx, m)
 	case *RoleMutation:
 		return c.Role.mutate(ctx, m)
 	case *RoleMetadataMutation:
@@ -10458,6 +10466,140 @@ func (c *ProductTranslationClient) mutate(ctx context.Context, m *ProductTransla
 	}
 }
 
+// PromotionClient is a client for the Promotion schema.
+type PromotionClient struct {
+	config
+}
+
+// NewPromotionClient returns a client for the Promotion from the given config.
+func NewPromotionClient(c config) *PromotionClient {
+	return &PromotionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `promotion.Hooks(f(g(h())))`.
+func (c *PromotionClient) Use(hooks ...Hook) {
+	c.hooks.Promotion = append(c.hooks.Promotion, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `promotion.Intercept(f(g(h())))`.
+func (c *PromotionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.Promotion = append(c.inters.Promotion, interceptors...)
+}
+
+// Create returns a builder for creating a Promotion entity.
+func (c *PromotionClient) Create() *PromotionCreate {
+	mutation := newPromotionMutation(c.config, OpCreate)
+	return &PromotionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of Promotion entities.
+func (c *PromotionClient) CreateBulk(builders ...*PromotionCreate) *PromotionCreateBulk {
+	return &PromotionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PromotionClient) MapCreateBulk(slice any, setFunc func(*PromotionCreate, int)) *PromotionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PromotionCreateBulk{err: fmt.Errorf("calling to PromotionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PromotionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PromotionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for Promotion.
+func (c *PromotionClient) Update() *PromotionUpdate {
+	mutation := newPromotionMutation(c.config, OpUpdate)
+	return &PromotionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PromotionClient) UpdateOne(_m *Promotion) *PromotionUpdateOne {
+	mutation := newPromotionMutation(c.config, OpUpdateOne, withPromotion(_m))
+	return &PromotionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PromotionClient) UpdateOneID(id uint32) *PromotionUpdateOne {
+	mutation := newPromotionMutation(c.config, OpUpdateOne, withPromotionID(id))
+	return &PromotionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for Promotion.
+func (c *PromotionClient) Delete() *PromotionDelete {
+	mutation := newPromotionMutation(c.config, OpDelete)
+	return &PromotionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PromotionClient) DeleteOne(_m *Promotion) *PromotionDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PromotionClient) DeleteOneID(id uint32) *PromotionDeleteOne {
+	builder := c.Delete().Where(promotion.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PromotionDeleteOne{builder}
+}
+
+// Query returns a query builder for Promotion.
+func (c *PromotionClient) Query() *PromotionQuery {
+	return &PromotionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePromotion},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a Promotion entity by its id.
+func (c *PromotionClient) Get(ctx context.Context, id uint32) (*Promotion, error) {
+	return c.Query().Where(promotion.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PromotionClient) GetX(ctx context.Context, id uint32) *Promotion {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PromotionClient) Hooks() []Hook {
+	hooks := c.hooks.Promotion
+	return append(hooks[:len(hooks):len(hooks)], promotion.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PromotionClient) Interceptors() []Interceptor {
+	return c.inters.Promotion
+}
+
+func (c *PromotionClient) mutate(ctx context.Context, m *PromotionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PromotionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PromotionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PromotionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PromotionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown Promotion mutation op: %q", m.Op())
+	}
+}
+
 // RoleClient is a client for the Role schema.
 type RoleClient struct {
 	config
@@ -13699,11 +13841,11 @@ type (
 		PermissionGroup, PermissionMenu, PermissionPolicy, Plan, PlanModule, PlanQuota,
 		PolicyEvaluationLog, Position, Product, ProductAttribute,
 		ProductAttributeTranslation, ProductAttributeValue,
-		ProductAttributeValueTranslation, ProductTranslation, Role, RoleMetadata,
-		RolePermission, Script, ScriptLog, Shipment, ShippingAddress, ShippingRate,
-		Sku, SkuAttributeCombination, SkuPrice, StockAlert, SysConfig, Task, TaxRate,
-		Tenant, User, UserCoupon, UserCredential, UserMfaFactor, UserOrgUnit,
-		UserPosition, UserRole, Wishlist []ent.Hook
+		ProductAttributeValueTranslation, ProductTranslation, Promotion, Role,
+		RoleMetadata, RolePermission, Script, ScriptLog, Shipment, ShippingAddress,
+		ShippingRate, Sku, SkuAttributeCombination, SkuPrice, StockAlert, SysConfig,
+		Task, TaxRate, Tenant, User, UserCoupon, UserCredential, UserMfaFactor,
+		UserOrgUnit, UserPosition, UserRole, Wishlist []ent.Hook
 	}
 	inters struct {
 		AccessKey, AiAgentApp, AiAgentRun, AiChunk, AiConversation, AiDoc,
@@ -13720,10 +13862,10 @@ type (
 		PermissionGroup, PermissionMenu, PermissionPolicy, Plan, PlanModule, PlanQuota,
 		PolicyEvaluationLog, Position, Product, ProductAttribute,
 		ProductAttributeTranslation, ProductAttributeValue,
-		ProductAttributeValueTranslation, ProductTranslation, Role, RoleMetadata,
-		RolePermission, Script, ScriptLog, Shipment, ShippingAddress, ShippingRate,
-		Sku, SkuAttributeCombination, SkuPrice, StockAlert, SysConfig, Task, TaxRate,
-		Tenant, User, UserCoupon, UserCredential, UserMfaFactor, UserOrgUnit,
-		UserPosition, UserRole, Wishlist []ent.Interceptor
+		ProductAttributeValueTranslation, ProductTranslation, Promotion, Role,
+		RoleMetadata, RolePermission, Script, ScriptLog, Shipment, ShippingAddress,
+		ShippingRate, Sku, SkuAttributeCombination, SkuPrice, StockAlert, SysConfig,
+		Task, TaxRate, Tenant, User, UserCoupon, UserCredential, UserMfaFactor,
+		UserOrgUnit, UserPosition, UserRole, Wishlist []ent.Interceptor
 	}
 )
