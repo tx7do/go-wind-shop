@@ -41,8 +41,8 @@ func RegisterProductServiceHTTPServer(s *http.Server, srv ProductServiceHTTPServ
 	r := s.Route("/")
 	r.GET("/app/v1/mall/products", _ProductService_List11_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/products/{id}", _ProductService_Get10_HTTP_Handler(srv))
-	r.GET("/app/v1/mall/products/search", _ProductService_SearchProducts0_HTTP_Handler(srv))
-	r.GET("/app/v1/mall/products/suggest", _ProductService_SearchProductSuggestions0_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/product-search", _ProductService_SearchProducts0_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/product-suggest", _ProductService_SearchProductSuggestions0_HTTP_Handler(srv))
 }
 
 func _ProductService_List11_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
@@ -174,7 +174,7 @@ func (c *ProductServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRe
 // SearchProductSuggestions 搜索建议（输入联想，免鉴权）
 func (c *ProductServiceHTTPClientImpl) SearchProductSuggestions(ctx context.Context, in *v11.SearchProductSuggestionsRequest, opts ...http.CallOption) (*v11.SearchProductSuggestionsResponse, error) {
 	var out v11.SearchProductSuggestionsResponse
-	pattern := "/app/v1/mall/products/suggest"
+	pattern := "/app/v1/mall/product-suggest"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationProductServiceSearchProductSuggestions))
 	opts = append(opts, http.PathTemplate(pattern))
@@ -188,7 +188,7 @@ func (c *ProductServiceHTTPClientImpl) SearchProductSuggestions(ctx context.Cont
 // SearchProducts 搜索商品（Elasticsearch 全文检索）
 func (c *ProductServiceHTTPClientImpl) SearchProducts(ctx context.Context, in *v11.SearchProductsRequest, opts ...http.CallOption) (*v11.SearchProductsResponse, error) {
 	var out v11.SearchProductsResponse
-	pattern := "/app/v1/mall/products/search"
+	pattern := "/app/v1/mall/product-search"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationProductServiceSearchProducts))
 	opts = append(opts, http.PathTemplate(pattern))

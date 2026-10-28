@@ -27,12 +27,12 @@ var File_app_service_v1_i_product_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_product_proto_rawDesc = "" +
 	"\n" +
-	"\x1eapp/service/v1/i_product.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a catalog/service/v1/product.proto2\xa9\x04\n" +
+	"\x1eapp/service/v1/i_product.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a catalog/service/v1/product.proto2\xa7\x04\n" +
 	"\x0eProductService\x12i\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.catalog.service.v1.ListProductResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/app/v1/mall/products\x12m\n" +
-	"\x03Get\x12%.catalog.service.v1.GetProductRequest\x1a\x1b.catalog.service.v1.Product\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/app/v1/mall/products/{id}\x12\x8d\x01\n" +
-	"\x0eSearchProducts\x12).catalog.service.v1.SearchProductsRequest\x1a*.catalog.service.v1.SearchProductsResponse\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/app/v1/mall/products/search\x12\xac\x01\n" +
-	"\x18SearchProductSuggestions\x123.catalog.service.v1.SearchProductSuggestionsRequest\x1a4.catalog.service.v1.SearchProductSuggestionsResponse\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/app/v1/mall/products/suggestB\xaf\x01\n" +
+	"\x03Get\x12%.catalog.service.v1.GetProductRequest\x1a\x1b.catalog.service.v1.Product\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/app/v1/mall/products/{id}\x12\x8c\x01\n" +
+	"\x0eSearchProducts\x12).catalog.service.v1.SearchProductsRequest\x1a*.catalog.service.v1.SearchProductsResponse\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/app/v1/mall/product-search\x12\xab\x01\n" +
+	"\x18SearchProductSuggestions\x123.catalog.service.v1.SearchProductSuggestionsRequest\x1a4.catalog.service.v1.SearchProductSuggestionsResponse\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/app/v1/mall/product-suggestB\xaf\x01\n" +
 	"\x12com.app.service.v1B\rIProductProtoP\x01Z0go-wind-shop/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_product_proto_goTypes = []any{

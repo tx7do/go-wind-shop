@@ -3462,6 +3462,10 @@ export interface ProductService {
   SearchProducts(
     request: catalogservicev1_SearchProductsRequest,
   ): Promise<catalogservicev1_SearchProductsResponse>;
+  // 搜索建议（输入联想，免鉴权）
+  SearchProductSuggestions(
+    request: catalogservicev1_SearchProductSuggestionsRequest,
+  ): Promise<catalogservicev1_SearchProductSuggestionsResponse>;
 }
 
 export function createProductServiceClient(
@@ -3568,7 +3572,7 @@ export function createProductServiceClient(
       }) as Promise<catalogservicev1_Product>;
     },
     SearchProducts(request) {
-      const path = `/app/v1/mall/products/search`;
+      const path = `/app/v1/mall/product-search`;
       const body = null;
       const queryParams: string[] = [];
       if (request.query) {
@@ -3599,6 +3603,34 @@ export function createProductServiceClient(
         service: 'ProductService',
         method: 'SearchProducts',
       }) as Promise<catalogservicev1_SearchProductsResponse>;
+    },
+    SearchProductSuggestions(request) {
+      const path = `/app/v1/mall/product-suggest`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.language) {
+        queryParams.push(
+          `language=${encodeURIComponent(request.language.toString())}`,
+        );
+      }
+      if (request.size) {
+        queryParams.push(
+          `size=${encodeURIComponent(request.size.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'ProductService',
+        method: 'SearchProductSuggestions',
+      }) as Promise<catalogservicev1_SearchProductSuggestionsResponse>;
     },
   };
 }
@@ -3672,6 +3704,27 @@ export type catalogservicev1_SearchProductsResponse = {
 export type catalogservicev1_SearchProductHit = {
   imageUrl: string | undefined;
   language: string | undefined;
+  name: string | undefined;
+  productId: number | undefined;
+};
+
+// 搜索建议 - 请求
+export type catalogservicev1_SearchProductSuggestionsRequest = {
+  // 语言代码（缺省 zh-CN）
+  language?: string;
+  // 搜索关键词（前缀短语匹配）
+  query: string | undefined;
+  // 返回条数（缺省 8，最大 20）
+  size?: number;
+};
+
+// 搜索建议 - 回应
+export type catalogservicev1_SearchProductSuggestionsResponse = {
+  items: catalogservicev1_SearchProductSuggestionsResponse_Suggestion[] | undefined;
+};
+
+export type catalogservicev1_SearchProductSuggestionsResponse_Suggestion = {
+  imageUrl: string | undefined;
   name: string | undefined;
   productId: number | undefined;
 };

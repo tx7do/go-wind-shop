@@ -50,6 +50,8 @@ func NewRestMiddleware(
 		appV1.OperationProductServiceList,
 		appV1.OperationProductServiceGet,
 		appV1.OperationProductServiceSearchProducts,
+		appV1.OperationProductServiceSearchProductSuggestions,
+		appV1.OperationPromotionServiceListActivePromotions,
 		appV1.OperationProductAttributeServiceList,
 		appV1.OperationProductAttributeServiceGet,
 		appV1.OperationProductAttributeValueServiceList,

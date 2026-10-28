@@ -26,14 +26,14 @@ service ProductService {
   // 搜索商品（Elasticsearch 全文检索）
   rpc SearchProducts (catalog.service.v1.SearchProductsRequest) returns (catalog.service.v1.SearchProductsResponse) {
     option (google.api.http) = {
-      get: "/app/v1/mall/products/search"
+      get: "/app/v1/mall/product-search"
     };
   }
 
   // 搜索建议（输入联想，免鉴权）
   rpc SearchProductSuggestions (catalog.service.v1.SearchProductSuggestionsRequest) returns (catalog.service.v1.SearchProductSuggestionsResponse) {
     option (google.api.http) = {
-      get: "/app/v1/mall/products/suggest"
+      get: "/app/v1/mall/product-suggest"
     };
   }
 }
