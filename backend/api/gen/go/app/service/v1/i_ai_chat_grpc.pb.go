@@ -20,7 +20,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AiChatService_Chat_FullMethodName = "/app.service.v1.AiChatService/Chat"
+	AiChatService_Chat_FullMethodName               = "/app.service.v1.AiChatService/Chat"
+	AiChatService_RewriteSearchQuery_FullMethodName = "/app.service.v1.AiChatService/RewriteSearchQuery"
 )
 
 // AiChatServiceClient is the client API for AiChatService service.
@@ -37,6 +38,10 @@ const (
 type AiChatServiceClient interface {
 	// 发起一轮导购对话
 	Chat(ctx context.Context, in *v1.ChatRequest, opts ...grpc.CallOption) (*v1.ChatResponse, error)
+	// 搜索查询 AI 改写（匿名可用——白名单登记；LLM 生成，输入钳制 100 字符）。
+	// 自然语言搜索需求 → 2-4 个检索关键词，供 OpenSearch 全文检索使用；
+	// 输入过短（已是高效关键词）或 LLM 失败时 rewritten=false，前端沿用原词。
+	RewriteSearchQuery(ctx context.Context, in *RewriteSearchQueryRequest, opts ...grpc.CallOption) (*RewriteSearchQueryResponse, error)
 }
 
 type aiChatServiceClient struct {
@@ -57,6 +62,16 @@ func (c *aiChatServiceClient) Chat(ctx context.Context, in *v1.ChatRequest, opts
 	return out, nil
 }
 
+func (c *aiChatServiceClient) RewriteSearchQuery(ctx context.Context, in *RewriteSearchQueryRequest, opts ...grpc.CallOption) (*RewriteSearchQueryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RewriteSearchQueryResponse)
+	err := c.cc.Invoke(ctx, AiChatService_RewriteSearchQuery_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AiChatServiceServer is the server API for AiChatService service.
 // All implementations must embed UnimplementedAiChatServiceServer
 // for forward compatibility.
@@ -71,6 +86,10 @@ func (c *aiChatServiceClient) Chat(ctx context.Context, in *v1.ChatRequest, opts
 type AiChatServiceServer interface {
 	// 发起一轮导购对话
 	Chat(context.Context, *v1.ChatRequest) (*v1.ChatResponse, error)
+	// 搜索查询 AI 改写（匿名可用——白名单登记；LLM 生成，输入钳制 100 字符）。
+	// 自然语言搜索需求 → 2-4 个检索关键词，供 OpenSearch 全文检索使用；
+	// 输入过短（已是高效关键词）或 LLM 失败时 rewritten=false，前端沿用原词。
+	RewriteSearchQuery(context.Context, *RewriteSearchQueryRequest) (*RewriteSearchQueryResponse, error)
 	mustEmbedUnimplementedAiChatServiceServer()
 }
 
@@ -83,6 +102,9 @@ type UnimplementedAiChatServiceServer struct{}
 
 func (UnimplementedAiChatServiceServer) Chat(context.Context, *v1.ChatRequest) (*v1.ChatResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Chat not implemented")
+}
+func (UnimplementedAiChatServiceServer) RewriteSearchQuery(context.Context, *RewriteSearchQueryRequest) (*RewriteSearchQueryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RewriteSearchQuery not implemented")
 }
 func (UnimplementedAiChatServiceServer) mustEmbedUnimplementedAiChatServiceServer() {}
 func (UnimplementedAiChatServiceServer) testEmbeddedByValue()                       {}
@@ -123,6 +145,24 @@ func _AiChatService_Chat_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AiChatService_RewriteSearchQuery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RewriteSearchQueryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AiChatServiceServer).RewriteSearchQuery(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AiChatService_RewriteSearchQuery_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AiChatServiceServer).RewriteSearchQuery(ctx, req.(*RewriteSearchQueryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AiChatService_ServiceDesc is the grpc.ServiceDesc for AiChatService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -133,6 +173,10 @@ var AiChatService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Chat",
 			Handler:    _AiChatService_Chat_Handler,
+		},
+		{
+			MethodName: "RewriteSearchQuery",
+			Handler:    _AiChatService_RewriteSearchQuery_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

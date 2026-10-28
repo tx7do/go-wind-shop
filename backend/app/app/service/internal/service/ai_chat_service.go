@@ -2,8 +2,11 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
+	"time"
 
 	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
@@ -164,4 +167,90 @@ func (s *AiChatService) publishToUserStreams(ctx context.Context, streamIds *aut
 			Data:  data,
 		})
 	}
+}
+
+// ── 搜索查询 AI 改写 ────────────────────────────────────────────────
+
+const (
+	// searchRewriteMaxChars 输入长度钳制（匿名端点防滥用兜底）。
+	searchRewriteMaxChars = 100
+
+	// searchRewriteMinLen 输入低于该长度视为已是高效关键词，不做改写（省 LLM 调用）。
+	searchRewriteMinLen = 6
+
+	// searchRewriteTimeout 单次改写兜底时长。搜索路径上用户在等，但思考型模型
+	// （qwen3/r1 类）思考段就要十几秒，给足余量；超时由前端静默降级原词。
+	searchRewriteTimeout = 45 * time.Second
+)
+
+// RewriteSearchQuery 搜索查询 AI 改写：自然语言 → 检索关键词组。
+// 任何失败都降级为 rewritten=false（前端沿用原词，不阻断搜索）。
+func (s *AiChatService) RewriteSearchQuery(ctx context.Context, req *appV1.RewriteSearchQueryRequest) (*appV1.RewriteSearchQueryResponse, error) {
+	resp := &appV1.RewriteSearchQueryResponse{Rewritten: false}
+
+	query := strings.TrimSpace(req.GetQuery())
+	if query == "" {
+		return nil, appV1.ErrorBadRequest("query is required")
+	}
+	if len(query) > searchRewriteMaxChars {
+		query = query[:searchRewriteMaxChars]
+	}
+	// 短输入（已是关键词形态）或纯 ASCII 单词，改写无增益，直接原样返回。
+	if len([]rune(query)) < searchRewriteMinLen && !strings.Contains(query, " ") {
+		return resp, nil
+	}
+
+	gctx, cancel := context.WithTimeout(ctx, searchRewriteTimeout)
+	defer cancel()
+
+	gen, err := s.aiChatServiceClient.Generate(gctx, &aiV1.GenerateRequest{
+		System: trans.Ptr("你是电商搜索查询优化器。把用户的搜索请求改写成 2-4 个中文检索关键词" +
+			"（提取品类、核心属性、价格意图；丢弃语气词）。只输出 JSON 数组，" +
+			"格式：{\"keywords\": [\"关键词1\", \"关键词2\"]}，不要任何解释或代码块标记。"),
+		Prompt:    trans.Ptr(query),
+		// MaxTokens 需覆盖思考型模型的思考段 + 正文（同评论摘要的经验值）
+		MaxTokens: trans.Ptr(uint32(800)),
+	})
+	if err != nil {
+		s.log.Warnf("search rewrite llm call failed (degrade to original query): %v", err)
+		return resp, nil
+	}
+
+	text := strings.TrimSpace(gen.GetText())
+	if begin := strings.Index(text, "{"); begin >= 0 {
+		if end := strings.LastIndex(text, "}"); end > begin {
+			text = text[begin : end+1]
+		}
+	}
+	var parsed struct {
+		Keywords []string `json:"keywords"`
+	}
+	if err := json.Unmarshal([]byte(text), &parsed); err != nil || len(parsed.Keywords) == 0 {
+		s.log.Warnf("search rewrite unparsable llm output (degrade): %q", text)
+		return resp, nil
+	}
+
+	// 清洗：去空串/去重/每个再钳 30 字符，最多取 4 个
+	seen := make(map[string]bool, len(parsed.Keywords))
+	keywords := make([]string, 0, 4)
+	for _, k := range parsed.Keywords {
+		k = strings.TrimSpace(k)
+		if k == "" || seen[k] {
+			continue
+		}
+		if len([]rune(k)) > 30 {
+			k = string([]rune(k)[:30])
+		}
+		seen[k] = true
+		keywords = append(keywords, k)
+		if len(keywords) >= 4 {
+			break
+		}
+	}
+	if len(keywords) == 0 {
+		return resp, nil
+	}
+	resp.Keywords = keywords
+	resp.Rewritten = true
+	return resp, nil
 }

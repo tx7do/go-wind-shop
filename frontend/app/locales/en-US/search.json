@@ -4,5 +4,7 @@
   "empty": "No products matched “{q}”.",
   "resultCount": "{count} products found",
   "submitSearch": "Search",
-  "placeholder": "Enter a product keyword"
+  "placeholder": "Enter a product keyword",
+  "aiOptimized": "AI-optimized keywords",
+  "aiRestore": "Restore original"
 }

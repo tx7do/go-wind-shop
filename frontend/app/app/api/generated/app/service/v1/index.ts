@@ -125,6 +125,17 @@ export type AppErrorReason =
   | 'USER_NOT_FOUND'
   // 506
   | 'VARIANT_ALSO_NEGOTIATES';
+// 搜索查询改写 - 请求
+export type RewriteSearchQueryRequest = {
+  query: string | undefined;
+};
+
+// 搜索查询改写 - 响应
+export type RewriteSearchQueryResponse = {
+  keywords: string[] | undefined;
+  rewritten: boolean | undefined;
+};
+
 // AI 导购对话服务（C端）
 //
 // 流式语义：本 RPC 是普通 POST（body 为扁平请求体，不包 data）。
@@ -137,6 +148,12 @@ export interface AiChatService {
   Chat(
     request: aiservicev1_ChatRequest,
   ): Promise<aiservicev1_ChatResponse>;
+  // 搜索查询 AI 改写（匿名可用——白名单登记；LLM 生成，输入钳制 100 字符）。
+  // 自然语言搜索需求 → 2-4 个检索关键词，供 OpenSearch 全文检索使用；
+  // 输入过短（已是高效关键词）或 LLM 失败时 rewritten=false，前端沿用原词。
+  RewriteSearchQuery(
+    request: RewriteSearchQueryRequest,
+  ): Promise<RewriteSearchQueryResponse>;
 }
 
 export function createAiChatServiceClient(
@@ -150,6 +167,14 @@ export function createAiChatServiceClient(
         service: 'AiChatService',
         method: 'Chat',
       }) as Promise<aiservicev1_ChatResponse>;
+    },
+    RewriteSearchQuery(request) {
+      const path = `/app/v1/ai/search/rewrite`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'AiChatService',
+        method: 'RewriteSearchQuery',
+      }) as Promise<RewriteSearchQueryResponse>;
     },
   };
 }

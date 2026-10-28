@@ -12,6 +12,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -22,24 +23,145 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// 搜索查询改写 - 请求
+type RewriteSearchQueryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Query         string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"` // 用户原始搜索输入（≤100 字符）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RewriteSearchQueryRequest) Reset() {
+	*x = RewriteSearchQueryRequest{}
+	mi := &file_app_service_v1_i_ai_chat_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RewriteSearchQueryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RewriteSearchQueryRequest) ProtoMessage() {}
+
+func (x *RewriteSearchQueryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_app_service_v1_i_ai_chat_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RewriteSearchQueryRequest.ProtoReflect.Descriptor instead.
+func (*RewriteSearchQueryRequest) Descriptor() ([]byte, []int) {
+	return file_app_service_v1_i_ai_chat_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *RewriteSearchQueryRequest) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+// 搜索查询改写 - 响应
+type RewriteSearchQueryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Keywords      []string               `protobuf:"bytes,1,rep,name=keywords,proto3" json:"keywords,omitempty"`    // 改写后的检索关键词（2-4 个）
+	Rewritten     bool                   `protobuf:"varint,2,opt,name=rewritten,proto3" json:"rewritten,omitempty"` // 是否完成改写（无需改写/失败为 false）
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RewriteSearchQueryResponse) Reset() {
+	*x = RewriteSearchQueryResponse{}
+	mi := &file_app_service_v1_i_ai_chat_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RewriteSearchQueryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RewriteSearchQueryResponse) ProtoMessage() {}
+
+func (x *RewriteSearchQueryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_app_service_v1_i_ai_chat_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RewriteSearchQueryResponse.ProtoReflect.Descriptor instead.
+func (*RewriteSearchQueryResponse) Descriptor() ([]byte, []int) {
+	return file_app_service_v1_i_ai_chat_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *RewriteSearchQueryResponse) GetKeywords() []string {
+	if x != nil {
+		return x.Keywords
+	}
+	return nil
+}
+
+func (x *RewriteSearchQueryResponse) GetRewritten() bool {
+	if x != nil {
+		return x.Rewritten
+	}
+	return false
+}
+
 var File_app_service_v1_i_ai_chat_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_ai_chat_proto_rawDesc = "" +
 	"\n" +
-	"\x1eapp/service/v1/i_ai_chat.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bai/service/v1/ai_chat.proto2x\n" +
+	"\x1eapp/service/v1/i_ai_chat.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1bai/service/v1/ai_chat.proto\"1\n" +
+	"\x19RewriteSearchQueryRequest\x12\x14\n" +
+	"\x05query\x18\x01 \x01(\tR\x05query\"V\n" +
+	"\x1aRewriteSearchQueryResponse\x12\x1a\n" +
+	"\bkeywords\x18\x01 \x03(\tR\bkeywords\x12\x1c\n" +
+	"\trewritten\x18\x02 \x01(\bR\trewritten2\x8c\x02\n" +
 	"\rAiChatService\x12g\n" +
-	"\x04Chat\x12\x1a.ai.service.v1.ChatRequest\x1a\x1b.ai.service.v1.ChatResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/app/v1/ai/chat/completionsB\xae\x01\n" +
+	"\x04Chat\x12\x1a.ai.service.v1.ChatRequest\x1a\x1b.ai.service.v1.ChatResponse\"&\x82\xd3\xe4\x93\x02 :\x01*\"\x1b/app/v1/ai/chat/completions\x12\x91\x01\n" +
+	"\x12RewriteSearchQuery\x12).app.service.v1.RewriteSearchQueryRequest\x1a*.app.service.v1.RewriteSearchQueryResponse\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/app/v1/ai/search/rewriteB\xae\x01\n" +
 	"\x12com.app.service.v1B\fIAiChatProtoP\x01Z0go-wind-shop/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
+var (
+	file_app_service_v1_i_ai_chat_proto_rawDescOnce sync.Once
+	file_app_service_v1_i_ai_chat_proto_rawDescData []byte
+)
+
+func file_app_service_v1_i_ai_chat_proto_rawDescGZIP() []byte {
+	file_app_service_v1_i_ai_chat_proto_rawDescOnce.Do(func() {
+		file_app_service_v1_i_ai_chat_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_app_service_v1_i_ai_chat_proto_rawDesc), len(file_app_service_v1_i_ai_chat_proto_rawDesc)))
+	})
+	return file_app_service_v1_i_ai_chat_proto_rawDescData
+}
+
+var file_app_service_v1_i_ai_chat_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_app_service_v1_i_ai_chat_proto_goTypes = []any{
-	(*v1.ChatRequest)(nil),  // 0: ai.service.v1.ChatRequest
-	(*v1.ChatResponse)(nil), // 1: ai.service.v1.ChatResponse
+	(*RewriteSearchQueryRequest)(nil),  // 0: app.service.v1.RewriteSearchQueryRequest
+	(*RewriteSearchQueryResponse)(nil), // 1: app.service.v1.RewriteSearchQueryResponse
+	(*v1.ChatRequest)(nil),             // 2: ai.service.v1.ChatRequest
+	(*v1.ChatResponse)(nil),            // 3: ai.service.v1.ChatResponse
 }
 var file_app_service_v1_i_ai_chat_proto_depIdxs = []int32{
-	0, // 0: app.service.v1.AiChatService.Chat:input_type -> ai.service.v1.ChatRequest
-	1, // 1: app.service.v1.AiChatService.Chat:output_type -> ai.service.v1.ChatResponse
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
+	2, // 0: app.service.v1.AiChatService.Chat:input_type -> ai.service.v1.ChatRequest
+	0, // 1: app.service.v1.AiChatService.RewriteSearchQuery:input_type -> app.service.v1.RewriteSearchQueryRequest
+	3, // 2: app.service.v1.AiChatService.Chat:output_type -> ai.service.v1.ChatResponse
+	1, // 3: app.service.v1.AiChatService.RewriteSearchQuery:output_type -> app.service.v1.RewriteSearchQueryResponse
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -56,12 +178,13 @@ func file_app_service_v1_i_ai_chat_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_app_service_v1_i_ai_chat_proto_rawDesc), len(file_app_service_v1_i_ai_chat_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_app_service_v1_i_ai_chat_proto_goTypes,
 		DependencyIndexes: file_app_service_v1_i_ai_chat_proto_depIdxs,
+		MessageInfos:      file_app_service_v1_i_ai_chat_proto_msgTypes,
 	}.Build()
 	File_app_service_v1_i_ai_chat_proto = out.File
 	file_app_service_v1_i_ai_chat_proto_goTypes = nil

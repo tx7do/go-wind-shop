@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { useSearchProducts, fetchSearchSuggestions } from '@/api/composables';
+import { useSearchProducts, fetchSearchSuggestions, rewriteSearchQuery } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { XIcon } from '@/plugins/xicon';
 
@@ -25,9 +25,36 @@ useHead({ title: () => `${t('search.title')}: ${keyword.value || '—'}` });
 const PAGE_SIZE = 48;
 const page = ref(1);
 
+// ---------- AI 搜索改写 ----------
+// 关键词看起来是自然语言（≥6 字符）时异步请求 LLM 改写为 2-4 个检索关键词；
+// 改写成功则以关键词组重新检索，展示提示条（可还原原词）；失败静默沿用原词。
+const aiKeywords = ref<string[] | null>(null);
+const effectiveQuery = computed(() =>
+  aiKeywords.value?.length ? aiKeywords.value.join(' ') : keyword.value,
+);
+
+watch(keyword, (v) => {
+  aiKeywords.value = null;
+  if (!v || v.length < 6) return;
+  const asked = v;
+  rewriteSearchQuery(v)
+    .then((resp) => {
+      // 只应用对当前关键字的改写（防竞态：慢响应覆盖新一次搜索）
+      if (keyword.value !== asked) return;
+      if (resp.rewritten && resp.keywords?.length && resp.keywords.join(' ') !== asked) {
+        aiKeywords.value = resp.keywords as string[];
+      }
+    })
+    .catch(() => {});
+});
+
+function restoreOriginalQuery() {
+  aiKeywords.value = null;
+}
+
 const searchQuery = useSearchProducts(
   computed(() => ({
-    query: keyword.value,
+    query: effectiveQuery.value,
     language: getCurrentLocale(),
     page: page.value - 1, // ES 分页 0-based
     pageSize: PAGE_SIZE,
@@ -128,6 +155,29 @@ function onSuggestInputBlur() {
   />
 
   <LayoutSectionContainer>
+    <!-- AI 搜索改写提示条 -->
+    <div
+      v-if="aiKeywords?.length"
+      class="mx-auto mb-4 flex w-full max-w-xl flex-wrap items-center gap-2 rounded-xl border border-primary/30 bg-primary/5 px-3 py-2 text-xs"
+    >
+      <span class="flex items-center gap-1 font-medium text-primary">
+        <XIcon icon="lucide:sparkles" width="12" height="12" />
+        {{ t('search.aiOptimized') }}:
+      </span>
+      <span
+        v-for="kw in aiKeywords"
+        :key="kw"
+        class="rounded-full bg-primary/10 px-2 py-0.5 text-primary"
+      >{{ kw }}</span>
+      <button
+        type="button"
+        class="ml-auto text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
+        @click="restoreOriginalQuery"
+      >
+        {{ t('search.aiRestore') }}
+      </button>
+    </div>
+
     <!-- 搜索框（带输入联想下拉） -->
     <div class="relative mx-auto mb-6 w-full max-w-xl">
       <div class="flex items-center gap-2">

@@ -34,3 +34,211 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 )
+
+// Validate checks the field values on RewriteSearchQueryRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RewriteSearchQueryRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RewriteSearchQueryRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RewriteSearchQueryRequestMultiError, or nil if none found.
+func (m *RewriteSearchQueryRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RewriteSearchQueryRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Query
+
+	if len(errors) > 0 {
+		return RewriteSearchQueryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RewriteSearchQueryRequestMultiError is an error wrapping multiple validation
+// errors returned by RewriteSearchQueryRequest.ValidateAll() if the
+// designated constraints aren't met.
+type RewriteSearchQueryRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RewriteSearchQueryRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RewriteSearchQueryRequestMultiError) AllErrors() []error { return m }
+
+// RewriteSearchQueryRequestValidationError is the validation error returned by
+// RewriteSearchQueryRequest.Validate if the designated constraints aren't met.
+type RewriteSearchQueryRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RewriteSearchQueryRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RewriteSearchQueryRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RewriteSearchQueryRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RewriteSearchQueryRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RewriteSearchQueryRequestValidationError) ErrorName() string {
+	return "RewriteSearchQueryRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RewriteSearchQueryRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRewriteSearchQueryRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RewriteSearchQueryRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RewriteSearchQueryRequestValidationError{}
+
+// Validate checks the field values on RewriteSearchQueryResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RewriteSearchQueryResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RewriteSearchQueryResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RewriteSearchQueryResponseMultiError, or nil if none found.
+func (m *RewriteSearchQueryResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RewriteSearchQueryResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Rewritten
+
+	if len(errors) > 0 {
+		return RewriteSearchQueryResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// RewriteSearchQueryResponseMultiError is an error wrapping multiple
+// validation errors returned by RewriteSearchQueryResponse.ValidateAll() if
+// the designated constraints aren't met.
+type RewriteSearchQueryResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RewriteSearchQueryResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RewriteSearchQueryResponseMultiError) AllErrors() []error { return m }
+
+// RewriteSearchQueryResponseValidationError is the validation error returned
+// by RewriteSearchQueryResponse.Validate if the designated constraints aren't met.
+type RewriteSearchQueryResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RewriteSearchQueryResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RewriteSearchQueryResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RewriteSearchQueryResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RewriteSearchQueryResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RewriteSearchQueryResponseValidationError) ErrorName() string {
+	return "RewriteSearchQueryResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RewriteSearchQueryResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRewriteSearchQueryResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RewriteSearchQueryResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RewriteSearchQueryResponseValidationError{}

@@ -26,3 +26,14 @@ export async function sendAssistantMessage(
   }
   return await apiClient.aiChatService.Chat(request);
 }
+
+// ==============================
+// 搜索查询 AI 改写（匿名可用）
+// 自然语言 → 2-4 个检索关键词；rewritten=false 表示无需改写/降级，沿用原词。
+// ==============================
+export async function rewriteSearchQuery(query: string): Promise<{
+  keywords: string[];
+  rewritten: boolean;
+}> {
+  return await apiClient.aiChatService.RewriteSearchQuery({ query });
+}

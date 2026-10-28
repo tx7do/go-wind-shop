@@ -21,15 +21,21 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationAiChatServiceChat = "/app.service.v1.AiChatService/Chat"
+const OperationAiChatServiceRewriteSearchQuery = "/app.service.v1.AiChatService/RewriteSearchQuery"
 
 type AiChatServiceHTTPServer interface {
 	// Chat 发起一轮导购对话
 	Chat(context.Context, *v1.ChatRequest) (*v1.ChatResponse, error)
+	// RewriteSearchQuery 搜索查询 AI 改写（匿名可用——白名单登记；LLM 生成，输入钳制 100 字符）。
+	// 自然语言搜索需求 → 2-4 个检索关键词，供 OpenSearch 全文检索使用；
+	// 输入过短（已是高效关键词）或 LLM 失败时 rewritten=false，前端沿用原词。
+	RewriteSearchQuery(context.Context, *RewriteSearchQueryRequest) (*RewriteSearchQueryResponse, error)
 }
 
 func RegisterAiChatServiceHTTPServer(s *http.Server, srv AiChatServiceHTTPServer) {
 	r := s.Route("/")
 	r.POST("/app/v1/ai/chat/completions", _AiChatService_Chat0_HTTP_Handler(srv))
+	r.POST("/app/v1/ai/search/rewrite", _AiChatService_RewriteSearchQuery0_HTTP_Handler(srv))
 }
 
 func _AiChatService_Chat0_HTTP_Handler(srv AiChatServiceHTTPServer) func(ctx http.Context) error {
@@ -54,9 +60,35 @@ func _AiChatService_Chat0_HTTP_Handler(srv AiChatServiceHTTPServer) func(ctx htt
 	}
 }
 
+func _AiChatService_RewriteSearchQuery0_HTTP_Handler(srv AiChatServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in RewriteSearchQueryRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationAiChatServiceRewriteSearchQuery)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.RewriteSearchQuery(ctx, req.(*RewriteSearchQueryRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*RewriteSearchQueryResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type AiChatServiceHTTPClient interface {
 	// Chat 发起一轮导购对话
 	Chat(ctx context.Context, req *v1.ChatRequest, opts ...http.CallOption) (rsp *v1.ChatResponse, err error)
+	// RewriteSearchQuery 搜索查询 AI 改写（匿名可用——白名单登记；LLM 生成，输入钳制 100 字符）。
+	// 自然语言搜索需求 → 2-4 个检索关键词，供 OpenSearch 全文检索使用；
+	// 输入过短（已是高效关键词）或 LLM 失败时 rewritten=false，前端沿用原词。
+	RewriteSearchQuery(ctx context.Context, req *RewriteSearchQueryRequest, opts ...http.CallOption) (rsp *RewriteSearchQueryResponse, err error)
 }
 
 type AiChatServiceHTTPClientImpl struct {
@@ -73,6 +105,22 @@ func (c *AiChatServiceHTTPClientImpl) Chat(ctx context.Context, in *v1.ChatReque
 	pattern := "/app/v1/ai/chat/completions"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationAiChatServiceChat))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// RewriteSearchQuery 搜索查询 AI 改写（匿名可用——白名单登记；LLM 生成，输入钳制 100 字符）。
+// 自然语言搜索需求 → 2-4 个检索关键词，供 OpenSearch 全文检索使用；
+// 输入过短（已是高效关键词）或 LLM 失败时 rewritten=false，前端沿用原词。
+func (c *AiChatServiceHTTPClientImpl) RewriteSearchQuery(ctx context.Context, in *RewriteSearchQueryRequest, opts ...http.CallOption) (*RewriteSearchQueryResponse, error) {
+	var out RewriteSearchQueryResponse
+	pattern := "/app/v1/ai/search/rewrite"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationAiChatServiceRewriteSearchQuery))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {
