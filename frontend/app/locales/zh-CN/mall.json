@@ -59,7 +59,9 @@
     "average": "平均评分",
     "count": "评分数",
     "noRating": "暂无评分",
-    "selectRating": "选择评分"
+    "selectRating": "选择评分",
+    "aiSummary": "AI 评价洞察",
+    "aiSummaryEmpty": ""
   },
   "coupons": {
     "title": "优惠券中心",

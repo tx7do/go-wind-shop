@@ -90,8 +90,14 @@ def scan_app():
         rel = os.path.relpath(p, os.path.join(ROOT, "app"))
         for m in spat.finditer(s):
             key = m.group(1)
-            if key.split(".")[0] in top_ns:
-                refs.setdefault(key, set()).add(rel)
+            if key.split(".")[0] not in top_ns:
+                continue
+            # 只收「对象字面量值」形态(labelKey: 'xxx' / title: "xxx"),
+            # 排除 Vue 属性绑定 ":model-value=\"a.b.c\""(属性路径,非文案键)
+            before = s[: m.start()].rstrip()
+            if not before or before[-1] not in ":,([+":
+                continue
+            refs.setdefault(key, set()).add(rel)
 
     return report_missing(files, refs, "APP"), files
 
@@ -124,8 +130,12 @@ def scan_admin():
         rel = os.path.relpath(p, os.path.join(ROOT, "admin", "src"))
         for m in spat.finditer(s):
             key = m.group(1)
-            if key.split(".")[0] in top_ns:
-                refs.setdefault(key, set()).add(rel)
+            if key.split(".")[0] not in top_ns:
+                continue
+            before = s[: m.start()].rstrip()
+            if not before or before[-1] not in ":,([+":
+                continue
+            refs.setdefault(key, set()).add(rel)
 
     return report_missing(files, refs, "ADMIN"), files
 

@@ -9,5 +9,16 @@
   "errorReply": "Sorry, the service is temporarily unavailable. Please try again later.",
   "suggest1": "Recommend best-selling products",
   "suggest2": "What coupons can I claim?",
-  "suggest3": "Show me my orders"
+  "suggest3": "Show me my orders",
+  "toolSearch": "Searching products…",
+  "toolDetail": "Checking product details…",
+  "toolOrders": "Looking up your orders…",
+  "toolCoupons": "Checking coupons…",
+  "toolGeneric": "Calling a tool…",
+  "contextTag": "Answering about this product",
+  "viewProduct": "View",
+  "relatedProducts": "Related products",
+  "quotaExceeded": "Daily AI quota used up. Please come back tomorrow.",
+  "notLogin": "Log in to use the AI assistant",
+  "goLogin": "Log in"
 }

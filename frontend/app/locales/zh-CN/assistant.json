@@ -9,5 +9,16 @@
   "errorReply": "抱歉，服务暂时不可用，请稍后再试。",
   "suggest1": "有什么热卖商品推荐？",
   "suggest2": "现在有什么优惠券可领？",
-  "suggest3": "帮我查一下我的订单"
+  "suggest3": "帮我查一下我的订单",
+  "toolSearch": "正在搜索商品…",
+  "toolDetail": "正在查询商品详情…",
+  "toolOrders": "正在查询订单…",
+  "toolCoupons": "正在查询优惠券…",
+  "toolGeneric": "正在调用工具…",
+  "contextTag": "围绕当前商品回答",
+  "viewProduct": "查看",
+  "relatedProducts": "相关商品",
+  "quotaExceeded": "今日 AI 使用额度已用完，请明天再来。",
+  "notLogin": "登录后即可使用 AI 导购",
+  "goLogin": "去登录"
 }

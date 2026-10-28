@@ -76,7 +76,7 @@
     "moduleName": "商品管理",
     "category": "类目管理",
     "brand": "品牌管理",
-    "product": "PRODUCT_ZH",
+    "product": "商品列表",
     "productCreate": "新建商品",
     "productEdit": "编辑商品",
     "productAttribute": "属性管理",

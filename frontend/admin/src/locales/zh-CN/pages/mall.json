@@ -44,7 +44,12 @@
     "button": {
       "create": "创建商品",
       "update": "编辑商品"
-    }
+    },
+    "aiGenerate": "AI 生成文案",
+    "aiNeedName": "请先填写商品名称（或至少填写简述提示）",
+    "aiGenerateSuccess": "文案已生成并填入表单",
+    "aiGenerateFailed": "AI 生成失败，请确认已在「AI 服务商」配置可用模型",
+    "aiOverwriteConfirm": "将覆盖已有的商品简述与详情，是否继续？"
   },
   "productAttribute": {
     "moduleName": "属性管理",

@@ -128,6 +128,7 @@ const countsQueryParams = computed(() => ({
 
 const statusQuery = useGetInteractionStatus(statusQueryParams, {
   enabled: computed(() => isLogin.value && allCommentIds.value.length > 0),
+  retry: false, // 点赞状态属边缘装饰数据,失败静默(全 false),不重试不惊扰
 });
 const countsQuery = useGetCounts(countsQueryParams, {
   enabled: computed(() => allCommentIds.value.length > 0),

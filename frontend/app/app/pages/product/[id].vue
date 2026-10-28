@@ -17,6 +17,7 @@ import {
   useCreateWishlist,
   useDeleteWishlist,
   useGetProductRating,
+  useGetProductReviewSummary,
   useListActivePromotions,
 } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
@@ -190,6 +191,15 @@ const ratingCount = computed<number>(() => {
   return typeof v === 'number' ? v : 0;
 });
 const hasRating = computed(() => ratingCount.value > 0 && ratingAverage.value > 0);
+
+// ---------- 评论 AI 摘要（匿名可读；LLM 生成，服务端缓存 6h） ----------
+const reviewSummaryQuery = useGetProductReviewSummary(productId, {
+  enabled: computed(() => productId.value > 0),
+});
+const reviewSummary = computed<string>(() => {
+  const d = reviewSummaryQuery.data?.value as any;
+  return d?.available && d?.summary ? String(d.summary) : '';
+});
 
 // ---------- 属性 & 属性值 ----------
 const attributesQuery = useListProductAttributes({
@@ -371,10 +381,13 @@ const canAddToCart = computed(() => {
   return matchedSku.value !== undefined && !isOutOfStock.value;
 });
 
+// 后端 SKU 价格 amount 以「分」存储,展示统一换算为元(两位小数)。
 const displayPrice = computed(() => {
   const price = matchedSkuPrice.value;
   if (!price || !price.amount) return null;
-  return price.amount;
+  const fen = Number(price.amount);
+  if (Number.isNaN(fen) || fen <= 0) return null;
+  return (fen / 100).toFixed(2);
 });
 
 // ---------- 促销活动（专价划线价/满减角标） ----------
@@ -394,7 +407,7 @@ const promotionsQuery = useListActivePromotions();
 
 const productPromotions = computed(() => {
   const items = ((promotionsQuery.data?.value as any)?.items ?? []) as PromotionEntity[];
-  return items.filter((p) => p.productId === productId);
+  return items.filter((p) => p.productId === productId.value);
 });
 
 // 专价活动：priority 最大者优先；仅当专价低于现价时生效（与服务端同语义）。
@@ -412,8 +425,9 @@ const promoPrice = computed(() => {
   const base = displayPrice.value;
   const sp = specialPricePromo.value;
   if (!base || !sp?.specialPrice) return null;
-  const special = String(sp.specialPrice);
-  return Number(special) < Number(base) ? special : null;
+  // specialPrice 同为「分」,换算后与服务端同语义:仅低于现价时生效
+  const specialYuan = (sp.specialPrice / 100).toFixed(2);
+  return Number(specialYuan) < Number(base) ? specialYuan : null;
 });
 
 // 满减角标：取减让最大的店铺级活动展示「满 X 减 Y」。
@@ -677,6 +691,21 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
               {{ t('mall.productRating.noRating') }}
             </template>
           </span>
+        </div>
+
+        <!-- 评论 AI 摘要（"大家说"） -->
+        <div
+          v-if="reviewSummary"
+          class="flex items-start gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2.5"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            class="mt-0.5 shrink-0 text-primary"
+          ><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
+          <p class="text-xs leading-relaxed text-muted-foreground">
+            <span class="mr-1 font-medium text-foreground">{{ t('mall.productRating.aiSummary') }}:</span>{{ reviewSummary }}
+          </p>
         </div>
 
         <!-- SKU 卡片选择器（aria-radiogroup，保留键盘可访问性） -->

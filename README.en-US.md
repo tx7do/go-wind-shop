@@ -154,6 +154,17 @@ cd frontend/app && pnpm dev
 
 ## Features
 
+### Screenshots
+
+| Admin Console | Storefront |
+|:---:|:---:|
+| ![Promotion Management](gui-test-screenshots/admin-promotions.png) | ![Storefront Home](gui-test-screenshots/app-home.png) |
+| **Promotion Management** (special price / full reduction) | **Storefront Home** (unread badge · AI shopping assistant) |
+| ![Stock Operation Logs](gui-test-screenshots/admin-stock-op-logs.png) | ![My Messages](gui-test-screenshots/app-messages.png) |
+| **Stock Operation Logs** (append-only audit) | **Message Center** (order notifications · unread marks) |
+| ![Order Management](gui-test-screenshots/admin-orders.png) | ![My Orders](gui-test-screenshots/app-orders.png) |
+| **Order Management** (state machine + cancel/close) | **My Orders** (full lifecycle states) |
+
 ### Commerce
 
 | Feature | Description |
@@ -164,10 +175,18 @@ cd frontend/app && pnpm dev
 | Brand Management | Brand information management. |
 | SKU & Pricing | Management of SKUs, attribute combinations, and prices. |
 | Shopping Cart | Shopping cart and cart item management. |
-| Order Management | Order and order detail management. |
+| Order Management | Order and order detail management, with an optimistic-concurrency order state machine. |
+| Order Automation | Auto-cancel of unpaid orders after timeout (delayed task + periodic sweep) and auto-confirm receipt after the shipment window. |
+| Order Notifications | In-app notifications to buyers across the full lifecycle: payment, shipment, cancellation, receipt confirmation, and refund. |
+| Search | OpenSearch full-text search with type-ahead suggestions (product name prefix phrase matching). |
+| Promotions | Product special prices and store-wide full reductions, applied within the checkout transaction, stackable with coupons up to a floor of zero. |
+| Stock Operation Logs | Append-only audit: order deductions, cancel/refund restorations, and manual adjustments are all traced. |
+| Product Reviews | Tree-structured reviews with likes, merchant replies, and optional AI anti-spam. |
+| AI Shopping Assistant | Function-call tool loop (find products, check prices, look up orders and coupons) with a floating storefront assistant. |
 | Payment & Refund | Payment transaction and refund record management (note: the payment gateway is currently a simulated stub; real gateway integration is pending). |
 | Logistics & Shipment | Order fulfillment and shipment management, including shipment state machine and order-status linkage. |
 | Coupon System | Coupon template and user-coupon management, including a pricing discount engine with redemption at checkout and restoration on refund. |
+| Finance Export | Server-side XLSX export of order details for reconciliation. |
 | File Transfer | Upload and transfer of product images and resources. |
 
 ### Platform & System

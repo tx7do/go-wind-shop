@@ -1,37 +1,26 @@
 {
-  "theme": {
-    "light": "Light",
-    "dark": "Dark",
-    "auto": "Auto"
-  },
   "title": "Preferences",
-  "subtitle": "Customize your workspace",
+  "subtitle": "Customize your preferences",
   "actions": {
-    "reset": "Reset Preferences",
+    "clearCacheAndLogout": "Clear cache and logout",
     "close": "Close",
-    "copySettings": "Copy Settings",
-    "clearCacheAndLogout": "Clear Cache & Logout",
+    "copySettings": "Copy settings",
+    "reset": "Reset",
     "copySuccess": "Preferences copied to clipboard",
     "copyFailed": "Copy failed"
-  },
-  "tabs": {
-    "appearance": "Appearance",
-    "layout": "Layout",
-    "shortcut": "Shortcuts",
-    "general": "General"
   },
   "appearance": {
     "theme": "Theme",
     "lightMode": "Light",
     "darkMode": "Dark",
-    "followSystem": "Follow System",
-    "darkSidebar": "Dark Sidebar",
-    "darkHeader": "Dark Header",
-    "builtinThemes": "Built-in Themes",
-    "radius": "Border Radius",
+    "followSystem": "Follow system",
+    "darkSidebar": "Dark sidebar",
+    "darkHeader": "Dark header",
+    "builtinThemes": "Built-in themes",
+    "radius": "Radius",
     "other": "Other",
-    "colorWeakMode": "Color Weak Mode",
-    "colorGrayMode": "Grayscale Mode",
+    "colorWeakMode": "Color weak mode",
+    "colorGrayMode": "Grayscale mode",
     "themes": {
       "default": "Default",
       "violet": "Violet",
@@ -55,13 +44,13 @@
   "general": {
     "general": "General",
     "language": "Language",
-    "dynamicTitle": "Dynamic Title",
-    "watermark": "Watermark",
-    "checkUpdates": "Check Updates",
+    "loading": "Page loading",
+    "dynamicTitle": "Dynamic title",
+    "pageTransition": "Page transition",
+    "progressBar": "Progress bar",
     "animation": "Animation",
-    "progressBar": "Progress Bar",
-    "loading": "Loading",
-    "pageTransition": "Page Transition",
+    "watermark": "Watermark",
+    "checkUpdates": "Check updates",
     "transitions": {
       "fade": "Fade",
       "fadeDown": "Fade Down",
@@ -73,73 +62,77 @@
       "enUS": "English"
     }
   },
-  "shortcut": {
-    "global": "Global Shortcuts",
-    "shortcutKeys": "Shortcut Keys",
-    "globalSearch": "Global Search",
-    "logout": "Logout",
-    "lockScreen": "Lock Screen"
-  },
   "layout": {
+    "mode": "Layout",
     "modes": {
-      "title": "Layout Modes",
+      "title": "Layout mode",
       "sidebarNav": "Sidebar Nav",
       "sidebarMixedNav": "Sidebar Mixed Nav",
       "headerNav": "Header Nav",
       "mixedNav": "Mixed Nav",
       "fullContent": "Full Content"
     },
-    "contentModes": {
-      "title": "Content Width",
-      "wide": "Wide",
-      "compact": "Compact"
-    },
-    "sidebar": "Sidebar",
-    "showSidebar": "Show Sidebar",
-    "collapseMenu": "Collapse Menu",
-    "collapseShowTitle": "Show Title when Collapsed",
-    "width": "Width",
+    "navigationMenu": "Navigation menu",
+    "menuSplit": "Split menu",
+    "accordionMode": "Accordion mode",
     "header": "Header",
-    "showHeader": "Show Header",
-    "mode": "Mode",
+    "showHeader": "Show header",
     "headerModes": {
       "fixed": "Fixed",
       "auto": "Auto",
       "static": "Static"
     },
-    "navigationMenu": "Navigation Menu",
-    "menuStyle": "Menu Style",
+    "sidebar": "Sidebar",
+    "showSidebar": "Show sidebar",
+    "collapseMenu": "Collapse menu",
+    "collapseShowTitle": "Show title when collapsed",
+    "menuStyle": "Menu style",
     "menuStyles": {
-      "rounded": "Rounded",
-      "plain": "Plain"
+      "plain": "Plain",
+      "rounded": "Rounded"
     },
-    "menuSplit": "Menu Split",
-    "accordionMode": "Accordion Mode",
+    "width": "Menu width",
+    "tabbar": "Tabbar",
+    "enableTabbar": "Enable tabbar",
+    "persistTabs": "Persist tabs",
+    "showTabbarIcon": "Show tab icon",
+    "showMaximizeButton": "Show maximize button",
+    "showMoreButton": "Show more button",
+    "draggableSort": "Draggable sort",
+    "tabbarStyle": "Tabbar style",
+    "tabbarStyles": {
+      "plain": "Plain",
+      "card": "Card",
+      "chrome": "Chrome",
+      "brisk": "Brisk"
+    },
     "breadcrumb": "Breadcrumb",
-    "enableBreadcrumb": "Enable Breadcrumb",
-    "hideWhenOnlyOne": "Hide When Only One",
-    "showIcon": "Show Icon",
-    "showHomeButton": "Show Home Button",
-    "breadcrumbStyle": "Breadcrumb Style",
+    "enableBreadcrumb": "Enable breadcrumb",
+    "breadcrumbStyle": "Breadcrumb style",
     "breadcrumbStyles": {
-      "normal": "Normal",
+      "normal": "Plain",
       "background": "Background"
     },
-    "tabbar": "Tab Bar",
-    "enableTabbar": "Enable Tab Bar",
-    "persistTabs": "Persist Tabs",
-    "draggableSort": "Draggable Sort",
-    "showTabbarIcon": "Show Tab Icon",
-    "showMoreButton": "Show More Button",
-    "showMaximizeButton": "Show Maximize Button",
-    "tabbarStyle": "Tab Bar Style",
-    "tabbarStyles": {
-      "chrome": "Chrome",
-      "card": "Card",
-      "brisk": "Brisk",
-      "plain": "Plain"
-    },
+    "showHomeButton": "Show home button",
+    "showIcon": "Show icon",
+    "hideWhenOnlyOne": "Hide when only one",
+    "footer": "Footer",
+    "showFooter": "Show footer",
+    "fixedAtBottom": "Fixed at bottom",
+    "enableCopyright": "Enable copyright",
+    "copyright": "Copyright",
     "widgets": "Widgets",
+    "contentModes": {
+      "title": "Content area",
+      "wide": "Wide",
+      "compact": "Compact"
+    },
+    "positions": {
+      "fixed": "Fixed",
+      "auto": "Auto",
+      "hidden": "Hidden"
+    },
+    "preferencesPosition": "Preferences button position",
     "globalSearch": "Global Search",
     "themeToggle": "Theme Toggle",
     "languageToggle": "Language Toggle",
@@ -148,36 +141,43 @@
     "lockScreen": "Lock Screen",
     "sidebarToggle": "Sidebar Toggle",
     "refresh": "Refresh",
-    "preferencesPosition": "Preferences Position",
-    "positions": {
-      "auto": "Auto",
-      "fixed": "Fixed",
-      "hidden": "Hidden"
-    },
-    "footer": "Footer",
-    "showFooter": "Show Footer",
-    "fixedAtBottom": "Fixed at Bottom",
-    "copyright": "Copyright",
-    "enableCopyright": "Enable Copyright",
     "companyName": "Company Name",
     "companySite": "Company Website",
     "date": "Date",
     "icpNumber": "ICP Number",
     "icpLink": "ICP Link"
   },
+  "shortcut": {
+    "shortcutKeys": "Shortcut keys",
+    "global": "Global",
+    "globalSearch": "Global search",
+    "lockScreen": "Lock screen",
+    "logout": "Logout"
+  },
   "tabbar": {
     "contextMenu": {
       "reload": "Reload",
       "close": "Close",
-      "closeOther": "Close Others",
-      "closeLeft": "Close Left",
-      "closeRight": "Close Right",
-      "closeAll": "Close All",
-      "pin": "Pin Tab",
-      "unpin": "Unpin Tab",
+      "pin": "Pin",
+      "unpin": "Unpin",
       "maximize": "Maximize",
-      "restoreMaximize": "Exit Maximize",
-      "openInNewWindow": "Open in New Window"
+      "restoreMaximize": "Restore maximize",
+      "closeLeft": "Close left",
+      "closeRight": "Close right",
+      "closeOther": "Close others",
+      "closeAll": "Close all",
+      "openInNewWindow": "Open in new window"
     }
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "auto": "Auto"
+  },
+  "tabs": {
+    "appearance": "Appearance",
+    "layout": "Layout",
+    "shortcut": "Shortcuts",
+    "general": "General"
   }
 }

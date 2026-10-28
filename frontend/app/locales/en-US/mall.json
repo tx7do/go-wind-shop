@@ -59,7 +59,9 @@
     "average": "Average Rating",
     "count": "Ratings",
     "noRating": "No ratings yet",
-    "selectRating": "Select Rating"
+    "selectRating": "Select Rating",
+    "aiSummary": "AI review insights",
+    "aiSummaryEmpty": ""
   },
   "coupons": {
     "title": "Coupon Center",

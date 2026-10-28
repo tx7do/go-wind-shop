@@ -20,8 +20,12 @@ import addresses from './addresses.json'
 import messages from './messages.json'
 import shipment from './shipment.json'
 import legal from './legal.json'
+import comment from './comment.json'
+import invoices from './invoices.json'
 
 export default {
+    comment,
+    invoices,
     app,
     authentication,
     common,
