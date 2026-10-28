@@ -60,6 +60,11 @@ func (s *ProductService) SearchProducts(ctx context.Context, req *catalogV1.Sear
 	return s.productServiceClient.SearchProducts(ctx, req)
 }
 
+// SearchProductSuggestions 搜索建议（输入联想，免鉴权透传）。
+func (s *ProductService) SearchProductSuggestions(ctx context.Context, req *catalogV1.SearchProductSuggestionsRequest) (*catalogV1.SearchProductSuggestionsResponse, error) {
+	return s.productServiceClient.SearchProductSuggestions(ctx, req)
+}
+
 // injectStatusFilter 将 status 过滤条件合并进现有 query JSON 字符串。
 // 始终覆盖 status 字段为给定值。空输入则新建只含 status 的对象。
 func injectStatusFilter(existing, status string) string {

@@ -54,6 +54,13 @@ type ProductDocument struct {
 	ImageURL          string `json:"image_url"`          // keyword，locale 无关主图 URL（展示用，非检索字段）
 }
 
+// ProductSuggestion 搜索联想候选项（最小字段集）。
+type ProductSuggestion struct {
+	ProductId uint32 `json:"product_id"`
+	Name      string `json:"name"`
+	ImageUrl  string `json:"image_url"`
+}
+
 // ProductSearchHit 是搜索结果中的单条命中，只暴露最小字段集。
 type ProductSearchHit struct {
 	ProductID string
@@ -287,4 +294,90 @@ func (r *ProductSearchRepo) SearchProducts(
 	}
 
 	return result, nil
+}
+
+// SuggestProductNames 搜索联想：按商品名前缀短语匹配返回候选。
+//
+// DSL：filter（status/language 强制过滤，不参与评分）+ should（match_phrase_prefix
+// 对 name 做前缀短语匹配，最低匹配 1 条）。与 cms 的 SuggestPostTitles 同模式。
+// sourceFields 仅回传 product_id/name/image_url 最小字段集。
+func (r *ProductSearchRepo) SuggestProductNames(
+	ctx context.Context,
+	query string,
+	language string,
+	status string,
+	size int,
+) ([]ProductSuggestion, error) {
+	suggestions := make([]ProductSuggestion, 0, size)
+
+	if r.esClient == nil {
+		return suggestions, errors.New("opensearch client is nil")
+	}
+	if language == "" || status == "" || query == "" {
+		return suggestions, nil
+	}
+	if size <= 0 {
+		size = 8
+	}
+	if size > 20 {
+		size = 20
+	}
+
+	dsl := map[string]any{
+		"bool": map[string]any{
+			"filter": []any{
+				map[string]any{"term": map[string]any{"status": status}},
+				map[string]any{"term": map[string]any{"language": language}},
+			},
+			"must": []any{
+				map[string]any{
+					"match_phrase_prefix": map[string]any{
+						"name": map[string]any{"query": query},
+					},
+				},
+			},
+		},
+	}
+
+	sourceFields := []string{"product_id", "name", "image_url"}
+
+	searchResult, err := r.esClient.SearchWithHighlight(
+		ctx,
+		productSearchIndexName,
+		dsl,
+		nil,
+		sourceFields,
+		nil,
+		0,
+		size,
+	)
+	if err != nil {
+		r.log.Errorf("suggest search failed: %v", err)
+		return suggestions, err
+	}
+
+	for _, hit := range searchResult.Hits.Hits {
+		// product_id 在索引中是 keyword 字符串（与 SearchProducts 同一解析口径）
+		var src struct {
+			ProductID string `json:"product_id"`
+			Name      string `json:"name"`
+			ImageURL  string `json:"image_url"`
+		}
+		if err := json.Unmarshal(hit.Source, &src); err != nil {
+			r.log.Warnf("unmarshal suggest hit failed: %v", err)
+			continue
+		}
+		pid, pErr := strconv.ParseUint(src.ProductID, 10, 32)
+		if pErr != nil {
+			r.log.Warnf("parse suggest product_id [%s] failed: %v", src.ProductID, pErr)
+			continue
+		}
+		suggestions = append(suggestions, ProductSuggestion{
+			ProductId: uint32(pid),
+			Name:      src.Name,
+			ImageUrl:  src.ImageURL,
+		})
+	}
+
+	return suggestions, nil
 }

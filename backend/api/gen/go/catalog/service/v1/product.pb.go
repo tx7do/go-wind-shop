@@ -1289,6 +1289,115 @@ func (x *SearchProductsResponse) GetTotal() int32 {
 	return 0
 }
 
+// 搜索建议 - 请求
+type SearchProductSuggestionsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// 搜索关键词（前缀短语匹配）
+	Query string `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
+	// 语言代码（缺省 zh-CN）
+	Language *string `protobuf:"bytes,2,opt,name=language,proto3,oneof" json:"language,omitempty"`
+	// 返回条数（缺省 8，最大 20）
+	Size          *int32 `protobuf:"varint,3,opt,name=size,proto3,oneof" json:"size,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchProductSuggestionsRequest) Reset() {
+	*x = SearchProductSuggestionsRequest{}
+	mi := &file_catalog_service_v1_product_proto_msgTypes[18]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchProductSuggestionsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchProductSuggestionsRequest) ProtoMessage() {}
+
+func (x *SearchProductSuggestionsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_catalog_service_v1_product_proto_msgTypes[18]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchProductSuggestionsRequest.ProtoReflect.Descriptor instead.
+func (*SearchProductSuggestionsRequest) Descriptor() ([]byte, []int) {
+	return file_catalog_service_v1_product_proto_rawDescGZIP(), []int{18}
+}
+
+func (x *SearchProductSuggestionsRequest) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+func (x *SearchProductSuggestionsRequest) GetLanguage() string {
+	if x != nil && x.Language != nil {
+		return *x.Language
+	}
+	return ""
+}
+
+func (x *SearchProductSuggestionsRequest) GetSize() int32 {
+	if x != nil && x.Size != nil {
+		return *x.Size
+	}
+	return 0
+}
+
+// 搜索建议 - 回应
+type SearchProductSuggestionsResponse struct {
+	state         protoimpl.MessageState                         `protogen:"open.v1"`
+	Items         []*SearchProductSuggestionsResponse_Suggestion `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchProductSuggestionsResponse) Reset() {
+	*x = SearchProductSuggestionsResponse{}
+	mi := &file_catalog_service_v1_product_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchProductSuggestionsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchProductSuggestionsResponse) ProtoMessage() {}
+
+func (x *SearchProductSuggestionsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_catalog_service_v1_product_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchProductSuggestionsResponse.ProtoReflect.Descriptor instead.
+func (*SearchProductSuggestionsResponse) Descriptor() ([]byte, []int) {
+	return file_catalog_service_v1_product_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *SearchProductSuggestionsResponse) GetItems() []*SearchProductSuggestionsResponse_Suggestion {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
 type SearchProductHit struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	ProductId     uint32                 `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
@@ -1301,7 +1410,7 @@ type SearchProductHit struct {
 
 func (x *SearchProductHit) Reset() {
 	*x = SearchProductHit{}
-	mi := &file_catalog_service_v1_product_proto_msgTypes[18]
+	mi := &file_catalog_service_v1_product_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1313,7 +1422,7 @@ func (x *SearchProductHit) String() string {
 func (*SearchProductHit) ProtoMessage() {}
 
 func (x *SearchProductHit) ProtoReflect() protoreflect.Message {
-	mi := &file_catalog_service_v1_product_proto_msgTypes[18]
+	mi := &file_catalog_service_v1_product_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1326,7 +1435,7 @@ func (x *SearchProductHit) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SearchProductHit.ProtoReflect.Descriptor instead.
 func (*SearchProductHit) Descriptor() ([]byte, []int) {
-	return file_catalog_service_v1_product_proto_rawDescGZIP(), []int{18}
+	return file_catalog_service_v1_product_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *SearchProductHit) GetProductId() uint32 {
@@ -1351,6 +1460,66 @@ func (x *SearchProductHit) GetName() string {
 }
 
 func (x *SearchProductHit) GetImageUrl() string {
+	if x != nil {
+		return x.ImageUrl
+	}
+	return ""
+}
+
+type SearchProductSuggestionsResponse_Suggestion struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ProductId     uint32                 `protobuf:"varint,1,opt,name=product_id,json=productId,proto3" json:"product_id,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	ImageUrl      string                 `protobuf:"bytes,3,opt,name=image_url,json=imageUrl,proto3" json:"image_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchProductSuggestionsResponse_Suggestion) Reset() {
+	*x = SearchProductSuggestionsResponse_Suggestion{}
+	mi := &file_catalog_service_v1_product_proto_msgTypes[21]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchProductSuggestionsResponse_Suggestion) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchProductSuggestionsResponse_Suggestion) ProtoMessage() {}
+
+func (x *SearchProductSuggestionsResponse_Suggestion) ProtoReflect() protoreflect.Message {
+	mi := &file_catalog_service_v1_product_proto_msgTypes[21]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchProductSuggestionsResponse_Suggestion.ProtoReflect.Descriptor instead.
+func (*SearchProductSuggestionsResponse_Suggestion) Descriptor() ([]byte, []int) {
+	return file_catalog_service_v1_product_proto_rawDescGZIP(), []int{19, 0}
+}
+
+func (x *SearchProductSuggestionsResponse_Suggestion) GetProductId() uint32 {
+	if x != nil {
+		return x.ProductId
+	}
+	return 0
+}
+
+func (x *SearchProductSuggestionsResponse_Suggestion) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *SearchProductSuggestionsResponse_Suggestion) GetImageUrl() string {
 	if x != nil {
 		return x.ImageUrl
 	}
@@ -1508,13 +1677,28 @@ const file_catalog_service_v1_product_proto_rawDesc = "" +
 	"\tpage_size\x18\x04 \x01(\x05B*\xbaG'\x92\x02$每页条数（服务端封顶 50）R\bpageSize\"j\n" +
 	"\x16SearchProductsResponse\x12:\n" +
 	"\x05items\x18\x01 \x03(\v2$.catalog.service.v1.SearchProductHitR\x05items\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"\xd1\x02\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\x9e\x01\n" +
+	"\x1fSearchProductSuggestionsRequest\x12+\n" +
+	"\x05query\x18\x01 \x01(\tB\x15\xbaG\x12\x92\x02\x0f搜索关键词R\x05query\x12\x1f\n" +
+	"\blanguage\x18\x02 \x01(\tH\x00R\blanguage\x88\x01\x01\x12\x17\n" +
+	"\x04size\x18\x03 \x01(\x05H\x01R\x04size\x88\x01\x01B\v\n" +
+	"\t_languageB\a\n" +
+	"\x05_size\"\xd7\x01\n" +
+	" SearchProductSuggestionsResponse\x12U\n" +
+	"\x05items\x18\x01 \x03(\v2?.catalog.service.v1.SearchProductSuggestionsResponse.SuggestionR\x05items\x1a\\\n" +
+	"\n" +
+	"Suggestion\x12\x1d\n" +
+	"\n" +
+	"product_id\x18\x01 \x01(\rR\tproductId\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1b\n" +
+	"\timage_url\x18\x03 \x01(\tR\bimageUrl\"\xd1\x02\n" +
 	"\x10SearchProductHit\x12W\n" +
 	"\n" +
 	"product_id\x18\x01 \x01(\rB8\xbaG5\x92\x022商品ID（用于后续 GetProduct 详情查询）R\tproductId\x12.\n" +
 	"\blanguage\x18\x02 \x01(\tB\x12\xbaG\x0f\x92\x02\f语言代码R\blanguage\x12S\n" +
 	"\x04name\x18\x03 \x01(\tB?\xbaG<\x92\x029商品名称（来自翻译，用于搜索结果展示）R\x04name\x12_\n" +
-	"\timage_url\x18\x04 \x01(\tBB\xbaG?\x92\x02<商品主图URL（locale无关，用于搜索结果展示）R\bimageUrl2\xdb\t\n" +
+	"\timage_url\x18\x04 \x01(\tBB\xbaG?\x92\x02<商品主图URL（locale无关，用于搜索结果展示）R\bimageUrl2\xe5\n" +
+	"\n" +
 	"\x0eProductService\x12L\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.catalog.service.v1.ListProductResponse\"\x00\x12N\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a(.catalog.service.v1.CountProductResponse\"\x00\x12K\n" +
@@ -1528,7 +1712,8 @@ const file_catalog_service_v1_product_proto_rawDesc = "" +
 	"\x11CreateTranslation\x123.catalog.service.v1.CreateProductTranslationRequest\x1a&.catalog.service.v1.ProductTranslation\"\x00\x12r\n" +
 	"\x11UpdateTranslation\x123.catalog.service.v1.UpdateProductTranslationRequest\x1a&.catalog.service.v1.ProductTranslation\"\x00\x12b\n" +
 	"\x11DeleteTranslation\x123.catalog.service.v1.DeleteProductTranslationRequest\x1a\x16.google.protobuf.Empty\"\x00\x12i\n" +
-	"\x0eSearchProducts\x12).catalog.service.v1.SearchProductsRequest\x1a*.catalog.service.v1.SearchProductsResponse\"\x00B\xc6\x01\n" +
+	"\x0eSearchProducts\x12).catalog.service.v1.SearchProductsRequest\x1a*.catalog.service.v1.SearchProductsResponse\"\x00\x12\x87\x01\n" +
+	"\x18SearchProductSuggestions\x123.catalog.service.v1.SearchProductSuggestionsRequest\x1a4.catalog.service.v1.SearchProductSuggestionsResponse\"\x00B\xc6\x01\n" +
 	"\x16com.catalog.service.v1B\fProductProtoP\x01Z4go-wind-shop/api/gen/go/catalog/service/v1;catalogpb\xa2\x02\x03CSX\xaa\x02\x12Catalog.Service.V1\xca\x02\x12Catalog\\Service\\V1\xe2\x02\x1eCatalog\\Service\\V1\\GPBMetadata\xea\x02\x14Catalog::Service::V1b\x06proto3"
 
 var (
@@ -1544,84 +1729,90 @@ func file_catalog_service_v1_product_proto_rawDescGZIP() []byte {
 }
 
 var file_catalog_service_v1_product_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_catalog_service_v1_product_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_catalog_service_v1_product_proto_msgTypes = make([]protoimpl.MessageInfo, 22)
 var file_catalog_service_v1_product_proto_goTypes = []any{
-	(Product_ProductStatus)(0),               // 0: catalog.service.v1.Product.ProductStatus
-	(*Product)(nil),                          // 1: catalog.service.v1.Product
-	(*ProductTranslation)(nil),               // 2: catalog.service.v1.ProductTranslation
-	(*ListProductResponse)(nil),              // 3: catalog.service.v1.ListProductResponse
-	(*GetProductRequest)(nil),                // 4: catalog.service.v1.GetProductRequest
-	(*CreateProductRequest)(nil),             // 5: catalog.service.v1.CreateProductRequest
-	(*UpdateProductRequest)(nil),             // 6: catalog.service.v1.UpdateProductRequest
-	(*DeleteProductRequest)(nil),             // 7: catalog.service.v1.DeleteProductRequest
-	(*BatchCreateProductsRequest)(nil),       // 8: catalog.service.v1.BatchCreateProductsRequest
-	(*BatchCreateProductsResponse)(nil),      // 9: catalog.service.v1.BatchCreateProductsResponse
-	(*CountProductResponse)(nil),             // 10: catalog.service.v1.CountProductResponse
-	(*ProductTranslationExistsRequest)(nil),  // 11: catalog.service.v1.ProductTranslationExistsRequest
-	(*ProductTranslationExistsResponse)(nil), // 12: catalog.service.v1.ProductTranslationExistsResponse
-	(*CreateProductTranslationRequest)(nil),  // 13: catalog.service.v1.CreateProductTranslationRequest
-	(*UpdateProductTranslationRequest)(nil),  // 14: catalog.service.v1.UpdateProductTranslationRequest
-	(*DeleteProductTranslationRequest)(nil),  // 15: catalog.service.v1.DeleteProductTranslationRequest
-	(*ProductTranslationIdentifier)(nil),     // 16: catalog.service.v1.ProductTranslationIdentifier
-	(*SearchProductsRequest)(nil),            // 17: catalog.service.v1.SearchProductsRequest
-	(*SearchProductsResponse)(nil),           // 18: catalog.service.v1.SearchProductsResponse
-	(*SearchProductHit)(nil),                 // 19: catalog.service.v1.SearchProductHit
-	(*timestamppb.Timestamp)(nil),            // 20: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),            // 21: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),                 // 22: pagination.PagingRequest
-	(*emptypb.Empty)(nil),                    // 23: google.protobuf.Empty
+	(Product_ProductStatus)(0),                          // 0: catalog.service.v1.Product.ProductStatus
+	(*Product)(nil),                                     // 1: catalog.service.v1.Product
+	(*ProductTranslation)(nil),                          // 2: catalog.service.v1.ProductTranslation
+	(*ListProductResponse)(nil),                         // 3: catalog.service.v1.ListProductResponse
+	(*GetProductRequest)(nil),                           // 4: catalog.service.v1.GetProductRequest
+	(*CreateProductRequest)(nil),                        // 5: catalog.service.v1.CreateProductRequest
+	(*UpdateProductRequest)(nil),                        // 6: catalog.service.v1.UpdateProductRequest
+	(*DeleteProductRequest)(nil),                        // 7: catalog.service.v1.DeleteProductRequest
+	(*BatchCreateProductsRequest)(nil),                  // 8: catalog.service.v1.BatchCreateProductsRequest
+	(*BatchCreateProductsResponse)(nil),                 // 9: catalog.service.v1.BatchCreateProductsResponse
+	(*CountProductResponse)(nil),                        // 10: catalog.service.v1.CountProductResponse
+	(*ProductTranslationExistsRequest)(nil),             // 11: catalog.service.v1.ProductTranslationExistsRequest
+	(*ProductTranslationExistsResponse)(nil),            // 12: catalog.service.v1.ProductTranslationExistsResponse
+	(*CreateProductTranslationRequest)(nil),             // 13: catalog.service.v1.CreateProductTranslationRequest
+	(*UpdateProductTranslationRequest)(nil),             // 14: catalog.service.v1.UpdateProductTranslationRequest
+	(*DeleteProductTranslationRequest)(nil),             // 15: catalog.service.v1.DeleteProductTranslationRequest
+	(*ProductTranslationIdentifier)(nil),                // 16: catalog.service.v1.ProductTranslationIdentifier
+	(*SearchProductsRequest)(nil),                       // 17: catalog.service.v1.SearchProductsRequest
+	(*SearchProductsResponse)(nil),                      // 18: catalog.service.v1.SearchProductsResponse
+	(*SearchProductSuggestionsRequest)(nil),             // 19: catalog.service.v1.SearchProductSuggestionsRequest
+	(*SearchProductSuggestionsResponse)(nil),            // 20: catalog.service.v1.SearchProductSuggestionsResponse
+	(*SearchProductHit)(nil),                            // 21: catalog.service.v1.SearchProductHit
+	(*SearchProductSuggestionsResponse_Suggestion)(nil), // 22: catalog.service.v1.SearchProductSuggestionsResponse.Suggestion
+	(*timestamppb.Timestamp)(nil),                       // 23: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),                       // 24: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),                            // 25: pagination.PagingRequest
+	(*emptypb.Empty)(nil),                               // 26: google.protobuf.Empty
 }
 var file_catalog_service_v1_product_proto_depIdxs = []int32{
 	0,  // 0: catalog.service.v1.Product.status:type_name -> catalog.service.v1.Product.ProductStatus
 	2,  // 1: catalog.service.v1.Product.translations:type_name -> catalog.service.v1.ProductTranslation
-	20, // 2: catalog.service.v1.Product.created_at:type_name -> google.protobuf.Timestamp
-	20, // 3: catalog.service.v1.Product.updated_at:type_name -> google.protobuf.Timestamp
-	20, // 4: catalog.service.v1.Product.deleted_at:type_name -> google.protobuf.Timestamp
-	20, // 5: catalog.service.v1.ProductTranslation.created_at:type_name -> google.protobuf.Timestamp
-	20, // 6: catalog.service.v1.ProductTranslation.updated_at:type_name -> google.protobuf.Timestamp
-	20, // 7: catalog.service.v1.ProductTranslation.deleted_at:type_name -> google.protobuf.Timestamp
+	23, // 2: catalog.service.v1.Product.created_at:type_name -> google.protobuf.Timestamp
+	23, // 3: catalog.service.v1.Product.updated_at:type_name -> google.protobuf.Timestamp
+	23, // 4: catalog.service.v1.Product.deleted_at:type_name -> google.protobuf.Timestamp
+	23, // 5: catalog.service.v1.ProductTranslation.created_at:type_name -> google.protobuf.Timestamp
+	23, // 6: catalog.service.v1.ProductTranslation.updated_at:type_name -> google.protobuf.Timestamp
+	23, // 7: catalog.service.v1.ProductTranslation.deleted_at:type_name -> google.protobuf.Timestamp
 	1,  // 8: catalog.service.v1.ListProductResponse.items:type_name -> catalog.service.v1.Product
-	21, // 9: catalog.service.v1.GetProductRequest.view_mask:type_name -> google.protobuf.FieldMask
+	24, // 9: catalog.service.v1.GetProductRequest.view_mask:type_name -> google.protobuf.FieldMask
 	1,  // 10: catalog.service.v1.CreateProductRequest.data:type_name -> catalog.service.v1.Product
 	1,  // 11: catalog.service.v1.UpdateProductRequest.data:type_name -> catalog.service.v1.Product
-	21, // 12: catalog.service.v1.UpdateProductRequest.update_mask:type_name -> google.protobuf.FieldMask
+	24, // 12: catalog.service.v1.UpdateProductRequest.update_mask:type_name -> google.protobuf.FieldMask
 	1,  // 13: catalog.service.v1.BatchCreateProductsRequest.items:type_name -> catalog.service.v1.Product
 	2,  // 14: catalog.service.v1.CreateProductTranslationRequest.data:type_name -> catalog.service.v1.ProductTranslation
 	2,  // 15: catalog.service.v1.UpdateProductTranslationRequest.data:type_name -> catalog.service.v1.ProductTranslation
-	21, // 16: catalog.service.v1.UpdateProductTranslationRequest.update_mask:type_name -> google.protobuf.FieldMask
+	24, // 16: catalog.service.v1.UpdateProductTranslationRequest.update_mask:type_name -> google.protobuf.FieldMask
 	16, // 17: catalog.service.v1.DeleteProductTranslationRequest.identifier:type_name -> catalog.service.v1.ProductTranslationIdentifier
-	19, // 18: catalog.service.v1.SearchProductsResponse.items:type_name -> catalog.service.v1.SearchProductHit
-	22, // 19: catalog.service.v1.ProductService.List:input_type -> pagination.PagingRequest
-	22, // 20: catalog.service.v1.ProductService.Count:input_type -> pagination.PagingRequest
-	4,  // 21: catalog.service.v1.ProductService.Get:input_type -> catalog.service.v1.GetProductRequest
-	5,  // 22: catalog.service.v1.ProductService.Create:input_type -> catalog.service.v1.CreateProductRequest
-	8,  // 23: catalog.service.v1.ProductService.BatchCreate:input_type -> catalog.service.v1.BatchCreateProductsRequest
-	6,  // 24: catalog.service.v1.ProductService.Update:input_type -> catalog.service.v1.UpdateProductRequest
-	7,  // 25: catalog.service.v1.ProductService.Delete:input_type -> catalog.service.v1.DeleteProductRequest
-	11, // 26: catalog.service.v1.ProductService.TranslationExists:input_type -> catalog.service.v1.ProductTranslationExistsRequest
-	4,  // 27: catalog.service.v1.ProductService.GetTranslation:input_type -> catalog.service.v1.GetProductRequest
-	13, // 28: catalog.service.v1.ProductService.CreateTranslation:input_type -> catalog.service.v1.CreateProductTranslationRequest
-	14, // 29: catalog.service.v1.ProductService.UpdateTranslation:input_type -> catalog.service.v1.UpdateProductTranslationRequest
-	15, // 30: catalog.service.v1.ProductService.DeleteTranslation:input_type -> catalog.service.v1.DeleteProductTranslationRequest
-	17, // 31: catalog.service.v1.ProductService.SearchProducts:input_type -> catalog.service.v1.SearchProductsRequest
-	3,  // 32: catalog.service.v1.ProductService.List:output_type -> catalog.service.v1.ListProductResponse
-	10, // 33: catalog.service.v1.ProductService.Count:output_type -> catalog.service.v1.CountProductResponse
-	1,  // 34: catalog.service.v1.ProductService.Get:output_type -> catalog.service.v1.Product
-	23, // 35: catalog.service.v1.ProductService.Create:output_type -> google.protobuf.Empty
-	23, // 36: catalog.service.v1.ProductService.BatchCreate:output_type -> google.protobuf.Empty
-	23, // 37: catalog.service.v1.ProductService.Update:output_type -> google.protobuf.Empty
-	23, // 38: catalog.service.v1.ProductService.Delete:output_type -> google.protobuf.Empty
-	12, // 39: catalog.service.v1.ProductService.TranslationExists:output_type -> catalog.service.v1.ProductTranslationExistsResponse
-	2,  // 40: catalog.service.v1.ProductService.GetTranslation:output_type -> catalog.service.v1.ProductTranslation
-	2,  // 41: catalog.service.v1.ProductService.CreateTranslation:output_type -> catalog.service.v1.ProductTranslation
-	2,  // 42: catalog.service.v1.ProductService.UpdateTranslation:output_type -> catalog.service.v1.ProductTranslation
-	23, // 43: catalog.service.v1.ProductService.DeleteTranslation:output_type -> google.protobuf.Empty
-	18, // 44: catalog.service.v1.ProductService.SearchProducts:output_type -> catalog.service.v1.SearchProductsResponse
-	32, // [32:45] is the sub-list for method output_type
-	19, // [19:32] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	21, // 18: catalog.service.v1.SearchProductsResponse.items:type_name -> catalog.service.v1.SearchProductHit
+	22, // 19: catalog.service.v1.SearchProductSuggestionsResponse.items:type_name -> catalog.service.v1.SearchProductSuggestionsResponse.Suggestion
+	25, // 20: catalog.service.v1.ProductService.List:input_type -> pagination.PagingRequest
+	25, // 21: catalog.service.v1.ProductService.Count:input_type -> pagination.PagingRequest
+	4,  // 22: catalog.service.v1.ProductService.Get:input_type -> catalog.service.v1.GetProductRequest
+	5,  // 23: catalog.service.v1.ProductService.Create:input_type -> catalog.service.v1.CreateProductRequest
+	8,  // 24: catalog.service.v1.ProductService.BatchCreate:input_type -> catalog.service.v1.BatchCreateProductsRequest
+	6,  // 25: catalog.service.v1.ProductService.Update:input_type -> catalog.service.v1.UpdateProductRequest
+	7,  // 26: catalog.service.v1.ProductService.Delete:input_type -> catalog.service.v1.DeleteProductRequest
+	11, // 27: catalog.service.v1.ProductService.TranslationExists:input_type -> catalog.service.v1.ProductTranslationExistsRequest
+	4,  // 28: catalog.service.v1.ProductService.GetTranslation:input_type -> catalog.service.v1.GetProductRequest
+	13, // 29: catalog.service.v1.ProductService.CreateTranslation:input_type -> catalog.service.v1.CreateProductTranslationRequest
+	14, // 30: catalog.service.v1.ProductService.UpdateTranslation:input_type -> catalog.service.v1.UpdateProductTranslationRequest
+	15, // 31: catalog.service.v1.ProductService.DeleteTranslation:input_type -> catalog.service.v1.DeleteProductTranslationRequest
+	17, // 32: catalog.service.v1.ProductService.SearchProducts:input_type -> catalog.service.v1.SearchProductsRequest
+	19, // 33: catalog.service.v1.ProductService.SearchProductSuggestions:input_type -> catalog.service.v1.SearchProductSuggestionsRequest
+	3,  // 34: catalog.service.v1.ProductService.List:output_type -> catalog.service.v1.ListProductResponse
+	10, // 35: catalog.service.v1.ProductService.Count:output_type -> catalog.service.v1.CountProductResponse
+	1,  // 36: catalog.service.v1.ProductService.Get:output_type -> catalog.service.v1.Product
+	26, // 37: catalog.service.v1.ProductService.Create:output_type -> google.protobuf.Empty
+	26, // 38: catalog.service.v1.ProductService.BatchCreate:output_type -> google.protobuf.Empty
+	26, // 39: catalog.service.v1.ProductService.Update:output_type -> google.protobuf.Empty
+	26, // 40: catalog.service.v1.ProductService.Delete:output_type -> google.protobuf.Empty
+	12, // 41: catalog.service.v1.ProductService.TranslationExists:output_type -> catalog.service.v1.ProductTranslationExistsResponse
+	2,  // 42: catalog.service.v1.ProductService.GetTranslation:output_type -> catalog.service.v1.ProductTranslation
+	2,  // 43: catalog.service.v1.ProductService.CreateTranslation:output_type -> catalog.service.v1.ProductTranslation
+	2,  // 44: catalog.service.v1.ProductService.UpdateTranslation:output_type -> catalog.service.v1.ProductTranslation
+	26, // 45: catalog.service.v1.ProductService.DeleteTranslation:output_type -> google.protobuf.Empty
+	18, // 46: catalog.service.v1.ProductService.SearchProducts:output_type -> catalog.service.v1.SearchProductsResponse
+	20, // 47: catalog.service.v1.ProductService.SearchProductSuggestions:output_type -> catalog.service.v1.SearchProductSuggestionsResponse
+	34, // [34:48] is the sub-list for method output_type
+	20, // [20:34] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_catalog_service_v1_product_proto_init() }
@@ -1643,13 +1834,14 @@ func file_catalog_service_v1_product_proto_init() {
 		(*DeleteProductTranslationRequest_Id)(nil),
 		(*DeleteProductTranslationRequest_Identifier)(nil),
 	}
+	file_catalog_service_v1_product_proto_msgTypes[18].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_catalog_service_v1_product_proto_rawDesc), len(file_catalog_service_v1_product_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   19,
+			NumMessages:   22,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

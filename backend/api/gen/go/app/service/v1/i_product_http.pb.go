@@ -23,6 +23,7 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationProductServiceGet = "/app.service.v1.ProductService/Get"
 const OperationProductServiceList = "/app.service.v1.ProductService/List"
+const OperationProductServiceSearchProductSuggestions = "/app.service.v1.ProductService/SearchProductSuggestions"
 const OperationProductServiceSearchProducts = "/app.service.v1.ProductService/SearchProducts"
 
 type ProductServiceHTTPServer interface {
@@ -30,6 +31,8 @@ type ProductServiceHTTPServer interface {
 	Get(context.Context, *v11.GetProductRequest) (*v11.Product, error)
 	// List 分页查询商品列表
 	List(context.Context, *v1.PagingRequest) (*v11.ListProductResponse, error)
+	// SearchProductSuggestions 搜索建议（输入联想，免鉴权）
+	SearchProductSuggestions(context.Context, *v11.SearchProductSuggestionsRequest) (*v11.SearchProductSuggestionsResponse, error)
 	// SearchProducts 搜索商品（Elasticsearch 全文检索）
 	SearchProducts(context.Context, *v11.SearchProductsRequest) (*v11.SearchProductsResponse, error)
 }
@@ -39,6 +42,7 @@ func RegisterProductServiceHTTPServer(s *http.Server, srv ProductServiceHTTPServ
 	r.GET("/app/v1/mall/products", _ProductService_List11_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/products/{id}", _ProductService_Get10_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/products/search", _ProductService_SearchProducts0_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/products/suggest", _ProductService_SearchProductSuggestions0_HTTP_Handler(srv))
 }
 
 func _ProductService_List11_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
@@ -101,11 +105,32 @@ func _ProductService_SearchProducts0_HTTP_Handler(srv ProductServiceHTTPServer) 
 	}
 }
 
+func _ProductService_SearchProductSuggestions0_HTTP_Handler(srv ProductServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.SearchProductSuggestionsRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationProductServiceSearchProductSuggestions)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.SearchProductSuggestions(ctx, req.(*v11.SearchProductSuggestionsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.SearchProductSuggestionsResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type ProductServiceHTTPClient interface {
 	// Get 查询商品详情
 	Get(ctx context.Context, req *v11.GetProductRequest, opts ...http.CallOption) (rsp *v11.Product, err error)
 	// List 分页查询商品列表
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListProductResponse, err error)
+	// SearchProductSuggestions 搜索建议（输入联想，免鉴权）
+	SearchProductSuggestions(ctx context.Context, req *v11.SearchProductSuggestionsRequest, opts ...http.CallOption) (rsp *v11.SearchProductSuggestionsResponse, err error)
 	// SearchProducts 搜索商品（Elasticsearch 全文检索）
 	SearchProducts(ctx context.Context, req *v11.SearchProductsRequest, opts ...http.CallOption) (rsp *v11.SearchProductsResponse, err error)
 }
@@ -138,6 +163,20 @@ func (c *ProductServiceHTTPClientImpl) List(ctx context.Context, in *v1.PagingRe
 	pattern := "/app/v1/mall/products"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationProductServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// SearchProductSuggestions 搜索建议（输入联想，免鉴权）
+func (c *ProductServiceHTTPClientImpl) SearchProductSuggestions(ctx context.Context, in *v11.SearchProductSuggestionsRequest, opts ...http.CallOption) (*v11.SearchProductSuggestionsResponse, error) {
+	var out v11.SearchProductSuggestionsResponse
+	pattern := "/app/v1/mall/products/suggest"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationProductServiceSearchProductSuggestions))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

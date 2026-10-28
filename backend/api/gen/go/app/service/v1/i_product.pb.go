@@ -27,30 +27,35 @@ var File_app_service_v1_i_product_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_product_proto_rawDesc = "" +
 	"\n" +
-	"\x1eapp/service/v1/i_product.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a catalog/service/v1/product.proto2\xfa\x02\n" +
+	"\x1eapp/service/v1/i_product.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a catalog/service/v1/product.proto2\xa9\x04\n" +
 	"\x0eProductService\x12i\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a'.catalog.service.v1.ListProductResponse\"\x1d\x82\xd3\xe4\x93\x02\x17\x12\x15/app/v1/mall/products\x12m\n" +
 	"\x03Get\x12%.catalog.service.v1.GetProductRequest\x1a\x1b.catalog.service.v1.Product\"\"\x82\xd3\xe4\x93\x02\x1c\x12\x1a/app/v1/mall/products/{id}\x12\x8d\x01\n" +
-	"\x0eSearchProducts\x12).catalog.service.v1.SearchProductsRequest\x1a*.catalog.service.v1.SearchProductsResponse\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/app/v1/mall/products/searchB\xaf\x01\n" +
+	"\x0eSearchProducts\x12).catalog.service.v1.SearchProductsRequest\x1a*.catalog.service.v1.SearchProductsResponse\"$\x82\xd3\xe4\x93\x02\x1e\x12\x1c/app/v1/mall/products/search\x12\xac\x01\n" +
+	"\x18SearchProductSuggestions\x123.catalog.service.v1.SearchProductSuggestionsRequest\x1a4.catalog.service.v1.SearchProductSuggestionsResponse\"%\x82\xd3\xe4\x93\x02\x1f\x12\x1d/app/v1/mall/products/suggestB\xaf\x01\n" +
 	"\x12com.app.service.v1B\rIProductProtoP\x01Z0go-wind-shop/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_product_proto_goTypes = []any{
-	(*v1.PagingRequest)(nil),           // 0: pagination.PagingRequest
-	(*v11.GetProductRequest)(nil),      // 1: catalog.service.v1.GetProductRequest
-	(*v11.SearchProductsRequest)(nil),  // 2: catalog.service.v1.SearchProductsRequest
-	(*v11.ListProductResponse)(nil),    // 3: catalog.service.v1.ListProductResponse
-	(*v11.Product)(nil),                // 4: catalog.service.v1.Product
-	(*v11.SearchProductsResponse)(nil), // 5: catalog.service.v1.SearchProductsResponse
+	(*v1.PagingRequest)(nil),                     // 0: pagination.PagingRequest
+	(*v11.GetProductRequest)(nil),                // 1: catalog.service.v1.GetProductRequest
+	(*v11.SearchProductsRequest)(nil),            // 2: catalog.service.v1.SearchProductsRequest
+	(*v11.SearchProductSuggestionsRequest)(nil),  // 3: catalog.service.v1.SearchProductSuggestionsRequest
+	(*v11.ListProductResponse)(nil),              // 4: catalog.service.v1.ListProductResponse
+	(*v11.Product)(nil),                          // 5: catalog.service.v1.Product
+	(*v11.SearchProductsResponse)(nil),           // 6: catalog.service.v1.SearchProductsResponse
+	(*v11.SearchProductSuggestionsResponse)(nil), // 7: catalog.service.v1.SearchProductSuggestionsResponse
 }
 var file_app_service_v1_i_product_proto_depIdxs = []int32{
 	0, // 0: app.service.v1.ProductService.List:input_type -> pagination.PagingRequest
 	1, // 1: app.service.v1.ProductService.Get:input_type -> catalog.service.v1.GetProductRequest
 	2, // 2: app.service.v1.ProductService.SearchProducts:input_type -> catalog.service.v1.SearchProductsRequest
-	3, // 3: app.service.v1.ProductService.List:output_type -> catalog.service.v1.ListProductResponse
-	4, // 4: app.service.v1.ProductService.Get:output_type -> catalog.service.v1.Product
-	5, // 5: app.service.v1.ProductService.SearchProducts:output_type -> catalog.service.v1.SearchProductsResponse
-	3, // [3:6] is the sub-list for method output_type
-	0, // [0:3] is the sub-list for method input_type
+	3, // 3: app.service.v1.ProductService.SearchProductSuggestions:input_type -> catalog.service.v1.SearchProductSuggestionsRequest
+	4, // 4: app.service.v1.ProductService.List:output_type -> catalog.service.v1.ListProductResponse
+	5, // 5: app.service.v1.ProductService.Get:output_type -> catalog.service.v1.Product
+	6, // 6: app.service.v1.ProductService.SearchProducts:output_type -> catalog.service.v1.SearchProductsResponse
+	7, // 7: app.service.v1.ProductService.SearchProductSuggestions:output_type -> catalog.service.v1.SearchProductSuggestionsResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

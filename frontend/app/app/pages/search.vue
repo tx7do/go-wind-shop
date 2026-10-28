@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { useSearchProducts } from '@/api/composables';
+import { useSearchProducts, fetchSearchSuggestions } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { XIcon } from '@/plugins/xicon';
 
@@ -68,7 +68,54 @@ const results = computed<SearchResultItem[]>(() => {
 // 顶部搜索框提交：跳转到 /search?q=xxx（交由路由驱动结果）
 function submitSearch() {
   const q = searchInput.value.trim();
+  showSuggest.value = false;
   navigateTo(localePath('/search') + (q ? `?q=${encodeURIComponent(q)}` : ''));
+}
+
+// ---------- 搜索联想（输入联想） ----------
+// 输入 ≥ 2 字符时防抖 300ms 拉取建议；点击建议直达商品详情。
+type Suggestion = { productId?: number; name?: string; imageUrl?: string };
+
+const suggestions = ref<Suggestion[]>([]);
+const showSuggest = ref(false);
+const suggestLoading = ref(false);
+let suggestTimer: ReturnType<typeof setTimeout> | undefined;
+
+watch(searchInput, (v) => {
+  if (suggestTimer) clearTimeout(suggestTimer);
+  const q = v.trim();
+  if (q.length < 2) {
+    suggestions.value = [];
+    showSuggest.value = false;
+    return;
+  }
+  suggestTimer = setTimeout(async () => {
+    suggestLoading.value = true;
+    try {
+      const resp = await fetchSearchSuggestions(q);
+      suggestions.value = ((resp?.items ?? []) as Suggestion[]);
+      showSuggest.value = suggestions.value.length > 0;
+    } catch {
+      suggestions.value = [];
+      showSuggest.value = false;
+    } finally {
+      suggestLoading.value = false;
+    }
+  }, 300);
+});
+
+function pickSuggestion(s: Suggestion) {
+  showSuggest.value = false;
+  if (s.productId !== undefined) {
+    navigateTo(localePath('/product/' + s.productId));
+  }
+}
+
+function onSuggestInputBlur() {
+  // 延迟关闭以允许点击建议项（mousedown 先于 blur）
+  setTimeout(() => {
+    showSuggest.value = false;
+  }, 150);
 }
 </script>
 
@@ -81,18 +128,36 @@ function submitSearch() {
   />
 
   <LayoutSectionContainer>
-    <!-- 搜索框 -->
-    <div class="mx-auto mb-6 flex w-full max-w-xl items-center gap-2">
-      <UiInput
-        v-model="searchInput"
-        class="h-11"
-        :placeholder="t('search.placeholder')"
-        @keyup.enter="submitSearch"
-      />
-      <UiButton class="h-11 shrink-0" @click="submitSearch">
-        <XIcon icon="carbon:search" :size="16" />
-        {{ t('search.submitSearch') }}
-      </UiButton>
+    <!-- 搜索框（带输入联想下拉） -->
+    <div class="relative mx-auto mb-6 w-full max-w-xl">
+      <div class="flex items-center gap-2">
+        <UiInput
+          v-model="searchInput"
+          class="h-11"
+          :placeholder="t('search.placeholder')"
+          @keyup.enter="submitSearch"
+          @blur="onSuggestInputBlur"
+        />
+        <UiButton class="h-11 shrink-0" @click="submitSearch">
+          <XIcon icon="carbon:search" :size="16" />
+          {{ t('search.submitSearch') }}
+        </UiButton>
+      </div>
+      <div
+        v-if="showSuggest"
+        class="absolute left-0 right-14 top-12 z-20 overflow-hidden rounded-xl border border-border bg-card shadow-lg"
+      >
+        <button
+          v-for="s in suggestions"
+          :key="s.productId"
+          type="button"
+          class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-primary/5"
+          @mousedown.prevent="pickSuggestion(s)"
+        >
+          <UiImage v-if="s.imageUrl" :src="s.imageUrl" :alt="s.name" class="h-8 w-8 rounded object-cover" />
+          <span class="line-clamp-1">{{ s.name }}</span>
+        </button>
+      </div>
     </div>
 
     <!-- 加载中 -->

@@ -35,6 +35,15 @@ export async function fetchListProductsStore(params: any) {
 export async function fetchSearchProducts(params: any) {
   return await apiClient.productService.SearchProducts(params);
 }
+// 搜索联想（输入联想，免鉴权）：按商品名前缀短语匹配返回候选
+export async function fetchSearchSuggestions(query: string, language?: string, size?: number) {
+  return await apiClient.productService.SearchProductSuggestions({
+    query,
+    language: language || getCurrentLocale(),
+    size,
+  } as any);
+}
+
 export function useSearchProducts(
   params: any,
   options?: UseQueryOptions<Awaited<ReturnType<typeof fetchSearchProducts>>, Error>,

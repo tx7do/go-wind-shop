@@ -1,6 +1,8 @@
 package service
 
 import (
+	"strconv"
+	"strings"
 	"context"
 
 	"go-wind-shop/pkg/logx"
@@ -77,6 +79,68 @@ func (s *ProductService) Update(ctx context.Context, req *catalogV1.UpdateProduc
 	s.enqueueProductReindex(ctx, dto.GetId(), "index")
 
 	return &emptypb.Empty{}, nil
+}
+
+// SearchProducts 商品全文搜索（OpenSearch）。
+//
+// 此前本 RPC 未实现（嵌入 Unimplemented），C端搜索链路一直是断的——本次随
+// 搜索建议一并补上。安全口径与 ProductSearchService.Search 一致：status 硬编码
+// ACTIVE、language 强制 term 过滤（缺省 zh-CN）。
+func (s *ProductService) SearchProducts(ctx context.Context, req *catalogV1.SearchProductsRequest) (*catalogV1.SearchProductsResponse, error) {
+	query := strings.TrimSpace(req.GetQuery())
+	language := req.GetLanguage()
+	if language == "" {
+		language = "zh-CN"
+	}
+
+	result, err := s.productSearchService.Search(ctx, query, language, int(req.GetPage()), int(req.GetPageSize()))
+	if err != nil {
+		return nil, catalogV1.ErrorInternalServerError("search products failed")
+	}
+
+	items := make([]*catalogV1.SearchProductHit, 0, len(result.Hits))
+	for _, h := range result.Hits {
+		pid, pErr := strconv.ParseUint(h.ProductID, 10, 32)
+		if pErr != nil {
+			continue
+		}
+		items = append(items, &catalogV1.SearchProductHit{
+			ProductId: uint32(pid),
+			Language:  h.Language,
+			Name:      h.Name,
+			ImageUrl:  h.ImageURL,
+		})
+	}
+
+	return &catalogV1.SearchProductsResponse{
+		Items: items,
+		Total: int32(result.Total),
+	}, nil
+}
+
+// SearchProductSuggestions 搜索建议（输入联想，前台免鉴权）。
+func (s *ProductService) SearchProductSuggestions(ctx context.Context, req *catalogV1.SearchProductSuggestionsRequest) (*catalogV1.SearchProductSuggestionsResponse, error) {
+	query := strings.TrimSpace(req.GetQuery())
+	language := req.GetLanguage()
+	if language == "" {
+		language = "zh-CN"
+	}
+
+	suggestions, err := s.productSearchService.SearchSuggestions(ctx, query, language, int(req.GetSize()))
+	if err != nil {
+		return nil, catalogV1.ErrorInternalServerError("search suggestions failed")
+	}
+
+	items := make([]*catalogV1.SearchProductSuggestionsResponse_Suggestion, 0, len(suggestions))
+	for _, sug := range suggestions {
+		items = append(items, &catalogV1.SearchProductSuggestionsResponse_Suggestion{
+			ProductId: sug.ProductId,
+			Name:      sug.Name,
+			ImageUrl:  sug.ImageUrl,
+		})
+	}
+
+	return &catalogV1.SearchProductSuggestionsResponse{Items: items}, nil
 }
 
 func (s *ProductService) Delete(ctx context.Context, req *catalogV1.DeleteProductRequest) (*emptypb.Empty, error) {

@@ -2780,6 +2780,36 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/catalog.service.v1.SearchProductsResponse'
+    /app/v1/mall/products/suggest:
+        get:
+            tags:
+                - ProductService
+            description: 搜索建议（输入联想，免鉴权）
+            operationId: ProductService_SearchProductSuggestions
+            parameters:
+                - name: query
+                  in: query
+                  description: 搜索关键词（前缀短语匹配）
+                  schema:
+                    type: string
+                - name: language
+                  in: query
+                  description: 语言代码（缺省 zh-CN）
+                  schema:
+                    type: string
+                - name: size
+                  in: query
+                  description: 返回条数（缺省 8，最大 20）
+                  schema:
+                    type: integer
+                    format: int32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.SearchProductSuggestionsResponse'
     /app/v1/mall/products/{id}:
         get:
             tags:
@@ -5057,6 +5087,24 @@ components:
                 imageUrl:
                     type: string
                     description: 商品主图URL（locale无关，用于搜索结果展示）
+        catalog.service.v1.SearchProductSuggestionsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.SearchProductSuggestionsResponse_Suggestion'
+            description: 搜索建议 - 回应
+        catalog.service.v1.SearchProductSuggestionsResponse_Suggestion:
+            type: object
+            properties:
+                productId:
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                imageUrl:
+                    type: string
         catalog.service.v1.SearchProductsResponse:
             type: object
             properties:

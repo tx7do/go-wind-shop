@@ -47,6 +47,9 @@ service ProductService {
 
   // 搜索商品（Elasticsearch 全文检索）
   rpc SearchProducts (SearchProductsRequest) returns (SearchProductsResponse) {}
+
+  // 搜索建议（输入联想）：按商品名前缀短语匹配返回候选，免鉴权、只读
+  rpc SearchProductSuggestions (SearchProductSuggestionsRequest) returns (SearchProductSuggestionsResponse) {}
 }
 
 // 商品
@@ -313,6 +316,26 @@ message SearchProductsRequest {
 message SearchProductsResponse {
   repeated SearchProductHit items = 1 [json_name = "items"];
   int32 total = 2 [json_name = "total"];
+}
+
+// 搜索建议 - 请求
+message SearchProductSuggestionsRequest {
+  // 搜索关键词（前缀短语匹配）
+  string query = 1 [(gnostic.openapi.v3.property) = {description: "搜索关键词"}];
+  // 语言代码（缺省 zh-CN）
+  optional string language = 2 [json_name = "language"];
+  // 返回条数（缺省 8，最大 20）
+  optional int32 size = 3;
+}
+
+// 搜索建议 - 回应
+message SearchProductSuggestionsResponse {
+  message Suggestion {
+    uint32 product_id = 1 [json_name = "productId"];
+    string name = 2;
+    string image_url = 3 [json_name = "imageUrl"];
+  }
+  repeated Suggestion items = 1;
 }
 
 message SearchProductHit {

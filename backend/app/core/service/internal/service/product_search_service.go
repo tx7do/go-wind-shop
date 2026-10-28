@@ -170,3 +170,22 @@ func (s *ProductSearchService) ReindexProduct(taskType string, payload *task.Sea
 		return nil
 	}
 }
+
+// SearchSuggestions 搜索联想（输入联想，前台免鉴权）。
+//
+// 安全：status 硬编码 PRODUCT_STATUS_ACTIVE；language 缺省 zh-CN；size 缺省 8、上限 20。
+func (s *ProductSearchService) SearchSuggestions(
+	ctx context.Context,
+	query string,
+	language string,
+	size int,
+) ([]data.ProductSuggestion, error) {
+	const status = "PRODUCT_STATUS_ACTIVE"
+	if language == "" {
+		language = "zh-CN"
+	}
+	if size <= 0 {
+		size = 8
+	}
+	return s.productSearchRepo.SuggestProductNames(ctx, query, language, status, size)
+}

@@ -21,19 +21,20 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ProductService_List_FullMethodName              = "/catalog.service.v1.ProductService/List"
-	ProductService_Count_FullMethodName             = "/catalog.service.v1.ProductService/Count"
-	ProductService_Get_FullMethodName               = "/catalog.service.v1.ProductService/Get"
-	ProductService_Create_FullMethodName            = "/catalog.service.v1.ProductService/Create"
-	ProductService_BatchCreate_FullMethodName       = "/catalog.service.v1.ProductService/BatchCreate"
-	ProductService_Update_FullMethodName            = "/catalog.service.v1.ProductService/Update"
-	ProductService_Delete_FullMethodName            = "/catalog.service.v1.ProductService/Delete"
-	ProductService_TranslationExists_FullMethodName = "/catalog.service.v1.ProductService/TranslationExists"
-	ProductService_GetTranslation_FullMethodName    = "/catalog.service.v1.ProductService/GetTranslation"
-	ProductService_CreateTranslation_FullMethodName = "/catalog.service.v1.ProductService/CreateTranslation"
-	ProductService_UpdateTranslation_FullMethodName = "/catalog.service.v1.ProductService/UpdateTranslation"
-	ProductService_DeleteTranslation_FullMethodName = "/catalog.service.v1.ProductService/DeleteTranslation"
-	ProductService_SearchProducts_FullMethodName    = "/catalog.service.v1.ProductService/SearchProducts"
+	ProductService_List_FullMethodName                     = "/catalog.service.v1.ProductService/List"
+	ProductService_Count_FullMethodName                    = "/catalog.service.v1.ProductService/Count"
+	ProductService_Get_FullMethodName                      = "/catalog.service.v1.ProductService/Get"
+	ProductService_Create_FullMethodName                   = "/catalog.service.v1.ProductService/Create"
+	ProductService_BatchCreate_FullMethodName              = "/catalog.service.v1.ProductService/BatchCreate"
+	ProductService_Update_FullMethodName                   = "/catalog.service.v1.ProductService/Update"
+	ProductService_Delete_FullMethodName                   = "/catalog.service.v1.ProductService/Delete"
+	ProductService_TranslationExists_FullMethodName        = "/catalog.service.v1.ProductService/TranslationExists"
+	ProductService_GetTranslation_FullMethodName           = "/catalog.service.v1.ProductService/GetTranslation"
+	ProductService_CreateTranslation_FullMethodName        = "/catalog.service.v1.ProductService/CreateTranslation"
+	ProductService_UpdateTranslation_FullMethodName        = "/catalog.service.v1.ProductService/UpdateTranslation"
+	ProductService_DeleteTranslation_FullMethodName        = "/catalog.service.v1.ProductService/DeleteTranslation"
+	ProductService_SearchProducts_FullMethodName           = "/catalog.service.v1.ProductService/SearchProducts"
+	ProductService_SearchProductSuggestions_FullMethodName = "/catalog.service.v1.ProductService/SearchProductSuggestions"
 )
 
 // ProductServiceClient is the client API for ProductService service.
@@ -68,6 +69,8 @@ type ProductServiceClient interface {
 	DeleteTranslation(ctx context.Context, in *DeleteProductTranslationRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 搜索商品（Elasticsearch 全文检索）
 	SearchProducts(ctx context.Context, in *SearchProductsRequest, opts ...grpc.CallOption) (*SearchProductsResponse, error)
+	// 搜索建议（输入联想）：按商品名前缀短语匹配返回候选，免鉴权、只读
+	SearchProductSuggestions(ctx context.Context, in *SearchProductSuggestionsRequest, opts ...grpc.CallOption) (*SearchProductSuggestionsResponse, error)
 }
 
 type productServiceClient struct {
@@ -208,6 +211,16 @@ func (c *productServiceClient) SearchProducts(ctx context.Context, in *SearchPro
 	return out, nil
 }
 
+func (c *productServiceClient) SearchProductSuggestions(ctx context.Context, in *SearchProductSuggestionsRequest, opts ...grpc.CallOption) (*SearchProductSuggestionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchProductSuggestionsResponse)
+	err := c.cc.Invoke(ctx, ProductService_SearchProductSuggestions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility.
@@ -240,6 +253,8 @@ type ProductServiceServer interface {
 	DeleteTranslation(context.Context, *DeleteProductTranslationRequest) (*emptypb.Empty, error)
 	// 搜索商品（Elasticsearch 全文检索）
 	SearchProducts(context.Context, *SearchProductsRequest) (*SearchProductsResponse, error)
+	// 搜索建议（输入联想）：按商品名前缀短语匹配返回候选，免鉴权、只读
+	SearchProductSuggestions(context.Context, *SearchProductSuggestionsRequest) (*SearchProductSuggestionsResponse, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -288,6 +303,9 @@ func (UnimplementedProductServiceServer) DeleteTranslation(context.Context, *Del
 }
 func (UnimplementedProductServiceServer) SearchProducts(context.Context, *SearchProductsRequest) (*SearchProductsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SearchProducts not implemented")
+}
+func (UnimplementedProductServiceServer) SearchProductSuggestions(context.Context, *SearchProductSuggestionsRequest) (*SearchProductSuggestionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SearchProductSuggestions not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 func (UnimplementedProductServiceServer) testEmbeddedByValue()                        {}
@@ -544,6 +562,24 @@ func _ProductService_SearchProducts_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ProductService_SearchProductSuggestions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchProductSuggestionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductServiceServer).SearchProductSuggestions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductService_SearchProductSuggestions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductServiceServer).SearchProductSuggestions(ctx, req.(*SearchProductSuggestionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -602,6 +638,10 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SearchProducts",
 			Handler:    _ProductService_SearchProducts_Handler,
+		},
+		{
+			MethodName: "SearchProductSuggestions",
+			Handler:    _ProductService_SearchProductSuggestions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
