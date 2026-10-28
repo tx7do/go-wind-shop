@@ -294,7 +294,15 @@
     "createdAt": "创建时间",
     "button": {
       "update": "编辑评论"
-    }
+    },
+    "replySection": "回复管理",
+    "noReplies": "暂无回复",
+    "replyContent": "回复内容",
+    "replyPlaceholder": "以商家身份回复该评论（发布后直接展示给买家）",
+    "replyTip": "回复将创建为该评论的子评论，状态直接为已批准",
+    "replySubmit": "发布回复",
+    "replySuccess": "回复已发布",
+    "replyFailed": "回复发布失败"
   },
   "invoice": {
     "moduleName": "发票",

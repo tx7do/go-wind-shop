@@ -294,7 +294,15 @@
     "createdAt": "Created At",
     "button": {
       "update": "Edit Comment"
-    }
+    },
+    "replySection": "Replies",
+    "noReplies": "No replies yet",
+    "replyContent": "Reply",
+    "replyPlaceholder": "Reply as the merchant (visible to buyers once posted)",
+    "replyTip": "The reply is created as a child comment and published as approved",
+    "replySubmit": "Post Reply",
+    "replySuccess": "Reply posted",
+    "replyFailed": "Failed to post reply"
   },
   "invoice": {
     "moduleName": "Invoice",
