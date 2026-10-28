@@ -229,10 +229,15 @@ func (s *NotificationChannelService) SendTestEmail(ctx context.Context, req *not
 	return &notifyV1.SendTestEmailResponse{Success: true}, nil
 }
 
-// ListChannelSchemas 扩展渠道 schema 清单（前端 settings 动态表单的数据源）。
-// SendTest 通用测试发送（短信/扩展渠道）。EMAIL 渠道请走 SendTestEmail。
-// 【缓行】SMS/EXT 渠道的实际出站实现待接入，先返回未支持错误。
+// SendTest 通用测试发送入口（短信/扩展渠道）。与 SendTestEmail 共用同一实现：
+// SendTestEmail 按渠道类型分派（EMAIL/SMS/EXT 皆支持，WEBHOOK 引导去路由规则页测全链）。
 func (s *NotificationChannelService) SendTest(ctx context.Context, req *notifyV1.SendTestRequest) (*emptypb.Empty, error) {
+	if _, err := s.SendTestEmail(ctx, &notifyV1.SendTestEmailRequest{
+		Id:        req.GetId(),
+		Recipient: req.GetRecipient(),
+	}); err != nil {
+		return nil, err
+	}
 	return &emptypb.Empty{}, nil
 }
 

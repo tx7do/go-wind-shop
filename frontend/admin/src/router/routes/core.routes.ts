@@ -60,17 +60,8 @@ const coreRoutes: RouteRecordRaw[] = [
           title: "pages.auth.login",
         },
       },
-      {
-        name: "SsoCallback",
-        path: "sso/callback",
-        component: () => import("@/pages/core/login/sso-callback.vue"),
-        meta: {
-          title: "core.sso.title",
-          hideInBreadcrumb: true,
-          hideInMenu: true,
-          hideInTab: true,
-        },
-      },
+      // SsoCallback 路由随 SSO 后端一并缓行：后端无 SsoLogin RPC（proto/生成代码皆无），
+      // 保留断链路由会让 vite 全局解析失败白屏，接入 SSO 时一并恢复。
       {
         name: "MfaChallenge",
         path: "mfa-challenge",

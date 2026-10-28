@@ -18,13 +18,22 @@ type CommentService struct {
 
 	log *logx.Helper
 
-	repo *data.CommentRepo
+	repo       *data.CommentRepo
+	configRepo *data.ConfigRepo
+	aiDeps     *CommentAIModerationDeps
 }
 
-func NewCommentService(ctx *bootstrap.Context, repo *data.CommentRepo) *CommentService {
+func NewCommentService(
+	ctx *bootstrap.Context,
+	repo *data.CommentRepo,
+	configRepo *data.ConfigRepo,
+	aiDeps *CommentAIModerationDeps,
+) *CommentService {
 	return &CommentService{
-		log:  logx.New(ctx.NewLoggerHelper("comment/service/core-service")),
-		repo: repo,
+		log:        logx.New(ctx.NewLoggerHelper("comment/service/core-service")),
+		repo:       repo,
+		configRepo: configRepo,
+		aiDeps:     aiDeps,
 	}
 }
 
@@ -50,6 +59,12 @@ func (s *CommentService) Get(ctx context.Context, req *commentV1.GetCommentReque
 func (s *CommentService) Create(ctx context.Context, req *commentV1.CreateCommentRequest) (*emptypb.Empty, error) {
 	if req.Data == nil {
 		return nil, commentV1.ErrorBadRequest("invalid parameter")
+	}
+
+	// AI 反垃圾闸门（系统参数开关，默认关）：判为垃圾即拒绝创建。
+	// AI 链路任何错误都 fail-open（放行）——可用性优先，垃圾漏网可由人工审核兜底。
+	if err := s.moderateCommentAI(ctx, req.GetData().GetContent()); err != nil {
+		return nil, err
 	}
 
 	if err := s.repo.Create(ctx, req); err != nil {

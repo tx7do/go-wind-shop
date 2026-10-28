@@ -95,12 +95,12 @@ var DefaultPermissions = []*permissionV1.Permission{
 		Status:      trans.Ptr(permissionV1.Permission_ON),
 		MenuIds: []uint32{
 			1, 2, 3, 4, 5, 6,
-			10, 11,
+			10, 11, 12,
 			20, 21, 22, 23, 24,
 			30, 31, 32,
 			40, 41, 42,
 			50, 51, 52, 53, 54, 55,
-			60, 61, 62, 64, 65, 66, 67, // 63 dict 页面未移植，暂不下发
+			60, 61, 62, 63, 64, 65, 66, 67,
 		},
 		ApiIds: []uint32{
 			1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -109,7 +109,7 @@ var DefaultPermissions = []*permissionV1.Permission{
 			30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
 			40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
 			50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-			60, 61, 62, 64, 65, 66, 67, 68, 69, // 63 dict 页面未移植，暂不下发
+			60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
 			70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
 			80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
 			90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
@@ -132,7 +132,7 @@ var DefaultPermissions = []*permissionV1.Permission{
 			30, 32,
 			40, 41,
 			50, 51,
-			60, 61, 62, 64, // 63 dict 页面未移植，暂不下发
+			60, 61, 62, 64,
 		},
 		ApiIds: []uint32{
 			1, 2, 3, 4, 5, 6, 7, 8, 9,
@@ -141,7 +141,7 @@ var DefaultPermissions = []*permissionV1.Permission{
 			30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
 			40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
 			50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-			60, 61, 62, 64, 65, 66, 67, 68, 69, // 63 dict 页面未移植，暂不下发
+			60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
 			70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
 			80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
 			90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
@@ -397,6 +397,22 @@ var DefaultMenus = []*permissionV1.Menu{
 			Icon:      trans.Ptr("lucide:users"),
 			Authority: []string{"sys:platform_admin"},
 			AffixTab:  trans.Ptr(true),
+		},
+	},
+	{
+		// 租户套餐管理（上游 go-wind-admin 同款种子，id=12 挂 /tenant 下）
+		Id:        trans.Ptr(uint32(12)),
+		ParentId:  trans.Ptr(uint32(10)),
+		Type:      permissionV1.Menu_MENU.Enum(),
+		Name:      trans.Ptr("PlanManagement"),
+		Path:      trans.Ptr("plans"),
+		Component: trans.Ptr("app/tenant/plan/index.vue"),
+		CreatedAt: timeutil.TimeToTimestamppb(trans.Ptr(time.Now())),
+		Meta: &permissionV1.MenuMeta{
+			Order:     trans.Ptr(int32(2)),
+			Title:     trans.Ptr("menu.tenant.plan"),
+			Icon:      trans.Ptr("lucide:package"),
+			Authority: []string{"sys:platform_admin"},
 		},
 	},
 
@@ -703,7 +719,7 @@ var DefaultMenus = []*permissionV1.Menu{
 		Type:      permissionV1.Menu_CATALOG.Enum(),
 		Name:      trans.Ptr("System"),
 		Path:      trans.Ptr("/system"),
-		Redirect:  trans.Ptr("/system/files"),
+		Redirect:  trans.Ptr("/system/dict"),
 		Component: trans.Ptr("BasicLayout"),
 		CreatedAt: timeutil.TimeToTimestamppb(trans.Ptr(time.Now())),
 		Meta: &permissionV1.MenuMeta{
@@ -714,23 +730,22 @@ var DefaultMenus = []*permissionV1.Menu{
 			Authority: []string{"sys:platform_admin", "sys:tenant_manager"},
 		},
 	},
-	// 字典管理（菜单 63）：前端 dict 页面尚未移植（上游 app/system/dict/index.vue 无下游对应页），
-	// 页面落地前先不下发该菜单，避免点击进入空白路由。
-	//{
-	//	Id:        trans.Ptr(uint32(63)),
-	//	ParentId:  trans.Ptr(uint32(60)),
-	//	Type:      permissionV1.Menu_MENU.Enum(),
-	//	Name:      trans.Ptr("DictManagement"),
-	//	Path:      trans.Ptr("dict"),
-	//	Component: trans.Ptr("app/system/dict/index.vue"),
-	//	CreatedAt: timeutil.TimeToTimestamppb(trans.Ptr(time.Now())),
-	//	Meta: &permissionV1.MenuMeta{
-	//		Title:     trans.Ptr("menu.system.dict"),
-	//		Icon:      trans.Ptr("lucide:library-big"),
-	//		Order:     trans.Ptr(int32(3)),
-	//		Authority: []string{"sys:platform_admin"},
-	//	},
-	//},
+	{
+		// 字典管理：前端页面与后端 dict 域均已就位（app/system/dict/index.vue）
+		Id:        trans.Ptr(uint32(63)),
+		ParentId:  trans.Ptr(uint32(60)),
+		Type:      permissionV1.Menu_MENU.Enum(),
+		Name:      trans.Ptr("DictManagement"),
+		Path:      trans.Ptr("dict"),
+		Component: trans.Ptr("app/system/dict/index.vue"),
+		CreatedAt: timeutil.TimeToTimestamppb(trans.Ptr(time.Now())),
+		Meta: &permissionV1.MenuMeta{
+			Title:     trans.Ptr("menu.system.dict"),
+			Icon:      trans.Ptr("lucide:library-big"),
+			Order:     trans.Ptr(int32(1)),
+			Authority: []string{"sys:platform_admin"},
+		},
+	},
 	{
 		Id:        trans.Ptr(uint32(64)),
 		ParentId:  trans.Ptr(uint32(60)),
@@ -742,7 +757,7 @@ var DefaultMenus = []*permissionV1.Menu{
 		Meta: &permissionV1.MenuMeta{
 			Title:     trans.Ptr("menu.system.file"),
 			Icon:      trans.Ptr("lucide:file-search"),
-			Order:     trans.Ptr(int32(1)),
+			Order:     trans.Ptr(int32(2)),
 			Authority: []string{"sys:platform_admin", "sys:tenant_manager"},
 		},
 	},
@@ -757,7 +772,7 @@ var DefaultMenus = []*permissionV1.Menu{
 		Meta: &permissionV1.MenuMeta{
 			Title:     trans.Ptr("menu.system.task"),
 			Icon:      trans.Ptr("lucide:list-todo"),
-			Order:     trans.Ptr(int32(2)),
+			Order:     trans.Ptr(int32(3)),
 			Authority: []string{"sys:platform_admin", "sys:tenant_manager"},
 		},
 	},
@@ -772,7 +787,7 @@ var DefaultMenus = []*permissionV1.Menu{
 		Meta: &permissionV1.MenuMeta{
 			Title:     trans.Ptr("menu.system.loginPolicy"),
 			Icon:      trans.Ptr("lucide:shield-x"),
-			Order:     trans.Ptr(int32(3)),
+			Order:     trans.Ptr(int32(4)),
 			Authority: []string{"sys:platform_admin"},
 		},
 	},
@@ -787,7 +802,7 @@ var DefaultMenus = []*permissionV1.Menu{
 		Meta: &permissionV1.MenuMeta{
 			Title:     trans.Ptr("menu.system.language"),
 			Icon:      trans.Ptr("lucide:globe"),
-			Order:     trans.Ptr(int32(4)),
+			Order:     trans.Ptr(int32(5)),
 			Authority: []string{"sys:platform_admin"},
 		},
 	},
@@ -854,15 +869,13 @@ var DefaultConfigs = []*configV1.Config{
 		ValueType: configV1.Config_INT.Enum(),
 		IsBuiltIn: trans.Ptr(true),
 	},
-	// 【缓行】评论 AI 反垃圾开关依赖 AI 域接入后启用：
-	//
-	//	{
-	//		// 评论 AI 反垃圾开关（消费方 core CommentService.Create；默认关，
-	//		// AI 不可用 fail-open）。
-	//		Key:       trans.Ptr(ConfigKeyCommentAIModeration),
-	//		Name:      trans.Ptr("Comment AI anti-spam moderation enabled"),
-	//		Value:     trans.Ptr("false"),
-	//		ValueType: configV1.Config_BOOL.Enum(),
-	//		IsBuiltIn: trans.Ptr(true),
-	//	},
+	{
+		// 评论 AI 反垃圾开关（消费方 core CommentService.Create；默认关，
+		// AI 不可用 fail-open）。
+		Key:       trans.Ptr(ConfigKeyCommentAIModeration),
+		Name:      trans.Ptr("Comment AI anti-spam moderation enabled"),
+		Value:     trans.Ptr("false"),
+		ValueType: configV1.Config_BOOL.Enum(),
+		IsBuiltIn: trans.Ptr(true),
+	},
 }

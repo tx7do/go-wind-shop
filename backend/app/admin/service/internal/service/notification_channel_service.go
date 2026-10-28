@@ -51,6 +51,11 @@ func (s *NotificationChannelService) SendTestEmail(ctx context.Context, req *not
 	return s.channelCli.SendTestEmail(ctx, req)
 }
 
+// SendTest 通用测试发送入口（短信/扩展渠道），透传 core——分派逻辑与 SendTestEmail 同源。
+func (s *NotificationChannelService) SendTest(ctx context.Context, req *notifyV1.SendTestRequest) (*emptypb.Empty, error) {
+	return s.channelCli.SendTest(ctx, req)
+}
+
 // ListChannelSchemas 扩展渠道 schema 清单（透传 core：schema 声明与 settings 构造都在 core 侧）。
 func (s *NotificationChannelService) ListChannelSchemas(ctx context.Context, req *emptypb.Empty) (*notifyV1.ListChannelSchemasResponse, error) {
 	return s.channelCli.ListChannelSchemas(ctx, req)

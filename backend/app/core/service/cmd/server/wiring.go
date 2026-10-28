@@ -197,7 +197,6 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	userCouponService := service.NewUserCouponService(ctx, userCouponRepo, couponTemplateRepo, entClient)
 	shippingRateService := service.NewShippingRateService(ctx, shippingRateRepo)
 	taxRateService := service.NewTaxRateService(ctx, taxRateRepo)
-	commentService := service.NewCommentService(ctx, commentRepo)
 	interactionService := service.NewInteractionService(ctx, interactionRepo)
 	interactionAdminService := service.NewInteractionAdminService(ctx, interactionRepo, operationAuditLogRepo)
 	invoiceService := service.NewInvoiceService(ctx, invoiceRepo)
@@ -224,6 +223,12 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiKnowledgeRepo := data.NewAiKnowledgeRepo(ctx, entClient)
 	aiAgentAppRepo := data.NewAiAgentAppRepo(ctx, entClient)
 	aiAgentRunRepo := data.NewAiAgentRunRepo(ctx, entClient)
+
+	// 评论服务依赖 configRepo（AI 反垃圾开关）与 AI 域 repos（审核外呼），故置于其后构造
+	commentService := service.NewCommentService(ctx, commentRepo, configRepo, &service.CommentAIModerationDeps{
+		ProviderRepo: aiProviderRepo,
+		UsageLogRepo: aiUsageLogRepo,
+	})
 
 	// ── Notification 通知域（移植自 go-wind-cms）──
 	notificationChannelRepo := data.NewNotificationChannelRepo(ctx, entClient)

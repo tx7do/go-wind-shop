@@ -92,8 +92,7 @@ import {
 } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
 import { $t } from "@/core/i18n";
-// 【缓行】字段权限未启用：import { parseResourceHiddenFields } from "@/core/access";
-const parseResourceHiddenFields = (_fields: unknown, _resource: string) => new Set<string>();
+import { parseResourceHiddenFields } from "@/core/access";
 import { router } from "@/router";
 import { getRandomColor } from "@/utils/color";
 import { useUserViewStore } from "./user-view.state";
@@ -334,8 +333,8 @@ async function handleResetMfa(row: any) {
     return;
   }
   try {
-    // 【缓行】MFA 未接入：await disableMfa({ userId: row.id, method: "TOTP" } as any);
-    ElMessage.warning("MFA 管理待接入");
+    await disableMfa({ userId: row.id, method: "TOTP" } as any);
+    ElNotification.success($t("pages.user.resetMfaSuccess"));
   } catch (err: any) {
     ElNotification.error(err?.message || $t("pages.user.resetMfaFailed"));
   }

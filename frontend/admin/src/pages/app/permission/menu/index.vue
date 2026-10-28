@@ -73,7 +73,7 @@ import MenuDrawer from "./menu-drawer.vue";
 
 import {
   buildMenuTree,
-  // 【缓行】后端菜单同步接口无下游实现：buildSyncMenusRequest,
+  buildSyncMenusRequest,
   menuTypeToType,
   menuTypeToName,
   statusList,
@@ -81,17 +81,15 @@ import {
   statusToName,
   fetchListMenus,
   useDeleteMenu,
-  // 【缓行】useSyncMenus,
+  useSyncMenus,
 } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
 import { getRandomColor } from "@/utils/color";
 import { $t } from "@/core/i18n";
-// 【缓行】import { accessRoutes } from "@/router/routes";
+import { accessRoutes } from "@/router/routes";
 
 const { mutateAsync: deleteMenu } = useDeleteMenu();
-// 【缓行】后端菜单同步接口无下游实现，接入后恢复：
-// const { mutateAsync: syncMenus, isPending: isSyncing } = useSyncMenus();
-const isSyncing = ref(false);
+const { mutateAsync: syncMenus, isPending: isSyncing } = useSyncMenus();
 
 /**
  * 菜单标题关键词的前端过滤。
@@ -273,10 +271,26 @@ function handleToolbar(name: string) {
   }
 }
 
-/* 同步菜单：将本地静态路由全量推送到后端（后端会清空重建，角色授权需重做）
- * 【缓行】后端菜单同步接口无下游实现，接入后恢复原实现（确认框 + buildSyncMenusRequest + syncMenus）。 */
+/* 同步菜单：将本地静态路由推送到后端（MERGE 保 ID、不废角色授权） */
 async function handleSyncMenus() {
-  ElMessage.warning($t("pages.menu.sync") + "：接口待接入");
+  try {
+    await ElMessageBox.confirm($t("pages.menu.syncConfirm"), $t("pages.menu.sync"), {
+      type: "warning",
+      confirmButtonText: $t("common.button.confirm"),
+      cancelButtonText: $t("common.button.cancel"),
+    });
+  } catch {
+    return; // 用户取消确认框，非错误
+  }
+
+  try {
+    await syncMenus(buildSyncMenusRequest(accessRoutes));
+    ElMessage.success($t("common.notification.syncSuccess"));
+    pageRef.value?.refresh();
+  } catch (error) {
+    console.error("sync menus failed:", error);
+    ElMessage.error($t("common.notification.syncFailed"));
+  }
 }
 
 function normalizeAuthority(authority: unknown): string[] {

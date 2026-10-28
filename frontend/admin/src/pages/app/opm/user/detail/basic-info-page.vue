@@ -126,9 +126,8 @@ const pageLoading = ref(true);
 
 // 字段权限：User 资源上被隐藏的字段整项不渲染
 const accessStore = useAccessStore();
-function isFieldHidden(_field: string): boolean {
-  // 【缓行】字段权限未启用，恒可见；接入后恢复 isFieldHiddenBase(accessStore.hiddenFields, "User", field)
-  return false;
+function isFieldHidden(field: string): boolean {
+  return isFieldHiddenBase(accessStore.hiddenFields, "User", field);
 }
 
 // 获取首字母（默认用'?'）
