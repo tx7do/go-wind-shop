@@ -2,7 +2,8 @@
   <ProModal
     v-model:visible="visible"
     :title="title"
-    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH, closeOnClickModal: false } }"
+    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH } }"
+    :close-guard="guard.allowClose"
   >
     <ElForm
       ref="formRef"
@@ -14,7 +15,7 @@
       <ElDivider content-position="left">{{ $t("common.section.basic") }}</ElDivider>
 
       <ElFormItem :label="$t('pages.mall.comment.content')">
-        <div class="readonly-content">{{ formData.content || '—' }}</div>
+        <div class="readonly-content">{{ formData.content || "—" }}</div>
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.mall.comment.status')" prop="status">
@@ -33,8 +34,10 @@
         <div v-for="r in replies" :key="r.id" class="reply-item">
           <div class="reply-item__meta">
             <span>#{{ r.id }}</span>
-            <span class="reply-item__author">{{ r.createdBy ? `用户 ${r.createdBy}` : '—' }}</span>
-            <span v-if="r.createdAt" class="reply-item__time">{{ String(r.createdAt).slice(0, 16).replace('T', ' ') }}</span>
+            <span class="reply-item__author">{{ r.createdBy ? `用户 ${r.createdBy}` : "—" }}</span>
+            <span v-if="r.createdAt" class="reply-item__time">
+              {{ String(r.createdAt).slice(0, 16).replace("T", " ") }}
+            </span>
           </div>
           <div class="reply-item__content">{{ r.content }}</div>
         </div>
@@ -69,7 +72,9 @@
 
     <template #footer>
       <div class="drawer-footer">
-        <ElButton @click="handleClose">{{ $t("common.button.cancel") }}</ElButton>
+        <ElButton @click="guard.requestClose(handleClose)">
+          {{ $t("common.button.cancel") }}
+        </ElButton>
         <ElButton type="primary" :loading="submitLoading" @click="handleSubmit">
           {{ $t("common.button.confirm") }}
         </ElButton>
@@ -82,11 +87,17 @@
 import { computed, reactive, ref, watch } from "vue";
 import { ElMessage, type FormInstance, type FormRules } from "element-plus";
 
-import { useUpdateComment, useCreateComment, fetchGetComment, fetchListComments } from "@/api/composables";
+import {
+  useUpdateComment,
+  useCreateComment,
+  fetchGetComment,
+  fetchListComments,
+} from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
 import { $t } from "@/core/i18n";
 import { DRAWER_WIDTH } from "@/constants";
 import ProModal from "@/components/Pro/ProModal/index.vue";
+import { useDrawerCloseGuard } from "@/components/Pro/composables/use-drawer-close-guard";
 
 const emit = defineEmits<{
   success: [];
@@ -110,7 +121,9 @@ const parentContext = reactive<{
   contentType: "CONTENT_TYPE_PRODUCT",
 });
 
-const replies = ref<Array<{ id?: number; content?: string; createdBy?: number; createdAt?: string }>>([]);
+const replies = ref<
+  Array<{ id?: number; content?: string; createdBy?: number; createdAt?: string }>
+>([]);
 
 const formData = reactive<{
   content: string;
@@ -136,12 +149,21 @@ function loadReplies(commentId: number) {
     })
   )
     .then((resp: any) => {
-      replies.value = (resp.items ?? []) as Array<{ id?: number; content?: string; createdBy?: number; createdAt?: string }>;
+      replies.value = (resp.items ?? []) as Array<{
+        id?: number;
+        content?: string;
+        createdBy?: number;
+        createdAt?: string;
+      }>;
     })
     .catch(() => {
       replies.value = [];
     });
 }
+
+// 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+// replyContent 一并在 getModel 内——回复框打了字未发送，关闭时也要确认
+const guard = useDrawerCloseGuard(() => ({ ...formData }));
 
 function open(row?: any) {
   visible.value = true;
@@ -156,6 +178,7 @@ function open(row?: any) {
         formData.content = resp.content ?? "";
         formData.status = resp.status ?? "STATUS_PENDING";
         parentContext.objectId = resp.objectId ?? parentContext.objectId;
+        guard.syncBaseline();
       })
       .catch(() => {
         ElMessage.error($t("common.message.error"));
@@ -164,6 +187,9 @@ function open(row?: any) {
     currentId.value = undefined;
     resetForm();
   }
+
+  // 填充完成后记录基线快照（回填不算脏；编辑异步回填在 then 里重记）
+  guard.syncBaseline();
 }
 
 function handleClose() {

@@ -2,7 +2,8 @@
   <ProModal
     v-model:visible="visible"
     :title="title"
-    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH, closeOnClickModal: false } }"
+    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH } }"
+    :close-guard="guard.allowClose"
   >
     <ElForm
       ref="formRef"
@@ -86,7 +87,9 @@
 
     <template #footer>
       <div class="drawer-footer">
-        <ElButton @click="handleClose">{{ $t("common.button.cancel") }}</ElButton>
+        <ElButton @click="guard.requestClose(handleClose)">
+          {{ $t("common.button.cancel") }}
+        </ElButton>
         <ElButton type="primary" :loading="submitLoading" @click="handleSubmit">
           {{ $t("common.button.confirm") }}
         </ElButton>
@@ -103,6 +106,7 @@ import { useCreateInvoice, useUpdateInvoice, fetchGetInvoice } from "@/api/compo
 import { $t } from "@/core/i18n";
 import { DRAWER_WIDTH } from "@/constants";
 import ProModal from "@/components/Pro/ProModal/index.vue";
+import { useDrawerCloseGuard } from "@/components/Pro/composables/use-drawer-close-guard";
 
 const emit = defineEmits<{
   success: [];
@@ -154,6 +158,9 @@ const title = computed(() =>
   isCreate.value ? $t("pages.mall.invoice.button.create") : $t("pages.mall.invoice.button.update")
 );
 
+// 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+const guard = useDrawerCloseGuard(() => ({ ...formData }));
+
 function open(row?: any) {
   visible.value = true;
 
@@ -163,6 +170,7 @@ function open(row?: any) {
     fetchGetInvoice({ id: row.id })
       .then((resp: any) => {
         Object.assign(formData, resp);
+        guard.syncBaseline();
       })
       .catch(() => {
         ElMessage.error($t("common.message.error"));
@@ -172,6 +180,9 @@ function open(row?: any) {
     currentId.value = undefined;
     resetForm();
   }
+
+  // 填充完成后记录基线快照（回填不算脏；编辑异步回填在 then 里重记）
+  guard.syncBaseline();
 }
 
 function handleClose() {

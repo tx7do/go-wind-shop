@@ -2,7 +2,8 @@
   <ProModal
     v-model:visible="visible"
     :title="title"
-    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH, closeOnClickModal: false } }"
+    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH } }"
+    :close-guard="guard.allowClose"
   >
     <ElForm
       ref="formRef"
@@ -36,7 +37,9 @@
 
     <template #footer>
       <div class="drawer-footer">
-        <ElButton @click="handleClose">{{ $t("common.button.cancel") }}</ElButton>
+        <ElButton @click="guard.requestClose(handleClose)">
+          {{ $t("common.button.cancel") }}
+        </ElButton>
         <ElButton type="primary" :loading="submitLoading" @click="handleSubmit">
           {{ $t("common.button.confirm") }}
         </ElButton>
@@ -53,6 +56,7 @@ import { useCreateUserCoupon } from "@/api/composables";
 import { $t } from "@/core/i18n";
 import { DRAWER_WIDTH } from "@/constants";
 import ProModal from "@/components/Pro/ProModal/index.vue";
+import { useDrawerCloseGuard } from "@/components/Pro/composables/use-drawer-close-guard";
 
 const emit = defineEmits<{
   success: [];
@@ -77,9 +81,15 @@ const formRules: FormRules = {
 
 const title = computed(() => $t("pages.mall.userCoupon.button.create"));
 
+// 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+const guard = useDrawerCloseGuard(() => ({ ...formData }));
+
 function open() {
   visible.value = true;
   resetForm();
+
+  // 填充完成后记录基线快照（回填不算脏）
+  guard.syncBaseline();
 }
 
 function handleClose() {

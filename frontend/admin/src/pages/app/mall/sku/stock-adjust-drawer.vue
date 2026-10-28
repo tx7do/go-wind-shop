@@ -2,7 +2,8 @@
   <ProModal
     v-model:visible="visible"
     :title="title"
-    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH, closeOnClickModal: false } }"
+    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH } }"
+    :close-guard="guard.allowClose"
   >
     <ElForm
       ref="formRef"
@@ -14,26 +15,40 @@
       <ElDivider content-position="left">{{ $t("common.section.basic") }}</ElDivider>
 
       <ElFormItem :label="$t('pages.mall.stockAdjust.skuId')">
-        <div class="readonly-content">{{ formData.skuId ?? '—' }}</div>
+        <div class="readonly-content">{{ formData.skuId ?? "—" }}</div>
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.mall.stockAdjust.currentStock')">
-        <div class="readonly-content">{{ formData.stockQty ?? '—' }}</div>
+        <div class="readonly-content">{{ formData.stockQty ?? "—" }}</div>
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.mall.stockAdjust.delta')" prop="delta">
-        <ElInputNumber v-model="formData.delta" :min="-100000" :max="100000" :controls="false" class="!w-full" />
-        <div class="form-tip">{{ $t('pages.mall.stockAdjust.deltaTip') }}</div>
+        <ElInputNumber
+          v-model="formData.delta"
+          :min="-100000"
+          :max="100000"
+          :controls="false"
+          class="!w-full"
+        />
+        <div class="form-tip">{{ $t("pages.mall.stockAdjust.deltaTip") }}</div>
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.mall.stockAdjust.remark')" prop="remark">
-        <ElInput v-model="formData.remark" type="textarea" :rows="2" :maxlength="200" show-word-limit />
+        <ElInput
+          v-model="formData.remark"
+          type="textarea"
+          :rows="2"
+          :maxlength="200"
+          show-word-limit
+        />
       </ElFormItem>
     </ElForm>
 
     <template #footer>
       <div class="drawer-footer">
-        <ElButton @click="handleClose">{{ $t("common.button.cancel") }}</ElButton>
+        <ElButton @click="guard.requestClose(handleClose)">
+          {{ $t("common.button.cancel") }}
+        </ElButton>
         <ElButton type="primary" :loading="submitLoading" @click="handleSubmit">
           {{ $t("common.button.confirm") }}
         </ElButton>
@@ -50,6 +65,7 @@ import { useAdjustSkuStock } from "@/api/composables";
 import { $t } from "@/core/i18n";
 import { DRAWER_WIDTH } from "@/constants";
 import ProModal from "@/components/Pro/ProModal/index.vue";
+import { useDrawerCloseGuard } from "@/components/Pro/composables/use-drawer-close-guard";
 
 const emit = defineEmits<{
   success: [];
@@ -91,6 +107,9 @@ const formRules: FormRules = {
 
 const title = computed(() => $t("pages.mall.stockAdjust.title"));
 
+// 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+const guard = useDrawerCloseGuard(() => ({ ...formData }));
+
 function open(row?: any) {
   if (!row) return;
   visible.value = true;
@@ -98,6 +117,9 @@ function open(row?: any) {
   formData.stockQty = row.stockQty ?? 0;
   formData.delta = 0;
   formData.remark = "";
+
+  // 填充完成后记录基线快照（回填不算脏）
+  guard.syncBaseline();
 }
 
 function handleClose() {

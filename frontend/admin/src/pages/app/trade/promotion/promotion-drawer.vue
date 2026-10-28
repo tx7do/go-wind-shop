@@ -2,7 +2,8 @@
   <ProModal
     v-model:visible="visible"
     :title="title"
-    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH, closeOnClickModal: false } }"
+    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH } }"
+    :close-guard="guard.allowClose"
   >
     <ElForm
       ref="formRef"
@@ -19,8 +20,14 @@
 
       <ElFormItem :label="$t('pages.mall.promotion.promoType')" prop="promoType">
         <ElSelect v-model="formData.promoType" :placeholder="$t('common.placeholder.select')">
-          <ElOption :label="$t('pages.mall.promotion.promoTypeLabel.SPECIAL_PRICE')" value="SPECIAL_PRICE" />
-          <ElOption :label="$t('pages.mall.promotion.promoTypeLabel.FULL_REDUCTION')" value="FULL_REDUCTION" />
+          <ElOption
+            :label="$t('pages.mall.promotion.promoTypeLabel.SPECIAL_PRICE')"
+            value="SPECIAL_PRICE"
+          />
+          <ElOption
+            :label="$t('pages.mall.promotion.promoTypeLabel.FULL_REDUCTION')"
+            value="FULL_REDUCTION"
+          />
         </ElSelect>
       </ElFormItem>
 
@@ -98,7 +105,13 @@
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.mall.promotion.priority')" prop="priority">
-        <ElInputNumber v-model="formData.priority" :min="0" :max="9999" :controls="false" class="!w-full" />
+        <ElInputNumber
+          v-model="formData.priority"
+          :min="0"
+          :max="9999"
+          :controls="false"
+          class="!w-full"
+        />
         <div class="form-tip">{{ $t("pages.mall.promotion.priorityTip") }}</div>
       </ElFormItem>
 
@@ -112,7 +125,9 @@
 
     <template #footer>
       <div class="drawer-footer">
-        <ElButton @click="handleClose">{{ $t("common.button.cancel") }}</ElButton>
+        <ElButton @click="guard.requestClose(handleClose)">
+          {{ $t("common.button.cancel") }}
+        </ElButton>
         <ElButton type="primary" :loading="submitLoading" @click="handleSubmit">
           {{ $t("common.button.confirm") }}
         </ElButton>
@@ -129,6 +144,7 @@ import { useCreatePromotion, useUpdatePromotion, fetchGetPromotion } from "@/api
 import { $t } from "@/core/i18n";
 import { DRAWER_WIDTH } from "@/constants";
 import ProModal from "@/components/Pro/ProModal/index.vue";
+import { useDrawerCloseGuard } from "@/components/Pro/composables/use-drawer-close-guard";
 
 const emit = defineEmits<{
   success: [];
@@ -196,8 +212,14 @@ const formRules: FormRules = {
 };
 
 const title = computed(() =>
-  isCreate.value ? $t("pages.mall.promotion.button.create") : $t("pages.mall.promotion.button.update")
+  isCreate.value
+    ? $t("pages.mall.promotion.button.create")
+    : $t("pages.mall.promotion.button.update")
 );
+
+// 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+// validRange 在 formData 之外（有效窗口 ref），一并纳入脏判定
+const guard = useDrawerCloseGuard(() => ({ ...formData, validRange: validRange.value }));
 
 function open(row?: any) {
   visible.value = true;
@@ -224,6 +246,7 @@ function open(row?: any) {
         } else {
           validRange.value = null;
         }
+        guard.syncBaseline();
       })
       .catch(() => {
         ElMessage.error($t("common.message.error"));
@@ -232,6 +255,9 @@ function open(row?: any) {
     isCreate.value = true;
     currentId.value = undefined;
   }
+
+  // 填充完成后记录基线快照（回填不算脏；编辑异步回填在 then 里重记）
+  guard.syncBaseline();
 }
 
 function handleClose() {

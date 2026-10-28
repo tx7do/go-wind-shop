@@ -2,7 +2,8 @@
   <ProModal
     v-model:visible="visible"
     :title="title"
-    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH, closeOnClickModal: false } }"
+    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH } }"
+    :close-guard="guard.allowClose"
   >
     <ElForm
       ref="formRef"
@@ -49,7 +50,9 @@
 
     <template #footer>
       <div class="drawer-footer">
-        <ElButton @click="handleClose">{{ $t("common.button.cancel") }}</ElButton>
+        <ElButton @click="guard.requestClose(handleClose)">
+          {{ $t("common.button.cancel") }}
+        </ElButton>
         <ElButton type="primary" :loading="submitLoading" @click="handleSubmit">
           {{ $t("common.button.confirm") }}
         </ElButton>
@@ -66,6 +69,7 @@ import { useCreateShipment, fetchListOrders } from "@/api/composables";
 import { $t } from "@/core/i18n";
 import { DRAWER_WIDTH } from "@/constants";
 import ProModal from "@/components/Pro/ProModal/index.vue";
+import { useDrawerCloseGuard } from "@/components/Pro/composables/use-drawer-close-guard";
 import { PaginationQuery } from "@/core/transport/rest";
 
 const emit = defineEmits<{
@@ -78,11 +82,13 @@ const visible = ref(false);
 const submitLoading = ref(false);
 const formRef = ref<FormInstance>();
 
-const formData = reactive<{ orderId: number | undefined; carrier: string; trackingNumber: string }>({
-  orderId: undefined,
-  carrier: "",
-  trackingNumber: "",
-});
+const formData = reactive<{ orderId: number | undefined; carrier: string; trackingNumber: string }>(
+  {
+    orderId: undefined,
+    carrier: "",
+    trackingNumber: "",
+  }
+);
 
 const formRules: FormRules = {
   orderId: [{ required: true, message: $t("common.placeholder.select"), trigger: "change" }],
@@ -112,10 +118,16 @@ async function loadOptions() {
   }
 }
 
+// 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+const guard = useDrawerCloseGuard(() => ({ ...formData }));
+
 function open() {
   visible.value = true;
   resetForm();
   loadOptions();
+
+  // 填充完成后记录基线快照（回填不算脏）
+  guard.syncBaseline();
 }
 
 function handleClose() {

@@ -2,7 +2,8 @@
   <ProModal
     v-model:visible="visible"
     :title="title"
-    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH, closeOnClickModal: false } }"
+    :config="{ component: 'drawer', drawer: { size: DRAWER_WIDTH } }"
+    :close-guard="guard.allowClose"
   >
     <ElForm
       ref="formRef"
@@ -14,19 +15,19 @@
       <ElDivider content-position="left">{{ $t("common.section.basic") }}</ElDivider>
 
       <ElFormItem :label="$t('pages.mall.stockAlert.skuId')">
-        <div class="readonly-content">{{ formData.skuId ?? '—' }}</div>
+        <div class="readonly-content">{{ formData.skuId ?? "—" }}</div>
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.mall.stockAlert.stockQtyAtTrigger')">
-        <div class="readonly-content">{{ formData.stockQtyAtTrigger ?? '—' }}</div>
+        <div class="readonly-content">{{ formData.stockQtyAtTrigger ?? "—" }}</div>
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.mall.stockAlert.threshold')">
-        <div class="readonly-content">{{ formData.threshold ?? '—' }}</div>
+        <div class="readonly-content">{{ formData.threshold ?? "—" }}</div>
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.mall.stockAlert.createdAt')">
-        <div class="readonly-content">{{ formData.createdAt ?? '—' }}</div>
+        <div class="readonly-content">{{ formData.createdAt ?? "—" }}</div>
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.mall.stockAlert.status')" prop="status">
@@ -38,7 +39,9 @@
 
     <template #footer>
       <div class="drawer-footer">
-        <ElButton @click="handleClose">{{ $t("common.button.cancel") }}</ElButton>
+        <ElButton @click="guard.requestClose(handleClose)">
+          {{ $t("common.button.cancel") }}
+        </ElButton>
         <ElButton type="primary" :loading="submitLoading" @click="handleSubmit">
           {{ $t("common.button.confirm") }}
         </ElButton>
@@ -55,6 +58,7 @@ import { useUpdateStockAlert, fetchGetStockAlert } from "@/api/composables";
 import { $t } from "@/core/i18n";
 import { DRAWER_WIDTH } from "@/constants";
 import ProModal from "@/components/Pro/ProModal/index.vue";
+import { useDrawerCloseGuard } from "@/components/Pro/composables/use-drawer-close-guard";
 
 const emit = defineEmits<{
   success: [];
@@ -87,6 +91,9 @@ const formRules: FormRules = {
 
 const title = computed(() => $t("pages.mall.stockAlert.button.update"));
 
+// 关闭守卫：遮罩/ESC/X/取消统一，脏数据先确认（docs/form_drawer_close_guard.md）
+const guard = useDrawerCloseGuard(() => ({ ...formData }));
+
 function open(row?: any) {
   if (!row) {
     return;
@@ -100,10 +107,14 @@ function open(row?: any) {
       formData.threshold = resp.threshold ?? "";
       formData.createdAt = resp.createdAt ?? "";
       formData.status = "RESOLVED";
+      guard.syncBaseline();
     })
     .catch(() => {
       ElMessage.error($t("common.message.error"));
     });
+
+  // 填充完成后记录基线快照（回填不算脏；异步回填在 then 里重记）
+  guard.syncBaseline();
 }
 
 function handleClose() {
