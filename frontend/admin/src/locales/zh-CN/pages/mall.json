@@ -66,6 +66,8 @@
     "displayName": "属性值名称",
     "sortOrder": "排序",
     "createdAt": "创建时间",
+    "noAttributeContext": "属性值隶属于具体属性，请先从属性管理中选择一个属性",
+    "goAttributes": "前往属性管理",
     "button": {
       "create": "创建属性值",
       "update": "编辑属性值"

@@ -321,6 +321,11 @@ function toToolbarButtons(
       attrs: { ...defaultAttrs, ...item.attrs },
       auth: item.auth,
       visible: item.visible,
+      // ToolsButton 声明的三态必须透传：ProToolbar 模板在 v-bind=attrs 之后还有
+      // 显式 :disabled/:loading 绑定，漏映射会被 undefined 覆盖 attrs 里的同名值
+      disabled: item.disabled,
+      loading: item.loading,
+      hidden: item.hidden,
     };
   });
 }

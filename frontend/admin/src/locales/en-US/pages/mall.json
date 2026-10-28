@@ -66,6 +66,8 @@
     "displayName": "Attribute Value Name",
     "sortOrder": "Sort Order",
     "createdAt": "Created At",
+    "noAttributeContext": "Attribute values belong to a specific attribute. Pick one in Attribute Management first",
+    "goAttributes": "Go to Attribute Management",
     "button": {
       "create": "Create Attribute Value",
       "update": "Edit Attribute Value"

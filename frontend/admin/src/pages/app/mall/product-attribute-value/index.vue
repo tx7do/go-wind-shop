@@ -1,5 +1,26 @@
 <template>
   <div class="app-container h-full flex flex-1 flex-col">
+    <!-- 属性值是属性的子资源：不带 attrId 进入时给出引导（否则列表恒空、新增无从归属） -->
+    <ElAlert
+      v-if="!attributeId"
+      :title="$t('pages.mall.productAttributeValue.noAttributeContext')"
+      type="info"
+      show-icon
+      :closable="false"
+      class="attr-context-alert"
+    >
+      <template #default>
+        <ElButton
+          text
+          type="primary"
+          size="small"
+          @click="router.push('/mall/product-attributes')"
+        >
+          {{ $t("pages.mall.productAttributeValue.goAttributes") }}
+        </ElButton>
+      </template>
+    </ElAlert>
+
     <ProPage ref="pageRef" :config="pageConfig" @add="handleAdd" @edit="handleEdit">
       <template #displayName="scope: any">
         <span>{{ getTranslationField(scope.row, "displayName") }}</span>
@@ -17,7 +38,8 @@
 
 <script lang="ts" setup>
 import { ref, computed, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+import { ElMessage } from "element-plus";
 
 import ProPage from "@/components/Pro/ProPage/index.vue";
 import type { ProPageConfig } from "@/components/Pro/ProPage/types";
@@ -29,6 +51,7 @@ import { $t, useI18n } from "@/core/i18n";
 
 const { mutateAsync: deleteProductAttributeValue } = useDeleteProductAttributeValue();
 const route = useRoute();
+const router = useRouter();
 const { locale } = useI18n();
 
 const pageRef = ref();
@@ -82,7 +105,17 @@ const pageConfig = computed<ProPageConfig>(() => ({
       await deleteProductAttributeValue({ id: ids as any });
     },
     toolbar: [],
-    toolbarRight: ["add"],
+    // 无属性上下文时置灰新增（抽屉创建依赖 attributeId 归属），配合顶部引导条
+    toolbarRight: attributeId.value
+      ? ["add"]
+      : [
+          {
+            name: "add",
+            label: "common.button.add",
+            attrs: { type: "primary", plain: true },
+            disabled: true,
+          },
+        ],
     defaultToolbar: ["refresh", "exports", "filter"],
     tableAttrs: { border: true, stripe: false },
     columns: [
@@ -123,7 +156,10 @@ const pageConfig = computed<ProPageConfig>(() => ({
 }));
 
 function handleAdd() {
-  if (!attributeId.value) return;
+  if (!attributeId.value) {
+    ElMessage.warning($t("pages.mall.productAttributeValue.noAttributeContext"));
+    return;
+  }
   drawerRef.value?.open();
 }
 
@@ -142,5 +178,9 @@ function handleSuccess() {
   width: 100%;
   min-width: 0;
   flex-shrink: 0;
+}
+
+.attr-context-alert {
+  margin-bottom: 12px;
 }
 </style>
