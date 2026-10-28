@@ -59,6 +59,9 @@ const loginLoading = ref(false);
 
 const ACCESS_TOKEN_REFRESH_INTERVAL = 90 * 60 * 1000;
 
+/** refresh_expires_in 缺失/非法时的兜底 TTL（与 use-token-refresh 的兜底一致取 12h） */
+const REFRESH_TOKEN_FALLBACK_TTL = 12 * 60 * 60 * 1000;
+
 // ==============================
 // 核心业务逻辑
 // ==============================
@@ -168,9 +171,26 @@ async function applySuccessfulLogin(
 
   accessStore.setAccessToken(accessToken);
   accessStore.setAccessTokenExpireTime(expiresAt);
+  // 登录响应同时携带 refresh_token/refresh_expires_in，必须一并入库：
+  // 定时刷新与刷新页面后的静默续期都依赖它。此前缺失会导致登录后
+  // refreshToken 恒为 null——首次定时刷新直接 reauthenticate，AT 过期
+  // 后也无法续期，只能重新登录。
+  const refreshTokenValue = resp.refresh_token;
+  if (refreshTokenValue) {
+    accessStore.setRefreshToken(refreshTokenValue);
+    const refreshExpiresSec = Number(resp.refresh_expires_in);
+    accessStore.setRefreshTokenExpireTime(
+      Number.isFinite(refreshExpiresSec) && refreshExpiresSec > 0
+        ? Date.now() + Math.floor(refreshExpiresSec * 1000)
+        : Date.now() + REFRESH_TOKEN_FALLBACK_TTL
+    );
+  }
+  // 从 AT 载荷提取刷新端点所需的身份键（uid/jti）。jti 每次刷新轮换，
+  // 刷新成功路径（applyRefreshResponse）会同步更新。
+  accessStore.applySessionIdentityFromToken(accessToken);
 
-  // refresh token 通过 HttpOnly Cookie 传输，前端不可读也不存内存。
-  // 页面刷新后由 bootstrap 静默恢复（凭 cookie 调 /refresh-token 换新 access token）。
+  // refresh token 随会话持久化在 localStorage（本项目后端无 cookie 续期链路）。
+  // 页面刷新后由路由守卫凭持久化 token + 身份键静默续期恢复会话。
   startRefreshTimer();
 
   const [fetchUserInfoResult, fetchAccessCodeResult] = await Promise.all([

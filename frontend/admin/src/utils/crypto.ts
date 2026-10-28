@@ -23,3 +23,20 @@ export function encryptPassword(password: string): string {
   }
   return encryptData(password, key, key);
 }
+
+/**
+ * 解析 JWT 载荷（不验签——仅读取本方签发令牌中的非敏感声明，如 user_id/jti）。
+ * 解析失败返回 null。
+ */
+export function parseJwtPayload(token: string): Record<string, any> | null {
+  try {
+    const parts = token.split(".");
+    if (parts.length < 2) return null;
+    // base64url → base64，补齐 padding 后交给 atob
+    const b64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const padded = b64 + "=".repeat((4 - (b64.length % 4)) % 4);
+    return JSON.parse(atob(padded));
+  } catch {
+    return null;
+  }
+}

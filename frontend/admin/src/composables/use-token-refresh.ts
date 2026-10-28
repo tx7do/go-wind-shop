@@ -1,4 +1,5 @@
 import { refreshToken as refreshTokenService } from "@/api/composables";
+import type { authenticationservicev1_LoginResponse } from "@/api/generated/admin/service/v1";
 import { LOGIN_PATH } from "@/constants";
 import { preferences } from "@/core/preferences";
 import { globalSSEClient } from "@/core/transport/sse";
@@ -35,8 +36,60 @@ type RefreshTokenFunc = () => Promise<string> | string;
 // ==============================
 
 /**
- * 刷新访问令牌
- * 使用 refresh_token 换取新的 access_token 和 refresh_token
+ * 调刷新端点。端点在 BFF 鉴权白名单内（AT 过期是刷新的前提），身份键
+ * （user_id/jti/refresh_token）全部从持久化的 access store 带回。
+ */
+async function requestRefreshToken(): Promise<authenticationservicev1_LoginResponse> {
+  const accessStore = useAccessStore();
+  return await refreshTokenService({
+    grant_type: "refresh_token",
+    refresh_token: accessStore.refreshToken ?? "",
+    user_id: accessStore.sessionUserId,
+    jti: accessStore.sessionJti,
+  } as any);
+}
+
+/**
+ * 将刷新响应应用到 store：更新 access token 与过期时间。
+ * 注意：每次刷新 RT 都会轮换出新 jti（旧令牌对被原子吊销），必须从新 AT 的
+ * JWT 载荷同步 sessionUserId/sessionJti，否则下一次刷新按旧 jti 查不到会话。
+ */
+function applyRefreshResponse(resp: any): string {
+  const accessStore = useAccessStore();
+
+  const newAccessToken = (resp as any).access_token;
+  const newRefreshToken = (resp as any).refresh_token;
+
+  let expiresIn = (resp as any).expires_in;
+  let refreshExpiresIn = (resp as any).refresh_expires_in;
+
+  const expiresInSec = Number(expiresIn);
+  expiresIn =
+    !Number.isFinite(expiresInSec) || expiresInSec <= 0
+      ? Date.now() + ACCESS_TOKEN_REFRESH_INTERVAL
+      : Date.now() + Math.floor(expiresInSec * 1000);
+
+  const refreshExpiresInSec = Number(refreshExpiresIn);
+  refreshExpiresIn =
+    !Number.isFinite(refreshExpiresInSec) || refreshExpiresInSec <= 0
+      ? Date.now() + REFRESH_TOKEN_REFRESH_INTERVAL
+      : Date.now() + Math.floor(refreshExpiresInSec * 1000);
+
+  accessStore.setAccessTokenExpireTime(expiresIn);
+  accessStore.setRefreshTokenExpireTime(refreshExpiresIn);
+
+  accessStore.setAccessToken(newAccessToken ?? null);
+  accessStore.setRefreshToken(newRefreshToken ?? accessStore.refreshToken);
+  if (newAccessToken) {
+    accessStore.applySessionIdentityFromToken(newAccessToken);
+  }
+
+  return newAccessToken ?? "";
+}
+
+/**
+ * 刷新访问令牌（定时器 / 401 拦截器入口）
+ * 失败触发重新认证（跳登录页）
  */
 export async function refreshToken(): Promise<string> {
   const accessStore = useAccessStore();
@@ -47,40 +100,49 @@ export async function refreshToken(): Promise<string> {
   }
 
   try {
-    const resp = await refreshTokenService(accessStore.refreshToken ?? "");
+    const resp = await requestRefreshToken();
 
-    const newAccessToken = (resp as any).access_token;
-    const newRefreshToken = (resp as any).refresh_token;
-
-    let expiresIn = (resp as any).expires_in;
-    let refreshExpiresIn = (resp as any).refresh_expires_in;
-
-    const expiresInSec = Number(expiresIn);
-    expiresIn =
-      !Number.isFinite(expiresInSec) || expiresInSec <= 0
-        ? Date.now() + ACCESS_TOKEN_REFRESH_INTERVAL
-        : Date.now() + Math.floor(expiresInSec * 1000);
-
-    const refreshExpiresInSec = Number(refreshExpiresIn);
-    refreshExpiresIn =
-      !Number.isFinite(refreshExpiresInSec) || refreshExpiresInSec <= 0
-        ? Date.now() + REFRESH_TOKEN_REFRESH_INTERVAL
-        : Date.now() + Math.floor(refreshExpiresInSec * 1000);
-
-    accessStore.setAccessTokenExpireTime(expiresIn);
-    accessStore.setRefreshTokenExpireTime(refreshExpiresIn);
-
-    accessStore.setAccessToken(newAccessToken ?? null);
-    accessStore.setRefreshToken(newRefreshToken ?? null);
+    const newAccessToken = applyRefreshResponse(resp);
 
     // token 已更新，重连 SSE 以使用新凭证
     reconnectSSEServer();
 
-    return newAccessToken ?? "";
+    return newAccessToken;
   } catch (error) {
     console.error("刷新 access token 失败", error);
     await reauthenticate();
     return "";
+  }
+}
+
+/**
+ * 静默续期：用持久化的 RT 换新 AT，成功返回 true；失败仅返回 false，
+ * 不触发 reauthenticate/跳转——供路由守卫在 AT 过期时先行尝试，
+ * 由守卫自行决定降级动作（守卫内并发 router.replace 会互相打断导航）。
+ */
+export async function attemptSilentRefresh(): Promise<boolean> {
+  const accessStore = useAccessStore();
+
+  // 身份键不齐（旧版本登录留下的会话）无法定位 Redis 会话，直接放弃
+  if (!accessStore.refreshToken || !accessStore.sessionJti || !accessStore.sessionUserId) {
+    return false;
+  }
+  // RT 已过有效期（本地时钟近似），不再浪费一次必败请求
+  if (accessStore.refreshTokenExpireTime && Date.now() >= accessStore.refreshTokenExpireTime) {
+    return false;
+  }
+
+  try {
+    const resp = await requestRefreshToken();
+    const newAccessToken = applyRefreshResponse(resp);
+    if (!newAccessToken) {
+      return false;
+    }
+    reconnectSSEServer();
+    return true;
+  } catch (error) {
+    console.warn("[TokenRefresh] 静默续期失败:", error);
+    return false;
   }
 }
 
@@ -106,10 +168,13 @@ export async function reauthenticate(): Promise<void> {
     const accessStore = useAccessStore();
     accessStore.setAccessToken(null);
     accessStore.setRefreshToken(null);
+    // 注意：setIsAccessChecked(false) 之前必须先读出原值用于下面的 modal 判定，
+    // 否则下方 accessStore.isAccessChecked 永远是 false，modal 模式恒不触发。
+    const wasAccessChecked = accessStore.isAccessChecked;
     accessStore.setIsAccessChecked(false);
     accessStore.setAccessCodes([]);
 
-    if (preferences.app.loginExpiredMode === "modal" && accessStore.isAccessChecked) {
+    if (preferences.app.loginExpiredMode === "modal" && wasAccessChecked) {
       accessStore.setLoginExpired(true);
     } else {
       await logoutToLoginPage();

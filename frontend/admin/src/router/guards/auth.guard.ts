@@ -8,6 +8,7 @@ import { useAuth, NetworkError } from "@/composables/use-auth";
 
 import { generateAccess } from "@/router/route-generator";
 import { fetchAllDictEntries } from "@/composables/use-dict-cache";
+import { attemptSilentRefresh } from "@/composables/use-token-refresh";
 
 /**
  * 权限访问守卫配置
@@ -25,9 +26,9 @@ function setupAccessGuard(router: Router) {
       return { name: "MfaChallenge", replace: true } as any;
     }
 
-    // 过期的 access token 视同无 token 统一跳登录，避免“仅未访问页面首次发请求
-    // 被 401 拦截才登出”的不一致。治标：dev 明文 HTTP 拒收 Secure cookie 致续期
-    // 链路断裂，token 过期无法刷新；此检查统一登出时机，不解决会话丢失根因。
+    // 过期的 access token 视同无 token 统一处理，避免“仅未访问页面首次发请求
+    // 被 401 拦截才登出”的不一致。下方分支会用持久化的 RT 先尝试静默续期，
+    // 成功则继续导航，失败才落登录页。
     const tokenExpired = accessStore.checkAccessTokenExpired();
 
     // 基本路由，这些路由不需要进入权限拦截
@@ -48,19 +49,24 @@ function setupAccessGuard(router: Router) {
         return true;
       }
 
-      // 没有访问权限，跳转登录页面
-      if (to.path !== LOGIN_PATH) {
+      // 已经在登录页面，直接通过（用户主动去登录，不做静默续期）
+      if (to.path === LOGIN_PATH) {
+        return true;
+      }
+
+      // AT 缺失/过期但 RT 仍在有效期：先静默续期再放行（AT 1.5h、RT 12h，
+      // 短时离开回来刷新页面不该被踢登录）。续期失败才落登录页。
+      if (!(await attemptSilentRefresh())) {
+        // 没有访问权限，跳转登录页面，携带当前跳转的页面，登录后重新跳转该页面
         return {
           path: LOGIN_PATH,
           // 如不需要，直接删除 query
           query:
             to.fullPath === DEFAULT_HOME_PATH ? {} : { redirect: encodeURIComponent(to.fullPath) },
-          // 携带当前跳转的页面，登录后重新跳转该页面
           replace: true,
         };
       }
-      // 已经在登录页面，直接通过
-      return true;
+      // 续期成功，token 已更新，继续走下方动态路由生成
     }
 
     // 是否已经生成过动态路由

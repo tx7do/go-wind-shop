@@ -42,10 +42,15 @@ func NewRestMiddleware(
 	ms = append(ms, logging.Server(logx.AsKratos(ctx.GetLogger())))
 
 	// add white list for authentication.
+	// RefreshToken 必须在白名单内：access token 过期恰恰是触发刷新的前提场景，
+	// 不能再要求有效 AT，否则 AT 一过期续期链路自己先 401（会话永远无法续命）。
+	// 该端点的真实鉴权由 core 的 VerifyRefreshToken 完成——RT 是 256 位随机串，
+	// 需与 Redis 会话中的值精确比对，身份键（user_id/jti）仅为查找键。
 	rpc.AddWhiteList(
 		adminV1.OperationAuthenticationServiceLogin,
 		adminV1.OperationAuthenticationServiceGenerateCaptcha,
 		adminV1.OperationAuthenticationServiceVerifyCaptcha,
+		adminV1.OperationAuthenticationServiceRefreshToken,
 	)
 
 	ms = append(ms, applogging.Server(

@@ -149,20 +149,21 @@ func (s *AuthenticationService) Logout(ctx context.Context, _ *emptypb.Empty) (*
 	})
 }
 
-// RefreshToken 刷新令牌
+// RefreshToken 刷新令牌。
+// 本端点在鉴权白名单内：access token 已过期恰恰是触发刷新的前提，不能再要求
+// 有效 AT（也不能从 operator 上下文取身份）。user_id/jti/refresh_token 三个
+// 身份键全部由前端从持久化会话带回。RT 是不透明随机串，真正鉴权由 core 的
+// VerifyRefreshToken 做值比对；user_id/jti 只是查找键，伪造它们拿不到有效 RT。
 func (s *AuthenticationService) RefreshToken(ctx context.Context, req *authenticationV1.LoginRequest) (*authenticationV1.LoginResponse, error) {
 	if req == nil {
 		return nil, authenticationV1.ErrorBadRequest("invalid request")
 	}
 
-	operator, err := auth.FromContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	req.ClientType = trans.Ptr(authenticationV1.ClientType_admin)
-	req.UserId = trans.Ptr(operator.GetUserId())
-	req.Jti = operator.Jti
+
+	if req.GetUserId() == 0 || req.GetJti() == "" || req.GetRefreshToken() == "" {
+		return nil, authenticationV1.ErrorBadRequest("user_id, jti and refresh_token are required")
+	}
 
 	return s.authenticationServiceClient.RefreshToken(ctx, req)
 }

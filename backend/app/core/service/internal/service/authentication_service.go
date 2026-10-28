@@ -294,6 +294,14 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 
 // doGrantTypeRefreshToken 处理授权类型 - 刷新令牌
 func (s *AuthenticationService) doGrantTypeRefreshToken(ctx context.Context, req *authenticationV1.LoginRequest) (*authenticationV1.LoginResponse, error) {
+	// 本端点在 BFF 侧为鉴权白名单（AT 过期是刷新的前提），ctx 无 operator 元数据。
+	// 与 doGrantTypePassword 同理：无 viewer 信息使用空 NoopContext 并绕过隐私
+	// 保护中间件，否则下方 userRepo.Get 等查询因缺 ViewerContext 直接失败。
+	// RT 与 user_id/jti 的值比对已由 VerifyRefreshToken 完成真实鉴权。
+	ctx = viewer.WithContext(ctx, viewer.NewNoopContext())
+	ctx = privacy.DecisionContext(ctx, privacy.Allow)
+	ctx, _ = metadata.NewContext(ctx, metadata.NewUserOperator(0, 0, 0, identityV1.DataScope_ALL))
+
 	// 获取用户信息
 	user, err := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
 		QueryBy: &identityV1.GetUserRequest_Id{

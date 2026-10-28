@@ -25,10 +25,22 @@ export async function generateCaptcha() {
   return apiClient.authenticationService.GenerateCaptcha({});
 }
 
-export async function refreshToken(refreshToken: string) {
+/**
+ * 刷新令牌。端点在鉴权白名单内（AT 过期是刷新的前提），身份键（user_id/jti）
+ * 由前端从持久化会话带回；RT 与 Redis 会话的值比对由后端完成真实鉴权。
+ */
+export interface RefreshTokenParams {
+  refresh_token?: string;
+  user_id?: number;
+  jti?: string;
+}
+
+export async function refreshToken(request: RefreshTokenParams) {
   return apiClient.authenticationService.RefreshToken({
     grant_type: "refresh_token",
-    refresh_token: refreshToken ?? "",
+    refresh_token: request.refresh_token ?? "",
+    user_id: request.user_id,
+    jti: request.jti,
   });
 }
 
@@ -83,11 +95,11 @@ export function useRefreshToken(
   options?: UseMutationOptions<
     authenticationservicev1_LoginResponse,
     Error,
-    authenticationservicev1_LoginRequest
+    RefreshTokenParams
   >
 ) {
   return useMutation({
-    mutationFn: (req) => refreshToken(req.refresh_token ?? ""),
+    mutationFn: (req) => refreshToken(req),
     ...options,
   });
 }
