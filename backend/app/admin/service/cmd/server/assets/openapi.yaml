@@ -5792,6 +5792,234 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/mall/member-tiers:
+        get:
+            tags:
+                - MemberTierService
+            operationId: MemberTierService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.ListMemberTierResponse'
+        post:
+            tags:
+                - MemberTierService
+            operationId: MemberTierService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/catalog.service.v1.CreateMemberTierRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/mall/member-tiers/count:
+        get:
+            tags:
+                - MemberTierService
+            operationId: MemberTierService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.CountMemberTierResponse'
+    /admin/v1/mall/member-tiers/{id}:
+        get:
+            tags:
+                - MemberTierService
+            operationId: MemberTierService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.MemberTier'
+        put:
+            tags:
+                - MemberTierService
+            operationId: MemberTierService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/catalog.service.v1.UpdateMemberTierRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - MemberTierService
+            operationId: MemberTierService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/mall/order-items:
         get:
             tags:
@@ -17754,6 +17982,11 @@ components:
             properties:
                 count:
                     type: string
+        catalog.service.v1.CountMemberTierResponse:
+            type: object
+            properties:
+                count:
+                    type: string
         catalog.service.v1.CountPointsLedgerResponse:
             type: object
             properties:
@@ -17826,6 +18059,11 @@ components:
             properties:
                 data:
                     $ref: '#/components/schemas/catalog.service.v1.GrouponActivity'
+        catalog.service.v1.CreateMemberTierRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/catalog.service.v1.MemberTier'
         catalog.service.v1.CreateProductAttributeRequest:
             type: object
             properties:
@@ -18019,6 +18257,15 @@ components:
                         $ref: '#/components/schemas/catalog.service.v1.GrouponGroup'
                 total:
                     type: string
+        catalog.service.v1.ListMemberTierResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.MemberTier'
+                total:
+                    type: string
         catalog.service.v1.ListPointsLedgerResponse:
             type: object
             properties:
@@ -18119,6 +18366,45 @@ components:
                         $ref: '#/components/schemas/catalog.service.v1.StockOpLog'
                 total:
                     type: string
+        catalog.service.v1.MemberTier:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                    description: 等级名称（如白银/黄金/钻石）
+                level:
+                    type: integer
+                    description: 等级（数值越大越高）
+                    format: int32
+                minSpend:
+                    type: string
+                    description: 累计消费门槛（分）
+                pointsMultiplier:
+                    type: integer
+                    description: 积分倍率
+                    format: int32
+                badgeIcon:
+                    type: string
+                    description: 等级徽章图标（icon name）
+                currency:
+                    type: string
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - ACTIVE
+                        - INACTIVE
+                    type: string
+                    format: enum
+                tenantId:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+            description: 会员等级
         catalog.service.v1.PointsLedger:
             type: object
             properties:
@@ -18141,6 +18427,7 @@ components:
                         - POINTS_TYPE_UNSPECIFIED
                         - POINTS_TYPE_EARN
                         - POINTS_TYPE_DEDUCT
+                        - POINTS_TYPE_CHECK_IN
                     type: string
                     description: 类型
                     format: enum
@@ -18920,6 +19207,17 @@ components:
                 updateMask:
                     type: string
                     format: field-mask
+        catalog.service.v1.UpdateMemberTierRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/catalog.service.v1.MemberTier'
+                updateMask:
+                    type: string
+                    format: field-mask
         catalog.service.v1.UpdateProductAttributeRequest:
             type: object
             properties:
@@ -19359,6 +19657,9 @@ components:
                 currency:
                     type: string
                     description: 币种（ISO 4217）
+                pointsPrice:
+                    type: string
+                    description: 积分兑换价（0=不可兑换）
                 claimable:
                     type: boolean
                     description: 是否公开可领取（领券中心仅展示 true 的模板）
@@ -24828,6 +25129,8 @@ tags:
       description: 登录审计日志管理服务
     - name: LoginPolicyService
       description: 登录策略管理服务
+    - name: MemberTierService
+      description: 会员等级管理服务（admin 全 CRUD）
     - name: MenuService
       description: 后台菜单管理服务
     - name: MfaService

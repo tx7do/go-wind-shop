@@ -148,6 +148,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	invoiceRepo := data.NewInvoiceRepo(ctx, entClient)
 
 	// ── register:repo ── 新模块仓储在此行后注册(make register 工具锚点,勿删)
+	memberTierRepo := data.NewMemberTierRepo(ctx, entClient)
 	pointsLedgerRepo := data.NewPointsLedgerRepo(ctx, entClient)
 	seckillActivityRepo := data.NewSeckillActivityRepo(ctx, entClient)
 
@@ -192,7 +193,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cartService := service.NewCartService(ctx, cartRepo)
 	cartItemService := service.NewCartItemService(ctx, cartItemRepo)
 	wishlistService := service.NewWishlistService(ctx, wishlistRepo)
-	pointsLedgerService := service.NewPointsLedgerService(ctx, pointsLedgerRepo, entClient, couponTemplateRepo)
+	memberTierService := service.NewMemberTierService(ctx, memberTierRepo, entClient)
+	pointsLedgerService := service.NewPointsLedgerService(ctx, pointsLedgerRepo, entClient, couponTemplateRepo, memberTierService)
 	paymentChannelConfigService := service.NewPaymentChannelConfigService(ctx, paymentChannelConfigRepo)
 	paymentGatewayResolver := service.NewPaymentGatewayResolver(ctx, paymentChannelConfigService)
 	grouponService := service.NewGrouponService(ctx, grouponActivityRepo, entClient)
@@ -349,6 +351,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		wishlistService,
 		orderService,
 		orderItemService,
+		memberTierService,
 		pointsLedgerService,
 		seckillActivityService,
 		grouponService,

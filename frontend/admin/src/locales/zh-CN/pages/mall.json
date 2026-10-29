@@ -49,7 +49,8 @@
     "aiNeedName": "请先填写商品名称（或至少填写简述提示）",
     "aiGenerateSuccess": "文案已生成并填入表单",
     "aiGenerateFailed": "AI 生成失败，请确认已在「AI 服务商」配置可用模型",
-    "aiOverwriteConfirm": "将覆盖已有的商品简述与详情，是否继续？"
+    "aiOverwriteConfirm": "将覆盖已有的商品简述与详情，是否继续？",
+    "discardConfirm": "表单内容已修改，离开将丢失未保存的修改，是否离开？"
   },
   "productAttribute": {
     "moduleName": "属性管理",
@@ -71,7 +72,8 @@
     "button": {
       "create": "创建属性值",
       "update": "编辑属性值"
-    }
+    },
+    "currentAttribute": "当前属性：{name}（管理该属性下的全部属性值）"
   },
   "sku": {
     "moduleName": "SKU管理",
@@ -150,7 +152,14 @@
     },
     "methodLabel": {
       "ALIPAY": "支付宝",
-      "WECHAT": "微信支付"
+      "WECHAT": "微信支付",
+      "BALANCE": "余额支付",
+      "CARD": "银行卡"
+    },
+    "businessTypeLabel": {
+      "BUSINESS_TYPE_CONSUME": "消费",
+      "BUSINESS_TYPE_REFUND": "退款",
+      "BUSINESS_TYPE_RECHARGE": "充值"
     }
   },
   "refund": {
@@ -234,6 +243,14 @@
     "button": {
       "create": "新建优惠券模板",
       "update": "编辑优惠券模板"
+    },
+    "typeLabel": {
+      "FIXED_AMOUNT": "固定金额",
+      "PERCENTAGE": "折扣百分比"
+    },
+    "statusLabel": {
+      "ACTIVE": "生效",
+      "INACTIVE": "停用"
     }
   },
   "shippingRate": {
@@ -248,6 +265,10 @@
     "button": {
       "create": "新建运费模板",
       "update": "编辑运费模板"
+    },
+    "statusLabel": {
+      "ACTIVE": "生效",
+      "INACTIVE": "停用"
     }
   },
   "stockAlert": {
@@ -278,6 +299,10 @@
     "button": {
       "create": "新建税率规则",
       "update": "编辑税率规则"
+    },
+    "statusLabel": {
+      "ACTIVE": "生效",
+      "INACTIVE": "停用"
     }
   },
   "userCoupon": {
@@ -310,7 +335,18 @@
     "replyTip": "回复将创建为该评论的子评论，状态直接为已批准",
     "replySubmit": "发布回复",
     "replySuccess": "回复已发布",
-    "replyFailed": "回复发布失败"
+    "replyFailed": "回复发布失败",
+    "typeLabel": {
+      "CONTENT_TYPE_PRODUCT": "商品评论",
+      "CONTENT_TYPE_SHOP": "店铺",
+      "CONTENT_TYPE_POST": "文章"
+    },
+    "statusLabel": {
+      "STATUS_PENDING": "待审核",
+      "STATUS_APPROVED": "已批准",
+      "STATUS_REJECTED": "已拒绝",
+      "STATUS_SPAM": "垃圾"
+    }
   },
   "invoice": {
     "moduleName": "发票",
@@ -489,6 +525,17 @@
     "button": {
       "create": "新增拼团活动",
       "update": "编辑拼团活动"
+    }
+  },
+  "memberTier": {
+    "name": "等级名称",
+    "level": "等级",
+    "minSpend": "累计消费门槛",
+    "pointsMultiplier": "积分倍率",
+    "status": "状态",
+    "button": {
+      "create": "新增等级",
+      "update": "编辑等级"
     }
   }
 }

@@ -103,6 +103,7 @@
     "seckill": "秒杀活动管理",
     "pointsLedger": "积分台账",
     "groupon": "拼团活动管理",
+    "memberTier": "会员等级",
     "stockOpLog": "库存操作流水"
   }
 }

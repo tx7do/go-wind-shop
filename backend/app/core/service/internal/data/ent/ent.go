@@ -46,6 +46,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/membershiporgunit"
 	"go-wind-shop/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-shop/app/core/service/internal/data/ent/membershiprole"
+	"go-wind-shop/app/core/service/internal/data/ent/membertier"
 	"go-wind-shop/app/core/service/internal/data/ent/menu"
 	"go-wind-shop/app/core/service/internal/data/ent/monitoralertrule"
 	"go-wind-shop/app/core/service/internal/data/ent/notificationchannel"
@@ -207,6 +208,7 @@ func checkColumn(t, c string) error {
 			language.Table:                         language.ValidColumn,
 			loginauditlog.Table:                    loginauditlog.ValidColumn,
 			loginpolicy.Table:                      loginpolicy.ValidColumn,
+			membertier.Table:                       membertier.ValidColumn,
 			membership.Table:                       membership.ValidColumn,
 			membershiporgunit.Table:                membershiporgunit.ValidColumn,
 			membershipposition.Table:               membershipposition.ValidColumn,

@@ -43,14 +43,14 @@ type PlanServiceHTTPServer interface {
 
 func RegisterPlanServiceHTTPServer(s *http.Server, srv PlanServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/plans", _PlanService_List38_HTTP_Handler(srv))
-	r.GET("/admin/v1/plans/{id}", _PlanService_Get38_HTTP_Handler(srv))
-	r.POST("/admin/v1/plans", _PlanService_Create29_HTTP_Handler(srv))
-	r.PUT("/admin/v1/plans/{id}", _PlanService_Update30_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/plans", _PlanService_Delete32_HTTP_Handler(srv))
+	r.GET("/admin/v1/plans", _PlanService_List39_HTTP_Handler(srv))
+	r.GET("/admin/v1/plans/{id}", _PlanService_Get39_HTTP_Handler(srv))
+	r.POST("/admin/v1/plans", _PlanService_Create30_HTTP_Handler(srv))
+	r.PUT("/admin/v1/plans/{id}", _PlanService_Update31_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/plans", _PlanService_Delete33_HTTP_Handler(srv))
 }
 
-func _PlanService_List38_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http.Context) error {
+func _PlanService_List39_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -69,7 +69,7 @@ func _PlanService_List38_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http.C
 	}
 }
 
-func _PlanService_Get38_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http.Context) error {
+func _PlanService_Get39_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPlanRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -91,7 +91,7 @@ func _PlanService_Get38_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http.Co
 	}
 }
 
-func _PlanService_Create29_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http.Context) error {
+func _PlanService_Create30_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreatePlanRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -113,7 +113,7 @@ func _PlanService_Create29_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http
 	}
 }
 
-func _PlanService_Update30_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http.Context) error {
+func _PlanService_Update31_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdatePlanRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -138,7 +138,7 @@ func _PlanService_Update30_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http
 	}
 }
 
-func _PlanService_Delete32_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http.Context) error {
+func _PlanService_Delete33_HTTP_Handler(srv PlanServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeletePlanRequest
 		if err := ctx.BindQuery(&in); err != nil {

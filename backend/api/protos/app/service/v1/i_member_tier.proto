@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "catalog/service/v1/member_tier.proto";
+
+// 会员等级前台服务（C端：我的等级 + 全部等级列表）
+service MemberTierService {
+  // 我的等级信息（登录态，user 由 BFF 强制注入）
+  rpc GetMyTierInfo (catalog.service.v1.GetUserTierInfoRequest) returns (catalog.service.v1.GetUserTierInfoResponse) {
+    option (google.api.http) = { get: "/app/v1/mall/member-tiers/my" };
+  }
+  // 全部等级列表（匿名可读，展示各等级权益）
+  rpc ListTiers (catalog.service.v1.ListActiveMemberTiersRequest) returns (catalog.service.v1.ListMemberTierResponse) {
+    option (google.api.http) = { get: "/app/v1/mall/member-tiers/list" };
+  }
+}

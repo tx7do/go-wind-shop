@@ -214,7 +214,19 @@ const trade: RouteRecordRaw[] = [
         component: () => import("@/pages/app/trade/groupon/index.vue"),
       },
       {
+        path: "member-tiers",
+        name: "TradeMemberTierManagement",
+        meta: {
+          order: 20,
+          icon: "lucide:crown",
+          title: "routes.trade.memberTier",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/member-tiers/index.vue"),
+      },
+      {
         path: "stock-op-logs",
+        name: "TradeStockOpLogManagement",
         name: "TradeStockOpLogManagement",
         meta: {
           order: 15,

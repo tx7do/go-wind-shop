@@ -49,7 +49,8 @@
     "aiNeedName": "Fill in the product name first (or at least a short hint)",
     "aiGenerateSuccess": "Copy generated and filled into the form",
     "aiGenerateFailed": "AI generation failed. Configure a provider in AI Providers first",
-    "aiOverwriteConfirm": "This will overwrite the existing short/long description. Continue?"
+    "aiOverwriteConfirm": "This will overwrite the existing short/long description. Continue?",
+    "discardConfirm": "You have unsaved changes. Leave without saving?"
   },
   "productAttribute": {
     "moduleName": "Attribute Management",
@@ -71,7 +72,8 @@
     "button": {
       "create": "Create Attribute Value",
       "update": "Edit Attribute Value"
-    }
+    },
+    "currentAttribute": "Current attribute: {name} (all values under it)"
   },
   "sku": {
     "moduleName": "SKU Management",
@@ -150,7 +152,14 @@
     },
     "methodLabel": {
       "ALIPAY": "Alipay",
-      "WECHAT": "WeChat Pay"
+      "WECHAT": "WeChat Pay",
+      "BALANCE": "Balance",
+      "CARD": "Card"
+    },
+    "businessTypeLabel": {
+      "BUSINESS_TYPE_CONSUME": "Consume",
+      "BUSINESS_TYPE_REFUND": "Refund",
+      "BUSINESS_TYPE_RECHARGE": "Recharge"
     }
   },
   "refund": {
@@ -234,6 +243,14 @@
     "button": {
       "create": "Create Coupon Template",
       "update": "Edit Coupon Template"
+    },
+    "typeLabel": {
+      "FIXED_AMOUNT": "Fixed amount",
+      "PERCENTAGE": "Percentage"
+    },
+    "statusLabel": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
     }
   },
   "shippingRate": {
@@ -248,6 +265,10 @@
     "button": {
       "create": "Create Shipping Rate",
       "update": "Edit Shipping Rate"
+    },
+    "statusLabel": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
     }
   },
   "stockAlert": {
@@ -278,6 +299,10 @@
     "button": {
       "create": "Create Tax Rate",
       "update": "Edit Tax Rate"
+    },
+    "statusLabel": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
     }
   },
   "userCoupon": {
@@ -310,7 +335,18 @@
     "replyTip": "The reply is created as a child comment and published as approved",
     "replySubmit": "Post Reply",
     "replySuccess": "Reply posted",
-    "replyFailed": "Failed to post reply"
+    "replyFailed": "Failed to post reply",
+    "typeLabel": {
+      "CONTENT_TYPE_PRODUCT": "Product review",
+      "CONTENT_TYPE_SHOP": "Shop",
+      "CONTENT_TYPE_POST": "Article"
+    },
+    "statusLabel": {
+      "STATUS_PENDING": "Pending",
+      "STATUS_APPROVED": "Approved",
+      "STATUS_REJECTED": "Rejected",
+      "STATUS_SPAM": "Spam"
+    }
   },
   "invoice": {
     "moduleName": "Invoice",
@@ -489,6 +525,17 @@
     "button": {
       "create": "New Groupon Activity",
       "update": "Edit Groupon Activity"
+    }
+  },
+  "memberTier": {
+    "name": "Tier Name",
+    "level": "Level",
+    "minSpend": "Min Spend",
+    "pointsMultiplier": "Points Multiplier",
+    "status": "Status",
+    "button": {
+      "create": "New Tier",
+      "update": "Edit Tier"
     }
   }
 }

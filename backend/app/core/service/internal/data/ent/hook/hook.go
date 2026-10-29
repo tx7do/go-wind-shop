@@ -440,6 +440,18 @@ func (f LoginPolicyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value,
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.LoginPolicyMutation", m)
 }
 
+// The MemberTierFunc type is an adapter to allow the use of ordinary
+// function as MemberTier mutator.
+type MemberTierFunc func(context.Context, *ent.MemberTierMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MemberTierFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MemberTierMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MemberTierMutation", m)
+}
+
 // The MembershipFunc type is an adapter to allow the use of ordinary
 // function as Membership mutator.
 type MembershipFunc func(context.Context, *ent.MembershipMutation) (ent.Value, error)

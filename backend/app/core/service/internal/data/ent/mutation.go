@@ -49,6 +49,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/membershiporgunit"
 	"go-wind-shop/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-shop/app/core/service/internal/data/ent/membershiprole"
+	"go-wind-shop/app/core/service/internal/data/ent/membertier"
 	"go-wind-shop/app/core/service/internal/data/ent/menu"
 	"go-wind-shop/app/core/service/internal/data/ent/monitoralertrule"
 	"go-wind-shop/app/core/service/internal/data/ent/notificationchannel"
@@ -161,6 +162,7 @@ const (
 	TypeLanguage                         = "Language"
 	TypeLoginAuditLog                    = "LoginAuditLog"
 	TypeLoginPolicy                      = "LoginPolicy"
+	TypeMemberTier                       = "MemberTier"
 	TypeMembership                       = "Membership"
 	TypeMembershipOrgUnit                = "MembershipOrgUnit"
 	TypeMembershipPosition               = "MembershipPosition"
@@ -52718,6 +52720,1452 @@ func (m *LoginPolicyMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *LoginPolicyMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown LoginPolicy edge %s", name)
+}
+
+// MemberTierMutation represents an operation that mutates the MemberTier nodes in the graph.
+type MemberTierMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *uint32
+	created_at           *time.Time
+	updated_at           *time.Time
+	deleted_at           *time.Time
+	created_by           *uint32
+	addcreated_by        *int32
+	updated_by           *uint32
+	addupdated_by        *int32
+	deleted_by           *uint32
+	adddeleted_by        *int32
+	tenant_id            *uint32
+	addtenant_id         *int32
+	name                 *string
+	level                *int32
+	addlevel             *int32
+	min_spend            *int64
+	addmin_spend         *int64
+	points_multiplier    *int32
+	addpoints_multiplier *int32
+	badge_icon           *string
+	currency             *string
+	status               *membertier.Status
+	clearedFields        map[string]struct{}
+	done                 bool
+	oldValue             func(context.Context) (*MemberTier, error)
+	predicates           []predicate.MemberTier
+}
+
+var _ ent.Mutation = (*MemberTierMutation)(nil)
+
+// membertierOption allows management of the mutation configuration using functional options.
+type membertierOption func(*MemberTierMutation)
+
+// newMemberTierMutation creates new mutation for the MemberTier entity.
+func newMemberTierMutation(c config, op Op, opts ...membertierOption) *MemberTierMutation {
+	m := &MemberTierMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeMemberTier,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withMemberTierID sets the ID field of the mutation.
+func withMemberTierID(id uint32) membertierOption {
+	return func(m *MemberTierMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *MemberTier
+		)
+		m.oldValue = func(ctx context.Context) (*MemberTier, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().MemberTier.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withMemberTier sets the old MemberTier of the mutation.
+func withMemberTier(node *MemberTier) membertierOption {
+	return func(m *MemberTierMutation) {
+		m.oldValue = func(context.Context) (*MemberTier, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m MemberTierMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m MemberTierMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of MemberTier entities.
+func (m *MemberTierMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *MemberTierMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *MemberTierMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().MemberTier.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *MemberTierMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *MemberTierMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *MemberTierMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[membertier.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *MemberTierMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[membertier.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *MemberTierMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, membertier.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MemberTierMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MemberTierMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *MemberTierMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[membertier.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *MemberTierMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[membertier.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MemberTierMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, membertier.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *MemberTierMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *MemberTierMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *MemberTierMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[membertier.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *MemberTierMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[membertier.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *MemberTierMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, membertier.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *MemberTierMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *MemberTierMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *MemberTierMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *MemberTierMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *MemberTierMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[membertier.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *MemberTierMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[membertier.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *MemberTierMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, membertier.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *MemberTierMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *MemberTierMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *MemberTierMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *MemberTierMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *MemberTierMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[membertier.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *MemberTierMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[membertier.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *MemberTierMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, membertier.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *MemberTierMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *MemberTierMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *MemberTierMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *MemberTierMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *MemberTierMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[membertier.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *MemberTierMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[membertier.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *MemberTierMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, membertier.FieldDeletedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *MemberTierMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *MemberTierMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *MemberTierMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *MemberTierMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *MemberTierMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[membertier.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *MemberTierMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[membertier.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *MemberTierMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, membertier.FieldTenantID)
+}
+
+// SetName sets the "name" field.
+func (m *MemberTierMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *MemberTierMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *MemberTierMutation) ResetName() {
+	m.name = nil
+}
+
+// SetLevel sets the "level" field.
+func (m *MemberTierMutation) SetLevel(i int32) {
+	m.level = &i
+	m.addlevel = nil
+}
+
+// Level returns the value of the "level" field in the mutation.
+func (m *MemberTierMutation) Level() (r int32, exists bool) {
+	v := m.level
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLevel returns the old "level" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldLevel(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLevel is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLevel requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLevel: %w", err)
+	}
+	return oldValue.Level, nil
+}
+
+// AddLevel adds i to the "level" field.
+func (m *MemberTierMutation) AddLevel(i int32) {
+	if m.addlevel != nil {
+		*m.addlevel += i
+	} else {
+		m.addlevel = &i
+	}
+}
+
+// AddedLevel returns the value that was added to the "level" field in this mutation.
+func (m *MemberTierMutation) AddedLevel() (r int32, exists bool) {
+	v := m.addlevel
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLevel resets all changes to the "level" field.
+func (m *MemberTierMutation) ResetLevel() {
+	m.level = nil
+	m.addlevel = nil
+}
+
+// SetMinSpend sets the "min_spend" field.
+func (m *MemberTierMutation) SetMinSpend(i int64) {
+	m.min_spend = &i
+	m.addmin_spend = nil
+}
+
+// MinSpend returns the value of the "min_spend" field in the mutation.
+func (m *MemberTierMutation) MinSpend() (r int64, exists bool) {
+	v := m.min_spend
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMinSpend returns the old "min_spend" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldMinSpend(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMinSpend is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMinSpend requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMinSpend: %w", err)
+	}
+	return oldValue.MinSpend, nil
+}
+
+// AddMinSpend adds i to the "min_spend" field.
+func (m *MemberTierMutation) AddMinSpend(i int64) {
+	if m.addmin_spend != nil {
+		*m.addmin_spend += i
+	} else {
+		m.addmin_spend = &i
+	}
+}
+
+// AddedMinSpend returns the value that was added to the "min_spend" field in this mutation.
+func (m *MemberTierMutation) AddedMinSpend() (r int64, exists bool) {
+	v := m.addmin_spend
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMinSpend resets all changes to the "min_spend" field.
+func (m *MemberTierMutation) ResetMinSpend() {
+	m.min_spend = nil
+	m.addmin_spend = nil
+}
+
+// SetPointsMultiplier sets the "points_multiplier" field.
+func (m *MemberTierMutation) SetPointsMultiplier(i int32) {
+	m.points_multiplier = &i
+	m.addpoints_multiplier = nil
+}
+
+// PointsMultiplier returns the value of the "points_multiplier" field in the mutation.
+func (m *MemberTierMutation) PointsMultiplier() (r int32, exists bool) {
+	v := m.points_multiplier
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPointsMultiplier returns the old "points_multiplier" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldPointsMultiplier(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPointsMultiplier is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPointsMultiplier requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPointsMultiplier: %w", err)
+	}
+	return oldValue.PointsMultiplier, nil
+}
+
+// AddPointsMultiplier adds i to the "points_multiplier" field.
+func (m *MemberTierMutation) AddPointsMultiplier(i int32) {
+	if m.addpoints_multiplier != nil {
+		*m.addpoints_multiplier += i
+	} else {
+		m.addpoints_multiplier = &i
+	}
+}
+
+// AddedPointsMultiplier returns the value that was added to the "points_multiplier" field in this mutation.
+func (m *MemberTierMutation) AddedPointsMultiplier() (r int32, exists bool) {
+	v := m.addpoints_multiplier
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPointsMultiplier resets all changes to the "points_multiplier" field.
+func (m *MemberTierMutation) ResetPointsMultiplier() {
+	m.points_multiplier = nil
+	m.addpoints_multiplier = nil
+}
+
+// SetBadgeIcon sets the "badge_icon" field.
+func (m *MemberTierMutation) SetBadgeIcon(s string) {
+	m.badge_icon = &s
+}
+
+// BadgeIcon returns the value of the "badge_icon" field in the mutation.
+func (m *MemberTierMutation) BadgeIcon() (r string, exists bool) {
+	v := m.badge_icon
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBadgeIcon returns the old "badge_icon" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldBadgeIcon(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBadgeIcon is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBadgeIcon requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBadgeIcon: %w", err)
+	}
+	return oldValue.BadgeIcon, nil
+}
+
+// ClearBadgeIcon clears the value of the "badge_icon" field.
+func (m *MemberTierMutation) ClearBadgeIcon() {
+	m.badge_icon = nil
+	m.clearedFields[membertier.FieldBadgeIcon] = struct{}{}
+}
+
+// BadgeIconCleared returns if the "badge_icon" field was cleared in this mutation.
+func (m *MemberTierMutation) BadgeIconCleared() bool {
+	_, ok := m.clearedFields[membertier.FieldBadgeIcon]
+	return ok
+}
+
+// ResetBadgeIcon resets all changes to the "badge_icon" field.
+func (m *MemberTierMutation) ResetBadgeIcon() {
+	m.badge_icon = nil
+	delete(m.clearedFields, membertier.FieldBadgeIcon)
+}
+
+// SetCurrency sets the "currency" field.
+func (m *MemberTierMutation) SetCurrency(s string) {
+	m.currency = &s
+}
+
+// Currency returns the value of the "currency" field in the mutation.
+func (m *MemberTierMutation) Currency() (r string, exists bool) {
+	v := m.currency
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrency returns the old "currency" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldCurrency(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrency is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrency requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrency: %w", err)
+	}
+	return oldValue.Currency, nil
+}
+
+// ResetCurrency resets all changes to the "currency" field.
+func (m *MemberTierMutation) ResetCurrency() {
+	m.currency = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *MemberTierMutation) SetStatus(value membertier.Status) {
+	m.status = &value
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *MemberTierMutation) Status() (r membertier.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the MemberTier entity.
+// If the MemberTier object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MemberTierMutation) OldStatus(ctx context.Context) (v *membertier.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *MemberTierMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[membertier.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *MemberTierMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[membertier.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *MemberTierMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, membertier.FieldStatus)
+}
+
+// Where appends a list predicates to the MemberTierMutation builder.
+func (m *MemberTierMutation) Where(ps ...predicate.MemberTier) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the MemberTierMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *MemberTierMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MemberTier, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *MemberTierMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *MemberTierMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (MemberTier).
+func (m *MemberTierMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *MemberTierMutation) Fields() []string {
+	fields := make([]string, 0, 14)
+	if m.created_at != nil {
+		fields = append(fields, membertier.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, membertier.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, membertier.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, membertier.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, membertier.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, membertier.FieldDeletedBy)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, membertier.FieldTenantID)
+	}
+	if m.name != nil {
+		fields = append(fields, membertier.FieldName)
+	}
+	if m.level != nil {
+		fields = append(fields, membertier.FieldLevel)
+	}
+	if m.min_spend != nil {
+		fields = append(fields, membertier.FieldMinSpend)
+	}
+	if m.points_multiplier != nil {
+		fields = append(fields, membertier.FieldPointsMultiplier)
+	}
+	if m.badge_icon != nil {
+		fields = append(fields, membertier.FieldBadgeIcon)
+	}
+	if m.currency != nil {
+		fields = append(fields, membertier.FieldCurrency)
+	}
+	if m.status != nil {
+		fields = append(fields, membertier.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *MemberTierMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case membertier.FieldCreatedAt:
+		return m.CreatedAt()
+	case membertier.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case membertier.FieldDeletedAt:
+		return m.DeletedAt()
+	case membertier.FieldCreatedBy:
+		return m.CreatedBy()
+	case membertier.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case membertier.FieldDeletedBy:
+		return m.DeletedBy()
+	case membertier.FieldTenantID:
+		return m.TenantID()
+	case membertier.FieldName:
+		return m.Name()
+	case membertier.FieldLevel:
+		return m.Level()
+	case membertier.FieldMinSpend:
+		return m.MinSpend()
+	case membertier.FieldPointsMultiplier:
+		return m.PointsMultiplier()
+	case membertier.FieldBadgeIcon:
+		return m.BadgeIcon()
+	case membertier.FieldCurrency:
+		return m.Currency()
+	case membertier.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *MemberTierMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case membertier.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case membertier.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case membertier.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case membertier.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case membertier.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case membertier.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case membertier.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case membertier.FieldName:
+		return m.OldName(ctx)
+	case membertier.FieldLevel:
+		return m.OldLevel(ctx)
+	case membertier.FieldMinSpend:
+		return m.OldMinSpend(ctx)
+	case membertier.FieldPointsMultiplier:
+		return m.OldPointsMultiplier(ctx)
+	case membertier.FieldBadgeIcon:
+		return m.OldBadgeIcon(ctx)
+	case membertier.FieldCurrency:
+		return m.OldCurrency(ctx)
+	case membertier.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown MemberTier field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MemberTierMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case membertier.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case membertier.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case membertier.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case membertier.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case membertier.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case membertier.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case membertier.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case membertier.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case membertier.FieldLevel:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLevel(v)
+		return nil
+	case membertier.FieldMinSpend:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMinSpend(v)
+		return nil
+	case membertier.FieldPointsMultiplier:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPointsMultiplier(v)
+		return nil
+	case membertier.FieldBadgeIcon:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBadgeIcon(v)
+		return nil
+	case membertier.FieldCurrency:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrency(v)
+		return nil
+	case membertier.FieldStatus:
+		v, ok := value.(membertier.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MemberTier field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *MemberTierMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, membertier.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, membertier.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, membertier.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, membertier.FieldTenantID)
+	}
+	if m.addlevel != nil {
+		fields = append(fields, membertier.FieldLevel)
+	}
+	if m.addmin_spend != nil {
+		fields = append(fields, membertier.FieldMinSpend)
+	}
+	if m.addpoints_multiplier != nil {
+		fields = append(fields, membertier.FieldPointsMultiplier)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *MemberTierMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case membertier.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case membertier.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case membertier.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case membertier.FieldTenantID:
+		return m.AddedTenantID()
+	case membertier.FieldLevel:
+		return m.AddedLevel()
+	case membertier.FieldMinSpend:
+		return m.AddedMinSpend()
+	case membertier.FieldPointsMultiplier:
+		return m.AddedPointsMultiplier()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *MemberTierMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case membertier.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case membertier.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case membertier.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case membertier.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case membertier.FieldLevel:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLevel(v)
+		return nil
+	case membertier.FieldMinSpend:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMinSpend(v)
+		return nil
+	case membertier.FieldPointsMultiplier:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPointsMultiplier(v)
+		return nil
+	}
+	return fmt.Errorf("unknown MemberTier numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *MemberTierMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(membertier.FieldCreatedAt) {
+		fields = append(fields, membertier.FieldCreatedAt)
+	}
+	if m.FieldCleared(membertier.FieldUpdatedAt) {
+		fields = append(fields, membertier.FieldUpdatedAt)
+	}
+	if m.FieldCleared(membertier.FieldDeletedAt) {
+		fields = append(fields, membertier.FieldDeletedAt)
+	}
+	if m.FieldCleared(membertier.FieldCreatedBy) {
+		fields = append(fields, membertier.FieldCreatedBy)
+	}
+	if m.FieldCleared(membertier.FieldUpdatedBy) {
+		fields = append(fields, membertier.FieldUpdatedBy)
+	}
+	if m.FieldCleared(membertier.FieldDeletedBy) {
+		fields = append(fields, membertier.FieldDeletedBy)
+	}
+	if m.FieldCleared(membertier.FieldTenantID) {
+		fields = append(fields, membertier.FieldTenantID)
+	}
+	if m.FieldCleared(membertier.FieldBadgeIcon) {
+		fields = append(fields, membertier.FieldBadgeIcon)
+	}
+	if m.FieldCleared(membertier.FieldStatus) {
+		fields = append(fields, membertier.FieldStatus)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *MemberTierMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *MemberTierMutation) ClearField(name string) error {
+	switch name {
+	case membertier.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case membertier.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case membertier.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case membertier.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case membertier.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case membertier.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case membertier.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case membertier.FieldBadgeIcon:
+		m.ClearBadgeIcon()
+		return nil
+	case membertier.FieldStatus:
+		m.ClearStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown MemberTier nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *MemberTierMutation) ResetField(name string) error {
+	switch name {
+	case membertier.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case membertier.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case membertier.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case membertier.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case membertier.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case membertier.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case membertier.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case membertier.FieldName:
+		m.ResetName()
+		return nil
+	case membertier.FieldLevel:
+		m.ResetLevel()
+		return nil
+	case membertier.FieldMinSpend:
+		m.ResetMinSpend()
+		return nil
+	case membertier.FieldPointsMultiplier:
+		m.ResetPointsMultiplier()
+		return nil
+	case membertier.FieldBadgeIcon:
+		m.ResetBadgeIcon()
+		return nil
+	case membertier.FieldCurrency:
+		m.ResetCurrency()
+		return nil
+	case membertier.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown MemberTier field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *MemberTierMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *MemberTierMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *MemberTierMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *MemberTierMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *MemberTierMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *MemberTierMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *MemberTierMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown MemberTier unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *MemberTierMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown MemberTier edge %s", name)
 }
 
 // MembershipMutation represents an operation that mutates the Membership nodes in the graph.

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/member_tier.proto";
+
+// 会员等级管理服务（admin 全 CRUD）
+service MemberTierService {
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListMemberTierResponse) {
+    option (google.api.http) = { get: "/admin/v1/mall/member-tiers" };
+  }
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountMemberTierResponse) {
+    option (google.api.http) = { get: "/admin/v1/mall/member-tiers/count" };
+  }
+  rpc Get (catalog.service.v1.GetMemberTierRequest) returns (catalog.service.v1.MemberTier) {
+    option (google.api.http) = { get: "/admin/v1/mall/member-tiers/{id}" };
+  }
+  rpc Create (catalog.service.v1.CreateMemberTierRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = { post: "/admin/v1/mall/member-tiers" body: "*" };
+  }
+  rpc Update (catalog.service.v1.UpdateMemberTierRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = { put: "/admin/v1/mall/member-tiers/{id}" body: "*" };
+  }
+  rpc Delete (catalog.service.v1.DeleteMemberTierRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = { delete: "/admin/v1/mall/member-tiers/{id}" };
+  }
+}

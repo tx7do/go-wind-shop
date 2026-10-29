@@ -133,6 +133,7 @@ func NewGrpcServer(
 	orderItemService *service.OrderItemService,
 
 	// register:grpc-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
+	memberTierService *service.MemberTierService,
 	pointsLedgerService *service.PointsLedgerService,
 	seckillActivityService *service.SeckillActivityService,
 	grouponService *service.GrouponService,
@@ -266,6 +267,7 @@ func NewGrpcServer(
 	authenticationV1.RegisterMFAServiceServer(srv, mfaService)
 
 	// register:grpc-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
+	catalogV1.RegisterMemberTierServiceServer(srv, memberTierService)
 	catalogV1.RegisterPointsLedgerServiceServer(srv, pointsLedgerService)
 	catalogV1.RegisterSeckillActivityServiceServer(srv, seckillActivityService)
 	catalogV1.RegisterGrouponActivityServiceServer(srv, grouponService)

@@ -1429,6 +1429,62 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/coupon.service.v1.ListCouponTemplateResponse'
+    /app/v1/mall/groupons/active:
+        get:
+            tags:
+                - GrouponService
+            description: 当前生效中的拼团活动（商品页拼团价展示；匿名可读）
+            operationId: GrouponService_ListActiveGroupons
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.ListGrouponActivityResponse'
+    /app/v1/mall/groupons/groups/{id}:
+        get:
+            tags:
+                - GrouponService
+            description: 团详情与团列表（订单详情展示团状态 / 参团列表）
+            operationId: GrouponService_GetGroup
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.GrouponGroup'
+    /app/v1/mall/groupons/{activityId}/groups:
+        get:
+            tags:
+                - GrouponService
+            operationId: GrouponService_ListGroups
+            parameters:
+                - name: activityId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: status
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.ListGrouponGroupResponse'
     /app/v1/mall/invoices:
         get:
             tags:
@@ -1530,6 +1586,38 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/invoice.service.v1.Invoice'
+    /app/v1/mall/member-tiers/list:
+        get:
+            tags:
+                - MemberTierService
+            description: 全部等级列表（匿名可读，展示各等级权益）
+            operationId: MemberTierService_ListTiers
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.ListMemberTierResponse'
+    /app/v1/mall/member-tiers/my:
+        get:
+            tags:
+                - MemberTierService
+            description: 我的等级信息（登录态，user 由 BFF 强制注入）
+            operationId: MemberTierService_GetMyTierInfo
+            parameters:
+                - name: userId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.GetUserTierInfoResponse'
     /app/v1/mall/messages:
         get:
             tags:
@@ -2531,6 +2619,160 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/payment.service.v1.MockConfirmPaymentResponse'
+    /app/v1/mall/points/balance:
+        get:
+            tags:
+                - PointsService
+            description: 我的积分余额（user 由登录态隐私层钉定）
+            operationId: PointsService_GetMyPointsBalance
+            parameters:
+                - name: userId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.GetUserPointsBalanceResponse'
+    /app/v1/mall/points/check-in:
+        post:
+            tags:
+                - PointsService
+            description: 每日签到（登录态；幂等）
+            operationId: PointsService_CheckIn
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/catalog.service.v1.CheckInRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.CheckInResponse'
+    /app/v1/mall/points/check-in-status:
+        get:
+            tags:
+                - PointsService
+            description: 签到状态（登录态）
+            operationId: PointsService_GetCheckInStatus
+            parameters:
+                - name: userId
+                  in: query
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.GetCheckInStatusResponse'
+    /app/v1/mall/points/exchange-coupon:
+        post:
+            tags:
+                - PointsService
+            description: 积分兑换优惠券（登录态；事务内扣积分+发券）
+            operationId: PointsService_ExchangePointsForCoupon
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/catalog.service.v1.ExchangePointsForCouponRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.ExchangePointsForCouponResponse'
+    /app/v1/mall/points/ledgers:
+        get:
+            tags:
+                - PointsService
+            description: 我的积分台账（user 由登录态隐私层钉定）
+            operationId: PointsService_ListMyPointsLedgers
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.ListPointsLedgerResponse'
     /app/v1/mall/product-attribute-values:
         get:
             tags:
@@ -4720,6 +4962,164 @@ components:
                     description: 删除时间
                     format: date-time
             description: 类目翻译
+        catalog.service.v1.CheckInRequest:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    format: uint32
+        catalog.service.v1.CheckInResponse:
+            type: object
+            properties:
+                awarded:
+                    type: string
+                    description: 本次签到积分
+                balance:
+                    type: string
+                    description: 签到后余额
+                alreadyCheckedIn:
+                    type: boolean
+                    description: 今日已签到（幂等返回）
+        catalog.service.v1.ExchangePointsForCouponRequest:
+            type: object
+            properties:
+                userId:
+                    type: integer
+                    format: uint32
+                couponTemplateId:
+                    type: integer
+                    format: uint32
+        catalog.service.v1.ExchangePointsForCouponResponse:
+            type: object
+            properties:
+                couponId:
+                    type: integer
+                    format: uint32
+                pointsDeducted:
+                    type: string
+                balance:
+                    type: string
+        catalog.service.v1.GetCheckInStatusResponse:
+            type: object
+            properties:
+                checkedInToday:
+                    type: boolean
+                consecutiveDays:
+                    type: integer
+                    description: 连续签到天数
+                    format: int32
+        catalog.service.v1.GetUserPointsBalanceResponse:
+            type: object
+            properties:
+                balance:
+                    type: string
+        catalog.service.v1.GetUserTierInfoResponse:
+            type: object
+            properties:
+                tier:
+                    $ref: '#/components/schemas/catalog.service.v1.MemberTier'
+                cumulativeSpend:
+                    type: string
+                    description: 累计已支付金额（分）
+        catalog.service.v1.GrouponActivity:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                skuId:
+                    type: integer
+                    description: 拼团 SKU ID
+                    format: uint32
+                groupPrice:
+                    type: string
+                    description: 成团价（分）
+                groupSize:
+                    type: integer
+                    description: 成团人数
+                    format: int32
+                groupValidHours:
+                    type: integer
+                    description: 单团成团时限（小时）
+                    format: int32
+                perUserLimit:
+                    type: integer
+                    description: 每人限购（活动窗口内）
+                    format: int32
+                validFrom:
+                    type: string
+                    format: date-time
+                validUntil:
+                    type: string
+                    format: date-time
+                currency:
+                    type: string
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - ACTIVE
+                        - INACTIVE
+                    type: string
+                    format: enum
+                tenantId:
+                    type: integer
+                    format: uint32
+                createdBy:
+                    type: integer
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            description: 拼团活动
+        catalog.service.v1.GrouponGroup:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                activityId:
+                    type: integer
+                    format: uint32
+                leaderOrderId:
+                    type: integer
+                    description: 团长订单ID
+                    format: uint32
+                memberCount:
+                    type: integer
+                    description: 已参团人数（含未支付）
+                    format: int32
+                paidCount:
+                    type: integer
+                    description: 已支付人数
+                    format: int32
+                targetSize:
+                    type: integer
+                    description: 成团所需人数
+                    format: int32
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - OPENING
+                        - SUCCESS
+                        - FAILED
+                    type: string
+                    format: enum
+                expireAt:
+                    type: string
+                    description: 成团截止时间
+                    format: date-time
+                createdAt:
+                    type: string
+                    format: date-time
+            description: 拼团
         catalog.service.v1.ListBrandResponse:
             type: object
             properties:
@@ -4740,6 +5140,42 @@ components:
                 total:
                     type: string
             description: 类目列表 - 答复
+        catalog.service.v1.ListGrouponActivityResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.GrouponActivity'
+                total:
+                    type: string
+        catalog.service.v1.ListGrouponGroupResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.GrouponGroup'
+                total:
+                    type: string
+        catalog.service.v1.ListMemberTierResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.MemberTier'
+                total:
+                    type: string
+        catalog.service.v1.ListPointsLedgerResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.PointsLedger'
+                total:
+                    type: string
         catalog.service.v1.ListProductAttributeResponse:
             type: object
             properties:
@@ -4813,6 +5249,83 @@ components:
                         $ref: '#/components/schemas/catalog.service.v1.Sku'
                 total:
                     type: string
+        catalog.service.v1.MemberTier:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                    description: 等级名称（如白银/黄金/钻石）
+                level:
+                    type: integer
+                    description: 等级（数值越大越高）
+                    format: int32
+                minSpend:
+                    type: string
+                    description: 累计消费门槛（分）
+                pointsMultiplier:
+                    type: integer
+                    description: 积分倍率
+                    format: int32
+                badgeIcon:
+                    type: string
+                    description: 等级徽章图标（icon name）
+                currency:
+                    type: string
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - ACTIVE
+                        - INACTIVE
+                    type: string
+                    format: enum
+                tenantId:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+            description: 会员等级
+        catalog.service.v1.PointsLedger:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 台账ID
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
+                delta:
+                    type: string
+                    description: 积分变动（±）
+                balanceAfter:
+                    type: string
+                    description: 变动后余额
+                type:
+                    enum:
+                        - POINTS_TYPE_UNSPECIFIED
+                        - POINTS_TYPE_EARN
+                        - POINTS_TYPE_DEDUCT
+                        - POINTS_TYPE_CHECK_IN
+                    type: string
+                    description: 类型
+                    format: enum
+                reason:
+                    type: string
+                    description: 事由
+                refOrderId:
+                    type: integer
+                    description: 关联订单ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+            description: 积分台账
         catalog.service.v1.Product:
             type: object
             properties:
@@ -5645,6 +6158,9 @@ components:
                 currency:
                     type: string
                     description: 币种（ISO 4217）
+                pointsPrice:
+                    type: string
+                    description: 积分兑换价（0=不可兑换）
                 claimable:
                     type: boolean
                     description: 是否公开可领取（领券中心仅展示 true 的模板）
@@ -6392,6 +6908,14 @@ components:
             properties:
                 data:
                     $ref: '#/components/schemas/order.service.v1.Order'
+                grouponActivityId:
+                    type: integer
+                    description: 拼团活动ID（开团/参团指令）
+                    format: uint32
+                grouponGroupId:
+                    type: integer
+                    description: 拼团ID（参团指令，留空=开新团）
+                    format: uint32
                 couponId:
                     type: integer
                     description: 优惠券实例ID（核销指令，留空表示不使用）
@@ -6487,6 +7011,14 @@ components:
                 deletedBy:
                     type: integer
                     description: 删除者用户ID
+                    format: uint32
+                grouponActivityId:
+                    type: integer
+                    description: 拼团活动ID
+                    format: uint32
+                grouponGroupId:
+                    type: integer
+                    description: 拼团ID
                     format: uint32
                 createdAt:
                     type: string
@@ -7177,6 +7709,8 @@ tags:
          匿名可读（rest_server 白名单登记），仿商品 List。
     - name: FileTransferService
       description: 文件传输服务
+    - name: GrouponService
+      description: 拼团前台服务（C端只读）
     - name: InteractionService
       description: |-
         交互服务（评论点赞）。
@@ -7192,6 +7726,8 @@ tags:
         发票前台服务（裁剪写 RPC：仅 List/Get，无 Create/Update/Delete）。
          用户隔离由 BFF fail-closed 注入 user_id + core UserPrivacy 行级隔离双重保障。
          用户不能自己开发票，只能查看自己订单的发票。
+    - name: MemberTierService
+      description: 会员等级前台服务（C端：我的等级 + 全部等级列表）
     - name: OrderItemService
       description: 订单项前台服务
     - name: OrderService
@@ -7202,6 +7738,8 @@ tags:
       description: 支付退款前台服务
     - name: PaymentTransactionService
       description: 支付流水前台服务
+    - name: PointsService
+      description: 积分前台服务（C端：余额 + 本人台账）
     - name: ProductAttributeService
       description: 商品属性前台服务
     - name: ProductAttributeValueService

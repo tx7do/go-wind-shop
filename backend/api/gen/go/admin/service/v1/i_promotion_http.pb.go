@@ -40,15 +40,15 @@ type PromotionServiceHTTPServer interface {
 
 func RegisterPromotionServiceHTTPServer(s *http.Server, srv PromotionServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/promotions", _PromotionService_List47_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/promotions/count", _PromotionService_Count18_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/promotions/{id}", _PromotionService_Get46_HTTP_Handler(srv))
-	r.POST("/admin/v1/mall/promotions", _PromotionService_Create36_HTTP_Handler(srv))
-	r.PUT("/admin/v1/mall/promotions/{id}", _PromotionService_Update37_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/mall/promotions/{id}", _PromotionService_Delete39_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/promotions", _PromotionService_List48_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/promotions/count", _PromotionService_Count19_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/promotions/{id}", _PromotionService_Get47_HTTP_Handler(srv))
+	r.POST("/admin/v1/mall/promotions", _PromotionService_Create37_HTTP_Handler(srv))
+	r.PUT("/admin/v1/mall/promotions/{id}", _PromotionService_Update38_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/mall/promotions/{id}", _PromotionService_Delete40_HTTP_Handler(srv))
 }
 
-func _PromotionService_List47_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
+func _PromotionService_List48_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -67,7 +67,7 @@ func _PromotionService_List47_HTTP_Handler(srv PromotionServiceHTTPServer) func(
 	}
 }
 
-func _PromotionService_Count18_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
+func _PromotionService_Count19_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -86,7 +86,7 @@ func _PromotionService_Count18_HTTP_Handler(srv PromotionServiceHTTPServer) func
 	}
 }
 
-func _PromotionService_Get46_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
+func _PromotionService_Get47_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPromotionRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -108,7 +108,7 @@ func _PromotionService_Get46_HTTP_Handler(srv PromotionServiceHTTPServer) func(c
 	}
 }
 
-func _PromotionService_Create36_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
+func _PromotionService_Create37_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreatePromotionRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -130,7 +130,7 @@ func _PromotionService_Create36_HTTP_Handler(srv PromotionServiceHTTPServer) fun
 	}
 }
 
-func _PromotionService_Update37_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
+func _PromotionService_Update38_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdatePromotionRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -155,7 +155,7 @@ func _PromotionService_Update37_HTTP_Handler(srv PromotionServiceHTTPServer) fun
 	}
 }
 
-func _PromotionService_Delete39_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
+func _PromotionService_Delete40_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeletePromotionRequest
 		if err := ctx.BindQuery(&in); err != nil {

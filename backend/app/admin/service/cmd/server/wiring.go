@@ -135,6 +135,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	permissionAuditLogServiceClient := data.NewPermissionAuditLogServiceClient(ctx, discovery)
 
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
+	memberTierServiceClient := data.NewMemberTierServiceClient(ctx, discovery)
 	grouponServiceClient := data.NewGrouponServiceClient(ctx, discovery)
 	pointsLedgerServiceClient := data.NewPointsLedgerServiceClient(ctx, discovery)
 	seckillServiceClient := data.NewSeckillServiceClient(ctx, discovery)
@@ -230,6 +231,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	permissionAuditLogService := service.NewPermissionAuditLogService(ctx, permissionAuditLogServiceClient)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
+	memberTierService := service.NewMemberTierService(ctx, memberTierServiceClient)
 	grouponService := service.NewGrouponService(ctx, grouponServiceClient)
 	pointsLedgerService := service.NewPointsLedgerService(ctx, pointsLedgerServiceClient)
 	seckillService := service.NewSeckillService(ctx, seckillServiceClient)
@@ -321,6 +323,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		operationAuditLogService,
 		permissionAuditLogService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
+		memberTierService,
 		grouponService,
 		pointsLedgerService,
 		seckillService,

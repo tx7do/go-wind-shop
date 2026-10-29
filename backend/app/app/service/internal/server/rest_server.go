@@ -130,6 +130,7 @@ func NewRestServer(
 	internalMessageRecipientService *service.InternalMessageRecipientService,
 
 	// register:rest-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
+	memberTierService *service.MemberTierService,
 	grouponService *service.GrouponService,
 	pointsService *service.PointsService,
 	seckillService *service.SeckillService,
@@ -194,6 +195,7 @@ func NewRestServer(
 	appV1.RegisterAiChatServiceHTTPServer(srv, aiChatService)
 
 	// register:rest-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
+	appV1.RegisterMemberTierServiceHTTPServer(srv, memberTierService)
 	appV1.RegisterGrouponServiceHTTPServer(srv, grouponService)
 	appV1.RegisterPointsServiceHTTPServer(srv, pointsService)
 	appV1.RegisterSeckillServiceHTTPServer(srv, seckillService)

@@ -5218,6 +5218,8 @@ export type couponservicev1_CouponTemplate = {
   id?: number;
   maxRedemptions?: number;
   maxRedemptionsPerUser?: number;
+  // 积分兑换价（0=不可兑换，>0 可用积分兑换）
+  pointsPrice?: number;
   redeemedCount?: number;
   status?: couponservicev1_CouponTemplate_Status;
   tenantId?: number;
@@ -8446,6 +8448,269 @@ export type authenticationservicev1_UpdateLoginPolicyRequest = {
 // 删除登录策略 - 请求
 export type authenticationservicev1_DeleteLoginPolicyRequest = {
   id?: number;
+};
+
+// 会员等级管理服务（admin 全 CRUD）
+export interface MemberTierService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_ListMemberTierResponse>;
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_CountMemberTierResponse>;
+  Get(
+    request: catalogservicev1_GetMemberTierRequest,
+  ): Promise<catalogservicev1_MemberTier>;
+  Create(
+    request: catalogservicev1_CreateMemberTierRequest,
+  ): Promise<wellKnownEmpty>;
+  Update(
+    request: catalogservicev1_UpdateMemberTierRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: catalogservicev1_DeleteMemberTierRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createMemberTierServiceClient(
+  transport: ClientTransport,
+): MemberTierService {
+  return {
+    List(request) {
+      const path = `/admin/v1/mall/member-tiers`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'MemberTierService',
+        method: 'List',
+      }) as Promise<catalogservicev1_ListMemberTierResponse>;
+    },
+    Count(request) {
+      const path = `/admin/v1/mall/member-tiers/count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'MemberTierService',
+        method: 'Count',
+      }) as Promise<catalogservicev1_CountMemberTierResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/member-tiers/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'MemberTierService',
+        method: 'Get',
+      }) as Promise<catalogservicev1_MemberTier>;
+    },
+    Create(request) {
+      const path = `/admin/v1/mall/member-tiers`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'MemberTierService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/member-tiers/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'MemberTierService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/member-tiers/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'MemberTierService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type catalogservicev1_ListMemberTierResponse = {
+  items: catalogservicev1_MemberTier[] | undefined;
+  total: number | undefined;
+};
+
+// 会员等级
+export type catalogservicev1_MemberTier = {
+  badgeIcon?: string;
+  createdAt?: wellKnownTimestamp;
+  currency?: string;
+  id?: number;
+  level?: number;
+  minSpend?: number;
+  name?: string;
+  pointsMultiplier?: number;
+  status?: catalogservicev1_MemberTier_Status;
+  tenantId?: number;
+};
+
+export type catalogservicev1_MemberTier_Status =
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'STATUS_UNSPECIFIED';
+export type catalogservicev1_CountMemberTierResponse = {
+  count: number | undefined;
+};
+
+export type catalogservicev1_GetMemberTierRequest = {
+  id: number | undefined;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type catalogservicev1_CreateMemberTierRequest = {
+  data: catalogservicev1_MemberTier | undefined;
+};
+
+export type catalogservicev1_UpdateMemberTierRequest = {
+  data: catalogservicev1_MemberTier | undefined;
+  id: number | undefined;
+  updateMask?: wellKnownFieldMask;
+};
+
+export type catalogservicev1_DeleteMemberTierRequest = {
+  id: number | undefined;
 };
 
 // 后台菜单管理服务
@@ -13838,6 +14103,7 @@ export type catalogservicev1_PointsLedger = {
 
 // 积分类型
 export type catalogservicev1_PointsLedgerType =
+  | 'POINTS_TYPE_CHECK_IN'
   | 'POINTS_TYPE_DEDUCT'
   | 'POINTS_TYPE_EARN'
   | 'POINTS_TYPE_UNSPECIFIED';
@@ -20455,6 +20721,7 @@ export class ApiClient {
   private _languageService?: LanguageService;
   private _loginAuditLogService?: LoginAuditLogService;
   private _loginPolicyService?: LoginPolicyService;
+  private _memberTierService?: MemberTierService;
   private _menuService?: MenuService;
   private _mfaService?: MfaService;
   private _monitorAlertService?: MonitorAlertService;
@@ -20648,6 +20915,10 @@ export class ApiClient {
 
   get loginPolicyService(): LoginPolicyService {
     return this._loginPolicyService ??= createLoginPolicyServiceClient(this._transport);
+  }
+
+  get memberTierService(): MemberTierService {
+    return this._memberTierService ??= createMemberTierServiceClient(this._transport);
   }
 
   get menuService(): MenuService {

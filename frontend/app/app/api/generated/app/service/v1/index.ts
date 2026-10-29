@@ -1862,6 +1862,8 @@ export type couponservicev1_CouponTemplate = {
   id?: number;
   maxRedemptions?: number;
   maxRedemptionsPerUser?: number;
+  // 积分兑换价（0=不可兑换，>0 可用积分兑换）
+  pointsPrice?: number;
   redeemedCount?: number;
   status?: couponservicev1_CouponTemplate_Status;
   tenantId?: number;
@@ -2583,6 +2585,85 @@ export type invoiceservicev1_Invoice_Status =
 export type invoiceservicev1_GetInvoiceRequest = {
   id?: number;
   viewMask?: wellKnownFieldMask;
+};
+
+// 会员等级前台服务（C端：我的等级 + 全部等级列表）
+export interface MemberTierService {
+  // 我的等级信息（登录态，user 由 BFF 强制注入）
+  GetMyTierInfo(
+    request: catalogservicev1_GetUserTierInfoRequest,
+  ): Promise<catalogservicev1_GetUserTierInfoResponse>;
+  // 全部等级列表（匿名可读，展示各等级权益）
+  ListTiers(
+    request: catalogservicev1_ListActiveMemberTiersRequest,
+  ): Promise<catalogservicev1_ListMemberTierResponse>;
+}
+
+export function createMemberTierServiceClient(
+  transport: ClientTransport,
+): MemberTierService {
+  return {
+    GetMyTierInfo(request) {
+      const path = `/app/v1/mall/member-tiers/my`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.userId) {
+        queryParams.push(
+          `userId=${encodeURIComponent(request.userId.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'MemberTierService',
+        method: 'GetMyTierInfo',
+      }) as Promise<catalogservicev1_GetUserTierInfoResponse>;
+    },
+    ListTiers(_request) {
+      const path = `/app/v1/mall/member-tiers/list`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'MemberTierService',
+        method: 'ListTiers',
+      }) as Promise<catalogservicev1_ListMemberTierResponse>;
+    },
+  };
+}
+export type catalogservicev1_GetUserTierInfoRequest = {
+  userId: number | undefined;
+};
+
+export type catalogservicev1_GetUserTierInfoResponse = {
+  cumulativeSpend: number | undefined;
+  tier: catalogservicev1_MemberTier | undefined;
+};
+
+// 会员等级
+export type catalogservicev1_MemberTier = {
+  badgeIcon?: string;
+  createdAt?: wellKnownTimestamp;
+  currency?: string;
+  id?: number;
+  level?: number;
+  minSpend?: number;
+  name?: string;
+  pointsMultiplier?: number;
+  status?: catalogservicev1_MemberTier_Status;
+  tenantId?: number;
+};
+
+export type catalogservicev1_MemberTier_Status =
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'STATUS_UNSPECIFIED';
+export type catalogservicev1_ListActiveMemberTiersRequest = {
+};
+
+export type catalogservicev1_ListMemberTierResponse = {
+  items: catalogservicev1_MemberTier[] | undefined;
+  total: number | undefined;
 };
 
 // 订单前台服务
@@ -3782,6 +3863,18 @@ export interface PointsService {
   ListMyPointsLedgers(
     request: pagination_PagingRequest,
   ): Promise<catalogservicev1_ListPointsLedgerResponse>;
+  // 每日签到（登录态；幂等）
+  CheckIn(
+    request: catalogservicev1_CheckInRequest,
+  ): Promise<catalogservicev1_CheckInResponse>;
+  // 签到状态（登录态）
+  GetCheckInStatus(
+    request: catalogservicev1_GetCheckInStatusRequest,
+  ): Promise<catalogservicev1_GetCheckInStatusResponse>;
+  // 积分兑换优惠券（登录态；事务内扣积分+发券）
+  ExchangePointsForCoupon(
+    request: catalogservicev1_ExchangePointsForCouponRequest,
+  ): Promise<catalogservicev1_ExchangePointsForCouponResponse>;
 }
 
 export function createPointsServiceClient(
@@ -3874,6 +3967,40 @@ export function createPointsServiceClient(
         method: 'ListMyPointsLedgers',
       }) as Promise<catalogservicev1_ListPointsLedgerResponse>;
     },
+    CheckIn(request) {
+      const path = `/app/v1/mall/points/check-in`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PointsService',
+        method: 'CheckIn',
+      }) as Promise<catalogservicev1_CheckInResponse>;
+    },
+    GetCheckInStatus(request) {
+      const path = `/app/v1/mall/points/check-in-status`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.userId) {
+        queryParams.push(
+          `userId=${encodeURIComponent(request.userId.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PointsService',
+        method: 'GetCheckInStatus',
+      }) as Promise<catalogservicev1_GetCheckInStatusResponse>;
+    },
+    ExchangePointsForCoupon(request) {
+      const path = `/app/v1/mall/points/exchange-coupon`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PointsService',
+        method: 'ExchangePointsForCoupon',
+      }) as Promise<catalogservicev1_ExchangePointsForCouponResponse>;
+    },
   };
 }
 export type catalogservicev1_GetUserPointsBalanceRequest = {
@@ -3903,9 +4030,40 @@ export type catalogservicev1_PointsLedger = {
 
 // 积分类型
 export type catalogservicev1_PointsLedgerType =
+  | 'POINTS_TYPE_CHECK_IN'
   | 'POINTS_TYPE_DEDUCT'
   | 'POINTS_TYPE_EARN'
   | 'POINTS_TYPE_UNSPECIFIED';
+export type catalogservicev1_CheckInRequest = {
+  userId: number | undefined;
+};
+
+export type catalogservicev1_CheckInResponse = {
+  alreadyCheckedIn: boolean | undefined;
+  awarded: number | undefined;
+  balance: number | undefined;
+};
+
+export type catalogservicev1_GetCheckInStatusRequest = {
+  userId: number | undefined;
+};
+
+export type catalogservicev1_GetCheckInStatusResponse = {
+  checkedInToday: boolean | undefined;
+  consecutiveDays: number | undefined;
+};
+
+export type catalogservicev1_ExchangePointsForCouponRequest = {
+  couponTemplateId: number | undefined;
+  userId: number | undefined;
+};
+
+export type catalogservicev1_ExchangePointsForCouponResponse = {
+  balance: number | undefined;
+  couponId: number | undefined;
+  pointsDeducted: number | undefined;
+};
+
 // 商品前台服务
 export interface ProductService {
   // 分页查询商品列表
@@ -6022,6 +6180,7 @@ export class ApiClient {
   private _interactionService?: InteractionService;
   private _internalMessageRecipientService?: InternalMessageRecipientService;
   private _invoiceService?: InvoiceService;
+  private _memberTierService?: MemberTierService;
   private _orderItemService?: OrderItemService;
   private _orderService?: OrderService;
   private _paymentChannelService?: PaymentChannelService;
@@ -6097,6 +6256,10 @@ export class ApiClient {
 
   get invoiceService(): InvoiceService {
     return this._invoiceService ??= createInvoiceServiceClient(this._transport);
+  }
+
+  get memberTierService(): MemberTierService {
+    return this._memberTierService ??= createMemberTierServiceClient(this._transport);
   }
 
   get orderItemService(): OrderItemService {

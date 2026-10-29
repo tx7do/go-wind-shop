@@ -113,5 +113,6 @@ export * from "./payment-channel";
 export * from "./seckill";
 export * from "./points-ledger";
 export * from "./groupon";
+export * from "./member-tier";
 export * from "./sku-stock";
 export * from "./stock-op-log";

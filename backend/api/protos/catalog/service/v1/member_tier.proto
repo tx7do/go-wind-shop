@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package catalog.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+// 会员等级服务
+//
+// 按用户累计已支付订单金额自动分层（level 最低=普通会员）。
+// 积分入账按等级倍率放大；折扣权益由调用方按 level 读取。
+service MemberTierService {
+  rpc List (pagination.PagingRequest) returns (ListMemberTierResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountMemberTierResponse) {}
+  rpc Get (GetMemberTierRequest) returns (MemberTier) {}
+  rpc Create (CreateMemberTierRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdateMemberTierRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteMemberTierRequest) returns (google.protobuf.Empty) {}
+
+  // 获取用户当前等级 + 累计消费（SystemViewer 内部调用 / C端按 viewer 钉定）
+  rpc GetUserTierInfo (GetUserTierInfoRequest) returns (GetUserTierInfoResponse) {}
+
+  // 全部 ACTIVE 等级列表（level 升序）
+  rpc ListActiveMemberTiers (ListActiveMemberTiersRequest) returns (ListMemberTierResponse) {}
+}
+
+// 会员等级
+message MemberTier {
+  optional uint32 id = 1 [json_name = "id"];
+  optional string name = 2 [json_name = "name", (gnostic.openapi.v3.property) = {description: "等级名称（如白银/黄金/钻石）"}];
+  optional int32 level = 3 [json_name = "level", (gnostic.openapi.v3.property) = {description: "等级（数值越大越高）"}];
+  optional int64 min_spend = 4 [json_name = "minSpend", (gnostic.openapi.v3.property) = {description: "累计消费门槛（分）"}];
+  optional int32 points_multiplier = 5 [json_name = "pointsMultiplier", (gnostic.openapi.v3.property) = {description: "积分倍率"}];
+  optional string badge_icon = 6 [json_name = "badgeIcon", (gnostic.openapi.v3.property) = {description: "等级徽章图标（icon name）"}];
+  optional string currency = 7 [json_name = "currency"];
+  optional Status status = 8 [json_name = "status"];
+
+  optional uint32 tenant_id = 90 [json_name = "tenantId"];
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt"];
+
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    ACTIVE = 1;
+    INACTIVE = 2;
+  }
+}
+
+message ListMemberTierResponse { repeated MemberTier items = 1; uint64 total = 2; }
+message CountMemberTierResponse { uint64 count = 1; }
+
+message GetMemberTierRequest {
+  uint32 id = 1 [json_name = "id"];
+  optional google.protobuf.FieldMask view_mask = 100 [json_name = "viewMask"];
+}
+message CreateMemberTierRequest { MemberTier data = 1; }
+message UpdateMemberTierRequest {
+  uint32 id = 1;
+  MemberTier data = 2;
+  optional google.protobuf.FieldMask update_mask = 3;
+}
+message DeleteMemberTierRequest { uint32 id = 1 [json_name = "id"]; }
+
+message ListActiveMemberTiersRequest {}
+
+message GetUserTierInfoRequest {
+  uint32 user_id = 1 [json_name = "userId"];
+}
+message GetUserTierInfoResponse {
+  MemberTier tier = 1 [json_name = "tier"];
+  int64 cumulative_spend = 2 [json_name = "cumulativeSpend", (gnostic.openapi.v3.property) = {description: "累计已支付金额（分）"}];
+}

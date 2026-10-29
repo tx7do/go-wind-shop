@@ -103,6 +103,7 @@
     "seckill": "Seckill Management",
     "pointsLedger": "Points Ledger",
     "groupon": "Groupon Management",
+    "memberTier": "Member Tiers",
     "stockOpLog": "Stock Op Logs"
   }
 }

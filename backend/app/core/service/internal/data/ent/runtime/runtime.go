@@ -45,6 +45,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/membershiporgunit"
 	"go-wind-shop/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-shop/app/core/service/internal/data/ent/membershiprole"
+	"go-wind-shop/app/core/service/internal/data/ent/membertier"
 	"go-wind-shop/app/core/service/internal/data/ent/menu"
 	"go-wind-shop/app/core/service/internal/data/ent/monitoralertrule"
 	"go-wind-shop/app/core/service/internal/data/ent/notificationchannel"
@@ -1123,6 +1124,50 @@ func init() {
 	loginpolicyDescID := loginpolicyMixinFields0[0].Descriptor()
 	// loginpolicy.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	loginpolicy.IDValidator = loginpolicyDescID.Validators[0].(func(uint32) error)
+	membertierMixin := schema.MemberTier{}.Mixin()
+	membertier.Policy = privacy.NewPolicies(membertierMixin[3], schema.MemberTier{})
+	membertier.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := membertier.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	membertierMixinFields0 := membertierMixin[0].Fields()
+	_ = membertierMixinFields0
+	membertierMixinFields3 := membertierMixin[3].Fields()
+	_ = membertierMixinFields3
+	membertierFields := schema.MemberTier{}.Fields()
+	_ = membertierFields
+	// membertierDescTenantID is the schema descriptor for tenant_id field.
+	membertierDescTenantID := membertierMixinFields3[0].Descriptor()
+	// membertier.DefaultTenantID holds the default value on creation for the tenant_id field.
+	membertier.DefaultTenantID = membertierDescTenantID.Default.(uint32)
+	// membertierDescName is the schema descriptor for name field.
+	membertierDescName := membertierFields[0].Descriptor()
+	// membertier.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	membertier.NameValidator = membertierDescName.Validators[0].(func(string) error)
+	// membertierDescLevel is the schema descriptor for level field.
+	membertierDescLevel := membertierFields[1].Descriptor()
+	// membertier.DefaultLevel holds the default value on creation for the level field.
+	membertier.DefaultLevel = membertierDescLevel.Default.(int32)
+	// membertierDescMinSpend is the schema descriptor for min_spend field.
+	membertierDescMinSpend := membertierFields[2].Descriptor()
+	// membertier.DefaultMinSpend holds the default value on creation for the min_spend field.
+	membertier.DefaultMinSpend = membertierDescMinSpend.Default.(int64)
+	// membertierDescPointsMultiplier is the schema descriptor for points_multiplier field.
+	membertierDescPointsMultiplier := membertierFields[3].Descriptor()
+	// membertier.DefaultPointsMultiplier holds the default value on creation for the points_multiplier field.
+	membertier.DefaultPointsMultiplier = membertierDescPointsMultiplier.Default.(int32)
+	// membertierDescCurrency is the schema descriptor for currency field.
+	membertierDescCurrency := membertierFields[5].Descriptor()
+	// membertier.DefaultCurrency holds the default value on creation for the currency field.
+	membertier.DefaultCurrency = membertierDescCurrency.Default.(string)
+	// membertierDescID is the schema descriptor for id field.
+	membertierDescID := membertierMixinFields0[0].Descriptor()
+	// membertier.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	membertier.IDValidator = membertierDescID.Validators[0].(func(uint32) error)
 	membershipMixin := schema.Membership{}.Mixin()
 	membership.Policy = privacy.NewPolicies(membershipMixin[3], schema.Membership{})
 	membership.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -1635,6 +1635,38 @@ var (
 			},
 		},
 	}
+	// MallMemberTiersColumns holds the columns for the "mall_member_tiers" table.
+	MallMemberTiersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Comment: "等级名称"},
+		{Name: "level", Type: field.TypeInt32, Comment: "等级（数值越大越高）", Default: 1},
+		{Name: "min_spend", Type: field.TypeInt64, Comment: "累计消费门槛（分）", Default: 0},
+		{Name: "points_multiplier", Type: field.TypeInt32, Comment: "积分倍率", Default: 1},
+		{Name: "badge_icon", Type: field.TypeString, Nullable: true, Comment: "等级徽章图标"},
+		{Name: "currency", Type: field.TypeString, Comment: "币种", Default: "CNY"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "状态", Enums: []string{"ACTIVE", "INACTIVE"}, Default: "ACTIVE"},
+	}
+	// MallMemberTiersTable holds the schema information for the "mall_member_tiers" table.
+	MallMemberTiersTable = &schema.Table{
+		Name:       "mall_member_tiers",
+		Comment:    "会员等级表",
+		Columns:    MallMemberTiersColumns,
+		PrimaryKey: []*schema.Column{MallMemberTiersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "membertier_tenant_id_level",
+				Unique:  false,
+				Columns: []*schema.Column{MallMemberTiersColumns[7], MallMemberTiersColumns[9]},
+			},
+		},
+	}
 	// SysMembershipsColumns holds the columns for the "sys_memberships" table.
 	SysMembershipsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -5004,6 +5036,7 @@ var (
 		SysLanguagesTable,
 		SysLoginAuditLogsTable,
 		SysLoginPoliciesTable,
+		MallMemberTiersTable,
 		SysMembershipsTable,
 		SysMembershipOrgUnitsTable,
 		SysMembershipPositionsTable,
@@ -5255,6 +5288,11 @@ func init() {
 	}
 	SysLoginPoliciesTable.Annotation = &entsql.Annotation{
 		Table:     "sys_login_policies",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallMemberTiersTable.Annotation = &entsql.Annotation{
+		Table:     "mall_member_tiers",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

@@ -514,6 +514,15 @@ func NewGrouponServiceClient(ctx *bootstrap.Context, r registry.Discovery) catal
 	return catalogV1.NewGrouponActivityServiceClient(cli)
 }
 
+func NewMemberTierServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.MemberTierServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return catalogV1.NewMemberTierServiceClient(cli)
+}
+
 func NewPromotionServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.PromotionServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

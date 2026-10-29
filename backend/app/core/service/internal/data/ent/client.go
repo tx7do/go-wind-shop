@@ -51,6 +51,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/membershiporgunit"
 	"go-wind-shop/app/core/service/internal/data/ent/membershipposition"
 	"go-wind-shop/app/core/service/internal/data/ent/membershiprole"
+	"go-wind-shop/app/core/service/internal/data/ent/membertier"
 	"go-wind-shop/app/core/service/internal/data/ent/menu"
 	"go-wind-shop/app/core/service/internal/data/ent/monitoralertrule"
 	"go-wind-shop/app/core/service/internal/data/ent/notificationchannel"
@@ -194,6 +195,8 @@ type Client struct {
 	LoginAuditLog *LoginAuditLogClient
 	// LoginPolicy is the client for interacting with the LoginPolicy builders.
 	LoginPolicy *LoginPolicyClient
+	// MemberTier is the client for interacting with the MemberTier builders.
+	MemberTier *MemberTierClient
 	// Membership is the client for interacting with the Membership builders.
 	Membership *MembershipClient
 	// MembershipOrgUnit is the client for interacting with the MembershipOrgUnit builders.
@@ -367,6 +370,7 @@ func (c *Client) init() {
 	c.Language = NewLanguageClient(c.config)
 	c.LoginAuditLog = NewLoginAuditLogClient(c.config)
 	c.LoginPolicy = NewLoginPolicyClient(c.config)
+	c.MemberTier = NewMemberTierClient(c.config)
 	c.Membership = NewMembershipClient(c.config)
 	c.MembershipOrgUnit = NewMembershipOrgUnitClient(c.config)
 	c.MembershipPosition = NewMembershipPositionClient(c.config)
@@ -558,6 +562,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Language:                         NewLanguageClient(cfg),
 		LoginAuditLog:                    NewLoginAuditLogClient(cfg),
 		LoginPolicy:                      NewLoginPolicyClient(cfg),
+		MemberTier:                       NewMemberTierClient(cfg),
 		Membership:                       NewMembershipClient(cfg),
 		MembershipOrgUnit:                NewMembershipOrgUnitClient(cfg),
 		MembershipPosition:               NewMembershipPositionClient(cfg),
@@ -676,6 +681,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Language:                         NewLanguageClient(cfg),
 		LoginAuditLog:                    NewLoginAuditLogClient(cfg),
 		LoginPolicy:                      NewLoginPolicyClient(cfg),
+		MemberTier:                       NewMemberTierClient(cfg),
 		Membership:                       NewMembershipClient(cfg),
 		MembershipOrgUnit:                NewMembershipOrgUnitClient(cfg),
 		MembershipPosition:               NewMembershipPositionClient(cfg),
@@ -775,21 +781,22 @@ func (c *Client) Use(hooks ...Hook) {
 		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.File,
 		c.GrouponActivity, c.GrouponGroup, c.InteractionCounter, c.InternalMessage,
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Invoice, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.MonitorAlertRule,
-		c.NotificationChannel, c.NotificationDelivery, c.NotificationPreference,
-		c.NotificationRule, c.NotificationTemplate, c.OperationAuditLog, c.Order,
-		c.OrderItem, c.OrgUnit, c.PaymentChannelConfig, c.PaymentRefund,
-		c.PaymentTransaction, c.Permission, c.PermissionApi, c.PermissionAuditLog,
-		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.Plan, c.PlanModule,
-		c.PlanQuota, c.PointsLedger, c.PolicyEvaluationLog, c.Position, c.Product,
-		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
-		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Promotion, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Script, c.ScriptLog, c.SeckillActivity,
-		c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
-		c.SkuAttributeCombination, c.SkuPrice, c.StockAlert, c.StockOpLog, c.SysConfig,
-		c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential,
-		c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
+		c.LoginAuditLog, c.LoginPolicy, c.MemberTier, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.MonitorAlertRule, c.NotificationChannel, c.NotificationDelivery,
+		c.NotificationPreference, c.NotificationRule, c.NotificationTemplate,
+		c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit, c.PaymentChannelConfig,
+		c.PaymentRefund, c.PaymentTransaction, c.Permission, c.PermissionApi,
+		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
+		c.Plan, c.PlanModule, c.PlanQuota, c.PointsLedger, c.PolicyEvaluationLog,
+		c.Position, c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
+		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
+		c.ProductTranslation, c.Promotion, c.Role, c.RoleMetadata, c.RolePermission,
+		c.Script, c.ScriptLog, c.SeckillActivity, c.Shipment, c.ShippingAddress,
+		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.StockAlert,
+		c.StockOpLog, c.SysConfig, c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon,
+		c.UserCredential, c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Wishlist,
 	} {
 		n.Use(hooks...)
 	}
@@ -806,21 +813,22 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.File,
 		c.GrouponActivity, c.GrouponGroup, c.InteractionCounter, c.InternalMessage,
 		c.InternalMessageCategory, c.InternalMessageRecipient, c.Invoice, c.Language,
-		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
-		c.MembershipPosition, c.MembershipRole, c.Menu, c.MonitorAlertRule,
-		c.NotificationChannel, c.NotificationDelivery, c.NotificationPreference,
-		c.NotificationRule, c.NotificationTemplate, c.OperationAuditLog, c.Order,
-		c.OrderItem, c.OrgUnit, c.PaymentChannelConfig, c.PaymentRefund,
-		c.PaymentTransaction, c.Permission, c.PermissionApi, c.PermissionAuditLog,
-		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.Plan, c.PlanModule,
-		c.PlanQuota, c.PointsLedger, c.PolicyEvaluationLog, c.Position, c.Product,
-		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
-		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Promotion, c.Role,
-		c.RoleMetadata, c.RolePermission, c.Script, c.ScriptLog, c.SeckillActivity,
-		c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
-		c.SkuAttributeCombination, c.SkuPrice, c.StockAlert, c.StockOpLog, c.SysConfig,
-		c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential,
-		c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
+		c.LoginAuditLog, c.LoginPolicy, c.MemberTier, c.Membership,
+		c.MembershipOrgUnit, c.MembershipPosition, c.MembershipRole, c.Menu,
+		c.MonitorAlertRule, c.NotificationChannel, c.NotificationDelivery,
+		c.NotificationPreference, c.NotificationRule, c.NotificationTemplate,
+		c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit, c.PaymentChannelConfig,
+		c.PaymentRefund, c.PaymentTransaction, c.Permission, c.PermissionApi,
+		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
+		c.Plan, c.PlanModule, c.PlanQuota, c.PointsLedger, c.PolicyEvaluationLog,
+		c.Position, c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
+		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
+		c.ProductTranslation, c.Promotion, c.Role, c.RoleMetadata, c.RolePermission,
+		c.Script, c.ScriptLog, c.SeckillActivity, c.Shipment, c.ShippingAddress,
+		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.StockAlert,
+		c.StockOpLog, c.SysConfig, c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon,
+		c.UserCredential, c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Wishlist,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -901,6 +909,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.LoginAuditLog.mutate(ctx, m)
 	case *LoginPolicyMutation:
 		return c.LoginPolicy.mutate(ctx, m)
+	case *MemberTierMutation:
+		return c.MemberTier.mutate(ctx, m)
 	case *MembershipMutation:
 		return c.Membership.mutate(ctx, m)
 	case *MembershipOrgUnitMutation:
@@ -6070,6 +6080,140 @@ func (c *LoginPolicyClient) mutate(ctx context.Context, m *LoginPolicyMutation) 
 		return (&LoginPolicyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown LoginPolicy mutation op: %q", m.Op())
+	}
+}
+
+// MemberTierClient is a client for the MemberTier schema.
+type MemberTierClient struct {
+	config
+}
+
+// NewMemberTierClient returns a client for the MemberTier from the given config.
+func NewMemberTierClient(c config) *MemberTierClient {
+	return &MemberTierClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `membertier.Hooks(f(g(h())))`.
+func (c *MemberTierClient) Use(hooks ...Hook) {
+	c.hooks.MemberTier = append(c.hooks.MemberTier, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `membertier.Intercept(f(g(h())))`.
+func (c *MemberTierClient) Intercept(interceptors ...Interceptor) {
+	c.inters.MemberTier = append(c.inters.MemberTier, interceptors...)
+}
+
+// Create returns a builder for creating a MemberTier entity.
+func (c *MemberTierClient) Create() *MemberTierCreate {
+	mutation := newMemberTierMutation(c.config, OpCreate)
+	return &MemberTierCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of MemberTier entities.
+func (c *MemberTierClient) CreateBulk(builders ...*MemberTierCreate) *MemberTierCreateBulk {
+	return &MemberTierCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *MemberTierClient) MapCreateBulk(slice any, setFunc func(*MemberTierCreate, int)) *MemberTierCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &MemberTierCreateBulk{err: fmt.Errorf("calling to MemberTierClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*MemberTierCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &MemberTierCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for MemberTier.
+func (c *MemberTierClient) Update() *MemberTierUpdate {
+	mutation := newMemberTierMutation(c.config, OpUpdate)
+	return &MemberTierUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *MemberTierClient) UpdateOne(_m *MemberTier) *MemberTierUpdateOne {
+	mutation := newMemberTierMutation(c.config, OpUpdateOne, withMemberTier(_m))
+	return &MemberTierUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *MemberTierClient) UpdateOneID(id uint32) *MemberTierUpdateOne {
+	mutation := newMemberTierMutation(c.config, OpUpdateOne, withMemberTierID(id))
+	return &MemberTierUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for MemberTier.
+func (c *MemberTierClient) Delete() *MemberTierDelete {
+	mutation := newMemberTierMutation(c.config, OpDelete)
+	return &MemberTierDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *MemberTierClient) DeleteOne(_m *MemberTier) *MemberTierDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *MemberTierClient) DeleteOneID(id uint32) *MemberTierDeleteOne {
+	builder := c.Delete().Where(membertier.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &MemberTierDeleteOne{builder}
+}
+
+// Query returns a query builder for MemberTier.
+func (c *MemberTierClient) Query() *MemberTierQuery {
+	return &MemberTierQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeMemberTier},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a MemberTier entity by its id.
+func (c *MemberTierClient) Get(ctx context.Context, id uint32) (*MemberTier, error) {
+	return c.Query().Where(membertier.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *MemberTierClient) GetX(ctx context.Context, id uint32) *MemberTier {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *MemberTierClient) Hooks() []Hook {
+	hooks := c.hooks.MemberTier
+	return append(hooks[:len(hooks):len(hooks)], membertier.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *MemberTierClient) Interceptors() []Interceptor {
+	return c.inters.MemberTier
+}
+
+func (c *MemberTierClient) mutate(ctx context.Context, m *MemberTierMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&MemberTierCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&MemberTierUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&MemberTierUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&MemberTierDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown MemberTier mutation op: %q", m.Op())
 	}
 }
 
@@ -14686,8 +14830,8 @@ type (
 		CommentLike, CouponTemplate, DataAccessAuditLog, DictEntry, DictEntryI18n,
 		DictType, File, GrouponActivity, GrouponGroup, InteractionCounter,
 		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Invoice,
-		Language, LoginAuditLog, LoginPolicy, Membership, MembershipOrgUnit,
-		MembershipPosition, MembershipRole, Menu, MonitorAlertRule,
+		Language, LoginAuditLog, LoginPolicy, MemberTier, Membership,
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, MonitorAlertRule,
 		NotificationChannel, NotificationDelivery, NotificationPreference,
 		NotificationRule, NotificationTemplate, OperationAuditLog, Order, OrderItem,
 		OrgUnit, PaymentChannelConfig, PaymentRefund, PaymentTransaction, Permission,
@@ -14709,8 +14853,8 @@ type (
 		CommentLike, CouponTemplate, DataAccessAuditLog, DictEntry, DictEntryI18n,
 		DictType, File, GrouponActivity, GrouponGroup, InteractionCounter,
 		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Invoice,
-		Language, LoginAuditLog, LoginPolicy, Membership, MembershipOrgUnit,
-		MembershipPosition, MembershipRole, Menu, MonitorAlertRule,
+		Language, LoginAuditLog, LoginPolicy, MemberTier, Membership,
+		MembershipOrgUnit, MembershipPosition, MembershipRole, Menu, MonitorAlertRule,
 		NotificationChannel, NotificationDelivery, NotificationPreference,
 		NotificationRule, NotificationTemplate, OperationAuditLog, Order, OrderItem,
 		OrgUnit, PaymentChannelConfig, PaymentRefund, PaymentTransaction, Permission,
