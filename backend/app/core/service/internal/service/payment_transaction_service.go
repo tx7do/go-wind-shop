@@ -14,6 +14,7 @@ import (
 
 	"go-wind-shop/app/core/service/internal/data"
 	"go-wind-shop/app/core/service/internal/data/ent"
+	"go-wind-shop/app/core/service/internal/data/ent/paymentrefund"
 	"go-wind-shop/app/core/service/internal/data/ent/paymenttransaction"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -403,6 +404,13 @@ const reconcileStaleCutoff = 10 * time.Minute
 // reconcileBatchSize 单轮对账扫描的流水上限（防止极端积压拖垮单轮任务）。
 const reconcileBatchSize = 100
 
+// refundDriftWindow 退款漂移检测窗口：只核查最近 48 小时内确认的退款
+// （微信退款异步失败极少且集中在受理后短时间内；更久远的异常走人工对账）。
+const refundDriftWindow = 48 * time.Hour
+
+// refundDriftBatchSize 单轮退款漂移检测上限。
+const refundDriftBatchSize = 50
+
 // HandlePaymentReconcile 支付对账周期任务处理器（asynq 注册，SystemViewer 上下文）。
 //
 // 扫描超过 reconcileStaleCutoff 仍 PENDING 的网关渠道流水，逐条主动查询渠道侧
@@ -435,6 +443,8 @@ func (s *PaymentTransactionService) HandlePaymentReconcile(taskType string, task
 		return err
 	}
 	if len(stales) == 0 {
+		// 无陈旧待查流水也照常跑退款漂移检测（两者独立）
+		s.reconcileRefundDrift(ctx)
 		return nil
 	}
 
@@ -508,9 +518,71 @@ func (s *PaymentTransactionService) HandlePaymentReconcile(taskType string, task
 		}
 	}
 
+	s.reconcileRefundDrift(ctx)
+
 	s.log.Infow("msg", "payment reconcile done",
 		"scanned", len(stales), "confirmed", confirmed, "closed", closed, "skipped", skipped)
 	return nil
+}
+
+// reconcileRefundDrift 退款漂移检测：渠道已受理（本系统记 SUCCEEDED）的退款，
+// 若渠道侧后续异步失败（ABNORMAL/CLOSED），本系统的 REFUNDED 记账与资金实况
+// 就会出现漂移。此处只告警不自动改状态——补偿级联太深（库存已回补、站内信
+// 已发），自动回滚的风险大于收益，异常单交由人工核对后走管理端处理。
+func (s *PaymentTransactionService) reconcileRefundDrift(ctx context.Context) {
+	refunds, err := s.entClient.Client().PaymentRefund.Query().
+		Where(
+			paymentrefund.StatusEQ(paymentrefund.StatusPaymentRefundStatusSucceeded),
+			paymentrefund.UpdatedAtGTE(time.Now().Add(-refundDriftWindow)),
+		).
+		Order(ent.Desc(paymentrefund.FieldID)).
+		Limit(refundDriftBatchSize).
+		All(ctx)
+	if err != nil {
+		s.log.Errorf("refund drift query failed: %v", err)
+		return
+	}
+	if len(refunds) == 0 {
+		return
+	}
+
+	for _, rf := range refunds {
+		refundId := rf.ID
+		if refundId == 0 || rf.TransactionID == nil || *rf.TransactionID == 0 {
+			continue
+		}
+		txEnt, txErr := s.entClient.Client().PaymentTransaction.Query().
+			Where(paymenttransaction.IDEQ(*rf.TransactionID)).
+			Only(ctx)
+		if txErr != nil || txEnt == nil || txEnt.PaymentMethod == nil {
+			continue
+		}
+		if *txEnt.PaymentMethod != "WECHAT" {
+			// 支付宝退款同步受理无独立退款单状态口径；MOCK/记账型无资金
+			continue
+		}
+
+		gw, rErr := s.gatewayResolver.ByPaymentMethod(ctx, paymentV1.PaymentMethod_WECHAT)
+		if rErr != nil || gw == nil {
+			s.log.Errorf("refund drift resolve gateway for refund [%d] failed: %v", refundId, rErr)
+			continue
+		}
+
+		qr, qErr := gw.QueryRefund(ctx, strconv.FormatUint(uint64(refundId), 10))
+		if qErr != nil {
+			s.log.Errorf("refund drift query refund [%d] failed: %v", refundId, qErr)
+			continue
+		}
+		if qr == nil {
+			continue
+		}
+		if qr.Status == "ABNORMAL" || qr.Status == "CLOSED" {
+			s.log.Errorf("REFUND DRIFT ALERT: refund [%d] (tx [%d]) is %s at gateway "+
+				"but recorded SUCCEEDED locally — 退款渠道侧异常，资金未退回，"+
+				"请人工核对后处理（勿自动改状态）", refundId, *rf.TransactionID, qr.Status)
+		}
+	}
+	s.log.Infow("msg", "refund drift scan done", "checked", len(refunds))
 }
 
 // isGatewayClosedState 判断渠道侧状态是否为终态关闭/失败（可把 PENDING 收敛为 FAILED）。

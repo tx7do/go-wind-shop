@@ -38,3 +38,8 @@ func (g *MockGateway) QueryOrder(ctx context.Context, outTradeNo string) (*Order
 	// 模拟渠道无网关侧状态可查：nil 表示跳过对账
 	return nil, nil
 }
+
+func (g *MockGateway) QueryRefund(ctx context.Context, outRefundNo string) (*RefundQueryResult, error) {
+	// 模拟渠道无退款单状态：nil 表示跳过漂移检测
+	return nil, nil
+}

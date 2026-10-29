@@ -180,15 +180,23 @@ function displayAmount(v: number | undefined, currency?: string): string {
             <div class="grid grid-cols-[80px_1fr_120px_140px] items-center gap-4">
               <span class="text-sm tabular-nums text-foreground">#{{ refund.id ?? '—' }}</span>
 
-              <div class="flex items-center gap-2">
+              <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2">
+                  <span
+                    class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium"
+                    :class="statusTagClass(refund.status)"
+                  >
+                    {{ statusLabel(refund.status) }}
+                  </span>
+                  <span class="text-[10px] text-muted-foreground">
+                    {{ t('refunds.table.transactionId') }} #{{ refund.transactionId ?? '—' }}
+                  </span>
+                </div>
                 <span
-                  class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium"
-                  :class="statusTagClass(refund.status)"
+                  v-if="refund.reason"
+                  class="line-clamp-2 text-[10px] text-muted-foreground"
                 >
-                  {{ statusLabel(refund.status) }}
-                </span>
-                <span class="text-[10px] text-muted-foreground">
-                  {{ t('refunds.table.transactionId') }} #{{ refund.transactionId ?? '—' }}
+                  {{ t('refunds.table.reason') }}：{{ refund.reason }}
                 </span>
               </div>
 

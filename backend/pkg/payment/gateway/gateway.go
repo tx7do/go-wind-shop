@@ -69,6 +69,12 @@ type OrderQueryResult struct {
 	Success bool
 }
 
+// RefundQueryResult 渠道侧退款单状态查询结果（退款漂移检测用）
+type RefundQueryResult struct {
+	// 渠道原始退款状态（如 SUCCESS/PROCESSING/CLOSED/ABNORMAL）
+	Status string
+}
+
 // Gateway 支付网关适配器接口
 type Gateway interface {
 	CreatePayment(ctx context.Context, req PayRequest) (*PayResult, error)
@@ -83,6 +89,9 @@ type Gateway interface {
 	// QueryOrder 主动查询渠道侧订单状态（对账兜底，回调丢失时自愈用）。
 	// 返回 (nil, nil) 表示该渠道无查询语义（调用方跳过）。
 	QueryOrder(ctx context.Context, outTradeNo string) (*OrderQueryResult, error)
+	// QueryRefund 查询渠道侧退款单状态（退款漂移检测：受理后异步失败的告警源）。
+	// 返回 (nil, nil) 表示该渠道无退款查询语义（调用方跳过）。
+	QueryRefund(ctx context.Context, outRefundNo string) (*RefundQueryResult, error)
 }
 
 // New 按渠道类型构造网关适配器。credentialsJSON 为解密后的凭据明文 JSON。

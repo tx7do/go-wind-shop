@@ -137,3 +137,9 @@ func (g *AlipayPageGateway) QueryOrder(ctx context.Context, outTradeNo string) (
 		Success:        rsp.TradeStatus == alipay.TradeStatusSuccess,
 	}, nil
 }
+
+// QueryRefund 支付宝退款为同步受理且无独立退款单状态查询口径
+// （trade.query 的 refund_status 仅部分退款场景有值）——返回 nil 跳过漂移检测。
+func (g *AlipayPageGateway) QueryRefund(ctx context.Context, outRefundNo string) (*RefundQueryResult, error) {
+	return nil, nil
+}

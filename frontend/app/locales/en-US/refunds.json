@@ -7,7 +7,8 @@
     "transactionId": "Transaction",
     "amount": "Amount",
     "status": "Status",
-    "createdAt": "Requested"
+    "createdAt": "Requested",
+    "reason": "Reason"
   },
   "status": {
     "pending": "Processing",

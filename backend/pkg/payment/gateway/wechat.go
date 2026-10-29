@@ -231,3 +231,18 @@ func deref(s *string) string {
 	}
 	return *s
 }
+
+// QueryRefund 查询微信退款单状态（按商户退款单号）。
+func (g *WechatGateway) QueryRefund(ctx context.Context, outRefundNo string) (*RefundQueryResult, error) {
+	svc := refunddomestic.RefundsApiService{Client: g.base.client}
+	resp, _, err := svc.QueryByOutRefundNo(ctx, refunddomestic.QueryByOutRefundNoRequest{
+		OutRefundNo: core.String(outRefundNo),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("wechat query refund [%s] failed: %w", outRefundNo, err)
+	}
+	if resp == nil || resp.Status == nil {
+		return &RefundQueryResult{Status: "NOT_FOUND"}, nil
+	}
+	return &RefundQueryResult{Status: string(*resp.Status)}, nil
+}
