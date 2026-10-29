@@ -192,6 +192,17 @@ const trade: RouteRecordRaw[] = [
         component: () => import("@/pages/app/trade/seckill/index.vue"),
       },
       {
+        path: "points-ledgers",
+        name: "TradePointsLedgerManagement",
+        meta: {
+          order: 18,
+          icon: "lucide:star",
+          title: "routes.trade.pointsLedger",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/points-ledger/index.vue"),
+      },
+      {
         path: "stock-op-logs",
         name: "TradeStockOpLogManagement",
         meta: {

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/points.proto";
+
+// 积分台账管理服务（admin 只读；台账 append-only，入账/回冲由交易链路驱动）
+service PointsLedgerService {
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListPointsLedgerResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/points-ledgers"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountPointsLedgerResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/points-ledgers/count"
+    };
+  }
+
+  rpc Get (catalog.service.v1.GetPointsLedgerRequest) returns (catalog.service.v1.PointsLedger) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/points-ledgers/{id}"
+    };
+  }
+}

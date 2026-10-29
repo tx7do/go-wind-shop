@@ -274,6 +274,9 @@ func (s *PaymentRefundService) Update(ctx context.Context, req *paymentV1.Update
 
 				// 退款成功通知（best-effort）：站内信告知买家退款已处理。
 				s.transactionService.NotifyOrderRefundSuccess(ctx, orderId, tx.GetAmount())
+
+				// 积分回冲（best-effort，幂等）：对订单已入账积分对冲。
+				s.transactionService.ForwardRefundPointsDeduct(ctx, orderId)
 			}
 		}
 	}

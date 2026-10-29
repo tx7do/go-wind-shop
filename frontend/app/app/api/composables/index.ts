@@ -51,3 +51,4 @@ export * from './assistant';
 export * from './promotion';
 export * from './payment';
 export * from './seckill';
+export * from './points';

@@ -6469,6 +6469,184 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/mall/points-ledgers:
+        get:
+            tags:
+                - PointsLedgerService
+            operationId: PointsLedgerService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.ListPointsLedgerResponse'
+    /admin/v1/mall/points-ledgers/count:
+        get:
+            tags:
+                - PointsLedgerService
+            operationId: PointsLedgerService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.CountPointsLedgerResponse'
+    /admin/v1/mall/points-ledgers/{id}:
+        get:
+            tags:
+                - PointsLedgerService
+            operationId: PointsLedgerService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.PointsLedger'
     /admin/v1/mall/product-attribute-values:
         get:
             tags:
@@ -17320,6 +17498,11 @@ components:
             properties:
                 count:
                     type: string
+        catalog.service.v1.CountPointsLedgerResponse:
+            type: object
+            properties:
+                count:
+                    type: string
         catalog.service.v1.CountProductAttributeResponse:
             type: object
             properties:
@@ -17458,6 +17641,15 @@ components:
                 total:
                     type: string
             description: 类目列表 - 答复
+        catalog.service.v1.ListPointsLedgerResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.PointsLedger'
+                total:
+                    type: string
         catalog.service.v1.ListProductAttributeResponse:
             type: object
             properties:
@@ -17549,6 +17741,43 @@ components:
                         $ref: '#/components/schemas/catalog.service.v1.StockOpLog'
                 total:
                     type: string
+        catalog.service.v1.PointsLedger:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 台账ID
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 用户ID
+                    format: uint32
+                delta:
+                    type: string
+                    description: 积分变动（±）
+                balanceAfter:
+                    type: string
+                    description: 变动后余额
+                type:
+                    enum:
+                        - POINTS_TYPE_UNSPECIFIED
+                        - POINTS_TYPE_EARN
+                        - POINTS_TYPE_DEDUCT
+                    type: string
+                    description: 类型
+                    format: enum
+                reason:
+                    type: string
+                    description: 事由
+                refOrderId:
+                    type: integer
+                    description: 关联订单ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+            description: 积分台账
         catalog.service.v1.Product:
             type: object
             properties:
@@ -24258,6 +24487,8 @@ tags:
       description: 套餐配额管理服务
     - name: PlanService
       description: 套餐管理服务
+    - name: PointsLedgerService
+      description: 积分台账管理服务（admin 只读；台账 append-only，入账/回冲由交易链路驱动）
     - name: PolicyEvaluationLogService
       description: 策略评估日志服务
     - name: PositionService

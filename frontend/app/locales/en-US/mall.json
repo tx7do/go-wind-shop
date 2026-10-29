@@ -94,5 +94,17 @@
   },
   "orders": {
     "title": "My Orders"
+  },
+  "mall": {
+    "seckill": {
+      "tag": "Flash Sale"
+    }
+  },
+  "points": {
+    "title": "My Points",
+    "reason": "Points detail"
+  },
+  "seckill": {
+    "tag": "Flash Sale"
   }
 }

@@ -13319,6 +13319,213 @@ export type identityservicev1_DeletePlanQuotaRequest = {
   id?: number;
 };
 
+// 积分台账管理服务（admin 只读；台账 append-only，入账/回冲由交易链路驱动）
+export interface PointsLedgerService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_ListPointsLedgerResponse>;
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_CountPointsLedgerResponse>;
+  Get(
+    request: catalogservicev1_GetPointsLedgerRequest,
+  ): Promise<catalogservicev1_PointsLedger>;
+}
+
+export function createPointsLedgerServiceClient(
+  transport: ClientTransport,
+): PointsLedgerService {
+  return {
+    List(request) {
+      const path = `/admin/v1/mall/points-ledgers`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PointsLedgerService',
+        method: 'List',
+      }) as Promise<catalogservicev1_ListPointsLedgerResponse>;
+    },
+    Count(request) {
+      const path = `/admin/v1/mall/points-ledgers/count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PointsLedgerService',
+        method: 'Count',
+      }) as Promise<catalogservicev1_CountPointsLedgerResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/points-ledgers/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PointsLedgerService',
+        method: 'Get',
+      }) as Promise<catalogservicev1_PointsLedger>;
+    },
+  };
+}
+export type catalogservicev1_ListPointsLedgerResponse = {
+  items: catalogservicev1_PointsLedger[] | undefined;
+  total: number | undefined;
+};
+
+// 积分台账
+export type catalogservicev1_PointsLedger = {
+  balanceAfter?: number;
+  createdAt?: wellKnownTimestamp;
+  delta?: number;
+  id?: number;
+  reason?: string;
+  refOrderId?: number;
+  type?: catalogservicev1_PointsLedgerType;
+  userId?: number;
+};
+
+// 积分类型
+export type catalogservicev1_PointsLedgerType =
+  | 'POINTS_TYPE_DEDUCT'
+  | 'POINTS_TYPE_EARN'
+  | 'POINTS_TYPE_UNSPECIFIED';
+export type catalogservicev1_CountPointsLedgerResponse = {
+  count: number | undefined;
+};
+
+export type catalogservicev1_GetPointsLedgerRequest = {
+  id: number | undefined;
+  viewMask?: wellKnownFieldMask;
+};
+
 // 策略评估日志服务
 export interface PolicyEvaluationLogService {
   // 查询策略评估日志列表
@@ -19945,6 +20152,7 @@ export class ApiClient {
   private _planModuleService?: PlanModuleService;
   private _planQuotaService?: PlanQuotaService;
   private _planService?: PlanService;
+  private _pointsLedgerService?: PointsLedgerService;
   private _policyEvaluationLogService?: PolicyEvaluationLogService;
   private _positionService?: PositionService;
   private _productAttributeService?: ProductAttributeService;
@@ -20199,6 +20407,10 @@ export class ApiClient {
 
   get planService(): PlanService {
     return this._planService ??= createPlanServiceClient(this._transport);
+  }
+
+  get pointsLedgerService(): PointsLedgerService {
+    return this._pointsLedgerService ??= createPointsLedgerServiceClient(this._transport);
   }
 
   get policyEvaluationLogService(): PolicyEvaluationLogService {

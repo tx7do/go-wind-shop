@@ -38,6 +38,7 @@ type PaymentTransactionService struct {
 	channelConfigService *PaymentChannelConfigService
 	gatewayResolver      *PaymentGatewayResolver
 	entClient            *entCrud.EntClient[*ent.Client]
+	pointsLedgerService  *PointsLedgerService
 }
 
 func NewPaymentTransactionService(
@@ -47,6 +48,7 @@ func NewPaymentTransactionService(
 	channelConfigService *PaymentChannelConfigService,
 	gatewayResolver *PaymentGatewayResolver,
 	entClient *entCrud.EntClient[*ent.Client],
+	pointsLedgerService *PointsLedgerService,
 ) *PaymentTransactionService {
 	return &PaymentTransactionService{
 		log:                  logx.New(ctx.NewLoggerHelper("payment-transaction/service/core-service")),
@@ -55,6 +57,7 @@ func NewPaymentTransactionService(
 		channelConfigService: channelConfigService,
 		gatewayResolver:      gatewayResolver,
 		entClient:            entClient,
+		pointsLedgerService:  pointsLedgerService,
 	}
 }
 
@@ -85,6 +88,17 @@ func (s *PaymentTransactionService) Get(ctx context.Context, req *paymentV1.GetP
 // 不引入循环）。
 func (s *PaymentTransactionService) RestoreOrderStockForRefund(ctx context.Context, orderId uint32) error {
 	return s.orderService.RestoreStockForRefund(ctx, orderId)
+}
+
+// ForwardRefundPointsDeduct 转发到 PointsLedgerService 退款回冲（best-effort，
+// 幂等；失败不影响退款状态）。
+func (s *PaymentTransactionService) ForwardRefundPointsDeduct(ctx context.Context, orderId uint32) {
+	if s.pointsLedgerService == nil {
+		return
+	}
+	if err := s.pointsLedgerService.DeductForOrder(ctx, orderId); err != nil {
+		s.log.Errorf("deduct points for refunded order [%d] failed: %v", orderId, err)
+	}
 }
 
 // NotifyOrderRefundSuccess 转发到 OrderService 发送退款成功站内通知（best-effort，
@@ -360,6 +374,11 @@ func (s *PaymentTransactionService) ConfirmPayment(ctx context.Context, req *pay
 			ExpectedStatus: []orderV1.Order_Status{orderV1.Order_PENDING_PAYMENT},
 		}); uErr != nil {
 			s.log.Errorf("mark order [%d] as PAID after payment confirm failed: %v", orderId, uErr)
+		} else if tx.GetUserId() != 0 {
+			// 会员积分入账（best-effort，幂等；失败不影响支付主流程）
+			if aErr := s.pointsLedgerService.AwardForOrder(ctx, tx.GetUserId(), orderId, tx.GetAmount()); aErr != nil {
+				s.log.Errorf("award points for order [%d] failed: %v", orderId, aErr)
+			}
 		}
 	}
 

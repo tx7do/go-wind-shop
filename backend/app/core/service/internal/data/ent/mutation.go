@@ -70,6 +70,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/plan"
 	"go-wind-shop/app/core/service/internal/data/ent/planmodule"
 	"go-wind-shop/app/core/service/internal/data/ent/planquota"
+	"go-wind-shop/app/core/service/internal/data/ent/pointsledger"
 	"go-wind-shop/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-shop/app/core/service/internal/data/ent/position"
 	"go-wind-shop/app/core/service/internal/data/ent/predicate"
@@ -183,6 +184,7 @@ const (
 	TypePlan                             = "Plan"
 	TypePlanModule                       = "PlanModule"
 	TypePlanQuota                        = "PlanQuota"
+	TypePointsLedger                     = "PointsLedger"
 	TypePolicyEvaluationLog              = "PolicyEvaluationLog"
 	TypePosition                         = "Position"
 	TypeProduct                          = "Product"
@@ -92468,6 +92470,1131 @@ func (m *PlanQuotaMutation) ResetEdge(name string) error {
 		return nil
 	}
 	return fmt.Errorf("unknown PlanQuota edge %s", name)
+}
+
+// PointsLedgerMutation represents an operation that mutates the PointsLedger nodes in the graph.
+type PointsLedgerMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *uint32
+	created_at       *time.Time
+	updated_at       *time.Time
+	deleted_at       *time.Time
+	tenant_id        *uint32
+	addtenant_id     *int32
+	user_id          *uint32
+	adduser_id       *int32
+	delta            *int64
+	adddelta         *int64
+	balance_after    *int64
+	addbalance_after *int64
+	_type            *pointsledger.Type
+	reason           *string
+	ref_order_id     *uint32
+	addref_order_id  *int32
+	clearedFields    map[string]struct{}
+	done             bool
+	oldValue         func(context.Context) (*PointsLedger, error)
+	predicates       []predicate.PointsLedger
+}
+
+var _ ent.Mutation = (*PointsLedgerMutation)(nil)
+
+// pointsledgerOption allows management of the mutation configuration using functional options.
+type pointsledgerOption func(*PointsLedgerMutation)
+
+// newPointsLedgerMutation creates new mutation for the PointsLedger entity.
+func newPointsLedgerMutation(c config, op Op, opts ...pointsledgerOption) *PointsLedgerMutation {
+	m := &PointsLedgerMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePointsLedger,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPointsLedgerID sets the ID field of the mutation.
+func withPointsLedgerID(id uint32) pointsledgerOption {
+	return func(m *PointsLedgerMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PointsLedger
+		)
+		m.oldValue = func(ctx context.Context) (*PointsLedger, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PointsLedger.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPointsLedger sets the old PointsLedger of the mutation.
+func withPointsLedger(node *PointsLedger) pointsledgerOption {
+	return func(m *PointsLedgerMutation) {
+		m.oldValue = func(context.Context) (*PointsLedger, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PointsLedgerMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PointsLedgerMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of PointsLedger entities.
+func (m *PointsLedgerMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PointsLedgerMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PointsLedgerMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().PointsLedger.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PointsLedgerMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PointsLedgerMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the PointsLedger entity.
+// If the PointsLedger object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointsLedgerMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *PointsLedgerMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[pointsledger.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *PointsLedgerMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[pointsledger.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PointsLedgerMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, pointsledger.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PointsLedgerMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PointsLedgerMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the PointsLedger entity.
+// If the PointsLedger object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointsLedgerMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *PointsLedgerMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[pointsledger.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *PointsLedgerMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[pointsledger.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PointsLedgerMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, pointsledger.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *PointsLedgerMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *PointsLedgerMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the PointsLedger entity.
+// If the PointsLedger object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointsLedgerMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *PointsLedgerMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[pointsledger.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *PointsLedgerMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[pointsledger.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *PointsLedgerMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, pointsledger.FieldDeletedAt)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *PointsLedgerMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *PointsLedgerMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the PointsLedger entity.
+// If the PointsLedger object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointsLedgerMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *PointsLedgerMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *PointsLedgerMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *PointsLedgerMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[pointsledger.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *PointsLedgerMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[pointsledger.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *PointsLedgerMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, pointsledger.FieldTenantID)
+}
+
+// SetUserID sets the "user_id" field.
+func (m *PointsLedgerMutation) SetUserID(u uint32) {
+	m.user_id = &u
+	m.adduser_id = nil
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *PointsLedgerMutation) UserID() (r uint32, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the PointsLedger entity.
+// If the PointsLedger object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointsLedgerMutation) OldUserID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// AddUserID adds u to the "user_id" field.
+func (m *PointsLedgerMutation) AddUserID(u int32) {
+	if m.adduser_id != nil {
+		*m.adduser_id += u
+	} else {
+		m.adduser_id = &u
+	}
+}
+
+// AddedUserID returns the value that was added to the "user_id" field in this mutation.
+func (m *PointsLedgerMutation) AddedUserID() (r int32, exists bool) {
+	v := m.adduser_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUserID clears the value of the "user_id" field.
+func (m *PointsLedgerMutation) ClearUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	m.clearedFields[pointsledger.FieldUserID] = struct{}{}
+}
+
+// UserIDCleared returns if the "user_id" field was cleared in this mutation.
+func (m *PointsLedgerMutation) UserIDCleared() bool {
+	_, ok := m.clearedFields[pointsledger.FieldUserID]
+	return ok
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *PointsLedgerMutation) ResetUserID() {
+	m.user_id = nil
+	m.adduser_id = nil
+	delete(m.clearedFields, pointsledger.FieldUserID)
+}
+
+// SetDelta sets the "delta" field.
+func (m *PointsLedgerMutation) SetDelta(i int64) {
+	m.delta = &i
+	m.adddelta = nil
+}
+
+// Delta returns the value of the "delta" field in the mutation.
+func (m *PointsLedgerMutation) Delta() (r int64, exists bool) {
+	v := m.delta
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDelta returns the old "delta" field's value of the PointsLedger entity.
+// If the PointsLedger object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointsLedgerMutation) OldDelta(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDelta is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDelta requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDelta: %w", err)
+	}
+	return oldValue.Delta, nil
+}
+
+// AddDelta adds i to the "delta" field.
+func (m *PointsLedgerMutation) AddDelta(i int64) {
+	if m.adddelta != nil {
+		*m.adddelta += i
+	} else {
+		m.adddelta = &i
+	}
+}
+
+// AddedDelta returns the value that was added to the "delta" field in this mutation.
+func (m *PointsLedgerMutation) AddedDelta() (r int64, exists bool) {
+	v := m.adddelta
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDelta resets all changes to the "delta" field.
+func (m *PointsLedgerMutation) ResetDelta() {
+	m.delta = nil
+	m.adddelta = nil
+}
+
+// SetBalanceAfter sets the "balance_after" field.
+func (m *PointsLedgerMutation) SetBalanceAfter(i int64) {
+	m.balance_after = &i
+	m.addbalance_after = nil
+}
+
+// BalanceAfter returns the value of the "balance_after" field in the mutation.
+func (m *PointsLedgerMutation) BalanceAfter() (r int64, exists bool) {
+	v := m.balance_after
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBalanceAfter returns the old "balance_after" field's value of the PointsLedger entity.
+// If the PointsLedger object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointsLedgerMutation) OldBalanceAfter(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBalanceAfter is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBalanceAfter requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBalanceAfter: %w", err)
+	}
+	return oldValue.BalanceAfter, nil
+}
+
+// AddBalanceAfter adds i to the "balance_after" field.
+func (m *PointsLedgerMutation) AddBalanceAfter(i int64) {
+	if m.addbalance_after != nil {
+		*m.addbalance_after += i
+	} else {
+		m.addbalance_after = &i
+	}
+}
+
+// AddedBalanceAfter returns the value that was added to the "balance_after" field in this mutation.
+func (m *PointsLedgerMutation) AddedBalanceAfter() (r int64, exists bool) {
+	v := m.addbalance_after
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetBalanceAfter resets all changes to the "balance_after" field.
+func (m *PointsLedgerMutation) ResetBalanceAfter() {
+	m.balance_after = nil
+	m.addbalance_after = nil
+}
+
+// SetType sets the "type" field.
+func (m *PointsLedgerMutation) SetType(po pointsledger.Type) {
+	m._type = &po
+}
+
+// GetType returns the value of the "type" field in the mutation.
+func (m *PointsLedgerMutation) GetType() (r pointsledger.Type, exists bool) {
+	v := m._type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldType returns the old "type" field's value of the PointsLedger entity.
+// If the PointsLedger object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointsLedgerMutation) OldType(ctx context.Context) (v *pointsledger.Type, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldType: %w", err)
+	}
+	return oldValue.Type, nil
+}
+
+// ClearType clears the value of the "type" field.
+func (m *PointsLedgerMutation) ClearType() {
+	m._type = nil
+	m.clearedFields[pointsledger.FieldType] = struct{}{}
+}
+
+// TypeCleared returns if the "type" field was cleared in this mutation.
+func (m *PointsLedgerMutation) TypeCleared() bool {
+	_, ok := m.clearedFields[pointsledger.FieldType]
+	return ok
+}
+
+// ResetType resets all changes to the "type" field.
+func (m *PointsLedgerMutation) ResetType() {
+	m._type = nil
+	delete(m.clearedFields, pointsledger.FieldType)
+}
+
+// SetReason sets the "reason" field.
+func (m *PointsLedgerMutation) SetReason(s string) {
+	m.reason = &s
+}
+
+// Reason returns the value of the "reason" field in the mutation.
+func (m *PointsLedgerMutation) Reason() (r string, exists bool) {
+	v := m.reason
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReason returns the old "reason" field's value of the PointsLedger entity.
+// If the PointsLedger object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointsLedgerMutation) OldReason(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReason is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReason requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReason: %w", err)
+	}
+	return oldValue.Reason, nil
+}
+
+// ResetReason resets all changes to the "reason" field.
+func (m *PointsLedgerMutation) ResetReason() {
+	m.reason = nil
+}
+
+// SetRefOrderID sets the "ref_order_id" field.
+func (m *PointsLedgerMutation) SetRefOrderID(u uint32) {
+	m.ref_order_id = &u
+	m.addref_order_id = nil
+}
+
+// RefOrderID returns the value of the "ref_order_id" field in the mutation.
+func (m *PointsLedgerMutation) RefOrderID() (r uint32, exists bool) {
+	v := m.ref_order_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRefOrderID returns the old "ref_order_id" field's value of the PointsLedger entity.
+// If the PointsLedger object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PointsLedgerMutation) OldRefOrderID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRefOrderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRefOrderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRefOrderID: %w", err)
+	}
+	return oldValue.RefOrderID, nil
+}
+
+// AddRefOrderID adds u to the "ref_order_id" field.
+func (m *PointsLedgerMutation) AddRefOrderID(u int32) {
+	if m.addref_order_id != nil {
+		*m.addref_order_id += u
+	} else {
+		m.addref_order_id = &u
+	}
+}
+
+// AddedRefOrderID returns the value that was added to the "ref_order_id" field in this mutation.
+func (m *PointsLedgerMutation) AddedRefOrderID() (r int32, exists bool) {
+	v := m.addref_order_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearRefOrderID clears the value of the "ref_order_id" field.
+func (m *PointsLedgerMutation) ClearRefOrderID() {
+	m.ref_order_id = nil
+	m.addref_order_id = nil
+	m.clearedFields[pointsledger.FieldRefOrderID] = struct{}{}
+}
+
+// RefOrderIDCleared returns if the "ref_order_id" field was cleared in this mutation.
+func (m *PointsLedgerMutation) RefOrderIDCleared() bool {
+	_, ok := m.clearedFields[pointsledger.FieldRefOrderID]
+	return ok
+}
+
+// ResetRefOrderID resets all changes to the "ref_order_id" field.
+func (m *PointsLedgerMutation) ResetRefOrderID() {
+	m.ref_order_id = nil
+	m.addref_order_id = nil
+	delete(m.clearedFields, pointsledger.FieldRefOrderID)
+}
+
+// Where appends a list predicates to the PointsLedgerMutation builder.
+func (m *PointsLedgerMutation) Where(ps ...predicate.PointsLedger) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PointsLedgerMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PointsLedgerMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.PointsLedger, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PointsLedgerMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PointsLedgerMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (PointsLedger).
+func (m *PointsLedgerMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PointsLedgerMutation) Fields() []string {
+	fields := make([]string, 0, 10)
+	if m.created_at != nil {
+		fields = append(fields, pointsledger.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, pointsledger.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, pointsledger.FieldDeletedAt)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, pointsledger.FieldTenantID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, pointsledger.FieldUserID)
+	}
+	if m.delta != nil {
+		fields = append(fields, pointsledger.FieldDelta)
+	}
+	if m.balance_after != nil {
+		fields = append(fields, pointsledger.FieldBalanceAfter)
+	}
+	if m._type != nil {
+		fields = append(fields, pointsledger.FieldType)
+	}
+	if m.reason != nil {
+		fields = append(fields, pointsledger.FieldReason)
+	}
+	if m.ref_order_id != nil {
+		fields = append(fields, pointsledger.FieldRefOrderID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PointsLedgerMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case pointsledger.FieldCreatedAt:
+		return m.CreatedAt()
+	case pointsledger.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case pointsledger.FieldDeletedAt:
+		return m.DeletedAt()
+	case pointsledger.FieldTenantID:
+		return m.TenantID()
+	case pointsledger.FieldUserID:
+		return m.UserID()
+	case pointsledger.FieldDelta:
+		return m.Delta()
+	case pointsledger.FieldBalanceAfter:
+		return m.BalanceAfter()
+	case pointsledger.FieldType:
+		return m.GetType()
+	case pointsledger.FieldReason:
+		return m.Reason()
+	case pointsledger.FieldRefOrderID:
+		return m.RefOrderID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PointsLedgerMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case pointsledger.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case pointsledger.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case pointsledger.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case pointsledger.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case pointsledger.FieldUserID:
+		return m.OldUserID(ctx)
+	case pointsledger.FieldDelta:
+		return m.OldDelta(ctx)
+	case pointsledger.FieldBalanceAfter:
+		return m.OldBalanceAfter(ctx)
+	case pointsledger.FieldType:
+		return m.OldType(ctx)
+	case pointsledger.FieldReason:
+		return m.OldReason(ctx)
+	case pointsledger.FieldRefOrderID:
+		return m.OldRefOrderID(ctx)
+	}
+	return nil, fmt.Errorf("unknown PointsLedger field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PointsLedgerMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case pointsledger.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case pointsledger.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case pointsledger.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case pointsledger.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case pointsledger.FieldUserID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case pointsledger.FieldDelta:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDelta(v)
+		return nil
+	case pointsledger.FieldBalanceAfter:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBalanceAfter(v)
+		return nil
+	case pointsledger.FieldType:
+		v, ok := value.(pointsledger.Type)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetType(v)
+		return nil
+	case pointsledger.FieldReason:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReason(v)
+		return nil
+	case pointsledger.FieldRefOrderID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRefOrderID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PointsLedger field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PointsLedgerMutation) AddedFields() []string {
+	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, pointsledger.FieldTenantID)
+	}
+	if m.adduser_id != nil {
+		fields = append(fields, pointsledger.FieldUserID)
+	}
+	if m.adddelta != nil {
+		fields = append(fields, pointsledger.FieldDelta)
+	}
+	if m.addbalance_after != nil {
+		fields = append(fields, pointsledger.FieldBalanceAfter)
+	}
+	if m.addref_order_id != nil {
+		fields = append(fields, pointsledger.FieldRefOrderID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PointsLedgerMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case pointsledger.FieldTenantID:
+		return m.AddedTenantID()
+	case pointsledger.FieldUserID:
+		return m.AddedUserID()
+	case pointsledger.FieldDelta:
+		return m.AddedDelta()
+	case pointsledger.FieldBalanceAfter:
+		return m.AddedBalanceAfter()
+	case pointsledger.FieldRefOrderID:
+		return m.AddedRefOrderID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PointsLedgerMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case pointsledger.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case pointsledger.FieldUserID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUserID(v)
+		return nil
+	case pointsledger.FieldDelta:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDelta(v)
+		return nil
+	case pointsledger.FieldBalanceAfter:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddBalanceAfter(v)
+		return nil
+	case pointsledger.FieldRefOrderID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRefOrderID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PointsLedger numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PointsLedgerMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(pointsledger.FieldCreatedAt) {
+		fields = append(fields, pointsledger.FieldCreatedAt)
+	}
+	if m.FieldCleared(pointsledger.FieldUpdatedAt) {
+		fields = append(fields, pointsledger.FieldUpdatedAt)
+	}
+	if m.FieldCleared(pointsledger.FieldDeletedAt) {
+		fields = append(fields, pointsledger.FieldDeletedAt)
+	}
+	if m.FieldCleared(pointsledger.FieldTenantID) {
+		fields = append(fields, pointsledger.FieldTenantID)
+	}
+	if m.FieldCleared(pointsledger.FieldUserID) {
+		fields = append(fields, pointsledger.FieldUserID)
+	}
+	if m.FieldCleared(pointsledger.FieldType) {
+		fields = append(fields, pointsledger.FieldType)
+	}
+	if m.FieldCleared(pointsledger.FieldRefOrderID) {
+		fields = append(fields, pointsledger.FieldRefOrderID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PointsLedgerMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PointsLedgerMutation) ClearField(name string) error {
+	switch name {
+	case pointsledger.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case pointsledger.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case pointsledger.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case pointsledger.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case pointsledger.FieldUserID:
+		m.ClearUserID()
+		return nil
+	case pointsledger.FieldType:
+		m.ClearType()
+		return nil
+	case pointsledger.FieldRefOrderID:
+		m.ClearRefOrderID()
+		return nil
+	}
+	return fmt.Errorf("unknown PointsLedger nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PointsLedgerMutation) ResetField(name string) error {
+	switch name {
+	case pointsledger.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case pointsledger.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case pointsledger.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case pointsledger.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case pointsledger.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case pointsledger.FieldDelta:
+		m.ResetDelta()
+		return nil
+	case pointsledger.FieldBalanceAfter:
+		m.ResetBalanceAfter()
+		return nil
+	case pointsledger.FieldType:
+		m.ResetType()
+		return nil
+	case pointsledger.FieldReason:
+		m.ResetReason()
+		return nil
+	case pointsledger.FieldRefOrderID:
+		m.ResetRefOrderID()
+		return nil
+	}
+	return fmt.Errorf("unknown PointsLedger field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PointsLedgerMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PointsLedgerMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PointsLedgerMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PointsLedgerMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PointsLedgerMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PointsLedgerMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PointsLedgerMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown PointsLedger unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PointsLedgerMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown PointsLedger edge %s", name)
 }
 
 // PolicyEvaluationLogMutation represents an operation that mutates the PolicyEvaluationLog nodes in the graph.

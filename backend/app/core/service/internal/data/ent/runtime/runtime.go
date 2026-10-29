@@ -66,6 +66,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/plan"
 	"go-wind-shop/app/core/service/internal/data/ent/planmodule"
 	"go-wind-shop/app/core/service/internal/data/ent/planquota"
+	"go-wind-shop/app/core/service/internal/data/ent/pointsledger"
 	"go-wind-shop/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-shop/app/core/service/internal/data/ent/position"
 	"go-wind-shop/app/core/service/internal/data/ent/product"
@@ -1693,6 +1694,42 @@ func init() {
 	planquotaDescID := planquotaMixinFields0[0].Descriptor()
 	// planquota.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	planquota.IDValidator = planquotaDescID.Validators[0].(func(uint32) error)
+	pointsledgerMixin := schema.PointsLedger{}.Mixin()
+	pointsledger.Policy = privacy.NewPolicies(pointsledgerMixin[2], schema.PointsLedger{})
+	pointsledger.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := pointsledger.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	pointsledgerMixinFields0 := pointsledgerMixin[0].Fields()
+	_ = pointsledgerMixinFields0
+	pointsledgerMixinFields2 := pointsledgerMixin[2].Fields()
+	_ = pointsledgerMixinFields2
+	pointsledgerFields := schema.PointsLedger{}.Fields()
+	_ = pointsledgerFields
+	// pointsledgerDescTenantID is the schema descriptor for tenant_id field.
+	pointsledgerDescTenantID := pointsledgerMixinFields2[0].Descriptor()
+	// pointsledger.DefaultTenantID holds the default value on creation for the tenant_id field.
+	pointsledger.DefaultTenantID = pointsledgerDescTenantID.Default.(uint32)
+	// pointsledgerDescDelta is the schema descriptor for delta field.
+	pointsledgerDescDelta := pointsledgerFields[1].Descriptor()
+	// pointsledger.DefaultDelta holds the default value on creation for the delta field.
+	pointsledger.DefaultDelta = pointsledgerDescDelta.Default.(int64)
+	// pointsledgerDescBalanceAfter is the schema descriptor for balance_after field.
+	pointsledgerDescBalanceAfter := pointsledgerFields[2].Descriptor()
+	// pointsledger.DefaultBalanceAfter holds the default value on creation for the balance_after field.
+	pointsledger.DefaultBalanceAfter = pointsledgerDescBalanceAfter.Default.(int64)
+	// pointsledgerDescReason is the schema descriptor for reason field.
+	pointsledgerDescReason := pointsledgerFields[4].Descriptor()
+	// pointsledger.DefaultReason holds the default value on creation for the reason field.
+	pointsledger.DefaultReason = pointsledgerDescReason.Default.(string)
+	// pointsledgerDescID is the schema descriptor for id field.
+	pointsledgerDescID := pointsledgerMixinFields0[0].Descriptor()
+	// pointsledger.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	pointsledger.IDValidator = pointsledgerDescID.Validators[0].(func(uint32) error)
 	policyevaluationlogMixin := schema.PolicyEvaluationLog{}.Mixin()
 	policyevaluationlog.Policy = privacy.NewPolicies(policyevaluationlogMixin[2], schema.PolicyEvaluationLog{})
 	policyevaluationlog.Hooks[0] = func(next ent.Mutator) ent.Mutator {

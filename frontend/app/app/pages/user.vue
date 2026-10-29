@@ -7,6 +7,7 @@ import { XIcon } from '@/plugins/xicon'
 import { useUserStore } from '@/stores/modules/core/user.state'
 import { useAccessStore } from '@/stores/modules/core/access.state'
 import { useGetMe } from '@/api/composables/user-profile'
+import { useGetMyPointsBalance, useListMyPointsLedgers } from '@/api/composables'
 
 const { t } = useI18n()
 
@@ -23,6 +24,14 @@ const isLogin = computed(() => {
 const { data: me, isPending, isError, refetch } = useGetMe({ enabled: isLogin })
 
 const userInfo = computed(() => me.value || userStore.user)
+
+// ---------- 会员积分 ----------
+const pointsBalanceQuery = useGetMyPointsBalance({}, { enabled: isLogin } as any)
+const pointsBalance = computed(() => pointsBalanceQuery.data.value?.balance ?? 0)
+const ledgersQuery = useListMyPointsLedgers({ page: 1, pageSize: 5, noPaging: false }, { enabled: isLogin } as any)
+const pointsLedgers = computed(() => ((ledgersQuery.data?.value as any)?.items ?? []) as Array<{
+  id?: number; delta?: number; reason?: string
+}>)
 </script>
 
 <template>
@@ -99,6 +108,29 @@ const userInfo = computed(() => me.value || userStore.user)
             >
               {{ t('orders.filter.all') }}
             </NuxtLink>
+          </div>
+
+          <!-- 会员积分：余额 + 最近台账 -->
+          <div class="mt-4 rounded-xl border border-border bg-background/40 p-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-medium text-muted-foreground">{{ t('mall.points.title') }}</span>
+              <span class="text-2xl font-extrabold text-primary tabular-nums">{{ pointsBalance }}</span>
+            </div>
+            <ul v-if="pointsLedgers.length > 0" class="mt-3 flex flex-col gap-1.5">
+              <li
+                v-for="l in pointsLedgers"
+                :key="l.id"
+                class="flex items-center justify-between text-[11px]"
+              >
+                <span class="text-muted-foreground">{{ l.reason || t('mall.points.reason') }}</span>
+                <span
+                  class="font-medium tabular-nums"
+                  :class="(l.delta ?? 0) >= 0 ? 'text-primary' : 'text-red-500'"
+                >
+                  {{ (l.delta ?? 0) >= 0 ? '+' : '' }}{{ l.delta }}
+                </span>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

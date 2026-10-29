@@ -40,15 +40,15 @@ type PromotionServiceHTTPServer interface {
 
 func RegisterPromotionServiceHTTPServer(s *http.Server, srv PromotionServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/promotions", _PromotionService_List45_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/promotions/count", _PromotionService_Count16_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/promotions/{id}", _PromotionService_Get44_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/promotions", _PromotionService_List46_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/promotions/count", _PromotionService_Count17_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/promotions/{id}", _PromotionService_Get45_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/promotions", _PromotionService_Create35_HTTP_Handler(srv))
 	r.PUT("/admin/v1/mall/promotions/{id}", _PromotionService_Update36_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/mall/promotions/{id}", _PromotionService_Delete38_HTTP_Handler(srv))
 }
 
-func _PromotionService_List45_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
+func _PromotionService_List46_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -67,7 +67,7 @@ func _PromotionService_List45_HTTP_Handler(srv PromotionServiceHTTPServer) func(
 	}
 }
 
-func _PromotionService_Count16_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
+func _PromotionService_Count17_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -86,7 +86,7 @@ func _PromotionService_Count16_HTTP_Handler(srv PromotionServiceHTTPServer) func
 	}
 }
 
-func _PromotionService_Get44_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
+func _PromotionService_Get45_HTTP_Handler(srv PromotionServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPromotionRequest
 		if err := ctx.BindQuery(&in); err != nil {

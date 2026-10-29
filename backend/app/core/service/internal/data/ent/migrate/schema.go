@@ -3072,6 +3072,39 @@ var (
 			},
 		},
 	}
+	// MallPointsLedgersColumns holds the columns for the "mall_points_ledgers" table.
+	MallPointsLedgersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "用户ID"},
+		{Name: "delta", Type: field.TypeInt64, Comment: "积分变动（±）", Default: 0},
+		{Name: "balance_after", Type: field.TypeInt64, Comment: "变动后余额快照", Default: 0},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "类型", Enums: []string{"POINTS_TYPE_EARN", "POINTS_TYPE_DEDUCT"}, Default: "POINTS_TYPE_EARN"},
+		{Name: "reason", Type: field.TypeString, Comment: "事由", Default: ""},
+		{Name: "ref_order_id", Type: field.TypeUint32, Nullable: true, Comment: "关联订单ID"},
+	}
+	// MallPointsLedgersTable holds the schema information for the "mall_points_ledgers" table.
+	MallPointsLedgersTable = &schema.Table{
+		Name:       "mall_points_ledgers",
+		Comment:    "积分台账表",
+		Columns:    MallPointsLedgersColumns,
+		PrimaryKey: []*schema.Column{MallPointsLedgersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "pointsledger_tenant_id_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallPointsLedgersColumns[4], MallPointsLedgersColumns[5]},
+			},
+			{
+				Name:    "pointsledger_ref_order_id",
+				Unique:  false,
+				Columns: []*schema.Column{MallPointsLedgersColumns[10]},
+			},
+		},
+	}
 	// SysPolicyEvaluationLogsColumns holds the columns for the "sys_policy_evaluation_logs" table.
 	SysPolicyEvaluationLogsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -4924,6 +4957,7 @@ var (
 		SysPlansTable,
 		SysPlanModulesTable,
 		SysPlanQuotasTable,
+		MallPointsLedgersTable,
 		SysPolicyEvaluationLogsTable,
 		SysPositionsTable,
 		MallProductsTable,
@@ -5277,6 +5311,11 @@ func init() {
 	SysPlanQuotasTable.ForeignKeys[0].RefTable = SysPlansTable
 	SysPlanQuotasTable.Annotation = &entsql.Annotation{
 		Table:     "sys_plan_quotas",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallPointsLedgersTable.Annotation = &entsql.Annotation{
+		Table:     "mall_points_ledgers",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

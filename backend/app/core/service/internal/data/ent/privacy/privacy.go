@@ -1575,6 +1575,30 @@ func (f PlanQuotaMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutat
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PlanQuotaMutation", m)
 }
 
+// The PointsLedgerQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PointsLedgerQueryRuleFunc func(context.Context, *ent.PointsLedgerQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PointsLedgerQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PointsLedgerQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PointsLedgerQuery", q)
+}
+
+// The PointsLedgerMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PointsLedgerMutationRuleFunc func(context.Context, *ent.PointsLedgerMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PointsLedgerMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PointsLedgerMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PointsLedgerMutation", m)
+}
+
 // The PolicyEvaluationLogQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type PolicyEvaluationLogQueryRuleFunc func(context.Context, *ent.PolicyEvaluationLogQuery) error
@@ -2572,6 +2596,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.PlanQuotaQuery:
 		return q.Filter(), nil
+	case *ent.PointsLedgerQuery:
+		return q.Filter(), nil
 	case *ent.PolicyEvaluationLogQuery:
 		return q.Filter(), nil
 	case *ent.PositionQuery:
@@ -2770,6 +2796,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.PlanModuleMutation:
 		return m.Filter(), nil
 	case *ent.PlanQuotaMutation:
+		return m.Filter(), nil
+	case *ent.PointsLedgerMutation:
 		return m.Filter(), nil
 	case *ent.PolicyEvaluationLogMutation:
 		return m.Filter(), nil

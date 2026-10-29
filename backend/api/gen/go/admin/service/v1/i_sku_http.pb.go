@@ -52,9 +52,9 @@ type SkuServiceHTTPServer interface {
 
 func RegisterSkuServiceHTTPServer(s *http.Server, srv SkuServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/skus", _SkuService_List52_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/skus/count", _SkuService_Count22_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/skus/{id}", _SkuService_Get51_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/skus", _SkuService_List53_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/skus/count", _SkuService_Count23_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/skus/{id}", _SkuService_Get52_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/skus", _SkuService_Create41_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/skus/batch", _SkuService_BatchCreate9_HTTP_Handler(srv))
 	r.PUT("/admin/v1/mall/skus/{id}", _SkuService_Update42_HTTP_Handler(srv))
@@ -62,7 +62,7 @@ func RegisterSkuServiceHTTPServer(s *http.Server, srv SkuServiceHTTPServer) {
 	r.POST("/admin/v1/mall/skus/{id}:adjust-stock", _SkuService_AdjustStock0_HTTP_Handler(srv))
 }
 
-func _SkuService_List52_HTTP_Handler(srv SkuServiceHTTPServer) func(ctx http.Context) error {
+func _SkuService_List53_HTTP_Handler(srv SkuServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -81,7 +81,7 @@ func _SkuService_List52_HTTP_Handler(srv SkuServiceHTTPServer) func(ctx http.Con
 	}
 }
 
-func _SkuService_Count22_HTTP_Handler(srv SkuServiceHTTPServer) func(ctx http.Context) error {
+func _SkuService_Count23_HTTP_Handler(srv SkuServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -100,7 +100,7 @@ func _SkuService_Count22_HTTP_Handler(srv SkuServiceHTTPServer) func(ctx http.Co
 	}
 }
 
-func _SkuService_Get51_HTTP_Handler(srv SkuServiceHTTPServer) func(ctx http.Context) error {
+func _SkuService_Get52_HTTP_Handler(srv SkuServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetSkuRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -401,16 +401,16 @@ type SkuPriceServiceHTTPServer interface {
 
 func RegisterSkuPriceServiceHTTPServer(s *http.Server, srv SkuPriceServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/sku-prices", _SkuPriceService_List53_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/sku-prices/count", _SkuPriceService_Count23_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/sku-prices/{id}", _SkuPriceService_Get52_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/sku-prices", _SkuPriceService_List54_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/sku-prices/count", _SkuPriceService_Count24_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/sku-prices/{id}", _SkuPriceService_Get53_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/sku-prices", _SkuPriceService_Create42_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/sku-prices/batch", _SkuPriceService_BatchCreate10_HTTP_Handler(srv))
 	r.PUT("/admin/v1/mall/sku-prices/{id}", _SkuPriceService_Update43_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/mall/sku-prices", _SkuPriceService_Delete45_HTTP_Handler(srv))
 }
 
-func _SkuPriceService_List53_HTTP_Handler(srv SkuPriceServiceHTTPServer) func(ctx http.Context) error {
+func _SkuPriceService_List54_HTTP_Handler(srv SkuPriceServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -429,7 +429,7 @@ func _SkuPriceService_List53_HTTP_Handler(srv SkuPriceServiceHTTPServer) func(ct
 	}
 }
 
-func _SkuPriceService_Count23_HTTP_Handler(srv SkuPriceServiceHTTPServer) func(ctx http.Context) error {
+func _SkuPriceService_Count24_HTTP_Handler(srv SkuPriceServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -448,7 +448,7 @@ func _SkuPriceService_Count23_HTTP_Handler(srv SkuPriceServiceHTTPServer) func(c
 	}
 }
 
-func _SkuPriceService_Get52_HTTP_Handler(srv SkuPriceServiceHTTPServer) func(ctx http.Context) error {
+func _SkuPriceService_Get53_HTTP_Handler(srv SkuPriceServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetSkuPriceRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -708,16 +708,16 @@ type SkuAttributeCombinationServiceHTTPServer interface {
 
 func RegisterSkuAttributeCombinationServiceHTTPServer(s *http.Server, srv SkuAttributeCombinationServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/sku-attribute-combinations", _SkuAttributeCombinationService_List54_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/sku-attribute-combinations/count", _SkuAttributeCombinationService_Count24_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/sku-attribute-combinations/{id}", _SkuAttributeCombinationService_Get53_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/sku-attribute-combinations", _SkuAttributeCombinationService_List55_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/sku-attribute-combinations/count", _SkuAttributeCombinationService_Count25_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/sku-attribute-combinations/{id}", _SkuAttributeCombinationService_Get54_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/sku-attribute-combinations", _SkuAttributeCombinationService_Create43_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/sku-attribute-combinations/batch", _SkuAttributeCombinationService_BatchCreate11_HTTP_Handler(srv))
 	r.PUT("/admin/v1/mall/sku-attribute-combinations/{id}", _SkuAttributeCombinationService_Update44_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/mall/sku-attribute-combinations", _SkuAttributeCombinationService_Delete46_HTTP_Handler(srv))
 }
 
-func _SkuAttributeCombinationService_List54_HTTP_Handler(srv SkuAttributeCombinationServiceHTTPServer) func(ctx http.Context) error {
+func _SkuAttributeCombinationService_List55_HTTP_Handler(srv SkuAttributeCombinationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -736,7 +736,7 @@ func _SkuAttributeCombinationService_List54_HTTP_Handler(srv SkuAttributeCombina
 	}
 }
 
-func _SkuAttributeCombinationService_Count24_HTTP_Handler(srv SkuAttributeCombinationServiceHTTPServer) func(ctx http.Context) error {
+func _SkuAttributeCombinationService_Count25_HTTP_Handler(srv SkuAttributeCombinationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -755,7 +755,7 @@ func _SkuAttributeCombinationService_Count24_HTTP_Handler(srv SkuAttributeCombin
 	}
 }
 
-func _SkuAttributeCombinationService_Get53_HTTP_Handler(srv SkuAttributeCombinationServiceHTTPServer) func(ctx http.Context) error {
+func _SkuAttributeCombinationService_Get54_HTTP_Handler(srv SkuAttributeCombinationServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetSkuAttributeCombinationRequest
 		if err := ctx.BindQuery(&in); err != nil {

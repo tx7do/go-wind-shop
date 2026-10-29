@@ -189,6 +189,9 @@ type PlanModule func(*sql.Selector)
 // PlanQuota is the predicate function for planquota builders.
 type PlanQuota func(*sql.Selector)
 
+// PointsLedger is the predicate function for pointsledger builders.
+type PointsLedger func(*sql.Selector)
+
 // PolicyEvaluationLog is the predicate function for policyevaluationlog builders.
 type PolicyEvaluationLog func(*sql.Selector)
 

@@ -67,6 +67,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/plan"
 	"go-wind-shop/app/core/service/internal/data/ent/planmodule"
 	"go-wind-shop/app/core/service/internal/data/ent/planquota"
+	"go-wind-shop/app/core/service/internal/data/ent/pointsledger"
 	"go-wind-shop/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-shop/app/core/service/internal/data/ent/position"
 	"go-wind-shop/app/core/service/internal/data/ent/product"
@@ -229,6 +230,7 @@ func checkColumn(t, c string) error {
 			plan.Table:                             plan.ValidColumn,
 			planmodule.Table:                       planmodule.ValidColumn,
 			planquota.Table:                        planquota.ValidColumn,
+			pointsledger.Table:                     pointsledger.ValidColumn,
 			policyevaluationlog.Table:              policyevaluationlog.ValidColumn,
 			position.Table:                         position.ValidColumn,
 			product.Table:                          product.ValidColumn,

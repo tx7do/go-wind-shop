@@ -449,5 +449,18 @@
       "create": "New Seckill Activity",
       "update": "Edit Seckill Activity"
     }
+  },
+  "points": {
+    "userId": "User ID",
+    "type": "Type",
+    "typeLabel": {
+      "earn": "Earn",
+      "deduct": "Deduct"
+    },
+    "delta": "Delta",
+    "balanceAfter": "Balance After",
+    "reason": "Reason",
+    "refOrderId": "Order",
+    "createdAt": "Time"
   }
 }

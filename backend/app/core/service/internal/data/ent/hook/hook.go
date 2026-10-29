@@ -740,6 +740,18 @@ func (f PlanQuotaFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PlanQuotaMutation", m)
 }
 
+// The PointsLedgerFunc type is an adapter to allow the use of ordinary
+// function as PointsLedger mutator.
+type PointsLedgerFunc func(context.Context, *ent.PointsLedgerMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PointsLedgerFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PointsLedgerMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PointsLedgerMutation", m)
+}
+
 // The PolicyEvaluationLogFunc type is an adapter to allow the use of ordinary
 // function as PolicyEvaluationLog mutator.
 type PolicyEvaluationLogFunc func(context.Context, *ent.PolicyEvaluationLogMutation) (ent.Value, error)

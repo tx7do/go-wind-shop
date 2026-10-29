@@ -72,6 +72,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/plan"
 	"go-wind-shop/app/core/service/internal/data/ent/planmodule"
 	"go-wind-shop/app/core/service/internal/data/ent/planquota"
+	"go-wind-shop/app/core/service/internal/data/ent/pointsledger"
 	"go-wind-shop/app/core/service/internal/data/ent/policyevaluationlog"
 	"go-wind-shop/app/core/service/internal/data/ent/position"
 	"go-wind-shop/app/core/service/internal/data/ent/product"
@@ -241,6 +242,8 @@ type Client struct {
 	PlanModule *PlanModuleClient
 	// PlanQuota is the client for interacting with the PlanQuota builders.
 	PlanQuota *PlanQuotaClient
+	// PointsLedger is the client for interacting with the PointsLedger builders.
+	PointsLedger *PointsLedgerClient
 	// PolicyEvaluationLog is the client for interacting with the PolicyEvaluationLog builders.
 	PolicyEvaluationLog *PolicyEvaluationLogClient
 	// Position is the client for interacting with the Position builders.
@@ -383,6 +386,7 @@ func (c *Client) init() {
 	c.Plan = NewPlanClient(c.config)
 	c.PlanModule = NewPlanModuleClient(c.config)
 	c.PlanQuota = NewPlanQuotaClient(c.config)
+	c.PointsLedger = NewPointsLedgerClient(c.config)
 	c.PolicyEvaluationLog = NewPolicyEvaluationLogClient(c.config)
 	c.Position = NewPositionClient(c.config)
 	c.Product = NewProductClient(c.config)
@@ -571,6 +575,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Plan:                             NewPlanClient(cfg),
 		PlanModule:                       NewPlanModuleClient(cfg),
 		PlanQuota:                        NewPlanQuotaClient(cfg),
+		PointsLedger:                     NewPointsLedgerClient(cfg),
 		PolicyEvaluationLog:              NewPolicyEvaluationLogClient(cfg),
 		Position:                         NewPositionClient(cfg),
 		Product:                          NewProductClient(cfg),
@@ -686,6 +691,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Plan:                             NewPlanClient(cfg),
 		PlanModule:                       NewPlanModuleClient(cfg),
 		PlanQuota:                        NewPlanQuotaClient(cfg),
+		PointsLedger:                     NewPointsLedgerClient(cfg),
 		PolicyEvaluationLog:              NewPolicyEvaluationLogClient(cfg),
 		Position:                         NewPositionClient(cfg),
 		Product:                          NewProductClient(cfg),
@@ -763,15 +769,15 @@ func (c *Client) Use(hooks ...Hook) {
 		c.NotificationTemplate, c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit,
 		c.PaymentChannelConfig, c.PaymentRefund, c.PaymentTransaction, c.Permission,
 		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.Plan, c.PlanModule, c.PlanQuota, c.PolicyEvaluationLog,
-		c.Position, c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
-		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
-		c.ProductTranslation, c.Promotion, c.Role, c.RoleMetadata, c.RolePermission,
-		c.Script, c.ScriptLog, c.SeckillActivity, c.Shipment, c.ShippingAddress,
-		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.StockAlert,
-		c.StockOpLog, c.SysConfig, c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon,
-		c.UserCredential, c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole,
-		c.Wishlist,
+		c.PermissionPolicy, c.Plan, c.PlanModule, c.PlanQuota, c.PointsLedger,
+		c.PolicyEvaluationLog, c.Position, c.Product, c.ProductAttribute,
+		c.ProductAttributeTranslation, c.ProductAttributeValue,
+		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Promotion, c.Role,
+		c.RoleMetadata, c.RolePermission, c.Script, c.ScriptLog, c.SeckillActivity,
+		c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
+		c.SkuAttributeCombination, c.SkuPrice, c.StockAlert, c.StockOpLog, c.SysConfig,
+		c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential,
+		c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
 	} {
 		n.Use(hooks...)
 	}
@@ -794,15 +800,15 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.NotificationTemplate, c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit,
 		c.PaymentChannelConfig, c.PaymentRefund, c.PaymentTransaction, c.Permission,
 		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.Plan, c.PlanModule, c.PlanQuota, c.PolicyEvaluationLog,
-		c.Position, c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
-		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
-		c.ProductTranslation, c.Promotion, c.Role, c.RoleMetadata, c.RolePermission,
-		c.Script, c.ScriptLog, c.SeckillActivity, c.Shipment, c.ShippingAddress,
-		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.StockAlert,
-		c.StockOpLog, c.SysConfig, c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon,
-		c.UserCredential, c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole,
-		c.Wishlist,
+		c.PermissionPolicy, c.Plan, c.PlanModule, c.PlanQuota, c.PointsLedger,
+		c.PolicyEvaluationLog, c.Position, c.Product, c.ProductAttribute,
+		c.ProductAttributeTranslation, c.ProductAttributeValue,
+		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Promotion, c.Role,
+		c.RoleMetadata, c.RolePermission, c.Script, c.ScriptLog, c.SeckillActivity,
+		c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
+		c.SkuAttributeCombination, c.SkuPrice, c.StockAlert, c.StockOpLog, c.SysConfig,
+		c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential,
+		c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -933,6 +939,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PlanModule.mutate(ctx, m)
 	case *PlanQuotaMutation:
 		return c.PlanQuota.mutate(ctx, m)
+	case *PointsLedgerMutation:
+		return c.PointsLedger.mutate(ctx, m)
 	case *PolicyEvaluationLogMutation:
 		return c.PolicyEvaluationLog.mutate(ctx, m)
 	case *PositionMutation:
@@ -9560,6 +9568,140 @@ func (c *PlanQuotaClient) mutate(ctx context.Context, m *PlanQuotaMutation) (Val
 	}
 }
 
+// PointsLedgerClient is a client for the PointsLedger schema.
+type PointsLedgerClient struct {
+	config
+}
+
+// NewPointsLedgerClient returns a client for the PointsLedger from the given config.
+func NewPointsLedgerClient(c config) *PointsLedgerClient {
+	return &PointsLedgerClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `pointsledger.Hooks(f(g(h())))`.
+func (c *PointsLedgerClient) Use(hooks ...Hook) {
+	c.hooks.PointsLedger = append(c.hooks.PointsLedger, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `pointsledger.Intercept(f(g(h())))`.
+func (c *PointsLedgerClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PointsLedger = append(c.inters.PointsLedger, interceptors...)
+}
+
+// Create returns a builder for creating a PointsLedger entity.
+func (c *PointsLedgerClient) Create() *PointsLedgerCreate {
+	mutation := newPointsLedgerMutation(c.config, OpCreate)
+	return &PointsLedgerCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PointsLedger entities.
+func (c *PointsLedgerClient) CreateBulk(builders ...*PointsLedgerCreate) *PointsLedgerCreateBulk {
+	return &PointsLedgerCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PointsLedgerClient) MapCreateBulk(slice any, setFunc func(*PointsLedgerCreate, int)) *PointsLedgerCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PointsLedgerCreateBulk{err: fmt.Errorf("calling to PointsLedgerClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PointsLedgerCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PointsLedgerCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PointsLedger.
+func (c *PointsLedgerClient) Update() *PointsLedgerUpdate {
+	mutation := newPointsLedgerMutation(c.config, OpUpdate)
+	return &PointsLedgerUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PointsLedgerClient) UpdateOne(_m *PointsLedger) *PointsLedgerUpdateOne {
+	mutation := newPointsLedgerMutation(c.config, OpUpdateOne, withPointsLedger(_m))
+	return &PointsLedgerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PointsLedgerClient) UpdateOneID(id uint32) *PointsLedgerUpdateOne {
+	mutation := newPointsLedgerMutation(c.config, OpUpdateOne, withPointsLedgerID(id))
+	return &PointsLedgerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PointsLedger.
+func (c *PointsLedgerClient) Delete() *PointsLedgerDelete {
+	mutation := newPointsLedgerMutation(c.config, OpDelete)
+	return &PointsLedgerDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PointsLedgerClient) DeleteOne(_m *PointsLedger) *PointsLedgerDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PointsLedgerClient) DeleteOneID(id uint32) *PointsLedgerDeleteOne {
+	builder := c.Delete().Where(pointsledger.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PointsLedgerDeleteOne{builder}
+}
+
+// Query returns a query builder for PointsLedger.
+func (c *PointsLedgerClient) Query() *PointsLedgerQuery {
+	return &PointsLedgerQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePointsLedger},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PointsLedger entity by its id.
+func (c *PointsLedgerClient) Get(ctx context.Context, id uint32) (*PointsLedger, error) {
+	return c.Query().Where(pointsledger.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PointsLedgerClient) GetX(ctx context.Context, id uint32) *PointsLedger {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PointsLedgerClient) Hooks() []Hook {
+	hooks := c.hooks.PointsLedger
+	return append(hooks[:len(hooks):len(hooks)], pointsledger.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PointsLedgerClient) Interceptors() []Interceptor {
+	return c.inters.PointsLedger
+}
+
+func (c *PointsLedgerClient) mutate(ctx context.Context, m *PointsLedgerMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PointsLedgerCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PointsLedgerUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PointsLedgerUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PointsLedgerDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PointsLedger mutation op: %q", m.Op())
+	}
+}
+
 // PolicyEvaluationLogClient is a client for the PolicyEvaluationLog schema.
 type PolicyEvaluationLogClient struct {
 	config
@@ -14266,7 +14408,7 @@ type (
 		OperationAuditLog, Order, OrderItem, OrgUnit, PaymentChannelConfig,
 		PaymentRefund, PaymentTransaction, Permission, PermissionApi,
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy, Plan,
-		PlanModule, PlanQuota, PolicyEvaluationLog, Position, Product,
+		PlanModule, PlanQuota, PointsLedger, PolicyEvaluationLog, Position, Product,
 		ProductAttribute, ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Promotion, Role,
 		RoleMetadata, RolePermission, Script, ScriptLog, SeckillActivity, Shipment,
@@ -14288,7 +14430,7 @@ type (
 		OperationAuditLog, Order, OrderItem, OrgUnit, PaymentChannelConfig,
 		PaymentRefund, PaymentTransaction, Permission, PermissionApi,
 		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy, Plan,
-		PlanModule, PlanQuota, PolicyEvaluationLog, Position, Product,
+		PlanModule, PlanQuota, PointsLedger, PolicyEvaluationLog, Position, Product,
 		ProductAttribute, ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Promotion, Role,
 		RoleMetadata, RolePermission, Script, ScriptLog, SeckillActivity, Shipment,

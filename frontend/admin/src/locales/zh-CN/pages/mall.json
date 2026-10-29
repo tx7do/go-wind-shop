@@ -449,5 +449,18 @@
       "create": "新增秒杀活动",
       "update": "编辑秒杀活动"
     }
+  },
+  "points": {
+    "userId": "用户ID",
+    "type": "类型",
+    "typeLabel": {
+      "earn": "入账",
+      "deduct": "回冲"
+    },
+    "delta": "变动",
+    "balanceAfter": "变动后余额",
+    "reason": "事由",
+    "refOrderId": "关联订单",
+    "createdAt": "时间"
   }
 }

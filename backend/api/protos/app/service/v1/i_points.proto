@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/points.proto";
+
+// 积分前台服务（C端：余额 + 本人台账）
+service PointsService {
+  // 我的积分余额（user 由登录态隐私层钉定）
+  rpc GetMyPointsBalance (catalog.service.v1.GetUserPointsBalanceRequest) returns (catalog.service.v1.GetUserPointsBalanceResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/points/balance"
+    };
+  }
+
+  // 我的积分台账（user 由登录态隐私层钉定）
+  rpc ListMyPointsLedgers (pagination.PagingRequest) returns (catalog.service.v1.ListPointsLedgerResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/points/ledgers"
+    };
+  }
+}

@@ -64,6 +64,14 @@ func (s *SkuService) Update(ctx context.Context, req *catalogV1.UpdateSkuRequest
 		return nil, catalogV1.ErrorBadRequest("invalid parameter")
 	}
 
+	// 库存变更必须走 AdjustStock（行锁 + append-only 流水）；通用更新里带 stockQty
+	// 会绕过流水审计，直接拒绝。
+	for _, path := range req.GetUpdateMask().GetPaths() {
+		if path == "stockQty" || path == "stock_qty" {
+			return nil, catalogV1.ErrorBadRequest("库存变更请使用库存调整接口（不记审计流水）")
+		}
+	}
+
 	if err := s.repo.Update(ctx, req); err != nil {
 		return nil, err
 	}

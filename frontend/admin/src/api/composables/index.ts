@@ -111,5 +111,6 @@ export * from "./mfa";
 export * from "./promotion";
 export * from "./payment-channel";
 export * from "./seckill";
+export * from "./points-ledger";
 export * from "./sku-stock";
 export * from "./stock-op-log";

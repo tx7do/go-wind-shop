@@ -134,6 +134,8 @@ type Tx struct {
 	PlanModule *PlanModuleClient
 	// PlanQuota is the client for interacting with the PlanQuota builders.
 	PlanQuota *PlanQuotaClient
+	// PointsLedger is the client for interacting with the PointsLedger builders.
+	PointsLedger *PointsLedgerClient
 	// PolicyEvaluationLog is the client for interacting with the PolicyEvaluationLog builders.
 	PolicyEvaluationLog *PolicyEvaluationLogClient
 	// Position is the client for interacting with the Position builders.
@@ -396,6 +398,7 @@ func (tx *Tx) init() {
 	tx.Plan = NewPlanClient(tx.config)
 	tx.PlanModule = NewPlanModuleClient(tx.config)
 	tx.PlanQuota = NewPlanQuotaClient(tx.config)
+	tx.PointsLedger = NewPointsLedgerClient(tx.config)
 	tx.PolicyEvaluationLog = NewPolicyEvaluationLogClient(tx.config)
 	tx.Position = NewPositionClient(tx.config)
 	tx.Product = NewProductClient(tx.config)

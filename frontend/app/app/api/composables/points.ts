@@ -1,0 +1,34 @@
+import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
+import { toValue } from 'vue';
+import { apiClient } from '@/api/client';
+import type {
+  catalogservicev1_ListPointsLedgerResponse,
+} from '@/api/generated/app/service/v1';
+
+// ==============================
+// 会员积分（C端：余额 + 本人台账；登录态，隐私层钉定本人）
+// ==============================
+export async function fetchGetMyPointsBalance(): Promise<{ balance?: number }> {
+  return await apiClient.pointsService.GetMyPointsBalance({} as any);
+}
+export function useGetMyPointsBalance(
+  params?: Record<string, any>,
+  options?: UseQueryOptions<{ balance?: number }, Error>,
+) {
+  return useQuery({
+    queryKey: ['myPointsBalance', params],
+    queryFn: () => fetchGetMyPointsBalance(),
+    ...options,
+  });
+}
+
+export function useListMyPointsLedgers(
+  query: Record<string, any>,
+  options?: UseQueryOptions<catalogservicev1_ListPointsLedgerResponse, Error>,
+) {
+  return useQuery({
+    queryKey: ['myPointsLedgers', query],
+    queryFn: () => apiClient.pointsService.ListMyPointsLedgers(query as any),
+    ...options,
+  });
+}

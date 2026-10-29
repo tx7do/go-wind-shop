@@ -40,15 +40,15 @@ type SeckillActivityServiceHTTPServer interface {
 
 func RegisterSeckillActivityServiceHTTPServer(s *http.Server, srv SeckillActivityServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/seckills", _SeckillActivityService_List49_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/seckills/count", _SeckillActivityService_Count19_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/seckills/{id}", _SeckillActivityService_Get48_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/seckills", _SeckillActivityService_List50_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/seckills/count", _SeckillActivityService_Count20_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/seckills/{id}", _SeckillActivityService_Get49_HTTP_Handler(srv))
 	r.POST("/admin/v1/mall/seckills", _SeckillActivityService_Create38_HTTP_Handler(srv))
 	r.PUT("/admin/v1/mall/seckills/{id}", _SeckillActivityService_Update39_HTTP_Handler(srv))
 	r.DELETE("/admin/v1/mall/seckills/{id}", _SeckillActivityService_Delete41_HTTP_Handler(srv))
 }
 
-func _SeckillActivityService_List49_HTTP_Handler(srv SeckillActivityServiceHTTPServer) func(ctx http.Context) error {
+func _SeckillActivityService_List50_HTTP_Handler(srv SeckillActivityServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -67,7 +67,7 @@ func _SeckillActivityService_List49_HTTP_Handler(srv SeckillActivityServiceHTTPS
 	}
 }
 
-func _SeckillActivityService_Count19_HTTP_Handler(srv SeckillActivityServiceHTTPServer) func(ctx http.Context) error {
+func _SeckillActivityService_Count20_HTTP_Handler(srv SeckillActivityServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -86,7 +86,7 @@ func _SeckillActivityService_Count19_HTTP_Handler(srv SeckillActivityServiceHTTP
 	}
 }
 
-func _SeckillActivityService_Get48_HTTP_Handler(srv SeckillActivityServiceHTTPServer) func(ctx http.Context) error {
+func _SeckillActivityService_Get49_HTTP_Handler(srv SeckillActivityServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetSeckillActivityRequest
 		if err := ctx.BindQuery(&in); err != nil {

@@ -94,5 +94,17 @@
   },
   "orders": {
     "title": "我的订单"
+  },
+  "mall": {
+    "seckill": {
+      "tag": "限时秒杀"
+    }
+  },
+  "points": {
+    "title": "我的积分",
+    "reason": "积分明细"
+  },
+  "seckill": {
+    "tag": "我的积分"
   }
 }

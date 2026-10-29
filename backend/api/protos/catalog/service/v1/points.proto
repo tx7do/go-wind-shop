@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package catalog.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+import "pagination/v1/pagination.proto";
+
+// 积分台账服务（append-only）
+//
+// 订单支付成功入账（1 积分/元），退款成功回冲（对订单已入账积分对冲，余额
+// 拖底为 0 不产生负积分）。余额 = 用户全部 delta 求和。
+service PointsLedgerService {
+  rpc List (pagination.PagingRequest) returns (ListPointsLedgerResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountPointsLedgerResponse) {}
+  rpc Get (GetPointsLedgerRequest) returns (PointsLedger) {}
+
+  // 用户积分余额
+  rpc GetUserPointsBalance (GetUserPointsBalanceRequest) returns (GetUserPointsBalanceResponse) {}
+}
+
+// 积分类型
+enum PointsLedgerType {
+  POINTS_TYPE_UNSPECIFIED = 0;
+  POINTS_TYPE_EARN = 1;    // 消费入账
+  POINTS_TYPE_DEDUCT = 2;  // 退款回冲
+}
+
+// 积分台账
+message PointsLedger {
+  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "台账ID"}];
+  optional uint32 user_id = 2 [json_name = "userId", (gnostic.openapi.v3.property) = {description: "用户ID"}];
+  optional int64 delta = 3 [json_name = "delta", (gnostic.openapi.v3.property) = {description: "积分变动（±）"}];
+  optional int64 balance_after = 4 [json_name = "balanceAfter", (gnostic.openapi.v3.property) = {description: "变动后余额"}];
+  optional PointsLedgerType type = 5 [json_name = "type", (gnostic.openapi.v3.property) = {description: "类型"}];
+  optional string reason = 6 [json_name = "reason", (gnostic.openapi.v3.property) = {description: "事由"}];
+  optional uint32 ref_order_id = 7 [json_name = "refOrderId", (gnostic.openapi.v3.property) = {description: "关联订单ID"}];
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
+}
+
+message ListPointsLedgerResponse { repeated PointsLedger items = 1; uint64 total = 2; }
+message CountPointsLedgerResponse { uint64 count = 1; }
+
+message GetPointsLedgerRequest {
+  uint32 id = 1 [json_name = "id"];
+  optional google.protobuf.FieldMask view_mask = 100 [json_name = "viewMask"];
+}
+
+message GetUserPointsBalanceRequest {
+  uint32 user_id = 1 [json_name = "userId"];
+}
+
+message GetUserPointsBalanceResponse {
+  int64 balance = 1 [json_name = "balance"];
+}

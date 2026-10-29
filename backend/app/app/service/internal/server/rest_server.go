@@ -129,6 +129,7 @@ func NewRestServer(
 	internalMessageRecipientService *service.InternalMessageRecipientService,
 
 	// register:rest-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
+	pointsService *service.PointsService,
 	seckillService *service.SeckillService,
 		userCouponService *service.UserCouponService,
 		couponTemplateService *service.CouponTemplateService,
@@ -191,6 +192,7 @@ func NewRestServer(
 	appV1.RegisterAiChatServiceHTTPServer(srv, aiChatService)
 
 	// register:rest-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
+	appV1.RegisterPointsServiceHTTPServer(srv, pointsService)
 	appV1.RegisterSeckillServiceHTTPServer(srv, seckillService)
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

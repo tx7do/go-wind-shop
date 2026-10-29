@@ -3640,6 +3640,140 @@ export type paymentservicev1_CreatePaymentRefundRequest = {
   data: paymentservicev1_PaymentRefund | undefined;
 };
 
+// 积分前台服务（C端：余额 + 本人台账）
+export interface PointsService {
+  // 我的积分余额（user 由登录态隐私层钉定）
+  GetMyPointsBalance(
+    request: catalogservicev1_GetUserPointsBalanceRequest,
+  ): Promise<catalogservicev1_GetUserPointsBalanceResponse>;
+  // 我的积分台账（user 由登录态隐私层钉定）
+  ListMyPointsLedgers(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_ListPointsLedgerResponse>;
+}
+
+export function createPointsServiceClient(
+  transport: ClientTransport,
+): PointsService {
+  return {
+    GetMyPointsBalance(request) {
+      const path = `/app/v1/mall/points/balance`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.userId) {
+        queryParams.push(
+          `userId=${encodeURIComponent(request.userId.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PointsService',
+        method: 'GetMyPointsBalance',
+      }) as Promise<catalogservicev1_GetUserPointsBalanceResponse>;
+    },
+    ListMyPointsLedgers(request) {
+      const path = `/app/v1/mall/points/ledgers`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PointsService',
+        method: 'ListMyPointsLedgers',
+      }) as Promise<catalogservicev1_ListPointsLedgerResponse>;
+    },
+  };
+}
+export type catalogservicev1_GetUserPointsBalanceRequest = {
+  userId: number | undefined;
+};
+
+export type catalogservicev1_GetUserPointsBalanceResponse = {
+  balance: number | undefined;
+};
+
+export type catalogservicev1_ListPointsLedgerResponse = {
+  items: catalogservicev1_PointsLedger[] | undefined;
+  total: number | undefined;
+};
+
+// 积分台账
+export type catalogservicev1_PointsLedger = {
+  balanceAfter?: number;
+  createdAt?: wellKnownTimestamp;
+  delta?: number;
+  id?: number;
+  reason?: string;
+  refOrderId?: number;
+  type?: catalogservicev1_PointsLedgerType;
+  userId?: number;
+};
+
+// 积分类型
+export type catalogservicev1_PointsLedgerType =
+  | 'POINTS_TYPE_DEDUCT'
+  | 'POINTS_TYPE_EARN'
+  | 'POINTS_TYPE_UNSPECIFIED';
 // 商品前台服务
 export interface ProductService {
   // 分页查询商品列表
@@ -5760,6 +5894,7 @@ export class ApiClient {
   private _paymentChannelService?: PaymentChannelService;
   private _paymentRefundService?: PaymentRefundService;
   private _paymentTransactionService?: PaymentTransactionService;
+  private _pointsService?: PointsService;
   private _productAttributeService?: ProductAttributeService;
   private _productAttributeValueService?: ProductAttributeValueService;
   private _productService?: ProductService;
@@ -5845,6 +5980,10 @@ export class ApiClient {
 
   get paymentTransactionService(): PaymentTransactionService {
     return this._paymentTransactionService ??= createPaymentTransactionServiceClient(this._transport);
+  }
+
+  get pointsService(): PointsService {
+    return this._pointsService ??= createPointsServiceClient(this._transport);
   }
 
   get productAttributeService(): ProductAttributeService {

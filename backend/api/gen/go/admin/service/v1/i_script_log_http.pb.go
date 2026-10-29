@@ -36,12 +36,12 @@ type ScriptLogServiceHTTPServer interface {
 
 func RegisterScriptLogServiceHTTPServer(s *http.Server, srv ScriptLogServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/script/logs", _ScriptLogService_List48_HTTP_Handler(srv))
-	r.GET("/admin/v1/script/logs/count", _ScriptLogService_Count18_HTTP_Handler(srv))
+	r.GET("/admin/v1/script/logs", _ScriptLogService_List49_HTTP_Handler(srv))
+	r.GET("/admin/v1/script/logs/count", _ScriptLogService_Count19_HTTP_Handler(srv))
 	r.POST("/admin/v1/script/logs/purge", _ScriptLogService_Purge0_HTTP_Handler(srv))
 }
 
-func _ScriptLogService_List48_HTTP_Handler(srv ScriptLogServiceHTTPServer) func(ctx http.Context) error {
+func _ScriptLogService_List49_HTTP_Handler(srv ScriptLogServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -60,7 +60,7 @@ func _ScriptLogService_List48_HTTP_Handler(srv ScriptLogServiceHTTPServer) func(
 	}
 }
 
-func _ScriptLogService_Count18_HTTP_Handler(srv ScriptLogServiceHTTPServer) func(ctx http.Context) error {
+func _ScriptLogService_Count19_HTTP_Handler(srv ScriptLogServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {

@@ -135,6 +135,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	permissionAuditLogServiceClient := data.NewPermissionAuditLogServiceClient(ctx, discovery)
 
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
+	pointsLedgerServiceClient := data.NewPointsLedgerServiceClient(ctx, discovery)
 	seckillServiceClient := data.NewSeckillServiceClient(ctx, discovery)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
@@ -228,6 +229,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	permissionAuditLogService := service.NewPermissionAuditLogService(ctx, permissionAuditLogServiceClient)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
+	pointsLedgerService := service.NewPointsLedgerService(ctx, pointsLedgerServiceClient)
 	seckillService := service.NewSeckillService(ctx, seckillServiceClient)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
@@ -317,6 +319,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		operationAuditLogService,
 		permissionAuditLogService,
 		// register:rest-arg ── 新模块服务实参在此行后追加(make register 工具锚点,勿删)
+		pointsLedgerService,
 		seckillService,
 	)
 
