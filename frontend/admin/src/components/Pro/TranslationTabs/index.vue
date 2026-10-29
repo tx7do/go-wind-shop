@@ -36,10 +36,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watchEffect } from "vue";
+import { ref, unref, watchEffect } from "vue";
 import { fetchListLanguages } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
-import { $t } from "@/core/i18n";
+import { $t, i18n } from "@/core/i18n";
 import type { TranslationFieldConfig } from "./types";
 
 defineOptions({ name: "TranslationTabs" });
@@ -64,7 +64,10 @@ async function loadLanguages() {
     );
     languages.value = (resp.items || []).filter((l) => l.isEnabled === true);
     if (languages.value.length > 0) {
-      activeName.value = "0";
+      // 默认落在当前界面语言（如 zh-CN）对应的页签；找不到再回落到第一个
+      const current = unref(i18n.global.locale);
+      const idx = languages.value.findIndex((l) => l.languageCode === current);
+      activeName.value = String(idx >= 0 ? idx : 0);
     }
   } catch (e) {
     languages.value = [];

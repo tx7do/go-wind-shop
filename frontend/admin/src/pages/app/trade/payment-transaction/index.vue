@@ -37,6 +37,20 @@ const paymentStatusLabelMap: Record<string, string> = {
   STATUS_UNSPECIFIED: $t("pages.mall.paymentTransaction.statusLabel.STATUS_UNSPECIFIED"),
 };
 
+// 支付方式/业务类型 -> 显示文案映射（裸枚举直接展示无翻译）
+const paymentMethodLabelMap: Record<string, string> = {
+  ALIPAY: $t("pages.mall.paymentTransaction.methodLabel.ALIPAY"),
+  WECHAT: $t("pages.mall.paymentTransaction.methodLabel.WECHAT"),
+  BALANCE: $t("pages.mall.paymentTransaction.methodLabel.BALANCE"),
+  CARD: $t("pages.mall.paymentTransaction.methodLabel.CARD"),
+};
+
+const businessTypeLabelMap: Record<string, string> = {
+  BUSINESS_TYPE_CONSUME: $t("pages.mall.paymentTransaction.businessTypeLabel.BUSINESS_TYPE_CONSUME"),
+  BUSINESS_TYPE_REFUND: $t("pages.mall.paymentTransaction.businessTypeLabel.BUSINESS_TYPE_REFUND"),
+  BUSINESS_TYPE_RECHARGE: $t("pages.mall.paymentTransaction.businessTypeLabel.BUSINESS_TYPE_RECHARGE"),
+};
+
 const pageConfig = computed<ProPageConfig>(() => ({
   skeleton: true,
   search: {
@@ -94,8 +108,10 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.paymentTransaction.amount"),
         minWidth: 100,
         align: "right",
-        cellType: "price",
-        pricePrefix: "",
+        formatter: (row: any) =>
+          row.amount === null || row.amount === undefined || row.amount === ""
+            ? "-"
+            : (Number(row.amount) / 100).toFixed(2),
       },
       {
         prop: "currency",
@@ -114,11 +130,13 @@ const pageConfig = computed<ProPageConfig>(() => ({
         prop: "paymentMethod",
         label: $t("pages.mall.paymentTransaction.paymentMethod"),
         minWidth: 120,
+        formatter: (row: any) => paymentMethodLabelMap[row.paymentMethod] ?? row.paymentMethod ?? "",
       },
       {
         prop: "businessType",
         label: $t("pages.mall.paymentTransaction.businessType"),
         minWidth: 120,
+        formatter: (row: any) => businessTypeLabelMap[row.businessType] ?? row.businessType ?? "",
       },
       {
         prop: "createdAt",

@@ -20,6 +20,14 @@
         </ElButton>
       </template>
     </ElAlert>
+    <ElAlert
+      v-else
+      :title="attributeContextTitle"
+      type="success"
+      show-icon
+      :closable="false"
+      class="attr-context-alert"
+    />
 
     <ProPage ref="pageRef" :config="pageConfig" @add="handleAdd" @edit="handleEdit">
       <template #displayName="scope: any">
@@ -45,7 +53,7 @@ import ProPage from "@/components/Pro/ProPage/index.vue";
 import type { ProPageConfig } from "@/components/Pro/ProPage/types";
 import ProductAttributeValueDrawer from "./product-attribute-value-drawer.vue";
 
-import { fetchListProductAttributeValues, useDeleteProductAttributeValue } from "@/api/composables";
+import { fetchListProductAttributeValues, useDeleteProductAttributeValue, fetchGetProductAttribute } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
 import { $t, useI18n } from "@/core/i18n";
 
@@ -64,10 +72,34 @@ const attributeId = computed(() => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : undefined;
 });
 
-// 当 attrId 变化时重新加载列表
-watch(attributeId, () => {
-  pageRef.value?.refresh();
+// 当前属性上下文展示：带 attrId 进入时标明正在管理哪个属性的值
+const attributeName = ref("");
+const attributeContextTitle = computed(() => {
+  const name = attributeName.value || `#${attributeId.value}`;
+  return $t("pages.mall.productAttributeValue.currentAttribute", { name });
 });
+
+async function loadAttributeName() {
+  attributeName.value = "";
+  if (!attributeId.value) return;
+  try {
+    const resp: any = await fetchGetProductAttribute({ id: attributeId.value });
+    attributeName.value = getTranslationField(resp, "name");
+  } catch {
+    attributeName.value = "";
+  }
+}
+
+// 当 attrId 变化时重新加载列表与上下文名；immediate 覆盖整页直载（刷新/直链）场景。
+// 注意：回调须声明在 attributeName 等状态之后，immediate 首次执行发生在 setup 期间。
+watch(
+  attributeId,
+  () => {
+    pageRef.value?.refresh();
+    loadAttributeName();
+  },
+  { immediate: true }
+);
 
 // 按 UI 当前语言从 translations 中取对应字段的字面值。
 // List 响应含全部语言的 translations，须匹配 languageCode 才能取到

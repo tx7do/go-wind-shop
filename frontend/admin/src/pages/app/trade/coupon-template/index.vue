@@ -61,6 +61,8 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.couponTemplate.discountType"),
         minWidth: 120,
         align: "left",
+        formatter: (row: any) =>
+          $t(`pages.mall.couponTemplate.typeLabel.${row.discountType}`, row.discountType ?? ""),
       },
       {
         prop: "discountValue",
@@ -111,6 +113,8 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.couponTemplate.status"),
         minWidth: 100,
         align: "left",
+        formatter: (row: any) =>
+          $t(`pages.mall.couponTemplate.statusLabel.${row.status}`, row.status ?? ""),
       },
       {
         prop: "claimable",

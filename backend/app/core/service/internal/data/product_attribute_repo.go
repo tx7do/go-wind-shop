@@ -18,6 +18,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 	"go-wind-shop/app/core/service/internal/data/ent/productattribute"
+	"go-wind-shop/app/core/service/internal/data/ent/productattributetranslation"
 
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 )
@@ -86,12 +87,57 @@ func (r *ProductAttributeRepo) Count(ctx context.Context, whereCond []func(s *sq
 	return count, nil
 }
 
+// filterByTranslationName 把名称条件改写为翻译表子查询（主表无 name 列）。
+// 返回 found=false 表示没有任何翻译命中，调用方可直接返回空结果。
+func (r *ProductAttributeRepo) filterByTranslationName(ctx context.Context, builder *ent.ProductAttributeQuery, keyword string, contains bool) (found bool, err error) {
+	q := r.entClient.Client().ProductAttributeTranslation.Query()
+	if contains {
+		q = q.Where(productattributetranslation.NameContains(keyword))
+	} else {
+		q = q.Where(productattributetranslation.NameEQ(keyword))
+	}
+	rows, err := q.Select(productattributetranslation.FieldAttributeID).Ints(ctx)
+	if err != nil {
+		r.log.Errorf("query attribute ids by translation name failed: %s", err.Error())
+		return false, catalogV1.ErrorInternalServerError("query translations failed")
+	}
+	if len(rows) == 0 {
+		return false, nil
+	}
+	ids := make([]uint32, 0, len(rows))
+	for _, n := range rows {
+		ids = append(ids, uint32(n))
+	}
+	builder.Where(productattribute.IDIn(ids...))
+	return true, nil
+}
+
 func (r *ProductAttributeRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*catalogV1.ListProductAttributeResponse, error) {
 	if req == nil {
 		return nil, catalogV1.ErrorBadRequest("invalid parameter")
 	}
 
 	builder := r.entClient.Client().ProductAttribute.Query()
+
+	// 名称列在属性翻译表（主表无 name 列）：把名称条件从通用 query 中
+	// 抽出来改走翻译表过滤，否则通用分页把 name 当主表列拼 SQL 直接报错。
+	contains, equals, ferr := ExtractTranslationFilters(req, "name")
+	if ferr != nil {
+		return nil, catalogV1.ErrorBadRequest("invalid query")
+	}
+	if kw := contains["name"]; kw != "" {
+		if found, terr := r.filterByTranslationName(ctx, builder, kw, true); terr != nil {
+			return nil, terr
+		} else if !found {
+			return &catalogV1.ListProductAttributeResponse{Total: 0, Items: nil}, nil
+		}
+	} else if kw := equals["name"]; kw != "" {
+		if found, terr := r.filterByTranslationName(ctx, builder, kw, false); terr != nil {
+			return nil, terr
+		} else if !found {
+			return &catalogV1.ListProductAttributeResponse{Total: 0, Items: nil}, nil
+		}
+	}
 
 	ret, err := r.repository.ListWithPaging(ctx, builder, builder.Clone(), req)
 	if err != nil {
@@ -299,6 +345,12 @@ func (r *ProductAttributeRepo) Update(ctx context.Context, req *catalogV1.Update
 	if len(req.Data.Translations) > 0 {
 		for i := range req.Data.Translations {
 			req.Data.Translations[i].AttributeId = trans.Ptr(req.GetId())
+		}
+
+		// 与 Create 同策略：先清空旧翻译再批量插入（翻译表唯一键，直接插入会撞键）。
+		if err = r.productAttributeTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
+			r.log.Errorf("clean translations failed: %s", err.Error())
+			return nil, catalogV1.ErrorInternalServerError("clean translations failed")
 		}
 
 		if err = r.productAttributeTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {

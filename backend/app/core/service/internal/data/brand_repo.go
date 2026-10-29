@@ -17,6 +17,7 @@ import (
 
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/brand"
+	"go-wind-shop/app/core/service/internal/data/ent/brandtranslation"
 	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
@@ -86,12 +87,57 @@ func (r *BrandRepo) Count(ctx context.Context, whereCond []func(s *sql.Selector)
 	return count, nil
 }
 
+// filterByTranslationName 把名称条件改写为翻译表子查询（主表无 name 列）。
+// 返回 found=false 表示没有任何翻译命中，调用方可直接返回空结果。
+func (r *BrandRepo) filterByTranslationName(ctx context.Context, builder *ent.BrandQuery, keyword string, contains bool) (found bool, err error) {
+	q := r.entClient.Client().BrandTranslation.Query()
+	if contains {
+		q = q.Where(brandtranslation.NameContains(keyword))
+	} else {
+		q = q.Where(brandtranslation.NameEQ(keyword))
+	}
+	rows, err := q.Select(brandtranslation.FieldBrandID).Ints(ctx)
+	if err != nil {
+		r.log.Errorf("query brand ids by translation name failed: %s", err.Error())
+		return false, catalogV1.ErrorInternalServerError("query translations failed")
+	}
+	if len(rows) == 0 {
+		return false, nil
+	}
+	ids := make([]uint32, 0, len(rows))
+	for _, n := range rows {
+		ids = append(ids, uint32(n))
+	}
+	builder.Where(brand.IDIn(ids...))
+	return true, nil
+}
+
 func (r *BrandRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*catalogV1.ListBrandResponse, error) {
 	if req == nil {
 		return nil, catalogV1.ErrorBadRequest("invalid parameter")
 	}
 
 	builder := r.entClient.Client().Brand.Query()
+
+	// 名称列在 brand_translations（主表无 name 列）：把名称条件从通用 query 中
+	// 抽出来改走翻译表过滤，否则通用分页把 name 当主表列拼 SQL 直接报错。
+	contains, equals, ferr := ExtractTranslationFilters(req, "name")
+	if ferr != nil {
+		return nil, catalogV1.ErrorBadRequest("invalid query")
+	}
+	if kw := contains["name"]; kw != "" {
+		if found, terr := r.filterByTranslationName(ctx, builder, kw, true); terr != nil {
+			return nil, terr
+		} else if !found {
+			return &catalogV1.ListBrandResponse{Total: 0, Items: nil}, nil
+		}
+	} else if kw := equals["name"]; kw != "" {
+		if found, terr := r.filterByTranslationName(ctx, builder, kw, false); terr != nil {
+			return nil, terr
+		} else if !found {
+			return &catalogV1.ListBrandResponse{Total: 0, Items: nil}, nil
+		}
+	}
 
 	ret, err := r.repository.ListWithPaging(ctx, builder, builder.Clone(), req)
 	if err != nil {
@@ -300,6 +346,13 @@ func (r *BrandRepo) Update(ctx context.Context, req *catalogV1.UpdateBrandReques
 	if len(req.Data.Translations) > 0 {
 		for i := range req.Data.Translations {
 			req.Data.Translations[i].BrandId = trans.Ptr(req.GetId())
+		}
+
+		// 与 Create 同策略：先清空旧翻译再批量插入——翻译表对 brand_id+language_code
+		// 有唯一约束，直接插入会撞键（前端编辑恒带全量翻译，必现 500）。
+		if err = r.brandTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
+			r.log.Errorf("clean translations failed: %s", err.Error())
+			return nil, catalogV1.ErrorInternalServerError("clean translations failed")
 		}
 
 		if err = r.brandTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+  <!-- 亮色主题兜底占位图：暗色版见 placeholder-dark.svg，两份几何一致，由 Image.vue 按主题挑选 -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F9FAFB"/>
+      <stop offset="1" stop-color="#EFF2F6"/>
+    </linearGradient>
+    <linearGradient id="m1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#D7DEE8"/>
+      <stop offset="1" stop-color="#C2CCDA"/>
+    </linearGradient>
+    <linearGradient id="m2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E3E8F0"/>
+      <stop offset="1" stop-color="#CDD6E2"/>
+    </linearGradient>
+    <clipPath id="clip">
+      <rect x="252" y="272" width="296" height="256" rx="38"/>
+    </clipPath>
+  </defs>
+
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <circle cx="400" cy="400" r="250" fill="#FFFFFF" opacity="0.72"/>
+  <circle cx="400" cy="400" r="250" fill="none" stroke="#E6EAF0" stroke-width="2"/>
+
+  <rect x="252" y="272" width="296" height="256" rx="38" fill="#FDFEFE"/>
+  <g clip-path="url(#clip)">
+    <circle cx="334" cy="348" r="26" fill="#DCE3EC"/>
+    <path d="M236 560 L330 428 Q346 406 363 427 L448 536 Q453 542 445 542 L236 542 Z" fill="url(#m1)"/>
+    <path d="M392 560 L468 458 Q483 439 499 457 L574 546 Q580 553 571 553 L392 553 Z" fill="url(#m2)"/>
+  </g>
+  <rect x="252" y="272" width="296" height="256" rx="38" fill="none" stroke="#C6CFDB" stroke-width="13"/>
+
+  <circle cx="572" cy="298" r="10" fill="#DDE3EC"/>
+  <circle cx="238" cy="514" r="7" fill="#E2E8F0"/>
+</svg>

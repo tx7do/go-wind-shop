@@ -73,6 +73,8 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.taxRate.status"),
         minWidth: 100,
         align: "left",
+        formatter: (row: any) =>
+          $t(`pages.mall.taxRate.statusLabel.${row.status}`, row.status ?? ""),
       },
       {
         prop: "currency",

@@ -30,6 +30,7 @@
     "disabled": "禁用",
     "active": "活跃",
     "inactive": "非活跃",
+    "draft": "草稿",
     "pending": "待处理",
     "completed": "已完成",
     "failed": "失败"

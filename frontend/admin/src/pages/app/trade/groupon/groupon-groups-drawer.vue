@@ -39,7 +39,7 @@ const activityName = computed(() => activity.value?.name ?? "");
 const groupsQuery = useListGrouponGroups(
   computed(() => ({ activityId: activity.value?.id ?? 0 })),
   { enabled: computed(() => visible.value && !!activity.value?.id) } as any
-) as any;
+);
 const groups = computed(() => (groupsQuery.data.value as any)?.items ?? []);
 
 function groupTagType(status: string) {

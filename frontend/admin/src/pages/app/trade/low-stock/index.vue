@@ -50,6 +50,11 @@ const pageConfig = computed<ProPageConfig>(() => ({
   table: {
     listAction: async (query: any) => {
       const { page, pageSize, ...queryParams } = query;
+      // 兜底：ProPage 的 initialValue 只回填表单 UI，不进首次请求——
+      // 缺省时补上默认阈值 10（与后端告警扫描阈值一致），否则首屏会展示全部 SKU
+      if (queryParams.stockQty__lte === undefined || queryParams.stockQty__lte === null || queryParams.stockQty__lte === "") {
+        queryParams.stockQty__lte = 10;
+      }
       const result = await fetchListSkus(
         new PaginationQuery({
           paging: { page: page || 1, pageSize: pageSize || 10 },

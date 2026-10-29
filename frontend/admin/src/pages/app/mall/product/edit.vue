@@ -184,7 +184,7 @@
 
 <script lang="ts" setup>
 import { computed, reactive, ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute, useRouter, onBeforeRouteLeave } from "vue-router";
 import { ElMessage, ElMessageBox, type FormInstance, type FormRules } from "element-plus";
 
 import {
@@ -360,15 +360,45 @@ async function loadProduct() {
     formData.sortOrder = resp.sortOrder ?? 1;
     formData.imageUrl = resp.imageUrl ?? "";
     formData.translations = Array.isArray(resp.translations) ? resp.translations : [];
+    // 回填完成：以当前状态为干净基线
+    formBaseline = formSnapshot();
   } catch {
     ElMessage.error($t("common.message.error"));
     handleCancel();
   }
 }
 
-function handleCancel() {
+// ── 脏数据守卫：回填完成记基线，离开（取消/路由跳转）前比对确认 ──
+let formBaseline = "";
+
+function formSnapshot(): string {
+  const { name, slug, shortDescription, longDescription, status, categoryId, brandId, sortOrder, imageUrl, translations } = formData;
+  return JSON.stringify({ name, slug, shortDescription, longDescription, status, categoryId, brandId, sortOrder, imageUrl, translations });
+}
+
+function isFormDirty(): boolean {
+  return formBaseline !== "" && formSnapshot() !== formBaseline;
+}
+
+async function confirmDiscard(): Promise<boolean> {
+  if (!isFormDirty()) return true;
+  try {
+    await ElMessageBox.confirm($t("pages.mall.product.discardConfirm"), { type: "warning" });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function handleCancel() {
+  if (!(await confirmDiscard())) return;
   router.push("/mall/products");
 }
+
+// 路由级守卫：侧边栏/标签页跳转同样拦截（与抽屉四路径守卫同语义）
+onBeforeRouteLeave(async () => {
+  return await confirmDiscard();
+});
 
 async function handleSubmit() {
   if (!formRef.value) return;
@@ -426,6 +456,10 @@ function syncCurrentLocaleIntoTranslations() {
 onMounted(() => {
   loadOptions();
   loadProduct();
+  // 新建模式没有异步回填，直接记基线；编辑模式在 loadProduct 回填后重记
+  if (isCreate) {
+    formBaseline = formSnapshot();
+  }
 });
 </script>
 

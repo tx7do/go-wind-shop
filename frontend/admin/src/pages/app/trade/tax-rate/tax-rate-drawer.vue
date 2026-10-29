@@ -19,10 +19,14 @@
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.mall.taxRate.taxRate')" prop="taxRate">
+        <!-- 后端 taxRate 为 int32（整数百分比），小数会被 protojson 拒绝（400） -->
         <ElInputNumber
           v-model="formData.taxRate"
           :min="0"
           :max="100"
+          :step="1"
+          :step-strictly="true"
+          :precision="0"
           controls-position="right"
           :placeholder="$t('common.placeholder.input')"
           style="width: 100%"

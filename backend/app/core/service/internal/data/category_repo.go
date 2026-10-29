@@ -18,6 +18,7 @@ import (
 
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/category"
+	"go-wind-shop/app/core/service/internal/data/ent/categorytranslation"
 	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
@@ -87,12 +88,57 @@ func (r *CategoryRepo) Count(ctx context.Context, whereCond []func(s *sql.Select
 	return count, nil
 }
 
+// filterByTranslationName 把名称条件改写为翻译表子查询（主表无 name 列）。
+// 返回 found=false 表示没有任何翻译命中，调用方可直接返回空结果。
+func (r *CategoryRepo) filterByTranslationName(ctx context.Context, builder *ent.CategoryQuery, keyword string, contains bool) (found bool, err error) {
+	q := r.entClient.Client().CategoryTranslation.Query()
+	if contains {
+		q = q.Where(categorytranslation.NameContains(keyword))
+	} else {
+		q = q.Where(categorytranslation.NameEQ(keyword))
+	}
+	rows, err := q.Select(categorytranslation.FieldCategoryID).Ints(ctx)
+	if err != nil {
+		r.log.Errorf("query category ids by translation name failed: %s", err.Error())
+		return false, catalogV1.ErrorInternalServerError("query translations failed")
+	}
+	if len(rows) == 0 {
+		return false, nil
+	}
+	ids := make([]uint32, 0, len(rows))
+	for _, n := range rows {
+		ids = append(ids, uint32(n))
+	}
+	builder.Where(category.IDIn(ids...))
+	return true, nil
+}
+
 func (r *CategoryRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*catalogV1.ListCategoryResponse, error) {
 	if req == nil {
 		return nil, catalogV1.ErrorBadRequest("invalid parameter")
 	}
 
 	builder := r.entClient.Client().Category.Query()
+
+	// 名称列在 category_translations（主表无 name 列）：把名称条件从通用 query 中
+	// 抽出来改走翻译表过滤，否则通用分页把 name 当主表列拼 SQL 直接报错。
+	contains, equals, ferr := ExtractTranslationFilters(req, "name")
+	if ferr != nil {
+		return nil, catalogV1.ErrorBadRequest("invalid query")
+	}
+	if kw := contains["name"]; kw != "" {
+		if found, terr := r.filterByTranslationName(ctx, builder, kw, true); terr != nil {
+			return nil, terr
+		} else if !found {
+			return &catalogV1.ListCategoryResponse{Total: 0, Items: nil}, nil
+		}
+	} else if kw := equals["name"]; kw != "" {
+		if found, terr := r.filterByTranslationName(ctx, builder, kw, false); terr != nil {
+			return nil, terr
+		} else if !found {
+			return &catalogV1.ListCategoryResponse{Total: 0, Items: nil}, nil
+		}
+	}
 
 	ret, err := r.repository.ListWithPaging(ctx, builder, builder.Clone(), req)
 	if err != nil {
@@ -316,6 +362,12 @@ func (r *CategoryRepo) Update(ctx context.Context, req *catalogV1.UpdateCategory
 	if len(req.Data.Translations) > 0 {
 		for i := range req.Data.Translations {
 			req.Data.Translations[i].CategoryId = trans.Ptr(req.GetId())
+		}
+
+		// 与 Create 同策略：先清空旧翻译再批量插入（翻译表唯一键，直接插入会撞键）。
+		if err = r.categoryTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
+			r.log.Errorf("clean translations failed: %s", err.Error())
+			return nil, catalogV1.ErrorInternalServerError("clean translations failed")
 		}
 
 		if err = r.categoryTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {

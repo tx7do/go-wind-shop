@@ -302,6 +302,12 @@ func (r *ProductAttributeValueRepo) Update(ctx context.Context, req *catalogV1.U
 			req.Data.Translations[i].ValueId = trans.Ptr(req.GetId())
 		}
 
+		// 与 Create 同策略：先清空旧翻译再批量插入（翻译表唯一键，直接插入会撞键）。
+		if err = r.productAttributeValueTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
+			r.log.Errorf("clean translations failed: %s", err.Error())
+			return nil, catalogV1.ErrorInternalServerError("clean translations failed")
+		}
+
 		if err = r.productAttributeValueTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {
 			r.log.Errorf("batch insert translations failed: %s", err.Error())
 			return nil, catalogV1.ErrorInternalServerError("batch insert translations failed")

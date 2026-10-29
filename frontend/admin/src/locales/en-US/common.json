@@ -30,6 +30,7 @@
     "disabled": "Disabled",
     "active": "Active",
     "inactive": "Inactive",
+    "draft": "Draft",
     "pending": "Pending",
     "completed": "Completed",
     "failed": "Failed"

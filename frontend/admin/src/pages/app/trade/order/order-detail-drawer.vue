@@ -15,13 +15,13 @@
           {{ data?.userId ?? "-" }}
         </ElDescriptionsItem>
         <ElDescriptionsItem :label="$t('pages.mall.order.totalAmount')">
-          {{ data?.totalAmount ?? "-" }}
+          {{ fenToYuan(data?.totalAmount) }}
         </ElDescriptionsItem>
         <ElDescriptionsItem :label="$t('pages.mall.order.originalAmount')">
-          {{ data?.originalAmount ?? "-" }}
+          {{ fenToYuan(data?.originalAmount) }}
         </ElDescriptionsItem>
         <ElDescriptionsItem :label="$t('pages.mall.order.discountAmount')">
-          {{ data?.discountAmount ?? "-" }}
+          {{ fenToYuan(data?.discountAmount) }}
         </ElDescriptionsItem>
         <ElDescriptionsItem :label="$t('pages.mall.order.currency')">
           {{ data?.currency || "-" }}
@@ -70,18 +70,24 @@
           :label="$t('pages.mall.order.orderItems.unitPrice')"
           min-width="100"
           align="right"
-        />
+        >
+          <template #default="scope">{{ fenToYuan(scope.row.unitPrice) }}</template>
+        </ElTableColumn>
         <ElTableColumn
           prop="subtotal"
           :label="$t('pages.mall.order.orderItems.subtotal')"
           min-width="100"
           align="right"
-        />
+        >
+          <template #default="scope">{{ fenToYuan(scope.row.subtotal) }}</template>
+        </ElTableColumn>
         <ElTableColumn
           prop="skuSnapshot"
           :label="$t('pages.mall.order.orderItems.skuSnapshot')"
           min-width="160"
-        />
+        >
+          <template #default="scope">{{ formatSnapshot(scope.row.skuSnapshot) }}</template>
+        </ElTableColumn>
         <ElTableColumn
           prop="createdAt"
           :label="$t('pages.mall.order.orderItems.createdAt')"
@@ -93,12 +99,18 @@
         </ElTableColumn>
       </ElTable>
     </div>
+    <template #footer>
+      <div class="drawer-footer">
+        <ElButton @click="close">{{ $t("common.button.close") }}</ElButton>
+      </div>
+    </template>
   </ProModal>
 </template>
 
 <script lang="ts" setup>
 import { ref } from "vue";
 import {
+  ElButton,
   ElDivider,
   ElDescriptions,
   ElDescriptionsItem,
@@ -121,6 +133,27 @@ const visible = ref(false);
 const title = ref("");
 const data = ref<orderservicev1_Order>();
 const orderItems = ref<any[]>([]);
+
+// 金额字段以分存储，展示统一转元
+function fenToYuan(v: any): string {
+  return v === null || v === undefined || v === "" ? "-" : (Number(v) / 100).toFixed(2);
+}
+
+// SKU 快照为 JSON 字符串，格式化为可读的 k: v 串；解析失败按原文展示
+function formatSnapshot(raw: any): string {
+  if (raw === null || raw === undefined || raw === "") return "-";
+  try {
+    const obj = typeof raw === "string" ? JSON.parse(raw) : raw;
+    if (obj && typeof obj === "object") {
+      return Object.entries(obj)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join("；");
+    }
+    return String(raw);
+  } catch {
+    return String(raw);
+  }
+}
 
 // 订单状态 -> 显示文案映射
 const orderStatusLabelMap: Record<string, string> = {
@@ -161,5 +194,10 @@ defineExpose({ open, close });
 <style lang="scss" scoped>
 .detail-drawer {
   padding-right: 10px;
+}
+
+.drawer-footer {
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

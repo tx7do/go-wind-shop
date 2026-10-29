@@ -31,15 +31,22 @@ type PointsLedgerService struct {
 	repo                *data.PointsLedgerRepo
 	entClient           *entCrud.EntClient[*ent.Client]
 	couponTemplateRepo  *data.CouponTemplateRepo
+	memberTierService   *MemberTierService
 }
 
-func NewPointsLedgerService(ctx *bootstrap.Context, repo *data.PointsLedgerRepo, entClient *entCrud.EntClient[*ent.Client], couponTemplateRepo *data.CouponTemplateRepo) *PointsLedgerService {
+func NewPointsLedgerService(ctx *bootstrap.Context, repo *data.PointsLedgerRepo, entClient *entCrud.EntClient[*ent.Client], couponTemplateRepo *data.CouponTemplateRepo, memberTierService *MemberTierService) *PointsLedgerService {
 	return &PointsLedgerService{
 		log:                logx.New(ctx.NewLoggerHelper("points-ledger/service/core-service")),
 		repo:               repo,
 		entClient:          entClient,
 		couponTemplateRepo: couponTemplateRepo,
+		memberTierService:  memberTierService,
 	}
+}
+
+// RegisterMemberTierService 延迟注入（构造环解法）。
+func (s *PointsLedgerService) RegisterMemberTierService(svc *MemberTierService) {
+	s.memberTierService = svc
 }
 
 func (s *PointsLedgerService) List(ctx context.Context, req *paginationV1.PagingRequest) (*catalogV1.ListPointsLedgerResponse, error) {
@@ -212,6 +219,12 @@ func (s *PointsLedgerService) AwardForOrder(ctx context.Context, userId uint32, 
 	}
 
 	award := totalAmount / 100 * PointsAwardRatePerYuan
+	// 会员等级积分倍率
+	if s.memberTierService != nil {
+		if m := s.memberTierService.GetPointsMultiplierForUser(ctx, userId); m > 1 {
+			award *= int64(m)
+		}
+	}
 	if award <= 0 {
 		return nil
 	}

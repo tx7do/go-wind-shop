@@ -194,6 +194,10 @@ function open(row?: any) {
     currentId.value = row.id;
     fetchGetCouponTemplate({ id: row.id })
       .then((resp: any) => {
+        // protojson 把 int64 序列化为字符串，ElInputNumber 要求 Number，先归一
+        for (const k of ["discountValue", "discountPercentage", "maxRedemptions", "maxRedemptionsPerUser"]) {
+          if (typeof resp?.[k] === "string") resp[k] = Number(resp[k]);
+        }
         Object.assign(formData, resp);
         guard.syncBaseline();
       })

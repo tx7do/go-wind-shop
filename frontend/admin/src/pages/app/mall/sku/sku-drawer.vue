@@ -31,7 +31,9 @@
         />
       </ElFormItem>
 
-      <ElFormItem :label="$t('pages.mall.sku.stockQty')" prop="stockQty">
+      <!-- 库存仅创建时可填；编辑走「调库存」抽屉（行锁 + append-only 流水审计），
+           通用更新携带 stockQty 会被后端拒绝 -->
+      <ElFormItem v-if="isCreate" :label="$t('pages.mall.sku.stockQty')" prop="stockQty">
         <ElInputNumber
           v-model="formData.stockQty"
           :min="0"
@@ -136,6 +138,10 @@ async function handleSubmit() {
     submitLoading.value = true;
 
     const values = { ...formData };
+    if (!isCreate.value) {
+      // 编辑不含库存：库存变更必须走 AdjustStock（流水审计）
+      delete (values as Record<string, unknown>).stockQty;
+    }
 
     if (isCreate.value) {
       await createSku(values);

@@ -2,6 +2,7 @@ package data
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -92,6 +93,18 @@ func (r *CommentRepo) Count(ctx context.Context, req *paginationV1.PagingRequest
 func (r *CommentRepo) List(ctx context.Context, req *paginationV1.PagingRequest, treeTravel bool) (*commentV1.ListCommentResponse, error) {
 	if req == nil {
 		return nil, commentV1.ErrorBadRequest("invalid parameter")
+	}
+
+	// 查询条件带 parentId 时是"回复列表"场景：返回的行全部是子评论，其父节点
+	// 不在结果集内，BuildTree 会把它们当孤儿节点丢弃（items 空、total>0）。
+	// 此时跳过建树，平铺返回。
+	if req.GetQuery() != "" {
+		var cond map[string]any
+		if json.Unmarshal([]byte(req.GetQuery()), &cond) == nil {
+			if _, hasParent := cond["parentId"]; hasParent {
+				treeTravel = false
+			}
+		}
 	}
 
 	builder := r.entClient.Client().Comment.Query()

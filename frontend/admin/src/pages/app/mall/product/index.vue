@@ -57,7 +57,7 @@ function statusLabel(status: any): string {
     case "PRODUCT_STATUS_INACTIVE":
       return $t("common.status.inactive");
     case "PRODUCT_STATUS_DRAFT":
-      return "Draft";
+      return $t("common.status.draft");
     default:
       return $t("common.text.unknown");
   }

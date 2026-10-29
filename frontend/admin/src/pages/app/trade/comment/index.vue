@@ -21,6 +21,20 @@ import { $t } from "@/core/i18n";
 const pageRef = ref();
 const drawerRef = ref();
 
+// 内容类型/审核状态 -> 显示文案映射（裸枚举直接展示无翻译）
+const commentTypeLabelMap: Record<string, string> = {
+  CONTENT_TYPE_PRODUCT: $t("pages.mall.comment.typeLabel.CONTENT_TYPE_PRODUCT"),
+  CONTENT_TYPE_SHOP: $t("pages.mall.comment.typeLabel.CONTENT_TYPE_SHOP"),
+  CONTENT_TYPE_POST: $t("pages.mall.comment.typeLabel.CONTENT_TYPE_POST"),
+};
+
+const commentStatusLabelMap: Record<string, string> = {
+  STATUS_PENDING: $t("pages.mall.comment.statusLabel.STATUS_PENDING"),
+  STATUS_APPROVED: $t("pages.mall.comment.statusLabel.STATUS_APPROVED"),
+  STATUS_REJECTED: $t("pages.mall.comment.statusLabel.STATUS_REJECTED"),
+  STATUS_SPAM: $t("pages.mall.comment.statusLabel.STATUS_SPAM"),
+};
+
 const pageConfig = computed<ProPageConfig>(() => ({
   skeleton: true,
   search: {
@@ -55,6 +69,7 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.comment.contentType"),
         minWidth: 100,
         align: "left",
+        formatter: (row: any) => commentTypeLabelMap[row.contentType] ?? row.contentType ?? "",
       },
       {
         prop: "objectId",
@@ -73,6 +88,7 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.comment.status"),
         minWidth: 100,
         align: "left",
+        formatter: (row: any) => commentStatusLabelMap[row.status] ?? row.status ?? "",
       },
       {
         prop: "createdBy",

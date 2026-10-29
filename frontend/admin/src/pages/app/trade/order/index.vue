@@ -24,6 +24,9 @@ const { mutateAsync: updateOrder } = useUpdateOrder();
 const pageRef = ref();
 const drawerRef = ref();
 
+// 金额字段以分存储，展示统一转元（与促销/导出口径一致）
+const fenToYuan = (v: any) => (v === null || v === undefined || v === "" ? "-" : (Number(v) / 100).toFixed(2));
+
 // 订单状态 -> Tag 颜色映射
 const orderStatusTagTypeMap: Record<string, "success" | "primary" | "warning" | "danger" | "info"> =
   {
@@ -91,24 +94,21 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.order.totalAmount"),
         minWidth: 100,
         align: "right",
-        cellType: "price",
-        pricePrefix: "",
+        formatter: (row: any) => fenToYuan(row.totalAmount),
       },
       {
         prop: "originalAmount",
         label: $t("pages.mall.order.originalAmount"),
         minWidth: 100,
         align: "right",
-        cellType: "price",
-        pricePrefix: "",
+        formatter: (row: any) => fenToYuan(row.originalAmount),
       },
       {
         prop: "discountAmount",
         label: $t("pages.mall.order.discountAmount"),
         minWidth: 100,
         align: "right",
-        cellType: "price",
-        pricePrefix: "",
+        formatter: (row: any) => fenToYuan(row.discountAmount),
       },
       {
         prop: "currency",

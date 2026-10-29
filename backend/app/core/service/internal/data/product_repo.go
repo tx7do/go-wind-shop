@@ -105,33 +105,32 @@ func (r *ProductRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 
 	// 商品名搜索：商品名落在关联翻译表 mall_product_translations，不在 products 表，
 	// 通用 DSL 会把 name 当作 products.name 列处理而报 SQL 错误。因此这里在交给
-	// 通用分页框架前，先把 name 关键字从 query JSON 里剥离出来，改用子查询
-	// products.id IN (SELECT product_id FROM translations WHERE name LIKE %kw%)
-	// 实现（跨任意语言命中）。剥离后剩余字段（categoryId/brandId 等）仍走 DSL。
+	// 通用分页框架前，先把名称条件从 query JSON 里剥离出来，改走翻译表：
+	// 先查出命中的 product_id 集合，再以 id IN (...) 过滤主查询。
 	//
-	// 安全/正确性：
-	//   - LIKE 通配符 % _ \ 需转义，否则搜索"100%"会误匹配"1000"、搜索"%"匹配全部，
-	//     且可作为公开端点的 DoS 放大器。用 ESCAPE '\\' 配合转义。
-	//   - 子查询带 deleted_at IS NULL，避免软删除的旧翻译行"复活"已改名/删除的商品。
-	//
-	// 性能：LOWER(name) LIKE '%kw%' 带前导通配符，普通 B-tree 索引无效，会全表扫描
+	// 性能：LIKE '%kw%' 带前导通配符，普通 B-tree 索引无效，会全表扫描
 	// mall_product_translations。数据量增大时需 DBA 按实际数据库加专用索引：
 	//   PostgreSQL → CREATE EXTENSION pg_trgm; CREATE INDEX ... USING GIN (name gin_trgm_ops);
 	//   MySQL      → FULLTEXT 索引（注意中文需 ngram 分词）。
-	// 不在此处加普通 index.Fields("name")（对前导通配无效且徒增写入开销）。
-	if nameKeyword := extractAndStripNameKeyword(req); nameKeyword != "" {
-		// 转义 LIKE 特殊字符：\（转义符本身）、%（任意）、_（单字符）。
-		escaped := likeEscape.Replace(nameKeyword)
-		like := "%" + strings.ToLower(escaped) + "%"
-		builder.Modify(func(s *sql.Selector) {
-			s.Where(sql.ExprP(
-				"\""+product.FieldID+"\" IN (SELECT \""+productTranslation.FieldProductID+
-					"\" FROM \""+productTranslation.Table+
-					"\" WHERE LOWER(\""+productTranslation.FieldName+"\") LIKE ? ESCAPE '\\'" +
-					" AND \""+productTranslation.Table+"\".\"deleted_at\" IS NULL)",
-				like,
-			))
-		})
+	var nameFilter string
+	var nameExact bool
+	if contains, equals, ferr := ExtractTranslationFilters(req, "name"); ferr != nil {
+		return nil, catalogV1.ErrorBadRequest("invalid query")
+	} else if kw := contains["name"]; kw != "" {
+		nameFilter, nameExact = kw, false
+	} else if kw := equals["name"]; kw != "" {
+		nameFilter, nameExact = kw, true
+	}
+	if kw := extractAndStripKeyword(req); kw != "" && nameFilter == "" {
+		// 兼容老的裸关键字字段 keyword/q，语义等同名称模糊搜索。
+		nameFilter, nameExact = kw, false
+	}
+	if nameFilter != "" {
+		if found, terr := r.filterByTranslationName(ctx, builder, nameFilter, !nameExact); terr != nil {
+			return nil, terr
+		} else if !found {
+			return &catalogV1.ListProductResponse{Total: 0, Items: nil}, nil
+		}
 	}
 
 	ret, err := r.repository.ListWithPaging(ctx, builder, builder.Clone(), req)
@@ -155,18 +154,14 @@ func (r *ProductRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 	}, nil
 }
 
-// likeEscape 转义 LIKE 模式中的特殊字符，配合 SQL 的 ESCAPE '\\' 使用。
-// 顺序：先转义反斜杠本身，再转义 % 与 _。
-var likeEscape = strings.NewReplacer(`\`, `\\`, `%`, `\%`, `_`, `\_`)
-
-// extractAndStripNameKeyword 从分页请求的 query JSON 中取出名称搜索关键字
-// （兼容 name / keyword / q 三个前端字段名），并将其从 query 中移除，
-// 避免通用 DSL 再以 products.name 列处理而报错。无 query 或不含这些字段时返回空串。
+// extractAndStripKeyword 从分页请求的 query JSON 中取出裸关键字字段
+// （keyword / q，旧版前端字段名），并将其从 query 中移除——这些键同样不是
+// products 表的列，交给通用 DSL 会报错。返回空串表示没有这些字段。
 //
 // 仅当某 key 的值是有效非空字符串时才提取并从 query 删除该 key；
-// 非字符串值（如 {name:123}）不提取、不删除，保留原样交调用方/DSL 处理，
+// 非字符串值（如 {keyword:123}）不提取、不删除，保留原样交调用方/DSL 处理，
 // 避免静默吞掉过滤条件污染剩余 query。
-func extractAndStripNameKeyword(req *paginationV1.PagingRequest) string {
+func extractAndStripKeyword(req *paginationV1.PagingRequest) string {
 	if req == nil || req.GetQuery() == "" {
 		return ""
 	}
@@ -176,7 +171,7 @@ func extractAndStripNameKeyword(req *paginationV1.PagingRequest) string {
 		return ""
 	}
 	var keyword string
-	for _, key := range []string{"name", "keyword", "q"} {
+	for _, key := range []string{"keyword", "q"} {
 		if v, ok := m[key]; ok {
 			s, ok2 := v.(string)
 			if !ok2 {
@@ -199,6 +194,31 @@ func extractAndStripNameKeyword(req *paginationV1.PagingRequest) string {
 		req.FilteringType = &paginationV1.PagingRequest_Query{Query: string(newJSON)}
 	}
 	return keyword
+}
+
+// filterByTranslationName 把名称条件改写为翻译表过滤（主表无 name 列）。
+// 返回 found=false 表示没有任何翻译命中，调用方可直接返回空结果。
+func (r *ProductRepo) filterByTranslationName(ctx context.Context, builder *ent.ProductQuery, keyword string, contains bool) (found bool, err error) {
+	q := r.entClient.Client().ProductTranslation.Query()
+	if contains {
+		q = q.Where(productTranslation.NameContains(keyword))
+	} else {
+		q = q.Where(productTranslation.NameEQ(keyword))
+	}
+	rows, err := q.Select(productTranslation.FieldProductID).Ints(ctx)
+	if err != nil {
+		r.log.Errorf("query product ids by translation name failed: %s", err.Error())
+		return false, catalogV1.ErrorInternalServerError("query translations failed")
+	}
+	if len(rows) == 0 {
+		return false, nil
+	}
+	ids := make([]uint32, 0, len(rows))
+	for _, n := range rows {
+		ids = append(ids, uint32(n))
+	}
+	builder.Where(product.IDIn(ids...))
+	return true, nil
 }
 
 func (r *ProductRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
@@ -389,6 +409,12 @@ func (r *ProductRepo) Update(ctx context.Context, req *catalogV1.UpdateProductRe
 	if len(req.Data.Translations) > 0 {
 		for i := range req.Data.Translations {
 			req.Data.Translations[i].ProductId = trans.Ptr(req.GetId())
+		}
+
+		// 与 Create 同策略：先清空旧翻译再批量插入（翻译表唯一键，直接插入会撞键）。
+		if err = r.productTranslationRepo.CleanTranslations(ctx, tx, req.GetId()); err != nil {
+			r.log.Errorf("clean translations failed: %s", err.Error())
+			return nil, catalogV1.ErrorInternalServerError("clean translations failed")
 		}
 
 		if err = r.productTranslationRepo.BatchCreate(ctx, tx, req.Data.GetTranslations()); err != nil {
