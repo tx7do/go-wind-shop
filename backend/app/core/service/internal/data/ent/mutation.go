@@ -28314,6 +28314,8 @@ type CouponTemplateMutation struct {
 	redeemed_count              *int32
 	addredeemed_count           *int32
 	status                      *coupontemplate.Status
+	points_price                *int64
+	addpoints_price             *int64
 	claimable                   *bool
 	clearedFields               map[string]struct{}
 	done                        bool
@@ -29447,6 +29449,62 @@ func (m *CouponTemplateMutation) ResetStatus() {
 	delete(m.clearedFields, coupontemplate.FieldStatus)
 }
 
+// SetPointsPrice sets the "points_price" field.
+func (m *CouponTemplateMutation) SetPointsPrice(i int64) {
+	m.points_price = &i
+	m.addpoints_price = nil
+}
+
+// PointsPrice returns the value of the "points_price" field in the mutation.
+func (m *CouponTemplateMutation) PointsPrice() (r int64, exists bool) {
+	v := m.points_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPointsPrice returns the old "points_price" field's value of the CouponTemplate entity.
+// If the CouponTemplate object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *CouponTemplateMutation) OldPointsPrice(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPointsPrice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPointsPrice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPointsPrice: %w", err)
+	}
+	return oldValue.PointsPrice, nil
+}
+
+// AddPointsPrice adds i to the "points_price" field.
+func (m *CouponTemplateMutation) AddPointsPrice(i int64) {
+	if m.addpoints_price != nil {
+		*m.addpoints_price += i
+	} else {
+		m.addpoints_price = &i
+	}
+}
+
+// AddedPointsPrice returns the value that was added to the "points_price" field in this mutation.
+func (m *CouponTemplateMutation) AddedPointsPrice() (r int64, exists bool) {
+	v := m.addpoints_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPointsPrice resets all changes to the "points_price" field.
+func (m *CouponTemplateMutation) ResetPointsPrice() {
+	m.points_price = nil
+	m.addpoints_price = nil
+}
+
 // SetClaimable sets the "claimable" field.
 func (m *CouponTemplateMutation) SetClaimable(b bool) {
 	m.claimable = &b
@@ -29530,7 +29588,7 @@ func (m *CouponTemplateMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *CouponTemplateMutation) Fields() []string {
-	fields := make([]string, 0, 18)
+	fields := make([]string, 0, 19)
 	if m.created_at != nil {
 		fields = append(fields, coupontemplate.FieldCreatedAt)
 	}
@@ -29582,6 +29640,9 @@ func (m *CouponTemplateMutation) Fields() []string {
 	if m.status != nil {
 		fields = append(fields, coupontemplate.FieldStatus)
 	}
+	if m.points_price != nil {
+		fields = append(fields, coupontemplate.FieldPointsPrice)
+	}
 	if m.claimable != nil {
 		fields = append(fields, coupontemplate.FieldClaimable)
 	}
@@ -29627,6 +29688,8 @@ func (m *CouponTemplateMutation) Field(name string) (ent.Value, bool) {
 		return m.RedeemedCount()
 	case coupontemplate.FieldStatus:
 		return m.Status()
+	case coupontemplate.FieldPointsPrice:
+		return m.PointsPrice()
 	case coupontemplate.FieldClaimable:
 		return m.Claimable()
 	}
@@ -29672,6 +29735,8 @@ func (m *CouponTemplateMutation) OldField(ctx context.Context, name string) (ent
 		return m.OldRedeemedCount(ctx)
 	case coupontemplate.FieldStatus:
 		return m.OldStatus(ctx)
+	case coupontemplate.FieldPointsPrice:
+		return m.OldPointsPrice(ctx)
 	case coupontemplate.FieldClaimable:
 		return m.OldClaimable(ctx)
 	}
@@ -29802,6 +29867,13 @@ func (m *CouponTemplateMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStatus(v)
 		return nil
+	case coupontemplate.FieldPointsPrice:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPointsPrice(v)
+		return nil
 	case coupontemplate.FieldClaimable:
 		v, ok := value.(bool)
 		if !ok {
@@ -29844,6 +29916,9 @@ func (m *CouponTemplateMutation) AddedFields() []string {
 	if m.addredeemed_count != nil {
 		fields = append(fields, coupontemplate.FieldRedeemedCount)
 	}
+	if m.addpoints_price != nil {
+		fields = append(fields, coupontemplate.FieldPointsPrice)
+	}
 	return fields
 }
 
@@ -29870,6 +29945,8 @@ func (m *CouponTemplateMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedMaxRedemptionsPerUser()
 	case coupontemplate.FieldRedeemedCount:
 		return m.AddedRedeemedCount()
+	case coupontemplate.FieldPointsPrice:
+		return m.AddedPointsPrice()
 	}
 	return nil, false
 }
@@ -29941,6 +30018,13 @@ func (m *CouponTemplateMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddRedeemedCount(v)
+		return nil
+	case coupontemplate.FieldPointsPrice:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPointsPrice(v)
 		return nil
 	}
 	return fmt.Errorf("unknown CouponTemplate numeric field %s", name)
@@ -30130,6 +30214,9 @@ func (m *CouponTemplateMutation) ResetField(name string) error {
 		return nil
 	case coupontemplate.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case coupontemplate.FieldPointsPrice:
+		m.ResetPointsPrice()
 		return nil
 	case coupontemplate.FieldClaimable:
 		m.ResetClaimable()

@@ -129,6 +129,11 @@ func RedeemedCount(v int32) predicate.CouponTemplate {
 	return predicate.CouponTemplate(sql.FieldEQ(FieldRedeemedCount, v))
 }
 
+// PointsPrice applies equality check predicate on the "points_price" field. It's identical to PointsPriceEQ.
+func PointsPrice(v int64) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldEQ(FieldPointsPrice, v))
+}
+
 // Claimable applies equality check predicate on the "claimable" field. It's identical to ClaimableEQ.
 func Claimable(v bool) predicate.CouponTemplate {
 	return predicate.CouponTemplate(sql.FieldEQ(FieldClaimable, v))
@@ -967,6 +972,46 @@ func StatusIsNil() predicate.CouponTemplate {
 // StatusNotNil applies the NotNil predicate on the "status" field.
 func StatusNotNil() predicate.CouponTemplate {
 	return predicate.CouponTemplate(sql.FieldNotNull(FieldStatus))
+}
+
+// PointsPriceEQ applies the EQ predicate on the "points_price" field.
+func PointsPriceEQ(v int64) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldEQ(FieldPointsPrice, v))
+}
+
+// PointsPriceNEQ applies the NEQ predicate on the "points_price" field.
+func PointsPriceNEQ(v int64) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldNEQ(FieldPointsPrice, v))
+}
+
+// PointsPriceIn applies the In predicate on the "points_price" field.
+func PointsPriceIn(vs ...int64) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldIn(FieldPointsPrice, vs...))
+}
+
+// PointsPriceNotIn applies the NotIn predicate on the "points_price" field.
+func PointsPriceNotIn(vs ...int64) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldNotIn(FieldPointsPrice, vs...))
+}
+
+// PointsPriceGT applies the GT predicate on the "points_price" field.
+func PointsPriceGT(v int64) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldGT(FieldPointsPrice, v))
+}
+
+// PointsPriceGTE applies the GTE predicate on the "points_price" field.
+func PointsPriceGTE(v int64) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldGTE(FieldPointsPrice, v))
+}
+
+// PointsPriceLT applies the LT predicate on the "points_price" field.
+func PointsPriceLT(v int64) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldLT(FieldPointsPrice, v))
+}
+
+// PointsPriceLTE applies the LTE predicate on the "points_price" field.
+func PointsPriceLTE(v int64) predicate.CouponTemplate {
+	return predicate.CouponTemplate(sql.FieldLTE(FieldPointsPrice, v))
 }
 
 // ClaimableEQ applies the EQ predicate on the "claimable" field.

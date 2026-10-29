@@ -92,6 +92,10 @@ func (CouponTemplate) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.Int64("points_price").
+			Comment("积分兑换价（0=不可兑换，>0 可用积分兑换）").
+			Default(0),
+
 		field.Bool("claimable").
 			Comment("是否公开可领取（领券中心仅展示 true 的模板，默认 false）").
 			Optional().

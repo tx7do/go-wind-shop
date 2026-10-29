@@ -1201,3 +1201,219 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetCheckInStatusResponseValidationError{}
+
+// Validate checks the field values on ExchangePointsForCouponRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ExchangePointsForCouponRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ExchangePointsForCouponRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ExchangePointsForCouponRequestMultiError, or nil if none found.
+func (m *ExchangePointsForCouponRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ExchangePointsForCouponRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserId
+
+	// no validation rules for CouponTemplateId
+
+	if len(errors) > 0 {
+		return ExchangePointsForCouponRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ExchangePointsForCouponRequestMultiError is an error wrapping multiple
+// validation errors returned by ExchangePointsForCouponRequest.ValidateAll()
+// if the designated constraints aren't met.
+type ExchangePointsForCouponRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ExchangePointsForCouponRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ExchangePointsForCouponRequestMultiError) AllErrors() []error { return m }
+
+// ExchangePointsForCouponRequestValidationError is the validation error
+// returned by ExchangePointsForCouponRequest.Validate if the designated
+// constraints aren't met.
+type ExchangePointsForCouponRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ExchangePointsForCouponRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ExchangePointsForCouponRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ExchangePointsForCouponRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ExchangePointsForCouponRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ExchangePointsForCouponRequestValidationError) ErrorName() string {
+	return "ExchangePointsForCouponRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ExchangePointsForCouponRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sExchangePointsForCouponRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ExchangePointsForCouponRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ExchangePointsForCouponRequestValidationError{}
+
+// Validate checks the field values on ExchangePointsForCouponResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ExchangePointsForCouponResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ExchangePointsForCouponResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ExchangePointsForCouponResponseMultiError, or nil if none found.
+func (m *ExchangePointsForCouponResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ExchangePointsForCouponResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CouponId
+
+	// no validation rules for PointsDeducted
+
+	// no validation rules for Balance
+
+	if len(errors) > 0 {
+		return ExchangePointsForCouponResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ExchangePointsForCouponResponseMultiError is an error wrapping multiple
+// validation errors returned by ExchangePointsForCouponResponse.ValidateAll()
+// if the designated constraints aren't met.
+type ExchangePointsForCouponResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ExchangePointsForCouponResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ExchangePointsForCouponResponseMultiError) AllErrors() []error { return m }
+
+// ExchangePointsForCouponResponseValidationError is the validation error
+// returned by ExchangePointsForCouponResponse.Validate if the designated
+// constraints aren't met.
+type ExchangePointsForCouponResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ExchangePointsForCouponResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ExchangePointsForCouponResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ExchangePointsForCouponResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ExchangePointsForCouponResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ExchangePointsForCouponResponseValidationError) ErrorName() string {
+	return "ExchangePointsForCouponResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ExchangePointsForCouponResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sExchangePointsForCouponResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ExchangePointsForCouponResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ExchangePointsForCouponResponseValidationError{}

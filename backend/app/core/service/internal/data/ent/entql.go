@@ -652,6 +652,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			coupontemplate.FieldMaxRedemptionsPerUser: {Type: field.TypeInt32, Column: coupontemplate.FieldMaxRedemptionsPerUser},
 			coupontemplate.FieldRedeemedCount:         {Type: field.TypeInt32, Column: coupontemplate.FieldRedeemedCount},
 			coupontemplate.FieldStatus:                {Type: field.TypeEnum, Column: coupontemplate.FieldStatus},
+			coupontemplate.FieldPointsPrice:           {Type: field.TypeInt64, Column: coupontemplate.FieldPointsPrice},
 			coupontemplate.FieldClaimable:             {Type: field.TypeBool, Column: coupontemplate.FieldClaimable},
 		},
 	}
@@ -5414,6 +5415,11 @@ func (f *CouponTemplateFilter) WhereRedeemedCount(p entql.Int32P) {
 // WhereStatus applies the entql string predicate on the status field.
 func (f *CouponTemplateFilter) WhereStatus(p entql.StringP) {
 	f.Where(p.Field(coupontemplate.FieldStatus))
+}
+
+// WherePointsPrice applies the entql int64 predicate on the points_price field.
+func (f *CouponTemplateFilter) WherePointsPrice(p entql.Int64P) {
+	f.Where(p.Field(coupontemplate.FieldPointsPrice))
 }
 
 // WhereClaimable applies the entql bool predicate on the claimable field.

@@ -260,6 +260,20 @@ func (_c *CouponTemplateCreate) SetNillableStatus(v *coupontemplate.Status) *Cou
 	return _c
 }
 
+// SetPointsPrice sets the "points_price" field.
+func (_c *CouponTemplateCreate) SetPointsPrice(v int64) *CouponTemplateCreate {
+	_c.mutation.SetPointsPrice(v)
+	return _c
+}
+
+// SetNillablePointsPrice sets the "points_price" field if the given value is not nil.
+func (_c *CouponTemplateCreate) SetNillablePointsPrice(v *int64) *CouponTemplateCreate {
+	if v != nil {
+		_c.SetPointsPrice(*v)
+	}
+	return _c
+}
+
 // SetClaimable sets the "claimable" field.
 func (_c *CouponTemplateCreate) SetClaimable(v bool) *CouponTemplateCreate {
 	_c.mutation.SetClaimable(v)
@@ -345,6 +359,10 @@ func (_c *CouponTemplateCreate) defaults() error {
 		v := coupontemplate.DefaultRedeemedCount
 		_c.mutation.SetRedeemedCount(v)
 	}
+	if _, ok := _c.mutation.PointsPrice(); !ok {
+		v := coupontemplate.DefaultPointsPrice
+		_c.mutation.SetPointsPrice(v)
+	}
 	if _, ok := _c.mutation.Claimable(); !ok {
 		v := coupontemplate.DefaultClaimable
 		_c.mutation.SetClaimable(v)
@@ -363,6 +381,9 @@ func (_c *CouponTemplateCreate) check() error {
 		if err := coupontemplate.StatusValidator(v); err != nil {
 			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "CouponTemplate.status": %w`, err)}
 		}
+	}
+	if _, ok := _c.mutation.PointsPrice(); !ok {
+		return &ValidationError{Name: "points_price", err: errors.New(`ent: missing required field "CouponTemplate.points_price"`)}
 	}
 	if v, ok := _c.mutation.ID(); ok {
 		if err := coupontemplate.IDValidator(v); err != nil {
@@ -469,6 +490,10 @@ func (_c *CouponTemplateCreate) createSpec() (*CouponTemplate, *sqlgraph.CreateS
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(coupontemplate.FieldStatus, field.TypeEnum, value)
 		_node.Status = &value
+	}
+	if value, ok := _c.mutation.PointsPrice(); ok {
+		_spec.SetField(coupontemplate.FieldPointsPrice, field.TypeInt64, value)
+		_node.PointsPrice = value
 	}
 	if value, ok := _c.mutation.Claimable(); ok {
 		_spec.SetField(coupontemplate.FieldClaimable, field.TypeBool, value)
@@ -841,6 +866,24 @@ func (u *CouponTemplateUpsert) UpdateStatus() *CouponTemplateUpsert {
 // ClearStatus clears the value of the "status" field.
 func (u *CouponTemplateUpsert) ClearStatus() *CouponTemplateUpsert {
 	u.SetNull(coupontemplate.FieldStatus)
+	return u
+}
+
+// SetPointsPrice sets the "points_price" field.
+func (u *CouponTemplateUpsert) SetPointsPrice(v int64) *CouponTemplateUpsert {
+	u.Set(coupontemplate.FieldPointsPrice, v)
+	return u
+}
+
+// UpdatePointsPrice sets the "points_price" field to the value that was provided on create.
+func (u *CouponTemplateUpsert) UpdatePointsPrice() *CouponTemplateUpsert {
+	u.SetExcluded(coupontemplate.FieldPointsPrice)
+	return u
+}
+
+// AddPointsPrice adds v to the "points_price" field.
+func (u *CouponTemplateUpsert) AddPointsPrice(v int64) *CouponTemplateUpsert {
+	u.Add(coupontemplate.FieldPointsPrice, v)
 	return u
 }
 
@@ -1284,6 +1327,27 @@ func (u *CouponTemplateUpsertOne) UpdateStatus() *CouponTemplateUpsertOne {
 func (u *CouponTemplateUpsertOne) ClearStatus() *CouponTemplateUpsertOne {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.ClearStatus()
+	})
+}
+
+// SetPointsPrice sets the "points_price" field.
+func (u *CouponTemplateUpsertOne) SetPointsPrice(v int64) *CouponTemplateUpsertOne {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.SetPointsPrice(v)
+	})
+}
+
+// AddPointsPrice adds v to the "points_price" field.
+func (u *CouponTemplateUpsertOne) AddPointsPrice(v int64) *CouponTemplateUpsertOne {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.AddPointsPrice(v)
+	})
+}
+
+// UpdatePointsPrice sets the "points_price" field to the value that was provided on create.
+func (u *CouponTemplateUpsertOne) UpdatePointsPrice() *CouponTemplateUpsertOne {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.UpdatePointsPrice()
 	})
 }
 
@@ -1896,6 +1960,27 @@ func (u *CouponTemplateUpsertBulk) UpdateStatus() *CouponTemplateUpsertBulk {
 func (u *CouponTemplateUpsertBulk) ClearStatus() *CouponTemplateUpsertBulk {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.ClearStatus()
+	})
+}
+
+// SetPointsPrice sets the "points_price" field.
+func (u *CouponTemplateUpsertBulk) SetPointsPrice(v int64) *CouponTemplateUpsertBulk {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.SetPointsPrice(v)
+	})
+}
+
+// AddPointsPrice adds v to the "points_price" field.
+func (u *CouponTemplateUpsertBulk) AddPointsPrice(v int64) *CouponTemplateUpsertBulk {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.AddPointsPrice(v)
+	})
+}
+
+// UpdatePointsPrice sets the "points_price" field to the value that was provided on create.
+func (u *CouponTemplateUpsertBulk) UpdatePointsPrice() *CouponTemplateUpsertBulk {
+	return u.Update(func(s *CouponTemplateUpsert) {
+		s.UpdatePointsPrice()
 	})
 }
 

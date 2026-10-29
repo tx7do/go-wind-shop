@@ -48,6 +48,8 @@ const (
 	FieldRedeemedCount = "redeemed_count"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldPointsPrice holds the string denoting the points_price field in the database.
+	FieldPointsPrice = "points_price"
 	// FieldClaimable holds the string denoting the claimable field in the database.
 	FieldClaimable = "claimable"
 	// Table holds the table name of the coupontemplate in the database.
@@ -74,6 +76,7 @@ var Columns = []string{
 	FieldMaxRedemptionsPerUser,
 	FieldRedeemedCount,
 	FieldStatus,
+	FieldPointsPrice,
 	FieldClaimable,
 }
 
@@ -109,6 +112,8 @@ var (
 	DefaultMaxRedemptionsPerUser int32
 	// DefaultRedeemedCount holds the default value on creation for the "redeemed_count" field.
 	DefaultRedeemedCount int32
+	// DefaultPointsPrice holds the default value on creation for the "points_price" field.
+	DefaultPointsPrice int64
 	// DefaultClaimable holds the default value on creation for the "claimable" field.
 	DefaultClaimable bool
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
@@ -252,6 +257,11 @@ func ByRedeemedCount(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByPointsPrice orders the results by the points_price field.
+func ByPointsPrice(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldPointsPrice, opts...).ToFunc()
 }
 
 // ByClaimable orders the results by the claimable field.

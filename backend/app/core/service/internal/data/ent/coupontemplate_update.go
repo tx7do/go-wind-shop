@@ -385,6 +385,27 @@ func (_u *CouponTemplateUpdate) ClearStatus() *CouponTemplateUpdate {
 	return _u
 }
 
+// SetPointsPrice sets the "points_price" field.
+func (_u *CouponTemplateUpdate) SetPointsPrice(v int64) *CouponTemplateUpdate {
+	_u.mutation.ResetPointsPrice()
+	_u.mutation.SetPointsPrice(v)
+	return _u
+}
+
+// SetNillablePointsPrice sets the "points_price" field if the given value is not nil.
+func (_u *CouponTemplateUpdate) SetNillablePointsPrice(v *int64) *CouponTemplateUpdate {
+	if v != nil {
+		_u.SetPointsPrice(*v)
+	}
+	return _u
+}
+
+// AddPointsPrice adds value to the "points_price" field.
+func (_u *CouponTemplateUpdate) AddPointsPrice(v int64) *CouponTemplateUpdate {
+	_u.mutation.AddPointsPrice(v)
+	return _u
+}
+
 // SetClaimable sets the "claimable" field.
 func (_u *CouponTemplateUpdate) SetClaimable(v bool) *CouponTemplateUpdate {
 	_u.mutation.SetClaimable(v)
@@ -589,6 +610,12 @@ func (_u *CouponTemplateUpdate) sqlSave(ctx context.Context) (_node int, err err
 	}
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(coupontemplate.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.PointsPrice(); ok {
+		_spec.SetField(coupontemplate.FieldPointsPrice, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedPointsPrice(); ok {
+		_spec.AddField(coupontemplate.FieldPointsPrice, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.Claimable(); ok {
 		_spec.SetField(coupontemplate.FieldClaimable, field.TypeBool, value)
@@ -974,6 +1001,27 @@ func (_u *CouponTemplateUpdateOne) ClearStatus() *CouponTemplateUpdateOne {
 	return _u
 }
 
+// SetPointsPrice sets the "points_price" field.
+func (_u *CouponTemplateUpdateOne) SetPointsPrice(v int64) *CouponTemplateUpdateOne {
+	_u.mutation.ResetPointsPrice()
+	_u.mutation.SetPointsPrice(v)
+	return _u
+}
+
+// SetNillablePointsPrice sets the "points_price" field if the given value is not nil.
+func (_u *CouponTemplateUpdateOne) SetNillablePointsPrice(v *int64) *CouponTemplateUpdateOne {
+	if v != nil {
+		_u.SetPointsPrice(*v)
+	}
+	return _u
+}
+
+// AddPointsPrice adds value to the "points_price" field.
+func (_u *CouponTemplateUpdateOne) AddPointsPrice(v int64) *CouponTemplateUpdateOne {
+	_u.mutation.AddPointsPrice(v)
+	return _u
+}
+
 // SetClaimable sets the "claimable" field.
 func (_u *CouponTemplateUpdateOne) SetClaimable(v bool) *CouponTemplateUpdateOne {
 	_u.mutation.SetClaimable(v)
@@ -1208,6 +1256,12 @@ func (_u *CouponTemplateUpdateOne) sqlSave(ctx context.Context) (_node *CouponTe
 	}
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(coupontemplate.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.PointsPrice(); ok {
+		_spec.SetField(coupontemplate.FieldPointsPrice, field.TypeInt64, value)
+	}
+	if value, ok := _u.mutation.AddedPointsPrice(); ok {
+		_spec.AddField(coupontemplate.FieldPointsPrice, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.Claimable(); ok {
 		_spec.SetField(coupontemplate.FieldClaimable, field.TypeBool, value)

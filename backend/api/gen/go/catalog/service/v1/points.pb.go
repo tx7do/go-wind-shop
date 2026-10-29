@@ -616,6 +616,118 @@ func (x *GetCheckInStatusResponse) GetConsecutiveDays() int32 {
 	return 0
 }
 
+type ExchangePointsForCouponRequest struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	UserId           uint32                 `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	CouponTemplateId uint32                 `protobuf:"varint,2,opt,name=coupon_template_id,json=couponTemplateId,proto3" json:"coupon_template_id,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *ExchangePointsForCouponRequest) Reset() {
+	*x = ExchangePointsForCouponRequest{}
+	mi := &file_catalog_service_v1_points_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExchangePointsForCouponRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExchangePointsForCouponRequest) ProtoMessage() {}
+
+func (x *ExchangePointsForCouponRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_catalog_service_v1_points_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExchangePointsForCouponRequest.ProtoReflect.Descriptor instead.
+func (*ExchangePointsForCouponRequest) Descriptor() ([]byte, []int) {
+	return file_catalog_service_v1_points_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *ExchangePointsForCouponRequest) GetUserId() uint32 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *ExchangePointsForCouponRequest) GetCouponTemplateId() uint32 {
+	if x != nil {
+		return x.CouponTemplateId
+	}
+	return 0
+}
+
+type ExchangePointsForCouponResponse struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	CouponId       uint32                 `protobuf:"varint,1,opt,name=coupon_id,json=couponId,proto3" json:"coupon_id,omitempty"`
+	PointsDeducted int64                  `protobuf:"varint,2,opt,name=points_deducted,json=pointsDeducted,proto3" json:"points_deducted,omitempty"`
+	Balance        int64                  `protobuf:"varint,3,opt,name=balance,proto3" json:"balance,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ExchangePointsForCouponResponse) Reset() {
+	*x = ExchangePointsForCouponResponse{}
+	mi := &file_catalog_service_v1_points_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExchangePointsForCouponResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExchangePointsForCouponResponse) ProtoMessage() {}
+
+func (x *ExchangePointsForCouponResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_catalog_service_v1_points_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExchangePointsForCouponResponse.ProtoReflect.Descriptor instead.
+func (*ExchangePointsForCouponResponse) Descriptor() ([]byte, []int) {
+	return file_catalog_service_v1_points_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *ExchangePointsForCouponResponse) GetCouponId() uint32 {
+	if x != nil {
+		return x.CouponId
+	}
+	return 0
+}
+
+func (x *ExchangePointsForCouponResponse) GetPointsDeducted() int64 {
+	if x != nil {
+		return x.PointsDeducted
+	}
+	return 0
+}
+
+func (x *ExchangePointsForCouponResponse) GetBalance() int64 {
+	if x != nil {
+		return x.Balance
+	}
+	return 0
+}
+
 var File_catalog_service_v1_points_proto protoreflect.FileDescriptor
 
 const file_catalog_service_v1_points_proto_rawDesc = "" +
@@ -665,19 +777,27 @@ const file_catalog_service_v1_points_proto_rawDesc = "" +
 	"\auser_id\x18\x01 \x01(\rR\x06userId\"\x89\x01\n" +
 	"\x18GetCheckInStatusResponse\x12(\n" +
 	"\x10checked_in_today\x18\x01 \x01(\bR\x0echeckedInToday\x12C\n" +
-	"\x10consecutive_days\x18\x02 \x01(\x05B\x18\xbaG\x15\x92\x02\x12连续签到天数R\x0fconsecutiveDays*w\n" +
+	"\x10consecutive_days\x18\x02 \x01(\x05B\x18\xbaG\x15\x92\x02\x12连续签到天数R\x0fconsecutiveDays\"g\n" +
+	"\x1eExchangePointsForCouponRequest\x12\x17\n" +
+	"\auser_id\x18\x01 \x01(\rR\x06userId\x12,\n" +
+	"\x12coupon_template_id\x18\x02 \x01(\rR\x10couponTemplateId\"\x81\x01\n" +
+	"\x1fExchangePointsForCouponResponse\x12\x1b\n" +
+	"\tcoupon_id\x18\x01 \x01(\rR\bcouponId\x12'\n" +
+	"\x0fpoints_deducted\x18\x02 \x01(\x03R\x0epointsDeducted\x12\x18\n" +
+	"\abalance\x18\x03 \x01(\x03R\abalance*w\n" +
 	"\x10PointsLedgerType\x12\x1b\n" +
 	"\x17POINTS_TYPE_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10POINTS_TYPE_EARN\x10\x01\x12\x16\n" +
 	"\x12POINTS_TYPE_DEDUCT\x10\x02\x12\x18\n" +
-	"\x14POINTS_TYPE_CHECK_IN\x10\x032\xd8\x04\n" +
+	"\x14POINTS_TYPE_CHECK_IN\x10\x032\xdf\x05\n" +
 	"\x13PointsLedgerService\x12Q\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a,.catalog.service.v1.ListPointsLedgerResponse\"\x00\x12S\n" +
 	"\x05Count\x12\x19.pagination.PagingRequest\x1a-.catalog.service.v1.CountPointsLedgerResponse\"\x00\x12U\n" +
 	"\x03Get\x12*.catalog.service.v1.GetPointsLedgerRequest\x1a .catalog.service.v1.PointsLedger\"\x00\x12{\n" +
 	"\x14GetUserPointsBalance\x12/.catalog.service.v1.GetUserPointsBalanceRequest\x1a0.catalog.service.v1.GetUserPointsBalanceResponse\"\x00\x12T\n" +
 	"\aCheckIn\x12\".catalog.service.v1.CheckInRequest\x1a#.catalog.service.v1.CheckInResponse\"\x00\x12o\n" +
-	"\x10GetCheckInStatus\x12+.catalog.service.v1.GetCheckInStatusRequest\x1a,.catalog.service.v1.GetCheckInStatusResponse\"\x00B\xc5\x01\n" +
+	"\x10GetCheckInStatus\x12+.catalog.service.v1.GetCheckInStatusRequest\x1a,.catalog.service.v1.GetCheckInStatusResponse\"\x00\x12\x84\x01\n" +
+	"\x17ExchangePointsForCoupon\x122.catalog.service.v1.ExchangePointsForCouponRequest\x1a3.catalog.service.v1.ExchangePointsForCouponResponse\"\x00B\xc5\x01\n" +
 	"\x16com.catalog.service.v1B\vPointsProtoP\x01Z4go-wind-shop/api/gen/go/catalog/service/v1;catalogpb\xa2\x02\x03CSX\xaa\x02\x12Catalog.Service.V1\xca\x02\x12Catalog\\Service\\V1\xe2\x02\x1eCatalog\\Service\\V1\\GPBMetadata\xea\x02\x14Catalog::Service::V1b\x06proto3"
 
 var (
@@ -693,42 +813,46 @@ func file_catalog_service_v1_points_proto_rawDescGZIP() []byte {
 }
 
 var file_catalog_service_v1_points_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_catalog_service_v1_points_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_catalog_service_v1_points_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_catalog_service_v1_points_proto_goTypes = []any{
-	(PointsLedgerType)(0),                // 0: catalog.service.v1.PointsLedgerType
-	(*PointsLedger)(nil),                 // 1: catalog.service.v1.PointsLedger
-	(*ListPointsLedgerResponse)(nil),     // 2: catalog.service.v1.ListPointsLedgerResponse
-	(*CountPointsLedgerResponse)(nil),    // 3: catalog.service.v1.CountPointsLedgerResponse
-	(*GetPointsLedgerRequest)(nil),       // 4: catalog.service.v1.GetPointsLedgerRequest
-	(*GetUserPointsBalanceRequest)(nil),  // 5: catalog.service.v1.GetUserPointsBalanceRequest
-	(*GetUserPointsBalanceResponse)(nil), // 6: catalog.service.v1.GetUserPointsBalanceResponse
-	(*CheckInRequest)(nil),               // 7: catalog.service.v1.CheckInRequest
-	(*CheckInResponse)(nil),              // 8: catalog.service.v1.CheckInResponse
-	(*GetCheckInStatusRequest)(nil),      // 9: catalog.service.v1.GetCheckInStatusRequest
-	(*GetCheckInStatusResponse)(nil),     // 10: catalog.service.v1.GetCheckInStatusResponse
-	(*timestamppb.Timestamp)(nil),        // 11: google.protobuf.Timestamp
-	(*fieldmaskpb.FieldMask)(nil),        // 12: google.protobuf.FieldMask
-	(*v1.PagingRequest)(nil),             // 13: pagination.PagingRequest
+	(PointsLedgerType)(0),                   // 0: catalog.service.v1.PointsLedgerType
+	(*PointsLedger)(nil),                    // 1: catalog.service.v1.PointsLedger
+	(*ListPointsLedgerResponse)(nil),        // 2: catalog.service.v1.ListPointsLedgerResponse
+	(*CountPointsLedgerResponse)(nil),       // 3: catalog.service.v1.CountPointsLedgerResponse
+	(*GetPointsLedgerRequest)(nil),          // 4: catalog.service.v1.GetPointsLedgerRequest
+	(*GetUserPointsBalanceRequest)(nil),     // 5: catalog.service.v1.GetUserPointsBalanceRequest
+	(*GetUserPointsBalanceResponse)(nil),    // 6: catalog.service.v1.GetUserPointsBalanceResponse
+	(*CheckInRequest)(nil),                  // 7: catalog.service.v1.CheckInRequest
+	(*CheckInResponse)(nil),                 // 8: catalog.service.v1.CheckInResponse
+	(*GetCheckInStatusRequest)(nil),         // 9: catalog.service.v1.GetCheckInStatusRequest
+	(*GetCheckInStatusResponse)(nil),        // 10: catalog.service.v1.GetCheckInStatusResponse
+	(*ExchangePointsForCouponRequest)(nil),  // 11: catalog.service.v1.ExchangePointsForCouponRequest
+	(*ExchangePointsForCouponResponse)(nil), // 12: catalog.service.v1.ExchangePointsForCouponResponse
+	(*timestamppb.Timestamp)(nil),           // 13: google.protobuf.Timestamp
+	(*fieldmaskpb.FieldMask)(nil),           // 14: google.protobuf.FieldMask
+	(*v1.PagingRequest)(nil),                // 15: pagination.PagingRequest
 }
 var file_catalog_service_v1_points_proto_depIdxs = []int32{
 	0,  // 0: catalog.service.v1.PointsLedger.type:type_name -> catalog.service.v1.PointsLedgerType
-	11, // 1: catalog.service.v1.PointsLedger.created_at:type_name -> google.protobuf.Timestamp
+	13, // 1: catalog.service.v1.PointsLedger.created_at:type_name -> google.protobuf.Timestamp
 	1,  // 2: catalog.service.v1.ListPointsLedgerResponse.items:type_name -> catalog.service.v1.PointsLedger
-	12, // 3: catalog.service.v1.GetPointsLedgerRequest.view_mask:type_name -> google.protobuf.FieldMask
-	13, // 4: catalog.service.v1.PointsLedgerService.List:input_type -> pagination.PagingRequest
-	13, // 5: catalog.service.v1.PointsLedgerService.Count:input_type -> pagination.PagingRequest
+	14, // 3: catalog.service.v1.GetPointsLedgerRequest.view_mask:type_name -> google.protobuf.FieldMask
+	15, // 4: catalog.service.v1.PointsLedgerService.List:input_type -> pagination.PagingRequest
+	15, // 5: catalog.service.v1.PointsLedgerService.Count:input_type -> pagination.PagingRequest
 	4,  // 6: catalog.service.v1.PointsLedgerService.Get:input_type -> catalog.service.v1.GetPointsLedgerRequest
 	5,  // 7: catalog.service.v1.PointsLedgerService.GetUserPointsBalance:input_type -> catalog.service.v1.GetUserPointsBalanceRequest
 	7,  // 8: catalog.service.v1.PointsLedgerService.CheckIn:input_type -> catalog.service.v1.CheckInRequest
 	9,  // 9: catalog.service.v1.PointsLedgerService.GetCheckInStatus:input_type -> catalog.service.v1.GetCheckInStatusRequest
-	2,  // 10: catalog.service.v1.PointsLedgerService.List:output_type -> catalog.service.v1.ListPointsLedgerResponse
-	3,  // 11: catalog.service.v1.PointsLedgerService.Count:output_type -> catalog.service.v1.CountPointsLedgerResponse
-	1,  // 12: catalog.service.v1.PointsLedgerService.Get:output_type -> catalog.service.v1.PointsLedger
-	6,  // 13: catalog.service.v1.PointsLedgerService.GetUserPointsBalance:output_type -> catalog.service.v1.GetUserPointsBalanceResponse
-	8,  // 14: catalog.service.v1.PointsLedgerService.CheckIn:output_type -> catalog.service.v1.CheckInResponse
-	10, // 15: catalog.service.v1.PointsLedgerService.GetCheckInStatus:output_type -> catalog.service.v1.GetCheckInStatusResponse
-	10, // [10:16] is the sub-list for method output_type
-	4,  // [4:10] is the sub-list for method input_type
+	11, // 10: catalog.service.v1.PointsLedgerService.ExchangePointsForCoupon:input_type -> catalog.service.v1.ExchangePointsForCouponRequest
+	2,  // 11: catalog.service.v1.PointsLedgerService.List:output_type -> catalog.service.v1.ListPointsLedgerResponse
+	3,  // 12: catalog.service.v1.PointsLedgerService.Count:output_type -> catalog.service.v1.CountPointsLedgerResponse
+	1,  // 13: catalog.service.v1.PointsLedgerService.Get:output_type -> catalog.service.v1.PointsLedger
+	6,  // 14: catalog.service.v1.PointsLedgerService.GetUserPointsBalance:output_type -> catalog.service.v1.GetUserPointsBalanceResponse
+	8,  // 15: catalog.service.v1.PointsLedgerService.CheckIn:output_type -> catalog.service.v1.CheckInResponse
+	10, // 16: catalog.service.v1.PointsLedgerService.GetCheckInStatus:output_type -> catalog.service.v1.GetCheckInStatusResponse
+	12, // 17: catalog.service.v1.PointsLedgerService.ExchangePointsForCoupon:output_type -> catalog.service.v1.ExchangePointsForCouponResponse
+	11, // [11:18] is the sub-list for method output_type
+	4,  // [4:11] is the sub-list for method input_type
 	4,  // [4:4] is the sub-list for extension type_name
 	4,  // [4:4] is the sub-list for extension extendee
 	0,  // [0:4] is the sub-list for field type_name
@@ -747,7 +871,7 @@ func file_catalog_service_v1_points_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_catalog_service_v1_points_proto_rawDesc), len(file_catalog_service_v1_points_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

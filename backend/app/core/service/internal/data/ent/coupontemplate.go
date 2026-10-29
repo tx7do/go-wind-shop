@@ -52,6 +52,8 @@ type CouponTemplate struct {
 	RedeemedCount *int32 `json:"redeemed_count,omitempty"`
 	// 模板状态
 	Status *coupontemplate.Status `json:"status,omitempty"`
+	// 积分兑换价（0=不可兑换，>0 可用积分兑换）
+	PointsPrice int64 `json:"points_price,omitempty"`
 	// 是否公开可领取（领券中心仅展示 true 的模板，默认 false）
 	Claimable    *bool `json:"claimable,omitempty"`
 	selectValues sql.SelectValues
@@ -64,7 +66,7 @@ func (*CouponTemplate) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case coupontemplate.FieldClaimable:
 			values[i] = new(sql.NullBool)
-		case coupontemplate.FieldID, coupontemplate.FieldCreatedBy, coupontemplate.FieldUpdatedBy, coupontemplate.FieldDeletedBy, coupontemplate.FieldTenantID, coupontemplate.FieldDiscountValue, coupontemplate.FieldDiscountPercentage, coupontemplate.FieldMaxRedemptions, coupontemplate.FieldMaxRedemptionsPerUser, coupontemplate.FieldRedeemedCount:
+		case coupontemplate.FieldID, coupontemplate.FieldCreatedBy, coupontemplate.FieldUpdatedBy, coupontemplate.FieldDeletedBy, coupontemplate.FieldTenantID, coupontemplate.FieldDiscountValue, coupontemplate.FieldDiscountPercentage, coupontemplate.FieldMaxRedemptions, coupontemplate.FieldMaxRedemptionsPerUser, coupontemplate.FieldRedeemedCount, coupontemplate.FieldPointsPrice:
 			values[i] = new(sql.NullInt64)
 		case coupontemplate.FieldCurrency, coupontemplate.FieldDiscountType, coupontemplate.FieldStatus:
 			values[i] = new(sql.NullString)
@@ -210,6 +212,12 @@ func (_m *CouponTemplate) assignValues(columns []string, values []any) error {
 				_m.Status = new(coupontemplate.Status)
 				*_m.Status = coupontemplate.Status(value.String)
 			}
+		case coupontemplate.FieldPointsPrice:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field points_price", values[i])
+			} else if value.Valid {
+				_m.PointsPrice = value.Int64
+			}
 		case coupontemplate.FieldClaimable:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field claimable", values[i])
@@ -337,6 +345,9 @@ func (_m *CouponTemplate) String() string {
 		builder.WriteString("status=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
+	builder.WriteString(", ")
+	builder.WriteString("points_price=")
+	builder.WriteString(fmt.Sprintf("%v", _m.PointsPrice))
 	builder.WriteString(", ")
 	if v := _m.Claimable; v != nil {
 		builder.WriteString("claimable=")

@@ -25,6 +25,9 @@ service PointsLedgerService {
 
   // 签到状态（今日是否已签 + 连续签到天数）
   rpc GetCheckInStatus (GetCheckInStatusRequest) returns (GetCheckInStatusResponse) {}
+
+  // 积分兑换优惠券（事务内扣积分+发券）
+  rpc ExchangePointsForCoupon (ExchangePointsForCouponRequest) returns (ExchangePointsForCouponResponse) {}
 }
 
 // 积分类型
@@ -81,4 +84,16 @@ message GetCheckInStatusRequest {
 message GetCheckInStatusResponse {
   bool checked_in_today = 1 [json_name = "checkedInToday"];
   int32 consecutive_days = 2 [json_name = "consecutiveDays", (gnostic.openapi.v3.property) = {description: "连续签到天数"}];
+}
+
+
+message ExchangePointsForCouponRequest {
+  uint32 user_id = 1 [json_name = "userId"];
+  uint32 coupon_template_id = 2 [json_name = "couponTemplateId"];
+}
+
+message ExchangePointsForCouponResponse {
+  uint32 coupon_id = 1 [json_name = "couponId"];
+  int64 points_deducted = 2 [json_name = "pointsDeducted"];
+  int64 balance = 3 [json_name = "balance"];
 }

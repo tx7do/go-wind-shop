@@ -159,6 +159,10 @@ func (m *CouponTemplate) validate(all bool) error {
 		// no validation rules for Currency
 	}
 
+	if m.PointsPrice != nil {
+		// no validation rules for PointsPrice
+	}
+
 	if m.Claimable != nil {
 		// no validation rules for Claimable
 	}

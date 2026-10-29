@@ -794,6 +794,7 @@ var (
 		{Name: "max_redemptions_per_user", Type: field.TypeInt32, Nullable: true, Comment: "每人核销上限（0=不限量；>0 为该模板下每用户累计可核销次数）", Default: 0},
 		{Name: "redeemed_count", Type: field.TypeInt32, Nullable: true, Comment: "已核销次数（核销自增、返还自减，行锁保护）", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "模板状态", Enums: []string{"ACTIVE", "INACTIVE"}},
+		{Name: "points_price", Type: field.TypeInt64, Comment: "积分兑换价（0=不可兑换，>0 可用积分兑换）", Default: 0},
 		{Name: "claimable", Type: field.TypeBool, Nullable: true, Comment: "是否公开可领取（领券中心仅展示 true 的模板，默认 false）", Default: false},
 	}
 	// MallCouponTemplatesTable holds the schema information for the "mall_coupon_templates" table.

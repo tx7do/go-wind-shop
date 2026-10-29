@@ -20,12 +20,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PointsLedgerService_List_FullMethodName                 = "/catalog.service.v1.PointsLedgerService/List"
-	PointsLedgerService_Count_FullMethodName                = "/catalog.service.v1.PointsLedgerService/Count"
-	PointsLedgerService_Get_FullMethodName                  = "/catalog.service.v1.PointsLedgerService/Get"
-	PointsLedgerService_GetUserPointsBalance_FullMethodName = "/catalog.service.v1.PointsLedgerService/GetUserPointsBalance"
-	PointsLedgerService_CheckIn_FullMethodName              = "/catalog.service.v1.PointsLedgerService/CheckIn"
-	PointsLedgerService_GetCheckInStatus_FullMethodName     = "/catalog.service.v1.PointsLedgerService/GetCheckInStatus"
+	PointsLedgerService_List_FullMethodName                    = "/catalog.service.v1.PointsLedgerService/List"
+	PointsLedgerService_Count_FullMethodName                   = "/catalog.service.v1.PointsLedgerService/Count"
+	PointsLedgerService_Get_FullMethodName                     = "/catalog.service.v1.PointsLedgerService/Get"
+	PointsLedgerService_GetUserPointsBalance_FullMethodName    = "/catalog.service.v1.PointsLedgerService/GetUserPointsBalance"
+	PointsLedgerService_CheckIn_FullMethodName                 = "/catalog.service.v1.PointsLedgerService/CheckIn"
+	PointsLedgerService_GetCheckInStatus_FullMethodName        = "/catalog.service.v1.PointsLedgerService/GetCheckInStatus"
+	PointsLedgerService_ExchangePointsForCoupon_FullMethodName = "/catalog.service.v1.PointsLedgerService/ExchangePointsForCoupon"
 )
 
 // PointsLedgerServiceClient is the client API for PointsLedgerService service.
@@ -46,6 +47,8 @@ type PointsLedgerServiceClient interface {
 	CheckIn(ctx context.Context, in *CheckInRequest, opts ...grpc.CallOption) (*CheckInResponse, error)
 	// 签到状态（今日是否已签 + 连续签到天数）
 	GetCheckInStatus(ctx context.Context, in *GetCheckInStatusRequest, opts ...grpc.CallOption) (*GetCheckInStatusResponse, error)
+	// 积分兑换优惠券（事务内扣积分+发券）
+	ExchangePointsForCoupon(ctx context.Context, in *ExchangePointsForCouponRequest, opts ...grpc.CallOption) (*ExchangePointsForCouponResponse, error)
 }
 
 type pointsLedgerServiceClient struct {
@@ -116,6 +119,16 @@ func (c *pointsLedgerServiceClient) GetCheckInStatus(ctx context.Context, in *Ge
 	return out, nil
 }
 
+func (c *pointsLedgerServiceClient) ExchangePointsForCoupon(ctx context.Context, in *ExchangePointsForCouponRequest, opts ...grpc.CallOption) (*ExchangePointsForCouponResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ExchangePointsForCouponResponse)
+	err := c.cc.Invoke(ctx, PointsLedgerService_ExchangePointsForCoupon_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PointsLedgerServiceServer is the server API for PointsLedgerService service.
 // All implementations must embed UnimplementedPointsLedgerServiceServer
 // for forward compatibility.
@@ -134,6 +147,8 @@ type PointsLedgerServiceServer interface {
 	CheckIn(context.Context, *CheckInRequest) (*CheckInResponse, error)
 	// 签到状态（今日是否已签 + 连续签到天数）
 	GetCheckInStatus(context.Context, *GetCheckInStatusRequest) (*GetCheckInStatusResponse, error)
+	// 积分兑换优惠券（事务内扣积分+发券）
+	ExchangePointsForCoupon(context.Context, *ExchangePointsForCouponRequest) (*ExchangePointsForCouponResponse, error)
 	mustEmbedUnimplementedPointsLedgerServiceServer()
 }
 
@@ -161,6 +176,9 @@ func (UnimplementedPointsLedgerServiceServer) CheckIn(context.Context, *CheckInR
 }
 func (UnimplementedPointsLedgerServiceServer) GetCheckInStatus(context.Context, *GetCheckInStatusRequest) (*GetCheckInStatusResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCheckInStatus not implemented")
+}
+func (UnimplementedPointsLedgerServiceServer) ExchangePointsForCoupon(context.Context, *ExchangePointsForCouponRequest) (*ExchangePointsForCouponResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ExchangePointsForCoupon not implemented")
 }
 func (UnimplementedPointsLedgerServiceServer) mustEmbedUnimplementedPointsLedgerServiceServer() {}
 func (UnimplementedPointsLedgerServiceServer) testEmbeddedByValue()                             {}
@@ -291,6 +309,24 @@ func _PointsLedgerService_GetCheckInStatus_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PointsLedgerService_ExchangePointsForCoupon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExchangePointsForCouponRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PointsLedgerServiceServer).ExchangePointsForCoupon(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PointsLedgerService_ExchangePointsForCoupon_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PointsLedgerServiceServer).ExchangePointsForCoupon(ctx, req.(*ExchangePointsForCouponRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PointsLedgerService_ServiceDesc is the grpc.ServiceDesc for PointsLedgerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -321,6 +357,10 @@ var PointsLedgerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCheckInStatus",
 			Handler:    _PointsLedgerService_GetCheckInStatus_Handler,
+		},
+		{
+			MethodName: "ExchangePointsForCoupon",
+			Handler:    _PointsLedgerService_ExchangePointsForCoupon_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

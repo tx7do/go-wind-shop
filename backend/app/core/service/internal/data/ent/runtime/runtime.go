@@ -618,8 +618,12 @@ func init() {
 	coupontemplateDescRedeemedCount := coupontemplateFields[7].Descriptor()
 	// coupontemplate.DefaultRedeemedCount holds the default value on creation for the redeemed_count field.
 	coupontemplate.DefaultRedeemedCount = coupontemplateDescRedeemedCount.Default.(int32)
+	// coupontemplateDescPointsPrice is the schema descriptor for points_price field.
+	coupontemplateDescPointsPrice := coupontemplateFields[9].Descriptor()
+	// coupontemplate.DefaultPointsPrice holds the default value on creation for the points_price field.
+	coupontemplate.DefaultPointsPrice = coupontemplateDescPointsPrice.Default.(int64)
 	// coupontemplateDescClaimable is the schema descriptor for claimable field.
-	coupontemplateDescClaimable := coupontemplateFields[9].Descriptor()
+	coupontemplateDescClaimable := coupontemplateFields[10].Descriptor()
 	// coupontemplate.DefaultClaimable holds the default value on creation for the claimable field.
 	coupontemplate.DefaultClaimable = coupontemplateDescClaimable.Default.(bool)
 	// coupontemplateDescID is the schema descriptor for id field.

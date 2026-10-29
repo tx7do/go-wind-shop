@@ -24,8 +24,8 @@ type PointsLedgerService struct {
 
 	log *logx.Helper
 
-	repo      *data.PointsLedgerRepo
-	entClient *entCrud.EntClient[*ent.Client]
+	repo                *data.PointsLedgerRepo
+	entClient           *entCrud.EntClient[*ent.Client]
 }
 
 func NewPointsLedgerService(ctx *bootstrap.Context, repo *data.PointsLedgerRepo, entClient *entCrud.EntClient[*ent.Client]) *PointsLedgerService {
