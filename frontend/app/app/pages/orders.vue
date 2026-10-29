@@ -135,7 +135,9 @@ function formatCreatedAt(ts: string | undefined): string {
 
 function displayTotal(order: OrderEntity): string {
   const currency = order.currency === 'CNY' ? t('mall.product.currencyCny') : '';
-  return currency + (order.totalAmount ?? 0);
+  // 后端金额为最小货币单位（分），展示转元；保留两位小数
+  const cents = order.totalAmount ?? 0;
+  return currency + (cents / 100).toFixed(2);
 }
 
 function filterLabel(key: FilterKey): string {

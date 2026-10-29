@@ -181,7 +181,8 @@ function maskAddress(addr: string | undefined): string {
 
 function displayAmount(v: number | undefined, currency?: string): string {
   const prefix = currency === 'CNY' ? t('mall.product.currencyCny') : '';
-  return prefix + (v ?? 0);
+  // 后端金额为最小货币单位（分），展示转元；保留两位小数
+  return prefix + ((v ?? 0) / 100).toFixed(2);
 }
 
 const orderTotalLabel = computed(() => displayAmount(order.value?.totalAmount, order.value?.currency));
