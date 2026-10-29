@@ -181,11 +181,18 @@ cd frontend/app && pnpm dev
 | Order Automation | Auto-cancel of unpaid orders after timeout (delayed task + periodic sweep) and auto-confirm receipt after the shipment window. |
 | Order Notifications | In-app notifications to buyers across the full lifecycle: payment, shipment, cancellation, receipt confirmation, and refund. |
 | Search | OpenSearch full-text search with type-ahead suggestions (product name prefix phrase matching). |
-| Promotions | Product special prices and store-wide full reductions, applied within the checkout transaction, stackable with coupons up to a floor of zero. |
+| Promotions | Product special prices, store-wide full reductions, flash sales (seckill), and group buying (groupon) — unified pricing within the checkout transaction with priority groupon > seckill > special price, stackable with coupons up to a floor of zero. |
 | Stock Operation Logs | Append-only audit: order deductions, cancel/refund restorations, and manual adjustments are all traced. |
+| Flash Sale (Seckill) | SKU-level limited-time flash sales with seckill price as the highest-priority override, row-level locking to prevent overselling, and per-user purchase limits. |
+| Group Buying (Groupon) | Group-price purchases requiring `group_size` paid members to form a group; expired groups automatically refund paid member orders via the `groupon_sweep` periodic task. |
+| Loyalty Points | Earn 1 point per CNY on purchase (amplified by tier multiplier) + refund reversal + daily check-in (+5/day, idempotent) + points-to-coupon exchange. Append-only ledger with balance snapshots. |
+| Membership Tiers | Automatic tier assignment based on cumulative paid spend (highest level matched first); points accrual amplified by tier multiplier. |
+| Refund (Aftersale) | Buyer initiates → admin approves → gateway refund (WeChat/Alipay API) + transaction REFUNDED + stock restoration + in-app notification + points reversal. |
+| Reconciliation Self-Healing | Periodic scan of stale PENDING transactions that actively queries the gateway — confirms paid orders lost to callback failures; marks closed transactions as FAILED. Includes refund drift detection alerts. |
+| Order Close Linkage | Best-effort gateway close-order after cancellation/timeout so stale QR codes and cashier links become invalid. |
 | Product Reviews | Tree-structured reviews with likes, merchant replies, and optional AI anti-spam. |
 | AI Shopping Assistant | Function-call tool loop (find products, check prices, look up orders and coupons) with a floating storefront assistant. |
-| Payment & Refund | Payment transaction and refund record management (note: the payment gateway is currently a simulated stub; real gateway integration is pending). |
+| Payment & Refund | WeChat Native/H5, Alipay, and Mock gateway adapters with intent/callback two-phase flow, reconciliation self-healing, refund drift detection, order-close linkage, and refund automation (gateway refund → stock restoration → in-app notification → points reversal). Merchants bring their own credentials; the platform never touches funds. |
 | Logistics & Shipment | Order fulfillment and shipment management, including shipment state machine and order-status linkage. |
 | Coupon System | Coupon template and user-coupon management, including a pricing discount engine with redemption at checkout and restoration on refund. |
 | Finance Export | Server-side XLSX export of order details for reconciliation. |
