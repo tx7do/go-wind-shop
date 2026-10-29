@@ -65,16 +65,15 @@
   },
   "coupons": {
     "title": "Coupon Center",
-    "subtitle": "Browse and claim publicly available coupons",
-    "empty": "No coupons available to claim right now.",
-    "claim": "Claim",
-    "claimed": "Claimed",
-    "discount": "Discount",
-    "validUntil": "Valid Until",
-    "discountType": "Discount Type",
-    "errors": {
-      "claimFailed": "Failed to claim. You may have reached the claim limit or the coupon is no longer valid."
-    }
+    "myPoints": "My Points",
+    "empty": "No coupons available",
+    "off": "OFF",
+    "validUntil": "Valid until",
+    "redeemed": "Redeemed",
+    "exchange": "{points} pts",
+    "exchanging": "Exchanging…",
+    "exchangeSuccess": "Exchange successful! Coupon added",
+    "exchangeFailed": "Exchange failed"
   },
   "checkout": {
     "title": "Checkout",

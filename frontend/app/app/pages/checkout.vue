@@ -33,6 +33,17 @@ import type {
 
 const { t } = useI18n();
 const localePath = useLocalePath();
+const route = useRoute();
+
+// ---------- 拼团参数（从商品页"立即购买"携带） ----------
+const grouponActivityId = computed(() => {
+  const v = Number(route.query.grouponActivityId);
+  return v > 0 ? v : undefined;
+});
+const grouponGroupId = computed(() => {
+  const v = Number(route.query.grouponGroupId);
+  return v > 0 ? v : undefined;
+});
 
 useHead({ title: t('mall.checkout.title') });
 
@@ -687,7 +698,12 @@ async function placeOrder() {
   } as orderservicev1_Order;
 
   try {
-    await orderMutation.mutateAsync({ data: orderData, couponId: selectedCouponId.value });
+    await orderMutation.mutateAsync({
+      data: orderData,
+      couponId: selectedCouponId.value,
+      grouponActivityId: grouponActivityId.value,
+      grouponGroupId: grouponGroupId.value,
+    });
   } catch {
     return;
   }

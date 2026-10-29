@@ -1,0 +1,12 @@
+{
+  "title": "Coupon Center",
+  "myPoints": "My Points",
+  "empty": "No coupons available",
+  "off": "OFF",
+  "validUntil": "Valid until",
+  "redeemed": "Redeemed",
+  "exchange": "{points} pts exchange",
+  "exchanging": "Exchanging…",
+  "exchangeSuccess": "Exchange successful! Coupon added",
+  "exchangeFailed": "Exchange failed"
+}

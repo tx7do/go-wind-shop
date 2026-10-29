@@ -1,0 +1,12 @@
+{
+  "title": "优惠券中心",
+  "myPoints": "我的积分",
+  "empty": "暂无可领优惠券",
+  "off": "立减",
+  "validUntil": "有效期至",
+  "redeemed": "已领",
+  "exchange": "{points} 积分兑换",
+  "exchanging": "兑换中…",
+  "exchangeSuccess": "兑换成功！优惠券已到账",
+  "exchangeFailed": "兑换失败"
+}

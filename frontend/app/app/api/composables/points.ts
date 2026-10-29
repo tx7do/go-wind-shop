@@ -1,4 +1,5 @@
-import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
+import { useMutation,
+  useQuery, type UseQueryOptions } from '@tanstack/vue-query';
 import { toValue } from 'vue';
 import { apiClient } from '@/api/client';
 import type {
@@ -57,6 +58,23 @@ export function useGetCheckInStatus(
   return useQuery({
     queryKey: ['checkInStatus'],
     queryFn: () => fetchGetCheckInStatus(),
+    ...options,
+  });
+}
+
+// ==============================
+// 积分兑换优惠券（登录态；事务内扣积分+发券）
+// ==============================
+export async function exchangePointsForCoupon(
+  couponTemplateId: number,
+): Promise<{ couponId?: number; pointsDeducted?: number; balance?: number }> {
+  return await apiClient.pointsService.ExchangePointsForCoupon({ couponTemplateId } as any);
+}
+export function useExchangePointsForCoupon(
+  options?: any,
+) {
+  return useMutation({
+    mutationFn: (couponTemplateId: number) => exchangePointsForCoupon(couponTemplateId),
     ...options,
   });
 }

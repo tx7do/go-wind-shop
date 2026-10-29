@@ -627,10 +627,15 @@ async function addToCartWithQty(qty: number) {
   } as any);
 }
 
-// ---------- 立即购买：加购后跳转结算页 ----------
+// ---------- 立即购买：加购后跳转结算页（拼团单带拼团参数） ----------
 async function buyNow() {
   if (!canAddToCart.value) return;
   await addToCartWithQty(quantity.value);
+  const g = activeGrouponForSku.value;
+  if (g?.id) {
+    navigateTo(localePath('/checkout') + `?grouponActivityId=${g.id}`);
+    return;
+  }
   navigateTo(localePath('/checkout'));
 }
 
