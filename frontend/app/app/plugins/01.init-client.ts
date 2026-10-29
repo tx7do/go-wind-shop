@@ -51,12 +51,16 @@ export default defineNuxtPlugin(async (nuxtApp) => {
         },
 
         onReAuthenticate: async (redirect?: boolean) => {
+            // 从未持有过 token 的游客收到 401 是预期行为（如误发的需登录接口），
+            // 只清状态不跳登录页，保证公开页面可匿名浏览。
+            const hadToken = !!accessStore.accessToken?.value
+
             accessStore.setAccessToken('')
             accessStore.setRefreshToken('')
             accessStore.setLoginExpired(true)
             userStore.setUserInfo(null as any)
 
-            if (redirect && typeof window !== 'undefined') {
+            if (redirect && hadToken && typeof window !== 'undefined') {
                 const currentPath = window.location.pathname
                 window.location.href = `/${(i18n as any)?.locale?.value || 'zh-CN'}/login?redirect=${encodeURIComponent(currentPath)}`
             }

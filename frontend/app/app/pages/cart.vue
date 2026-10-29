@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
 import { cn } from '@/lib/utils';
 import { XIcon } from '@/plugins/xicon';
@@ -275,6 +275,30 @@ function unitPriceLabel(skuId: number | undefined): string {
 // selectedIds: 当前被勾选的 cart item id 集合
 const selectedIds = reactive<Set<number>>(new Set());
 
+// 首次加载到商品后默认全选——购物车有货但结算区显示 ¥0.00 会像出了故障；
+// 仅自动全选一次，用户手动取消后不被 refetch 打回去。
+const didAutoSelect = ref(false);
+
+watch(
+  cartItems,
+  (items) => {
+    const ids = new Set(
+      items.map((it) => it.id).filter((v): v is number => v !== undefined),
+    );
+    // 清理已不存在（被删）的选中项，避免计数虚高
+    for (const id of [...selectedIds]) {
+      if (!ids.has(id)) selectedIds.delete(id);
+    }
+    if (ids.size === 0) {
+      didAutoSelect.value = false;
+    } else if (!didAutoSelect.value) {
+      for (const id of ids) selectedIds.add(id);
+      didAutoSelect.value = true;
+    }
+  },
+  { immediate: true },
+);
+
 const allSelected = computed(() => {
   if (cartItems.value.length === 0) return false;
   return cartItems.value.every((it) => it.id !== undefined && selectedIds.has(it.id));
@@ -469,8 +493,8 @@ function goCheckout() {
     <div v-else class="grid gap-6 md:grid-cols-12">
       <!-- 左侧：商品清单（8 栏） -->
       <div class="md:col-span-8 rounded-2xl border border-border bg-card overflow-hidden">
-        <!-- 表头（含全选） -->
-        <div class="border-b border-border bg-muted/40 px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        <!-- 表头（含全选，仅桌面网格布局展示） -->
+        <div class="hidden md:block border-b border-border bg-muted/40 px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           <div class="grid grid-cols-[32px_1fr_120px_160px_48px] items-center gap-4">
             <span class="flex items-center gap-2">
               <input
@@ -492,9 +516,68 @@ function goCheckout() {
         <div
           v-for="item in cartItems"
           :key="item.id"
-          class="border-b border-border px-6 py-4 last:border-b-0"
+          class="border-b border-border px-4 py-4 last:border-b-0 md:px-6"
         >
-          <div class="grid grid-cols-[32px_1fr_120px_160px_48px] items-center gap-4">
+          <!-- 移动端卡片布局：固定五列表格在窄屏会把名称压成一字、数量列挤出屏外 -->
+          <div class="flex items-start gap-3 md:hidden">
+            <input
+              type="checkbox"
+              class="mt-7 h-4 w-4 shrink-0 rounded border-border accent-[hsl(var(--primary))]"
+              :checked="item.id !== undefined && selectedIds.has(item.id)"
+              @change="toggleSelectItem(item.id, ($event.target as HTMLInputElement).checked)"
+            />
+            <img
+              v-if="productImageUrl(item.skuId)"
+              :src="productImageUrl(item.skuId)"
+              :alt="productName(item.skuId)"
+              class="aspect-square h-18 w-18 shrink-0 rounded-lg object-cover"
+            />
+            <UiProductPlaceholder
+              v-else
+              :seed="item.skuId ?? 0"
+              class="aspect-square h-18 w-18 shrink-0 rounded-lg text-muted-foreground"
+            />
+            <div class="min-w-0 flex-1">
+              <p class="line-clamp-2 text-sm font-semibold text-foreground dark:text-slate-200">
+                {{ productName(item.skuId) || '—' }}
+              </p>
+              <p
+                v-if="describeSku(item.skuId)"
+                class="mt-1 line-clamp-1 text-xs text-muted-foreground"
+              >
+                {{ describeSku(item.skuId) }}
+              </p>
+              <div class="mt-2 flex items-center justify-between gap-2">
+                <span class="text-base font-bold tabular-nums text-primary">
+                  {{ t('mall.product.currencyCny') }}{{ unitPriceLabel(item.skuId) || '—' }}
+                </span>
+                <div class="flex items-center gap-1.5">
+                  <UiButton
+                    size="sm"
+                    variant="outline"
+                    :disabled="updateMutation.isPending.value"
+                    @click="decreaseQty(item)"
+                  >
+                    <XIcon icon="carbon:subtract" :size="14" />
+                  </UiButton>
+                  <span class="w-8 text-center text-sm tabular-nums text-foreground">
+                    {{ item.quantity ?? 0 }}
+                  </span>
+                  <UiButton
+                    size="sm"
+                    variant="outline"
+                    :disabled="updateMutation.isPending.value"
+                    @click="increaseQty(item)"
+                  >
+                    <XIcon icon="carbon:add" :size="14" />
+                  </UiButton>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 桌面网格布局（与表头列对齐） -->
+          <div class="hidden md:grid grid-cols-[32px_1fr_120px_160px_48px] items-center gap-4">
             <!-- 单选 checkbox -->
             <span>
               <input

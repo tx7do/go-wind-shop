@@ -233,6 +233,16 @@ const valuesByAttribute = computed(() => {
   return map;
 });
 
+// 可选属性：只保留确实挂了属性值的属性。属性表是全局数据，可能存在
+// 「有属性名但该属性一个值都没配」的脏数据——这种属性渲染不出任何规格 chip，
+// 用户永远无法选中它；若参与「是否选满」判断会让 matchedSku 永远为空，
+// 整页价格隐藏、按钮禁用（购买链路死锁）。空属性应直接视为单 SKU 商品。
+const selectableAttributes = computed<AttributeEntity[]>(() => {
+  return attributes.value.filter(
+    (attr) => attr.id !== undefined && (valuesByAttribute.value.get(attr.id)?.length ?? 0) > 0,
+  );
+});
+
 // ---------- 用户选择 ----------
 // 注意：reka-ui Select 使用字符串值，因此选择以字符串存储，匹配时转为数字。
 const selections = reactive<Record<number, string | undefined>>({});
@@ -315,9 +325,9 @@ watch(
 );
 
 const allAttributesSelected = computed(() => {
-  // 无属性商品（单 SKU）：无可选属性，视为已满足选择前提。
-  if (attributes.value.length === 0) return true;
-  for (const attr of attributes.value) {
+  // 无可选属性（单 SKU / 属性未配值）：无可选项，视为已满足选择前提。
+  if (selectableAttributes.value.length === 0) return true;
+  for (const attr of selectableAttributes.value) {
     if (attr.id === undefined) continue;
     if (selections[attr.id] === undefined) return false;
   }
@@ -328,12 +338,11 @@ const allAttributesSelected = computed(() => {
 const matchedSku = computed<SkuEntity | undefined>(() => {
   if (!allAttributesSelected.value) return undefined;
 
-  // 无属性商品（单 SKU）：无属性组合，若恰好存在一个 SKU 则直接匹配。
-  if (attributes.value.length === 0) {
-    if (skus.value.length === 1) {
-      const only = skus.value[0];
-      if (only && only.id !== undefined) return only;
-    }
+  // 无可选属性（单 SKU / 属性未配值）：无属性组合可匹配，
+  // 优先取有库存的第一个 SKU，否则退回第一个 SKU，保证价格与购买可用。
+  if (selectableAttributes.value.length === 0) {
+    const inStock = skus.value.find((s) => (s.stockQty ?? 0) > 0) ?? skus.value[0];
+    if (inStock && inStock.id !== undefined) return inStock;
     return undefined;
   }
 
@@ -709,9 +718,9 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
         </div>
 
         <!-- SKU 卡片选择器（aria-radiogroup，保留键盘可访问性） -->
-        <div v-if="attributes.length > 0" class="flex flex-col gap-4">
+        <div v-if="selectableAttributes.length > 0" class="flex flex-col gap-4">
           <p class="text-sm text-muted-foreground">{{ t('mall.product.selectSku') }}</p>
-          <div v-for="attr in attributes" :key="attr.id" class="flex flex-col gap-2">
+          <div v-for="attr in selectableAttributes" :key="attr.id" class="flex flex-col gap-2">
             <label class="text-xs font-medium text-foreground">
               {{ pickTranslation(attr.translations)?.name || '—' }}
             </label>
@@ -754,9 +763,10 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
           {{ t('mall.product.outOfStock') }}
         </p>
 
-        <!-- 数量框 + 双按钮 -->
-        <div class="mt-2 flex items-center gap-3">
-          <div class="flex items-center rounded-xl border border-border bg-card">
+        <!-- 数量框 + 双按钮：移动端上下两行（数量一行、双按钮并排一行），
+             避免三元素挤一行把「立即购买」挤出屏外；sm 及以上保持同行。 -->
+        <div class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div class="flex w-fit items-center rounded-xl border border-border bg-card">
             <button
               type="button"
               class="flex h-10 w-10 items-center justify-center text-foreground disabled:opacity-40"
@@ -785,25 +795,27 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
             </button>
           </div>
 
-          <UiButton
-            variant="outline"
-            class="flex-1"
-            size="lg"
-            :disabled="!canAddToCart"
-            @click="addToCartWithQty(quantity)"
-          >
-            <XIcon icon="carbon:shopping-cart" :size="16" class="mr-2" />
-            {{ t('mall.product.addToCart') }}
-          </UiButton>
+          <div class="flex flex-1 items-center gap-3">
+            <UiButton
+              variant="outline"
+              class="flex-1"
+              size="lg"
+              :disabled="!canAddToCart"
+              @click="addToCartWithQty(quantity)"
+            >
+              <XIcon icon="carbon:shopping-cart" :size="16" class="mr-2" />
+              {{ t('mall.product.addToCart') }}
+            </UiButton>
 
-          <UiButton
-            class="flex-1"
-            size="lg"
-            :disabled="!canAddToCart"
-            @click="buyNow"
-          >
-            {{ t('mall.product.buyNow') }}
-          </UiButton>
+            <UiButton
+              class="flex-1"
+              size="lg"
+              :disabled="!canAddToCart"
+              @click="buyNow"
+            >
+              {{ t('mall.product.buyNow') }}
+            </UiButton>
+          </div>
         </div>
       </div>
     </div>

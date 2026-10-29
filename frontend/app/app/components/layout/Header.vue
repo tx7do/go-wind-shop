@@ -28,6 +28,8 @@ const isLogin = computed(() => {
 const currentUserId = computed(() => userStore.user?.id ?? 0)
 
 // 购物车数量徽标：查询当前用户的购物车项，总数用于红点显示。
+// enabled: isLogin——购物车接口要求登录，游客发请求会吃 401 并触发重认证跳转，
+// 导致匿名访客被踢出公开页面（游客必须能逛商城）。
 const cartsQuery = useListCarts(
   computed(() => ({
     page: 1,
@@ -35,6 +37,7 @@ const cartsQuery = useListCarts(
     noPaging: false,
     query: JSON.stringify({ userId: currentUserId.value }),
   })),
+  { enabled: isLogin },
 )
 const cartId = computed(() => {
   const items = ((cartsQuery.data?.value as any)?.items ?? []) as Array<{ id?: number }>
@@ -47,6 +50,7 @@ const cartItemsQuery = useListCartItems(
     noPaging: false,
     query: cartId.value === undefined ? undefined : JSON.stringify({ cartId: cartId.value }),
   })),
+  { enabled: isLogin },
 )
 const cartCount = computed(() => {
   const items = (cartItemsQuery.data?.value as any)?.items ?? []
