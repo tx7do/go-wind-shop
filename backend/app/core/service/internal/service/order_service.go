@@ -221,9 +221,11 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 	}
 	tenantId := req.Data.GetTenantId()
 	userId := req.Data.GetUserId()
-	if tenantId == 0 {
-		return nil, orderV1.ErrorBadRequest("tenant_id is required")
-	}
+	// tenant_id=0（平台租户）合法：单租户/开发部署下用户与全部商城数据同属
+	// tid=0。租户隔离安全不依赖本处拒绝——入参 tenant 来自 app BFF 的 JWT
+	// 运营者覆写（客户端伪造无效），读取侧由 TenantPrivacy 按 viewer 注入
+	// 租户过滤 + 订单 UserPrivacy 钉定本人，跨租户不可见。这里只挡明确的
+	// 无属主数据（userId=0）。
 	if userId == 0 {
 		return nil, orderV1.ErrorBadRequest("user_id is required")
 	}
