@@ -231,6 +231,9 @@ type Script func(*sql.Selector)
 // ScriptLog is the predicate function for scriptlog builders.
 type ScriptLog func(*sql.Selector)
 
+// SeckillActivity is the predicate function for seckillactivity builders.
+type SeckillActivity func(*sql.Selector)
+
 // Shipment is the predicate function for shipment builders.
 type Shipment func(*sql.Selector)
 

@@ -133,6 +133,7 @@ func NewGrpcServer(
 	orderItemService *service.OrderItemService,
 
 	// register:grpc-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
+	seckillActivityService *service.SeckillActivityService,
 		paymentChannelConfigService *service.PaymentChannelConfigService,
 		paymentTransactionService *service.PaymentTransactionService,
 		paymentRefundService *service.PaymentRefundService,
@@ -263,6 +264,7 @@ func NewGrpcServer(
 	authenticationV1.RegisterMFAServiceServer(srv, mfaService)
 
 	// register:grpc-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
+	catalogV1.RegisterSeckillActivityServiceServer(srv, seckillActivityService)
 
 	return srv, nil
 }

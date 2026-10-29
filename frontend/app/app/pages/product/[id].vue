@@ -19,6 +19,7 @@ import {
   useGetProductRating,
   useGetProductReviewSummary,
   useListActivePromotions,
+    useListActiveSeckills,
 } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { useAccessStore } from '@/stores/modules/core/access.state';
@@ -399,6 +400,24 @@ const displayPrice = computed(() => {
   return (fen / 100).toFixed(2);
 });
 
+// ---------- 秒杀（最高优先级价格展示） ----------
+// ListActiveSeckills 返回当前生效中且未售罄的秒杀，这里按当前商品的 SKU 匹配。
+type SeckillEntity = {
+  id?: number;
+  name?: string;
+  skuId?: number;
+  seckillPrice?: number;
+  totalStock?: number;
+  soldCount?: number;
+  validUntil?: string;
+};
+
+const seckillsQuery = useListActiveSeckills();
+const activeSeckills = computed(() => {
+  const items = ((seckillsQuery.data?.value as any)?.items ?? []) as SeckillEntity[];
+  return items;
+});
+
 // ---------- 促销活动（专价划线价/满减角标） ----------
 // ListActivePromotions 返回当前租户全部生效活动，这里按当前商品过滤。
 type PromotionEntity = {
@@ -437,6 +456,20 @@ const promoPrice = computed(() => {
   // specialPrice 同为「分」,换算后与服务端同语义:仅低于现价时生效
   const specialYuan = (sp.specialPrice / 100).toFixed(2);
   return Number(specialYuan) < Number(base) ? specialYuan : null;
+});
+
+// 秒杀（最高优先级）：当前选中 SKU 的生效秒杀，秒杀价低于现价时覆盖展示
+const activeSeckillForSku = computed(() => {
+  const sid = sku.value?.id;
+  if (!sid) return undefined;
+  return activeSeckills.value.find((k) => k.skuId === sid);
+});
+const seckillPrice = computed(() => {
+  const base = displayPrice.value;
+  const k = activeSeckillForSku.value;
+  if (!base || !k?.seckillPrice) return null;
+  const yuan = (k.seckillPrice / 100).toFixed(2);
+  return Number(yuan) < Number(base) ? yuan : null;
 });
 
 // 满减角标：取减让最大的店铺级活动展示「满 X 减 Y」。
@@ -671,7 +704,13 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
           class="rounded-xl border border-primary/40 bg-primary/5 p-5"
         >
           <p class="text-xs text-muted-foreground">{{ t('mall.product.price') }}</p>
-          <p v-if="promoPrice !== null" class="mt-1 text-3xl font-extrabold text-primary">
+          <p v-if="seckillPrice !== null" class="mt-1 text-3xl font-extrabold text-red-500">
+            {{ t('mall.product.currencyCny') }}{{ seckillPrice }}
+            <span class="ml-2 text-base font-medium text-muted-foreground line-through">
+              {{ t('mall.product.currencyCny') }}{{ displayPrice }}
+            </span>
+          </p>
+          <p v-else-if="promoPrice !== null" class="mt-1 text-3xl font-extrabold text-primary">
             {{ t('mall.product.currencyCny') }}{{ promoPrice }}
             <span class="ml-2 text-base font-medium text-muted-foreground line-through">
               {{ t('mall.product.currencyCny') }}{{ displayPrice }}
@@ -680,7 +719,10 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
           <p v-else class="mt-1 text-3xl font-extrabold text-primary">
             {{ t('mall.product.currencyCny') }}{{ displayPrice }}
           </p>
-          <div v-if="specialPricePromo" class="mt-2 inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+          <div v-if="activeSeckillForSku" class="mt-2 inline-flex items-center gap-1 rounded-full bg-red-500/15 px-2 py-0.5 text-xs font-medium text-red-500">
+            ⚡ {{ activeSeckillForSku.name || t('mall.seckill.tag') }}
+          </div>
+          <div v-else-if="specialPricePromo" class="mt-2 inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
             {{ specialPricePromo.name || t('mall.promotion.specialPriceTag') }}
           </div>
           <div v-else-if="fullReductionPromo" class="mt-2 inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">

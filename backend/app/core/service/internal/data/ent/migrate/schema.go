@@ -3821,6 +3821,42 @@ var (
 			},
 		},
 	}
+	// MallSeckillActivitiesColumns holds the columns for the "mall_seckill_activities" table.
+	MallSeckillActivitiesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Comment: "活动名称"},
+		{Name: "sku_id", Type: field.TypeUint32, Nullable: true, Comment: "秒杀 SKU ID"},
+		{Name: "seckill_price", Type: field.TypeInt64, Nullable: true, Comment: "秒杀价（最小货币单位，分）", Default: 0},
+		{Name: "total_stock", Type: field.TypeInt32, Nullable: true, Comment: "秒杀总限量（件）", Default: 0},
+		{Name: "sold_count", Type: field.TypeInt32, Comment: "已抢购件数", Default: 0},
+		{Name: "per_user_limit", Type: field.TypeInt32, Comment: "每人限购件数（活动窗口内累计）", Default: 1},
+		{Name: "priority", Type: field.TypeInt32, Comment: "优先级（同 SKU 并发活动取最高者）", Default: 0},
+		{Name: "valid_from", Type: field.TypeTime, Nullable: true, Comment: "生效时间"},
+		{Name: "valid_until", Type: field.TypeTime, Nullable: true, Comment: "失效时间"},
+		{Name: "currency", Type: field.TypeString, Comment: "币种", Default: "CNY"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "活动状态", Enums: []string{"ACTIVE", "INACTIVE"}, Default: "ACTIVE"},
+	}
+	// MallSeckillActivitiesTable holds the schema information for the "mall_seckill_activities" table.
+	MallSeckillActivitiesTable = &schema.Table{
+		Name:       "mall_seckill_activities",
+		Comment:    "秒杀活动表",
+		Columns:    MallSeckillActivitiesColumns,
+		PrimaryKey: []*schema.Column{MallSeckillActivitiesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "seckillactivity_tenant_id_sku_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{MallSeckillActivitiesColumns[7], MallSeckillActivitiesColumns[9], MallSeckillActivitiesColumns[18]},
+			},
+		},
+	}
 	// MallShipmentsColumns holds the columns for the "mall_shipments" table.
 	MallShipmentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -4902,6 +4938,7 @@ var (
 		SysRolePermissionsTable,
 		SysScriptsTable,
 		SysScriptLogsTable,
+		MallSeckillActivitiesTable,
 		MallShipmentsTable,
 		UserShippingAddressesTable,
 		MallShippingRatesTable,
@@ -5310,6 +5347,11 @@ func init() {
 	}
 	SysScriptLogsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_script_logs",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallSeckillActivitiesTable.Annotation = &entsql.Annotation{
+		Table:     "mall_seckill_activities",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

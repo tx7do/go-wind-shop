@@ -91,6 +91,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiChatServiceClient := data.NewAiChatServiceClient(ctx, discovery)
 
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
+	seckillServiceClient := data.NewSeckillServiceClient(ctx, discovery)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
@@ -125,6 +126,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiChatService := service.NewAiChatService(ctx, aiChatServiceClient, authenticationServiceClient)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
+	seckillService := service.NewSeckillService(ctx, seckillServiceClient)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
 
@@ -153,6 +155,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		shippingAddressService,
 		shipmentService,
 		internalMessageRecipientService,
+		seckillService,
 		userCouponService,
 		couponTemplateService,
 		promotionService,		commentService,

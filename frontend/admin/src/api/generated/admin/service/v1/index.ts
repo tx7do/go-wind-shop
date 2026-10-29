@@ -16169,6 +16169,278 @@ export type scriptservicev1_PurgeScriptLogsResponse = {
   deleted: number | undefined;
 };
 
+// 秒杀活动管理服务（admin 全 CRUD）
+export interface SeckillActivityService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_ListSeckillActivityResponse>;
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_CountSeckillActivityResponse>;
+  Get(
+    request: catalogservicev1_GetSeckillActivityRequest,
+  ): Promise<catalogservicev1_SeckillActivity>;
+  Create(
+    request: catalogservicev1_CreateSeckillActivityRequest,
+  ): Promise<wellKnownEmpty>;
+  Update(
+    request: catalogservicev1_UpdateSeckillActivityRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: catalogservicev1_DeleteSeckillActivityRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createSeckillActivityServiceClient(
+  transport: ClientTransport,
+): SeckillActivityService {
+  return {
+    List(request) {
+      const path = `/admin/v1/mall/seckills`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SeckillActivityService',
+        method: 'List',
+      }) as Promise<catalogservicev1_ListSeckillActivityResponse>;
+    },
+    Count(request) {
+      const path = `/admin/v1/mall/seckills/count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SeckillActivityService',
+        method: 'Count',
+      }) as Promise<catalogservicev1_CountSeckillActivityResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/seckills/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'SeckillActivityService',
+        method: 'Get',
+      }) as Promise<catalogservicev1_SeckillActivity>;
+    },
+    Create(request) {
+      const path = `/admin/v1/mall/seckills`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'SeckillActivityService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/seckills/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'SeckillActivityService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/seckills/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'SeckillActivityService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type catalogservicev1_ListSeckillActivityResponse = {
+  items: catalogservicev1_SeckillActivity[] | undefined;
+  total: number | undefined;
+};
+
+// 秒杀活动
+export type catalogservicev1_SeckillActivity = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  currency?: string;
+  id?: number;
+  name?: string;
+  perUserLimit?: number;
+  priority?: number;
+  seckillPrice?: number;
+  skuId?: number;
+  soldCount?: number;
+  status?: catalogservicev1_SeckillActivity_Status;
+  tenantId?: number;
+  totalStock?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  validFrom?: wellKnownTimestamp;
+  validUntil?: wellKnownTimestamp;
+};
+
+// 活动状态
+export type catalogservicev1_SeckillActivity_Status =
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'STATUS_UNSPECIFIED';
+export type catalogservicev1_CountSeckillActivityResponse = {
+  count: number | undefined;
+};
+
+export type catalogservicev1_GetSeckillActivityRequest = {
+  id?: number;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type catalogservicev1_CreateSeckillActivityRequest = {
+  data: catalogservicev1_SeckillActivity | undefined;
+};
+
+export type catalogservicev1_UpdateSeckillActivityRequest = {
+  allowMissing?: boolean;
+  data: catalogservicev1_SeckillActivity | undefined;
+  id: number | undefined;
+  updateMask?: wellKnownFieldMask;
+};
+
+export type catalogservicev1_DeleteSeckillActivityRequest = {
+  id: number | undefined;
+};
+
 // 物流单管理服务（admin 侧，卖家运营可读写）
 export interface ShipmentService {
   List(
@@ -19683,6 +19955,7 @@ export class ApiClient {
   private _roleService?: RoleService;
   private _scriptLogService?: ScriptLogService;
   private _scriptService?: ScriptService;
+  private _seckillActivityService?: SeckillActivityService;
   private _serverMonitorService?: ServerMonitorService;
   private _shipmentService?: ShipmentService;
   private _shippingRateService?: ShippingRateService;
@@ -19966,6 +20239,10 @@ export class ApiClient {
 
   get scriptService(): ScriptService {
     return this._scriptService ??= createScriptServiceClient(this._transport);
+  }
+
+  get seckillActivityService(): SeckillActivityService {
+    return this._seckillActivityService ??= createSeckillActivityServiceClient(this._transport);
   }
 
   get serverMonitorService(): ServerMonitorService {

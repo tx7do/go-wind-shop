@@ -4329,6 +4329,62 @@ export type catalogservicev1_QuoteOrderPromotionsResponse = {
   promoDiscount: number | undefined;
 };
 
+// 秒杀活动前台服务（C端只读）
+export interface SeckillService {
+  // 当前生效中的秒杀列表（商品页秒杀价角标/倒计时；匿名可读）
+  ListActiveSeckills(
+    request: catalogservicev1_ListActiveSeckillsRequest,
+  ): Promise<catalogservicev1_ListSeckillActivityResponse>;
+}
+
+export function createSeckillServiceClient(
+  transport: ClientTransport,
+): SeckillService {
+  return {
+    ListActiveSeckills(_request) {
+      const path = `/app/v1/mall/seckills/active`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'SeckillService',
+        method: 'ListActiveSeckills',
+      }) as Promise<catalogservicev1_ListSeckillActivityResponse>;
+    },
+  };
+}
+export type catalogservicev1_ListActiveSeckillsRequest = {
+};
+
+export type catalogservicev1_ListSeckillActivityResponse = {
+  items: catalogservicev1_SeckillActivity[] | undefined;
+  total: number | undefined;
+};
+
+// 秒杀活动
+export type catalogservicev1_SeckillActivity = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  currency?: string;
+  id?: number;
+  name?: string;
+  perUserLimit?: number;
+  priority?: number;
+  seckillPrice?: number;
+  skuId?: number;
+  soldCount?: number;
+  status?: catalogservicev1_SeckillActivity_Status;
+  tenantId?: number;
+  totalStock?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  validFrom?: wellKnownTimestamp;
+  validUntil?: wellKnownTimestamp;
+};
+
+// 活动状态
+export type catalogservicev1_SeckillActivity_Status =
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'STATUS_UNSPECIFIED';
 // 物流单前台服务（app 侧，买家只读查询自己订单的物流轨迹）
 // 仅暴露 List/Get，无 Create/Update/Delete。
 export interface ShipmentService {
@@ -5708,6 +5764,7 @@ export class ApiClient {
   private _productAttributeValueService?: ProductAttributeValueService;
   private _productService?: ProductService;
   private _promotionService?: PromotionService;
+  private _seckillService?: SeckillService;
   private _shipmentService?: ShipmentService;
   private _shippingAddressService?: ShippingAddressService;
   private _skuAttributeCombinationService?: SkuAttributeCombinationService;
@@ -5804,6 +5861,10 @@ export class ApiClient {
 
   get promotionService(): PromotionService {
     return this._promotionService ??= createPromotionServiceClient(this._transport);
+  }
+
+  get seckillService(): SeckillService {
+    return this._seckillService ??= createSeckillServiceClient(this._transport);
   }
 
   get shipmentService(): ShipmentService {

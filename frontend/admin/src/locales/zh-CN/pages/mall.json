@@ -429,5 +429,25 @@
       "update": "编辑支付渠道"
     },
     "updatedAt": "更新时间"
+  },
+  "seckill": {
+    "name": "活动名称",
+    "skuId": "SKU ID",
+    "seckillPrice": "秒杀价",
+    "totalStock": "总限量",
+    "soldProgress": "已抢/限量",
+    "perUserLimit": "每人限购",
+    "validFrom": "开始时间",
+    "validUntil": "结束时间",
+    "validRange": "活动窗口",
+    "status": "状态",
+    "statusLabel": {
+      "active": "生效",
+      "inactive": "停用"
+    },
+    "button": {
+      "create": "新增秒杀活动",
+      "update": "编辑秒杀活动"
+    }
   }
 }

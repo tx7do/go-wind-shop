@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/seckill.proto";
+
+// 秒杀活动管理服务（admin 全 CRUD）
+service SeckillActivityService {
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListSeckillActivityResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/seckills"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountSeckillActivityResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/seckills/count"
+    };
+  }
+
+  rpc Get (catalog.service.v1.GetSeckillActivityRequest) returns (catalog.service.v1.SeckillActivity) {
+    option (google.api.http) = {
+      get: "/admin/v1/mall/seckills/{id}"
+    };
+  }
+
+  rpc Create (catalog.service.v1.CreateSeckillActivityRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/mall/seckills"
+      body: "*"
+    };
+  }
+
+  rpc Update (catalog.service.v1.UpdateSeckillActivityRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/mall/seckills/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (catalog.service.v1.DeleteSeckillActivityRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/mall/seckills/{id}"
+    };
+  }
+}

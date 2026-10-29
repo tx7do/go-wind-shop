@@ -429,5 +429,25 @@
       "update": "Edit Payment Channel"
     },
     "updatedAt": "Updated At"
+  },
+  "seckill": {
+    "name": "Activity Name",
+    "skuId": "SKU ID",
+    "seckillPrice": "Seckill Price",
+    "totalStock": "Total Stock",
+    "soldProgress": "Sold / Limit",
+    "perUserLimit": "Per-user Limit",
+    "validFrom": "Start Time",
+    "validUntil": "End Time",
+    "validRange": "Activity Window",
+    "status": "Status",
+    "statusLabel": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "button": {
+      "create": "New Seckill Activity",
+      "update": "Edit Seckill Activity"
+    }
   }
 }

@@ -99,7 +99,8 @@
     "lowStock": "Low-Stock Management",
     "stockAlert": "Stock Alert Management",
     "promotion": "Promotion Management",
-    "stockOpLog": "Stock Op Logs",
-    "paymentChannel": "Payment Channels"
+    "paymentChannel": "Payment Channels",
+    "seckill": "Seckill Management",
+    "stockOpLog": "Stock Op Logs"
   }
 }

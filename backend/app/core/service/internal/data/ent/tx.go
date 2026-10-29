@@ -162,6 +162,8 @@ type Tx struct {
 	Script *ScriptClient
 	// ScriptLog is the client for interacting with the ScriptLog builders.
 	ScriptLog *ScriptLogClient
+	// SeckillActivity is the client for interacting with the SeckillActivity builders.
+	SeckillActivity *SeckillActivityClient
 	// Shipment is the client for interacting with the Shipment builders.
 	Shipment *ShipmentClient
 	// ShippingAddress is the client for interacting with the ShippingAddress builders.
@@ -408,6 +410,7 @@ func (tx *Tx) init() {
 	tx.RolePermission = NewRolePermissionClient(tx.config)
 	tx.Script = NewScriptClient(tx.config)
 	tx.ScriptLog = NewScriptLogClient(tx.config)
+	tx.SeckillActivity = NewSeckillActivityClient(tx.config)
 	tx.Shipment = NewShipmentClient(tx.config)
 	tx.ShippingAddress = NewShippingAddressClient(tx.config)
 	tx.ShippingRate = NewShippingRateClient(tx.config)

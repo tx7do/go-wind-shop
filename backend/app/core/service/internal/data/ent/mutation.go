@@ -85,6 +85,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-shop/app/core/service/internal/data/ent/script"
 	"go-wind-shop/app/core/service/internal/data/ent/scriptlog"
+	"go-wind-shop/app/core/service/internal/data/ent/seckillactivity"
 	"go-wind-shop/app/core/service/internal/data/ent/shipment"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingaddress"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingrate"
@@ -196,6 +197,7 @@ const (
 	TypeRolePermission                   = "RolePermission"
 	TypeScript                           = "Script"
 	TypeScriptLog                        = "ScriptLog"
+	TypeSeckillActivity                  = "SeckillActivity"
 	TypeShipment                         = "Shipment"
 	TypeShippingAddress                  = "ShippingAddress"
 	TypeShippingRate                     = "ShippingRate"
@@ -112160,6 +112162,1846 @@ func (m *ScriptLogMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *ScriptLogMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown ScriptLog edge %s", name)
+}
+
+// SeckillActivityMutation represents an operation that mutates the SeckillActivity nodes in the graph.
+type SeckillActivityMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *uint32
+	created_at        *time.Time
+	updated_at        *time.Time
+	deleted_at        *time.Time
+	created_by        *uint32
+	addcreated_by     *int32
+	updated_by        *uint32
+	addupdated_by     *int32
+	deleted_by        *uint32
+	adddeleted_by     *int32
+	tenant_id         *uint32
+	addtenant_id      *int32
+	name              *string
+	sku_id            *uint32
+	addsku_id         *int32
+	seckill_price     *int64
+	addseckill_price  *int64
+	total_stock       *int32
+	addtotal_stock    *int32
+	sold_count        *int32
+	addsold_count     *int32
+	per_user_limit    *int32
+	addper_user_limit *int32
+	priority          *int32
+	addpriority       *int32
+	valid_from        *time.Time
+	valid_until       *time.Time
+	currency          *string
+	status            *seckillactivity.Status
+	clearedFields     map[string]struct{}
+	done              bool
+	oldValue          func(context.Context) (*SeckillActivity, error)
+	predicates        []predicate.SeckillActivity
+}
+
+var _ ent.Mutation = (*SeckillActivityMutation)(nil)
+
+// seckillactivityOption allows management of the mutation configuration using functional options.
+type seckillactivityOption func(*SeckillActivityMutation)
+
+// newSeckillActivityMutation creates new mutation for the SeckillActivity entity.
+func newSeckillActivityMutation(c config, op Op, opts ...seckillactivityOption) *SeckillActivityMutation {
+	m := &SeckillActivityMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeSeckillActivity,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withSeckillActivityID sets the ID field of the mutation.
+func withSeckillActivityID(id uint32) seckillactivityOption {
+	return func(m *SeckillActivityMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *SeckillActivity
+		)
+		m.oldValue = func(ctx context.Context) (*SeckillActivity, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().SeckillActivity.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withSeckillActivity sets the old SeckillActivity of the mutation.
+func withSeckillActivity(node *SeckillActivity) seckillactivityOption {
+	return func(m *SeckillActivityMutation) {
+		m.oldValue = func(context.Context) (*SeckillActivity, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m SeckillActivityMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m SeckillActivityMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of SeckillActivity entities.
+func (m *SeckillActivityMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *SeckillActivityMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *SeckillActivityMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().SeckillActivity.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *SeckillActivityMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *SeckillActivityMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *SeckillActivityMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[seckillactivity.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *SeckillActivityMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[seckillactivity.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *SeckillActivityMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, seckillactivity.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *SeckillActivityMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *SeckillActivityMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *SeckillActivityMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[seckillactivity.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *SeckillActivityMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[seckillactivity.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *SeckillActivityMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, seckillactivity.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *SeckillActivityMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *SeckillActivityMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *SeckillActivityMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[seckillactivity.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *SeckillActivityMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[seckillactivity.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *SeckillActivityMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, seckillactivity.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *SeckillActivityMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *SeckillActivityMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *SeckillActivityMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *SeckillActivityMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *SeckillActivityMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[seckillactivity.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *SeckillActivityMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[seckillactivity.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *SeckillActivityMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, seckillactivity.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *SeckillActivityMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *SeckillActivityMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *SeckillActivityMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *SeckillActivityMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *SeckillActivityMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[seckillactivity.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *SeckillActivityMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[seckillactivity.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *SeckillActivityMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, seckillactivity.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *SeckillActivityMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *SeckillActivityMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *SeckillActivityMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *SeckillActivityMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *SeckillActivityMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[seckillactivity.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *SeckillActivityMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[seckillactivity.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *SeckillActivityMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, seckillactivity.FieldDeletedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *SeckillActivityMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *SeckillActivityMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *SeckillActivityMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *SeckillActivityMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *SeckillActivityMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[seckillactivity.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *SeckillActivityMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[seckillactivity.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *SeckillActivityMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, seckillactivity.FieldTenantID)
+}
+
+// SetName sets the "name" field.
+func (m *SeckillActivityMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *SeckillActivityMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *SeckillActivityMutation) ResetName() {
+	m.name = nil
+}
+
+// SetSkuID sets the "sku_id" field.
+func (m *SeckillActivityMutation) SetSkuID(u uint32) {
+	m.sku_id = &u
+	m.addsku_id = nil
+}
+
+// SkuID returns the value of the "sku_id" field in the mutation.
+func (m *SeckillActivityMutation) SkuID() (r uint32, exists bool) {
+	v := m.sku_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSkuID returns the old "sku_id" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldSkuID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSkuID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSkuID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSkuID: %w", err)
+	}
+	return oldValue.SkuID, nil
+}
+
+// AddSkuID adds u to the "sku_id" field.
+func (m *SeckillActivityMutation) AddSkuID(u int32) {
+	if m.addsku_id != nil {
+		*m.addsku_id += u
+	} else {
+		m.addsku_id = &u
+	}
+}
+
+// AddedSkuID returns the value that was added to the "sku_id" field in this mutation.
+func (m *SeckillActivityMutation) AddedSkuID() (r int32, exists bool) {
+	v := m.addsku_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearSkuID clears the value of the "sku_id" field.
+func (m *SeckillActivityMutation) ClearSkuID() {
+	m.sku_id = nil
+	m.addsku_id = nil
+	m.clearedFields[seckillactivity.FieldSkuID] = struct{}{}
+}
+
+// SkuIDCleared returns if the "sku_id" field was cleared in this mutation.
+func (m *SeckillActivityMutation) SkuIDCleared() bool {
+	_, ok := m.clearedFields[seckillactivity.FieldSkuID]
+	return ok
+}
+
+// ResetSkuID resets all changes to the "sku_id" field.
+func (m *SeckillActivityMutation) ResetSkuID() {
+	m.sku_id = nil
+	m.addsku_id = nil
+	delete(m.clearedFields, seckillactivity.FieldSkuID)
+}
+
+// SetSeckillPrice sets the "seckill_price" field.
+func (m *SeckillActivityMutation) SetSeckillPrice(i int64) {
+	m.seckill_price = &i
+	m.addseckill_price = nil
+}
+
+// SeckillPrice returns the value of the "seckill_price" field in the mutation.
+func (m *SeckillActivityMutation) SeckillPrice() (r int64, exists bool) {
+	v := m.seckill_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSeckillPrice returns the old "seckill_price" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldSeckillPrice(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSeckillPrice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSeckillPrice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSeckillPrice: %w", err)
+	}
+	return oldValue.SeckillPrice, nil
+}
+
+// AddSeckillPrice adds i to the "seckill_price" field.
+func (m *SeckillActivityMutation) AddSeckillPrice(i int64) {
+	if m.addseckill_price != nil {
+		*m.addseckill_price += i
+	} else {
+		m.addseckill_price = &i
+	}
+}
+
+// AddedSeckillPrice returns the value that was added to the "seckill_price" field in this mutation.
+func (m *SeckillActivityMutation) AddedSeckillPrice() (r int64, exists bool) {
+	v := m.addseckill_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearSeckillPrice clears the value of the "seckill_price" field.
+func (m *SeckillActivityMutation) ClearSeckillPrice() {
+	m.seckill_price = nil
+	m.addseckill_price = nil
+	m.clearedFields[seckillactivity.FieldSeckillPrice] = struct{}{}
+}
+
+// SeckillPriceCleared returns if the "seckill_price" field was cleared in this mutation.
+func (m *SeckillActivityMutation) SeckillPriceCleared() bool {
+	_, ok := m.clearedFields[seckillactivity.FieldSeckillPrice]
+	return ok
+}
+
+// ResetSeckillPrice resets all changes to the "seckill_price" field.
+func (m *SeckillActivityMutation) ResetSeckillPrice() {
+	m.seckill_price = nil
+	m.addseckill_price = nil
+	delete(m.clearedFields, seckillactivity.FieldSeckillPrice)
+}
+
+// SetTotalStock sets the "total_stock" field.
+func (m *SeckillActivityMutation) SetTotalStock(i int32) {
+	m.total_stock = &i
+	m.addtotal_stock = nil
+}
+
+// TotalStock returns the value of the "total_stock" field in the mutation.
+func (m *SeckillActivityMutation) TotalStock() (r int32, exists bool) {
+	v := m.total_stock
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTotalStock returns the old "total_stock" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldTotalStock(ctx context.Context) (v *int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTotalStock is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTotalStock requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTotalStock: %w", err)
+	}
+	return oldValue.TotalStock, nil
+}
+
+// AddTotalStock adds i to the "total_stock" field.
+func (m *SeckillActivityMutation) AddTotalStock(i int32) {
+	if m.addtotal_stock != nil {
+		*m.addtotal_stock += i
+	} else {
+		m.addtotal_stock = &i
+	}
+}
+
+// AddedTotalStock returns the value that was added to the "total_stock" field in this mutation.
+func (m *SeckillActivityMutation) AddedTotalStock() (r int32, exists bool) {
+	v := m.addtotal_stock
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTotalStock clears the value of the "total_stock" field.
+func (m *SeckillActivityMutation) ClearTotalStock() {
+	m.total_stock = nil
+	m.addtotal_stock = nil
+	m.clearedFields[seckillactivity.FieldTotalStock] = struct{}{}
+}
+
+// TotalStockCleared returns if the "total_stock" field was cleared in this mutation.
+func (m *SeckillActivityMutation) TotalStockCleared() bool {
+	_, ok := m.clearedFields[seckillactivity.FieldTotalStock]
+	return ok
+}
+
+// ResetTotalStock resets all changes to the "total_stock" field.
+func (m *SeckillActivityMutation) ResetTotalStock() {
+	m.total_stock = nil
+	m.addtotal_stock = nil
+	delete(m.clearedFields, seckillactivity.FieldTotalStock)
+}
+
+// SetSoldCount sets the "sold_count" field.
+func (m *SeckillActivityMutation) SetSoldCount(i int32) {
+	m.sold_count = &i
+	m.addsold_count = nil
+}
+
+// SoldCount returns the value of the "sold_count" field in the mutation.
+func (m *SeckillActivityMutation) SoldCount() (r int32, exists bool) {
+	v := m.sold_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSoldCount returns the old "sold_count" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldSoldCount(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSoldCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSoldCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSoldCount: %w", err)
+	}
+	return oldValue.SoldCount, nil
+}
+
+// AddSoldCount adds i to the "sold_count" field.
+func (m *SeckillActivityMutation) AddSoldCount(i int32) {
+	if m.addsold_count != nil {
+		*m.addsold_count += i
+	} else {
+		m.addsold_count = &i
+	}
+}
+
+// AddedSoldCount returns the value that was added to the "sold_count" field in this mutation.
+func (m *SeckillActivityMutation) AddedSoldCount() (r int32, exists bool) {
+	v := m.addsold_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetSoldCount resets all changes to the "sold_count" field.
+func (m *SeckillActivityMutation) ResetSoldCount() {
+	m.sold_count = nil
+	m.addsold_count = nil
+}
+
+// SetPerUserLimit sets the "per_user_limit" field.
+func (m *SeckillActivityMutation) SetPerUserLimit(i int32) {
+	m.per_user_limit = &i
+	m.addper_user_limit = nil
+}
+
+// PerUserLimit returns the value of the "per_user_limit" field in the mutation.
+func (m *SeckillActivityMutation) PerUserLimit() (r int32, exists bool) {
+	v := m.per_user_limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPerUserLimit returns the old "per_user_limit" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldPerUserLimit(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPerUserLimit is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPerUserLimit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPerUserLimit: %w", err)
+	}
+	return oldValue.PerUserLimit, nil
+}
+
+// AddPerUserLimit adds i to the "per_user_limit" field.
+func (m *SeckillActivityMutation) AddPerUserLimit(i int32) {
+	if m.addper_user_limit != nil {
+		*m.addper_user_limit += i
+	} else {
+		m.addper_user_limit = &i
+	}
+}
+
+// AddedPerUserLimit returns the value that was added to the "per_user_limit" field in this mutation.
+func (m *SeckillActivityMutation) AddedPerUserLimit() (r int32, exists bool) {
+	v := m.addper_user_limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPerUserLimit resets all changes to the "per_user_limit" field.
+func (m *SeckillActivityMutation) ResetPerUserLimit() {
+	m.per_user_limit = nil
+	m.addper_user_limit = nil
+}
+
+// SetPriority sets the "priority" field.
+func (m *SeckillActivityMutation) SetPriority(i int32) {
+	m.priority = &i
+	m.addpriority = nil
+}
+
+// Priority returns the value of the "priority" field in the mutation.
+func (m *SeckillActivityMutation) Priority() (r int32, exists bool) {
+	v := m.priority
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPriority returns the old "priority" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldPriority(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPriority is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPriority requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPriority: %w", err)
+	}
+	return oldValue.Priority, nil
+}
+
+// AddPriority adds i to the "priority" field.
+func (m *SeckillActivityMutation) AddPriority(i int32) {
+	if m.addpriority != nil {
+		*m.addpriority += i
+	} else {
+		m.addpriority = &i
+	}
+}
+
+// AddedPriority returns the value that was added to the "priority" field in this mutation.
+func (m *SeckillActivityMutation) AddedPriority() (r int32, exists bool) {
+	v := m.addpriority
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPriority resets all changes to the "priority" field.
+func (m *SeckillActivityMutation) ResetPriority() {
+	m.priority = nil
+	m.addpriority = nil
+}
+
+// SetValidFrom sets the "valid_from" field.
+func (m *SeckillActivityMutation) SetValidFrom(t time.Time) {
+	m.valid_from = &t
+}
+
+// ValidFrom returns the value of the "valid_from" field in the mutation.
+func (m *SeckillActivityMutation) ValidFrom() (r time.Time, exists bool) {
+	v := m.valid_from
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldValidFrom returns the old "valid_from" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldValidFrom(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldValidFrom is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldValidFrom requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldValidFrom: %w", err)
+	}
+	return oldValue.ValidFrom, nil
+}
+
+// ClearValidFrom clears the value of the "valid_from" field.
+func (m *SeckillActivityMutation) ClearValidFrom() {
+	m.valid_from = nil
+	m.clearedFields[seckillactivity.FieldValidFrom] = struct{}{}
+}
+
+// ValidFromCleared returns if the "valid_from" field was cleared in this mutation.
+func (m *SeckillActivityMutation) ValidFromCleared() bool {
+	_, ok := m.clearedFields[seckillactivity.FieldValidFrom]
+	return ok
+}
+
+// ResetValidFrom resets all changes to the "valid_from" field.
+func (m *SeckillActivityMutation) ResetValidFrom() {
+	m.valid_from = nil
+	delete(m.clearedFields, seckillactivity.FieldValidFrom)
+}
+
+// SetValidUntil sets the "valid_until" field.
+func (m *SeckillActivityMutation) SetValidUntil(t time.Time) {
+	m.valid_until = &t
+}
+
+// ValidUntil returns the value of the "valid_until" field in the mutation.
+func (m *SeckillActivityMutation) ValidUntil() (r time.Time, exists bool) {
+	v := m.valid_until
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldValidUntil returns the old "valid_until" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldValidUntil(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldValidUntil is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldValidUntil requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldValidUntil: %w", err)
+	}
+	return oldValue.ValidUntil, nil
+}
+
+// ClearValidUntil clears the value of the "valid_until" field.
+func (m *SeckillActivityMutation) ClearValidUntil() {
+	m.valid_until = nil
+	m.clearedFields[seckillactivity.FieldValidUntil] = struct{}{}
+}
+
+// ValidUntilCleared returns if the "valid_until" field was cleared in this mutation.
+func (m *SeckillActivityMutation) ValidUntilCleared() bool {
+	_, ok := m.clearedFields[seckillactivity.FieldValidUntil]
+	return ok
+}
+
+// ResetValidUntil resets all changes to the "valid_until" field.
+func (m *SeckillActivityMutation) ResetValidUntil() {
+	m.valid_until = nil
+	delete(m.clearedFields, seckillactivity.FieldValidUntil)
+}
+
+// SetCurrency sets the "currency" field.
+func (m *SeckillActivityMutation) SetCurrency(s string) {
+	m.currency = &s
+}
+
+// Currency returns the value of the "currency" field in the mutation.
+func (m *SeckillActivityMutation) Currency() (r string, exists bool) {
+	v := m.currency
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrency returns the old "currency" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldCurrency(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrency is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrency requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrency: %w", err)
+	}
+	return oldValue.Currency, nil
+}
+
+// ResetCurrency resets all changes to the "currency" field.
+func (m *SeckillActivityMutation) ResetCurrency() {
+	m.currency = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *SeckillActivityMutation) SetStatus(s seckillactivity.Status) {
+	m.status = &s
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *SeckillActivityMutation) Status() (r seckillactivity.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the SeckillActivity entity.
+// If the SeckillActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SeckillActivityMutation) OldStatus(ctx context.Context) (v *seckillactivity.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *SeckillActivityMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[seckillactivity.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *SeckillActivityMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[seckillactivity.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *SeckillActivityMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, seckillactivity.FieldStatus)
+}
+
+// Where appends a list predicates to the SeckillActivityMutation builder.
+func (m *SeckillActivityMutation) Where(ps ...predicate.SeckillActivity) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the SeckillActivityMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *SeckillActivityMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.SeckillActivity, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *SeckillActivityMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *SeckillActivityMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (SeckillActivity).
+func (m *SeckillActivityMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *SeckillActivityMutation) Fields() []string {
+	fields := make([]string, 0, 18)
+	if m.created_at != nil {
+		fields = append(fields, seckillactivity.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, seckillactivity.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, seckillactivity.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, seckillactivity.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, seckillactivity.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, seckillactivity.FieldDeletedBy)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, seckillactivity.FieldTenantID)
+	}
+	if m.name != nil {
+		fields = append(fields, seckillactivity.FieldName)
+	}
+	if m.sku_id != nil {
+		fields = append(fields, seckillactivity.FieldSkuID)
+	}
+	if m.seckill_price != nil {
+		fields = append(fields, seckillactivity.FieldSeckillPrice)
+	}
+	if m.total_stock != nil {
+		fields = append(fields, seckillactivity.FieldTotalStock)
+	}
+	if m.sold_count != nil {
+		fields = append(fields, seckillactivity.FieldSoldCount)
+	}
+	if m.per_user_limit != nil {
+		fields = append(fields, seckillactivity.FieldPerUserLimit)
+	}
+	if m.priority != nil {
+		fields = append(fields, seckillactivity.FieldPriority)
+	}
+	if m.valid_from != nil {
+		fields = append(fields, seckillactivity.FieldValidFrom)
+	}
+	if m.valid_until != nil {
+		fields = append(fields, seckillactivity.FieldValidUntil)
+	}
+	if m.currency != nil {
+		fields = append(fields, seckillactivity.FieldCurrency)
+	}
+	if m.status != nil {
+		fields = append(fields, seckillactivity.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *SeckillActivityMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case seckillactivity.FieldCreatedAt:
+		return m.CreatedAt()
+	case seckillactivity.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case seckillactivity.FieldDeletedAt:
+		return m.DeletedAt()
+	case seckillactivity.FieldCreatedBy:
+		return m.CreatedBy()
+	case seckillactivity.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case seckillactivity.FieldDeletedBy:
+		return m.DeletedBy()
+	case seckillactivity.FieldTenantID:
+		return m.TenantID()
+	case seckillactivity.FieldName:
+		return m.Name()
+	case seckillactivity.FieldSkuID:
+		return m.SkuID()
+	case seckillactivity.FieldSeckillPrice:
+		return m.SeckillPrice()
+	case seckillactivity.FieldTotalStock:
+		return m.TotalStock()
+	case seckillactivity.FieldSoldCount:
+		return m.SoldCount()
+	case seckillactivity.FieldPerUserLimit:
+		return m.PerUserLimit()
+	case seckillactivity.FieldPriority:
+		return m.Priority()
+	case seckillactivity.FieldValidFrom:
+		return m.ValidFrom()
+	case seckillactivity.FieldValidUntil:
+		return m.ValidUntil()
+	case seckillactivity.FieldCurrency:
+		return m.Currency()
+	case seckillactivity.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *SeckillActivityMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case seckillactivity.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case seckillactivity.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case seckillactivity.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case seckillactivity.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case seckillactivity.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case seckillactivity.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case seckillactivity.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case seckillactivity.FieldName:
+		return m.OldName(ctx)
+	case seckillactivity.FieldSkuID:
+		return m.OldSkuID(ctx)
+	case seckillactivity.FieldSeckillPrice:
+		return m.OldSeckillPrice(ctx)
+	case seckillactivity.FieldTotalStock:
+		return m.OldTotalStock(ctx)
+	case seckillactivity.FieldSoldCount:
+		return m.OldSoldCount(ctx)
+	case seckillactivity.FieldPerUserLimit:
+		return m.OldPerUserLimit(ctx)
+	case seckillactivity.FieldPriority:
+		return m.OldPriority(ctx)
+	case seckillactivity.FieldValidFrom:
+		return m.OldValidFrom(ctx)
+	case seckillactivity.FieldValidUntil:
+		return m.OldValidUntil(ctx)
+	case seckillactivity.FieldCurrency:
+		return m.OldCurrency(ctx)
+	case seckillactivity.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown SeckillActivity field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SeckillActivityMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case seckillactivity.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case seckillactivity.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case seckillactivity.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case seckillactivity.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case seckillactivity.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case seckillactivity.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case seckillactivity.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case seckillactivity.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case seckillactivity.FieldSkuID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSkuID(v)
+		return nil
+	case seckillactivity.FieldSeckillPrice:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSeckillPrice(v)
+		return nil
+	case seckillactivity.FieldTotalStock:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTotalStock(v)
+		return nil
+	case seckillactivity.FieldSoldCount:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSoldCount(v)
+		return nil
+	case seckillactivity.FieldPerUserLimit:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPerUserLimit(v)
+		return nil
+	case seckillactivity.FieldPriority:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPriority(v)
+		return nil
+	case seckillactivity.FieldValidFrom:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetValidFrom(v)
+		return nil
+	case seckillactivity.FieldValidUntil:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetValidUntil(v)
+		return nil
+	case seckillactivity.FieldCurrency:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrency(v)
+		return nil
+	case seckillactivity.FieldStatus:
+		v, ok := value.(seckillactivity.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SeckillActivity field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *SeckillActivityMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, seckillactivity.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, seckillactivity.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, seckillactivity.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, seckillactivity.FieldTenantID)
+	}
+	if m.addsku_id != nil {
+		fields = append(fields, seckillactivity.FieldSkuID)
+	}
+	if m.addseckill_price != nil {
+		fields = append(fields, seckillactivity.FieldSeckillPrice)
+	}
+	if m.addtotal_stock != nil {
+		fields = append(fields, seckillactivity.FieldTotalStock)
+	}
+	if m.addsold_count != nil {
+		fields = append(fields, seckillactivity.FieldSoldCount)
+	}
+	if m.addper_user_limit != nil {
+		fields = append(fields, seckillactivity.FieldPerUserLimit)
+	}
+	if m.addpriority != nil {
+		fields = append(fields, seckillactivity.FieldPriority)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *SeckillActivityMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case seckillactivity.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case seckillactivity.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case seckillactivity.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case seckillactivity.FieldTenantID:
+		return m.AddedTenantID()
+	case seckillactivity.FieldSkuID:
+		return m.AddedSkuID()
+	case seckillactivity.FieldSeckillPrice:
+		return m.AddedSeckillPrice()
+	case seckillactivity.FieldTotalStock:
+		return m.AddedTotalStock()
+	case seckillactivity.FieldSoldCount:
+		return m.AddedSoldCount()
+	case seckillactivity.FieldPerUserLimit:
+		return m.AddedPerUserLimit()
+	case seckillactivity.FieldPriority:
+		return m.AddedPriority()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *SeckillActivityMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case seckillactivity.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case seckillactivity.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case seckillactivity.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case seckillactivity.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case seckillactivity.FieldSkuID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSkuID(v)
+		return nil
+	case seckillactivity.FieldSeckillPrice:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSeckillPrice(v)
+		return nil
+	case seckillactivity.FieldTotalStock:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTotalStock(v)
+		return nil
+	case seckillactivity.FieldSoldCount:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSoldCount(v)
+		return nil
+	case seckillactivity.FieldPerUserLimit:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPerUserLimit(v)
+		return nil
+	case seckillactivity.FieldPriority:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPriority(v)
+		return nil
+	}
+	return fmt.Errorf("unknown SeckillActivity numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *SeckillActivityMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(seckillactivity.FieldCreatedAt) {
+		fields = append(fields, seckillactivity.FieldCreatedAt)
+	}
+	if m.FieldCleared(seckillactivity.FieldUpdatedAt) {
+		fields = append(fields, seckillactivity.FieldUpdatedAt)
+	}
+	if m.FieldCleared(seckillactivity.FieldDeletedAt) {
+		fields = append(fields, seckillactivity.FieldDeletedAt)
+	}
+	if m.FieldCleared(seckillactivity.FieldCreatedBy) {
+		fields = append(fields, seckillactivity.FieldCreatedBy)
+	}
+	if m.FieldCleared(seckillactivity.FieldUpdatedBy) {
+		fields = append(fields, seckillactivity.FieldUpdatedBy)
+	}
+	if m.FieldCleared(seckillactivity.FieldDeletedBy) {
+		fields = append(fields, seckillactivity.FieldDeletedBy)
+	}
+	if m.FieldCleared(seckillactivity.FieldTenantID) {
+		fields = append(fields, seckillactivity.FieldTenantID)
+	}
+	if m.FieldCleared(seckillactivity.FieldSkuID) {
+		fields = append(fields, seckillactivity.FieldSkuID)
+	}
+	if m.FieldCleared(seckillactivity.FieldSeckillPrice) {
+		fields = append(fields, seckillactivity.FieldSeckillPrice)
+	}
+	if m.FieldCleared(seckillactivity.FieldTotalStock) {
+		fields = append(fields, seckillactivity.FieldTotalStock)
+	}
+	if m.FieldCleared(seckillactivity.FieldValidFrom) {
+		fields = append(fields, seckillactivity.FieldValidFrom)
+	}
+	if m.FieldCleared(seckillactivity.FieldValidUntil) {
+		fields = append(fields, seckillactivity.FieldValidUntil)
+	}
+	if m.FieldCleared(seckillactivity.FieldStatus) {
+		fields = append(fields, seckillactivity.FieldStatus)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *SeckillActivityMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *SeckillActivityMutation) ClearField(name string) error {
+	switch name {
+	case seckillactivity.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case seckillactivity.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case seckillactivity.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case seckillactivity.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case seckillactivity.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case seckillactivity.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case seckillactivity.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case seckillactivity.FieldSkuID:
+		m.ClearSkuID()
+		return nil
+	case seckillactivity.FieldSeckillPrice:
+		m.ClearSeckillPrice()
+		return nil
+	case seckillactivity.FieldTotalStock:
+		m.ClearTotalStock()
+		return nil
+	case seckillactivity.FieldValidFrom:
+		m.ClearValidFrom()
+		return nil
+	case seckillactivity.FieldValidUntil:
+		m.ClearValidUntil()
+		return nil
+	case seckillactivity.FieldStatus:
+		m.ClearStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown SeckillActivity nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *SeckillActivityMutation) ResetField(name string) error {
+	switch name {
+	case seckillactivity.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case seckillactivity.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case seckillactivity.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case seckillactivity.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case seckillactivity.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case seckillactivity.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case seckillactivity.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case seckillactivity.FieldName:
+		m.ResetName()
+		return nil
+	case seckillactivity.FieldSkuID:
+		m.ResetSkuID()
+		return nil
+	case seckillactivity.FieldSeckillPrice:
+		m.ResetSeckillPrice()
+		return nil
+	case seckillactivity.FieldTotalStock:
+		m.ResetTotalStock()
+		return nil
+	case seckillactivity.FieldSoldCount:
+		m.ResetSoldCount()
+		return nil
+	case seckillactivity.FieldPerUserLimit:
+		m.ResetPerUserLimit()
+		return nil
+	case seckillactivity.FieldPriority:
+		m.ResetPriority()
+		return nil
+	case seckillactivity.FieldValidFrom:
+		m.ResetValidFrom()
+		return nil
+	case seckillactivity.FieldValidUntil:
+		m.ResetValidUntil()
+		return nil
+	case seckillactivity.FieldCurrency:
+		m.ResetCurrency()
+		return nil
+	case seckillactivity.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown SeckillActivity field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *SeckillActivityMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *SeckillActivityMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *SeckillActivityMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *SeckillActivityMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *SeckillActivityMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *SeckillActivityMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *SeckillActivityMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown SeckillActivity unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *SeckillActivityMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown SeckillActivity edge %s", name)
 }
 
 // ShipmentMutation represents an operation that mutates the Shipment nodes in the graph.

@@ -81,6 +81,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/schema"
 	"go-wind-shop/app/core/service/internal/data/ent/script"
 	"go-wind-shop/app/core/service/internal/data/ent/scriptlog"
+	"go-wind-shop/app/core/service/internal/data/ent/seckillactivity"
 	"go-wind-shop/app/core/service/internal/data/ent/shipment"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingaddress"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingrate"
@@ -2052,6 +2053,58 @@ func init() {
 	scriptlogDescID := scriptlogMixinFields0[0].Descriptor()
 	// scriptlog.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	scriptlog.IDValidator = scriptlogDescID.Validators[0].(func(uint32) error)
+	seckillactivityMixin := schema.SeckillActivity{}.Mixin()
+	seckillactivity.Policy = privacy.NewPolicies(seckillactivityMixin[3], schema.SeckillActivity{})
+	seckillactivity.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := seckillactivity.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	seckillactivityMixinFields0 := seckillactivityMixin[0].Fields()
+	_ = seckillactivityMixinFields0
+	seckillactivityMixinFields3 := seckillactivityMixin[3].Fields()
+	_ = seckillactivityMixinFields3
+	seckillactivityFields := schema.SeckillActivity{}.Fields()
+	_ = seckillactivityFields
+	// seckillactivityDescTenantID is the schema descriptor for tenant_id field.
+	seckillactivityDescTenantID := seckillactivityMixinFields3[0].Descriptor()
+	// seckillactivity.DefaultTenantID holds the default value on creation for the tenant_id field.
+	seckillactivity.DefaultTenantID = seckillactivityDescTenantID.Default.(uint32)
+	// seckillactivityDescName is the schema descriptor for name field.
+	seckillactivityDescName := seckillactivityFields[0].Descriptor()
+	// seckillactivity.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	seckillactivity.NameValidator = seckillactivityDescName.Validators[0].(func(string) error)
+	// seckillactivityDescSeckillPrice is the schema descriptor for seckill_price field.
+	seckillactivityDescSeckillPrice := seckillactivityFields[2].Descriptor()
+	// seckillactivity.DefaultSeckillPrice holds the default value on creation for the seckill_price field.
+	seckillactivity.DefaultSeckillPrice = seckillactivityDescSeckillPrice.Default.(int64)
+	// seckillactivityDescTotalStock is the schema descriptor for total_stock field.
+	seckillactivityDescTotalStock := seckillactivityFields[3].Descriptor()
+	// seckillactivity.DefaultTotalStock holds the default value on creation for the total_stock field.
+	seckillactivity.DefaultTotalStock = seckillactivityDescTotalStock.Default.(int32)
+	// seckillactivityDescSoldCount is the schema descriptor for sold_count field.
+	seckillactivityDescSoldCount := seckillactivityFields[4].Descriptor()
+	// seckillactivity.DefaultSoldCount holds the default value on creation for the sold_count field.
+	seckillactivity.DefaultSoldCount = seckillactivityDescSoldCount.Default.(int32)
+	// seckillactivityDescPerUserLimit is the schema descriptor for per_user_limit field.
+	seckillactivityDescPerUserLimit := seckillactivityFields[5].Descriptor()
+	// seckillactivity.DefaultPerUserLimit holds the default value on creation for the per_user_limit field.
+	seckillactivity.DefaultPerUserLimit = seckillactivityDescPerUserLimit.Default.(int32)
+	// seckillactivityDescPriority is the schema descriptor for priority field.
+	seckillactivityDescPriority := seckillactivityFields[6].Descriptor()
+	// seckillactivity.DefaultPriority holds the default value on creation for the priority field.
+	seckillactivity.DefaultPriority = seckillactivityDescPriority.Default.(int32)
+	// seckillactivityDescCurrency is the schema descriptor for currency field.
+	seckillactivityDescCurrency := seckillactivityFields[9].Descriptor()
+	// seckillactivity.DefaultCurrency holds the default value on creation for the currency field.
+	seckillactivity.DefaultCurrency = seckillactivityDescCurrency.Default.(string)
+	// seckillactivityDescID is the schema descriptor for id field.
+	seckillactivityDescID := seckillactivityMixinFields0[0].Descriptor()
+	// seckillactivity.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	seckillactivity.IDValidator = seckillactivityDescID.Validators[0].(func(uint32) error)
 	shipmentMixin := schema.Shipment{}.Mixin()
 	shipment.Policy = privacy.NewPolicies(shipmentMixin[3], schema.Shipment{})
 	shipment.Hooks[0] = func(next ent.Mutator) ent.Mutator {

@@ -908,6 +908,18 @@ func (f ScriptLogFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, e
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ScriptLogMutation", m)
 }
 
+// The SeckillActivityFunc type is an adapter to allow the use of ordinary
+// function as SeckillActivity mutator.
+type SeckillActivityFunc func(context.Context, *ent.SeckillActivityMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f SeckillActivityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.SeckillActivityMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.SeckillActivityMutation", m)
+}
+
 // The ShipmentFunc type is an adapter to allow the use of ordinary
 // function as Shipment mutator.
 type ShipmentFunc func(context.Context, *ent.ShipmentMutation) (ent.Value, error)

@@ -86,6 +86,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/rolepermission"
 	"go-wind-shop/app/core/service/internal/data/ent/script"
 	"go-wind-shop/app/core/service/internal/data/ent/scriptlog"
+	"go-wind-shop/app/core/service/internal/data/ent/seckillactivity"
 	"go-wind-shop/app/core/service/internal/data/ent/shipment"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingaddress"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingrate"
@@ -268,6 +269,8 @@ type Client struct {
 	Script *ScriptClient
 	// ScriptLog is the client for interacting with the ScriptLog builders.
 	ScriptLog *ScriptLogClient
+	// SeckillActivity is the client for interacting with the SeckillActivity builders.
+	SeckillActivity *SeckillActivityClient
 	// Shipment is the client for interacting with the Shipment builders.
 	Shipment *ShipmentClient
 	// ShippingAddress is the client for interacting with the ShippingAddress builders.
@@ -394,6 +397,7 @@ func (c *Client) init() {
 	c.RolePermission = NewRolePermissionClient(c.config)
 	c.Script = NewScriptClient(c.config)
 	c.ScriptLog = NewScriptLogClient(c.config)
+	c.SeckillActivity = NewSeckillActivityClient(c.config)
 	c.Shipment = NewShipmentClient(c.config)
 	c.ShippingAddress = NewShippingAddressClient(c.config)
 	c.ShippingRate = NewShippingRateClient(c.config)
@@ -581,6 +585,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		RolePermission:                   NewRolePermissionClient(cfg),
 		Script:                           NewScriptClient(cfg),
 		ScriptLog:                        NewScriptLogClient(cfg),
+		SeckillActivity:                  NewSeckillActivityClient(cfg),
 		Shipment:                         NewShipmentClient(cfg),
 		ShippingAddress:                  NewShippingAddressClient(cfg),
 		ShippingRate:                     NewShippingRateClient(cfg),
@@ -695,6 +700,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		RolePermission:                   NewRolePermissionClient(cfg),
 		Script:                           NewScriptClient(cfg),
 		ScriptLog:                        NewScriptLogClient(cfg),
+		SeckillActivity:                  NewSeckillActivityClient(cfg),
 		Shipment:                         NewShipmentClient(cfg),
 		ShippingAddress:                  NewShippingAddressClient(cfg),
 		ShippingRate:                     NewShippingRateClient(cfg),
@@ -761,10 +767,11 @@ func (c *Client) Use(hooks ...Hook) {
 		c.Position, c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
 		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
 		c.ProductTranslation, c.Promotion, c.Role, c.RoleMetadata, c.RolePermission,
-		c.Script, c.ScriptLog, c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
-		c.SkuAttributeCombination, c.SkuPrice, c.StockAlert, c.StockOpLog, c.SysConfig,
-		c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential,
-		c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
+		c.Script, c.ScriptLog, c.SeckillActivity, c.Shipment, c.ShippingAddress,
+		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.StockAlert,
+		c.StockOpLog, c.SysConfig, c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon,
+		c.UserCredential, c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Wishlist,
 	} {
 		n.Use(hooks...)
 	}
@@ -791,10 +798,11 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.Position, c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
 		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
 		c.ProductTranslation, c.Promotion, c.Role, c.RoleMetadata, c.RolePermission,
-		c.Script, c.ScriptLog, c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
-		c.SkuAttributeCombination, c.SkuPrice, c.StockAlert, c.StockOpLog, c.SysConfig,
-		c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon, c.UserCredential,
-		c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole, c.Wishlist,
+		c.Script, c.ScriptLog, c.SeckillActivity, c.Shipment, c.ShippingAddress,
+		c.ShippingRate, c.Sku, c.SkuAttributeCombination, c.SkuPrice, c.StockAlert,
+		c.StockOpLog, c.SysConfig, c.Task, c.TaxRate, c.Tenant, c.User, c.UserCoupon,
+		c.UserCredential, c.UserMfaFactor, c.UserOrgUnit, c.UserPosition, c.UserRole,
+		c.Wishlist,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -953,6 +961,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Script.mutate(ctx, m)
 	case *ScriptLogMutation:
 		return c.ScriptLog.mutate(ctx, m)
+	case *SeckillActivityMutation:
+		return c.SeckillActivity.mutate(ctx, m)
 	case *ShipmentMutation:
 		return c.Shipment.mutate(ctx, m)
 	case *ShippingAddressMutation:
@@ -11418,6 +11428,140 @@ func (c *ScriptLogClient) mutate(ctx context.Context, m *ScriptLogMutation) (Val
 	}
 }
 
+// SeckillActivityClient is a client for the SeckillActivity schema.
+type SeckillActivityClient struct {
+	config
+}
+
+// NewSeckillActivityClient returns a client for the SeckillActivity from the given config.
+func NewSeckillActivityClient(c config) *SeckillActivityClient {
+	return &SeckillActivityClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `seckillactivity.Hooks(f(g(h())))`.
+func (c *SeckillActivityClient) Use(hooks ...Hook) {
+	c.hooks.SeckillActivity = append(c.hooks.SeckillActivity, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `seckillactivity.Intercept(f(g(h())))`.
+func (c *SeckillActivityClient) Intercept(interceptors ...Interceptor) {
+	c.inters.SeckillActivity = append(c.inters.SeckillActivity, interceptors...)
+}
+
+// Create returns a builder for creating a SeckillActivity entity.
+func (c *SeckillActivityClient) Create() *SeckillActivityCreate {
+	mutation := newSeckillActivityMutation(c.config, OpCreate)
+	return &SeckillActivityCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of SeckillActivity entities.
+func (c *SeckillActivityClient) CreateBulk(builders ...*SeckillActivityCreate) *SeckillActivityCreateBulk {
+	return &SeckillActivityCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *SeckillActivityClient) MapCreateBulk(slice any, setFunc func(*SeckillActivityCreate, int)) *SeckillActivityCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &SeckillActivityCreateBulk{err: fmt.Errorf("calling to SeckillActivityClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*SeckillActivityCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &SeckillActivityCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for SeckillActivity.
+func (c *SeckillActivityClient) Update() *SeckillActivityUpdate {
+	mutation := newSeckillActivityMutation(c.config, OpUpdate)
+	return &SeckillActivityUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *SeckillActivityClient) UpdateOne(_m *SeckillActivity) *SeckillActivityUpdateOne {
+	mutation := newSeckillActivityMutation(c.config, OpUpdateOne, withSeckillActivity(_m))
+	return &SeckillActivityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *SeckillActivityClient) UpdateOneID(id uint32) *SeckillActivityUpdateOne {
+	mutation := newSeckillActivityMutation(c.config, OpUpdateOne, withSeckillActivityID(id))
+	return &SeckillActivityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for SeckillActivity.
+func (c *SeckillActivityClient) Delete() *SeckillActivityDelete {
+	mutation := newSeckillActivityMutation(c.config, OpDelete)
+	return &SeckillActivityDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *SeckillActivityClient) DeleteOne(_m *SeckillActivity) *SeckillActivityDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *SeckillActivityClient) DeleteOneID(id uint32) *SeckillActivityDeleteOne {
+	builder := c.Delete().Where(seckillactivity.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &SeckillActivityDeleteOne{builder}
+}
+
+// Query returns a query builder for SeckillActivity.
+func (c *SeckillActivityClient) Query() *SeckillActivityQuery {
+	return &SeckillActivityQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeSeckillActivity},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a SeckillActivity entity by its id.
+func (c *SeckillActivityClient) Get(ctx context.Context, id uint32) (*SeckillActivity, error) {
+	return c.Query().Where(seckillactivity.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *SeckillActivityClient) GetX(ctx context.Context, id uint32) *SeckillActivity {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *SeckillActivityClient) Hooks() []Hook {
+	hooks := c.hooks.SeckillActivity
+	return append(hooks[:len(hooks):len(hooks)], seckillactivity.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *SeckillActivityClient) Interceptors() []Interceptor {
+	return c.inters.SeckillActivity
+}
+
+func (c *SeckillActivityClient) mutate(ctx context.Context, m *SeckillActivityMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&SeckillActivityCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&SeckillActivityUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&SeckillActivityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&SeckillActivityDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown SeckillActivity mutation op: %q", m.Op())
+	}
+}
+
 // ShipmentClient is a client for the Shipment schema.
 type ShipmentClient struct {
 	config
@@ -14125,10 +14269,11 @@ type (
 		PlanModule, PlanQuota, PolicyEvaluationLog, Position, Product,
 		ProductAttribute, ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Promotion, Role,
-		RoleMetadata, RolePermission, Script, ScriptLog, Shipment, ShippingAddress,
-		ShippingRate, Sku, SkuAttributeCombination, SkuPrice, StockAlert, StockOpLog,
-		SysConfig, Task, TaxRate, Tenant, User, UserCoupon, UserCredential,
-		UserMfaFactor, UserOrgUnit, UserPosition, UserRole, Wishlist []ent.Hook
+		RoleMetadata, RolePermission, Script, ScriptLog, SeckillActivity, Shipment,
+		ShippingAddress, ShippingRate, Sku, SkuAttributeCombination, SkuPrice,
+		StockAlert, StockOpLog, SysConfig, Task, TaxRate, Tenant, User, UserCoupon,
+		UserCredential, UserMfaFactor, UserOrgUnit, UserPosition, UserRole,
+		Wishlist []ent.Hook
 	}
 	inters struct {
 		AccessKey, AiAgentApp, AiAgentRun, AiChunk, AiConversation, AiDoc,
@@ -14146,9 +14291,10 @@ type (
 		PlanModule, PlanQuota, PolicyEvaluationLog, Position, Product,
 		ProductAttribute, ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Promotion, Role,
-		RoleMetadata, RolePermission, Script, ScriptLog, Shipment, ShippingAddress,
-		ShippingRate, Sku, SkuAttributeCombination, SkuPrice, StockAlert, StockOpLog,
-		SysConfig, Task, TaxRate, Tenant, User, UserCoupon, UserCredential,
-		UserMfaFactor, UserOrgUnit, UserPosition, UserRole, Wishlist []ent.Interceptor
+		RoleMetadata, RolePermission, Script, ScriptLog, SeckillActivity, Shipment,
+		ShippingAddress, ShippingRate, Sku, SkuAttributeCombination, SkuPrice,
+		StockAlert, StockOpLog, SysConfig, Task, TaxRate, Tenant, User, UserCoupon,
+		UserCredential, UserMfaFactor, UserOrgUnit, UserPosition, UserRole,
+		Wishlist []ent.Interceptor
 	}
 )

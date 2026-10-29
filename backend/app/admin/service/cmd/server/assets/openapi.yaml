@@ -7833,6 +7833,234 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/mall/seckills:
+        get:
+            tags:
+                - SeckillActivityService
+            operationId: SeckillActivityService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.ListSeckillActivityResponse'
+        post:
+            tags:
+                - SeckillActivityService
+            operationId: SeckillActivityService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/catalog.service.v1.CreateSeckillActivityRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/mall/seckills/count:
+        get:
+            tags:
+                - SeckillActivityService
+            operationId: SeckillActivityService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.CountSeckillActivityResponse'
+    /admin/v1/mall/seckills/{id}:
+        get:
+            tags:
+                - SeckillActivityService
+            operationId: SeckillActivityService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.SeckillActivity'
+        put:
+            tags:
+                - SeckillActivityService
+            operationId: SeckillActivityService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/catalog.service.v1.UpdateSeckillActivityRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - SeckillActivityService
+            operationId: SeckillActivityService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/mall/shipments:
         get:
             tags:
@@ -17112,6 +17340,11 @@ components:
             properties:
                 count:
                     type: string
+        catalog.service.v1.CountSeckillActivityResponse:
+            type: object
+            properties:
+                count:
+                    type: string
         catalog.service.v1.CountSkuAttributeCombinationResponse:
             type: object
             properties:
@@ -17185,6 +17418,11 @@ components:
             properties:
                 data:
                     $ref: '#/components/schemas/catalog.service.v1.Promotion'
+        catalog.service.v1.CreateSeckillActivityRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/catalog.service.v1.SeckillActivity'
         catalog.service.v1.CreateSkuAttributeCombinationRequest:
             type: object
             properties:
@@ -17255,6 +17493,15 @@ components:
                     type: array
                     items:
                         $ref: '#/components/schemas/catalog.service.v1.Promotion'
+                total:
+                    type: string
+        catalog.service.v1.ListSeckillActivityResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.SeckillActivity'
                 total:
                     type: string
         catalog.service.v1.ListSkuAttributeCombinationResponse:
@@ -17699,6 +17946,79 @@ components:
                     description: 删除时间
                     format: date-time
             description: 促销活动
+        catalog.service.v1.SeckillActivity:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 活动ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 活动名称
+                skuId:
+                    type: integer
+                    description: 秒杀 SKU ID
+                    format: uint32
+                seckillPrice:
+                    type: string
+                    description: 秒杀价（最小货币单位，分）
+                totalStock:
+                    type: integer
+                    description: 秒杀总限量（件）
+                    format: int32
+                soldCount:
+                    type: integer
+                    description: 已抢购件数
+                    format: int32
+                perUserLimit:
+                    type: integer
+                    description: 每人限购件数（活动窗口内累计）
+                    format: int32
+                priority:
+                    type: integer
+                    description: 优先级（同 SKU 并发活动取最高者）
+                    format: int32
+                validFrom:
+                    type: string
+                    description: 生效时间
+                    format: date-time
+                validUntil:
+                    type: string
+                    description: 失效时间
+                    format: date-time
+                currency:
+                    type: string
+                    description: 币种
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - ACTIVE
+                        - INACTIVE
+                    type: string
+                    description: 活动状态
+                    format: enum
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+            description: 秒杀活动
         catalog.service.v1.Sku:
             type: object
             properties:
@@ -18085,6 +18405,20 @@ components:
                 allowMissing:
                     type: boolean
                     description: 允许缺失则插入
+        catalog.service.v1.UpdateSeckillActivityRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/catalog.service.v1.SeckillActivity'
+                updateMask:
+                    type: string
+                    format: field-mask
+                allowMissing:
+                    type: boolean
+                    description: 不存在时自动创建
         catalog.service.v1.UpdateSkuAttributeCombinationRequest:
             type: object
             properties:
@@ -23944,6 +24278,8 @@ tags:
       description: 脚本执行日志管理服务（平台管理员）
     - name: ScriptService
       description: 脚本管理服务（平台管理员）
+    - name: SeckillActivityService
+      description: 秒杀活动管理服务（admin 全 CRUD）
     - name: ServerMonitorService
       description: 服务监控查询服务（只读聚合视图；采集在 core 进程内完成）。
     - name: ShipmentService

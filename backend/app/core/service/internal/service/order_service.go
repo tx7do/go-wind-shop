@@ -365,10 +365,33 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 			return nil, err
 		}
 
+		// 2b-1. 秒杀价覆盖（最高优先级）：SKU 级限时限量活动，行锁扣减已售数
+		//       （防超卖）+ 每人限购校验。任一校验失败整事务回滚。
+		var seckillHit *ent.SeckillActivity
+		if skuId != nil {
+			if sk, skOk := activeSeckillInTx(ctx, tx, *skuId, time.Now()); skOk {
+				if sk.SeckillPrice != nil && *sk.SeckillPrice < unitPrice {
+					// 每人限购校验（窗口内累计，含本次数量）
+					if lErr := checkSeckillUserLimitInTx(ctx, tx, sk, userId, qty); lErr != nil {
+						err = lErr
+						return nil, err
+					}
+					// 行锁扣减已售数（防超卖，失败整事务回滚）
+					if dErr := deductSeckillInTx(ctx, tx, sk.ID); dErr != nil {
+						err = dErr
+						return nil, err
+					}
+					seckillHit = sk
+					unitPrice = *sk.SeckillPrice
+					s.log.Infof("seckill price applied for sku [%d]: %d (activity %d)", *skuId, unitPrice, sk.ID)
+				}
+			}
+		}
+
 		// 2b-2. 专价覆盖：取该商品当前生效、优先级最高的 SPECIAL_PRICE 活动
 		//       （与 PromotionService.QuoteOrderPromotions 试算同语义），仅当专价
 		//       低于现价时生效（不抬价）。订单项快照 unit_price 记录生效后价格。
-		if skuEnt.ProductID != nil {
+		if seckillHit == nil && skuEnt.ProductID != nil {
 			if sp, spOk := activeSpecialPriceInTx(ctx, tx, tenantId, *skuEnt.ProductID, currency, time.Now()); spOk && sp < unitPrice {
 				unitPrice = sp
 				s.log.Infof("special price applied for product [%d]: %d", *skuEnt.ProductID, sp)

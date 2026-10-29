@@ -186,6 +186,7 @@ func NewRestServer(
 	permissionAuditLogService *service.PermissionAuditLogService,
 
 	// register:rest-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
+	seckillService *service.SeckillService,
 ) *http.Server {
 	cfg := ctx.GetConfig()
 
@@ -307,6 +308,7 @@ func NewRestServer(
 	adminV1.RegisterFileServiceHTTPServer(srv, fileSvc)
 
 	// register:rest-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
+	adminV1.RegisterSeckillActivityServiceHTTPServer(srv, seckillService)
 
 	if cfg.GetServer().GetRest().GetEnableSwagger() {
 		swaggerUI.RegisterSwaggerUIServerWithOption(

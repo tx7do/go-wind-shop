@@ -147,6 +147,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	invoiceRepo := data.NewInvoiceRepo(ctx, entClient)
 
 	// ── register:repo ── 新模块仓储在此行后注册(make register 工具锚点,勿删)
+	seckillActivityRepo := data.NewSeckillActivityRepo(ctx, entClient)
 
 	// ═══════════════════════ 三、服务层(internal/service) ═══════════════════════
 
@@ -280,6 +281,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	scriptLogService := service.NewScriptLogService(ctx, scriptLogRepo)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
+	seckillActivityService := service.NewSeckillActivityService(ctx, seckillActivityRepo, entClient)
 
 	// ═══════════════════════ 四、传输层(internal/server) ═══════════════════════
 
@@ -342,6 +344,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		wishlistService,
 		orderService,
 		orderItemService,
+		seckillActivityService,
 		paymentChannelConfigService,
 		paymentTransactionService,
 		paymentRefundService,

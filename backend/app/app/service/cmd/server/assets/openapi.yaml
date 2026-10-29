@@ -2999,6 +2999,19 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/catalog.service.v1.QuoteOrderPromotionsResponse'
+    /app/v1/mall/seckills/active:
+        get:
+            tags:
+                - SeckillService
+            description: 当前生效中的秒杀列表（商品页秒杀价角标/倒计时；匿名可读）
+            operationId: SeckillService_ListActiveSeckills
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.ListSeckillActivityResponse'
     /app/v1/mall/shipments:
         get:
             tags:
@@ -4764,6 +4777,15 @@ components:
                         $ref: '#/components/schemas/catalog.service.v1.Promotion'
                 total:
                     type: string
+        catalog.service.v1.ListSeckillActivityResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.SeckillActivity'
+                total:
+                    type: string
         catalog.service.v1.ListSkuAttributeCombinationResponse:
             type: object
             properties:
@@ -5247,6 +5269,79 @@ components:
                 total:
                     type: integer
                     format: int32
+        catalog.service.v1.SeckillActivity:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 活动ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 活动名称
+                skuId:
+                    type: integer
+                    description: 秒杀 SKU ID
+                    format: uint32
+                seckillPrice:
+                    type: string
+                    description: 秒杀价（最小货币单位，分）
+                totalStock:
+                    type: integer
+                    description: 秒杀总限量（件）
+                    format: int32
+                soldCount:
+                    type: integer
+                    description: 已抢购件数
+                    format: int32
+                perUserLimit:
+                    type: integer
+                    description: 每人限购件数（活动窗口内累计）
+                    format: int32
+                priority:
+                    type: integer
+                    description: 优先级（同 SKU 并发活动取最高者）
+                    format: int32
+                validFrom:
+                    type: string
+                    description: 生效时间
+                    format: date-time
+                validUntil:
+                    type: string
+                    description: 失效时间
+                    format: date-time
+                currency:
+                    type: string
+                    description: 币种
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - ACTIVE
+                        - INACTIVE
+                    type: string
+                    description: 活动状态
+                    format: enum
+                tenantId:
+                    type: integer
+                    description: 租户ID
+                    format: uint32
+                createdBy:
+                    type: integer
+                    description: 创建者用户ID
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    description: 更新者用户ID
+                    format: uint32
+                createdAt:
+                    type: string
+                    description: 创建时间
+                    format: date-time
+                updatedAt:
+                    type: string
+                    description: 更新时间
+                    format: date-time
+            description: 秒杀活动
         catalog.service.v1.Sku:
             type: object
             properties:
@@ -7115,6 +7210,8 @@ tags:
       description: 商品前台服务
     - name: PromotionService
       description: 促销活动前台服务（C端只读）
+    - name: SeckillService
+      description: 秒杀活动前台服务（C端只读）
     - name: ShipmentService
       description: |-
         物流单前台服务（app 侧，买家只读查询自己订单的物流轨迹）

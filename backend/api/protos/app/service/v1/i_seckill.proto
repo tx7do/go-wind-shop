@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+
+import "catalog/service/v1/seckill.proto";
+
+// 秒杀活动前台服务（C端只读）
+service SeckillService {
+  // 当前生效中的秒杀列表（商品页秒杀价角标/倒计时；匿名可读）
+  rpc ListActiveSeckills (catalog.service.v1.ListActiveSeckillsRequest) returns (catalog.service.v1.ListSeckillActivityResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/seckills/active"
+    };
+  }
+}

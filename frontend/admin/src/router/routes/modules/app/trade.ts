@@ -181,6 +181,17 @@ const trade: RouteRecordRaw[] = [
         component: () => import("@/pages/app/trade/payment-channel/index.vue"),
       },
       {
+        path: "seckills",
+        name: "TradeSeckillManagement",
+        meta: {
+          order: 17,
+          icon: "lucide:zap",
+          title: "routes.trade.seckill",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/seckill/index.vue"),
+      },
+      {
         path: "stock-op-logs",
         name: "TradeStockOpLogManagement",
         meta: {

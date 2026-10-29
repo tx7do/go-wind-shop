@@ -487,6 +487,15 @@ func NewPaymentChannelConfigServiceClient(ctx *bootstrap.Context, r registry.Dis
 	return paymentV1.NewPaymentChannelConfigServiceClient(cli)
 }
 
+func NewSeckillServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.SeckillActivityServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return catalogV1.NewSeckillActivityServiceClient(cli)
+}
+
 func NewPromotionServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.PromotionServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {
