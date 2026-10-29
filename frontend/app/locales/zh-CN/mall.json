@@ -21,7 +21,8 @@
     "filterBrands": "品牌",
     "sortBy": "排序方式",
     "sortFeatured": "综合",
-    "sortLatest": "最新"
+    "sortLatest": "最新",
+    "title": "分类"
   },
   "product": {
     "addToCart": "加入购物车",
@@ -35,7 +36,10 @@
     "notFound": "未找到该商品。",
     "selectAttribute": "请选择",
     "skuUnavailable": "当前规格不可购买。",
-    "currencyCny": "￥"
+    "currencyCny": "￥",
+    "serviceAuthentic": "正品保障",
+    "serviceReturn": "七天无理由退货",
+    "serviceShipping": "极速发货"
   },
   "loading": "加载中…",
   "cart": {
@@ -115,5 +119,11 @@
   "groupon": {
     "tag": "拼团价",
     "tagSize": "{size}人成团"
+  },
+  "tab": {
+    "home": "首页",
+    "category": "分类",
+    "cart": "购物车",
+    "mine": "我的"
   }
 }

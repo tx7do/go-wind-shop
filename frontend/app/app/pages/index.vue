@@ -78,6 +78,18 @@ const featuredError = computed(() => featuredQuery.isError.value);
     <LayoutHeroBanner class="md:col-span-4" />
   </div>
 
+  <!-- 移动端搜索入口：假输入框样式，点击跳搜索页 -->
+  <div class="px-4 pt-3 md:hidden">
+    <NuxtLink
+      :to="localePath('/search')"
+      class="flex h-10 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm text-muted-foreground transition-colors active:border-primary/60"
+      aria-label="Search"
+    >
+      <XIcon icon="lucide:search" :size="16" />
+      <span>{{ t('navbar.top.search_placeholder') }}</span>
+    </NuxtLink>
+  </div>
+
   <!-- 分类导航：移动端金刚区 -->
   <LayoutCategoryQuickNav
     v-if="categoriesLoading || categories.length > 0"

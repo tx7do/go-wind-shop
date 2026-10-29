@@ -189,13 +189,16 @@ function handleToggle() {
 function productHref(id: number) {
   return localePath(`/product/${id}`)
 }
+// 商品详情/购物车移动端有吸底操作栏，悬浮按钮让位；其余移动页面抬高避开底部 Tab 栏
+const overlapsMobileBar = computed(() => /\/(product\/\d+|cart)/.test(route.path))
 </script>
 
 <template>
   <!-- 悬浮入口 -->
   <button
     type="button"
-    class="fixed bottom-6 right-6 z-900 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105"
+    class="fixed bottom-6 right-6 z-900 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105 max-md:bottom-[4.75rem]"
+    :class="overlapsMobileBar && 'max-md:hidden'"
     :aria-label="t('assistant.title')"
     @click="handleToggle"
   >
@@ -205,7 +208,7 @@ function productHref(id: number) {
   <!-- 聊天面板 -->
   <div
     v-if="open"
-    class="fixed bottom-22 right-6 z-900 flex h-100 w-85 max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-xl"
+    class="fixed bottom-22 right-6 z-900 flex h-100 w-85 max-w-[calc(100vw-3rem)] flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-xl max-md:bottom-[4.75rem]"
   >
     <div class="flex items-center gap-2 border-b border-border px-4 py-3">
       <XIcon icon="lucide:bot" width="18" height="18" class="text-primary" />

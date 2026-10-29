@@ -1,15 +1,24 @@
 <template>
   <LayoutSectionContainer class="!py-8">
     <div class="mx-auto w-full max-w-4xl">
-      <h2 class="mb-6 text-xl font-bold text-foreground">
-        {{ t('comment.sectionTitle') }}
-      </h2>
+      <!-- 分线标题：与商品详情区同节奏（居中标题 + 两侧细线） -->
+      <div class="mb-6 flex items-center gap-4">
+        <span class="h-px flex-1 bg-border" aria-hidden="true" />
+        <h2 class="text-base font-bold text-foreground">
+          {{ t('comment.sectionTitle') }}
+        </h2>
+        <span class="h-px flex-1 bg-border" aria-hidden="true" />
+      </div>
 
-      <div v-if="commentsLoading" class="py-8">
+      <div v-if="commentsLoading" class="rounded-2xl border border-border bg-card p-6">
         <UiSkeleton class="h-24 w-full" />
       </div>
 
-      <div v-else-if="topLevelComments.length === 0" class="py-12 text-center text-sm text-muted-foreground">
+      <!-- 空态给容器，避免文字浮在页面底色上 -->
+      <div
+        v-else-if="topLevelComments.length === 0"
+        class="rounded-2xl border border-border bg-card px-6 py-10 text-center text-sm text-muted-foreground"
+      >
         {{ t('comment.empty') }}
       </div>
 
@@ -46,7 +55,10 @@
         </UiButton>
       </div>
 
-      <div v-else class="mt-8 py-4 text-center text-sm text-muted-foreground">
+      <div
+        v-else
+        class="mt-8 rounded-2xl border border-border bg-card px-6 py-5 text-center text-sm text-muted-foreground"
+      >
         {{ t('comment.loginToPost') }}
       </div>
     </div>

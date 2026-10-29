@@ -75,11 +75,12 @@ const isActive = (path: string) => {
         </select>
       </div>
 
-      <main :key="$i18n.locale" class="flex w-full flex-1 flex-col min-w-0">
+      <main :key="$i18n.locale" class="flex w-full flex-1 flex-col min-w-0 pb-[calc(3.75rem+env(safe-area-inset-bottom))] md:pb-0">
         <slot />
       </main>
     </div>
     <LayoutFooter />
     <LayoutBackToTop />
+    <LayoutTabBar />
   </div>
 </template>

@@ -99,11 +99,14 @@ const handleClickLogout = async () => {
         aria-label="Go to homepage"
         @click="handleClickLogo"
       >
-        <img src="/logo.png" alt="Logo" width="36" height="36" class="h-9 w-9 shrink-0 max-md:h-8 max-md:w-8" />
+        <img src="/logo.svg" alt="GoWind" width="36" height="36" class="h-9 w-9 shrink-0 max-md:h-8 max-md:w-8" />
         <span class="text-lg font-bold text-primary whitespace-nowrap max-md:hidden">
           {{ t('app.title') }}
         </span>
       </button>
+
+      <!-- 全局搜索（桌面端；移动端首页顶部有搜索入口） -->
+      <LayoutSearchBar />
 
       <!-- 功能按钮区 -->
       <div class="flex shrink-0 items-center gap-1">
@@ -114,7 +117,22 @@ const handleClickLogout = async () => {
           class="relative flex h-9 w-9 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-primary/10"
           :aria-label="t('menu.my_messages')"
         >
-          <XIcon icon="lucide:bell" width="18" height="18" />
+          <!-- GoWind 风铃图标：铃身内嵌风线，与品牌标志同一笔触 -->
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+            <path d="M9.5 13h4.6a1.9 1.9 0 1 0-1.8-2.5" />
+          </svg>
           <span
             v-if="unreadCount > 0"
             class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground"
@@ -138,10 +156,10 @@ const handleClickLogout = async () => {
           </span>
         </NuxtLink>
 
-        <!-- 用户菜单 -->
+        <!-- 用户菜单（移动端收进底部 Tab「我的」） -->
         <UiDropdownMenu :modal="false">
           <UiDropdownMenuTrigger as-child>
-            <UiButton variant="ghost" size="icon" aria-label="User menu">
+            <UiButton variant="ghost" size="icon" aria-label="User menu" class="max-md:hidden">
               <XIcon icon="lucide:user" width="16" height="16" />
             </UiButton>
           </UiDropdownMenuTrigger>
@@ -170,10 +188,10 @@ const handleClickLogout = async () => {
           </UiDropdownMenuContent>
         </UiDropdownMenu>
 
-        <!-- 语言菜单 -->
+        <!-- 语言菜单（移动端收进 设置 页） -->
         <UiDropdownMenu :modal="false">
           <UiDropdownMenuTrigger as-child>
-            <UiButton variant="ghost" size="icon" aria-label="Language">
+            <UiButton variant="ghost" size="icon" aria-label="Language" class="max-md:hidden">
               <XIcon icon="lucide:globe" width="16" height="16" />
             </UiButton>
           </UiDropdownMenuTrigger>
@@ -187,10 +205,10 @@ const handleClickLogout = async () => {
           </UiDropdownMenuContent>
         </UiDropdownMenu>
 
-        <!-- 主题菜单 -->
+        <!-- 主题菜单（移动端收进 设置 页） -->
         <UiDropdownMenu :modal="false">
           <UiDropdownMenuTrigger as-child>
-            <UiButton variant="ghost" size="icon" aria-label="Toggle theme">
+            <UiButton variant="ghost" size="icon" aria-label="Toggle theme" class="max-md:hidden">
               <XIcon                 :icon="currentMode === 'dark' ? 'lucide:moon' : currentMode === 'light' ? 'lucide:sun' : 'lucide:monitor'"
                 width="16" height="16"
                 class="theme-icon-animate"

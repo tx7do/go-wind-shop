@@ -20,7 +20,8 @@ const isAuthPage = computed(() => {
       :key="$i18n.locale"
       :class="[
         'flex w-full flex-1 flex-col bg-background',
-        !isAuthPage && 'pt-(--layout-header-height) min-h-screen',
+        // 移动端为底部 Tab 栏（详情页为吸底购买栏）让出空间，避免内容被遮挡
+        !isAuthPage && 'pt-(--layout-header-height) pb-[calc(3.75rem+env(safe-area-inset-bottom))] md:pb-0 min-h-screen',
       ]"
     >
       <slot />
@@ -31,5 +32,7 @@ const isAuthPage = computed(() => {
     <LayoutBackToTop v-if="!isAuthPage" />
     <!-- AI 导购悬浮助手（登录后可用，未登录点击跳登录页） -->
     <AssistantChat v-if="!isAuthPage" />
+    <!-- 移动端底部 Tab 导航（认证页不渲染） -->
+    <LayoutTabBar v-if="!isAuthPage" />
   </div>
 </template>

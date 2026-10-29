@@ -37,6 +37,8 @@ const scrollToTop = () => {
     v-if="isVisible"
     :class="cn(
       'fixed bottom-10 right-10 z-999 flex h-14 w-14 items-center justify-center',
+      // 移动端抬高避开底部 Tab 栏 / 吸底操作栏
+      'max-md:bottom-[5.5rem] max-md:right-4 max-md:h-12 max-md:w-12',
       'rounded-full border-none bg-primary text-white cursor-pointer',
       'text-2xl shadow-lg transition-all duration-300',
       'hover:-translate-y-1 hover:shadow-xl hover:bg-primary/80',

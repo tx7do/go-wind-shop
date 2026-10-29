@@ -681,4 +681,21 @@ function goCheckout() {
       </div>
     </div>
   </LayoutSectionContainer>
+
+  <!-- 移动端吸底结算栏：合计 + 去结算常驻可见；桌面端用右侧结算看板。
+       bottom 抬高一个 Tab 栏高度，避免被底部 Tab 遮挡。 -->
+  <div
+    class="fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-0 right-0 z-40 flex items-center gap-3 border-t border-border bg-card/95 px-4 pt-3 backdrop-blur-md md:hidden dark:bg-card/90"
+    :style="{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }"
+  >
+    <div class="min-w-0 flex-1">
+      <p class="text-[10px] text-muted-foreground">
+        {{ t('cart.selectedAmount') }}（{{ selectedCount }} {{ t('cart.table.item') }}）
+      </p>
+      <p class="text-lg font-extrabold tabular-nums text-primary">{{ selectedLabel }}</p>
+    </div>
+    <UiButton class="flex-1" size="lg" @click="goCheckout">
+      {{ t('cart.goCheckout') }}
+    </UiButton>
+  </div>
 </template>

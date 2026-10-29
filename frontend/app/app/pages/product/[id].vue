@@ -476,7 +476,7 @@ const promoPrice = computed(() => {
 
 // 秒杀（最高优先级）：当前选中 SKU 的生效秒杀，秒杀价低于现价时覆盖展示
 const activeSeckillForSku = computed(() => {
-  const sid = sku.value?.id;
+  const sid = matchedSku.value?.id;
   if (!sid) return undefined;
   return activeSeckills.value.find((k) => k.skuId === sid);
 });
@@ -490,7 +490,7 @@ const seckillPrice = computed(() => {
 
 // 拼团（最高优先级）：当前选中 SKU 的生效拼团，拼团价低于现价时覆盖展示
 const activeGrouponForSku = computed(() => {
-  const sid = sku.value?.id;
+  const sid = matchedSku.value?.id;
   if (!sid) return undefined;
   return activeGroupons.value.find((g) => g.skuId === sid);
 });
@@ -691,94 +691,83 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
     </UiAppEmpty>
 
     <div v-else-if="productTranslation" class="grid gap-8 md:grid-cols-12">
-      <!-- 左侧：商品图片（1:1 正方形） -->
-      <div class="md:col-span-5 rounded-2xl border border-border bg-card overflow-hidden">
-        <UiCarousel class="relative">
-          <UiCarouselContent>
-            <UiCarouselItem>
-              <UiImage
-                :src="product.imageUrl"
-                :alt="productTranslation?.name || ''"
-                class="aspect-square w-full rounded-none object-cover"
-              />
-            </UiCarouselItem>
-          </UiCarouselContent>
-          <UiCarouselPrevious />
-          <UiCarouselNext />
-        </UiCarousel>
+      <!-- 左侧：商品主图（当前实体单图，不渲染轮播箭头；多图时在此扩展缩略图栏） -->
+      <div class="md:col-span-5 self-start overflow-hidden rounded-2xl border border-border bg-card md:sticky md:top-24">
+        <UiImage
+          :src="product.imageUrl"
+          :alt="productTranslation?.name || ''"
+          class="aspect-square w-full rounded-none object-cover"
+        />
       </div>
 
-      <!-- 右侧：商品信息 & SKU 选择 -->
-      <div class="md:col-span-7 flex flex-col gap-6">
-        <h1 class="text-3xl font-bold text-foreground">
-          {{ productTranslation.name }}
-        </h1>
-
-        <!-- 收藏 toggle：未收藏显示空心心形，已收藏显示填充心形 -->
-        <button
-          type="button"
-          :class="[
-            'inline-flex w-fit items-center gap-2 rounded-lg border px-4 py-2 text-sm transition-colors',
-            isFavorited
-              ? 'border-primary text-primary'
-              : 'border-border text-muted-foreground hover:border-primary/40 hover:text-primary',
-          ]"
-          @click="toggleFavorite"
-        >
-          <XIcon icon="lucide:heart" :size="16" :class="isFavorited ? 'fill-current' : ''" />
-          <span>{{ isFavorited ? t('mall.wishlist.table.action') : t('mall.wishlist.title') }}</span>
-        </button>
-
-        <p class="text-sm text-muted-foreground">
-          {{ productTranslation.shortDescription }}
-        </p>
-
-        <!-- 价格区（有专价时展示划线原价 + 促销价 + 活动标签） -->
-        <div
-          v-if="displayPrice !== null"
-          class="rounded-xl border border-primary/40 bg-primary/5 p-5"
-        >
-          <p class="text-xs text-muted-foreground">{{ t('mall.product.price') }}</p>
-          <p v-if="grouponPrice !== null" class="mt-1 text-3xl font-extrabold text-orange-500">
-            {{ t('mall.product.currencyCny') }}{{ grouponPrice }}
-            <span class="ml-2 text-base font-medium text-muted-foreground line-through">
-              {{ t('mall.product.currencyCny') }}{{ displayPrice }}
-            </span>
+      <!-- 右侧：价格带 → 标题/收藏 → 卖点 → 评分/摘要 → 服务承诺 → SKU → 数量/按钮 -->
+      <div class="md:col-span-7 flex flex-col">
+        <!-- 价格带：进页第一视觉。活动价着色沿用 秒杀(红)>拼团(橙)>专价(品牌绿) 优先级，
+             无框线软底色带替代原表单式边框盒。 -->
+        <div v-if="displayPrice !== null" class="rounded-xl bg-muted/60 px-4 py-3">
+          <p v-if="grouponPrice !== null" class="flex flex-wrap items-baseline gap-x-2 text-orange-500">
+            <span class="text-base font-bold">{{ t('mall.product.currencyCny') }}</span>
+            <span class="text-4xl font-extrabold leading-none tracking-tight">{{ grouponPrice }}</span>
+            <span class="text-sm text-muted-foreground line-through">{{ t('mall.product.currencyCny') }}{{ displayPrice }}</span>
           </p>
-          <p v-else-if="seckillPrice !== null" class="mt-1 text-3xl font-extrabold text-red-500">
-            {{ t('mall.product.currencyCny') }}{{ seckillPrice }}
-            <span class="ml-2 text-base font-medium text-muted-foreground line-through">
-              {{ t('mall.product.currencyCny') }}{{ displayPrice }}
-            </span>
+          <p v-else-if="seckillPrice !== null" class="flex flex-wrap items-baseline gap-x-2 text-red-500">
+            <span class="text-base font-bold">{{ t('mall.product.currencyCny') }}</span>
+            <span class="text-4xl font-extrabold leading-none tracking-tight">{{ seckillPrice }}</span>
+            <span class="text-sm text-muted-foreground line-through">{{ t('mall.product.currencyCny') }}{{ displayPrice }}</span>
           </p>
-          <p v-else-if="promoPrice !== null" class="mt-1 text-3xl font-extrabold text-primary">
-            {{ t('mall.product.currencyCny') }}{{ promoPrice }}
-            <span class="ml-2 text-base font-medium text-muted-foreground line-through">
-              {{ t('mall.product.currencyCny') }}{{ displayPrice }}
-            </span>
+          <p v-else-if="promoPrice !== null" class="flex flex-wrap items-baseline gap-x-2 text-primary">
+            <span class="text-base font-bold">{{ t('mall.product.currencyCny') }}</span>
+            <span class="text-4xl font-extrabold leading-none tracking-tight">{{ promoPrice }}</span>
+            <span class="text-sm text-muted-foreground line-through">{{ t('mall.product.currencyCny') }}{{ displayPrice }}</span>
           </p>
-          <p v-else class="mt-1 text-3xl font-extrabold text-primary">
-            {{ t('mall.product.currencyCny') }}{{ displayPrice }}
+          <p v-else class="flex flex-wrap items-baseline gap-x-2 text-primary">
+            <span class="text-base font-bold">{{ t('mall.product.currencyCny') }}</span>
+            <span class="text-4xl font-extrabold leading-none tracking-tight">{{ displayPrice }}</span>
           </p>
-          <div v-if="activeGrouponForSku" class="mt-2 inline-flex items-center gap-1 rounded-full bg-orange-500/15 px-2 py-0.5 text-xs font-medium text-orange-500">
-            👥 {{ activeGrouponForSku.name || t('mall.groupon.tag') }}
-            <template v-if="activeGrouponForSku.groupSize">
-              · {{ t('mall.groupon.tagSize', { size: activeGrouponForSku.groupSize }) }}
-            </template>
-          </div>
-          <div v-else-if="activeSeckillForSku" class="mt-2 inline-flex items-center gap-1 rounded-full bg-red-500/15 px-2 py-0.5 text-xs font-medium text-red-500">
-            ⚡ {{ activeSeckillForSku.name || t('mall.seckill.tag') }}
-          </div>
-          <div v-else-if="specialPricePromo" class="mt-2 inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
-            {{ specialPricePromo.name || t('mall.promotion.specialPriceTag') }}
-          </div>
-          <div v-else-if="fullReductionPromo" class="mt-2 inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
-            {{ t('mall.promotion.fullReductionTag', { threshold: yuan(fullReductionPromo.thresholdAmount), reduction: yuan(fullReductionPromo.reductionAmount) }) }}
+          <div class="mt-2 flex flex-wrap items-center gap-1.5">
+            <div v-if="activeGrouponForSku" class="inline-flex items-center gap-1 rounded-full bg-orange-500/15 px-2 py-0.5 text-xs font-medium text-orange-500">
+              👥 {{ activeGrouponForSku.name || t('mall.groupon.tag') }}
+              <template v-if="activeGrouponForSku.groupSize">
+                · {{ t('mall.groupon.tagSize', { size: activeGrouponForSku.groupSize }) }}
+              </template>
+            </div>
+            <div v-else-if="activeSeckillForSku" class="inline-flex items-center gap-1 rounded-full bg-red-500/15 px-2 py-0.5 text-xs font-medium text-red-500">
+              ⚡ {{ activeSeckillForSku.name || t('mall.seckill.tag') }}
+            </div>
+            <div v-else-if="specialPricePromo" class="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+              {{ specialPricePromo.name || t('mall.promotion.specialPriceTag') }}
+            </div>
+            <div v-else-if="fullReductionPromo" class="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
+              {{ t('mall.promotion.fullReductionTag', { threshold: yuan(fullReductionPromo.thresholdAmount), reduction: yuan(fullReductionPromo.reductionAmount) }) }}
+            </div>
           </div>
         </div>
 
+        <!-- 标题 + 收藏：收藏从独立大按钮压缩为标题旁的圆形图标钮 -->
+        <div class="mt-4 flex items-start justify-between gap-3">
+          <h1 class="text-xl font-bold leading-snug text-foreground md:text-3xl">
+            {{ productTranslation.name }}
+          </h1>
+          <button
+            type="button"
+            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors"
+            :class="isFavorited
+              ? 'border-primary bg-primary/10 text-primary'
+              : 'border-border text-muted-foreground hover:border-primary/40 hover:text-primary'"
+            :aria-label="isFavorited ? t('mall.wishlist.table.action') : t('mall.wishlist.title')"
+            :title="isFavorited ? t('mall.wishlist.table.action') : t('mall.wishlist.title')"
+            @click="toggleFavorite"
+          >
+            <XIcon icon="lucide:heart" :size="16" :class="isFavorited ? 'fill-current' : ''" />
+          </button>
+        </div>
+
+        <p class="mt-1.5 text-sm text-muted-foreground">
+          {{ productTranslation.shortDescription }}
+        </p>
+
         <!-- 商品评分聚合（只读展示） -->
-        <div class="flex items-center gap-3">
+        <div class="mt-3 flex items-center gap-3">
           <UiRatingStars v-if="hasRating" :value="ratingAverage" />
           <span class="text-xs tabular-nums text-muted-foreground">
             <template v-if="hasRating">
@@ -794,7 +783,7 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
         <!-- 评论 AI 摘要（"大家说"） -->
         <div
           v-if="reviewSummary"
-          class="flex items-start gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2.5"
+          class="mt-3 flex items-start gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2.5"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -806,8 +795,24 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
           </p>
         </div>
 
+        <!-- 服务承诺：静态信任信号（正品/退货/发货），细分隔线上下收拢 -->
+        <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1.5 border-y border-border py-3">
+          <span
+            v-for="service in [
+              { icon: 'lucide:shield-check', label: t('mall.product.serviceAuthentic') },
+              { icon: 'lucide:rotate-ccw', label: t('mall.product.serviceReturn') },
+              { icon: 'lucide:truck', label: t('mall.product.serviceShipping') },
+            ]"
+            :key="service.label"
+            class="flex items-center gap-1.5 text-xs text-muted-foreground"
+          >
+            <XIcon :icon="service.icon" :size="14" class="text-primary" />
+            {{ service.label }}
+          </span>
+        </div>
+
         <!-- SKU 卡片选择器（aria-radiogroup，保留键盘可访问性） -->
-        <div v-if="selectableAttributes.length > 0" class="flex flex-col gap-4">
+        <div v-if="selectableAttributes.length > 0" class="mt-4 flex flex-col gap-4">
           <p class="text-sm text-muted-foreground">{{ t('mall.product.selectSku') }}</p>
           <div v-for="attr in selectableAttributes" :key="attr.id" class="flex flex-col gap-2">
             <label class="text-xs font-medium text-foreground">
@@ -852,9 +857,9 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
           {{ t('mall.product.outOfStock') }}
         </p>
 
-        <!-- 数量框 + 双按钮：移动端上下两行（数量一行、双按钮并排一行），
-             避免三元素挤一行把「立即购买」挤出屏外；sm 及以上保持同行。 -->
-        <div class="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center">
+        <!-- 数量框 + 双按钮：移动端仅保留数量步进（加购/立即买走吸底栏），
+             sm 及以上同行展示完整双按钮。 -->
+        <div class="mt-4 flex items-center gap-3">
           <div class="flex w-fit items-center rounded-xl border border-border bg-card">
             <button
               type="button"
@@ -884,7 +889,7 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
             </button>
           </div>
 
-          <div class="flex flex-1 items-center gap-3">
+          <div class="hidden flex-1 items-center gap-3 sm:flex">
             <UiButton
               variant="outline"
               class="flex-1"
@@ -916,14 +921,19 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
       {{ t('mall.product.notFound') }}
     </div>
 
-    <!-- 商品详情描述（通栏居中，限宽 max-w-4xl，增加内边距提升阅读呼吸感） -->
+    <!-- 商品详情描述：小米式分线标题（居中标题 + 两侧细线），内容通栏不包盒，
+         避免长图文外再套一层大卡片在暗色下形成空洞 -->
     <div
       v-if="productTranslation?.longDescription"
-      class="mx-auto mt-12 w-full max-w-4xl rounded-2xl border border-border bg-card p-8 md:p-12"
+      class="mx-auto mt-12 w-full max-w-4xl"
     >
-      <h2 class="mb-4 text-xl font-bold text-foreground">
-        {{ t('mall.product.description') }}
-      </h2>
+      <div class="mb-6 flex items-center gap-4">
+        <span class="h-px flex-1 bg-border" aria-hidden="true" />
+        <h2 class="text-base font-bold text-foreground">
+          {{ t('mall.product.description') }}
+        </h2>
+        <span class="h-px flex-1 bg-border" aria-hidden="true" />
+      </div>
       <ClientOnly>
         <ContentViewer
           :content="productTranslation.longDescription"
@@ -937,4 +947,39 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
   </LayoutSectionContainer>
 
   <CommentSection :product-id="productId" />
+
+  <!-- 移动端吸底购买栏：收藏 + 加购 + 立即买常驻可见，滚动到任意位置都能下单 -->
+  <div
+    v-if="productTranslation"
+    class="fixed bottom-0 left-0 right-0 z-40 flex items-center gap-3 border-t border-border bg-card/95 px-4 pt-3 backdrop-blur-md md:hidden dark:bg-card/90"
+    :style="{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }"
+  >
+    <button
+      type="button"
+      class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition-colors"
+      :class="isFavorited
+        ? 'border-primary text-primary'
+        : 'border-border text-muted-foreground active:border-primary/40 active:text-primary'"
+      :aria-label="t('mall.wishlist.title')"
+      @click="toggleFavorite"
+    >
+      <XIcon icon="lucide:heart" :size="18" :class="isFavorited ? 'fill-current' : ''" />
+    </button>
+    <UiButton
+      variant="outline"
+      class="flex-1"
+      :disabled="!canAddToCart"
+      @click="addToCartWithQty(quantity)"
+    >
+      <XIcon icon="carbon:shopping-cart" :size="16" class="mr-2" />
+      {{ t('mall.product.addToCart') }}
+    </UiButton>
+    <UiButton
+      class="flex-1"
+      :disabled="!canAddToCart"
+      @click="buyNow"
+    >
+      {{ t('mall.product.buyNow') }}
+    </UiButton>
+  </div>
 </template>

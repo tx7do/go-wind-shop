@@ -21,7 +21,8 @@
     "filterBrands": "Brands",
     "sortBy": "Sort by",
     "sortFeatured": "Featured",
-    "sortLatest": "Latest"
+    "sortLatest": "Latest",
+    "title": "Categories"
   },
   "product": {
     "addToCart": "Add to cart",
@@ -35,7 +36,10 @@
     "notFound": "Product not found.",
     "selectAttribute": "Please select",
     "skuUnavailable": "This specification is not available.",
-    "currencyCny": "￥"
+    "currencyCny": "￥",
+    "serviceAuthentic": "Authenticity guaranteed",
+    "serviceReturn": "7-day no-reason returns",
+    "serviceShipping": "Fast dispatch"
   },
   "loading": "Loading…",
   "cart": {
@@ -115,5 +119,11 @@
   "groupon": {
     "tag": "Group Buy",
     "tagSize": "{size} to form"
+  },
+  "tab": {
+    "home": "Home",
+    "category": "Category",
+    "cart": "Cart",
+    "mine": "Mine"
   }
 }

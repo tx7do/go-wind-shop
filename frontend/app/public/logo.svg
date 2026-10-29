@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <title>GoWind</title>
+  <defs>
+    <linearGradient id="gwind" x1="6" y1="40" x2="42" y2="8" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#15803d"/>
+      <stop offset=".5" stop-color="#16a34a"/>
+      <stop offset="1" stop-color="#4ade80"/>
+    </linearGradient>
+  </defs>
+  <path d="M25.6 39.2a4 4 0 1 0 2.4-7.2H4" stroke="url(#gwind)" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M35 16a5 5 0 1 1 4 8H4" stroke="url(#gwind)" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M19.6 8.8a4 4 0 1 1 2.4 7.2H4" stroke="url(#gwind)" stroke-width="4.5" stroke-linecap="round"/>
+</svg>

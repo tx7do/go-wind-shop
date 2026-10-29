@@ -22,7 +22,7 @@ const defaultPreferences: Preferences = {
   },
   logo: {
     enable: true,
-    source: "/logo.png",
+    source: "/logo.svg",
   },
   theme: {
     mode: "auto",
