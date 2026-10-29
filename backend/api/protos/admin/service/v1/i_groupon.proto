@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "catalog/service/v1/groupon.proto";
+
+// 拼团活动管理服务（admin：活动全 CRUD + 团只读）
+service GrouponActivityService {
+  rpc List (pagination.PagingRequest) returns (catalog.service.v1.ListGrouponActivityResponse) {
+    option (google.api.http) = { get: "/admin/v1/mall/groupons" };
+  }
+  rpc Count (pagination.PagingRequest) returns (catalog.service.v1.CountGrouponActivityResponse) {
+    option (google.api.http) = { get: "/admin/v1/mall/groupons/count" };
+  }
+  rpc Get (catalog.service.v1.GetGrouponActivityRequest) returns (catalog.service.v1.GrouponActivity) {
+    option (google.api.http) = { get: "/admin/v1/mall/groupons/{id}" };
+  }
+  rpc Create (catalog.service.v1.CreateGrouponActivityRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = { post: "/admin/v1/mall/groupons" body: "*" };
+  }
+  rpc Update (catalog.service.v1.UpdateGrouponActivityRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = { put: "/admin/v1/mall/groupons/{id}" body: "*" };
+  }
+  rpc Delete (catalog.service.v1.DeleteGrouponActivityRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = { delete: "/admin/v1/mall/groupons/{id}" };
+  }
+  rpc ListGroups (catalog.service.v1.ListGrouponGroupsRequest) returns (catalog.service.v1.ListGrouponGroupResponse) {
+    option (google.api.http) = { get: "/admin/v1/mall/groupons/{activity_id}/groups" };
+  }
+}

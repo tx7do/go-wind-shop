@@ -735,6 +735,54 @@ func (f FileMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) 
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.FileMutation", m)
 }
 
+// The GrouponActivityQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type GrouponActivityQueryRuleFunc func(context.Context, *ent.GrouponActivityQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f GrouponActivityQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.GrouponActivityQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.GrouponActivityQuery", q)
+}
+
+// The GrouponActivityMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type GrouponActivityMutationRuleFunc func(context.Context, *ent.GrouponActivityMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f GrouponActivityMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.GrouponActivityMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.GrouponActivityMutation", m)
+}
+
+// The GrouponGroupQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type GrouponGroupQueryRuleFunc func(context.Context, *ent.GrouponGroupQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f GrouponGroupQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.GrouponGroupQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.GrouponGroupQuery", q)
+}
+
+// The GrouponGroupMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type GrouponGroupMutationRuleFunc func(context.Context, *ent.GrouponGroupMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f GrouponGroupMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.GrouponGroupMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.GrouponGroupMutation", m)
+}
+
 // The InteractionCounterQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type InteractionCounterQueryRuleFunc func(context.Context, *ent.InteractionCounterQuery) error
@@ -2526,6 +2574,10 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.FileQuery:
 		return q.Filter(), nil
+	case *ent.GrouponActivityQuery:
+		return q.Filter(), nil
+	case *ent.GrouponGroupQuery:
+		return q.Filter(), nil
 	case *ent.InteractionCounterQuery:
 		return q.Filter(), nil
 	case *ent.InternalMessageQuery:
@@ -2726,6 +2778,10 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.DictTypeMutation:
 		return m.Filter(), nil
 	case *ent.FileMutation:
+		return m.Filter(), nil
+	case *ent.GrouponActivityMutation:
+		return m.Filter(), nil
+	case *ent.GrouponGroupMutation:
 		return m.Filter(), nil
 	case *ent.InteractionCounterMutation:
 		return m.Filter(), nil

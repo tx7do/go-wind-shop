@@ -320,6 +320,30 @@ func (f FileFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FileMutation", m)
 }
 
+// The GrouponActivityFunc type is an adapter to allow the use of ordinary
+// function as GrouponActivity mutator.
+type GrouponActivityFunc func(context.Context, *ent.GrouponActivityMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GrouponActivityFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.GrouponActivityMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.GrouponActivityMutation", m)
+}
+
+// The GrouponGroupFunc type is an adapter to allow the use of ordinary
+// function as GrouponGroup mutator.
+type GrouponGroupFunc func(context.Context, *ent.GrouponGroupMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f GrouponGroupFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.GrouponGroupMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.GrouponGroupMutation", m)
+}
+
 // The InteractionCounterFunc type is an adapter to allow the use of ordinary
 // function as InteractionCounter mutator.
 type InteractionCounterFunc func(context.Context, *ent.InteractionCounterMutation) (ent.Value, error)

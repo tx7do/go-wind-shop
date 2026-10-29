@@ -31,6 +31,8 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-shop/app/core/service/internal/data/ent/dicttype"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
+	"go-wind-shop/app/core/service/internal/data/ent/grouponactivity"
+	"go-wind-shop/app/core/service/internal/data/ent/groupongroup"
 	"go-wind-shop/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagecategory"
@@ -794,6 +796,90 @@ func init() {
 	fileDescID := fileMixinFields0[0].Descriptor()
 	// file.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	file.IDValidator = fileDescID.Validators[0].(func(uint32) error)
+	grouponactivityMixin := schema.GrouponActivity{}.Mixin()
+	grouponactivity.Policy = privacy.NewPolicies(grouponactivityMixin[3], schema.GrouponActivity{})
+	grouponactivity.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := grouponactivity.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	grouponactivityMixinFields0 := grouponactivityMixin[0].Fields()
+	_ = grouponactivityMixinFields0
+	grouponactivityMixinFields3 := grouponactivityMixin[3].Fields()
+	_ = grouponactivityMixinFields3
+	grouponactivityFields := schema.GrouponActivity{}.Fields()
+	_ = grouponactivityFields
+	// grouponactivityDescTenantID is the schema descriptor for tenant_id field.
+	grouponactivityDescTenantID := grouponactivityMixinFields3[0].Descriptor()
+	// grouponactivity.DefaultTenantID holds the default value on creation for the tenant_id field.
+	grouponactivity.DefaultTenantID = grouponactivityDescTenantID.Default.(uint32)
+	// grouponactivityDescName is the schema descriptor for name field.
+	grouponactivityDescName := grouponactivityFields[0].Descriptor()
+	// grouponactivity.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	grouponactivity.NameValidator = grouponactivityDescName.Validators[0].(func(string) error)
+	// grouponactivityDescGroupPrice is the schema descriptor for group_price field.
+	grouponactivityDescGroupPrice := grouponactivityFields[2].Descriptor()
+	// grouponactivity.DefaultGroupPrice holds the default value on creation for the group_price field.
+	grouponactivity.DefaultGroupPrice = grouponactivityDescGroupPrice.Default.(int64)
+	// grouponactivityDescGroupSize is the schema descriptor for group_size field.
+	grouponactivityDescGroupSize := grouponactivityFields[3].Descriptor()
+	// grouponactivity.DefaultGroupSize holds the default value on creation for the group_size field.
+	grouponactivity.DefaultGroupSize = grouponactivityDescGroupSize.Default.(int32)
+	// grouponactivityDescGroupValidHours is the schema descriptor for group_valid_hours field.
+	grouponactivityDescGroupValidHours := grouponactivityFields[4].Descriptor()
+	// grouponactivity.DefaultGroupValidHours holds the default value on creation for the group_valid_hours field.
+	grouponactivity.DefaultGroupValidHours = grouponactivityDescGroupValidHours.Default.(int32)
+	// grouponactivityDescPerUserLimit is the schema descriptor for per_user_limit field.
+	grouponactivityDescPerUserLimit := grouponactivityFields[5].Descriptor()
+	// grouponactivity.DefaultPerUserLimit holds the default value on creation for the per_user_limit field.
+	grouponactivity.DefaultPerUserLimit = grouponactivityDescPerUserLimit.Default.(int32)
+	// grouponactivityDescCurrency is the schema descriptor for currency field.
+	grouponactivityDescCurrency := grouponactivityFields[8].Descriptor()
+	// grouponactivity.DefaultCurrency holds the default value on creation for the currency field.
+	grouponactivity.DefaultCurrency = grouponactivityDescCurrency.Default.(string)
+	// grouponactivityDescID is the schema descriptor for id field.
+	grouponactivityDescID := grouponactivityMixinFields0[0].Descriptor()
+	// grouponactivity.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	grouponactivity.IDValidator = grouponactivityDescID.Validators[0].(func(uint32) error)
+	groupongroupMixin := schema.GrouponGroup{}.Mixin()
+	groupongroup.Policy = privacy.NewPolicies(groupongroupMixin[2], schema.GrouponGroup{})
+	groupongroup.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := groupongroup.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	groupongroupMixinFields0 := groupongroupMixin[0].Fields()
+	_ = groupongroupMixinFields0
+	groupongroupMixinFields2 := groupongroupMixin[2].Fields()
+	_ = groupongroupMixinFields2
+	groupongroupFields := schema.GrouponGroup{}.Fields()
+	_ = groupongroupFields
+	// groupongroupDescTenantID is the schema descriptor for tenant_id field.
+	groupongroupDescTenantID := groupongroupMixinFields2[0].Descriptor()
+	// groupongroup.DefaultTenantID holds the default value on creation for the tenant_id field.
+	groupongroup.DefaultTenantID = groupongroupDescTenantID.Default.(uint32)
+	// groupongroupDescMemberCount is the schema descriptor for member_count field.
+	groupongroupDescMemberCount := groupongroupFields[2].Descriptor()
+	// groupongroup.DefaultMemberCount holds the default value on creation for the member_count field.
+	groupongroup.DefaultMemberCount = groupongroupDescMemberCount.Default.(int32)
+	// groupongroupDescPaidCount is the schema descriptor for paid_count field.
+	groupongroupDescPaidCount := groupongroupFields[3].Descriptor()
+	// groupongroup.DefaultPaidCount holds the default value on creation for the paid_count field.
+	groupongroup.DefaultPaidCount = groupongroupDescPaidCount.Default.(int32)
+	// groupongroupDescTargetSize is the schema descriptor for target_size field.
+	groupongroupDescTargetSize := groupongroupFields[4].Descriptor()
+	// groupongroup.DefaultTargetSize holds the default value on creation for the target_size field.
+	groupongroup.DefaultTargetSize = groupongroupDescTargetSize.Default.(int32)
+	// groupongroupDescID is the schema descriptor for id field.
+	groupongroupDescID := groupongroupMixinFields0[0].Descriptor()
+	// groupongroup.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	groupongroup.IDValidator = groupongroupDescID.Validators[0].(func(uint32) error)
 	interactioncounterMixin := schema.InteractionCounter{}.Mixin()
 	interactioncounter.Policy = privacy.NewPolicies(interactioncounterMixin[2], schema.InteractionCounter{})
 	interactioncounter.Hooks[0] = func(next ent.Mutator) ent.Mutator {

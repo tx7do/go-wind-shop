@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, orderService *service.OrderService, userCouponService *service.UserCouponService, stockAlertService *service.StockAlertScannerService, productSearchService *service.ProductSearchService, paymentTransactionService *service.PaymentTransactionService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, orderService *service.OrderService, userCouponService *service.UserCouponService, stockAlertService *service.StockAlertScannerService, productSearchService *service.ProductSearchService, paymentTransactionService *service.PaymentTransactionService, grouponService *service.GrouponService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {

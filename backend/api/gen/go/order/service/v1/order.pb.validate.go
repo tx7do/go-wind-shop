@@ -132,6 +132,14 @@ func (m *Order) validate(all bool) error {
 		// no validation rules for DeletedBy
 	}
 
+	if m.GrouponActivityId != nil {
+		// no validation rules for GrouponActivityId
+	}
+
+	if m.GrouponGroupId != nil {
+		// no validation rules for GrouponGroupId
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {
@@ -1189,6 +1197,14 @@ func (m *CreateOrderRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.GrouponActivityId != nil {
+		// no validation rules for GrouponActivityId
+	}
+
+	if m.GrouponGroupId != nil {
+		// no validation rules for GrouponGroupId
 	}
 
 	if m.CouponId != nil {

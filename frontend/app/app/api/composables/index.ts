@@ -52,3 +52,4 @@ export * from './promotion';
 export * from './payment';
 export * from './seckill';
 export * from './points';
+export * from './groupon';

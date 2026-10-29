@@ -505,6 +505,15 @@ func NewPointsLedgerServiceClient(ctx *bootstrap.Context, r registry.Discovery) 
 	return catalogV1.NewPointsLedgerServiceClient(cli)
 }
 
+func NewGrouponServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.GrouponActivityServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return catalogV1.NewGrouponActivityServiceClient(cli)
+}
+
 func NewPromotionServiceClient(ctx *bootstrap.Context, r registry.Discovery) catalogV1.PromotionServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

@@ -203,6 +203,17 @@ const trade: RouteRecordRaw[] = [
         component: () => import("@/pages/app/trade/points-ledger/index.vue"),
       },
       {
+        path: "groupons",
+        name: "TradeGrouponManagement",
+        meta: {
+          order: 19,
+          icon: "lucide:users",
+          title: "routes.trade.groupon",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/groupon/index.vue"),
+      },
+      {
         path: "stock-op-logs",
         name: "TradeStockOpLogManagement",
         meta: {

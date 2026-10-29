@@ -106,5 +106,9 @@
   },
   "seckill": {
     "tag": "我的积分"
+  },
+  "groupon": {
+    "tag": "拼团价",
+    "tagSize": "{size}人成团"
   }
 }

@@ -6540,6 +6540,327 @@ export type storageservicev1_UploadFileResponse = {
   presignedUrl?: string;
 };
 
+// 拼团活动管理服务（admin：活动全 CRUD + 团只读）
+export interface GrouponActivityService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_ListGrouponActivityResponse>;
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<catalogservicev1_CountGrouponActivityResponse>;
+  Get(
+    request: catalogservicev1_GetGrouponActivityRequest,
+  ): Promise<catalogservicev1_GrouponActivity>;
+  Create(
+    request: catalogservicev1_CreateGrouponActivityRequest,
+  ): Promise<wellKnownEmpty>;
+  Update(
+    request: catalogservicev1_UpdateGrouponActivityRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: catalogservicev1_DeleteGrouponActivityRequest,
+  ): Promise<wellKnownEmpty>;
+  ListGroups(
+    request: catalogservicev1_ListGrouponGroupsRequest,
+  ): Promise<catalogservicev1_ListGrouponGroupResponse>;
+}
+
+export function createGrouponActivityServiceClient(
+  transport: ClientTransport,
+): GrouponActivityService {
+  return {
+    List(request) {
+      const path = `/admin/v1/mall/groupons`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'GrouponActivityService',
+        method: 'List',
+      }) as Promise<catalogservicev1_ListGrouponActivityResponse>;
+    },
+    Count(request) {
+      const path = `/admin/v1/mall/groupons/count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'GrouponActivityService',
+        method: 'Count',
+      }) as Promise<catalogservicev1_CountGrouponActivityResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/groupons/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'GrouponActivityService',
+        method: 'Get',
+      }) as Promise<catalogservicev1_GrouponActivity>;
+    },
+    Create(request) {
+      const path = `/admin/v1/mall/groupons`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'GrouponActivityService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/groupons/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'GrouponActivityService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/mall/groupons/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'GrouponActivityService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+    ListGroups(request) {
+      if (request.activityId === undefined || request.activityId === null) {
+        throw new Error('missing required field request.activity_id');
+      }
+      const path = `/admin/v1/mall/groupons/${request.activityId}/groups`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.status) {
+        queryParams.push(
+          `status=${encodeURIComponent(request.status.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'GrouponActivityService',
+        method: 'ListGroups',
+      }) as Promise<catalogservicev1_ListGrouponGroupResponse>;
+    },
+  };
+}
+export type catalogservicev1_ListGrouponActivityResponse = {
+  items: catalogservicev1_GrouponActivity[] | undefined;
+  total: number | undefined;
+};
+
+// 拼团活动
+export type catalogservicev1_GrouponActivity = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  currency?: string;
+  groupPrice?: number;
+  groupSize?: number;
+  groupValidHours?: number;
+  id?: number;
+  name?: string;
+  perUserLimit?: number;
+  skuId?: number;
+  status?: catalogservicev1_GrouponActivity_Status;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  validFrom?: wellKnownTimestamp;
+  validUntil?: wellKnownTimestamp;
+};
+
+export type catalogservicev1_GrouponActivity_Status =
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'STATUS_UNSPECIFIED';
+export type catalogservicev1_CountGrouponActivityResponse = {
+  count: number | undefined;
+};
+
+export type catalogservicev1_GetGrouponActivityRequest = {
+  id: number | undefined;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type catalogservicev1_CreateGrouponActivityRequest = {
+  data: catalogservicev1_GrouponActivity | undefined;
+};
+
+export type catalogservicev1_UpdateGrouponActivityRequest = {
+  data: catalogservicev1_GrouponActivity | undefined;
+  id: number | undefined;
+  updateMask?: wellKnownFieldMask;
+};
+
+export type catalogservicev1_DeleteGrouponActivityRequest = {
+  id: number | undefined;
+};
+
+export type catalogservicev1_ListGrouponGroupsRequest = {
+  activityId: number | undefined;
+  status?: string;
+};
+
+export type catalogservicev1_ListGrouponGroupResponse = {
+  items: catalogservicev1_GrouponGroup[] | undefined;
+  total: number | undefined;
+};
+
+// 拼团
+export type catalogservicev1_GrouponGroup = {
+  activityId?: number;
+  createdAt?: wellKnownTimestamp;
+  expireAt?: wellKnownTimestamp;
+  id?: number;
+  leaderOrderId?: number;
+  memberCount?: number;
+  paidCount?: number;
+  status?: catalogservicev1_GrouponGroup_Status;
+  targetSize?: number;
+};
+
+export type catalogservicev1_GrouponGroup_Status =
+  | 'FAILED'
+  | 'OPENING'
+  | 'STATUS_UNSPECIFIED'
+  | 'SUCCESS';
 // 交互管理服务（运营清数据面）。仅转发至 core InteractionAdminService，
 // 调用方须为平台管理员（由 core 侧运营上下文 guard 校验）。
 export interface InteractionAdminService {
@@ -10626,6 +10947,9 @@ export type orderservicev1_Order = {
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
   discountAmount?: number;
+  // 拼团：参与的活动与团（下单事务写入；参团/开团载体）
+  grouponActivityId?: number;
+  grouponGroupId?: number;
   id?: number;
   idempotencyKey?: string;
   originalAmount?: number;
@@ -20122,6 +20446,7 @@ export class ApiClient {
   private _dictTypeService?: DictTypeService;
   private _fileService?: FileService;
   private _fileTransferService?: FileTransferService;
+  private _grouponActivityService?: GrouponActivityService;
   private _interactionAdminService?: InteractionAdminService;
   private _internalMessageCategoryService?: InternalMessageCategoryService;
   private _internalMessageRecipientService?: InternalMessageRecipientService;
@@ -20287,6 +20612,10 @@ export class ApiClient {
 
   get fileTransferService(): FileTransferService {
     return this._fileTransferService ??= createFileTransferServiceClient(this._transport);
+  }
+
+  get grouponActivityService(): GrouponActivityService {
+    return this._grouponActivityService ??= createGrouponActivityServiceClient(this._transport);
   }
 
   get interactionAdminService(): InteractionAdminService {

@@ -32,6 +32,8 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-shop/app/core/service/internal/data/ent/dicttype"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
+	"go-wind-shop/app/core/service/internal/data/ent/grouponactivity"
+	"go-wind-shop/app/core/service/internal/data/ent/groupongroup"
 	"go-wind-shop/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagecategory"
@@ -195,6 +197,8 @@ func checkColumn(t, c string) error {
 			dictentryi18n.Table:                    dictentryi18n.ValidColumn,
 			dicttype.Table:                         dicttype.ValidColumn,
 			file.Table:                             file.ValidColumn,
+			grouponactivity.Table:                  grouponactivity.ValidColumn,
+			groupongroup.Table:                     groupongroup.ValidColumn,
 			interactioncounter.Table:               interactioncounter.ValidColumn,
 			internalmessage.Table:                  internalmessage.ValidColumn,
 			internalmessagecategory.Table:          internalmessagecategory.ValidColumn,

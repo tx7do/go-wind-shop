@@ -54,6 +54,10 @@ type Order struct {
 	ShippingRegion *string `json:"shipping_region,omitempty"`
 	// 订单状态
 	Status *order.Status `json:"status,omitempty"`
+	// 拼团活动ID
+	GrouponActivityID *uint32 `json:"groupon_activity_id,omitempty"`
+	// 拼团ID（成员载体）
+	GrouponGroupID *uint32 `json:"groupon_group_id,omitempty"`
 	// 收件人姓名
 	RecipientName *string `json:"recipient_name,omitempty"`
 	// 收件人电话
@@ -68,7 +72,7 @@ func (*Order) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case order.FieldID, order.FieldCreatedBy, order.FieldUpdatedBy, order.FieldDeletedBy, order.FieldTenantID, order.FieldUserID, order.FieldTotalAmount, order.FieldOriginalAmount, order.FieldDiscountAmount, order.FieldShippingFee, order.FieldTaxAmount:
+		case order.FieldID, order.FieldCreatedBy, order.FieldUpdatedBy, order.FieldDeletedBy, order.FieldTenantID, order.FieldUserID, order.FieldTotalAmount, order.FieldOriginalAmount, order.FieldDiscountAmount, order.FieldShippingFee, order.FieldTaxAmount, order.FieldGrouponActivityID, order.FieldGrouponGroupID:
 			values[i] = new(sql.NullInt64)
 		case order.FieldCurrency, order.FieldBusinessRefID, order.FieldIdempotencyKey, order.FieldShippingRegion, order.FieldStatus, order.FieldRecipientName, order.FieldRecipientPhone, order.FieldShippingAddress:
 			values[i] = new(sql.NullString)
@@ -221,6 +225,20 @@ func (_m *Order) assignValues(columns []string, values []any) error {
 				_m.Status = new(order.Status)
 				*_m.Status = order.Status(value.String)
 			}
+		case order.FieldGrouponActivityID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field groupon_activity_id", values[i])
+			} else if value.Valid {
+				_m.GrouponActivityID = new(uint32)
+				*_m.GrouponActivityID = uint32(value.Int64)
+			}
+		case order.FieldGrouponGroupID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field groupon_group_id", values[i])
+			} else if value.Valid {
+				_m.GrouponGroupID = new(uint32)
+				*_m.GrouponGroupID = uint32(value.Int64)
+			}
 		case order.FieldRecipientName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field recipient_name", values[i])
@@ -365,6 +383,16 @@ func (_m *Order) String() string {
 	builder.WriteString(", ")
 	if v := _m.Status; v != nil {
 		builder.WriteString("status=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.GrouponActivityID; v != nil {
+		builder.WriteString("groupon_activity_id=")
+		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.GrouponGroupID; v != nil {
+		builder.WriteString("groupon_group_id=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
 	}
 	builder.WriteString(", ")

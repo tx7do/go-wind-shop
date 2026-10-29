@@ -64,6 +64,10 @@ type Tx struct {
 	DictType *DictTypeClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// GrouponActivity is the client for interacting with the GrouponActivity builders.
+	GrouponActivity *GrouponActivityClient
+	// GrouponGroup is the client for interacting with the GrouponGroup builders.
+	GrouponGroup *GrouponGroupClient
 	// InteractionCounter is the client for interacting with the InteractionCounter builders.
 	InteractionCounter *InteractionCounterClient
 	// InternalMessage is the client for interacting with the InternalMessage builders.
@@ -363,6 +367,8 @@ func (tx *Tx) init() {
 	tx.DictEntryI18n = NewDictEntryI18nClient(tx.config)
 	tx.DictType = NewDictTypeClient(tx.config)
 	tx.File = NewFileClient(tx.config)
+	tx.GrouponActivity = NewGrouponActivityClient(tx.config)
+	tx.GrouponGroup = NewGrouponGroupClient(tx.config)
 	tx.InteractionCounter = NewInteractionCounterClient(tx.config)
 	tx.InternalMessage = NewInternalMessageClient(tx.config)
 	tx.InternalMessageCategory = NewInternalMessageCategoryClient(tx.config)

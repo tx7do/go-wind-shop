@@ -2043,6 +2043,131 @@ export type storageservicev1_UploadFileResponse = {
   presignedUrl?: string;
 };
 
+// 拼团前台服务（C端只读）
+export interface GrouponService {
+  // 当前生效中的拼团活动（商品页拼团价展示；匿名可读）
+  ListActiveGroupons(
+    request: catalogservicev1_ListActiveGrouponsRequest,
+  ): Promise<catalogservicev1_ListGrouponActivityResponse>;
+  // 团详情与团列表（订单详情展示团状态 / 参团列表）
+  GetGroup(
+    request: catalogservicev1_GetGrouponGroupRequest,
+  ): Promise<catalogservicev1_GrouponGroup>;
+  ListGroups(
+    request: catalogservicev1_ListGrouponGroupsRequest,
+  ): Promise<catalogservicev1_ListGrouponGroupResponse>;
+}
+
+export function createGrouponServiceClient(
+  transport: ClientTransport,
+): GrouponService {
+  return {
+    ListActiveGroupons(_request) {
+      const path = `/app/v1/mall/groupons/active`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'GrouponService',
+        method: 'ListActiveGroupons',
+      }) as Promise<catalogservicev1_ListGrouponActivityResponse>;
+    },
+    GetGroup(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/app/v1/mall/groupons/groups/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'GrouponService',
+        method: 'GetGroup',
+      }) as Promise<catalogservicev1_GrouponGroup>;
+    },
+    ListGroups(request) {
+      if (request.activityId === undefined || request.activityId === null) {
+        throw new Error('missing required field request.activity_id');
+      }
+      const path = `/app/v1/mall/groupons/${request.activityId}/groups`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.status) {
+        queryParams.push(
+          `status=${encodeURIComponent(request.status.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'GrouponService',
+        method: 'ListGroups',
+      }) as Promise<catalogservicev1_ListGrouponGroupResponse>;
+    },
+  };
+}
+export type catalogservicev1_ListActiveGrouponsRequest = {
+};
+
+export type catalogservicev1_ListGrouponActivityResponse = {
+  items: catalogservicev1_GrouponActivity[] | undefined;
+  total: number | undefined;
+};
+
+// 拼团活动
+export type catalogservicev1_GrouponActivity = {
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  currency?: string;
+  groupPrice?: number;
+  groupSize?: number;
+  groupValidHours?: number;
+  id?: number;
+  name?: string;
+  perUserLimit?: number;
+  skuId?: number;
+  status?: catalogservicev1_GrouponActivity_Status;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+  validFrom?: wellKnownTimestamp;
+  validUntil?: wellKnownTimestamp;
+};
+
+export type catalogservicev1_GrouponActivity_Status =
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'STATUS_UNSPECIFIED';
+export type catalogservicev1_GetGrouponGroupRequest = {
+  id: number | undefined;
+};
+
+// 拼团
+export type catalogservicev1_GrouponGroup = {
+  activityId?: number;
+  createdAt?: wellKnownTimestamp;
+  expireAt?: wellKnownTimestamp;
+  id?: number;
+  leaderOrderId?: number;
+  memberCount?: number;
+  paidCount?: number;
+  status?: catalogservicev1_GrouponGroup_Status;
+  targetSize?: number;
+};
+
+export type catalogservicev1_GrouponGroup_Status =
+  | 'FAILED'
+  | 'OPENING'
+  | 'STATUS_UNSPECIFIED'
+  | 'SUCCESS';
+export type catalogservicev1_ListGrouponGroupsRequest = {
+  activityId: number | undefined;
+  status?: string;
+};
+
+export type catalogservicev1_ListGrouponGroupResponse = {
+  items: catalogservicev1_GrouponGroup[] | undefined;
+  total: number | undefined;
+};
+
 // 交互服务（评论点赞）。
 // Like/Unlike/GetInteractionStatus 需登录（rest_server 白名单刻意不登记，强制走鉴权中间件）。
 // 仅 GetCounts（公开计数，按 tenant 隔离、不依赖 viewer 身份）登记为白名单。
@@ -2719,6 +2844,9 @@ export type orderservicev1_Order = {
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
   discountAmount?: number;
+  // 拼团：参与的活动与团（下单事务写入；参团/开团载体）
+  grouponActivityId?: number;
+  grouponGroupId?: number;
   id?: number;
   idempotencyKey?: string;
   originalAmount?: number;
@@ -2763,12 +2891,16 @@ export type orderservicev1_GetOrderRequest = {
 };
 
 export type orderservicev1_CreateOrderRequest = {
+  couponId?: number;
+  data: orderservicev1_Order | undefined;
   // 优惠券核销指令：下单时携带的 user_coupon_id。
   // 非订单持久属性——券↔订单关联以 user_coupon.redeemed_order_id 为唯一来源。
   // 服务端在 Create 事务内 ForUpdate 锁定该券实例并校验归属/状态/窗口/额度，
   // 任一校验失败整事务回滚（fail-closed）。留空表示不使用优惠券。
-  couponId?: number;
-  data: orderservicev1_Order | undefined;
+  // 拼团指令：开团（仅 activity_id）或参团（activity_id + group_id）。
+  // 服务端在 Create 事务内校验活动/团状态并落拼团价；留空表示普通购买。
+  grouponActivityId?: number;
+  grouponGroupId?: number;
 };
 
 export type orderservicev1_UpdateOrderRequest = {
@@ -5886,6 +6018,7 @@ export class ApiClient {
   private _commentService?: CommentService;
   private _couponTemplateService?: CouponTemplateService;
   private _fileTransferService?: FileTransferService;
+  private _grouponService?: GrouponService;
   private _interactionService?: InteractionService;
   private _internalMessageRecipientService?: InternalMessageRecipientService;
   private _invoiceService?: InvoiceService;
@@ -5948,6 +6081,10 @@ export class ApiClient {
 
   get fileTransferService(): FileTransferService {
     return this._fileTransferService ??= createFileTransferServiceClient(this._transport);
+  }
+
+  get grouponService(): GrouponService {
+    return this._grouponService ??= createGrouponServiceClient(this._transport);
   }
 
   get interactionService(): InteractionService {

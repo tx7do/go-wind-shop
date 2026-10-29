@@ -462,5 +462,33 @@
     "reason": "事由",
     "refOrderId": "关联订单",
     "createdAt": "时间"
+  },
+  "groupon": {
+    "name": "活动名称",
+    "skuId": "SKU ID",
+    "groupPrice": "成团价",
+    "groupSize": "成团人数",
+    "groupValidHours": "成团时限（小时）",
+    "status": "状态",
+    "statusLabel": {
+      "active": "生效",
+      "inactive": "停用"
+    },
+    "groups": "拼团列表",
+    "groupsOf": "拼团列表：{name}",
+    "noGroups": "暂无拼团",
+    "leaderOrder": "团长订单",
+    "paidProgress": "已支付/成团",
+    "groupStatus": "团状态",
+    "groupStatusLabel": {
+      "opening": "拼购中",
+      "success": "已成团",
+      "failed": "已失败"
+    },
+    "expireAt": "成团截止",
+    "button": {
+      "create": "新增拼团活动",
+      "update": "编辑拼团活动"
+    }
   }
 }

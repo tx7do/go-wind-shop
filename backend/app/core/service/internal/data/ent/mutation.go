@@ -35,6 +35,8 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-shop/app/core/service/internal/data/ent/dicttype"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
+	"go-wind-shop/app/core/service/internal/data/ent/grouponactivity"
+	"go-wind-shop/app/core/service/internal/data/ent/groupongroup"
 	"go-wind-shop/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagecategory"
@@ -149,6 +151,8 @@ const (
 	TypeDictEntryI18n                    = "DictEntryI18n"
 	TypeDictType                         = "DictType"
 	TypeFile                             = "File"
+	TypeGrouponActivity                  = "GrouponActivity"
+	TypeGrouponGroup                     = "GrouponGroup"
 	TypeInteractionCounter               = "InteractionCounter"
 	TypeInternalMessage                  = "InternalMessage"
 	TypeInternalMessageCategory          = "InternalMessageCategory"
@@ -38439,6 +38443,2970 @@ func (m *FileMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown File edge %s", name)
 }
 
+// GrouponActivityMutation represents an operation that mutates the GrouponActivity nodes in the graph.
+type GrouponActivityMutation struct {
+	config
+	op                   Op
+	typ                  string
+	id                   *uint32
+	created_at           *time.Time
+	updated_at           *time.Time
+	deleted_at           *time.Time
+	created_by           *uint32
+	addcreated_by        *int32
+	updated_by           *uint32
+	addupdated_by        *int32
+	deleted_by           *uint32
+	adddeleted_by        *int32
+	tenant_id            *uint32
+	addtenant_id         *int32
+	name                 *string
+	sku_id               *uint32
+	addsku_id            *int32
+	group_price          *int64
+	addgroup_price       *int64
+	group_size           *int32
+	addgroup_size        *int32
+	group_valid_hours    *int32
+	addgroup_valid_hours *int32
+	per_user_limit       *int32
+	addper_user_limit    *int32
+	valid_from           *time.Time
+	valid_until          *time.Time
+	currency             *string
+	status               *grouponactivity.Status
+	clearedFields        map[string]struct{}
+	done                 bool
+	oldValue             func(context.Context) (*GrouponActivity, error)
+	predicates           []predicate.GrouponActivity
+}
+
+var _ ent.Mutation = (*GrouponActivityMutation)(nil)
+
+// grouponactivityOption allows management of the mutation configuration using functional options.
+type grouponactivityOption func(*GrouponActivityMutation)
+
+// newGrouponActivityMutation creates new mutation for the GrouponActivity entity.
+func newGrouponActivityMutation(c config, op Op, opts ...grouponactivityOption) *GrouponActivityMutation {
+	m := &GrouponActivityMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeGrouponActivity,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withGrouponActivityID sets the ID field of the mutation.
+func withGrouponActivityID(id uint32) grouponactivityOption {
+	return func(m *GrouponActivityMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *GrouponActivity
+		)
+		m.oldValue = func(ctx context.Context) (*GrouponActivity, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().GrouponActivity.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withGrouponActivity sets the old GrouponActivity of the mutation.
+func withGrouponActivity(node *GrouponActivity) grouponactivityOption {
+	return func(m *GrouponActivityMutation) {
+		m.oldValue = func(context.Context) (*GrouponActivity, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m GrouponActivityMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m GrouponActivityMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of GrouponActivity entities.
+func (m *GrouponActivityMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *GrouponActivityMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *GrouponActivityMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().GrouponActivity.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *GrouponActivityMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *GrouponActivityMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *GrouponActivityMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[grouponactivity.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *GrouponActivityMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[grouponactivity.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *GrouponActivityMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, grouponactivity.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *GrouponActivityMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *GrouponActivityMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *GrouponActivityMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[grouponactivity.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *GrouponActivityMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[grouponactivity.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *GrouponActivityMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, grouponactivity.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *GrouponActivityMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *GrouponActivityMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *GrouponActivityMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[grouponactivity.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *GrouponActivityMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[grouponactivity.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *GrouponActivityMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, grouponactivity.FieldDeletedAt)
+}
+
+// SetCreatedBy sets the "created_by" field.
+func (m *GrouponActivityMutation) SetCreatedBy(u uint32) {
+	m.created_by = &u
+	m.addcreated_by = nil
+}
+
+// CreatedBy returns the value of the "created_by" field in the mutation.
+func (m *GrouponActivityMutation) CreatedBy() (r uint32, exists bool) {
+	v := m.created_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedBy returns the old "created_by" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldCreatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedBy: %w", err)
+	}
+	return oldValue.CreatedBy, nil
+}
+
+// AddCreatedBy adds u to the "created_by" field.
+func (m *GrouponActivityMutation) AddCreatedBy(u int32) {
+	if m.addcreated_by != nil {
+		*m.addcreated_by += u
+	} else {
+		m.addcreated_by = &u
+	}
+}
+
+// AddedCreatedBy returns the value that was added to the "created_by" field in this mutation.
+func (m *GrouponActivityMutation) AddedCreatedBy() (r int32, exists bool) {
+	v := m.addcreated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearCreatedBy clears the value of the "created_by" field.
+func (m *GrouponActivityMutation) ClearCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	m.clearedFields[grouponactivity.FieldCreatedBy] = struct{}{}
+}
+
+// CreatedByCleared returns if the "created_by" field was cleared in this mutation.
+func (m *GrouponActivityMutation) CreatedByCleared() bool {
+	_, ok := m.clearedFields[grouponactivity.FieldCreatedBy]
+	return ok
+}
+
+// ResetCreatedBy resets all changes to the "created_by" field.
+func (m *GrouponActivityMutation) ResetCreatedBy() {
+	m.created_by = nil
+	m.addcreated_by = nil
+	delete(m.clearedFields, grouponactivity.FieldCreatedBy)
+}
+
+// SetUpdatedBy sets the "updated_by" field.
+func (m *GrouponActivityMutation) SetUpdatedBy(u uint32) {
+	m.updated_by = &u
+	m.addupdated_by = nil
+}
+
+// UpdatedBy returns the value of the "updated_by" field in the mutation.
+func (m *GrouponActivityMutation) UpdatedBy() (r uint32, exists bool) {
+	v := m.updated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedBy returns the old "updated_by" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldUpdatedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedBy: %w", err)
+	}
+	return oldValue.UpdatedBy, nil
+}
+
+// AddUpdatedBy adds u to the "updated_by" field.
+func (m *GrouponActivityMutation) AddUpdatedBy(u int32) {
+	if m.addupdated_by != nil {
+		*m.addupdated_by += u
+	} else {
+		m.addupdated_by = &u
+	}
+}
+
+// AddedUpdatedBy returns the value that was added to the "updated_by" field in this mutation.
+func (m *GrouponActivityMutation) AddedUpdatedBy() (r int32, exists bool) {
+	v := m.addupdated_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearUpdatedBy clears the value of the "updated_by" field.
+func (m *GrouponActivityMutation) ClearUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	m.clearedFields[grouponactivity.FieldUpdatedBy] = struct{}{}
+}
+
+// UpdatedByCleared returns if the "updated_by" field was cleared in this mutation.
+func (m *GrouponActivityMutation) UpdatedByCleared() bool {
+	_, ok := m.clearedFields[grouponactivity.FieldUpdatedBy]
+	return ok
+}
+
+// ResetUpdatedBy resets all changes to the "updated_by" field.
+func (m *GrouponActivityMutation) ResetUpdatedBy() {
+	m.updated_by = nil
+	m.addupdated_by = nil
+	delete(m.clearedFields, grouponactivity.FieldUpdatedBy)
+}
+
+// SetDeletedBy sets the "deleted_by" field.
+func (m *GrouponActivityMutation) SetDeletedBy(u uint32) {
+	m.deleted_by = &u
+	m.adddeleted_by = nil
+}
+
+// DeletedBy returns the value of the "deleted_by" field in the mutation.
+func (m *GrouponActivityMutation) DeletedBy() (r uint32, exists bool) {
+	v := m.deleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedBy returns the old "deleted_by" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldDeletedBy(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedBy is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedBy requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedBy: %w", err)
+	}
+	return oldValue.DeletedBy, nil
+}
+
+// AddDeletedBy adds u to the "deleted_by" field.
+func (m *GrouponActivityMutation) AddDeletedBy(u int32) {
+	if m.adddeleted_by != nil {
+		*m.adddeleted_by += u
+	} else {
+		m.adddeleted_by = &u
+	}
+}
+
+// AddedDeletedBy returns the value that was added to the "deleted_by" field in this mutation.
+func (m *GrouponActivityMutation) AddedDeletedBy() (r int32, exists bool) {
+	v := m.adddeleted_by
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeletedBy clears the value of the "deleted_by" field.
+func (m *GrouponActivityMutation) ClearDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	m.clearedFields[grouponactivity.FieldDeletedBy] = struct{}{}
+}
+
+// DeletedByCleared returns if the "deleted_by" field was cleared in this mutation.
+func (m *GrouponActivityMutation) DeletedByCleared() bool {
+	_, ok := m.clearedFields[grouponactivity.FieldDeletedBy]
+	return ok
+}
+
+// ResetDeletedBy resets all changes to the "deleted_by" field.
+func (m *GrouponActivityMutation) ResetDeletedBy() {
+	m.deleted_by = nil
+	m.adddeleted_by = nil
+	delete(m.clearedFields, grouponactivity.FieldDeletedBy)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *GrouponActivityMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *GrouponActivityMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *GrouponActivityMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *GrouponActivityMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *GrouponActivityMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[grouponactivity.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *GrouponActivityMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[grouponactivity.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *GrouponActivityMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, grouponactivity.FieldTenantID)
+}
+
+// SetName sets the "name" field.
+func (m *GrouponActivityMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *GrouponActivityMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *GrouponActivityMutation) ResetName() {
+	m.name = nil
+}
+
+// SetSkuID sets the "sku_id" field.
+func (m *GrouponActivityMutation) SetSkuID(u uint32) {
+	m.sku_id = &u
+	m.addsku_id = nil
+}
+
+// SkuID returns the value of the "sku_id" field in the mutation.
+func (m *GrouponActivityMutation) SkuID() (r uint32, exists bool) {
+	v := m.sku_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSkuID returns the old "sku_id" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldSkuID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSkuID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSkuID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSkuID: %w", err)
+	}
+	return oldValue.SkuID, nil
+}
+
+// AddSkuID adds u to the "sku_id" field.
+func (m *GrouponActivityMutation) AddSkuID(u int32) {
+	if m.addsku_id != nil {
+		*m.addsku_id += u
+	} else {
+		m.addsku_id = &u
+	}
+}
+
+// AddedSkuID returns the value that was added to the "sku_id" field in this mutation.
+func (m *GrouponActivityMutation) AddedSkuID() (r int32, exists bool) {
+	v := m.addsku_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearSkuID clears the value of the "sku_id" field.
+func (m *GrouponActivityMutation) ClearSkuID() {
+	m.sku_id = nil
+	m.addsku_id = nil
+	m.clearedFields[grouponactivity.FieldSkuID] = struct{}{}
+}
+
+// SkuIDCleared returns if the "sku_id" field was cleared in this mutation.
+func (m *GrouponActivityMutation) SkuIDCleared() bool {
+	_, ok := m.clearedFields[grouponactivity.FieldSkuID]
+	return ok
+}
+
+// ResetSkuID resets all changes to the "sku_id" field.
+func (m *GrouponActivityMutation) ResetSkuID() {
+	m.sku_id = nil
+	m.addsku_id = nil
+	delete(m.clearedFields, grouponactivity.FieldSkuID)
+}
+
+// SetGroupPrice sets the "group_price" field.
+func (m *GrouponActivityMutation) SetGroupPrice(i int64) {
+	m.group_price = &i
+	m.addgroup_price = nil
+}
+
+// GroupPrice returns the value of the "group_price" field in the mutation.
+func (m *GrouponActivityMutation) GroupPrice() (r int64, exists bool) {
+	v := m.group_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGroupPrice returns the old "group_price" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldGroupPrice(ctx context.Context) (v *int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGroupPrice is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGroupPrice requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGroupPrice: %w", err)
+	}
+	return oldValue.GroupPrice, nil
+}
+
+// AddGroupPrice adds i to the "group_price" field.
+func (m *GrouponActivityMutation) AddGroupPrice(i int64) {
+	if m.addgroup_price != nil {
+		*m.addgroup_price += i
+	} else {
+		m.addgroup_price = &i
+	}
+}
+
+// AddedGroupPrice returns the value that was added to the "group_price" field in this mutation.
+func (m *GrouponActivityMutation) AddedGroupPrice() (r int64, exists bool) {
+	v := m.addgroup_price
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearGroupPrice clears the value of the "group_price" field.
+func (m *GrouponActivityMutation) ClearGroupPrice() {
+	m.group_price = nil
+	m.addgroup_price = nil
+	m.clearedFields[grouponactivity.FieldGroupPrice] = struct{}{}
+}
+
+// GroupPriceCleared returns if the "group_price" field was cleared in this mutation.
+func (m *GrouponActivityMutation) GroupPriceCleared() bool {
+	_, ok := m.clearedFields[grouponactivity.FieldGroupPrice]
+	return ok
+}
+
+// ResetGroupPrice resets all changes to the "group_price" field.
+func (m *GrouponActivityMutation) ResetGroupPrice() {
+	m.group_price = nil
+	m.addgroup_price = nil
+	delete(m.clearedFields, grouponactivity.FieldGroupPrice)
+}
+
+// SetGroupSize sets the "group_size" field.
+func (m *GrouponActivityMutation) SetGroupSize(i int32) {
+	m.group_size = &i
+	m.addgroup_size = nil
+}
+
+// GroupSize returns the value of the "group_size" field in the mutation.
+func (m *GrouponActivityMutation) GroupSize() (r int32, exists bool) {
+	v := m.group_size
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGroupSize returns the old "group_size" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldGroupSize(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGroupSize is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGroupSize requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGroupSize: %w", err)
+	}
+	return oldValue.GroupSize, nil
+}
+
+// AddGroupSize adds i to the "group_size" field.
+func (m *GrouponActivityMutation) AddGroupSize(i int32) {
+	if m.addgroup_size != nil {
+		*m.addgroup_size += i
+	} else {
+		m.addgroup_size = &i
+	}
+}
+
+// AddedGroupSize returns the value that was added to the "group_size" field in this mutation.
+func (m *GrouponActivityMutation) AddedGroupSize() (r int32, exists bool) {
+	v := m.addgroup_size
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGroupSize resets all changes to the "group_size" field.
+func (m *GrouponActivityMutation) ResetGroupSize() {
+	m.group_size = nil
+	m.addgroup_size = nil
+}
+
+// SetGroupValidHours sets the "group_valid_hours" field.
+func (m *GrouponActivityMutation) SetGroupValidHours(i int32) {
+	m.group_valid_hours = &i
+	m.addgroup_valid_hours = nil
+}
+
+// GroupValidHours returns the value of the "group_valid_hours" field in the mutation.
+func (m *GrouponActivityMutation) GroupValidHours() (r int32, exists bool) {
+	v := m.group_valid_hours
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGroupValidHours returns the old "group_valid_hours" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldGroupValidHours(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGroupValidHours is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGroupValidHours requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGroupValidHours: %w", err)
+	}
+	return oldValue.GroupValidHours, nil
+}
+
+// AddGroupValidHours adds i to the "group_valid_hours" field.
+func (m *GrouponActivityMutation) AddGroupValidHours(i int32) {
+	if m.addgroup_valid_hours != nil {
+		*m.addgroup_valid_hours += i
+	} else {
+		m.addgroup_valid_hours = &i
+	}
+}
+
+// AddedGroupValidHours returns the value that was added to the "group_valid_hours" field in this mutation.
+func (m *GrouponActivityMutation) AddedGroupValidHours() (r int32, exists bool) {
+	v := m.addgroup_valid_hours
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetGroupValidHours resets all changes to the "group_valid_hours" field.
+func (m *GrouponActivityMutation) ResetGroupValidHours() {
+	m.group_valid_hours = nil
+	m.addgroup_valid_hours = nil
+}
+
+// SetPerUserLimit sets the "per_user_limit" field.
+func (m *GrouponActivityMutation) SetPerUserLimit(i int32) {
+	m.per_user_limit = &i
+	m.addper_user_limit = nil
+}
+
+// PerUserLimit returns the value of the "per_user_limit" field in the mutation.
+func (m *GrouponActivityMutation) PerUserLimit() (r int32, exists bool) {
+	v := m.per_user_limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPerUserLimit returns the old "per_user_limit" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldPerUserLimit(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPerUserLimit is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPerUserLimit requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPerUserLimit: %w", err)
+	}
+	return oldValue.PerUserLimit, nil
+}
+
+// AddPerUserLimit adds i to the "per_user_limit" field.
+func (m *GrouponActivityMutation) AddPerUserLimit(i int32) {
+	if m.addper_user_limit != nil {
+		*m.addper_user_limit += i
+	} else {
+		m.addper_user_limit = &i
+	}
+}
+
+// AddedPerUserLimit returns the value that was added to the "per_user_limit" field in this mutation.
+func (m *GrouponActivityMutation) AddedPerUserLimit() (r int32, exists bool) {
+	v := m.addper_user_limit
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPerUserLimit resets all changes to the "per_user_limit" field.
+func (m *GrouponActivityMutation) ResetPerUserLimit() {
+	m.per_user_limit = nil
+	m.addper_user_limit = nil
+}
+
+// SetValidFrom sets the "valid_from" field.
+func (m *GrouponActivityMutation) SetValidFrom(t time.Time) {
+	m.valid_from = &t
+}
+
+// ValidFrom returns the value of the "valid_from" field in the mutation.
+func (m *GrouponActivityMutation) ValidFrom() (r time.Time, exists bool) {
+	v := m.valid_from
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldValidFrom returns the old "valid_from" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldValidFrom(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldValidFrom is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldValidFrom requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldValidFrom: %w", err)
+	}
+	return oldValue.ValidFrom, nil
+}
+
+// ClearValidFrom clears the value of the "valid_from" field.
+func (m *GrouponActivityMutation) ClearValidFrom() {
+	m.valid_from = nil
+	m.clearedFields[grouponactivity.FieldValidFrom] = struct{}{}
+}
+
+// ValidFromCleared returns if the "valid_from" field was cleared in this mutation.
+func (m *GrouponActivityMutation) ValidFromCleared() bool {
+	_, ok := m.clearedFields[grouponactivity.FieldValidFrom]
+	return ok
+}
+
+// ResetValidFrom resets all changes to the "valid_from" field.
+func (m *GrouponActivityMutation) ResetValidFrom() {
+	m.valid_from = nil
+	delete(m.clearedFields, grouponactivity.FieldValidFrom)
+}
+
+// SetValidUntil sets the "valid_until" field.
+func (m *GrouponActivityMutation) SetValidUntil(t time.Time) {
+	m.valid_until = &t
+}
+
+// ValidUntil returns the value of the "valid_until" field in the mutation.
+func (m *GrouponActivityMutation) ValidUntil() (r time.Time, exists bool) {
+	v := m.valid_until
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldValidUntil returns the old "valid_until" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldValidUntil(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldValidUntil is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldValidUntil requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldValidUntil: %w", err)
+	}
+	return oldValue.ValidUntil, nil
+}
+
+// ClearValidUntil clears the value of the "valid_until" field.
+func (m *GrouponActivityMutation) ClearValidUntil() {
+	m.valid_until = nil
+	m.clearedFields[grouponactivity.FieldValidUntil] = struct{}{}
+}
+
+// ValidUntilCleared returns if the "valid_until" field was cleared in this mutation.
+func (m *GrouponActivityMutation) ValidUntilCleared() bool {
+	_, ok := m.clearedFields[grouponactivity.FieldValidUntil]
+	return ok
+}
+
+// ResetValidUntil resets all changes to the "valid_until" field.
+func (m *GrouponActivityMutation) ResetValidUntil() {
+	m.valid_until = nil
+	delete(m.clearedFields, grouponactivity.FieldValidUntil)
+}
+
+// SetCurrency sets the "currency" field.
+func (m *GrouponActivityMutation) SetCurrency(s string) {
+	m.currency = &s
+}
+
+// Currency returns the value of the "currency" field in the mutation.
+func (m *GrouponActivityMutation) Currency() (r string, exists bool) {
+	v := m.currency
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCurrency returns the old "currency" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldCurrency(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCurrency is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCurrency requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCurrency: %w", err)
+	}
+	return oldValue.Currency, nil
+}
+
+// ResetCurrency resets all changes to the "currency" field.
+func (m *GrouponActivityMutation) ResetCurrency() {
+	m.currency = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *GrouponActivityMutation) SetStatus(gr grouponactivity.Status) {
+	m.status = &gr
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *GrouponActivityMutation) Status() (r grouponactivity.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the GrouponActivity entity.
+// If the GrouponActivity object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponActivityMutation) OldStatus(ctx context.Context) (v *grouponactivity.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *GrouponActivityMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[grouponactivity.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *GrouponActivityMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[grouponactivity.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *GrouponActivityMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, grouponactivity.FieldStatus)
+}
+
+// Where appends a list predicates to the GrouponActivityMutation builder.
+func (m *GrouponActivityMutation) Where(ps ...predicate.GrouponActivity) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the GrouponActivityMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *GrouponActivityMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.GrouponActivity, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *GrouponActivityMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *GrouponActivityMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (GrouponActivity).
+func (m *GrouponActivityMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *GrouponActivityMutation) Fields() []string {
+	fields := make([]string, 0, 17)
+	if m.created_at != nil {
+		fields = append(fields, grouponactivity.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, grouponactivity.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, grouponactivity.FieldDeletedAt)
+	}
+	if m.created_by != nil {
+		fields = append(fields, grouponactivity.FieldCreatedBy)
+	}
+	if m.updated_by != nil {
+		fields = append(fields, grouponactivity.FieldUpdatedBy)
+	}
+	if m.deleted_by != nil {
+		fields = append(fields, grouponactivity.FieldDeletedBy)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, grouponactivity.FieldTenantID)
+	}
+	if m.name != nil {
+		fields = append(fields, grouponactivity.FieldName)
+	}
+	if m.sku_id != nil {
+		fields = append(fields, grouponactivity.FieldSkuID)
+	}
+	if m.group_price != nil {
+		fields = append(fields, grouponactivity.FieldGroupPrice)
+	}
+	if m.group_size != nil {
+		fields = append(fields, grouponactivity.FieldGroupSize)
+	}
+	if m.group_valid_hours != nil {
+		fields = append(fields, grouponactivity.FieldGroupValidHours)
+	}
+	if m.per_user_limit != nil {
+		fields = append(fields, grouponactivity.FieldPerUserLimit)
+	}
+	if m.valid_from != nil {
+		fields = append(fields, grouponactivity.FieldValidFrom)
+	}
+	if m.valid_until != nil {
+		fields = append(fields, grouponactivity.FieldValidUntil)
+	}
+	if m.currency != nil {
+		fields = append(fields, grouponactivity.FieldCurrency)
+	}
+	if m.status != nil {
+		fields = append(fields, grouponactivity.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *GrouponActivityMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case grouponactivity.FieldCreatedAt:
+		return m.CreatedAt()
+	case grouponactivity.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case grouponactivity.FieldDeletedAt:
+		return m.DeletedAt()
+	case grouponactivity.FieldCreatedBy:
+		return m.CreatedBy()
+	case grouponactivity.FieldUpdatedBy:
+		return m.UpdatedBy()
+	case grouponactivity.FieldDeletedBy:
+		return m.DeletedBy()
+	case grouponactivity.FieldTenantID:
+		return m.TenantID()
+	case grouponactivity.FieldName:
+		return m.Name()
+	case grouponactivity.FieldSkuID:
+		return m.SkuID()
+	case grouponactivity.FieldGroupPrice:
+		return m.GroupPrice()
+	case grouponactivity.FieldGroupSize:
+		return m.GroupSize()
+	case grouponactivity.FieldGroupValidHours:
+		return m.GroupValidHours()
+	case grouponactivity.FieldPerUserLimit:
+		return m.PerUserLimit()
+	case grouponactivity.FieldValidFrom:
+		return m.ValidFrom()
+	case grouponactivity.FieldValidUntil:
+		return m.ValidUntil()
+	case grouponactivity.FieldCurrency:
+		return m.Currency()
+	case grouponactivity.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *GrouponActivityMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case grouponactivity.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case grouponactivity.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case grouponactivity.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case grouponactivity.FieldCreatedBy:
+		return m.OldCreatedBy(ctx)
+	case grouponactivity.FieldUpdatedBy:
+		return m.OldUpdatedBy(ctx)
+	case grouponactivity.FieldDeletedBy:
+		return m.OldDeletedBy(ctx)
+	case grouponactivity.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case grouponactivity.FieldName:
+		return m.OldName(ctx)
+	case grouponactivity.FieldSkuID:
+		return m.OldSkuID(ctx)
+	case grouponactivity.FieldGroupPrice:
+		return m.OldGroupPrice(ctx)
+	case grouponactivity.FieldGroupSize:
+		return m.OldGroupSize(ctx)
+	case grouponactivity.FieldGroupValidHours:
+		return m.OldGroupValidHours(ctx)
+	case grouponactivity.FieldPerUserLimit:
+		return m.OldPerUserLimit(ctx)
+	case grouponactivity.FieldValidFrom:
+		return m.OldValidFrom(ctx)
+	case grouponactivity.FieldValidUntil:
+		return m.OldValidUntil(ctx)
+	case grouponactivity.FieldCurrency:
+		return m.OldCurrency(ctx)
+	case grouponactivity.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown GrouponActivity field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *GrouponActivityMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case grouponactivity.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case grouponactivity.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case grouponactivity.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case grouponactivity.FieldCreatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedBy(v)
+		return nil
+	case grouponactivity.FieldUpdatedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedBy(v)
+		return nil
+	case grouponactivity.FieldDeletedBy:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedBy(v)
+		return nil
+	case grouponactivity.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case grouponactivity.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case grouponactivity.FieldSkuID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSkuID(v)
+		return nil
+	case grouponactivity.FieldGroupPrice:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGroupPrice(v)
+		return nil
+	case grouponactivity.FieldGroupSize:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGroupSize(v)
+		return nil
+	case grouponactivity.FieldGroupValidHours:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGroupValidHours(v)
+		return nil
+	case grouponactivity.FieldPerUserLimit:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPerUserLimit(v)
+		return nil
+	case grouponactivity.FieldValidFrom:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetValidFrom(v)
+		return nil
+	case grouponactivity.FieldValidUntil:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetValidUntil(v)
+		return nil
+	case grouponactivity.FieldCurrency:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCurrency(v)
+		return nil
+	case grouponactivity.FieldStatus:
+		v, ok := value.(grouponactivity.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown GrouponActivity field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *GrouponActivityMutation) AddedFields() []string {
+	var fields []string
+	if m.addcreated_by != nil {
+		fields = append(fields, grouponactivity.FieldCreatedBy)
+	}
+	if m.addupdated_by != nil {
+		fields = append(fields, grouponactivity.FieldUpdatedBy)
+	}
+	if m.adddeleted_by != nil {
+		fields = append(fields, grouponactivity.FieldDeletedBy)
+	}
+	if m.addtenant_id != nil {
+		fields = append(fields, grouponactivity.FieldTenantID)
+	}
+	if m.addsku_id != nil {
+		fields = append(fields, grouponactivity.FieldSkuID)
+	}
+	if m.addgroup_price != nil {
+		fields = append(fields, grouponactivity.FieldGroupPrice)
+	}
+	if m.addgroup_size != nil {
+		fields = append(fields, grouponactivity.FieldGroupSize)
+	}
+	if m.addgroup_valid_hours != nil {
+		fields = append(fields, grouponactivity.FieldGroupValidHours)
+	}
+	if m.addper_user_limit != nil {
+		fields = append(fields, grouponactivity.FieldPerUserLimit)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *GrouponActivityMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case grouponactivity.FieldCreatedBy:
+		return m.AddedCreatedBy()
+	case grouponactivity.FieldUpdatedBy:
+		return m.AddedUpdatedBy()
+	case grouponactivity.FieldDeletedBy:
+		return m.AddedDeletedBy()
+	case grouponactivity.FieldTenantID:
+		return m.AddedTenantID()
+	case grouponactivity.FieldSkuID:
+		return m.AddedSkuID()
+	case grouponactivity.FieldGroupPrice:
+		return m.AddedGroupPrice()
+	case grouponactivity.FieldGroupSize:
+		return m.AddedGroupSize()
+	case grouponactivity.FieldGroupValidHours:
+		return m.AddedGroupValidHours()
+	case grouponactivity.FieldPerUserLimit:
+		return m.AddedPerUserLimit()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *GrouponActivityMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case grouponactivity.FieldCreatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCreatedBy(v)
+		return nil
+	case grouponactivity.FieldUpdatedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddUpdatedBy(v)
+		return nil
+	case grouponactivity.FieldDeletedBy:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeletedBy(v)
+		return nil
+	case grouponactivity.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case grouponactivity.FieldSkuID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddSkuID(v)
+		return nil
+	case grouponactivity.FieldGroupPrice:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGroupPrice(v)
+		return nil
+	case grouponactivity.FieldGroupSize:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGroupSize(v)
+		return nil
+	case grouponactivity.FieldGroupValidHours:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGroupValidHours(v)
+		return nil
+	case grouponactivity.FieldPerUserLimit:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPerUserLimit(v)
+		return nil
+	}
+	return fmt.Errorf("unknown GrouponActivity numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *GrouponActivityMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(grouponactivity.FieldCreatedAt) {
+		fields = append(fields, grouponactivity.FieldCreatedAt)
+	}
+	if m.FieldCleared(grouponactivity.FieldUpdatedAt) {
+		fields = append(fields, grouponactivity.FieldUpdatedAt)
+	}
+	if m.FieldCleared(grouponactivity.FieldDeletedAt) {
+		fields = append(fields, grouponactivity.FieldDeletedAt)
+	}
+	if m.FieldCleared(grouponactivity.FieldCreatedBy) {
+		fields = append(fields, grouponactivity.FieldCreatedBy)
+	}
+	if m.FieldCleared(grouponactivity.FieldUpdatedBy) {
+		fields = append(fields, grouponactivity.FieldUpdatedBy)
+	}
+	if m.FieldCleared(grouponactivity.FieldDeletedBy) {
+		fields = append(fields, grouponactivity.FieldDeletedBy)
+	}
+	if m.FieldCleared(grouponactivity.FieldTenantID) {
+		fields = append(fields, grouponactivity.FieldTenantID)
+	}
+	if m.FieldCleared(grouponactivity.FieldSkuID) {
+		fields = append(fields, grouponactivity.FieldSkuID)
+	}
+	if m.FieldCleared(grouponactivity.FieldGroupPrice) {
+		fields = append(fields, grouponactivity.FieldGroupPrice)
+	}
+	if m.FieldCleared(grouponactivity.FieldValidFrom) {
+		fields = append(fields, grouponactivity.FieldValidFrom)
+	}
+	if m.FieldCleared(grouponactivity.FieldValidUntil) {
+		fields = append(fields, grouponactivity.FieldValidUntil)
+	}
+	if m.FieldCleared(grouponactivity.FieldStatus) {
+		fields = append(fields, grouponactivity.FieldStatus)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *GrouponActivityMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *GrouponActivityMutation) ClearField(name string) error {
+	switch name {
+	case grouponactivity.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case grouponactivity.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case grouponactivity.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case grouponactivity.FieldCreatedBy:
+		m.ClearCreatedBy()
+		return nil
+	case grouponactivity.FieldUpdatedBy:
+		m.ClearUpdatedBy()
+		return nil
+	case grouponactivity.FieldDeletedBy:
+		m.ClearDeletedBy()
+		return nil
+	case grouponactivity.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case grouponactivity.FieldSkuID:
+		m.ClearSkuID()
+		return nil
+	case grouponactivity.FieldGroupPrice:
+		m.ClearGroupPrice()
+		return nil
+	case grouponactivity.FieldValidFrom:
+		m.ClearValidFrom()
+		return nil
+	case grouponactivity.FieldValidUntil:
+		m.ClearValidUntil()
+		return nil
+	case grouponactivity.FieldStatus:
+		m.ClearStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown GrouponActivity nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *GrouponActivityMutation) ResetField(name string) error {
+	switch name {
+	case grouponactivity.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case grouponactivity.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case grouponactivity.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case grouponactivity.FieldCreatedBy:
+		m.ResetCreatedBy()
+		return nil
+	case grouponactivity.FieldUpdatedBy:
+		m.ResetUpdatedBy()
+		return nil
+	case grouponactivity.FieldDeletedBy:
+		m.ResetDeletedBy()
+		return nil
+	case grouponactivity.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case grouponactivity.FieldName:
+		m.ResetName()
+		return nil
+	case grouponactivity.FieldSkuID:
+		m.ResetSkuID()
+		return nil
+	case grouponactivity.FieldGroupPrice:
+		m.ResetGroupPrice()
+		return nil
+	case grouponactivity.FieldGroupSize:
+		m.ResetGroupSize()
+		return nil
+	case grouponactivity.FieldGroupValidHours:
+		m.ResetGroupValidHours()
+		return nil
+	case grouponactivity.FieldPerUserLimit:
+		m.ResetPerUserLimit()
+		return nil
+	case grouponactivity.FieldValidFrom:
+		m.ResetValidFrom()
+		return nil
+	case grouponactivity.FieldValidUntil:
+		m.ResetValidUntil()
+		return nil
+	case grouponactivity.FieldCurrency:
+		m.ResetCurrency()
+		return nil
+	case grouponactivity.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown GrouponActivity field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *GrouponActivityMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *GrouponActivityMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *GrouponActivityMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *GrouponActivityMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *GrouponActivityMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *GrouponActivityMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *GrouponActivityMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown GrouponActivity unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *GrouponActivityMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown GrouponActivity edge %s", name)
+}
+
+// GrouponGroupMutation represents an operation that mutates the GrouponGroup nodes in the graph.
+type GrouponGroupMutation struct {
+	config
+	op                 Op
+	typ                string
+	id                 *uint32
+	created_at         *time.Time
+	updated_at         *time.Time
+	deleted_at         *time.Time
+	tenant_id          *uint32
+	addtenant_id       *int32
+	activity_id        *uint32
+	addactivity_id     *int32
+	leader_order_id    *uint32
+	addleader_order_id *int32
+	member_count       *int32
+	addmember_count    *int32
+	paid_count         *int32
+	addpaid_count      *int32
+	target_size        *int32
+	addtarget_size     *int32
+	expire_at          *time.Time
+	status             *groupongroup.Status
+	clearedFields      map[string]struct{}
+	done               bool
+	oldValue           func(context.Context) (*GrouponGroup, error)
+	predicates         []predicate.GrouponGroup
+}
+
+var _ ent.Mutation = (*GrouponGroupMutation)(nil)
+
+// groupongroupOption allows management of the mutation configuration using functional options.
+type groupongroupOption func(*GrouponGroupMutation)
+
+// newGrouponGroupMutation creates new mutation for the GrouponGroup entity.
+func newGrouponGroupMutation(c config, op Op, opts ...groupongroupOption) *GrouponGroupMutation {
+	m := &GrouponGroupMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeGrouponGroup,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withGrouponGroupID sets the ID field of the mutation.
+func withGrouponGroupID(id uint32) groupongroupOption {
+	return func(m *GrouponGroupMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *GrouponGroup
+		)
+		m.oldValue = func(ctx context.Context) (*GrouponGroup, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().GrouponGroup.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withGrouponGroup sets the old GrouponGroup of the mutation.
+func withGrouponGroup(node *GrouponGroup) groupongroupOption {
+	return func(m *GrouponGroupMutation) {
+		m.oldValue = func(context.Context) (*GrouponGroup, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m GrouponGroupMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m GrouponGroupMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of GrouponGroup entities.
+func (m *GrouponGroupMutation) SetID(id uint32) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *GrouponGroupMutation) ID() (id uint32, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *GrouponGroupMutation) IDs(ctx context.Context) ([]uint32, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []uint32{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().GrouponGroup.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *GrouponGroupMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *GrouponGroupMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the GrouponGroup entity.
+// If the GrouponGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponGroupMutation) OldCreatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *GrouponGroupMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[groupongroup.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *GrouponGroupMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[groupongroup.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *GrouponGroupMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, groupongroup.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *GrouponGroupMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *GrouponGroupMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the GrouponGroup entity.
+// If the GrouponGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponGroupMutation) OldUpdatedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *GrouponGroupMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[groupongroup.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *GrouponGroupMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[groupongroup.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *GrouponGroupMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, groupongroup.FieldUpdatedAt)
+}
+
+// SetDeletedAt sets the "deleted_at" field.
+func (m *GrouponGroupMutation) SetDeletedAt(t time.Time) {
+	m.deleted_at = &t
+}
+
+// DeletedAt returns the value of the "deleted_at" field in the mutation.
+func (m *GrouponGroupMutation) DeletedAt() (r time.Time, exists bool) {
+	v := m.deleted_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeletedAt returns the old "deleted_at" field's value of the GrouponGroup entity.
+// If the GrouponGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponGroupMutation) OldDeletedAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeletedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeletedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeletedAt: %w", err)
+	}
+	return oldValue.DeletedAt, nil
+}
+
+// ClearDeletedAt clears the value of the "deleted_at" field.
+func (m *GrouponGroupMutation) ClearDeletedAt() {
+	m.deleted_at = nil
+	m.clearedFields[groupongroup.FieldDeletedAt] = struct{}{}
+}
+
+// DeletedAtCleared returns if the "deleted_at" field was cleared in this mutation.
+func (m *GrouponGroupMutation) DeletedAtCleared() bool {
+	_, ok := m.clearedFields[groupongroup.FieldDeletedAt]
+	return ok
+}
+
+// ResetDeletedAt resets all changes to the "deleted_at" field.
+func (m *GrouponGroupMutation) ResetDeletedAt() {
+	m.deleted_at = nil
+	delete(m.clearedFields, groupongroup.FieldDeletedAt)
+}
+
+// SetTenantID sets the "tenant_id" field.
+func (m *GrouponGroupMutation) SetTenantID(u uint32) {
+	m.tenant_id = &u
+	m.addtenant_id = nil
+}
+
+// TenantID returns the value of the "tenant_id" field in the mutation.
+func (m *GrouponGroupMutation) TenantID() (r uint32, exists bool) {
+	v := m.tenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTenantID returns the old "tenant_id" field's value of the GrouponGroup entity.
+// If the GrouponGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponGroupMutation) OldTenantID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTenantID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTenantID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTenantID: %w", err)
+	}
+	return oldValue.TenantID, nil
+}
+
+// AddTenantID adds u to the "tenant_id" field.
+func (m *GrouponGroupMutation) AddTenantID(u int32) {
+	if m.addtenant_id != nil {
+		*m.addtenant_id += u
+	} else {
+		m.addtenant_id = &u
+	}
+}
+
+// AddedTenantID returns the value that was added to the "tenant_id" field in this mutation.
+func (m *GrouponGroupMutation) AddedTenantID() (r int32, exists bool) {
+	v := m.addtenant_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearTenantID clears the value of the "tenant_id" field.
+func (m *GrouponGroupMutation) ClearTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	m.clearedFields[groupongroup.FieldTenantID] = struct{}{}
+}
+
+// TenantIDCleared returns if the "tenant_id" field was cleared in this mutation.
+func (m *GrouponGroupMutation) TenantIDCleared() bool {
+	_, ok := m.clearedFields[groupongroup.FieldTenantID]
+	return ok
+}
+
+// ResetTenantID resets all changes to the "tenant_id" field.
+func (m *GrouponGroupMutation) ResetTenantID() {
+	m.tenant_id = nil
+	m.addtenant_id = nil
+	delete(m.clearedFields, groupongroup.FieldTenantID)
+}
+
+// SetActivityID sets the "activity_id" field.
+func (m *GrouponGroupMutation) SetActivityID(u uint32) {
+	m.activity_id = &u
+	m.addactivity_id = nil
+}
+
+// ActivityID returns the value of the "activity_id" field in the mutation.
+func (m *GrouponGroupMutation) ActivityID() (r uint32, exists bool) {
+	v := m.activity_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldActivityID returns the old "activity_id" field's value of the GrouponGroup entity.
+// If the GrouponGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponGroupMutation) OldActivityID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldActivityID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldActivityID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldActivityID: %w", err)
+	}
+	return oldValue.ActivityID, nil
+}
+
+// AddActivityID adds u to the "activity_id" field.
+func (m *GrouponGroupMutation) AddActivityID(u int32) {
+	if m.addactivity_id != nil {
+		*m.addactivity_id += u
+	} else {
+		m.addactivity_id = &u
+	}
+}
+
+// AddedActivityID returns the value that was added to the "activity_id" field in this mutation.
+func (m *GrouponGroupMutation) AddedActivityID() (r int32, exists bool) {
+	v := m.addactivity_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearActivityID clears the value of the "activity_id" field.
+func (m *GrouponGroupMutation) ClearActivityID() {
+	m.activity_id = nil
+	m.addactivity_id = nil
+	m.clearedFields[groupongroup.FieldActivityID] = struct{}{}
+}
+
+// ActivityIDCleared returns if the "activity_id" field was cleared in this mutation.
+func (m *GrouponGroupMutation) ActivityIDCleared() bool {
+	_, ok := m.clearedFields[groupongroup.FieldActivityID]
+	return ok
+}
+
+// ResetActivityID resets all changes to the "activity_id" field.
+func (m *GrouponGroupMutation) ResetActivityID() {
+	m.activity_id = nil
+	m.addactivity_id = nil
+	delete(m.clearedFields, groupongroup.FieldActivityID)
+}
+
+// SetLeaderOrderID sets the "leader_order_id" field.
+func (m *GrouponGroupMutation) SetLeaderOrderID(u uint32) {
+	m.leader_order_id = &u
+	m.addleader_order_id = nil
+}
+
+// LeaderOrderID returns the value of the "leader_order_id" field in the mutation.
+func (m *GrouponGroupMutation) LeaderOrderID() (r uint32, exists bool) {
+	v := m.leader_order_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLeaderOrderID returns the old "leader_order_id" field's value of the GrouponGroup entity.
+// If the GrouponGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponGroupMutation) OldLeaderOrderID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLeaderOrderID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLeaderOrderID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLeaderOrderID: %w", err)
+	}
+	return oldValue.LeaderOrderID, nil
+}
+
+// AddLeaderOrderID adds u to the "leader_order_id" field.
+func (m *GrouponGroupMutation) AddLeaderOrderID(u int32) {
+	if m.addleader_order_id != nil {
+		*m.addleader_order_id += u
+	} else {
+		m.addleader_order_id = &u
+	}
+}
+
+// AddedLeaderOrderID returns the value that was added to the "leader_order_id" field in this mutation.
+func (m *GrouponGroupMutation) AddedLeaderOrderID() (r int32, exists bool) {
+	v := m.addleader_order_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearLeaderOrderID clears the value of the "leader_order_id" field.
+func (m *GrouponGroupMutation) ClearLeaderOrderID() {
+	m.leader_order_id = nil
+	m.addleader_order_id = nil
+	m.clearedFields[groupongroup.FieldLeaderOrderID] = struct{}{}
+}
+
+// LeaderOrderIDCleared returns if the "leader_order_id" field was cleared in this mutation.
+func (m *GrouponGroupMutation) LeaderOrderIDCleared() bool {
+	_, ok := m.clearedFields[groupongroup.FieldLeaderOrderID]
+	return ok
+}
+
+// ResetLeaderOrderID resets all changes to the "leader_order_id" field.
+func (m *GrouponGroupMutation) ResetLeaderOrderID() {
+	m.leader_order_id = nil
+	m.addleader_order_id = nil
+	delete(m.clearedFields, groupongroup.FieldLeaderOrderID)
+}
+
+// SetMemberCount sets the "member_count" field.
+func (m *GrouponGroupMutation) SetMemberCount(i int32) {
+	m.member_count = &i
+	m.addmember_count = nil
+}
+
+// MemberCount returns the value of the "member_count" field in the mutation.
+func (m *GrouponGroupMutation) MemberCount() (r int32, exists bool) {
+	v := m.member_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMemberCount returns the old "member_count" field's value of the GrouponGroup entity.
+// If the GrouponGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponGroupMutation) OldMemberCount(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMemberCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMemberCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMemberCount: %w", err)
+	}
+	return oldValue.MemberCount, nil
+}
+
+// AddMemberCount adds i to the "member_count" field.
+func (m *GrouponGroupMutation) AddMemberCount(i int32) {
+	if m.addmember_count != nil {
+		*m.addmember_count += i
+	} else {
+		m.addmember_count = &i
+	}
+}
+
+// AddedMemberCount returns the value that was added to the "member_count" field in this mutation.
+func (m *GrouponGroupMutation) AddedMemberCount() (r int32, exists bool) {
+	v := m.addmember_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetMemberCount resets all changes to the "member_count" field.
+func (m *GrouponGroupMutation) ResetMemberCount() {
+	m.member_count = nil
+	m.addmember_count = nil
+}
+
+// SetPaidCount sets the "paid_count" field.
+func (m *GrouponGroupMutation) SetPaidCount(i int32) {
+	m.paid_count = &i
+	m.addpaid_count = nil
+}
+
+// PaidCount returns the value of the "paid_count" field in the mutation.
+func (m *GrouponGroupMutation) PaidCount() (r int32, exists bool) {
+	v := m.paid_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPaidCount returns the old "paid_count" field's value of the GrouponGroup entity.
+// If the GrouponGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponGroupMutation) OldPaidCount(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPaidCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPaidCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPaidCount: %w", err)
+	}
+	return oldValue.PaidCount, nil
+}
+
+// AddPaidCount adds i to the "paid_count" field.
+func (m *GrouponGroupMutation) AddPaidCount(i int32) {
+	if m.addpaid_count != nil {
+		*m.addpaid_count += i
+	} else {
+		m.addpaid_count = &i
+	}
+}
+
+// AddedPaidCount returns the value that was added to the "paid_count" field in this mutation.
+func (m *GrouponGroupMutation) AddedPaidCount() (r int32, exists bool) {
+	v := m.addpaid_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetPaidCount resets all changes to the "paid_count" field.
+func (m *GrouponGroupMutation) ResetPaidCount() {
+	m.paid_count = nil
+	m.addpaid_count = nil
+}
+
+// SetTargetSize sets the "target_size" field.
+func (m *GrouponGroupMutation) SetTargetSize(i int32) {
+	m.target_size = &i
+	m.addtarget_size = nil
+}
+
+// TargetSize returns the value of the "target_size" field in the mutation.
+func (m *GrouponGroupMutation) TargetSize() (r int32, exists bool) {
+	v := m.target_size
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTargetSize returns the old "target_size" field's value of the GrouponGroup entity.
+// If the GrouponGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponGroupMutation) OldTargetSize(ctx context.Context) (v int32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTargetSize is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTargetSize requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTargetSize: %w", err)
+	}
+	return oldValue.TargetSize, nil
+}
+
+// AddTargetSize adds i to the "target_size" field.
+func (m *GrouponGroupMutation) AddTargetSize(i int32) {
+	if m.addtarget_size != nil {
+		*m.addtarget_size += i
+	} else {
+		m.addtarget_size = &i
+	}
+}
+
+// AddedTargetSize returns the value that was added to the "target_size" field in this mutation.
+func (m *GrouponGroupMutation) AddedTargetSize() (r int32, exists bool) {
+	v := m.addtarget_size
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTargetSize resets all changes to the "target_size" field.
+func (m *GrouponGroupMutation) ResetTargetSize() {
+	m.target_size = nil
+	m.addtarget_size = nil
+}
+
+// SetExpireAt sets the "expire_at" field.
+func (m *GrouponGroupMutation) SetExpireAt(t time.Time) {
+	m.expire_at = &t
+}
+
+// ExpireAt returns the value of the "expire_at" field in the mutation.
+func (m *GrouponGroupMutation) ExpireAt() (r time.Time, exists bool) {
+	v := m.expire_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpireAt returns the old "expire_at" field's value of the GrouponGroup entity.
+// If the GrouponGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponGroupMutation) OldExpireAt(ctx context.Context) (v *time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpireAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpireAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpireAt: %w", err)
+	}
+	return oldValue.ExpireAt, nil
+}
+
+// ClearExpireAt clears the value of the "expire_at" field.
+func (m *GrouponGroupMutation) ClearExpireAt() {
+	m.expire_at = nil
+	m.clearedFields[groupongroup.FieldExpireAt] = struct{}{}
+}
+
+// ExpireAtCleared returns if the "expire_at" field was cleared in this mutation.
+func (m *GrouponGroupMutation) ExpireAtCleared() bool {
+	_, ok := m.clearedFields[groupongroup.FieldExpireAt]
+	return ok
+}
+
+// ResetExpireAt resets all changes to the "expire_at" field.
+func (m *GrouponGroupMutation) ResetExpireAt() {
+	m.expire_at = nil
+	delete(m.clearedFields, groupongroup.FieldExpireAt)
+}
+
+// SetStatus sets the "status" field.
+func (m *GrouponGroupMutation) SetStatus(gr groupongroup.Status) {
+	m.status = &gr
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *GrouponGroupMutation) Status() (r groupongroup.Status, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the GrouponGroup entity.
+// If the GrouponGroup object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *GrouponGroupMutation) OldStatus(ctx context.Context) (v *groupongroup.Status, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *GrouponGroupMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[groupongroup.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *GrouponGroupMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[groupongroup.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *GrouponGroupMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, groupongroup.FieldStatus)
+}
+
+// Where appends a list predicates to the GrouponGroupMutation builder.
+func (m *GrouponGroupMutation) Where(ps ...predicate.GrouponGroup) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the GrouponGroupMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *GrouponGroupMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.GrouponGroup, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *GrouponGroupMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *GrouponGroupMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (GrouponGroup).
+func (m *GrouponGroupMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *GrouponGroupMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_at != nil {
+		fields = append(fields, groupongroup.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, groupongroup.FieldUpdatedAt)
+	}
+	if m.deleted_at != nil {
+		fields = append(fields, groupongroup.FieldDeletedAt)
+	}
+	if m.tenant_id != nil {
+		fields = append(fields, groupongroup.FieldTenantID)
+	}
+	if m.activity_id != nil {
+		fields = append(fields, groupongroup.FieldActivityID)
+	}
+	if m.leader_order_id != nil {
+		fields = append(fields, groupongroup.FieldLeaderOrderID)
+	}
+	if m.member_count != nil {
+		fields = append(fields, groupongroup.FieldMemberCount)
+	}
+	if m.paid_count != nil {
+		fields = append(fields, groupongroup.FieldPaidCount)
+	}
+	if m.target_size != nil {
+		fields = append(fields, groupongroup.FieldTargetSize)
+	}
+	if m.expire_at != nil {
+		fields = append(fields, groupongroup.FieldExpireAt)
+	}
+	if m.status != nil {
+		fields = append(fields, groupongroup.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *GrouponGroupMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case groupongroup.FieldCreatedAt:
+		return m.CreatedAt()
+	case groupongroup.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case groupongroup.FieldDeletedAt:
+		return m.DeletedAt()
+	case groupongroup.FieldTenantID:
+		return m.TenantID()
+	case groupongroup.FieldActivityID:
+		return m.ActivityID()
+	case groupongroup.FieldLeaderOrderID:
+		return m.LeaderOrderID()
+	case groupongroup.FieldMemberCount:
+		return m.MemberCount()
+	case groupongroup.FieldPaidCount:
+		return m.PaidCount()
+	case groupongroup.FieldTargetSize:
+		return m.TargetSize()
+	case groupongroup.FieldExpireAt:
+		return m.ExpireAt()
+	case groupongroup.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *GrouponGroupMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case groupongroup.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case groupongroup.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case groupongroup.FieldDeletedAt:
+		return m.OldDeletedAt(ctx)
+	case groupongroup.FieldTenantID:
+		return m.OldTenantID(ctx)
+	case groupongroup.FieldActivityID:
+		return m.OldActivityID(ctx)
+	case groupongroup.FieldLeaderOrderID:
+		return m.OldLeaderOrderID(ctx)
+	case groupongroup.FieldMemberCount:
+		return m.OldMemberCount(ctx)
+	case groupongroup.FieldPaidCount:
+		return m.OldPaidCount(ctx)
+	case groupongroup.FieldTargetSize:
+		return m.OldTargetSize(ctx)
+	case groupongroup.FieldExpireAt:
+		return m.OldExpireAt(ctx)
+	case groupongroup.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown GrouponGroup field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *GrouponGroupMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case groupongroup.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case groupongroup.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case groupongroup.FieldDeletedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeletedAt(v)
+		return nil
+	case groupongroup.FieldTenantID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTenantID(v)
+		return nil
+	case groupongroup.FieldActivityID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetActivityID(v)
+		return nil
+	case groupongroup.FieldLeaderOrderID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLeaderOrderID(v)
+		return nil
+	case groupongroup.FieldMemberCount:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMemberCount(v)
+		return nil
+	case groupongroup.FieldPaidCount:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPaidCount(v)
+		return nil
+	case groupongroup.FieldTargetSize:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTargetSize(v)
+		return nil
+	case groupongroup.FieldExpireAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpireAt(v)
+		return nil
+	case groupongroup.FieldStatus:
+		v, ok := value.(groupongroup.Status)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown GrouponGroup field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *GrouponGroupMutation) AddedFields() []string {
+	var fields []string
+	if m.addtenant_id != nil {
+		fields = append(fields, groupongroup.FieldTenantID)
+	}
+	if m.addactivity_id != nil {
+		fields = append(fields, groupongroup.FieldActivityID)
+	}
+	if m.addleader_order_id != nil {
+		fields = append(fields, groupongroup.FieldLeaderOrderID)
+	}
+	if m.addmember_count != nil {
+		fields = append(fields, groupongroup.FieldMemberCount)
+	}
+	if m.addpaid_count != nil {
+		fields = append(fields, groupongroup.FieldPaidCount)
+	}
+	if m.addtarget_size != nil {
+		fields = append(fields, groupongroup.FieldTargetSize)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *GrouponGroupMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case groupongroup.FieldTenantID:
+		return m.AddedTenantID()
+	case groupongroup.FieldActivityID:
+		return m.AddedActivityID()
+	case groupongroup.FieldLeaderOrderID:
+		return m.AddedLeaderOrderID()
+	case groupongroup.FieldMemberCount:
+		return m.AddedMemberCount()
+	case groupongroup.FieldPaidCount:
+		return m.AddedPaidCount()
+	case groupongroup.FieldTargetSize:
+		return m.AddedTargetSize()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *GrouponGroupMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case groupongroup.FieldTenantID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTenantID(v)
+		return nil
+	case groupongroup.FieldActivityID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddActivityID(v)
+		return nil
+	case groupongroup.FieldLeaderOrderID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLeaderOrderID(v)
+		return nil
+	case groupongroup.FieldMemberCount:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddMemberCount(v)
+		return nil
+	case groupongroup.FieldPaidCount:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPaidCount(v)
+		return nil
+	case groupongroup.FieldTargetSize:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTargetSize(v)
+		return nil
+	}
+	return fmt.Errorf("unknown GrouponGroup numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *GrouponGroupMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(groupongroup.FieldCreatedAt) {
+		fields = append(fields, groupongroup.FieldCreatedAt)
+	}
+	if m.FieldCleared(groupongroup.FieldUpdatedAt) {
+		fields = append(fields, groupongroup.FieldUpdatedAt)
+	}
+	if m.FieldCleared(groupongroup.FieldDeletedAt) {
+		fields = append(fields, groupongroup.FieldDeletedAt)
+	}
+	if m.FieldCleared(groupongroup.FieldTenantID) {
+		fields = append(fields, groupongroup.FieldTenantID)
+	}
+	if m.FieldCleared(groupongroup.FieldActivityID) {
+		fields = append(fields, groupongroup.FieldActivityID)
+	}
+	if m.FieldCleared(groupongroup.FieldLeaderOrderID) {
+		fields = append(fields, groupongroup.FieldLeaderOrderID)
+	}
+	if m.FieldCleared(groupongroup.FieldExpireAt) {
+		fields = append(fields, groupongroup.FieldExpireAt)
+	}
+	if m.FieldCleared(groupongroup.FieldStatus) {
+		fields = append(fields, groupongroup.FieldStatus)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *GrouponGroupMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *GrouponGroupMutation) ClearField(name string) error {
+	switch name {
+	case groupongroup.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case groupongroup.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case groupongroup.FieldDeletedAt:
+		m.ClearDeletedAt()
+		return nil
+	case groupongroup.FieldTenantID:
+		m.ClearTenantID()
+		return nil
+	case groupongroup.FieldActivityID:
+		m.ClearActivityID()
+		return nil
+	case groupongroup.FieldLeaderOrderID:
+		m.ClearLeaderOrderID()
+		return nil
+	case groupongroup.FieldExpireAt:
+		m.ClearExpireAt()
+		return nil
+	case groupongroup.FieldStatus:
+		m.ClearStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown GrouponGroup nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *GrouponGroupMutation) ResetField(name string) error {
+	switch name {
+	case groupongroup.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case groupongroup.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case groupongroup.FieldDeletedAt:
+		m.ResetDeletedAt()
+		return nil
+	case groupongroup.FieldTenantID:
+		m.ResetTenantID()
+		return nil
+	case groupongroup.FieldActivityID:
+		m.ResetActivityID()
+		return nil
+	case groupongroup.FieldLeaderOrderID:
+		m.ResetLeaderOrderID()
+		return nil
+	case groupongroup.FieldMemberCount:
+		m.ResetMemberCount()
+		return nil
+	case groupongroup.FieldPaidCount:
+		m.ResetPaidCount()
+		return nil
+	case groupongroup.FieldTargetSize:
+		m.ResetTargetSize()
+		return nil
+	case groupongroup.FieldExpireAt:
+		m.ResetExpireAt()
+		return nil
+	case groupongroup.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown GrouponGroup field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *GrouponGroupMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *GrouponGroupMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *GrouponGroupMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *GrouponGroupMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *GrouponGroupMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *GrouponGroupMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *GrouponGroupMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown GrouponGroup unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *GrouponGroupMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown GrouponGroup edge %s", name)
+}
+
 // InteractionCounterMutation represents an operation that mutates the InteractionCounter nodes in the graph.
 type InteractionCounterMutation struct {
 	config
@@ -69793,44 +72761,48 @@ func (m *OperationAuditLogMutation) ResetEdge(name string) error {
 // OrderMutation represents an operation that mutates the Order nodes in the graph.
 type OrderMutation struct {
 	config
-	op                 Op
-	typ                string
-	id                 *uint32
-	created_at         *time.Time
-	updated_at         *time.Time
-	deleted_at         *time.Time
-	created_by         *uint32
-	addcreated_by      *int32
-	updated_by         *uint32
-	addupdated_by      *int32
-	deleted_by         *uint32
-	adddeleted_by      *int32
-	tenant_id          *uint32
-	addtenant_id       *int32
-	currency           *string
-	business_ref_id    *string
-	idempotency_key    *string
-	user_id            *uint32
-	adduser_id         *int32
-	total_amount       *int64
-	addtotal_amount    *int64
-	original_amount    *int64
-	addoriginal_amount *int64
-	discount_amount    *int64
-	adddiscount_amount *int64
-	shipping_fee       *int64
-	addshipping_fee    *int64
-	tax_amount         *int64
-	addtax_amount      *int64
-	shipping_region    *string
-	status             *order.Status
-	recipient_name     *string
-	recipient_phone    *string
-	shipping_address   *string
-	clearedFields      map[string]struct{}
-	done               bool
-	oldValue           func(context.Context) (*Order, error)
-	predicates         []predicate.Order
+	op                     Op
+	typ                    string
+	id                     *uint32
+	created_at             *time.Time
+	updated_at             *time.Time
+	deleted_at             *time.Time
+	created_by             *uint32
+	addcreated_by          *int32
+	updated_by             *uint32
+	addupdated_by          *int32
+	deleted_by             *uint32
+	adddeleted_by          *int32
+	tenant_id              *uint32
+	addtenant_id           *int32
+	currency               *string
+	business_ref_id        *string
+	idempotency_key        *string
+	user_id                *uint32
+	adduser_id             *int32
+	total_amount           *int64
+	addtotal_amount        *int64
+	original_amount        *int64
+	addoriginal_amount     *int64
+	discount_amount        *int64
+	adddiscount_amount     *int64
+	shipping_fee           *int64
+	addshipping_fee        *int64
+	tax_amount             *int64
+	addtax_amount          *int64
+	shipping_region        *string
+	status                 *order.Status
+	groupon_activity_id    *uint32
+	addgroupon_activity_id *int32
+	groupon_group_id       *uint32
+	addgroupon_group_id    *int32
+	recipient_name         *string
+	recipient_phone        *string
+	shipping_address       *string
+	clearedFields          map[string]struct{}
+	done                   bool
+	oldValue               func(context.Context) (*Order, error)
+	predicates             []predicate.Order
 }
 
 var _ ent.Mutation = (*OrderMutation)(nil)
@@ -71029,6 +74001,146 @@ func (m *OrderMutation) ResetStatus() {
 	delete(m.clearedFields, order.FieldStatus)
 }
 
+// SetGrouponActivityID sets the "groupon_activity_id" field.
+func (m *OrderMutation) SetGrouponActivityID(u uint32) {
+	m.groupon_activity_id = &u
+	m.addgroupon_activity_id = nil
+}
+
+// GrouponActivityID returns the value of the "groupon_activity_id" field in the mutation.
+func (m *OrderMutation) GrouponActivityID() (r uint32, exists bool) {
+	v := m.groupon_activity_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGrouponActivityID returns the old "groupon_activity_id" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldGrouponActivityID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGrouponActivityID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGrouponActivityID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGrouponActivityID: %w", err)
+	}
+	return oldValue.GrouponActivityID, nil
+}
+
+// AddGrouponActivityID adds u to the "groupon_activity_id" field.
+func (m *OrderMutation) AddGrouponActivityID(u int32) {
+	if m.addgroupon_activity_id != nil {
+		*m.addgroupon_activity_id += u
+	} else {
+		m.addgroupon_activity_id = &u
+	}
+}
+
+// AddedGrouponActivityID returns the value that was added to the "groupon_activity_id" field in this mutation.
+func (m *OrderMutation) AddedGrouponActivityID() (r int32, exists bool) {
+	v := m.addgroupon_activity_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearGrouponActivityID clears the value of the "groupon_activity_id" field.
+func (m *OrderMutation) ClearGrouponActivityID() {
+	m.groupon_activity_id = nil
+	m.addgroupon_activity_id = nil
+	m.clearedFields[order.FieldGrouponActivityID] = struct{}{}
+}
+
+// GrouponActivityIDCleared returns if the "groupon_activity_id" field was cleared in this mutation.
+func (m *OrderMutation) GrouponActivityIDCleared() bool {
+	_, ok := m.clearedFields[order.FieldGrouponActivityID]
+	return ok
+}
+
+// ResetGrouponActivityID resets all changes to the "groupon_activity_id" field.
+func (m *OrderMutation) ResetGrouponActivityID() {
+	m.groupon_activity_id = nil
+	m.addgroupon_activity_id = nil
+	delete(m.clearedFields, order.FieldGrouponActivityID)
+}
+
+// SetGrouponGroupID sets the "groupon_group_id" field.
+func (m *OrderMutation) SetGrouponGroupID(u uint32) {
+	m.groupon_group_id = &u
+	m.addgroupon_group_id = nil
+}
+
+// GrouponGroupID returns the value of the "groupon_group_id" field in the mutation.
+func (m *OrderMutation) GrouponGroupID() (r uint32, exists bool) {
+	v := m.groupon_group_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldGrouponGroupID returns the old "groupon_group_id" field's value of the Order entity.
+// If the Order object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OrderMutation) OldGrouponGroupID(ctx context.Context) (v *uint32, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldGrouponGroupID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldGrouponGroupID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldGrouponGroupID: %w", err)
+	}
+	return oldValue.GrouponGroupID, nil
+}
+
+// AddGrouponGroupID adds u to the "groupon_group_id" field.
+func (m *OrderMutation) AddGrouponGroupID(u int32) {
+	if m.addgroupon_group_id != nil {
+		*m.addgroupon_group_id += u
+	} else {
+		m.addgroupon_group_id = &u
+	}
+}
+
+// AddedGrouponGroupID returns the value that was added to the "groupon_group_id" field in this mutation.
+func (m *OrderMutation) AddedGrouponGroupID() (r int32, exists bool) {
+	v := m.addgroupon_group_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearGrouponGroupID clears the value of the "groupon_group_id" field.
+func (m *OrderMutation) ClearGrouponGroupID() {
+	m.groupon_group_id = nil
+	m.addgroupon_group_id = nil
+	m.clearedFields[order.FieldGrouponGroupID] = struct{}{}
+}
+
+// GrouponGroupIDCleared returns if the "groupon_group_id" field was cleared in this mutation.
+func (m *OrderMutation) GrouponGroupIDCleared() bool {
+	_, ok := m.clearedFields[order.FieldGrouponGroupID]
+	return ok
+}
+
+// ResetGrouponGroupID resets all changes to the "groupon_group_id" field.
+func (m *OrderMutation) ResetGrouponGroupID() {
+	m.groupon_group_id = nil
+	m.addgroupon_group_id = nil
+	delete(m.clearedFields, order.FieldGrouponGroupID)
+}
+
 // SetRecipientName sets the "recipient_name" field.
 func (m *OrderMutation) SetRecipientName(s string) {
 	m.recipient_name = &s
@@ -71210,7 +74322,7 @@ func (m *OrderMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OrderMutation) Fields() []string {
-	fields := make([]string, 0, 21)
+	fields := make([]string, 0, 23)
 	if m.created_at != nil {
 		fields = append(fields, order.FieldCreatedAt)
 	}
@@ -71265,6 +74377,12 @@ func (m *OrderMutation) Fields() []string {
 	if m.status != nil {
 		fields = append(fields, order.FieldStatus)
 	}
+	if m.groupon_activity_id != nil {
+		fields = append(fields, order.FieldGrouponActivityID)
+	}
+	if m.groupon_group_id != nil {
+		fields = append(fields, order.FieldGrouponGroupID)
+	}
 	if m.recipient_name != nil {
 		fields = append(fields, order.FieldRecipientName)
 	}
@@ -71318,6 +74436,10 @@ func (m *OrderMutation) Field(name string) (ent.Value, bool) {
 		return m.ShippingRegion()
 	case order.FieldStatus:
 		return m.Status()
+	case order.FieldGrouponActivityID:
+		return m.GrouponActivityID()
+	case order.FieldGrouponGroupID:
+		return m.GrouponGroupID()
 	case order.FieldRecipientName:
 		return m.RecipientName()
 	case order.FieldRecipientPhone:
@@ -71369,6 +74491,10 @@ func (m *OrderMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldShippingRegion(ctx)
 	case order.FieldStatus:
 		return m.OldStatus(ctx)
+	case order.FieldGrouponActivityID:
+		return m.OldGrouponActivityID(ctx)
+	case order.FieldGrouponGroupID:
+		return m.OldGrouponGroupID(ctx)
 	case order.FieldRecipientName:
 		return m.OldRecipientName(ctx)
 	case order.FieldRecipientPhone:
@@ -71510,6 +74636,20 @@ func (m *OrderMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetStatus(v)
 		return nil
+	case order.FieldGrouponActivityID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGrouponActivityID(v)
+		return nil
+	case order.FieldGrouponGroupID:
+		v, ok := value.(uint32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetGrouponGroupID(v)
+		return nil
 	case order.FieldRecipientName:
 		v, ok := value.(string)
 		if !ok {
@@ -71569,6 +74709,12 @@ func (m *OrderMutation) AddedFields() []string {
 	if m.addtax_amount != nil {
 		fields = append(fields, order.FieldTaxAmount)
 	}
+	if m.addgroupon_activity_id != nil {
+		fields = append(fields, order.FieldGrouponActivityID)
+	}
+	if m.addgroupon_group_id != nil {
+		fields = append(fields, order.FieldGrouponGroupID)
+	}
 	return fields
 }
 
@@ -71597,6 +74743,10 @@ func (m *OrderMutation) AddedField(name string) (ent.Value, bool) {
 		return m.AddedShippingFee()
 	case order.FieldTaxAmount:
 		return m.AddedTaxAmount()
+	case order.FieldGrouponActivityID:
+		return m.AddedGrouponActivityID()
+	case order.FieldGrouponGroupID:
+		return m.AddedGrouponGroupID()
 	}
 	return nil, false
 }
@@ -71676,6 +74826,20 @@ func (m *OrderMutation) AddField(name string, value ent.Value) error {
 		}
 		m.AddTaxAmount(v)
 		return nil
+	case order.FieldGrouponActivityID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGrouponActivityID(v)
+		return nil
+	case order.FieldGrouponGroupID:
+		v, ok := value.(int32)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGrouponGroupID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Order numeric field %s", name)
 }
@@ -71737,6 +74901,12 @@ func (m *OrderMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(order.FieldStatus) {
 		fields = append(fields, order.FieldStatus)
+	}
+	if m.FieldCleared(order.FieldGrouponActivityID) {
+		fields = append(fields, order.FieldGrouponActivityID)
+	}
+	if m.FieldCleared(order.FieldGrouponGroupID) {
+		fields = append(fields, order.FieldGrouponGroupID)
 	}
 	if m.FieldCleared(order.FieldRecipientName) {
 		fields = append(fields, order.FieldRecipientName)
@@ -71815,6 +74985,12 @@ func (m *OrderMutation) ClearField(name string) error {
 	case order.FieldStatus:
 		m.ClearStatus()
 		return nil
+	case order.FieldGrouponActivityID:
+		m.ClearGrouponActivityID()
+		return nil
+	case order.FieldGrouponGroupID:
+		m.ClearGrouponGroupID()
+		return nil
 	case order.FieldRecipientName:
 		m.ClearRecipientName()
 		return nil
@@ -71885,6 +75061,12 @@ func (m *OrderMutation) ResetField(name string) error {
 		return nil
 	case order.FieldStatus:
 		m.ResetStatus()
+		return nil
+	case order.FieldGrouponActivityID:
+		m.ResetGrouponActivityID()
+		return nil
+	case order.FieldGrouponGroupID:
+		m.ResetGrouponGroupID()
 		return nil
 	case order.FieldRecipientName:
 		m.ResetRecipientName()

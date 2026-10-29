@@ -462,5 +462,33 @@
     "reason": "Reason",
     "refOrderId": "Order",
     "createdAt": "Time"
+  },
+  "groupon": {
+    "name": "Activity Name",
+    "skuId": "SKU ID",
+    "groupPrice": "Group Price",
+    "groupSize": "Group Size",
+    "groupValidHours": "Group Valid Hours",
+    "status": "Status",
+    "statusLabel": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "groups": "Groups",
+    "groupsOf": "Groups: {name}",
+    "noGroups": "No groups yet",
+    "leaderOrder": "Leader Order",
+    "paidProgress": "Paid / Target",
+    "groupStatus": "Group Status",
+    "groupStatusLabel": {
+      "opening": "Opening",
+      "success": "Success",
+      "failed": "Failed"
+    },
+    "expireAt": "Expires At",
+    "button": {
+      "create": "New Groupon Activity",
+      "update": "Edit Groupon Activity"
+    }
   }
 }

@@ -412,6 +412,60 @@ func (_u *OrderUpdate) ClearStatus() *OrderUpdate {
 	return _u
 }
 
+// SetGrouponActivityID sets the "groupon_activity_id" field.
+func (_u *OrderUpdate) SetGrouponActivityID(v uint32) *OrderUpdate {
+	_u.mutation.ResetGrouponActivityID()
+	_u.mutation.SetGrouponActivityID(v)
+	return _u
+}
+
+// SetNillableGrouponActivityID sets the "groupon_activity_id" field if the given value is not nil.
+func (_u *OrderUpdate) SetNillableGrouponActivityID(v *uint32) *OrderUpdate {
+	if v != nil {
+		_u.SetGrouponActivityID(*v)
+	}
+	return _u
+}
+
+// AddGrouponActivityID adds value to the "groupon_activity_id" field.
+func (_u *OrderUpdate) AddGrouponActivityID(v int32) *OrderUpdate {
+	_u.mutation.AddGrouponActivityID(v)
+	return _u
+}
+
+// ClearGrouponActivityID clears the value of the "groupon_activity_id" field.
+func (_u *OrderUpdate) ClearGrouponActivityID() *OrderUpdate {
+	_u.mutation.ClearGrouponActivityID()
+	return _u
+}
+
+// SetGrouponGroupID sets the "groupon_group_id" field.
+func (_u *OrderUpdate) SetGrouponGroupID(v uint32) *OrderUpdate {
+	_u.mutation.ResetGrouponGroupID()
+	_u.mutation.SetGrouponGroupID(v)
+	return _u
+}
+
+// SetNillableGrouponGroupID sets the "groupon_group_id" field if the given value is not nil.
+func (_u *OrderUpdate) SetNillableGrouponGroupID(v *uint32) *OrderUpdate {
+	if v != nil {
+		_u.SetGrouponGroupID(*v)
+	}
+	return _u
+}
+
+// AddGrouponGroupID adds value to the "groupon_group_id" field.
+func (_u *OrderUpdate) AddGrouponGroupID(v int32) *OrderUpdate {
+	_u.mutation.AddGrouponGroupID(v)
+	return _u
+}
+
+// ClearGrouponGroupID clears the value of the "groupon_group_id" field.
+func (_u *OrderUpdate) ClearGrouponGroupID() *OrderUpdate {
+	_u.mutation.ClearGrouponGroupID()
+	return _u
+}
+
 // SetRecipientName sets the "recipient_name" field.
 func (_u *OrderUpdate) SetRecipientName(v string) *OrderUpdate {
 	_u.mutation.SetRecipientName(v)
@@ -660,6 +714,24 @@ func (_u *OrderUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	}
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(order.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.GrouponActivityID(); ok {
+		_spec.SetField(order.FieldGrouponActivityID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedGrouponActivityID(); ok {
+		_spec.AddField(order.FieldGrouponActivityID, field.TypeUint32, value)
+	}
+	if _u.mutation.GrouponActivityIDCleared() {
+		_spec.ClearField(order.FieldGrouponActivityID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.GrouponGroupID(); ok {
+		_spec.SetField(order.FieldGrouponGroupID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedGrouponGroupID(); ok {
+		_spec.AddField(order.FieldGrouponGroupID, field.TypeUint32, value)
+	}
+	if _u.mutation.GrouponGroupIDCleared() {
+		_spec.ClearField(order.FieldGrouponGroupID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.RecipientName(); ok {
 		_spec.SetField(order.FieldRecipientName, field.TypeString, value)
@@ -1084,6 +1156,60 @@ func (_u *OrderUpdateOne) ClearStatus() *OrderUpdateOne {
 	return _u
 }
 
+// SetGrouponActivityID sets the "groupon_activity_id" field.
+func (_u *OrderUpdateOne) SetGrouponActivityID(v uint32) *OrderUpdateOne {
+	_u.mutation.ResetGrouponActivityID()
+	_u.mutation.SetGrouponActivityID(v)
+	return _u
+}
+
+// SetNillableGrouponActivityID sets the "groupon_activity_id" field if the given value is not nil.
+func (_u *OrderUpdateOne) SetNillableGrouponActivityID(v *uint32) *OrderUpdateOne {
+	if v != nil {
+		_u.SetGrouponActivityID(*v)
+	}
+	return _u
+}
+
+// AddGrouponActivityID adds value to the "groupon_activity_id" field.
+func (_u *OrderUpdateOne) AddGrouponActivityID(v int32) *OrderUpdateOne {
+	_u.mutation.AddGrouponActivityID(v)
+	return _u
+}
+
+// ClearGrouponActivityID clears the value of the "groupon_activity_id" field.
+func (_u *OrderUpdateOne) ClearGrouponActivityID() *OrderUpdateOne {
+	_u.mutation.ClearGrouponActivityID()
+	return _u
+}
+
+// SetGrouponGroupID sets the "groupon_group_id" field.
+func (_u *OrderUpdateOne) SetGrouponGroupID(v uint32) *OrderUpdateOne {
+	_u.mutation.ResetGrouponGroupID()
+	_u.mutation.SetGrouponGroupID(v)
+	return _u
+}
+
+// SetNillableGrouponGroupID sets the "groupon_group_id" field if the given value is not nil.
+func (_u *OrderUpdateOne) SetNillableGrouponGroupID(v *uint32) *OrderUpdateOne {
+	if v != nil {
+		_u.SetGrouponGroupID(*v)
+	}
+	return _u
+}
+
+// AddGrouponGroupID adds value to the "groupon_group_id" field.
+func (_u *OrderUpdateOne) AddGrouponGroupID(v int32) *OrderUpdateOne {
+	_u.mutation.AddGrouponGroupID(v)
+	return _u
+}
+
+// ClearGrouponGroupID clears the value of the "groupon_group_id" field.
+func (_u *OrderUpdateOne) ClearGrouponGroupID() *OrderUpdateOne {
+	_u.mutation.ClearGrouponGroupID()
+	return _u
+}
+
 // SetRecipientName sets the "recipient_name" field.
 func (_u *OrderUpdateOne) SetRecipientName(v string) *OrderUpdateOne {
 	_u.mutation.SetRecipientName(v)
@@ -1362,6 +1488,24 @@ func (_u *OrderUpdateOne) sqlSave(ctx context.Context) (_node *Order, err error)
 	}
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(order.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.GrouponActivityID(); ok {
+		_spec.SetField(order.FieldGrouponActivityID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedGrouponActivityID(); ok {
+		_spec.AddField(order.FieldGrouponActivityID, field.TypeUint32, value)
+	}
+	if _u.mutation.GrouponActivityIDCleared() {
+		_spec.ClearField(order.FieldGrouponActivityID, field.TypeUint32)
+	}
+	if value, ok := _u.mutation.GrouponGroupID(); ok {
+		_spec.SetField(order.FieldGrouponGroupID, field.TypeUint32, value)
+	}
+	if value, ok := _u.mutation.AddedGrouponGroupID(); ok {
+		_spec.AddField(order.FieldGrouponGroupID, field.TypeUint32, value)
+	}
+	if _u.mutation.GrouponGroupIDCleared() {
+		_spec.ClearField(order.FieldGrouponGroupID, field.TypeUint32)
 	}
 	if value, ok := _u.mutation.RecipientName(); ok {
 		_spec.SetField(order.FieldRecipientName, field.TypeString, value)

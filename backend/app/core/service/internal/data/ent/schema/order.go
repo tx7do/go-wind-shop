@@ -89,6 +89,16 @@ func (Order) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.Uint32("groupon_activity_id").
+			Comment("拼团活动ID").
+			Optional().
+			Nillable(),
+
+		field.Uint32("groupon_group_id").
+			Comment("拼团ID（成员载体）").
+			Optional().
+			Nillable(),
+
 		field.String("recipient_name").
 			Comment("收件人姓名").
 			Optional().

@@ -138,6 +138,10 @@ message Order {
   optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
   optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
 
+  // 拼团：参与的活动与团（下单事务写入；参团/开团载体）
+  optional uint32 groupon_activity_id = 60 [json_name = "grouponActivityId", (gnostic.openapi.v3.property) = {description: "拼团活动ID"}];
+  optional uint32 groupon_group_id = 61 [json_name = "grouponGroupId", (gnostic.openapi.v3.property) = {description: "拼团ID"}];
+
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
   optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
@@ -222,6 +226,18 @@ message CreateOrderRequest {
   // 非订单持久属性——券↔订单关联以 user_coupon.redeemed_order_id 为唯一来源。
   // 服务端在 Create 事务内 ForUpdate 锁定该券实例并校验归属/状态/窗口/额度，
   // 任一校验失败整事务回滚（fail-closed）。留空表示不使用优惠券。
+  // 拼团指令：开团（仅 activity_id）或参团（activity_id + group_id）。
+  // 服务端在 Create 事务内校验活动/团状态并落拼团价；留空表示普通购买。
+  optional uint32 groupon_activity_id = 3 [
+    json_name = "grouponActivityId",
+    (gnostic.openapi.v3.property) = {description: "拼团活动ID（开团/参团指令）"}
+  ];
+
+  optional uint32 groupon_group_id = 4 [
+    json_name = "grouponGroupId",
+    (gnostic.openapi.v3.property) = {description: "拼团ID（参团指令，留空=开新团）"}
+  ];
+
   optional uint32 coupon_id = 2 [
     json_name = "couponId",
     (gnostic.openapi.v3.property) = {description: "优惠券实例ID（核销指令，留空表示不使用）"}

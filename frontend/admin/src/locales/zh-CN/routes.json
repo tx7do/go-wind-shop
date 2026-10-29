@@ -101,6 +101,8 @@
     "promotion": "促销活动管理",
     "paymentChannel": "支付渠道配置",
     "seckill": "秒杀活动管理",
+    "pointsLedger": "积分台账",
+    "groupon": "拼团活动管理",
     "stockOpLog": "库存操作流水"
   }
 }

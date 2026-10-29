@@ -284,6 +284,30 @@ func (s *PaymentRefundService) Update(ctx context.Context, req *paymentV1.Update
 	return &emptypb.Empty{}, nil
 }
 
+// CreateAuto 系统自动退款入口（拼团失败等场景）：创建 PENDING 退款记录。
+// 复用既有 Create 校验（流水 SUCCEEDED/金额/防重）。
+func (s *PaymentRefundService) CreateAuto(ctx context.Context, transactionId uint32, amount int64, reason string) error {
+	_, err := s.Create(ctx, &paymentV1.CreatePaymentRefundRequest{
+		Data: &paymentV1.PaymentRefund{
+			TransactionId: trans.Ptr(transactionId),
+			Amount:        trans.Ptr(amount),
+			Currency:      trans.Ptr("CNY"),
+			Reason:        trans.Ptr(reason),
+		},
+	})
+	return err
+}
+
+// ApproveAuto 系统自动退款确认入口：推进 SUCCEEDED 并触发既有联动
+// （渠道退款/流水 REFUNDED/库存回补/站内信/积分回冲）。
+func (s *PaymentRefundService) ApproveAuto(ctx context.Context, refundId uint32) error {
+	_, err := s.Update(ctx, &paymentV1.UpdatePaymentRefundRequest{
+		Id:   refundId,
+		Data: &paymentV1.PaymentRefund{Status: paymentV1.PaymentRefund_SUCCEEDED.Enum()},
+	})
+	return err
+}
+
 func (s *PaymentRefundService) Delete(ctx context.Context, req *paymentV1.DeletePaymentRefundRequest) (*emptypb.Empty, error) {
 	if err := s.repo.Delete(ctx, req); err != nil {
 		return nil, err

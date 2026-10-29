@@ -20,6 +20,7 @@ import {
   useGetProductReviewSummary,
   useListActivePromotions,
     useListActiveSeckills,
+  useListActiveGroupons,
 } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { useAccessStore } from '@/stores/modules/core/access.state';
@@ -418,6 +419,21 @@ const activeSeckills = computed(() => {
   return items;
 });
 
+// ---------- 拼团（最高优先级价格展示） ----------
+type GrouponEntity = {
+  id?: number;
+  name?: string;
+  skuId?: number;
+  groupPrice?: number;
+  groupSize?: number;
+};
+
+const grouponsQuery = useListActiveGroupons();
+const activeGroupons = computed(() => {
+  const items = ((grouponsQuery.data?.value as any)?.items ?? []) as GrouponEntity[];
+  return items;
+});
+
 // ---------- 促销活动（专价划线价/满减角标） ----------
 // ListActivePromotions 返回当前租户全部生效活动，这里按当前商品过滤。
 type PromotionEntity = {
@@ -469,6 +485,20 @@ const seckillPrice = computed(() => {
   const k = activeSeckillForSku.value;
   if (!base || !k?.seckillPrice) return null;
   const yuan = (k.seckillPrice / 100).toFixed(2);
+  return Number(yuan) < Number(base) ? yuan : null;
+});
+
+// 拼团（最高优先级）：当前选中 SKU 的生效拼团，拼团价低于现价时覆盖展示
+const activeGrouponForSku = computed(() => {
+  const sid = sku.value?.id;
+  if (!sid) return undefined;
+  return activeGroupons.value.find((g) => g.skuId === sid);
+});
+const grouponPrice = computed(() => {
+  const base = displayPrice.value;
+  const g = activeGrouponForSku.value;
+  if (!base || !g?.groupPrice) return null;
+  const yuan = (g.groupPrice / 100).toFixed(2);
   return Number(yuan) < Number(base) ? yuan : null;
 });
 
@@ -704,7 +734,13 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
           class="rounded-xl border border-primary/40 bg-primary/5 p-5"
         >
           <p class="text-xs text-muted-foreground">{{ t('mall.product.price') }}</p>
-          <p v-if="seckillPrice !== null" class="mt-1 text-3xl font-extrabold text-red-500">
+          <p v-if="grouponPrice !== null" class="mt-1 text-3xl font-extrabold text-orange-500">
+            {{ t('mall.product.currencyCny') }}{{ grouponPrice }}
+            <span class="ml-2 text-base font-medium text-muted-foreground line-through">
+              {{ t('mall.product.currencyCny') }}{{ displayPrice }}
+            </span>
+          </p>
+          <p v-else-if="seckillPrice !== null" class="mt-1 text-3xl font-extrabold text-red-500">
             {{ t('mall.product.currencyCny') }}{{ seckillPrice }}
             <span class="ml-2 text-base font-medium text-muted-foreground line-through">
               {{ t('mall.product.currencyCny') }}{{ displayPrice }}
@@ -719,7 +755,13 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
           <p v-else class="mt-1 text-3xl font-extrabold text-primary">
             {{ t('mall.product.currencyCny') }}{{ displayPrice }}
           </p>
-          <div v-if="activeSeckillForSku" class="mt-2 inline-flex items-center gap-1 rounded-full bg-red-500/15 px-2 py-0.5 text-xs font-medium text-red-500">
+          <div v-if="activeGrouponForSku" class="mt-2 inline-flex items-center gap-1 rounded-full bg-orange-500/15 px-2 py-0.5 text-xs font-medium text-orange-500">
+            👥 {{ activeGrouponForSku.name || t('mall.groupon.tag') }}
+            <template v-if="activeGrouponForSku.groupSize">
+              · {{ t('mall.groupon.tagSize', { size: activeGrouponForSku.groupSize }) }}
+            </template>
+          </div>
+          <div v-else-if="activeSeckillForSku" class="mt-2 inline-flex items-center gap-1 rounded-full bg-red-500/15 px-2 py-0.5 text-xs font-medium text-red-500">
             ⚡ {{ activeSeckillForSku.name || t('mall.seckill.tag') }}
           </div>
           <div v-else-if="specialPricePromo" class="mt-2 inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">

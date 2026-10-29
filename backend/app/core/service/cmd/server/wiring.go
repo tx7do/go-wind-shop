@@ -134,6 +134,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	paymentTransactionRepo := data.NewPaymentTransactionRepo(ctx, entClient)
 	paymentRefundRepo := data.NewPaymentRefundRepo(ctx, entClient)
 	paymentChannelConfigRepo := data.NewPaymentChannelConfigRepo(ctx, entClient)
+	grouponActivityRepo := data.NewGrouponActivityRepo(ctx, entClient)
 	shippingAddressRepo := data.NewShippingAddressRepo(ctx, entClient)
 	shipmentRepo := data.NewShipmentRepo(ctx, entClient)
 	couponTemplateRepo := data.NewCouponTemplateRepo(ctx, entClient)
@@ -194,10 +195,12 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	pointsLedgerService := service.NewPointsLedgerService(ctx, pointsLedgerRepo, entClient)
 	paymentChannelConfigService := service.NewPaymentChannelConfigService(ctx, paymentChannelConfigRepo)
 	paymentGatewayResolver := service.NewPaymentGatewayResolver(ctx, paymentChannelConfigService)
-	orderService := service.NewOrderService(ctx, orderRepo, orderItemRepo, skuRepo, cartItemRepo, entClient, internalMessageService, paymentGatewayResolver)
+	grouponService := service.NewGrouponService(ctx, grouponActivityRepo, entClient)
+	orderService := service.NewOrderService(ctx, orderRepo, orderItemRepo, skuRepo, cartItemRepo, entClient, internalMessageService, paymentGatewayResolver, grouponService)
 	orderItemService := service.NewOrderItemService(ctx, orderItemRepo)
 	paymentTransactionService := service.NewPaymentTransactionService(ctx, paymentTransactionRepo, orderService, paymentChannelConfigService, paymentGatewayResolver, entClient, pointsLedgerService)
 	paymentRefundService := service.NewPaymentRefundService(ctx, paymentRefundRepo, paymentTransactionRepo, paymentTransactionService, paymentGatewayResolver)
+	grouponService.RegisterRefundService(paymentRefundService)
 	shippingAddressService := service.NewShippingAddressService(ctx, shippingAddressRepo)
 	shipmentService := service.NewShipmentService(ctx, shipmentRepo, entClient)
 	couponTemplateService := service.NewCouponTemplateService(ctx, couponTemplateRepo)
@@ -348,6 +351,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		orderItemService,
 		pointsLedgerService,
 		seckillActivityService,
+		grouponService,
 		paymentChannelConfigService,
 		paymentTransactionService,
 		paymentRefundService,
@@ -370,7 +374,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	asynqServer := server.NewAsynqServer(ctx, taskService, orderService, userCouponService, stockAlertScannerService, productSearchService, paymentTransactionService)
+	asynqServer := server.NewAsynqServer(ctx, taskService, orderService, userCouponService, stockAlertScannerService, productSearchService, paymentTransactionService, grouponService)
 
 	return newApp(ctx, grpcServer, asynqServer), rollback, nil
 }

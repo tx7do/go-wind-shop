@@ -5314,6 +5314,257 @@ paths:
                 "200":
                     description: OK
                     content: {}
+    /admin/v1/mall/groupons:
+        get:
+            tags:
+                - GrouponActivityService
+            operationId: GrouponActivityService_List
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.ListGrouponActivityResponse'
+        post:
+            tags:
+                - GrouponActivityService
+            operationId: GrouponActivityService_Create
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/catalog.service.v1.CreateGrouponActivityRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+    /admin/v1/mall/groupons/count:
+        get:
+            tags:
+                - GrouponActivityService
+            operationId: GrouponActivityService_Count
+            parameters:
+                - name: page
+                  in: query
+                  description: 当前页码（从1开始，默认1）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: pageSize
+                  in: query
+                  description: 每页条数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: offset
+                  in: query
+                  description: 跳过的记录数（从0开始，默认0）
+                  schema:
+                    type: string
+                - name: limit
+                  in: query
+                  description: 最多返回的记录数（默认10，建议设置上限如100）
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: token
+                  in: query
+                  description: 上一页最后一条记录的游标（如ID/时间戳+ID，首次请求为空）
+                  schema:
+                    type: string
+                - name: noPaging
+                  in: query
+                  description: 是否不分页，如果为true，则page和pageSize参数无效。
+                  schema:
+                    type: boolean
+                - name: query
+                  in: query
+                  description: JSON字符串过滤条件，基础语法：{"field1":"val1", "field2___icontains":"val2"}，具体请参见：https://github.com/tx7do/go-crud/tree/main/pagination/filter/README.md
+                  schema:
+                    type: string
+                - name: filter
+                  in: query
+                  description: Google AIP规范字符串过滤条件
+                  schema:
+                    type: string
+                - name: filterExpr.type
+                  in: query
+                  description: 过滤表达式类型
+                  schema:
+                    enum:
+                        - EXPR_TYPE_UNSPECIFIED
+                        - AND
+                        - OR
+                    type: string
+                    format: enum
+                - name: orderBy
+                  in: query
+                  description: 排序条件
+                  schema:
+                    type: string
+                - name: fieldMask
+                  in: query
+                  description: 字段掩码，其作用为SELECT中的字段，其语法为使用逗号分隔字段名，例如：id,realName,userName。如果为空则选中所有字段，即SELECT *。
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.CountGrouponActivityResponse'
+    /admin/v1/mall/groupons/{activityId}/groups:
+        get:
+            tags:
+                - GrouponActivityService
+            operationId: GrouponActivityService_ListGroups
+            parameters:
+                - name: activityId
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: status
+                  in: query
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.ListGrouponGroupResponse'
+    /admin/v1/mall/groupons/{id}:
+        get:
+            tags:
+                - GrouponActivityService
+            operationId: GrouponActivityService_Get
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+                - name: viewMask
+                  in: query
+                  schema:
+                    type: string
+                    format: field-mask
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/catalog.service.v1.GrouponActivity'
+        put:
+            tags:
+                - GrouponActivityService
+            operationId: GrouponActivityService_Update
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/catalog.service.v1.UpdateGrouponActivityRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content: {}
+        delete:
+            tags:
+                - GrouponActivityService
+            operationId: GrouponActivityService_Delete
+            parameters:
+                - name: id
+                  in: path
+                  required: true
+                  schema:
+                    type: integer
+                    format: uint32
+            responses:
+                "200":
+                    description: OK
+                    content: {}
     /admin/v1/mall/invoices:
         get:
             tags:
@@ -17498,6 +17749,11 @@ components:
             properties:
                 count:
                     type: string
+        catalog.service.v1.CountGrouponActivityResponse:
+            type: object
+            properties:
+                count:
+                    type: string
         catalog.service.v1.CountPointsLedgerResponse:
             type: object
             properties:
@@ -17565,6 +17821,11 @@ components:
             properties:
                 data:
                     $ref: '#/components/schemas/catalog.service.v1.CategoryTranslation'
+        catalog.service.v1.CreateGrouponActivityRequest:
+            type: object
+            properties:
+                data:
+                    $ref: '#/components/schemas/catalog.service.v1.GrouponActivity'
         catalog.service.v1.CreateProductAttributeRequest:
             type: object
             properties:
@@ -17621,6 +17882,105 @@ components:
             properties:
                 data:
                     $ref: '#/components/schemas/catalog.service.v1.Sku'
+        catalog.service.v1.GrouponActivity:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                name:
+                    type: string
+                skuId:
+                    type: integer
+                    description: 拼团 SKU ID
+                    format: uint32
+                groupPrice:
+                    type: string
+                    description: 成团价（分）
+                groupSize:
+                    type: integer
+                    description: 成团人数
+                    format: int32
+                groupValidHours:
+                    type: integer
+                    description: 单团成团时限（小时）
+                    format: int32
+                perUserLimit:
+                    type: integer
+                    description: 每人限购（活动窗口内）
+                    format: int32
+                validFrom:
+                    type: string
+                    format: date-time
+                validUntil:
+                    type: string
+                    format: date-time
+                currency:
+                    type: string
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - ACTIVE
+                        - INACTIVE
+                    type: string
+                    format: enum
+                tenantId:
+                    type: integer
+                    format: uint32
+                createdBy:
+                    type: integer
+                    format: uint32
+                updatedBy:
+                    type: integer
+                    format: uint32
+                createdAt:
+                    type: string
+                    format: date-time
+                updatedAt:
+                    type: string
+                    format: date-time
+            description: 拼团活动
+        catalog.service.v1.GrouponGroup:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                activityId:
+                    type: integer
+                    format: uint32
+                leaderOrderId:
+                    type: integer
+                    description: 团长订单ID
+                    format: uint32
+                memberCount:
+                    type: integer
+                    description: 已参团人数（含未支付）
+                    format: int32
+                paidCount:
+                    type: integer
+                    description: 已支付人数
+                    format: int32
+                targetSize:
+                    type: integer
+                    description: 成团所需人数
+                    format: int32
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - OPENING
+                        - SUCCESS
+                        - FAILED
+                    type: string
+                    format: enum
+                expireAt:
+                    type: string
+                    description: 成团截止时间
+                    format: date-time
+                createdAt:
+                    type: string
+                    format: date-time
+            description: 拼团
         catalog.service.v1.ListBrandResponse:
             type: object
             properties:
@@ -17641,6 +18001,24 @@ components:
                 total:
                     type: string
             description: 类目列表 - 答复
+        catalog.service.v1.ListGrouponActivityResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.GrouponActivity'
+                total:
+                    type: string
+        catalog.service.v1.ListGrouponGroupResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/catalog.service.v1.GrouponGroup'
+                total:
+                    type: string
         catalog.service.v1.ListPointsLedgerResponse:
             type: object
             properties:
@@ -18530,6 +18908,17 @@ components:
                     example: id,realname,username
                     type: string
                     description: 要更新的字段列表
+                    format: field-mask
+        catalog.service.v1.UpdateGrouponActivityRequest:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    format: uint32
+                data:
+                    $ref: '#/components/schemas/catalog.service.v1.GrouponActivity'
+                updateMask:
+                    type: string
                     format: field-mask
         catalog.service.v1.UpdateProductAttributeRequest:
             type: object
@@ -22040,6 +22429,14 @@ components:
                     type: integer
                     description: 删除者用户ID
                     format: uint32
+                grouponActivityId:
+                    type: integer
+                    description: 拼团活动ID
+                    format: uint32
+                grouponGroupId:
+                    type: integer
+                    description: 拼团ID
+                    format: uint32
                 createdAt:
                     type: string
                     description: 创建时间
@@ -24411,6 +24808,8 @@ tags:
       description: 文件管理服务
     - name: FileTransferService
       description: 文件传输服务
+    - name: GrouponActivityService
+      description: 拼团活动管理服务（admin：活动全 CRUD + 团只读）
     - name: InteractionAdminService
       description: |-
         交互管理服务（运营清数据面）。仅转发至 core InteractionAdminService，

@@ -114,11 +114,14 @@ type Order struct {
 	CreatedBy       *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
 	UpdatedBy       *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
 	DeletedBy       *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`
-	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt       *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt       *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	// 拼团：参与的活动与团（下单事务写入；参团/开团载体）
+	GrouponActivityId *uint32                `protobuf:"varint,60,opt,name=groupon_activity_id,json=grouponActivityId,proto3,oneof" json:"groupon_activity_id,omitempty"`
+	GrouponGroupId    *uint32                `protobuf:"varint,61,opt,name=groupon_group_id,json=grouponGroupId,proto3,oneof" json:"groupon_group_id,omitempty"`
+	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt         *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *Order) Reset() {
@@ -280,6 +283,20 @@ func (x *Order) GetUpdatedBy() uint32 {
 func (x *Order) GetDeletedBy() uint32 {
 	if x != nil && x.DeletedBy != nil {
 		return *x.DeletedBy
+	}
+	return 0
+}
+
+func (x *Order) GetGrouponActivityId() uint32 {
+	if x != nil && x.GrouponActivityId != nil {
+		return *x.GrouponActivityId
+	}
+	return 0
+}
+
+func (x *Order) GetGrouponGroupId() uint32 {
+	if x != nil && x.GrouponGroupId != nil {
+		return *x.GrouponGroupId
 	}
 	return 0
 }
@@ -730,9 +747,13 @@ type CreateOrderRequest struct {
 	// 非订单持久属性——券↔订单关联以 user_coupon.redeemed_order_id 为唯一来源。
 	// 服务端在 Create 事务内 ForUpdate 锁定该券实例并校验归属/状态/窗口/额度，
 	// 任一校验失败整事务回滚（fail-closed）。留空表示不使用优惠券。
-	CouponId      *uint32 `protobuf:"varint,2,opt,name=coupon_id,json=couponId,proto3,oneof" json:"coupon_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	// 拼团指令：开团（仅 activity_id）或参团（activity_id + group_id）。
+	// 服务端在 Create 事务内校验活动/团状态并落拼团价；留空表示普通购买。
+	GrouponActivityId *uint32 `protobuf:"varint,3,opt,name=groupon_activity_id,json=grouponActivityId,proto3,oneof" json:"groupon_activity_id,omitempty"`
+	GrouponGroupId    *uint32 `protobuf:"varint,4,opt,name=groupon_group_id,json=grouponGroupId,proto3,oneof" json:"groupon_group_id,omitempty"`
+	CouponId          *uint32 `protobuf:"varint,2,opt,name=coupon_id,json=couponId,proto3,oneof" json:"coupon_id,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
 }
 
 func (x *CreateOrderRequest) Reset() {
@@ -770,6 +791,20 @@ func (x *CreateOrderRequest) GetData() *Order {
 		return x.Data
 	}
 	return nil
+}
+
+func (x *CreateOrderRequest) GetGrouponActivityId() uint32 {
+	if x != nil && x.GrouponActivityId != nil {
+		return *x.GrouponActivityId
+	}
+	return 0
+}
+
+func (x *CreateOrderRequest) GetGrouponGroupId() uint32 {
+	if x != nil && x.GrouponGroupId != nil {
+		return *x.GrouponGroupId
+	}
+	return 0
 }
 
 func (x *CreateOrderRequest) GetCouponId() uint32 {
@@ -1575,7 +1610,7 @@ var File_order_service_v1_order_proto protoreflect.FileDescriptor
 
 const file_order_service_v1_order_proto_rawDesc = "" +
 	"\n" +
-	"\x1corder/service/v1/order.proto\x12\x10order.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\x8b\x13\n" +
+	"\x1corder/service/v1/order.proto\x12\x10order.service.v1\x1a$gnostic/openapi/v3/annotations.proto\x1a\x1cgoogle/api/annotations.proto\x1a\x1fgoogle/api/field_behavior.proto\x1a\x1bgoogle/protobuf/empty.proto\x1a\x1fgoogle/protobuf/timestamp.proto\x1a google/protobuf/field_mask.proto\x1a\x1epagination/v1/pagination.proto\"\xc2\x14\n" +
 	"\x05Order\x12#\n" +
 	"\x02id\x18\x01 \x01(\rB\x0e\xbaG\v\x92\x02\b订单IDH\x00R\x02id\x88\x01\x01\x122\n" +
 	"\auser_id\x18\x02 \x01(\rB\x14\xbaG\x11\x92\x02\x0e下单用户IDH\x01R\x06userId\x88\x01\x01\x12[\n" +
@@ -1601,13 +1636,15 @@ const file_order_service_v1_order_proto_rawDesc = "" +
 	"\n" +
 	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\x11R\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x12R\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\x12R\tdeletedBy\x88\x01\x01\x12I\n" +
+	"\x13groupon_activity_id\x18< \x01(\rB\x14\xbaG\x11\x92\x02\x0e拼团活动IDH\x13R\x11grouponActivityId\x88\x01\x01\x12=\n" +
+	"\x10groupon_group_id\x18= \x01(\rB\x0e\xbaG\v\x92\x02\b拼团IDH\x14R\x0egrouponGroupId\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x13R\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\x15R\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x14R\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x16R\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x15R\tdeletedAt\x88\x01\x01\"i\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x17R\tdeletedAt\x88\x01\x01\"i\n" +
 	"\x06Status\x12\x16\n" +
 	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fPENDING_PAYMENT\x10\x01\x12\b\n" +
@@ -1636,7 +1673,9 @@ const file_order_service_v1_order_proto_rawDesc = "" +
 	"_tenant_idB\r\n" +
 	"\v_created_byB\r\n" +
 	"\v_updated_byB\r\n" +
-	"\v_deleted_byB\r\n" +
+	"\v_deleted_byB\x16\n" +
+	"\x14_groupon_activity_idB\x13\n" +
+	"\x11_groupon_group_idB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
 	"\v_deleted_at\"\xc3\b\n" +
@@ -1699,10 +1738,14 @@ const file_order_service_v1_order_proto_rawDesc = "" +
 	"\n" +
 	"\bquery_byB\f\n" +
 	"\n" +
-	"_view_mask\"\xb4\x01\n" +
+	"_view_mask\"\xa9\x03\n" +
 	"\x12CreateOrderRequest\x12+\n" +
-	"\x04data\x18\x01 \x01(\v2\x17.order.service.v1.OrderR\x04data\x12c\n" +
-	"\tcoupon_id\x18\x02 \x01(\rBA\xbaG>\x92\x02;优惠券实例ID（核销指令，留空表示不使用）H\x00R\bcouponId\x88\x01\x01B\f\n" +
+	"\x04data\x18\x01 \x01(\v2\x17.order.service.v1.OrderR\x04data\x12b\n" +
+	"\x13groupon_activity_id\x18\x03 \x01(\rB-\xbaG*\x92\x02'拼团活动ID（开团/参团指令）H\x00R\x11grouponActivityId\x88\x01\x01\x12b\n" +
+	"\x10groupon_group_id\x18\x04 \x01(\rB3\xbaG0\x92\x02-拼团ID（参团指令，留空=开新团）H\x01R\x0egrouponGroupId\x88\x01\x01\x12c\n" +
+	"\tcoupon_id\x18\x02 \x01(\rBA\xbaG>\x92\x02;优惠券实例ID（核销指令，留空表示不使用）H\x02R\bcouponId\x88\x01\x01B\x16\n" +
+	"\x14_groupon_activity_idB\x13\n" +
+	"\x11_groupon_group_idB\f\n" +
 	"\n" +
 	"_coupon_id\"\xce\x03\n" +
 	"\x12UpdateOrderRequest\x12 \n" +

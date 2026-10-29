@@ -1146,6 +1146,75 @@ var (
 			},
 		},
 	}
+	// MallGrouponActivitiesColumns holds the columns for the "mall_groupon_activities" table.
+	MallGrouponActivitiesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Comment: "活动名称"},
+		{Name: "sku_id", Type: field.TypeUint32, Nullable: true, Comment: "拼团 SKU ID"},
+		{Name: "group_price", Type: field.TypeInt64, Nullable: true, Comment: "成团价（分）", Default: 0},
+		{Name: "group_size", Type: field.TypeInt32, Comment: "成团人数", Default: 2},
+		{Name: "group_valid_hours", Type: field.TypeInt32, Comment: "单团成团时限（小时）", Default: 24},
+		{Name: "per_user_limit", Type: field.TypeInt32, Comment: "每人限购（活动窗口内）", Default: 1},
+		{Name: "valid_from", Type: field.TypeTime, Nullable: true, Comment: "生效时间"},
+		{Name: "valid_until", Type: field.TypeTime, Nullable: true, Comment: "失效时间"},
+		{Name: "currency", Type: field.TypeString, Comment: "币种", Default: "CNY"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "活动状态", Enums: []string{"ACTIVE", "INACTIVE"}, Default: "ACTIVE"},
+	}
+	// MallGrouponActivitiesTable holds the schema information for the "mall_groupon_activities" table.
+	MallGrouponActivitiesTable = &schema.Table{
+		Name:       "mall_groupon_activities",
+		Comment:    "拼团活动表",
+		Columns:    MallGrouponActivitiesColumns,
+		PrimaryKey: []*schema.Column{MallGrouponActivitiesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "grouponactivity_tenant_id_sku_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{MallGrouponActivitiesColumns[7], MallGrouponActivitiesColumns[9], MallGrouponActivitiesColumns[17]},
+			},
+		},
+	}
+	// MallGrouponGroupsColumns holds the columns for the "mall_groupon_groups" table.
+	MallGrouponGroupsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "activity_id", Type: field.TypeUint32, Nullable: true, Comment: "活动ID"},
+		{Name: "leader_order_id", Type: field.TypeUint32, Nullable: true, Comment: "团长订单ID"},
+		{Name: "member_count", Type: field.TypeInt32, Comment: "已参团人数（含未支付）", Default: 1},
+		{Name: "paid_count", Type: field.TypeInt32, Comment: "已支付人数", Default: 0},
+		{Name: "target_size", Type: field.TypeInt32, Comment: "成团所需人数", Default: 2},
+		{Name: "expire_at", Type: field.TypeTime, Nullable: true, Comment: "成团截止时间"},
+		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "团状态", Enums: []string{"OPENING", "SUCCESS", "FAILED"}, Default: "OPENING"},
+	}
+	// MallGrouponGroupsTable holds the schema information for the "mall_groupon_groups" table.
+	MallGrouponGroupsTable = &schema.Table{
+		Name:       "mall_groupon_groups",
+		Comment:    "拼团表",
+		Columns:    MallGrouponGroupsColumns,
+		PrimaryKey: []*schema.Column{MallGrouponGroupsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "groupongroup_activity_id_status",
+				Unique:  false,
+				Columns: []*schema.Column{MallGrouponGroupsColumns[5], MallGrouponGroupsColumns[11]},
+			},
+			{
+				Name:    "groupongroup_status_expire_at",
+				Unique:  false,
+				Columns: []*schema.Column{MallGrouponGroupsColumns[11], MallGrouponGroupsColumns[10]},
+			},
+		},
+	}
 	// InteractionCountersColumns holds the columns for the "interaction_counters" table.
 	InteractionCountersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2400,6 +2469,8 @@ var (
 		{Name: "tax_amount", Type: field.TypeInt64, Nullable: true, Comment: "税费（最小货币单位，分；无税率规则时为 0；审计/对账用）", Default: 0},
 		{Name: "shipping_region", Type: field.TypeString, Nullable: true, Comment: "收货地区代码（ISO 3166；运费/税率计算输入；审计/对账用）"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "订单状态", Enums: []string{"PENDING_PAYMENT", "PAID", "CANCELLED", "FULFILLED", "CLOSED"}},
+		{Name: "groupon_activity_id", Type: field.TypeUint32, Nullable: true, Comment: "拼团活动ID"},
+		{Name: "groupon_group_id", Type: field.TypeUint32, Nullable: true, Comment: "拼团ID（成员载体）"},
 		{Name: "recipient_name", Type: field.TypeString, Nullable: true, Comment: "收件人姓名"},
 		{Name: "recipient_phone", Type: field.TypeString, Nullable: true, Comment: "收件人电话"},
 		{Name: "shipping_address", Type: field.TypeString, Nullable: true, Comment: "收货地址（结构化文本）"},
@@ -4922,6 +4993,8 @@ var (
 		SysDictEntryI18nTable,
 		SysDictTypesTable,
 		FilesTable,
+		MallGrouponActivitiesTable,
+		MallGrouponGroupsTable,
 		InteractionCountersTable,
 		InternalMessagesTable,
 		InternalMessageCategoriesTable,
@@ -5131,6 +5204,16 @@ func init() {
 	}
 	FilesTable.Annotation = &entsql.Annotation{
 		Table:     "files",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallGrouponActivitiesTable.Annotation = &entsql.Annotation{
+		Table:     "mall_groupon_activities",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallGrouponGroupsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_groupon_groups",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

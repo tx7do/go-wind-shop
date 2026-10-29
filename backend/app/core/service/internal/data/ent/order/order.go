@@ -50,6 +50,10 @@ const (
 	FieldShippingRegion = "shipping_region"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldGrouponActivityID holds the string denoting the groupon_activity_id field in the database.
+	FieldGrouponActivityID = "groupon_activity_id"
+	// FieldGrouponGroupID holds the string denoting the groupon_group_id field in the database.
+	FieldGrouponGroupID = "groupon_group_id"
 	// FieldRecipientName holds the string denoting the recipient_name field in the database.
 	FieldRecipientName = "recipient_name"
 	// FieldRecipientPhone holds the string denoting the recipient_phone field in the database.
@@ -81,6 +85,8 @@ var Columns = []string{
 	FieldTaxAmount,
 	FieldShippingRegion,
 	FieldStatus,
+	FieldGrouponActivityID,
+	FieldGrouponGroupID,
 	FieldRecipientName,
 	FieldRecipientPhone,
 	FieldShippingAddress,
@@ -244,6 +250,16 @@ func ByShippingRegion(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByGrouponActivityID orders the results by the groupon_activity_id field.
+func ByGrouponActivityID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGrouponActivityID, opts...).ToFunc()
+}
+
+// ByGrouponGroupID orders the results by the groupon_group_id field.
+func ByGrouponGroupID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGrouponGroupID, opts...).ToFunc()
 }
 
 // ByRecipientName orders the results by the recipient_name field.

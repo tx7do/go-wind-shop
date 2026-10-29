@@ -40,15 +40,15 @@ type PaymentChannelConfigServiceHTTPServer interface {
 
 func RegisterPaymentChannelConfigServiceHTTPServer(s *http.Server, srv PaymentChannelConfigServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/payment-channels", _PaymentChannelConfigService_List33_HTTP_Handler(srv))
-	r.GET("/admin/v1/payment-channels/count", _PaymentChannelConfigService_Count12_HTTP_Handler(srv))
-	r.GET("/admin/v1/payment-channels/{id}", _PaymentChannelConfigService_Get33_HTTP_Handler(srv))
-	r.POST("/admin/v1/payment-channels", _PaymentChannelConfigService_Create25_HTTP_Handler(srv))
-	r.PUT("/admin/v1/payment-channels/{id}", _PaymentChannelConfigService_Update26_HTTP_Handler(srv))
-	r.DELETE("/admin/v1/payment-channels/{id}", _PaymentChannelConfigService_Delete28_HTTP_Handler(srv))
+	r.GET("/admin/v1/payment-channels", _PaymentChannelConfigService_List34_HTTP_Handler(srv))
+	r.GET("/admin/v1/payment-channels/count", _PaymentChannelConfigService_Count13_HTTP_Handler(srv))
+	r.GET("/admin/v1/payment-channels/{id}", _PaymentChannelConfigService_Get34_HTTP_Handler(srv))
+	r.POST("/admin/v1/payment-channels", _PaymentChannelConfigService_Create26_HTTP_Handler(srv))
+	r.PUT("/admin/v1/payment-channels/{id}", _PaymentChannelConfigService_Update27_HTTP_Handler(srv))
+	r.DELETE("/admin/v1/payment-channels/{id}", _PaymentChannelConfigService_Delete29_HTTP_Handler(srv))
 }
 
-func _PaymentChannelConfigService_List33_HTTP_Handler(srv PaymentChannelConfigServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentChannelConfigService_List34_HTTP_Handler(srv PaymentChannelConfigServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -67,7 +67,7 @@ func _PaymentChannelConfigService_List33_HTTP_Handler(srv PaymentChannelConfigSe
 	}
 }
 
-func _PaymentChannelConfigService_Count12_HTTP_Handler(srv PaymentChannelConfigServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentChannelConfigService_Count13_HTTP_Handler(srv PaymentChannelConfigServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -86,7 +86,7 @@ func _PaymentChannelConfigService_Count12_HTTP_Handler(srv PaymentChannelConfigS
 	}
 }
 
-func _PaymentChannelConfigService_Get33_HTTP_Handler(srv PaymentChannelConfigServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentChannelConfigService_Get34_HTTP_Handler(srv PaymentChannelConfigServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPaymentChannelConfigRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -108,7 +108,7 @@ func _PaymentChannelConfigService_Get33_HTTP_Handler(srv PaymentChannelConfigSer
 	}
 }
 
-func _PaymentChannelConfigService_Create25_HTTP_Handler(srv PaymentChannelConfigServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentChannelConfigService_Create26_HTTP_Handler(srv PaymentChannelConfigServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.CreatePaymentChannelConfigRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -130,7 +130,7 @@ func _PaymentChannelConfigService_Create25_HTTP_Handler(srv PaymentChannelConfig
 	}
 }
 
-func _PaymentChannelConfigService_Update26_HTTP_Handler(srv PaymentChannelConfigServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentChannelConfigService_Update27_HTTP_Handler(srv PaymentChannelConfigServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.UpdatePaymentChannelConfigRequest
 		if err := ctx.Bind(&in); err != nil {
@@ -155,7 +155,7 @@ func _PaymentChannelConfigService_Update26_HTTP_Handler(srv PaymentChannelConfig
 	}
 }
 
-func _PaymentChannelConfigService_Delete28_HTTP_Handler(srv PaymentChannelConfigServiceHTTPServer) func(ctx http.Context) error {
+func _PaymentChannelConfigService_Delete29_HTTP_Handler(srv PaymentChannelConfigServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.DeletePaymentChannelConfigRequest
 		if err := ctx.BindQuery(&in); err != nil {

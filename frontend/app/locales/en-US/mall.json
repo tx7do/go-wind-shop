@@ -106,5 +106,9 @@
   },
   "seckill": {
     "tag": "Flash Sale"
+  },
+  "groupon": {
+    "tag": "Group Buy",
+    "tagSize": "{size} to form"
   }
 }

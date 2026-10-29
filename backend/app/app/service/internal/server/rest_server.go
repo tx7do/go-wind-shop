@@ -53,6 +53,7 @@ func NewRestMiddleware(
 		appV1.OperationProductServiceSearchProductSuggestions,
 		appV1.OperationPromotionServiceListActivePromotions,
 		appV1.OperationSeckillServiceListActiveSeckills,
+		appV1.OperationGrouponServiceListActiveGroupons,
 		appV1.OperationProductAttributeServiceList,
 		appV1.OperationProductAttributeServiceGet,
 		appV1.OperationProductAttributeValueServiceList,
@@ -129,6 +130,7 @@ func NewRestServer(
 	internalMessageRecipientService *service.InternalMessageRecipientService,
 
 	// register:rest-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
+	grouponService *service.GrouponService,
 	pointsService *service.PointsService,
 	seckillService *service.SeckillService,
 		userCouponService *service.UserCouponService,
@@ -192,6 +194,7 @@ func NewRestServer(
 	appV1.RegisterAiChatServiceHTTPServer(srv, aiChatService)
 
 	// register:rest-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
+	appV1.RegisterGrouponServiceHTTPServer(srv, grouponService)
 	appV1.RegisterPointsServiceHTTPServer(srv, pointsService)
 	appV1.RegisterSeckillServiceHTTPServer(srv, seckillService)
 	if cfg.GetServer().GetRest().GetEnableSwagger() {

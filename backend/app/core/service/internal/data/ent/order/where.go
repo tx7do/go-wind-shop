@@ -139,6 +139,16 @@ func ShippingRegion(v string) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldShippingRegion, v))
 }
 
+// GrouponActivityID applies equality check predicate on the "groupon_activity_id" field. It's identical to GrouponActivityIDEQ.
+func GrouponActivityID(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldGrouponActivityID, v))
+}
+
+// GrouponGroupID applies equality check predicate on the "groupon_group_id" field. It's identical to GrouponGroupIDEQ.
+func GrouponGroupID(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldGrouponGroupID, v))
+}
+
 // RecipientName applies equality check predicate on the "recipient_name" field. It's identical to RecipientNameEQ.
 func RecipientName(v string) predicate.Order {
 	return predicate.Order(sql.FieldEQ(FieldRecipientName, v))
@@ -1132,6 +1142,106 @@ func StatusIsNil() predicate.Order {
 // StatusNotNil applies the NotNil predicate on the "status" field.
 func StatusNotNil() predicate.Order {
 	return predicate.Order(sql.FieldNotNull(FieldStatus))
+}
+
+// GrouponActivityIDEQ applies the EQ predicate on the "groupon_activity_id" field.
+func GrouponActivityIDEQ(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldGrouponActivityID, v))
+}
+
+// GrouponActivityIDNEQ applies the NEQ predicate on the "groupon_activity_id" field.
+func GrouponActivityIDNEQ(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldNEQ(FieldGrouponActivityID, v))
+}
+
+// GrouponActivityIDIn applies the In predicate on the "groupon_activity_id" field.
+func GrouponActivityIDIn(vs ...uint32) predicate.Order {
+	return predicate.Order(sql.FieldIn(FieldGrouponActivityID, vs...))
+}
+
+// GrouponActivityIDNotIn applies the NotIn predicate on the "groupon_activity_id" field.
+func GrouponActivityIDNotIn(vs ...uint32) predicate.Order {
+	return predicate.Order(sql.FieldNotIn(FieldGrouponActivityID, vs...))
+}
+
+// GrouponActivityIDGT applies the GT predicate on the "groupon_activity_id" field.
+func GrouponActivityIDGT(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldGT(FieldGrouponActivityID, v))
+}
+
+// GrouponActivityIDGTE applies the GTE predicate on the "groupon_activity_id" field.
+func GrouponActivityIDGTE(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldGTE(FieldGrouponActivityID, v))
+}
+
+// GrouponActivityIDLT applies the LT predicate on the "groupon_activity_id" field.
+func GrouponActivityIDLT(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldLT(FieldGrouponActivityID, v))
+}
+
+// GrouponActivityIDLTE applies the LTE predicate on the "groupon_activity_id" field.
+func GrouponActivityIDLTE(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldLTE(FieldGrouponActivityID, v))
+}
+
+// GrouponActivityIDIsNil applies the IsNil predicate on the "groupon_activity_id" field.
+func GrouponActivityIDIsNil() predicate.Order {
+	return predicate.Order(sql.FieldIsNull(FieldGrouponActivityID))
+}
+
+// GrouponActivityIDNotNil applies the NotNil predicate on the "groupon_activity_id" field.
+func GrouponActivityIDNotNil() predicate.Order {
+	return predicate.Order(sql.FieldNotNull(FieldGrouponActivityID))
+}
+
+// GrouponGroupIDEQ applies the EQ predicate on the "groupon_group_id" field.
+func GrouponGroupIDEQ(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldEQ(FieldGrouponGroupID, v))
+}
+
+// GrouponGroupIDNEQ applies the NEQ predicate on the "groupon_group_id" field.
+func GrouponGroupIDNEQ(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldNEQ(FieldGrouponGroupID, v))
+}
+
+// GrouponGroupIDIn applies the In predicate on the "groupon_group_id" field.
+func GrouponGroupIDIn(vs ...uint32) predicate.Order {
+	return predicate.Order(sql.FieldIn(FieldGrouponGroupID, vs...))
+}
+
+// GrouponGroupIDNotIn applies the NotIn predicate on the "groupon_group_id" field.
+func GrouponGroupIDNotIn(vs ...uint32) predicate.Order {
+	return predicate.Order(sql.FieldNotIn(FieldGrouponGroupID, vs...))
+}
+
+// GrouponGroupIDGT applies the GT predicate on the "groupon_group_id" field.
+func GrouponGroupIDGT(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldGT(FieldGrouponGroupID, v))
+}
+
+// GrouponGroupIDGTE applies the GTE predicate on the "groupon_group_id" field.
+func GrouponGroupIDGTE(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldGTE(FieldGrouponGroupID, v))
+}
+
+// GrouponGroupIDLT applies the LT predicate on the "groupon_group_id" field.
+func GrouponGroupIDLT(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldLT(FieldGrouponGroupID, v))
+}
+
+// GrouponGroupIDLTE applies the LTE predicate on the "groupon_group_id" field.
+func GrouponGroupIDLTE(v uint32) predicate.Order {
+	return predicate.Order(sql.FieldLTE(FieldGrouponGroupID, v))
+}
+
+// GrouponGroupIDIsNil applies the IsNil predicate on the "groupon_group_id" field.
+func GrouponGroupIDIsNil() predicate.Order {
+	return predicate.Order(sql.FieldIsNull(FieldGrouponGroupID))
+}
+
+// GrouponGroupIDNotNil applies the NotNil predicate on the "groupon_group_id" field.
+func GrouponGroupIDNotNil() predicate.Order {
+	return predicate.Order(sql.FieldNotNull(FieldGrouponGroupID))
 }
 
 // RecipientNameEQ applies the EQ predicate on the "recipient_name" field.

@@ -91,6 +91,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiChatServiceClient := data.NewAiChatServiceClient(ctx, discovery)
 
 	// ── register:client ── 新模块服务客户端在此行后注册(make register 工具锚点,勿删)
+	grouponServiceClient := data.NewGrouponServiceClient(ctx, discovery)
 	pointsServiceClient := data.NewPointsServiceClient(ctx, discovery)
 	seckillServiceClient := data.NewSeckillServiceClient(ctx, discovery)
 
@@ -127,6 +128,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	aiChatService := service.NewAiChatService(ctx, aiChatServiceClient, authenticationServiceClient)
 
 	// ── register:service ── 新模块服务在此行后注册(make register 工具锚点,勿删)
+	grouponService := service.NewGrouponService(ctx, grouponServiceClient)
 	pointsService := service.NewPointsService(ctx, pointsServiceClient)
 	seckillService := service.NewSeckillService(ctx, seckillServiceClient)
 
@@ -157,6 +159,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		shippingAddressService,
 		shipmentService,
 		internalMessageRecipientService,
+		grouponService,
 		pointsService,
 		seckillService,
 		userCouponService,

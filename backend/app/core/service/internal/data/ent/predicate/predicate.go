@@ -84,6 +84,12 @@ type DictType func(*sql.Selector)
 // File is the predicate function for file builders.
 type File func(*sql.Selector)
 
+// GrouponActivity is the predicate function for grouponactivity builders.
+type GrouponActivity func(*sql.Selector)
+
+// GrouponGroup is the predicate function for groupongroup builders.
+type GrouponGroup func(*sql.Selector)
+
 // InteractionCounter is the predicate function for interactioncounter builders.
 type InteractionCounter func(*sql.Selector)
 

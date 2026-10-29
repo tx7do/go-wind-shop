@@ -101,6 +101,8 @@
     "promotion": "Promotion Management",
     "paymentChannel": "Payment Channels",
     "seckill": "Seckill Management",
+    "pointsLedger": "Points Ledger",
+    "groupon": "Groupon Management",
     "stockOpLog": "Stock Op Logs"
   }
 }

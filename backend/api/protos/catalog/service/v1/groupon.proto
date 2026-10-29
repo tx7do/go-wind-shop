@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package catalog.service.v1;
+
+import "gnostic/openapi/v3/annotations.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+// 拼团活动服务
+//
+// SKU 级拼团：成团价（group_price）需要 group_size 人支付成团；每人开团/参团
+// 以订单为成员载体（order.groupon_group_id）。到期未成团 → FAILED → 成员已支付
+// 订单由 groupon_sweep 自动退款并关闭。拼团价优先级高于秒杀/专价。
+service GrouponActivityService {
+  rpc List (pagination.PagingRequest) returns (ListGrouponActivityResponse) {}
+  rpc Count (pagination.PagingRequest) returns (CountGrouponActivityResponse) {}
+  rpc Get (GetGrouponActivityRequest) returns (GrouponActivity) {}
+  rpc Create (CreateGrouponActivityRequest) returns (google.protobuf.Empty) {}
+  rpc Update (UpdateGrouponActivityRequest) returns (google.protobuf.Empty) {}
+  rpc Delete (DeleteGrouponActivityRequest) returns (google.protobuf.Empty) {}
+
+  // 当前生效中的拼团活动（C端商品页拼团价展示）
+  rpc ListActiveGroupons (ListActiveGrouponsRequest) returns (ListGrouponActivityResponse) {}
+
+  // 活动下的团列表（C端参团列表 / admin 运营查看）
+  rpc ListGroups (ListGrouponGroupsRequest) returns (ListGrouponGroupResponse) {}
+  rpc GetGroup (GetGrouponGroupRequest) returns (GrouponGroup) {}
+}
+
+// 拼团活动
+message GrouponActivity {
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    ACTIVE = 1;
+    INACTIVE = 2;
+  }
+
+  optional uint32 id = 1 [json_name = "id"];
+  optional string name = 2 [json_name = "name"];
+  optional uint32 sku_id = 3 [json_name = "skuId", (gnostic.openapi.v3.property) = {description: "拼团 SKU ID"}];
+  optional int64 group_price = 4 [json_name = "groupPrice", (gnostic.openapi.v3.property) = {description: "成团价（分）"}];
+  optional int32 group_size = 5 [json_name = "groupSize", (gnostic.openapi.v3.property) = {description: "成团人数"}];
+  optional int32 group_valid_hours = 6 [json_name = "groupValidHours", (gnostic.openapi.v3.property) = {description: "单团成团时限（小时）"}];
+  optional int32 per_user_limit = 7 [json_name = "perUserLimit", (gnostic.openapi.v3.property) = {description: "每人限购（活动窗口内）"}];
+  optional google.protobuf.Timestamp valid_from = 8 [json_name = "validFrom"];
+  optional google.protobuf.Timestamp valid_until = 9 [json_name = "validUntil"];
+  optional string currency = 10 [json_name = "currency"];
+  optional Status status = 11 [json_name = "status"];
+
+  optional uint32 tenant_id = 90 [json_name = "tenantId"];
+  optional uint32 created_by = 100 [json_name = "createdBy"];
+  optional uint32 updated_by = 101 [json_name = "updatedBy"];
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt"];
+  optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt"];
+}
+
+// 拼团
+message GrouponGroup {
+  enum Status {
+    STATUS_UNSPECIFIED = 0;
+    OPENING = 1;   // 拼购中
+    SUCCESS = 2;   // 已成团
+    FAILED = 3;    // 已失败（到期未成团，成员订单自动退款关闭）
+  }
+
+  optional uint32 id = 1 [json_name = "id"];
+  optional uint32 activity_id = 2 [json_name = "activityId"];
+  optional uint32 leader_order_id = 3 [json_name = "leaderOrderId", (gnostic.openapi.v3.property) = {description: "团长订单ID"}];
+  optional int32 member_count = 4 [json_name = "memberCount", (gnostic.openapi.v3.property) = {description: "已参团人数（含未支付）"}];
+  optional int32 paid_count = 5 [json_name = "paidCount", (gnostic.openapi.v3.property) = {description: "已支付人数"}];
+  optional int32 target_size = 6 [json_name = "targetSize", (gnostic.openapi.v3.property) = {description: "成团所需人数"}];
+  optional Status status = 7 [json_name = "status"];
+  optional google.protobuf.Timestamp expire_at = 8 [json_name = "expireAt", (gnostic.openapi.v3.property) = {description: "成团截止时间"}];
+
+  optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt"];
+}
+
+message ListGrouponActivityResponse { repeated GrouponActivity items = 1; uint64 total = 2; }
+message CountGrouponActivityResponse { uint64 count = 1; }
+message ListGrouponGroupResponse { repeated GrouponGroup items = 1; uint64 total = 2; }
+
+message GetGrouponActivityRequest {
+  uint32 id = 1 [json_name = "id"];
+  optional google.protobuf.FieldMask view_mask = 100 [json_name = "viewMask"];
+}
+message CreateGrouponActivityRequest { GrouponActivity data = 1; }
+message UpdateGrouponActivityRequest {
+  uint32 id = 1;
+  GrouponActivity data = 2;
+  optional google.protobuf.FieldMask update_mask = 3;
+}
+message DeleteGrouponActivityRequest { uint32 id = 1 [json_name = "id"]; }
+message ListActiveGrouponsRequest {}
+message ListGrouponGroupsRequest {
+  uint32 activity_id = 1 [json_name = "activityId"];
+  optional string status = 2 [json_name = "status"];
+}
+message GetGrouponGroupRequest {
+  uint32 id = 1 [json_name = "id"];
+}

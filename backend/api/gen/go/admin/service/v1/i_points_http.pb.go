@@ -33,12 +33,12 @@ type PointsLedgerServiceHTTPServer interface {
 
 func RegisterPointsLedgerServiceHTTPServer(s *http.Server, srv PointsLedgerServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/points-ledgers", _PointsLedgerService_List40_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/points-ledgers/count", _PointsLedgerService_Count13_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/points-ledgers/{id}", _PointsLedgerService_Get39_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/points-ledgers", _PointsLedgerService_List41_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/points-ledgers/count", _PointsLedgerService_Count14_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/points-ledgers/{id}", _PointsLedgerService_Get40_HTTP_Handler(srv))
 }
 
-func _PointsLedgerService_List40_HTTP_Handler(srv PointsLedgerServiceHTTPServer) func(ctx http.Context) error {
+func _PointsLedgerService_List41_HTTP_Handler(srv PointsLedgerServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -57,7 +57,7 @@ func _PointsLedgerService_List40_HTTP_Handler(srv PointsLedgerServiceHTTPServer)
 	}
 }
 
-func _PointsLedgerService_Count13_HTTP_Handler(srv PointsLedgerServiceHTTPServer) func(ctx http.Context) error {
+func _PointsLedgerService_Count14_HTTP_Handler(srv PointsLedgerServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -76,7 +76,7 @@ func _PointsLedgerService_Count13_HTTP_Handler(srv PointsLedgerServiceHTTPServer
 	}
 }
 
-func _PointsLedgerService_Get39_HTTP_Handler(srv PointsLedgerServiceHTTPServer) func(ctx http.Context) error {
+func _PointsLedgerService_Get40_HTTP_Handler(srv PointsLedgerServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetPointsLedgerRequest
 		if err := ctx.BindQuery(&in); err != nil {

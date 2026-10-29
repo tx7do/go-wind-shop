@@ -135,6 +135,7 @@ func NewGrpcServer(
 	// register:grpc-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
 	pointsLedgerService *service.PointsLedgerService,
 	seckillActivityService *service.SeckillActivityService,
+	grouponService *service.GrouponService,
 		paymentChannelConfigService *service.PaymentChannelConfigService,
 		paymentTransactionService *service.PaymentTransactionService,
 		paymentRefundService *service.PaymentRefundService,
@@ -267,6 +268,7 @@ func NewGrpcServer(
 	// register:grpc-route ── 新模块服务路由在此行后注册(make register 工具锚点,勿删)
 	catalogV1.RegisterPointsLedgerServiceServer(srv, pointsLedgerService)
 	catalogV1.RegisterSeckillActivityServiceServer(srv, seckillActivityService)
+	catalogV1.RegisterGrouponActivityServiceServer(srv, grouponService)
 
 	return srv, nil
 }

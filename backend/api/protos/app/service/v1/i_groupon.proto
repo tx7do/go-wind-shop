@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package app.service.v1;
+
+import "google/api/annotations.proto";
+import "catalog/service/v1/groupon.proto";
+
+// 拼团前台服务（C端只读）
+service GrouponService {
+  // 当前生效中的拼团活动（商品页拼团价展示；匿名可读）
+  rpc ListActiveGroupons (catalog.service.v1.ListActiveGrouponsRequest) returns (catalog.service.v1.ListGrouponActivityResponse) {
+    option (google.api.http) = { get: "/app/v1/mall/groupons/active" };
+  }
+
+  // 团详情与团列表（订单详情展示团状态 / 参团列表）
+  rpc GetGroup (catalog.service.v1.GetGrouponGroupRequest) returns (catalog.service.v1.GrouponGroup) {
+    option (google.api.http) = { get: "/app/v1/mall/groupons/groups/{id}" };
+  }
+  rpc ListGroups (catalog.service.v1.ListGrouponGroupsRequest) returns (catalog.service.v1.ListGrouponGroupResponse) {
+    option (google.api.http) = { get: "/app/v1/mall/groupons/{activity_id}/groups" };
+  }
+}

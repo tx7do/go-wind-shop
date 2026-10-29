@@ -55,6 +55,7 @@ type OrderService struct {
 	entClient              *entCrud.EntClient[*ent.Client]
 	internalMessageService *InternalMessageService
 	gatewayResolver        *PaymentGatewayResolver
+	grouponService         *GrouponService
 
 	taskScheduler TaskScheduler
 }
@@ -68,6 +69,7 @@ func NewOrderService(
 	entClient *entCrud.EntClient[*ent.Client],
 	internalMessageService *InternalMessageService,
 	gatewayResolver *PaymentGatewayResolver,
+	grouponService *GrouponService,
 ) *OrderService {
 	return &OrderService{
 		log:                    logx.New(ctx.NewLoggerHelper("order/service/core-service")),
@@ -78,6 +80,7 @@ func NewOrderService(
 		entClient:              entClient,
 		internalMessageService: internalMessageService,
 		gatewayResolver:        gatewayResolver,
+		grouponService:         grouponService,
 	}
 }
 
@@ -265,6 +268,7 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 	//    复用 orderRepo 的字段映射逻辑，但走事务客户端。
 	orderEntBuilder := tx.Order.Create().
 		SetNillableUserID(req.Data.UserId).
+		SetNillableGrouponActivityID(req.GrouponActivityId).
 		SetNillableTotalAmount(req.Data.TotalAmount).
 		SetNillableCurrency(req.Data.Currency).
 		SetNillableBusinessRefID(req.Data.BusinessRefId).
@@ -299,6 +303,19 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 		return nil, err
 	}
 	orderId := createdOrder.ID
+
+	// 拼团成员载体（参团单在下单时已带；开团单在此回填）
+	var grouponGroupId uint32
+
+	// 拼团开团：订单落库后创建团并回填 groupon_group_id（参团单在下单时已带）
+	if req.GetGrouponActivityId() != 0 && req.GetGrouponGroupId() == 0 {
+		gid, gErr := s.grouponService.CreateGroupForLeaderTx(ctx, tx, req.GetGrouponActivityId(), orderId)
+		if gErr != nil {
+			err = gErr
+			return nil, err
+		}
+		grouponGroupId = gid
+	}
 
 	// 2. 查询购物车项（事务内），为每个项插入 OrderItem + 扣减 SKU 库存。
 	cartItems, qErr := tx.CartItem.Query().
@@ -365,10 +382,28 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 			return nil, err
 		}
 
+		// 2b-0. 拼团价覆盖（最高优先级，显式指令触发）：开团/参团 + 团校验。
+		//       团长订单落库后由 CreateGroupForLeaderTx 建团并回填 groupon_group_id。
+		if req.GetGrouponActivityId() != 0 && skuId != nil {
+			gid, gPrice, isNew, gErr := s.grouponService.ApplyGrouponInTx(ctx, tx,
+				req.GetGrouponActivityId(), req.GetGrouponGroupId(), userId, *skuId)
+			if gErr != nil {
+				err = gErr
+				return nil, err
+			}
+			if gPrice > 0 && gPrice < unitPrice {
+				unitPrice = gPrice
+				s.log.Infof("groupon price applied for sku [%d]: %d (activity %d)", *skuId, unitPrice, req.GetGrouponActivityId())
+			}
+			if !isNew {
+				grouponGroupId = gid
+			}
+		}
+
 		// 2b-1. 秒杀价覆盖（最高优先级）：SKU 级限时限量活动，行锁扣减已售数
 		//       （防超卖）+ 每人限购校验。任一校验失败整事务回滚。
 		var seckillHit *ent.SeckillActivity
-		if skuId != nil {
+		if seckillHit == nil && grouponGroupId == 0 && req.GetGrouponActivityId() == 0 && skuId != nil {
 			if sk, skOk := activeSeckillInTx(ctx, tx, *skuId, time.Now()); skOk {
 				if sk.SeckillPrice != nil && *sk.SeckillPrice < unitPrice {
 					// 每人限购校验（窗口内累计，含本次数量）

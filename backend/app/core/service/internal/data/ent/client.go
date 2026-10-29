@@ -37,6 +37,8 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/dictentryi18n"
 	"go-wind-shop/app/core/service/internal/data/ent/dicttype"
 	"go-wind-shop/app/core/service/internal/data/ent/file"
+	"go-wind-shop/app/core/service/internal/data/ent/grouponactivity"
+	"go-wind-shop/app/core/service/internal/data/ent/groupongroup"
 	"go-wind-shop/app/core/service/internal/data/ent/interactioncounter"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessage"
 	"go-wind-shop/app/core/service/internal/data/ent/internalmessagecategory"
@@ -172,6 +174,10 @@ type Client struct {
 	DictType *DictTypeClient
 	// File is the client for interacting with the File builders.
 	File *FileClient
+	// GrouponActivity is the client for interacting with the GrouponActivity builders.
+	GrouponActivity *GrouponActivityClient
+	// GrouponGroup is the client for interacting with the GrouponGroup builders.
+	GrouponGroup *GrouponGroupClient
 	// InteractionCounter is the client for interacting with the InteractionCounter builders.
 	InteractionCounter *InteractionCounterClient
 	// InternalMessage is the client for interacting with the InternalMessage builders.
@@ -351,6 +357,8 @@ func (c *Client) init() {
 	c.DictEntryI18n = NewDictEntryI18nClient(c.config)
 	c.DictType = NewDictTypeClient(c.config)
 	c.File = NewFileClient(c.config)
+	c.GrouponActivity = NewGrouponActivityClient(c.config)
+	c.GrouponGroup = NewGrouponGroupClient(c.config)
 	c.InteractionCounter = NewInteractionCounterClient(c.config)
 	c.InternalMessage = NewInternalMessageClient(c.config)
 	c.InternalMessageCategory = NewInternalMessageCategoryClient(c.config)
@@ -540,6 +548,8 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		DictEntryI18n:                    NewDictEntryI18nClient(cfg),
 		DictType:                         NewDictTypeClient(cfg),
 		File:                             NewFileClient(cfg),
+		GrouponActivity:                  NewGrouponActivityClient(cfg),
+		GrouponGroup:                     NewGrouponGroupClient(cfg),
 		InteractionCounter:               NewInteractionCounterClient(cfg),
 		InternalMessage:                  NewInternalMessageClient(cfg),
 		InternalMessageCategory:          NewInternalMessageCategoryClient(cfg),
@@ -656,6 +666,8 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		DictEntryI18n:                    NewDictEntryI18nClient(cfg),
 		DictType:                         NewDictTypeClient(cfg),
 		File:                             NewFileClient(cfg),
+		GrouponActivity:                  NewGrouponActivityClient(cfg),
+		GrouponGroup:                     NewGrouponGroupClient(cfg),
 		InteractionCounter:               NewInteractionCounterClient(cfg),
 		InternalMessage:                  NewInternalMessageClient(cfg),
 		InternalMessageCategory:          NewInternalMessageCategoryClient(cfg),
@@ -761,17 +773,17 @@ func (c *Client) Use(hooks ...Hook) {
 		c.ApiAuditLog, c.Brand, c.BrandTranslation, c.Cart, c.CartItem, c.Category,
 		c.CategoryTranslation, c.Comment, c.CommentLike, c.CouponTemplate,
 		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.File,
-		c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
-		c.InternalMessageRecipient, c.Invoice, c.Language, c.LoginAuditLog,
-		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
-		c.MembershipRole, c.Menu, c.MonitorAlertRule, c.NotificationChannel,
-		c.NotificationDelivery, c.NotificationPreference, c.NotificationRule,
-		c.NotificationTemplate, c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit,
-		c.PaymentChannelConfig, c.PaymentRefund, c.PaymentTransaction, c.Permission,
-		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.Plan, c.PlanModule, c.PlanQuota, c.PointsLedger,
-		c.PolicyEvaluationLog, c.Position, c.Product, c.ProductAttribute,
-		c.ProductAttributeTranslation, c.ProductAttributeValue,
+		c.GrouponActivity, c.GrouponGroup, c.InteractionCounter, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Invoice, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.MonitorAlertRule,
+		c.NotificationChannel, c.NotificationDelivery, c.NotificationPreference,
+		c.NotificationRule, c.NotificationTemplate, c.OperationAuditLog, c.Order,
+		c.OrderItem, c.OrgUnit, c.PaymentChannelConfig, c.PaymentRefund,
+		c.PaymentTransaction, c.Permission, c.PermissionApi, c.PermissionAuditLog,
+		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.Plan, c.PlanModule,
+		c.PlanQuota, c.PointsLedger, c.PolicyEvaluationLog, c.Position, c.Product,
+		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
 		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Promotion, c.Role,
 		c.RoleMetadata, c.RolePermission, c.Script, c.ScriptLog, c.SeckillActivity,
 		c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
@@ -792,17 +804,17 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.ApiAuditLog, c.Brand, c.BrandTranslation, c.Cart, c.CartItem, c.Category,
 		c.CategoryTranslation, c.Comment, c.CommentLike, c.CouponTemplate,
 		c.DataAccessAuditLog, c.DictEntry, c.DictEntryI18n, c.DictType, c.File,
-		c.InteractionCounter, c.InternalMessage, c.InternalMessageCategory,
-		c.InternalMessageRecipient, c.Invoice, c.Language, c.LoginAuditLog,
-		c.LoginPolicy, c.Membership, c.MembershipOrgUnit, c.MembershipPosition,
-		c.MembershipRole, c.Menu, c.MonitorAlertRule, c.NotificationChannel,
-		c.NotificationDelivery, c.NotificationPreference, c.NotificationRule,
-		c.NotificationTemplate, c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit,
-		c.PaymentChannelConfig, c.PaymentRefund, c.PaymentTransaction, c.Permission,
-		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
-		c.PermissionPolicy, c.Plan, c.PlanModule, c.PlanQuota, c.PointsLedger,
-		c.PolicyEvaluationLog, c.Position, c.Product, c.ProductAttribute,
-		c.ProductAttributeTranslation, c.ProductAttributeValue,
+		c.GrouponActivity, c.GrouponGroup, c.InteractionCounter, c.InternalMessage,
+		c.InternalMessageCategory, c.InternalMessageRecipient, c.Invoice, c.Language,
+		c.LoginAuditLog, c.LoginPolicy, c.Membership, c.MembershipOrgUnit,
+		c.MembershipPosition, c.MembershipRole, c.Menu, c.MonitorAlertRule,
+		c.NotificationChannel, c.NotificationDelivery, c.NotificationPreference,
+		c.NotificationRule, c.NotificationTemplate, c.OperationAuditLog, c.Order,
+		c.OrderItem, c.OrgUnit, c.PaymentChannelConfig, c.PaymentRefund,
+		c.PaymentTransaction, c.Permission, c.PermissionApi, c.PermissionAuditLog,
+		c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy, c.Plan, c.PlanModule,
+		c.PlanQuota, c.PointsLedger, c.PolicyEvaluationLog, c.Position, c.Product,
+		c.ProductAttribute, c.ProductAttributeTranslation, c.ProductAttributeValue,
 		c.ProductAttributeValueTranslation, c.ProductTranslation, c.Promotion, c.Role,
 		c.RoleMetadata, c.RolePermission, c.Script, c.ScriptLog, c.SeckillActivity,
 		c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
@@ -869,6 +881,10 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.DictType.mutate(ctx, m)
 	case *FileMutation:
 		return c.File.mutate(ctx, m)
+	case *GrouponActivityMutation:
+		return c.GrouponActivity.mutate(ctx, m)
+	case *GrouponGroupMutation:
+		return c.GrouponGroup.mutate(ctx, m)
 	case *InteractionCounterMutation:
 		return c.InteractionCounter.mutate(ctx, m)
 	case *InternalMessageMutation:
@@ -4715,6 +4731,274 @@ func (c *FileClient) mutate(ctx context.Context, m *FileMutation) (Value, error)
 		return (&FileDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown File mutation op: %q", m.Op())
+	}
+}
+
+// GrouponActivityClient is a client for the GrouponActivity schema.
+type GrouponActivityClient struct {
+	config
+}
+
+// NewGrouponActivityClient returns a client for the GrouponActivity from the given config.
+func NewGrouponActivityClient(c config) *GrouponActivityClient {
+	return &GrouponActivityClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `grouponactivity.Hooks(f(g(h())))`.
+func (c *GrouponActivityClient) Use(hooks ...Hook) {
+	c.hooks.GrouponActivity = append(c.hooks.GrouponActivity, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `grouponactivity.Intercept(f(g(h())))`.
+func (c *GrouponActivityClient) Intercept(interceptors ...Interceptor) {
+	c.inters.GrouponActivity = append(c.inters.GrouponActivity, interceptors...)
+}
+
+// Create returns a builder for creating a GrouponActivity entity.
+func (c *GrouponActivityClient) Create() *GrouponActivityCreate {
+	mutation := newGrouponActivityMutation(c.config, OpCreate)
+	return &GrouponActivityCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of GrouponActivity entities.
+func (c *GrouponActivityClient) CreateBulk(builders ...*GrouponActivityCreate) *GrouponActivityCreateBulk {
+	return &GrouponActivityCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *GrouponActivityClient) MapCreateBulk(slice any, setFunc func(*GrouponActivityCreate, int)) *GrouponActivityCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &GrouponActivityCreateBulk{err: fmt.Errorf("calling to GrouponActivityClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*GrouponActivityCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &GrouponActivityCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for GrouponActivity.
+func (c *GrouponActivityClient) Update() *GrouponActivityUpdate {
+	mutation := newGrouponActivityMutation(c.config, OpUpdate)
+	return &GrouponActivityUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *GrouponActivityClient) UpdateOne(_m *GrouponActivity) *GrouponActivityUpdateOne {
+	mutation := newGrouponActivityMutation(c.config, OpUpdateOne, withGrouponActivity(_m))
+	return &GrouponActivityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *GrouponActivityClient) UpdateOneID(id uint32) *GrouponActivityUpdateOne {
+	mutation := newGrouponActivityMutation(c.config, OpUpdateOne, withGrouponActivityID(id))
+	return &GrouponActivityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for GrouponActivity.
+func (c *GrouponActivityClient) Delete() *GrouponActivityDelete {
+	mutation := newGrouponActivityMutation(c.config, OpDelete)
+	return &GrouponActivityDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *GrouponActivityClient) DeleteOne(_m *GrouponActivity) *GrouponActivityDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *GrouponActivityClient) DeleteOneID(id uint32) *GrouponActivityDeleteOne {
+	builder := c.Delete().Where(grouponactivity.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &GrouponActivityDeleteOne{builder}
+}
+
+// Query returns a query builder for GrouponActivity.
+func (c *GrouponActivityClient) Query() *GrouponActivityQuery {
+	return &GrouponActivityQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeGrouponActivity},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a GrouponActivity entity by its id.
+func (c *GrouponActivityClient) Get(ctx context.Context, id uint32) (*GrouponActivity, error) {
+	return c.Query().Where(grouponactivity.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *GrouponActivityClient) GetX(ctx context.Context, id uint32) *GrouponActivity {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *GrouponActivityClient) Hooks() []Hook {
+	hooks := c.hooks.GrouponActivity
+	return append(hooks[:len(hooks):len(hooks)], grouponactivity.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *GrouponActivityClient) Interceptors() []Interceptor {
+	return c.inters.GrouponActivity
+}
+
+func (c *GrouponActivityClient) mutate(ctx context.Context, m *GrouponActivityMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&GrouponActivityCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&GrouponActivityUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&GrouponActivityUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&GrouponActivityDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown GrouponActivity mutation op: %q", m.Op())
+	}
+}
+
+// GrouponGroupClient is a client for the GrouponGroup schema.
+type GrouponGroupClient struct {
+	config
+}
+
+// NewGrouponGroupClient returns a client for the GrouponGroup from the given config.
+func NewGrouponGroupClient(c config) *GrouponGroupClient {
+	return &GrouponGroupClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `groupongroup.Hooks(f(g(h())))`.
+func (c *GrouponGroupClient) Use(hooks ...Hook) {
+	c.hooks.GrouponGroup = append(c.hooks.GrouponGroup, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `groupongroup.Intercept(f(g(h())))`.
+func (c *GrouponGroupClient) Intercept(interceptors ...Interceptor) {
+	c.inters.GrouponGroup = append(c.inters.GrouponGroup, interceptors...)
+}
+
+// Create returns a builder for creating a GrouponGroup entity.
+func (c *GrouponGroupClient) Create() *GrouponGroupCreate {
+	mutation := newGrouponGroupMutation(c.config, OpCreate)
+	return &GrouponGroupCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of GrouponGroup entities.
+func (c *GrouponGroupClient) CreateBulk(builders ...*GrouponGroupCreate) *GrouponGroupCreateBulk {
+	return &GrouponGroupCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *GrouponGroupClient) MapCreateBulk(slice any, setFunc func(*GrouponGroupCreate, int)) *GrouponGroupCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &GrouponGroupCreateBulk{err: fmt.Errorf("calling to GrouponGroupClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*GrouponGroupCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &GrouponGroupCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for GrouponGroup.
+func (c *GrouponGroupClient) Update() *GrouponGroupUpdate {
+	mutation := newGrouponGroupMutation(c.config, OpUpdate)
+	return &GrouponGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *GrouponGroupClient) UpdateOne(_m *GrouponGroup) *GrouponGroupUpdateOne {
+	mutation := newGrouponGroupMutation(c.config, OpUpdateOne, withGrouponGroup(_m))
+	return &GrouponGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *GrouponGroupClient) UpdateOneID(id uint32) *GrouponGroupUpdateOne {
+	mutation := newGrouponGroupMutation(c.config, OpUpdateOne, withGrouponGroupID(id))
+	return &GrouponGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for GrouponGroup.
+func (c *GrouponGroupClient) Delete() *GrouponGroupDelete {
+	mutation := newGrouponGroupMutation(c.config, OpDelete)
+	return &GrouponGroupDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *GrouponGroupClient) DeleteOne(_m *GrouponGroup) *GrouponGroupDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *GrouponGroupClient) DeleteOneID(id uint32) *GrouponGroupDeleteOne {
+	builder := c.Delete().Where(groupongroup.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &GrouponGroupDeleteOne{builder}
+}
+
+// Query returns a query builder for GrouponGroup.
+func (c *GrouponGroupClient) Query() *GrouponGroupQuery {
+	return &GrouponGroupQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeGrouponGroup},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a GrouponGroup entity by its id.
+func (c *GrouponGroupClient) Get(ctx context.Context, id uint32) (*GrouponGroup, error) {
+	return c.Query().Where(groupongroup.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *GrouponGroupClient) GetX(ctx context.Context, id uint32) *GrouponGroup {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *GrouponGroupClient) Hooks() []Hook {
+	hooks := c.hooks.GrouponGroup
+	return append(hooks[:len(hooks):len(hooks)], groupongroup.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *GrouponGroupClient) Interceptors() []Interceptor {
+	return c.inters.GrouponGroup
+}
+
+func (c *GrouponGroupClient) mutate(ctx context.Context, m *GrouponGroupMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&GrouponGroupCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&GrouponGroupUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&GrouponGroupUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&GrouponGroupDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown GrouponGroup mutation op: %q", m.Op())
 	}
 }
 
@@ -14400,16 +14684,17 @@ type (
 		AiKnowledgeBase, AiMessage, AiProvider, AiUsageLog, Api, ApiAuditLog, Brand,
 		BrandTranslation, Cart, CartItem, Category, CategoryTranslation, Comment,
 		CommentLike, CouponTemplate, DataAccessAuditLog, DictEntry, DictEntryI18n,
-		DictType, File, InteractionCounter, InternalMessage, InternalMessageCategory,
-		InternalMessageRecipient, Invoice, Language, LoginAuditLog, LoginPolicy,
-		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
-		MonitorAlertRule, NotificationChannel, NotificationDelivery,
-		NotificationPreference, NotificationRule, NotificationTemplate,
-		OperationAuditLog, Order, OrderItem, OrgUnit, PaymentChannelConfig,
-		PaymentRefund, PaymentTransaction, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy, Plan,
-		PlanModule, PlanQuota, PointsLedger, PolicyEvaluationLog, Position, Product,
-		ProductAttribute, ProductAttributeTranslation, ProductAttributeValue,
+		DictType, File, GrouponActivity, GrouponGroup, InteractionCounter,
+		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Invoice,
+		Language, LoginAuditLog, LoginPolicy, Membership, MembershipOrgUnit,
+		MembershipPosition, MembershipRole, Menu, MonitorAlertRule,
+		NotificationChannel, NotificationDelivery, NotificationPreference,
+		NotificationRule, NotificationTemplate, OperationAuditLog, Order, OrderItem,
+		OrgUnit, PaymentChannelConfig, PaymentRefund, PaymentTransaction, Permission,
+		PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
+		PermissionPolicy, Plan, PlanModule, PlanQuota, PointsLedger,
+		PolicyEvaluationLog, Position, Product, ProductAttribute,
+		ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Promotion, Role,
 		RoleMetadata, RolePermission, Script, ScriptLog, SeckillActivity, Shipment,
 		ShippingAddress, ShippingRate, Sku, SkuAttributeCombination, SkuPrice,
@@ -14422,16 +14707,17 @@ type (
 		AiKnowledgeBase, AiMessage, AiProvider, AiUsageLog, Api, ApiAuditLog, Brand,
 		BrandTranslation, Cart, CartItem, Category, CategoryTranslation, Comment,
 		CommentLike, CouponTemplate, DataAccessAuditLog, DictEntry, DictEntryI18n,
-		DictType, File, InteractionCounter, InternalMessage, InternalMessageCategory,
-		InternalMessageRecipient, Invoice, Language, LoginAuditLog, LoginPolicy,
-		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
-		MonitorAlertRule, NotificationChannel, NotificationDelivery,
-		NotificationPreference, NotificationRule, NotificationTemplate,
-		OperationAuditLog, Order, OrderItem, OrgUnit, PaymentChannelConfig,
-		PaymentRefund, PaymentTransaction, Permission, PermissionApi,
-		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy, Plan,
-		PlanModule, PlanQuota, PointsLedger, PolicyEvaluationLog, Position, Product,
-		ProductAttribute, ProductAttributeTranslation, ProductAttributeValue,
+		DictType, File, GrouponActivity, GrouponGroup, InteractionCounter,
+		InternalMessage, InternalMessageCategory, InternalMessageRecipient, Invoice,
+		Language, LoginAuditLog, LoginPolicy, Membership, MembershipOrgUnit,
+		MembershipPosition, MembershipRole, Menu, MonitorAlertRule,
+		NotificationChannel, NotificationDelivery, NotificationPreference,
+		NotificationRule, NotificationTemplate, OperationAuditLog, Order, OrderItem,
+		OrgUnit, PaymentChannelConfig, PaymentRefund, PaymentTransaction, Permission,
+		PermissionApi, PermissionAuditLog, PermissionGroup, PermissionMenu,
+		PermissionPolicy, Plan, PlanModule, PlanQuota, PointsLedger,
+		PolicyEvaluationLog, Position, Product, ProductAttribute,
+		ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Promotion, Role,
 		RoleMetadata, RolePermission, Script, ScriptLog, SeckillActivity, Shipment,
 		ShippingAddress, ShippingRate, Sku, SkuAttributeCombination, SkuPrice,

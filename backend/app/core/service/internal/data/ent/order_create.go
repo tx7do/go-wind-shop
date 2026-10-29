@@ -274,6 +274,34 @@ func (_c *OrderCreate) SetNillableStatus(v *order.Status) *OrderCreate {
 	return _c
 }
 
+// SetGrouponActivityID sets the "groupon_activity_id" field.
+func (_c *OrderCreate) SetGrouponActivityID(v uint32) *OrderCreate {
+	_c.mutation.SetGrouponActivityID(v)
+	return _c
+}
+
+// SetNillableGrouponActivityID sets the "groupon_activity_id" field if the given value is not nil.
+func (_c *OrderCreate) SetNillableGrouponActivityID(v *uint32) *OrderCreate {
+	if v != nil {
+		_c.SetGrouponActivityID(*v)
+	}
+	return _c
+}
+
+// SetGrouponGroupID sets the "groupon_group_id" field.
+func (_c *OrderCreate) SetGrouponGroupID(v uint32) *OrderCreate {
+	_c.mutation.SetGrouponGroupID(v)
+	return _c
+}
+
+// SetNillableGrouponGroupID sets the "groupon_group_id" field if the given value is not nil.
+func (_c *OrderCreate) SetNillableGrouponGroupID(v *uint32) *OrderCreate {
+	if v != nil {
+		_c.SetGrouponGroupID(*v)
+	}
+	return _c
+}
+
 // SetRecipientName sets the "recipient_name" field.
 func (_c *OrderCreate) SetRecipientName(v string) *OrderCreate {
 	_c.mutation.SetRecipientName(v)
@@ -506,6 +534,14 @@ func (_c *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(order.FieldStatus, field.TypeEnum, value)
 		_node.Status = &value
+	}
+	if value, ok := _c.mutation.GrouponActivityID(); ok {
+		_spec.SetField(order.FieldGrouponActivityID, field.TypeUint32, value)
+		_node.GrouponActivityID = &value
+	}
+	if value, ok := _c.mutation.GrouponGroupID(); ok {
+		_spec.SetField(order.FieldGrouponGroupID, field.TypeUint32, value)
+		_node.GrouponGroupID = &value
 	}
 	if value, ok := _c.mutation.RecipientName(); ok {
 		_spec.SetField(order.FieldRecipientName, field.TypeString, value)
@@ -910,6 +946,54 @@ func (u *OrderUpsert) UpdateStatus() *OrderUpsert {
 // ClearStatus clears the value of the "status" field.
 func (u *OrderUpsert) ClearStatus() *OrderUpsert {
 	u.SetNull(order.FieldStatus)
+	return u
+}
+
+// SetGrouponActivityID sets the "groupon_activity_id" field.
+func (u *OrderUpsert) SetGrouponActivityID(v uint32) *OrderUpsert {
+	u.Set(order.FieldGrouponActivityID, v)
+	return u
+}
+
+// UpdateGrouponActivityID sets the "groupon_activity_id" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateGrouponActivityID() *OrderUpsert {
+	u.SetExcluded(order.FieldGrouponActivityID)
+	return u
+}
+
+// AddGrouponActivityID adds v to the "groupon_activity_id" field.
+func (u *OrderUpsert) AddGrouponActivityID(v uint32) *OrderUpsert {
+	u.Add(order.FieldGrouponActivityID, v)
+	return u
+}
+
+// ClearGrouponActivityID clears the value of the "groupon_activity_id" field.
+func (u *OrderUpsert) ClearGrouponActivityID() *OrderUpsert {
+	u.SetNull(order.FieldGrouponActivityID)
+	return u
+}
+
+// SetGrouponGroupID sets the "groupon_group_id" field.
+func (u *OrderUpsert) SetGrouponGroupID(v uint32) *OrderUpsert {
+	u.Set(order.FieldGrouponGroupID, v)
+	return u
+}
+
+// UpdateGrouponGroupID sets the "groupon_group_id" field to the value that was provided on create.
+func (u *OrderUpsert) UpdateGrouponGroupID() *OrderUpsert {
+	u.SetExcluded(order.FieldGrouponGroupID)
+	return u
+}
+
+// AddGrouponGroupID adds v to the "groupon_group_id" field.
+func (u *OrderUpsert) AddGrouponGroupID(v uint32) *OrderUpsert {
+	u.Add(order.FieldGrouponGroupID, v)
+	return u
+}
+
+// ClearGrouponGroupID clears the value of the "groupon_group_id" field.
+func (u *OrderUpsert) ClearGrouponGroupID() *OrderUpsert {
+	u.SetNull(order.FieldGrouponGroupID)
 	return u
 }
 
@@ -1417,6 +1501,62 @@ func (u *OrderUpsertOne) UpdateStatus() *OrderUpsertOne {
 func (u *OrderUpsertOne) ClearStatus() *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearStatus()
+	})
+}
+
+// SetGrouponActivityID sets the "groupon_activity_id" field.
+func (u *OrderUpsertOne) SetGrouponActivityID(v uint32) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetGrouponActivityID(v)
+	})
+}
+
+// AddGrouponActivityID adds v to the "groupon_activity_id" field.
+func (u *OrderUpsertOne) AddGrouponActivityID(v uint32) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.AddGrouponActivityID(v)
+	})
+}
+
+// UpdateGrouponActivityID sets the "groupon_activity_id" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateGrouponActivityID() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateGrouponActivityID()
+	})
+}
+
+// ClearGrouponActivityID clears the value of the "groupon_activity_id" field.
+func (u *OrderUpsertOne) ClearGrouponActivityID() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearGrouponActivityID()
+	})
+}
+
+// SetGrouponGroupID sets the "groupon_group_id" field.
+func (u *OrderUpsertOne) SetGrouponGroupID(v uint32) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetGrouponGroupID(v)
+	})
+}
+
+// AddGrouponGroupID adds v to the "groupon_group_id" field.
+func (u *OrderUpsertOne) AddGrouponGroupID(v uint32) *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.AddGrouponGroupID(v)
+	})
+}
+
+// UpdateGrouponGroupID sets the "groupon_group_id" field to the value that was provided on create.
+func (u *OrderUpsertOne) UpdateGrouponGroupID() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateGrouponGroupID()
+	})
+}
+
+// ClearGrouponGroupID clears the value of the "groupon_group_id" field.
+func (u *OrderUpsertOne) ClearGrouponGroupID() *OrderUpsertOne {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearGrouponGroupID()
 	})
 }
 
@@ -2099,6 +2239,62 @@ func (u *OrderUpsertBulk) UpdateStatus() *OrderUpsertBulk {
 func (u *OrderUpsertBulk) ClearStatus() *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.ClearStatus()
+	})
+}
+
+// SetGrouponActivityID sets the "groupon_activity_id" field.
+func (u *OrderUpsertBulk) SetGrouponActivityID(v uint32) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetGrouponActivityID(v)
+	})
+}
+
+// AddGrouponActivityID adds v to the "groupon_activity_id" field.
+func (u *OrderUpsertBulk) AddGrouponActivityID(v uint32) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.AddGrouponActivityID(v)
+	})
+}
+
+// UpdateGrouponActivityID sets the "groupon_activity_id" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateGrouponActivityID() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateGrouponActivityID()
+	})
+}
+
+// ClearGrouponActivityID clears the value of the "groupon_activity_id" field.
+func (u *OrderUpsertBulk) ClearGrouponActivityID() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearGrouponActivityID()
+	})
+}
+
+// SetGrouponGroupID sets the "groupon_group_id" field.
+func (u *OrderUpsertBulk) SetGrouponGroupID(v uint32) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.SetGrouponGroupID(v)
+	})
+}
+
+// AddGrouponGroupID adds v to the "groupon_group_id" field.
+func (u *OrderUpsertBulk) AddGrouponGroupID(v uint32) *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.AddGrouponGroupID(v)
+	})
+}
+
+// UpdateGrouponGroupID sets the "groupon_group_id" field to the value that was provided on create.
+func (u *OrderUpsertBulk) UpdateGrouponGroupID() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.UpdateGrouponGroupID()
+	})
+}
+
+// ClearGrouponGroupID clears the value of the "groupon_group_id" field.
+func (u *OrderUpsertBulk) ClearGrouponGroupID() *OrderUpsertBulk {
+	return u.Update(func(s *OrderUpsert) {
+		s.ClearGrouponGroupID()
 	})
 }
 
