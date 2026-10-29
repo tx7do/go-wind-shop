@@ -7,7 +7,11 @@ import { XIcon } from '@/plugins/xicon'
 import { useUserStore } from '@/stores/modules/core/user.state'
 import { useAccessStore } from '@/stores/modules/core/access.state'
 import { useGetMe } from '@/api/composables/user-profile'
-import { useGetMyPointsBalance, useListMyPointsLedgers } from '@/api/composables'
+import { useGetMyPointsBalance, useListMyPointsLedgers, useCheckIn, useGetCheckInStatus } from '@/api/composables'
+
+import { toast } from 'vue-sonner'
+
+import { ref } from 'vue'
 
 const { t } = useI18n()
 
@@ -32,6 +36,31 @@ const ledgersQuery = useListMyPointsLedgers({ page: 1, pageSize: 5, noPaging: fa
 const pointsLedgers = computed(() => ((ledgersQuery.data?.value as any)?.items ?? []) as Array<{
   id?: number; delta?: number; reason?: string
 }>)
+const checkInStatusQuery = useGetCheckInStatus({ enabled: isLogin } as any)
+const checkedInToday = computed(() => checkInStatusQuery.data.value?.checkedInToday ?? false)
+const consecutiveDays = computed(() => checkInStatusQuery.data.value?.consecutiveDays ?? 0)
+const checkInMutation = useCheckIn()
+const checkInLoading = ref(false)
+
+async function handleCheckIn() {
+  if (checkedInToday.value || checkInLoading.value) return
+  checkInLoading.value = true
+  try {
+    const r = await checkIn()
+    if (r?.alreadyCheckedIn) {
+      toast.info(t('mall.points.alreadyCheckedIn'))
+    } else {
+      toast.success(t('mall.points.checkInSuccess', { awarded: r?.awarded ?? 0 }))
+    }
+    checkInStatusQuery.refetch()
+    pointsBalanceQuery.refetch()
+    ledgersQuery.refetch()
+  } catch {
+    toast.error(t('mall.points.checkInFailed'))
+  } finally {
+    checkInLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -114,8 +143,21 @@ const pointsLedgers = computed(() => ((ledgersQuery.data?.value as any)?.items ?
           <div class="mt-4 rounded-xl border border-border bg-background/40 p-4">
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-muted-foreground">{{ t('mall.points.title') }}</span>
-              <span class="text-2xl font-extrabold text-primary tabular-nums">{{ pointsBalance }}</span>
+              <div class="flex items-center gap-2">
+                <span class="text-2xl font-extrabold text-primary tabular-nums">{{ pointsBalance }}</span>
+                <UiButton
+                  size="sm"
+                  :variant="checkedInToday ? 'outline' : 'default'"
+                  :disabled="checkedInToday || checkInLoading"
+                  @click="handleCheckIn"
+                >
+                  {{ checkedInToday ? t('mall.points.checkedIn') : t('mall.points.checkIn') }}
+                </UiButton>
+              </div>
             </div>
+            <p v-if="consecutiveDays > 0" class="mt-1 text-[10px] text-muted-foreground">
+              {{ t('mall.points.consecutiveDays', { days: consecutiveDays }) }}
+            </p>
             <ul v-if="pointsLedgers.length > 0" class="mt-3 flex flex-col gap-1.5">
               <li
                 v-for="l in pointsLedgers"

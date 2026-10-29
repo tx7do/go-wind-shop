@@ -52,3 +52,25 @@ func (s *PointsService) ListMyPointsLedgers(ctx context.Context, req *pagination
 	}
 	return s.pointsLedgerServiceClient.List(ctx, req)
 }
+
+// CheckIn 每日签到（登录态；BFF 强制以登录态注入 userId）。
+func (s *PointsService) CheckIn(ctx context.Context, req *catalogV1.CheckInRequest) (*catalogV1.CheckInResponse, error) {
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return s.pointsLedgerServiceClient.CheckIn(ctx, &catalogV1.CheckInRequest{
+		UserId: operator.UserId,
+	})
+}
+
+// GetCheckInStatus 签到状态（登录态）。
+func (s *PointsService) GetCheckInStatus(ctx context.Context, req *catalogV1.GetCheckInStatusRequest) (*catalogV1.GetCheckInStatusResponse, error) {
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return s.pointsLedgerServiceClient.GetCheckInStatus(ctx, &catalogV1.GetCheckInStatusRequest{
+		UserId: operator.UserId,
+	})
+}

@@ -27,25 +27,35 @@ var File_app_service_v1_i_points_proto protoreflect.FileDescriptor
 
 const file_app_service_v1_i_points_proto_rawDesc = "" +
 	"\n" +
-	"\x1dapp/service/v1/i_points.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1fcatalog/service/v1/points.proto2\xb4\x02\n" +
+	"\x1dapp/service/v1/i_points.proto\x12\x0eapp.service.v1\x1a\x1cgoogle/api/annotations.proto\x1a\x1epagination/v1/pagination.proto\x1a\x1fcatalog/service/v1/points.proto2\xce\x04\n" +
 	"\rPointsService\x12\x9c\x01\n" +
 	"\x12GetMyPointsBalance\x12/.catalog.service.v1.GetUserPointsBalanceRequest\x1a0.catalog.service.v1.GetUserPointsBalanceResponse\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/app/v1/mall/points/balance\x12\x83\x01\n" +
-	"\x13ListMyPointsLedgers\x12\x19.pagination.PagingRequest\x1a,.catalog.service.v1.ListPointsLedgerResponse\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/app/v1/mall/points/ledgersB\xae\x01\n" +
+	"\x13ListMyPointsLedgers\x12\x19.pagination.PagingRequest\x1a,.catalog.service.v1.ListPointsLedgerResponse\"#\x82\xd3\xe4\x93\x02\x1d\x12\x1b/app/v1/mall/points/ledgers\x12{\n" +
+	"\aCheckIn\x12\".catalog.service.v1.CheckInRequest\x1a#.catalog.service.v1.CheckInResponse\"'\x82\xd3\xe4\x93\x02!:\x01*\"\x1c/app/v1/mall/points/check-in\x12\x9a\x01\n" +
+	"\x10GetCheckInStatus\x12+.catalog.service.v1.GetCheckInStatusRequest\x1a,.catalog.service.v1.GetCheckInStatusResponse\"+\x82\xd3\xe4\x93\x02%\x12#/app/v1/mall/points/check-in-statusB\xae\x01\n" +
 	"\x12com.app.service.v1B\fIPointsProtoP\x01Z0go-wind-shop/api/gen/go/app/service/v1;servicev1\xa2\x02\x03ASX\xaa\x02\x0eApp.Service.V1\xca\x02\x0eApp\\Service\\V1\xe2\x02\x1aApp\\Service\\V1\\GPBMetadata\xea\x02\x10App::Service::V1b\x06proto3"
 
 var file_app_service_v1_i_points_proto_goTypes = []any{
 	(*v1.GetUserPointsBalanceRequest)(nil),  // 0: catalog.service.v1.GetUserPointsBalanceRequest
 	(*v11.PagingRequest)(nil),               // 1: pagination.PagingRequest
-	(*v1.GetUserPointsBalanceResponse)(nil), // 2: catalog.service.v1.GetUserPointsBalanceResponse
-	(*v1.ListPointsLedgerResponse)(nil),     // 3: catalog.service.v1.ListPointsLedgerResponse
+	(*v1.CheckInRequest)(nil),               // 2: catalog.service.v1.CheckInRequest
+	(*v1.GetCheckInStatusRequest)(nil),      // 3: catalog.service.v1.GetCheckInStatusRequest
+	(*v1.GetUserPointsBalanceResponse)(nil), // 4: catalog.service.v1.GetUserPointsBalanceResponse
+	(*v1.ListPointsLedgerResponse)(nil),     // 5: catalog.service.v1.ListPointsLedgerResponse
+	(*v1.CheckInResponse)(nil),              // 6: catalog.service.v1.CheckInResponse
+	(*v1.GetCheckInStatusResponse)(nil),     // 7: catalog.service.v1.GetCheckInStatusResponse
 }
 var file_app_service_v1_i_points_proto_depIdxs = []int32{
 	0, // 0: app.service.v1.PointsService.GetMyPointsBalance:input_type -> catalog.service.v1.GetUserPointsBalanceRequest
 	1, // 1: app.service.v1.PointsService.ListMyPointsLedgers:input_type -> pagination.PagingRequest
-	2, // 2: app.service.v1.PointsService.GetMyPointsBalance:output_type -> catalog.service.v1.GetUserPointsBalanceResponse
-	3, // 3: app.service.v1.PointsService.ListMyPointsLedgers:output_type -> catalog.service.v1.ListPointsLedgerResponse
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	2, // 2: app.service.v1.PointsService.CheckIn:input_type -> catalog.service.v1.CheckInRequest
+	3, // 3: app.service.v1.PointsService.GetCheckInStatus:input_type -> catalog.service.v1.GetCheckInStatusRequest
+	4, // 4: app.service.v1.PointsService.GetMyPointsBalance:output_type -> catalog.service.v1.GetUserPointsBalanceResponse
+	5, // 5: app.service.v1.PointsService.ListMyPointsLedgers:output_type -> catalog.service.v1.ListPointsLedgerResponse
+	6, // 6: app.service.v1.PointsService.CheckIn:output_type -> catalog.service.v1.CheckInResponse
+	7, // 7: app.service.v1.PointsService.GetCheckInStatus:output_type -> catalog.service.v1.GetCheckInStatusResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

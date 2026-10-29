@@ -55,6 +55,7 @@ func (PointsLedger) Fields() []ent.Field {
 			NamedValues(
 				"PointsTypeEarn", "POINTS_TYPE_EARN",
 				"PointsTypeDeduct", "POINTS_TYPE_DEDUCT",
+				"PointsTypeCheckIn", "POINTS_TYPE_CHECK_IN",
 			).
 			Default("POINTS_TYPE_EARN").
 			Optional().

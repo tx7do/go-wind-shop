@@ -21,10 +21,16 @@ var _ = binding.EncodeURL
 
 const _ = http.SupportPackageIsVersion1
 
+const OperationPointsServiceCheckIn = "/app.service.v1.PointsService/CheckIn"
+const OperationPointsServiceGetCheckInStatus = "/app.service.v1.PointsService/GetCheckInStatus"
 const OperationPointsServiceGetMyPointsBalance = "/app.service.v1.PointsService/GetMyPointsBalance"
 const OperationPointsServiceListMyPointsLedgers = "/app.service.v1.PointsService/ListMyPointsLedgers"
 
 type PointsServiceHTTPServer interface {
+	// CheckIn 每日签到（登录态；幂等）
+	CheckIn(context.Context, *v1.CheckInRequest) (*v1.CheckInResponse, error)
+	// GetCheckInStatus 签到状态（登录态）
+	GetCheckInStatus(context.Context, *v1.GetCheckInStatusRequest) (*v1.GetCheckInStatusResponse, error)
 	// GetMyPointsBalance 我的积分余额（user 由登录态隐私层钉定）
 	GetMyPointsBalance(context.Context, *v1.GetUserPointsBalanceRequest) (*v1.GetUserPointsBalanceResponse, error)
 	// ListMyPointsLedgers 我的积分台账（user 由登录态隐私层钉定）
@@ -35,6 +41,8 @@ func RegisterPointsServiceHTTPServer(s *http.Server, srv PointsServiceHTTPServer
 	r := s.Route("/")
 	r.GET("/app/v1/mall/points/balance", _PointsService_GetMyPointsBalance0_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/points/ledgers", _PointsService_ListMyPointsLedgers0_HTTP_Handler(srv))
+	r.POST("/app/v1/mall/points/check-in", _PointsService_CheckIn0_HTTP_Handler(srv))
+	r.GET("/app/v1/mall/points/check-in-status", _PointsService_GetCheckInStatus0_HTTP_Handler(srv))
 }
 
 func _PointsService_GetMyPointsBalance0_HTTP_Handler(srv PointsServiceHTTPServer) func(ctx http.Context) error {
@@ -75,7 +83,52 @@ func _PointsService_ListMyPointsLedgers0_HTTP_Handler(srv PointsServiceHTTPServe
 	}
 }
 
+func _PointsService_CheckIn0_HTTP_Handler(srv PointsServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.CheckInRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPointsServiceCheckIn)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CheckIn(ctx, req.(*v1.CheckInRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.CheckInResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PointsService_GetCheckInStatus0_HTTP_Handler(srv PointsServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.GetCheckInStatusRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPointsServiceGetCheckInStatus)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.GetCheckInStatus(ctx, req.(*v1.GetCheckInStatusRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.GetCheckInStatusResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PointsServiceHTTPClient interface {
+	// CheckIn 每日签到（登录态；幂等）
+	CheckIn(ctx context.Context, req *v1.CheckInRequest, opts ...http.CallOption) (rsp *v1.CheckInResponse, err error)
+	// GetCheckInStatus 签到状态（登录态）
+	GetCheckInStatus(ctx context.Context, req *v1.GetCheckInStatusRequest, opts ...http.CallOption) (rsp *v1.GetCheckInStatusResponse, err error)
 	// GetMyPointsBalance 我的积分余额（user 由登录态隐私层钉定）
 	GetMyPointsBalance(ctx context.Context, req *v1.GetUserPointsBalanceRequest, opts ...http.CallOption) (rsp *v1.GetUserPointsBalanceResponse, err error)
 	// ListMyPointsLedgers 我的积分台账（user 由登录态隐私层钉定）
@@ -88,6 +141,34 @@ type PointsServiceHTTPClientImpl struct {
 
 func NewPointsServiceHTTPClient(client *http.Client) PointsServiceHTTPClient {
 	return &PointsServiceHTTPClientImpl{client}
+}
+
+// CheckIn 每日签到（登录态；幂等）
+func (c *PointsServiceHTTPClientImpl) CheckIn(ctx context.Context, in *v1.CheckInRequest, opts ...http.CallOption) (*v1.CheckInResponse, error) {
+	var out v1.CheckInResponse
+	pattern := "/app/v1/mall/points/check-in"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPointsServiceCheckIn))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// GetCheckInStatus 签到状态（登录态）
+func (c *PointsServiceHTTPClientImpl) GetCheckInStatus(ctx context.Context, in *v1.GetCheckInStatusRequest, opts ...http.CallOption) (*v1.GetCheckInStatusResponse, error) {
+	var out v1.GetCheckInStatusResponse
+	pattern := "/app/v1/mall/points/check-in-status"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPointsServiceGetCheckInStatus))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
 }
 
 // GetMyPointsBalance 我的积分余额（user 由登录态隐私层钉定）

@@ -91,8 +91,9 @@ const DefaultType = TypePointsTypeEarn
 
 // Type values.
 const (
-	TypePointsTypeEarn   Type = "POINTS_TYPE_EARN"
-	TypePointsTypeDeduct Type = "POINTS_TYPE_DEDUCT"
+	TypePointsTypeEarn    Type = "POINTS_TYPE_EARN"
+	TypePointsTypeDeduct  Type = "POINTS_TYPE_DEDUCT"
+	TypePointsTypeCheckIn Type = "POINTS_TYPE_CHECK_IN"
 )
 
 func (_type Type) String() string {
@@ -102,7 +103,7 @@ func (_type Type) String() string {
 // TypeValidator is a validator for the "type" field enum values. It is called by the builders before save.
 func TypeValidator(_type Type) error {
 	switch _type {
-	case TypePointsTypeEarn, TypePointsTypeDeduct:
+	case TypePointsTypeEarn, TypePointsTypeDeduct, TypePointsTypeCheckIn:
 		return nil
 	default:
 		return fmt.Errorf("pointsledger: invalid enum value for type field: %q", _type)

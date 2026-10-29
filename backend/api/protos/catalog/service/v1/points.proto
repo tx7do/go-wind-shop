@@ -19,6 +19,12 @@ service PointsLedgerService {
 
   // 用户积分余额
   rpc GetUserPointsBalance (GetUserPointsBalanceRequest) returns (GetUserPointsBalanceResponse) {}
+
+  // 每日签到（幂等：同日同用户仅一次，+5 积分）
+  rpc CheckIn (CheckInRequest) returns (CheckInResponse) {}
+
+  // 签到状态（今日是否已签 + 连续签到天数）
+  rpc GetCheckInStatus (GetCheckInStatusRequest) returns (GetCheckInStatusResponse) {}
 }
 
 // 积分类型
@@ -26,6 +32,7 @@ enum PointsLedgerType {
   POINTS_TYPE_UNSPECIFIED = 0;
   POINTS_TYPE_EARN = 1;    // 消费入账
   POINTS_TYPE_DEDUCT = 2;  // 退款回冲
+  POINTS_TYPE_CHECK_IN = 3; // 每日签到
 }
 
 // 积分台账
@@ -54,4 +61,24 @@ message GetUserPointsBalanceRequest {
 
 message GetUserPointsBalanceResponse {
   int64 balance = 1 [json_name = "balance"];
+}
+
+
+message CheckInRequest {
+  uint32 user_id = 1 [json_name = "userId"];
+}
+
+message CheckInResponse {
+  int64 awarded = 1 [json_name = "awarded", (gnostic.openapi.v3.property) = {description: "本次签到积分"}];
+  int64 balance = 2 [json_name = "balance", (gnostic.openapi.v3.property) = {description: "签到后余额"}];
+  bool already_checked_in = 3 [json_name = "alreadyCheckedIn", (gnostic.openapi.v3.property) = {description: "今日已签到（幂等返回）"}];
+}
+
+message GetCheckInStatusRequest {
+  uint32 user_id = 1 [json_name = "userId"];
+}
+
+message GetCheckInStatusResponse {
+  bool checked_in_today = 1 [json_name = "checkedInToday"];
+  int32 consecutive_days = 2 [json_name = "consecutiveDays", (gnostic.openapi.v3.property) = {description: "连续签到天数"}];
 }

@@ -24,6 +24,8 @@ const (
 	PointsLedgerService_Count_FullMethodName                = "/catalog.service.v1.PointsLedgerService/Count"
 	PointsLedgerService_Get_FullMethodName                  = "/catalog.service.v1.PointsLedgerService/Get"
 	PointsLedgerService_GetUserPointsBalance_FullMethodName = "/catalog.service.v1.PointsLedgerService/GetUserPointsBalance"
+	PointsLedgerService_CheckIn_FullMethodName              = "/catalog.service.v1.PointsLedgerService/CheckIn"
+	PointsLedgerService_GetCheckInStatus_FullMethodName     = "/catalog.service.v1.PointsLedgerService/GetCheckInStatus"
 )
 
 // PointsLedgerServiceClient is the client API for PointsLedgerService service.
@@ -40,6 +42,10 @@ type PointsLedgerServiceClient interface {
 	Get(ctx context.Context, in *GetPointsLedgerRequest, opts ...grpc.CallOption) (*PointsLedger, error)
 	// 用户积分余额
 	GetUserPointsBalance(ctx context.Context, in *GetUserPointsBalanceRequest, opts ...grpc.CallOption) (*GetUserPointsBalanceResponse, error)
+	// 每日签到（幂等：同日同用户仅一次，+5 积分）
+	CheckIn(ctx context.Context, in *CheckInRequest, opts ...grpc.CallOption) (*CheckInResponse, error)
+	// 签到状态（今日是否已签 + 连续签到天数）
+	GetCheckInStatus(ctx context.Context, in *GetCheckInStatusRequest, opts ...grpc.CallOption) (*GetCheckInStatusResponse, error)
 }
 
 type pointsLedgerServiceClient struct {
@@ -90,6 +96,26 @@ func (c *pointsLedgerServiceClient) GetUserPointsBalance(ctx context.Context, in
 	return out, nil
 }
 
+func (c *pointsLedgerServiceClient) CheckIn(ctx context.Context, in *CheckInRequest, opts ...grpc.CallOption) (*CheckInResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckInResponse)
+	err := c.cc.Invoke(ctx, PointsLedgerService_CheckIn_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pointsLedgerServiceClient) GetCheckInStatus(ctx context.Context, in *GetCheckInStatusRequest, opts ...grpc.CallOption) (*GetCheckInStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetCheckInStatusResponse)
+	err := c.cc.Invoke(ctx, PointsLedgerService_GetCheckInStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PointsLedgerServiceServer is the server API for PointsLedgerService service.
 // All implementations must embed UnimplementedPointsLedgerServiceServer
 // for forward compatibility.
@@ -104,6 +130,10 @@ type PointsLedgerServiceServer interface {
 	Get(context.Context, *GetPointsLedgerRequest) (*PointsLedger, error)
 	// 用户积分余额
 	GetUserPointsBalance(context.Context, *GetUserPointsBalanceRequest) (*GetUserPointsBalanceResponse, error)
+	// 每日签到（幂等：同日同用户仅一次，+5 积分）
+	CheckIn(context.Context, *CheckInRequest) (*CheckInResponse, error)
+	// 签到状态（今日是否已签 + 连续签到天数）
+	GetCheckInStatus(context.Context, *GetCheckInStatusRequest) (*GetCheckInStatusResponse, error)
 	mustEmbedUnimplementedPointsLedgerServiceServer()
 }
 
@@ -125,6 +155,12 @@ func (UnimplementedPointsLedgerServiceServer) Get(context.Context, *GetPointsLed
 }
 func (UnimplementedPointsLedgerServiceServer) GetUserPointsBalance(context.Context, *GetUserPointsBalanceRequest) (*GetUserPointsBalanceResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetUserPointsBalance not implemented")
+}
+func (UnimplementedPointsLedgerServiceServer) CheckIn(context.Context, *CheckInRequest) (*CheckInResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckIn not implemented")
+}
+func (UnimplementedPointsLedgerServiceServer) GetCheckInStatus(context.Context, *GetCheckInStatusRequest) (*GetCheckInStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCheckInStatus not implemented")
 }
 func (UnimplementedPointsLedgerServiceServer) mustEmbedUnimplementedPointsLedgerServiceServer() {}
 func (UnimplementedPointsLedgerServiceServer) testEmbeddedByValue()                             {}
@@ -219,6 +255,42 @@ func _PointsLedgerService_GetUserPointsBalance_Handler(srv interface{}, ctx cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PointsLedgerService_CheckIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckInRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PointsLedgerServiceServer).CheckIn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PointsLedgerService_CheckIn_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PointsLedgerServiceServer).CheckIn(ctx, req.(*CheckInRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PointsLedgerService_GetCheckInStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCheckInStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PointsLedgerServiceServer).GetCheckInStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PointsLedgerService_GetCheckInStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PointsLedgerServiceServer).GetCheckInStatus(ctx, req.(*GetCheckInStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PointsLedgerService_ServiceDesc is the grpc.ServiceDesc for PointsLedgerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -241,6 +313,14 @@ var PointsLedgerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserPointsBalance",
 			Handler:    _PointsLedgerService_GetUserPointsBalance_Handler,
+		},
+		{
+			MethodName: "CheckIn",
+			Handler:    _PointsLedgerService_CheckIn_Handler,
+		},
+		{
+			MethodName: "GetCheckInStatus",
+			Handler:    _PointsLedgerService_GetCheckInStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

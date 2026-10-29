@@ -32,3 +32,31 @@ export function useListMyPointsLedgers(
     ...options,
   });
 }
+
+// ==============================
+// 每日签到（登录态；幂等）
+// ==============================
+export async function checkIn(): Promise<{ awarded?: number; balance?: number; alreadyCheckedIn?: boolean }> {
+  return await apiClient.pointsService.CheckIn({});
+}
+export function useCheckIn(
+  options?: UseMutationOptions<{ awarded?: number; balance?: number; alreadyCheckedIn?: boolean }, Error, void>,
+) {
+  return useMutation({
+    mutationFn: () => checkIn(),
+    ...options,
+  });
+}
+
+export async function fetchGetCheckInStatus(): Promise<{ checkedInToday?: boolean; consecutiveDays?: number }> {
+  return await apiClient.pointsService.GetCheckInStatus({});
+}
+export function useGetCheckInStatus(
+  options?: UseQueryOptions<{ checkedInToday?: boolean; consecutiveDays?: number }, Error>,
+) {
+  return useQuery({
+    queryKey: ['checkInStatus'],
+    queryFn: () => fetchGetCheckInStatus(),
+    ...options,
+  });
+}

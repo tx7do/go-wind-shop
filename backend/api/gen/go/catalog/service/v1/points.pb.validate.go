@@ -783,3 +783,421 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GetUserPointsBalanceResponseValidationError{}
+
+// Validate checks the field values on CheckInRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CheckInRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CheckInRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CheckInRequestMultiError,
+// or nil if none found.
+func (m *CheckInRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CheckInRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserId
+
+	if len(errors) > 0 {
+		return CheckInRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CheckInRequestMultiError is an error wrapping multiple validation errors
+// returned by CheckInRequest.ValidateAll() if the designated constraints
+// aren't met.
+type CheckInRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CheckInRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CheckInRequestMultiError) AllErrors() []error { return m }
+
+// CheckInRequestValidationError is the validation error returned by
+// CheckInRequest.Validate if the designated constraints aren't met.
+type CheckInRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CheckInRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CheckInRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CheckInRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CheckInRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CheckInRequestValidationError) ErrorName() string { return "CheckInRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CheckInRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCheckInRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CheckInRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CheckInRequestValidationError{}
+
+// Validate checks the field values on CheckInResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CheckInResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CheckInResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CheckInResponseMultiError, or nil if none found.
+func (m *CheckInResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CheckInResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Awarded
+
+	// no validation rules for Balance
+
+	// no validation rules for AlreadyCheckedIn
+
+	if len(errors) > 0 {
+		return CheckInResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CheckInResponseMultiError is an error wrapping multiple validation errors
+// returned by CheckInResponse.ValidateAll() if the designated constraints
+// aren't met.
+type CheckInResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CheckInResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CheckInResponseMultiError) AllErrors() []error { return m }
+
+// CheckInResponseValidationError is the validation error returned by
+// CheckInResponse.Validate if the designated constraints aren't met.
+type CheckInResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CheckInResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CheckInResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CheckInResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CheckInResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CheckInResponseValidationError) ErrorName() string { return "CheckInResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CheckInResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCheckInResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CheckInResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CheckInResponseValidationError{}
+
+// Validate checks the field values on GetCheckInStatusRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCheckInStatusRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCheckInStatusRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCheckInStatusRequestMultiError, or nil if none found.
+func (m *GetCheckInStatusRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCheckInStatusRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserId
+
+	if len(errors) > 0 {
+		return GetCheckInStatusRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCheckInStatusRequestMultiError is an error wrapping multiple validation
+// errors returned by GetCheckInStatusRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetCheckInStatusRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCheckInStatusRequestMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCheckInStatusRequestMultiError) AllErrors() []error { return m }
+
+// GetCheckInStatusRequestValidationError is the validation error returned by
+// GetCheckInStatusRequest.Validate if the designated constraints aren't met.
+type GetCheckInStatusRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCheckInStatusRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCheckInStatusRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCheckInStatusRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCheckInStatusRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCheckInStatusRequestValidationError) ErrorName() string {
+	return "GetCheckInStatusRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCheckInStatusRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCheckInStatusRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCheckInStatusRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCheckInStatusRequestValidationError{}
+
+// Validate checks the field values on GetCheckInStatusResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCheckInStatusResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCheckInStatusResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCheckInStatusResponseMultiError, or nil if none found.
+func (m *GetCheckInStatusResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCheckInStatusResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CheckedInToday
+
+	// no validation rules for ConsecutiveDays
+
+	if len(errors) > 0 {
+		return GetCheckInStatusResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCheckInStatusResponseMultiError is an error wrapping multiple validation
+// errors returned by GetCheckInStatusResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetCheckInStatusResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCheckInStatusResponseMultiError) Error() string {
+	msgs := make([]string, 0, len(m))
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCheckInStatusResponseMultiError) AllErrors() []error { return m }
+
+// GetCheckInStatusResponseValidationError is the validation error returned by
+// GetCheckInStatusResponse.Validate if the designated constraints aren't met.
+type GetCheckInStatusResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCheckInStatusResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCheckInStatusResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCheckInStatusResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCheckInStatusResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCheckInStatusResponseValidationError) ErrorName() string {
+	return "GetCheckInStatusResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCheckInStatusResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCheckInStatusResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCheckInStatusResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCheckInStatusResponseValidationError{}

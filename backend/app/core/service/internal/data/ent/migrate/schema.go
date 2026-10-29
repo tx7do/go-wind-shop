@@ -3153,7 +3153,7 @@ var (
 		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "用户ID"},
 		{Name: "delta", Type: field.TypeInt64, Comment: "积分变动（±）", Default: 0},
 		{Name: "balance_after", Type: field.TypeInt64, Comment: "变动后余额快照", Default: 0},
-		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "类型", Enums: []string{"POINTS_TYPE_EARN", "POINTS_TYPE_DEDUCT"}, Default: "POINTS_TYPE_EARN"},
+		{Name: "type", Type: field.TypeEnum, Nullable: true, Comment: "类型", Enums: []string{"POINTS_TYPE_EARN", "POINTS_TYPE_DEDUCT", "POINTS_TYPE_CHECK_IN"}, Default: "POINTS_TYPE_EARN"},
 		{Name: "reason", Type: field.TypeString, Comment: "事由", Default: ""},
 		{Name: "ref_order_id", Type: field.TypeUint32, Nullable: true, Comment: "关联订单ID"},
 	}

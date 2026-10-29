@@ -22,4 +22,19 @@ service PointsService {
       get: "/app/v1/mall/points/ledgers"
     };
   }
+
+  // 每日签到（登录态；幂等）
+  rpc CheckIn (catalog.service.v1.CheckInRequest) returns (catalog.service.v1.CheckInResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/points/check-in"
+      body: "*"
+    };
+  }
+
+  // 签到状态（登录态）
+  rpc GetCheckInStatus (catalog.service.v1.GetCheckInStatusRequest) returns (catalog.service.v1.GetCheckInStatusResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/points/check-in-status"
+    };
+  }
 }

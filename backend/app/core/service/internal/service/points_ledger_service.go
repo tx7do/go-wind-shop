@@ -61,6 +61,118 @@ func (s *PointsLedgerService) GetUserPointsBalance(ctx context.Context, req *cat
 	return &catalogV1.GetUserPointsBalanceResponse{Balance: balance}, nil
 }
 
+// checkInAwardPerDay 每日签到固定奖励积分数。
+const checkInAwardPerDay = int64(5)
+
+// CheckIn 每日签到（幂等：同日同用户仅一次）。奖励固定 +5 积分。
+func (s *PointsLedgerService) CheckIn(ctx context.Context, req *catalogV1.CheckInRequest) (*catalogV1.CheckInResponse, error) {
+	userId := req.GetUserId()
+	if userId == 0 {
+		return nil, catalogV1.ErrorBadRequest("user_id is required")
+	}
+
+	// 幂等：今日已签到 → 幂等返回
+	now := time.Now()
+	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+	todayEnd := todayStart.Add(24 * time.Hour)
+	already, err := s.entClient.Client().PointsLedger.Query().
+		Where(
+			pointsledger.UserIDEQ(userId),
+			pointsledger.TypeEQ(pointsledger.TypePointsTypeCheckIn),
+			pointsledger.CreatedAtGTE(todayStart),
+			pointsledger.CreatedAtLT(todayEnd),
+		).
+		Exist(ctx)
+	if err != nil {
+		return nil, catalogV1.ErrorInternalServerError("check-in query failed")
+	}
+
+	balance, bErr := s.userBalance(ctx, userId)
+	if bErr != nil {
+		return nil, catalogV1.ErrorInternalServerError("balance query failed")
+	}
+
+	if already {
+		return &catalogV1.CheckInResponse{
+			Awarded:          0,
+			Balance:          balance,
+			AlreadyCheckedIn: true,
+		}, nil
+	}
+
+	award := checkInAwardPerDay
+	balance += award
+
+	cErr := s.entClient.Client().PointsLedger.Create().
+		SetUserID(userId).
+		SetDelta(award).
+		SetBalanceAfter(balance).
+		SetType(pointsledger.TypePointsTypeCheckIn).
+		SetReason("每日签到").
+		SetCreatedAt(now).
+		Exec(ctx)
+	if cErr != nil {
+		return nil, catalogV1.ErrorInternalServerError("check-in write failed")
+	}
+
+	return &catalogV1.CheckInResponse{
+		Awarded:          award,
+		Balance:          balance,
+		AlreadyCheckedIn: false,
+	}, nil
+}
+
+// GetCheckInStatus 签到状态（今日是否已签 + 连续签到天数）。
+func (s *PointsLedgerService) GetCheckInStatus(ctx context.Context, req *catalogV1.GetCheckInStatusRequest) (*catalogV1.GetCheckInStatusResponse, error) {
+	userId := req.GetUserId()
+	if userId == 0 {
+		return nil, catalogV1.ErrorBadRequest("user_id is required")
+	}
+
+	now := time.Now()
+	todayStart := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+
+	// 今日签到记录
+	checkedToday, err := s.entClient.Client().PointsLedger.Query().
+		Where(
+			pointsledger.UserIDEQ(userId),
+			pointsledger.TypeEQ(pointsledger.TypePointsTypeCheckIn),
+			pointsledger.CreatedAtGTE(todayStart),
+		).
+		Exist(ctx)
+	if err != nil {
+		return nil, catalogV1.ErrorInternalServerError("check-in status query failed")
+	}
+
+	// 连续签到天数：从今天（或昨天）往前数有签到记录的连续天数
+	consecutive := int32(0)
+	day := todayStart
+	if !checkedToday {
+		day = day.AddDate(0, 0, -1)
+	}
+	for i := 0; i < 365; i++ {
+		dayEnd := day.Add(24 * time.Hour)
+		exist, eErr := s.entClient.Client().PointsLedger.Query().
+			Where(
+				pointsledger.UserIDEQ(userId),
+				pointsledger.TypeEQ(pointsledger.TypePointsTypeCheckIn),
+				pointsledger.CreatedAtGTE(day),
+				pointsledger.CreatedAtLT(dayEnd),
+			).
+			Exist(ctx)
+		if eErr != nil || !exist {
+			break
+		}
+		consecutive++
+		day = day.AddDate(0, 0, -1)
+	}
+
+	return &catalogV1.GetCheckInStatusResponse{
+		CheckedInToday:  checkedToday,
+		ConsecutiveDays: consecutive,
+	}, nil
+}
+
 func (s *PointsLedgerService) userBalance(ctx context.Context, userId uint32) (int64, error) {
 	var rows []struct{ Sum int64 }
 	err := s.entClient.Client().PointsLedger.Query().

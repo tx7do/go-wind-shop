@@ -102,7 +102,13 @@
   },
   "points": {
     "title": "My Points",
-    "reason": "Points detail"
+    "reason": "Points detail",
+    "checkIn": "Check In",
+    "checkedIn": "Checked In",
+    "checkInSuccess": "Check-in success +{awarded} pts",
+    "alreadyCheckedIn": "Already checked in today",
+    "checkInFailed": "Check-in failed, please retry",
+    "consecutiveDays": "{days}-day streak"
   },
   "seckill": {
     "tag": "Flash Sale"

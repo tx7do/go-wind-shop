@@ -102,7 +102,13 @@
   },
   "points": {
     "title": "我的积分",
-    "reason": "积分明细"
+    "reason": "积分明细",
+    "checkIn": "签到",
+    "checkedIn": "已签到",
+    "checkInSuccess": "签到成功 +{awarded} 积分",
+    "alreadyCheckedIn": "今日已签到",
+    "checkInFailed": "签到失败，请重试",
+    "consecutiveDays": "连续签到 {days} 天"
   },
   "seckill": {
     "tag": "我的积分"

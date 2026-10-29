@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	PointsService_GetMyPointsBalance_FullMethodName  = "/app.service.v1.PointsService/GetMyPointsBalance"
 	PointsService_ListMyPointsLedgers_FullMethodName = "/app.service.v1.PointsService/ListMyPointsLedgers"
+	PointsService_CheckIn_FullMethodName             = "/app.service.v1.PointsService/CheckIn"
+	PointsService_GetCheckInStatus_FullMethodName    = "/app.service.v1.PointsService/GetCheckInStatus"
 )
 
 // PointsServiceClient is the client API for PointsService service.
@@ -35,6 +37,10 @@ type PointsServiceClient interface {
 	GetMyPointsBalance(ctx context.Context, in *v1.GetUserPointsBalanceRequest, opts ...grpc.CallOption) (*v1.GetUserPointsBalanceResponse, error)
 	// 我的积分台账（user 由登录态隐私层钉定）
 	ListMyPointsLedgers(ctx context.Context, in *v11.PagingRequest, opts ...grpc.CallOption) (*v1.ListPointsLedgerResponse, error)
+	// 每日签到（登录态；幂等）
+	CheckIn(ctx context.Context, in *v1.CheckInRequest, opts ...grpc.CallOption) (*v1.CheckInResponse, error)
+	// 签到状态（登录态）
+	GetCheckInStatus(ctx context.Context, in *v1.GetCheckInStatusRequest, opts ...grpc.CallOption) (*v1.GetCheckInStatusResponse, error)
 }
 
 type pointsServiceClient struct {
@@ -65,6 +71,26 @@ func (c *pointsServiceClient) ListMyPointsLedgers(ctx context.Context, in *v11.P
 	return out, nil
 }
 
+func (c *pointsServiceClient) CheckIn(ctx context.Context, in *v1.CheckInRequest, opts ...grpc.CallOption) (*v1.CheckInResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.CheckInResponse)
+	err := c.cc.Invoke(ctx, PointsService_CheckIn_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *pointsServiceClient) GetCheckInStatus(ctx context.Context, in *v1.GetCheckInStatusRequest, opts ...grpc.CallOption) (*v1.GetCheckInStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.GetCheckInStatusResponse)
+	err := c.cc.Invoke(ctx, PointsService_GetCheckInStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PointsServiceServer is the server API for PointsService service.
 // All implementations must embed UnimplementedPointsServiceServer
 // for forward compatibility.
@@ -75,6 +101,10 @@ type PointsServiceServer interface {
 	GetMyPointsBalance(context.Context, *v1.GetUserPointsBalanceRequest) (*v1.GetUserPointsBalanceResponse, error)
 	// 我的积分台账（user 由登录态隐私层钉定）
 	ListMyPointsLedgers(context.Context, *v11.PagingRequest) (*v1.ListPointsLedgerResponse, error)
+	// 每日签到（登录态；幂等）
+	CheckIn(context.Context, *v1.CheckInRequest) (*v1.CheckInResponse, error)
+	// 签到状态（登录态）
+	GetCheckInStatus(context.Context, *v1.GetCheckInStatusRequest) (*v1.GetCheckInStatusResponse, error)
 	mustEmbedUnimplementedPointsServiceServer()
 }
 
@@ -90,6 +120,12 @@ func (UnimplementedPointsServiceServer) GetMyPointsBalance(context.Context, *v1.
 }
 func (UnimplementedPointsServiceServer) ListMyPointsLedgers(context.Context, *v11.PagingRequest) (*v1.ListPointsLedgerResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyPointsLedgers not implemented")
+}
+func (UnimplementedPointsServiceServer) CheckIn(context.Context, *v1.CheckInRequest) (*v1.CheckInResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckIn not implemented")
+}
+func (UnimplementedPointsServiceServer) GetCheckInStatus(context.Context, *v1.GetCheckInStatusRequest) (*v1.GetCheckInStatusResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetCheckInStatus not implemented")
 }
 func (UnimplementedPointsServiceServer) mustEmbedUnimplementedPointsServiceServer() {}
 func (UnimplementedPointsServiceServer) testEmbeddedByValue()                       {}
@@ -148,6 +184,42 @@ func _PointsService_ListMyPointsLedgers_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PointsService_CheckIn_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.CheckInRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PointsServiceServer).CheckIn(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PointsService_CheckIn_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PointsServiceServer).CheckIn(ctx, req.(*v1.CheckInRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PointsService_GetCheckInStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.GetCheckInStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PointsServiceServer).GetCheckInStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PointsService_GetCheckInStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PointsServiceServer).GetCheckInStatus(ctx, req.(*v1.GetCheckInStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PointsService_ServiceDesc is the grpc.ServiceDesc for PointsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -162,6 +234,14 @@ var PointsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListMyPointsLedgers",
 			Handler:    _PointsService_ListMyPointsLedgers_Handler,
+		},
+		{
+			MethodName: "CheckIn",
+			Handler:    _PointsService_CheckIn_Handler,
+		},
+		{
+			MethodName: "GetCheckInStatus",
+			Handler:    _PointsService_GetCheckInStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
