@@ -13,7 +13,7 @@ import (
 )
 
 // NewAsynqServer creates a new asynq server.
-func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, orderService *service.OrderService, userCouponService *service.UserCouponService, stockAlertService *service.StockAlertScannerService, productSearchService *service.ProductSearchService) *asynq.Server {
+func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, orderService *service.OrderService, userCouponService *service.UserCouponService, stockAlertService *service.StockAlertScannerService, productSearchService *service.ProductSearchService, paymentTransactionService *service.PaymentTransactionService) *asynq.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Asynq == nil {
@@ -57,6 +57,11 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, or
 	}
 	// 注册商品搜索重索引任务处理器（商品/翻译变更后同步 ES 索引）。
 	if err = asynq.RegisterSubscriber(srv, task.SearchReindexTaskType, productSearchService.ReindexProduct); err != nil {
+		log.Error(err)
+	}
+	// 注册支付对账周期任务处理器（扫描陈旧 PENDING 流水主动查渠道自愈：
+	// 回调丢失则补确认推进订单；渠道已关闭则收敛流水状态）。
+	if err = asynq.RegisterSubscriber(srv, task.PaymentReconcileTaskType, paymentTransactionService.HandlePaymentReconcile); err != nil {
 		log.Error(err)
 	}
 

@@ -33,3 +33,8 @@ func (g *MockGateway) Refund(ctx context.Context, req RefundRequest) error {
 	// 模拟渠道不出真实资金：恒成功，让退款闭环可本地演示
 	return nil
 }
+
+func (g *MockGateway) QueryOrder(ctx context.Context, outTradeNo string) (*OrderQueryResult, error) {
+	// 模拟渠道无网关侧状态可查：nil 表示跳过对账
+	return nil, nil
+}

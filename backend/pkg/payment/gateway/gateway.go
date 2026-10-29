@@ -23,6 +23,8 @@ type PayRequest struct {
 	Subject string
 	// 服务端回调地址（必须公网可达）
 	NotifyURL string
+	// 买家客户端 IP（微信 H5 支付必传；取不到时调用方给兜底值）
+	ClientIp string
 }
 
 // PayResult 网关下单结果
@@ -55,6 +57,18 @@ type RefundRequest struct {
 	Reason string
 }
 
+// OrderQueryResult 渠道侧订单状态查询结果（对账用）
+type OrderQueryResult struct {
+	// 渠道侧交易号
+	GatewayTradeNo string
+	// 渠道原始交易状态（如 SUCCESS/NOTPAY/TRADE_SUCCESS）
+	TradeState string
+	// 已支付金额（分，仅 Success 时有意义）
+	PaidCents int64
+	// 是否已支付
+	Success bool
+}
+
 // Gateway 支付网关适配器接口
 type Gateway interface {
 	CreatePayment(ctx context.Context, req PayRequest) (*PayResult, error)
@@ -66,6 +80,9 @@ type Gateway interface {
 	// Refund 向渠道发起退款。返回 nil 表示渠道已受理（异步到账由渠道保证）；
 	// 返回错误表示渠道拒绝（调用方不得推进退款状态）。
 	Refund(ctx context.Context, req RefundRequest) error
+	// QueryOrder 主动查询渠道侧订单状态（对账兜底，回调丢失时自愈用）。
+	// 返回 (nil, nil) 表示该渠道无查询语义（调用方跳过）。
+	QueryOrder(ctx context.Context, outTradeNo string) (*OrderQueryResult, error)
 }
 
 // New 按渠道类型构造网关适配器。credentialsJSON 为解密后的凭据明文 JSON。
@@ -74,7 +91,9 @@ func New(channel paymentV1.PaymentChannelType, appID, mchID string, sandbox bool
 	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_MOCK:
 		return NewMockGateway(), nil
 	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_NATIVE:
-		return NewWechatNativeGateway(appID, mchID, sandbox, credentialsJSON)
+		return NewWechatGateway(appID, mchID, sandbox, credentialsJSON, wechatPayKindNative)
+	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_H5:
+		return NewWechatGateway(appID, mchID, sandbox, credentialsJSON, wechatPayKindH5)
 	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_ALIPAY_PAGE:
 		return NewAlipayPageGateway(appID, sandbox, credentialsJSON)
 	default:

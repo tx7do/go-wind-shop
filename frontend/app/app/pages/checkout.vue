@@ -479,6 +479,7 @@ watch(payChannels, (list) => {
 const CHANNEL_TYPE_KEY: Record<string, string> = {
   PAYMENT_CHANNEL_MOCK: 'mock',
   PAYMENT_CHANNEL_WECHAT_NATIVE: 'wechat',
+  PAYMENT_CHANNEL_WECHAT_H5: 'wechatH5',
   PAYMENT_CHANNEL_ALIPAY_PAGE: 'alipay',
 };
 function channelTypeKey(ch?: PayChannel): string {
@@ -493,7 +494,8 @@ function channelLabel(ch?: PayChannel): string {
 }
 function channelIcon(ch?: PayChannel): string {
   switch (channelTypeKey(ch)) {
-    case 'wechat': return 'logos:wechat';
+    case 'wechat':
+    case 'wechatH5': return 'logos:wechat';
     case 'alipay': return 'logos:alipay';
     default: return 'carbon:debugger';
   }

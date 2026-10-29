@@ -335,7 +335,9 @@ async function handleRequestRefund() {
     toast.error(t('orderDetail.errors.noTransaction'));
     return;
   }
-  if (!window.confirm(t('orderDetail.confirm.requestRefund'))) return;
+  // 弹窗收集退款原因（可留空；管理端审核时可见）
+  const reason = window.prompt(t('orderDetail.confirm.requestRefundReason'), '') ?? null;
+  if (reason === null) return; // 取消
   const cryptoObj = (globalThis as unknown as { crypto?: { randomUUID?: () => string } }).crypto;
   const refundIdempotencyKey = cryptoObj?.randomUUID?.() ?? '';
   if (!refundIdempotencyKey) {
@@ -351,6 +353,7 @@ async function handleRequestRefund() {
       currency: txn.currency ?? o.currency ?? 'CNY',
       idempotencyKey: refundIdempotencyKey,
       businessRefId: o.businessRefId,
+      reason: reason.trim() || undefined,
     } as any);
     toast.success(t('orderDetail.result.refundRequested'));
     refreshOrderAndList();

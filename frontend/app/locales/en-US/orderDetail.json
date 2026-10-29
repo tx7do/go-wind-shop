@@ -27,7 +27,8 @@
   "confirm": {
     "cancel": "Cancel this order? This cannot be undone.",
     "confirmReceipt": "Confirm you have received the items? The order will be completed.",
-    "requestRefund": "Request a refund for this order?"
+    "requestRefund": "Request a refund for this order?",
+    "requestRefundReason": "Refund reason (optional, sent to the merchant):"
   },
   "result": {
     "cancelled": "Order cancelled.",

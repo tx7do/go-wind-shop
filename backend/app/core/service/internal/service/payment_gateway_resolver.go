@@ -29,36 +29,50 @@ func NewPaymentGatewayResolver(
 	}
 }
 
-// paymentMethodChannel 支付方式 → 渠道类型映射（与 channelPaymentMethod 互逆）。
-func paymentMethodChannel(pm paymentV1.PaymentMethod) paymentV1.PaymentChannelType {
+// paymentMethodChannels 支付方式 → 渠道类型候选列表（按优先序）。
+// WECHAT 对应 Native/H5 两种渠道配置（同商户资质），任一启用即可服务
+// 关单/退款/查单；与 channelPaymentMethod 互逆。
+func paymentMethodChannels(pm paymentV1.PaymentMethod) []paymentV1.PaymentChannelType {
 	switch pm {
 	case paymentV1.PaymentMethod_WECHAT:
-		return paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_NATIVE
+		return []paymentV1.PaymentChannelType{
+			paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_NATIVE,
+			paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_H5,
+		}
 	case paymentV1.PaymentMethod_ALIPAY:
-		return paymentV1.PaymentChannelType_PAYMENT_CHANNEL_ALIPAY_PAGE
+		return []paymentV1.PaymentChannelType{paymentV1.PaymentChannelType_PAYMENT_CHANNEL_ALIPAY_PAGE}
 	case paymentV1.PaymentMethod_MOCK:
-		return paymentV1.PaymentChannelType_PAYMENT_CHANNEL_MOCK
+		return []paymentV1.PaymentChannelType{paymentV1.PaymentChannelType_PAYMENT_CHANNEL_MOCK}
 	default:
 		// BALANCE/CREDIT/OFFLINE 等记账型流水无网关语义
-		return paymentV1.PaymentChannelType_PAYMENT_CHANNEL_UNSPECIFIED
+		return nil
 	}
 }
 
 // ByPaymentMethod 按支付方式解析网关。非网关渠道返回 (nil, nil)，调用方跳过联动。
-// 解析失败（渠道未配置/未启用/凭据不可用）返回错误——取消关单按 best-effort
-// 记日志，退款联动则向调用方报错（不得在拿不到渠道时静默标记退款成功）。
+// 渠道候选按序取第一条启用配置。解析失败（渠道未配置/未启用/凭据不可用）返回
+// 错误——取消关单按 best-effort 记日志，退款联动则向调用方报错（不得在拿不到
+// 渠道时静默标记退款成功）。
 func (r *PaymentGatewayResolver) ByPaymentMethod(ctx context.Context, pm paymentV1.PaymentMethod) (gateway.Gateway, error) {
-	channel := paymentMethodChannel(pm)
-	if channel == paymentV1.PaymentChannelType_PAYMENT_CHANNEL_UNSPECIFIED {
+	candidates := paymentMethodChannels(pm)
+	if len(candidates) == 0 {
 		return nil, nil
 	}
 
-	cfg, err := r.channelConfigService.ResolveEnabledChannel(ctx, &paymentV1.ResolveEnabledChannelRequest{
-		Channel: channel,
-	})
-	if err != nil {
-		return nil, err
-	}
+	var lastErr error
+	for _, channel := range candidates {
+		cfg, err := r.channelConfigService.ResolveEnabledChannel(ctx, &paymentV1.ResolveEnabledChannelRequest{
+			Channel: channel,
+		})
+		if err != nil {
+			lastErr = err
+			continue
+		}
 
-	return gateway.New(cfg.GetChannel(), cfg.GetAppId(), cfg.GetMchId(), cfg.GetSandbox(), cfg.GetCredentials())
+		return gateway.New(cfg.GetChannel(), cfg.GetAppId(), cfg.GetMchId(), cfg.GetSandbox(), cfg.GetCredentials())
+	}
+	if lastErr != nil {
+		return nil, lastErr
+	}
+	return nil, paymentV1.ErrorNotFound("no enabled payment channel for method %v", pm)
 }

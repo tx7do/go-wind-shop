@@ -44,6 +44,9 @@ enum PaymentChannelType {
   // 微信支付 Native（扫码支付，直连商户）
   PAYMENT_CHANNEL_WECHAT_NATIVE = 2;
 
+  // 微信支付 H5（移动端浏览器跳转支付，直连商户）
+  PAYMENT_CHANNEL_WECHAT_H5 = 4;
+
   // 支付宝电脑网站支付（page pay，直连商户）
   PAYMENT_CHANNEL_ALIPAY_PAGE = 3;
 }

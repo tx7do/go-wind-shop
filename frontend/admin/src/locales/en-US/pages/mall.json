@@ -399,7 +399,8 @@
     "channelType": {
       "mock": "Mock (demo)",
       "wechatNative": "WeChat Pay Native (QR)",
-      "alipayPage": "Alipay (Page Pay)"
+      "alipayPage": "Alipay (Page Pay)",
+      "wechatH5": "WeChat Pay H5 (mobile)"
     },
     "appId": "App ID",
     "mchId": "Merchant ID (mch_id)",

@@ -2606,7 +2606,7 @@ var (
 		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
 		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
 		{Name: "name", Type: field.TypeString, Comment: "渠道显示名"},
-		{Name: "channel", Type: field.TypeEnum, Nullable: true, Comment: "渠道类型", Enums: []string{"PAYMENT_CHANNEL_MOCK", "PAYMENT_CHANNEL_WECHAT_NATIVE", "PAYMENT_CHANNEL_ALIPAY_PAGE"}, Default: "PAYMENT_CHANNEL_MOCK"},
+		{Name: "channel", Type: field.TypeEnum, Nullable: true, Comment: "渠道类型", Enums: []string{"PAYMENT_CHANNEL_MOCK", "PAYMENT_CHANNEL_WECHAT_NATIVE", "PAYMENT_CHANNEL_WECHAT_H5", "PAYMENT_CHANNEL_ALIPAY_PAGE"}, Default: "PAYMENT_CHANNEL_MOCK"},
 		{Name: "app_id", Type: field.TypeString, Nullable: true, Comment: "渠道应用ID（微信 appid / 支付宝 app_id）"},
 		{Name: "mch_id", Type: field.TypeString, Nullable: true, Comment: "商户号（微信 mch_id；支付宝直连可空）"},
 		{Name: "sandbox", Type: field.TypeBool, Comment: "沙箱模式（生产部署必须为 false）", Default: true},
@@ -2644,6 +2644,7 @@ var (
 		{Name: "transaction_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的支付流水ID"},
 		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "用户ID"},
 		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "退款金额（最小货币单位，分）", Default: 0},
+		{Name: "reason", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "退款原因（买家申请时填写）"},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "退款状态", Enums: []string{"PENDING", "SUCCEEDED", "FAILED"}},
 	}
 	// MallPaymentRefundsTable holds the schema information for the "mall_payment_refunds" table.

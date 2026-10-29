@@ -53,6 +53,11 @@ func (PaymentRefund) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
+		field.Text("reason").
+			Comment("退款原因（买家申请时填写）").
+			Optional().
+			Nillable(),
+
 		field.Enum("status").
 			Comment("退款状态").
 			NamedValues(

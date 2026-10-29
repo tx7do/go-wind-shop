@@ -44,6 +44,8 @@ type PaymentRefund struct {
 	UserID *uint32 `json:"user_id,omitempty"`
 	// 退款金额（最小货币单位，分）
 	Amount *int64 `json:"amount,omitempty"`
+	// 退款原因（买家申请时填写）
+	Reason *string `json:"reason,omitempty"`
 	// 退款状态
 	Status       *paymentrefund.Status `json:"status,omitempty"`
 	selectValues sql.SelectValues
@@ -56,7 +58,7 @@ func (*PaymentRefund) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case paymentrefund.FieldID, paymentrefund.FieldCreatedBy, paymentrefund.FieldUpdatedBy, paymentrefund.FieldDeletedBy, paymentrefund.FieldTenantID, paymentrefund.FieldTransactionID, paymentrefund.FieldUserID, paymentrefund.FieldAmount:
 			values[i] = new(sql.NullInt64)
-		case paymentrefund.FieldCurrency, paymentrefund.FieldBusinessRefID, paymentrefund.FieldIdempotencyKey, paymentrefund.FieldStatus:
+		case paymentrefund.FieldCurrency, paymentrefund.FieldBusinessRefID, paymentrefund.FieldIdempotencyKey, paymentrefund.FieldReason, paymentrefund.FieldStatus:
 			values[i] = new(sql.NullString)
 		case paymentrefund.FieldCreatedAt, paymentrefund.FieldUpdatedAt, paymentrefund.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -172,6 +174,13 @@ func (_m *PaymentRefund) assignValues(columns []string, values []any) error {
 				_m.Amount = new(int64)
 				*_m.Amount = value.Int64
 			}
+		case paymentrefund.FieldReason:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field reason", values[i])
+			} else if value.Valid {
+				_m.Reason = new(string)
+				*_m.Reason = value.String
+			}
 		case paymentrefund.FieldStatus:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
@@ -278,6 +287,11 @@ func (_m *PaymentRefund) String() string {
 	if v := _m.Amount; v != nil {
 		builder.WriteString("amount=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.Reason; v != nil {
+		builder.WriteString("reason=")
+		builder.WriteString(*v)
 	}
 	builder.WriteString(", ")
 	if v := _m.Status; v != nil {

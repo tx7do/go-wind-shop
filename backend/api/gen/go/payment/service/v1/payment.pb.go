@@ -998,15 +998,17 @@ type PaymentRefund struct {
 	BusinessRefId  *string                `protobuf:"bytes,6,opt,name=business_ref_id,json=businessRefId,proto3,oneof" json:"business_ref_id,omitempty"`
 	IdempotencyKey *string                `protobuf:"bytes,7,opt,name=idempotency_key,json=idempotencyKey,proto3,oneof" json:"idempotency_key,omitempty"`
 	UserId         *uint32                `protobuf:"varint,8,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
-	TenantId       *uint32                `protobuf:"varint,90,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
-	CreatedBy      *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
-	UpdatedBy      *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
-	DeletedBy      *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`
-	CreatedAt      *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt      *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	DeletedAt      *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// 退款原因（买家售后申请时填写）
+	Reason        *string                `protobuf:"bytes,9,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	TenantId      *uint32                `protobuf:"varint,90,opt,name=tenant_id,json=tenantId,proto3,oneof" json:"tenant_id,omitempty"`
+	CreatedBy     *uint32                `protobuf:"varint,100,opt,name=created_by,json=createdBy,proto3,oneof" json:"created_by,omitempty"`
+	UpdatedBy     *uint32                `protobuf:"varint,101,opt,name=updated_by,json=updatedBy,proto3,oneof" json:"updated_by,omitempty"`
+	DeletedBy     *uint32                `protobuf:"varint,102,opt,name=deleted_by,json=deletedBy,proto3,oneof" json:"deleted_by,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,200,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,201,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DeletedAt     *timestamppb.Timestamp `protobuf:"bytes,202,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *PaymentRefund) Reset() {
@@ -1093,6 +1095,13 @@ func (x *PaymentRefund) GetUserId() uint32 {
 		return *x.UserId
 	}
 	return 0
+}
+
+func (x *PaymentRefund) GetReason() string {
+	if x != nil && x.Reason != nil {
+		return *x.Reason
+	}
+	return ""
 }
 
 func (x *PaymentRefund) GetTenantId() uint32 {
@@ -2130,8 +2139,7 @@ const file_payment_service_v1_payment_proto_rawDesc = "" +
 	"\v_deleted_byB\r\n" +
 	"\v_created_atB\r\n" +
 	"\v_updated_atB\r\n" +
-	"\v_deleted_at\"\xe6\n" +
-	"\n" +
+	"\v_deleted_at\"\xa2\v\n" +
 	"\rPaymentRefund\x12)\n" +
 	"\x02id\x18\x01 \x01(\rB\x14\xbaG\x11\x92\x02\x0e退款记录IDH\x00R\x02id\x88\x01\x01\x12I\n" +
 	"\x0etransaction_id\x18\x02 \x01(\rB\x1d\xbaG\x1a\x92\x02\x17关联的支付流水IDH\x01R\rtransactionId\x88\x01\x01\x12M\n" +
@@ -2140,21 +2148,22 @@ const file_payment_service_v1_payment_proto_rawDesc = "" +
 	"\bcurrency\x18\x05 \x01(\tB\x1a\xbaG\x17\x92\x02\x14币种（ISO 4217）H\x04R\bcurrency\x88\x01\x01\x12e\n" +
 	"\x0fbusiness_ref_id\x18\x06 \x01(\tB8\xbaG5\x92\x022业务单号（与订单 business_ref_id 对齐）H\x05R\rbusinessRefId\x88\x01\x01\x12X\n" +
 	"\x0fidempotency_key\x18\a \x01(\tB*\xbaG'\x92\x02$退款幂等键（租户内唯一）H\x06R\x0eidempotencyKey\x88\x01\x01\x12,\n" +
-	"\auser_id\x18\b \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDH\aR\x06userId\x88\x01\x01\x120\n" +
-	"\ttenant_id\x18Z \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\bR\btenantId\x88\x01\x01\x12;\n" +
+	"\auser_id\x18\b \x01(\rB\x0e\xbaG\v\x92\x02\b用户IDH\aR\x06userId\x88\x01\x01\x12/\n" +
+	"\x06reason\x18\t \x01(\tB\x12\xbaG\x0f\x92\x02\f退款原因H\bR\x06reason\x88\x01\x01\x120\n" +
+	"\ttenant_id\x18Z \x01(\rB\x0e\xbaG\v\x92\x02\b租户IDH\tR\btenantId\x88\x01\x01\x12;\n" +
 	"\n" +
-	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\tR\tcreatedBy\x88\x01\x01\x12;\n" +
+	"created_by\x18d \x01(\rB\x17\xbaG\x14\x92\x02\x11创建者用户IDH\n" +
+	"R\tcreatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\n" +
-	"R\tupdatedBy\x88\x01\x01\x12;\n" +
+	"updated_by\x18e \x01(\rB\x17\xbaG\x14\x92\x02\x11更新者用户IDH\vR\tupdatedBy\x88\x01\x01\x12;\n" +
 	"\n" +
-	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\vR\tdeletedBy\x88\x01\x01\x12S\n" +
+	"deleted_by\x18f \x01(\rB\x17\xbaG\x14\x92\x02\x11删除者用户IDH\fR\tdeletedBy\x88\x01\x01\x12S\n" +
 	"\n" +
-	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\fR\tcreatedAt\x88\x01\x01\x12S\n" +
+	"created_at\x18\xc8\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f创建时间H\rR\tcreatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\rR\tupdatedAt\x88\x01\x01\x12S\n" +
+	"updated_at\x18\xc9\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f更新时间H\x0eR\tupdatedAt\x88\x01\x01\x12S\n" +
 	"\n" +
-	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x0eR\tdeletedAt\x88\x01\x01\"H\n" +
+	"deleted_at\x18\xca\x01 \x01(\v2\x1a.google.protobuf.TimestampB\x12\xbaG\x0f\x92\x02\f删除时间H\x0fR\tdeletedAt\x88\x01\x01\"H\n" +
 	"\x06Status\x12\x16\n" +
 	"\x12STATUS_UNSPECIFIED\x10\x00\x12\v\n" +
 	"\aPENDING\x10\x01\x12\r\n" +
@@ -2169,7 +2178,8 @@ const file_payment_service_v1_payment_proto_rawDesc = "" +
 	"\x10_business_ref_idB\x12\n" +
 	"\x10_idempotency_keyB\n" +
 	"\n" +
-	"\b_user_idB\f\n" +
+	"\b_user_idB\t\n" +
+	"\a_reasonB\f\n" +
 	"\n" +
 	"_tenant_idB\r\n" +
 	"\v_created_byB\r\n" +

@@ -11776,6 +11776,8 @@ export type paymentservicev1_PaymentRefund = {
   deletedBy?: number;
   id?: number;
   idempotencyKey?: string;
+  // 退款原因（买家售后申请时填写）
+  reason?: string;
   status?: paymentservicev1_PaymentRefund_Status;
   tenantId?: number;
   transactionId?: number;
@@ -12079,6 +12081,8 @@ export type paymentservicev1_PaymentChannelType =
   // 模拟渠道：开发/演示用，不出真实资金；默认停用，生产部署应保持停用
   | 'PAYMENT_CHANNEL_MOCK'
   | 'PAYMENT_CHANNEL_UNSPECIFIED'
+  // 微信支付 H5（移动端浏览器跳转支付，直连商户）
+  | 'PAYMENT_CHANNEL_WECHAT_H5'
   // 微信支付 Native（扫码支付，直连商户）
   | 'PAYMENT_CHANNEL_WECHAT_NATIVE';
 export type paymentservicev1_CountPaymentChannelConfigResponse = {

@@ -19,6 +19,8 @@ import (
 	appV1 "go-wind-shop/api/gen/go/app/service/v1"
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
 
+	khttp "github.com/go-kratos/kratos/v2/transport/http"
+
 	"go-wind-shop/pkg/middleware/auth"
 	"go-wind-shop/pkg/payment/gateway"
 )
@@ -108,6 +110,7 @@ func (s *PaymentTransactionService) CreatePaymentIntent(ctx context.Context, req
 		AmountCents: resp.GetTransaction().GetAmount(),
 		Subject:     resp.GetSubject(),
 		NotifyURL:   s.notifyURL(channel.GetChannel()),
+		ClientIp:    clientIPFromContext(ctx),
 	})
 	if err != nil {
 		s.log.Errorf("gateway create payment for tx [%d] failed: %v", resp.GetTransaction().GetId(), err)
@@ -126,6 +129,9 @@ func (s *PaymentTransactionService) CreatePaymentIntent(ctx context.Context, req
 	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_NATIVE:
 		out.PayType = paymentV1.PayType_PAY_TYPE_QR
 		out.QrCode = pr.QRCode
+	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_H5:
+		out.PayType = paymentV1.PayType_PAY_TYPE_REDIRECT
+		out.PayUrl = pr.RedirectURL
 	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_ALIPAY_PAGE:
 		out.PayType = paymentV1.PayType_PAY_TYPE_REDIRECT
 		out.PayUrl = pr.RedirectURL
@@ -251,6 +257,28 @@ func (s *PaymentTransactionService) failNotify(channel paymentV1.PaymentChannelT
 	}
 }
 
+// clientIPFromContext 从 kratos transport 取买家客户端 IP（微信 H5 支付必传）。
+// 取 X-Forwarded-For / X-Real-IP 头，缺省回环地址（本机/内网部署形态）。
+func clientIPFromContext(ctx context.Context) string {
+	if req, ok := khttp.RequestFromServerContext(ctx); ok && req != nil {
+		if v := req.Header.Get("X-Forwarded-For"); v != "" {
+			if idx := strings.Index(v, ","); idx > 0 {
+				v = v[:idx]
+			}
+			return strings.TrimSpace(v)
+		}
+		if v := req.Header.Get("X-Real-Ip"); v != "" {
+			return v
+		}
+		if req.RemoteAddr != "" {
+			if idx := strings.LastIndex(req.RemoteAddr, ":"); idx > 0 {
+				return strings.Trim(req.RemoteAddr[:idx], "[]")
+			}
+		}
+	}
+	return "127.0.0.1"
+}
+
 func (s *PaymentTransactionService) notifyURL(channel paymentV1.PaymentChannelType) string {
 	base := strings.TrimRight(os.Getenv(envPaymentNotifyBaseURL), "/")
 	if base == "" {
@@ -265,6 +293,8 @@ func channelSlug(channel paymentV1.PaymentChannelType) string {
 		return "alipay"
 	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_NATIVE:
 		return "wechat"
+	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_H5:
+		return "wechat-h5"
 	default:
 		return "mock"
 	}
@@ -276,6 +306,8 @@ func channelTypeBySlug(slug string) (paymentV1.PaymentChannelType, bool) {
 		return paymentV1.PaymentChannelType_PAYMENT_CHANNEL_ALIPAY_PAGE, true
 	case "wechat":
 		return paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_NATIVE, true
+	case "wechat-h5":
+		return paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_H5, true
 	default:
 		// mock 渠道无服务端回调：明确拒绝而不是静默 404
 		return paymentV1.PaymentChannelType_PAYMENT_CHANNEL_UNSPECIFIED, false

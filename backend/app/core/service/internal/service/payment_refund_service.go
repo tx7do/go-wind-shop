@@ -85,6 +85,14 @@ func (s *PaymentRefundService) Create(ctx context.Context, req *paymentV1.Create
 	if tx.GetStatus() != paymentV1.PaymentTransaction_SUCCEEDED {
 		return nil, paymentV1.ErrorBadRequest("cannot refund a non-succeeded payment transaction")
 	}
+	// 退款金额必须为正且不超过实付金额（支持部分退款，累计不超额由渠道侧
+	// 幂等与人工对账兜底）。
+	if req.Data.GetAmount() <= 0 {
+		return nil, paymentV1.ErrorBadRequest("refund amount must be positive")
+	}
+	if req.Data.GetAmount() > tx.GetAmount() {
+		return nil, paymentV1.ErrorBadRequest("refund amount exceeds payment amount")
+	}
 	txTenantId := tx.GetTenantId()
 	req.Data.TenantId = &txTenantId
 
@@ -109,8 +117,15 @@ func (s *PaymentRefundService) Create(ctx context.Context, req *paymentV1.Create
 	}
 	if existingRefunds != nil {
 		for _, r := range existingRefunds.Items {
-			if r.GetTransactionId() == txId && r.GetStatus() == paymentV1.PaymentRefund_SUCCEEDED {
+			if r.GetTransactionId() != txId {
+				continue
+			}
+			// 已有成功退款 → 拒绝；已有处理中申请 → 拒绝重复提交
+			if r.GetStatus() == paymentV1.PaymentRefund_SUCCEEDED {
 				return nil, paymentV1.ErrorBadRequest("payment transaction already refunded")
+			}
+			if r.GetStatus() == paymentV1.PaymentRefund_PENDING {
+				return nil, paymentV1.ErrorBadRequest("a pending refund request already exists")
 			}
 		}
 	}

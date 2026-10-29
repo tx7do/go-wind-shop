@@ -147,6 +147,7 @@ func (r *PaymentRefundRepo) Create(ctx context.Context, req *paymentV1.CreatePay
 	builder := r.entClient.Client().PaymentRefund.Create().
 		SetNillableTransactionID(req.Data.TransactionId).
 		SetNillableAmount(req.Data.Amount).
+		SetNillableReason(req.Data.Reason).
 		SetNillableStatus(r.statusConverter.ToEntity(req.Data.Status)).
 		SetNillableCurrency(req.Data.Currency).
 		SetNillableBusinessRefID(req.Data.BusinessRefId).

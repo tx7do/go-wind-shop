@@ -1521,6 +1521,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			paymentrefund.FieldTransactionID:  {Type: field.TypeUint32, Column: paymentrefund.FieldTransactionID},
 			paymentrefund.FieldUserID:         {Type: field.TypeUint32, Column: paymentrefund.FieldUserID},
 			paymentrefund.FieldAmount:         {Type: field.TypeInt64, Column: paymentrefund.FieldAmount},
+			paymentrefund.FieldReason:         {Type: field.TypeString, Column: paymentrefund.FieldReason},
 			paymentrefund.FieldStatus:         {Type: field.TypeEnum, Column: paymentrefund.FieldStatus},
 		},
 	}
@@ -9026,6 +9027,11 @@ func (f *PaymentRefundFilter) WhereUserID(p entql.Uint32P) {
 // WhereAmount applies the entql int64 predicate on the amount field.
 func (f *PaymentRefundFilter) WhereAmount(p entql.Int64P) {
 	f.Where(p.Field(paymentrefund.FieldAmount))
+}
+
+// WhereReason applies the entql string predicate on the reason field.
+func (f *PaymentRefundFilter) WhereReason(p entql.StringP) {
+	f.Where(p.Field(paymentrefund.FieldReason))
 }
 
 // WhereStatus applies the entql string predicate on the status field.

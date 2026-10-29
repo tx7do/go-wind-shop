@@ -39,6 +39,7 @@ func (PaymentChannelConfig) Fields() []ent.Field {
 			NamedValues(
 				"PaymentChannelTypeMock", "PAYMENT_CHANNEL_MOCK",
 				"PaymentChannelTypeWechatNative", "PAYMENT_CHANNEL_WECHAT_NATIVE",
+				"PaymentChannelTypeWechatH5", "PAYMENT_CHANNEL_WECHAT_H5",
 				"PaymentChannelTypeAlipayPage", "PAYMENT_CHANNEL_ALIPAY_PAGE",
 			).
 			Default("PAYMENT_CHANNEL_MOCK").

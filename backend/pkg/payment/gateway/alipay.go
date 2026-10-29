@@ -109,3 +109,31 @@ func (g *AlipayPageGateway) Refund(ctx context.Context, req RefundRequest) error
 	}
 	return nil
 }
+
+// QueryOrder 主动查询支付宝订单状态（对账兜底；alipay.trade.query 同步查询）。
+func (g *AlipayPageGateway) QueryOrder(ctx context.Context, outTradeNo string) (*OrderQueryResult, error) {
+	rsp, err := g.client.TradeQuery(ctx, alipay.TradeQuery{
+		OutTradeNo: outTradeNo,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("alipay query order [%s] failed: %w", outTradeNo, err)
+	}
+	if rsp != nil && !rsp.Error.IsSuccess() {
+		// 交易不存在 = 从未支付过，按未支付状态返回（非错误）
+		return &OrderQueryResult{TradeState: "NOT_FOUND"}, nil
+	}
+	if rsp == nil {
+		return nil, fmt.Errorf("alipay query order [%s] returned empty response", outTradeNo)
+	}
+
+	paidCents, pErr := YuanStringToCents(rsp.TotalAmount)
+	if pErr != nil {
+		paidCents = 0
+	}
+	return &OrderQueryResult{
+		GatewayTradeNo: rsp.TradeNo,
+		TradeState:     string(rsp.TradeStatus),
+		PaidCents:      paidCents,
+		Success:        rsp.TradeStatus == alipay.TradeStatusSuccess,
+	}, nil
+}

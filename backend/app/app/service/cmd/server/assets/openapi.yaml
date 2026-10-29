@@ -6629,6 +6629,7 @@ components:
                         - PAYMENT_CHANNEL_UNSPECIFIED
                         - PAYMENT_CHANNEL_MOCK
                         - PAYMENT_CHANNEL_WECHAT_NATIVE
+                        - PAYMENT_CHANNEL_WECHAT_H5
                         - PAYMENT_CHANNEL_ALIPAY_PAGE
                     type: string
                     description: 渠道类型
@@ -6673,6 +6674,9 @@ components:
                     type: integer
                     description: 用户ID
                     format: uint32
+                reason:
+                    type: string
+                    description: 退款原因
                 tenantId:
                     type: integer
                     description: 租户ID

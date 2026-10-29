@@ -51,7 +51,7 @@
       </ElFormItem>
 
       <ElFormItem
-        v-if="formData.channel === 'PAYMENT_CHANNEL_WECHAT_NATIVE'"
+        v-if="formData.channel === 'PAYMENT_CHANNEL_WECHAT_NATIVE' || formData.channel === 'PAYMENT_CHANNEL_WECHAT_H5'"
         :label="$t('pages.mall.paymentChannel.mchId')"
         prop="mchId"
       >
@@ -60,7 +60,7 @@
 
       <ElDivider content-position="left">{{ $t("pages.mall.paymentChannel.sectionCredentials") }}</ElDivider>
 
-      <template v-if="formData.channel === 'PAYMENT_CHANNEL_WECHAT_NATIVE'">
+      <template v-if="formData.channel === 'PAYMENT_CHANNEL_WECHAT_NATIVE' || formData.channel === 'PAYMENT_CHANNEL_WECHAT_H5'">
         <ElFormItem :label="$t('pages.mall.paymentChannel.mchCertSerialNo')" prop="mchCertSerialNo">
           <ElInput v-model="credentials.mchCertSerialNo" :placeholder="$t('common.placeholder.input')" />
         </ElFormItem>
@@ -110,7 +110,7 @@
       <ElDivider content-position="left">{{ $t("common.section.status") }}</ElDivider>
 
       <ElFormItem :label="$t('pages.mall.paymentChannel.sandbox')" prop="sandbox">
-        <ElSwitch v-model="formData.sandbox" :disabled="formData.channel === 'PAYMENT_CHANNEL_WECHAT_NATIVE'" />
+        <ElSwitch v-model="formData.sandbox" :disabled="formData.channel.startsWith('PAYMENT_CHANNEL_WECHAT')" />
         <span v-if="formData.channel === 'PAYMENT_CHANNEL_WECHAT_NATIVE'" class="ml-2 text-xs text-gray-400">
           {{ $t("pages.mall.paymentChannel.wechatNoSandbox") }}
         </span>
@@ -162,6 +162,7 @@ const { mutateAsync: updateChannel } = useUpdatePaymentChannelConfig();
 const CHANNEL_OPTIONS = [
   { value: "PAYMENT_CHANNEL_MOCK", labelKey: "mock" },
   { value: "PAYMENT_CHANNEL_WECHAT_NATIVE", labelKey: "wechatNative" },
+  { value: "PAYMENT_CHANNEL_WECHAT_H5", labelKey: "wechatH5" },
   { value: "PAYMENT_CHANNEL_ALIPAY_PAGE", labelKey: "alipayPage" },
 ] as const;
 
@@ -229,7 +230,8 @@ function resetCredentials() {
 
 function buildCredentialsJson(): string | undefined {
   switch (formData.channel) {
-    case "PAYMENT_CHANNEL_WECHAT_NATIVE": {
+    case "PAYMENT_CHANNEL_WECHAT_NATIVE":
+    case "PAYMENT_CHANNEL_WECHAT_H5": {
       if (
         !credentials.mchCertSerialNo &&
         !credentials.apiV3Key &&

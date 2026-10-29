@@ -39,7 +39,8 @@
     "wechat": "WeChat Pay",
     "alipay": "Alipay",
     "sandboxBadge": "Sandbox",
-    "empty": "No online payment channel is available yet. Please contact support."
+    "empty": "No online payment channel is available yet. Please contact support.",
+    "wechatH5": "WeChat Pay H5 (mobile)"
   },
   "payDialog": {
     "title": "Checkout",

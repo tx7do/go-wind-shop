@@ -26,6 +26,7 @@ const drawerRef = ref();
 const CHANNEL_LABEL_KEY: Record<string, string> = {
   PAYMENT_CHANNEL_MOCK: "mock",
   PAYMENT_CHANNEL_WECHAT_NATIVE: "wechatNative",
+  PAYMENT_CHANNEL_WECHAT_H5: "wechatH5",
   PAYMENT_CHANNEL_ALIPAY_PAGE: "alipayPage",
 };
 

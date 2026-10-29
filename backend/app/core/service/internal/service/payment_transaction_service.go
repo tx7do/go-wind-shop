@@ -3,6 +3,8 @@ package service
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"time"
 
 	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -11,20 +13,30 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
+	"go-wind-shop/app/core/service/internal/data/ent"
+	"go-wind-shop/app/core/service/internal/data/ent/paymenttransaction"
+
+	entCrud "github.com/tx7do/go-crud/entgo"
+
+	"go-wind-shop/pkg/task"
 
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
 
 	"github.com/tx7do/go-crud/viewer"
+
+	appViewer "go-wind-shop/pkg/entgo/viewer"
 )
 
 type PaymentTransactionService struct {
 	paymentV1.UnimplementedPaymentTransactionServiceServer
 
 	log *logx.Helper
-	repo         *data.PaymentTransactionRepo
-	orderService *OrderService
+	repo                 *data.PaymentTransactionRepo
+	orderService         *OrderService
 	channelConfigService *PaymentChannelConfigService
+	gatewayResolver      *PaymentGatewayResolver
+	entClient            *entCrud.EntClient[*ent.Client]
 }
 
 func NewPaymentTransactionService(
@@ -32,12 +44,16 @@ func NewPaymentTransactionService(
 	repo *data.PaymentTransactionRepo,
 	orderService *OrderService,
 	channelConfigService *PaymentChannelConfigService,
+	gatewayResolver *PaymentGatewayResolver,
+	entClient *entCrud.EntClient[*ent.Client],
 ) *PaymentTransactionService {
 	return &PaymentTransactionService{
 		log:                  logx.New(ctx.NewLoggerHelper("payment-transaction/service/core-service")),
 		repo:                 repo,
 		orderService:         orderService,
 		channelConfigService: channelConfigService,
+		gatewayResolver:      gatewayResolver,
+		entClient:            entClient,
 	}
 }
 
@@ -194,7 +210,8 @@ func (s *PaymentTransactionService) Delete(ctx context.Context, req *paymentV1.D
 // channelPaymentMethod 渠道类型 → 流水支付方式枚举映射。
 func channelPaymentMethod(channel paymentV1.PaymentChannelType) paymentV1.PaymentMethod {
 	switch channel {
-	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_NATIVE:
+	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_NATIVE,
+		paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_H5:
 		return paymentV1.PaymentMethod_WECHAT
 	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_ALIPAY_PAGE:
 		return paymentV1.PaymentMethod_ALIPAY
@@ -377,4 +394,137 @@ func paymentSubject(order *orderV1.Order) string {
 		ref = fmt.Sprintf("%d", order.GetId())
 	}
 	return fmt.Sprintf("订单支付 %s", ref)
+}
+
+// reconcileStaleCutoff 陈旧 PENDING 流水的对账门槛：创建超过该时长仍未确认，
+// 视为回调可能丢失/延迟，主动查渠道。
+const reconcileStaleCutoff = 10 * time.Minute
+
+// reconcileBatchSize 单轮对账扫描的流水上限（防止极端积压拖垮单轮任务）。
+const reconcileBatchSize = 100
+
+// HandlePaymentReconcile 支付对账周期任务处理器（asynq 注册，SystemViewer 上下文）。
+//
+// 扫描超过 reconcileStaleCutoff 仍 PENDING 的网关渠道流水，逐条主动查询渠道侧
+// 状态并自愈：
+//   - 渠道已支付 → ConfirmPayment 补确认（幂等；金额核验不过则保留 PENDING 待人工）
+//   - 渠道已关闭/支付失败 → 流水收敛为 FAILED（PENDING→FAILED 白名单内）
+//   - 未支付/查不到 → 保持 PENDING（订单超时取消路径会联动关单兜底）
+//
+// MOCK 渠道与记账型渠道（BALANCE/OFFLINE）无网关查询语义，解析层自然跳过。
+func (s *PaymentTransactionService) HandlePaymentReconcile(taskType string, taskData *task.PaymentReconcileTaskData) error {
+	ctx := appViewer.NewSystemViewerContext(context.Background())
+	s.log.Infow("msg", "payment reconcile started", "task_type", taskType, "name", taskData.GetName())
+
+	cutoff := time.Now().Add(-reconcileStaleCutoff)
+	pendingLabel := []paymenttransaction.PaymentMethod{"WECHAT", "ALIPAY"}
+	s.log.Infow("msg", "payment reconcile querying stale pendings")
+
+	stales, err := s.entClient.Client().PaymentTransaction.Query().
+		Where(
+			paymenttransaction.StatusEQ(paymenttransaction.StatusPaymentTransactionStatusPending),
+			paymenttransaction.PaymentMethodIn(pendingLabel...),
+			paymenttransaction.CreatedAtLT(cutoff),
+		).
+		Order(ent.Desc(paymenttransaction.FieldID)).
+		Limit(reconcileBatchSize).
+		All(ctx)
+	s.log.Infow("msg", "payment reconcile query returned", "rows", len(stales))
+	if err != nil {
+		s.log.Errorf("payment reconcile query stale pendings failed: %v", err)
+		return err
+	}
+	if len(stales) == 0 {
+		return nil
+	}
+
+	confirmed, closed, skipped := 0, 0, 0
+	for _, txEnt := range stales {
+		txId := txEnt.ID
+		if txId == 0 {
+			continue
+		}
+		pm := paymentV1.PaymentMethod_PAYMENT_METHOD_UNSPECIFIED
+		if txEnt.PaymentMethod != nil {
+			if v, ok := paymentV1.PaymentMethod_value[string(*txEnt.PaymentMethod)]; ok {
+				pm = paymentV1.PaymentMethod(v)
+			}
+		}
+
+		gw, rErr := s.gatewayResolver.ByPaymentMethod(ctx, pm)
+		if rErr != nil {
+			s.log.Errorf("payment reconcile resolve gateway for tx [%d] failed: %v", txId, rErr)
+			skipped++
+			continue
+		}
+		if gw == nil {
+			skipped++
+			continue
+		}
+
+		qr, qErr := gw.QueryOrder(ctx, strconv.FormatUint(uint64(txId), 10))
+		if qErr != nil {
+			s.log.Errorf("payment reconcile query order for tx [%d] failed: %v", txId, qErr)
+			skipped++
+			continue
+		}
+		if qr == nil {
+			skipped++
+			continue
+		}
+
+		switch {
+		case qr.Success:
+			if _, cErr := s.ConfirmPayment(ctx, &paymentV1.ConfirmPaymentRequest{
+				TransactionId:  txId,
+				GatewayTradeNo: qr.GatewayTradeNo,
+				PaidAmount:     qr.PaidCents,
+			}); cErr != nil {
+				// 金额不符等确认失败：保留 PENDING 待人工排查（日志告警）
+				s.log.Errorf("payment reconcile confirm tx [%d] failed: %v", txId, cErr)
+				skipped++
+				continue
+			}
+			s.log.Infow("msg", "payment reconcile confirmed stale paid tx",
+				"tx_id", txId, "gateway_trade_no", qr.GatewayTradeNo, "amount", qr.PaidCents)
+			confirmed++
+		case isGatewayClosedState(pm, qr.TradeState):
+			failed := paymentV1.PaymentTransaction_FAILED
+			if _, uErr := s.Update(ctx, &paymentV1.UpdatePaymentTransactionRequest{
+				Id: txId,
+				Data: &paymentV1.PaymentTransaction{
+					Status:         &failed,
+					GatewayTradeNo: trans.Ptr(qr.GatewayTradeNo),
+				},
+			}); uErr != nil {
+				s.log.Errorf("payment reconcile close tx [%d] failed: %v", txId, uErr)
+				skipped++
+				continue
+			}
+			s.log.Infow("msg", "payment reconcile closed stale tx", "tx_id", txId, "state", qr.TradeState)
+			closed++
+		default:
+			skipped++
+		}
+	}
+
+	s.log.Infow("msg", "payment reconcile done",
+		"scanned", len(stales), "confirmed", confirmed, "closed", closed, "skipped", skipped)
+	return nil
+}
+
+// isGatewayClosedState 判断渠道侧状态是否为终态关闭/失败（可把 PENDING 收敛为 FAILED）。
+func isGatewayClosedState(pm paymentV1.PaymentMethod, state string) bool {
+	switch pm {
+	case paymentV1.PaymentMethod_WECHAT:
+		switch state {
+		case "CLOSED", "REVOKED", "PAYERROR":
+			return true
+		}
+		return false
+	case paymentV1.PaymentMethod_ALIPAY:
+		return state == "TRADE_CLOSED"
+	default:
+		return false
+	}
 }

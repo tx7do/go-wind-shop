@@ -1166,6 +1166,10 @@ func (m *PaymentRefund) validate(all bool) error {
 		// no validation rules for UserId
 	}
 
+	if m.Reason != nil {
+		// no validation rules for Reason
+	}
+
 	if m.TenantId != nil {
 		// no validation rules for TenantId
 	}

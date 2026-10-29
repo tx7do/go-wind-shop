@@ -41,6 +41,8 @@ const (
 	PaymentChannelType_PAYMENT_CHANNEL_MOCK PaymentChannelType = 1
 	// 微信支付 Native（扫码支付，直连商户）
 	PaymentChannelType_PAYMENT_CHANNEL_WECHAT_NATIVE PaymentChannelType = 2
+	// 微信支付 H5（移动端浏览器跳转支付，直连商户）
+	PaymentChannelType_PAYMENT_CHANNEL_WECHAT_H5 PaymentChannelType = 4
 	// 支付宝电脑网站支付（page pay，直连商户）
 	PaymentChannelType_PAYMENT_CHANNEL_ALIPAY_PAGE PaymentChannelType = 3
 )
@@ -51,12 +53,14 @@ var (
 		0: "PAYMENT_CHANNEL_UNSPECIFIED",
 		1: "PAYMENT_CHANNEL_MOCK",
 		2: "PAYMENT_CHANNEL_WECHAT_NATIVE",
+		4: "PAYMENT_CHANNEL_WECHAT_H5",
 		3: "PAYMENT_CHANNEL_ALIPAY_PAGE",
 	}
 	PaymentChannelType_value = map[string]int32{
 		"PAYMENT_CHANNEL_UNSPECIFIED":   0,
 		"PAYMENT_CHANNEL_MOCK":          1,
 		"PAYMENT_CHANNEL_WECHAT_NATIVE": 2,
+		"PAYMENT_CHANNEL_WECHAT_H5":     4,
 		"PAYMENT_CHANNEL_ALIPAY_PAGE":   3,
 	}
 )
@@ -836,11 +840,12 @@ const file_payment_service_v1_payment_channel_config_proto_rawDesc = "" +
 	"\x1bListEnabledChannelsResponse\x128\n" +
 	"\x05items\x18\x01 \x03(\v2\".payment.service.v1.PaymentChannelR\x05items\"t\n" +
 	"\x1cResolveEnabledChannelRequest\x12T\n" +
-	"\achannel\x18\x01 \x01(\x0e2&.payment.service.v1.PaymentChannelTypeB\x12\xbaG\x0f\x92\x02\f渠道类型R\achannel*\x93\x01\n" +
+	"\achannel\x18\x01 \x01(\x0e2&.payment.service.v1.PaymentChannelTypeB\x12\xbaG\x0f\x92\x02\f渠道类型R\achannel*\xb2\x01\n" +
 	"\x12PaymentChannelType\x12\x1f\n" +
 	"\x1bPAYMENT_CHANNEL_UNSPECIFIED\x10\x00\x12\x18\n" +
 	"\x14PAYMENT_CHANNEL_MOCK\x10\x01\x12!\n" +
-	"\x1dPAYMENT_CHANNEL_WECHAT_NATIVE\x10\x02\x12\x1f\n" +
+	"\x1dPAYMENT_CHANNEL_WECHAT_NATIVE\x10\x02\x12\x1d\n" +
+	"\x19PAYMENT_CHANNEL_WECHAT_H5\x10\x04\x12\x1f\n" +
 	"\x1bPAYMENT_CHANNEL_ALIPAY_PAGE\x10\x032\xbe\x06\n" +
 	"\x1bPaymentChannelConfigService\x12Y\n" +
 	"\x04List\x12\x19.pagination.PagingRequest\x1a4.payment.service.v1.ListPaymentChannelConfigResponse\"\x00\x12[\n" +

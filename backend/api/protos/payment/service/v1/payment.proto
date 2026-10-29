@@ -296,6 +296,12 @@ message PaymentRefund {
     (gnostic.openapi.v3.property) = {description: "用户ID"}
   ];
 
+  // 退款原因（买家售后申请时填写）
+  optional string reason = 9 [
+    json_name = "reason",
+    (gnostic.openapi.v3.property) = {description: "退款原因"}
+  ];
+
   // ===== 以下是 infra mixin 注入字段（高编号） =====
 
   optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];

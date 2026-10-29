@@ -291,6 +291,26 @@ func (_u *PaymentRefundUpdate) ClearAmount() *PaymentRefundUpdate {
 	return _u
 }
 
+// SetReason sets the "reason" field.
+func (_u *PaymentRefundUpdate) SetReason(v string) *PaymentRefundUpdate {
+	_u.mutation.SetReason(v)
+	return _u
+}
+
+// SetNillableReason sets the "reason" field if the given value is not nil.
+func (_u *PaymentRefundUpdate) SetNillableReason(v *string) *PaymentRefundUpdate {
+	if v != nil {
+		_u.SetReason(*v)
+	}
+	return _u
+}
+
+// ClearReason clears the value of the "reason" field.
+func (_u *PaymentRefundUpdate) ClearReason() *PaymentRefundUpdate {
+	_u.mutation.ClearReason()
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *PaymentRefundUpdate) SetStatus(v paymentrefund.Status) *PaymentRefundUpdate {
 	_u.mutation.SetStatus(v)
@@ -460,6 +480,12 @@ func (_u *PaymentRefundUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	}
 	if _u.mutation.AmountCleared() {
 		_spec.ClearField(paymentrefund.FieldAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.Reason(); ok {
+		_spec.SetField(paymentrefund.FieldReason, field.TypeString, value)
+	}
+	if _u.mutation.ReasonCleared() {
+		_spec.ClearField(paymentrefund.FieldReason, field.TypeString)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(paymentrefund.FieldStatus, field.TypeEnum, value)
@@ -751,6 +777,26 @@ func (_u *PaymentRefundUpdateOne) ClearAmount() *PaymentRefundUpdateOne {
 	return _u
 }
 
+// SetReason sets the "reason" field.
+func (_u *PaymentRefundUpdateOne) SetReason(v string) *PaymentRefundUpdateOne {
+	_u.mutation.SetReason(v)
+	return _u
+}
+
+// SetNillableReason sets the "reason" field if the given value is not nil.
+func (_u *PaymentRefundUpdateOne) SetNillableReason(v *string) *PaymentRefundUpdateOne {
+	if v != nil {
+		_u.SetReason(*v)
+	}
+	return _u
+}
+
+// ClearReason clears the value of the "reason" field.
+func (_u *PaymentRefundUpdateOne) ClearReason() *PaymentRefundUpdateOne {
+	_u.mutation.ClearReason()
+	return _u
+}
+
 // SetStatus sets the "status" field.
 func (_u *PaymentRefundUpdateOne) SetStatus(v paymentrefund.Status) *PaymentRefundUpdateOne {
 	_u.mutation.SetStatus(v)
@@ -950,6 +996,12 @@ func (_u *PaymentRefundUpdateOne) sqlSave(ctx context.Context) (_node *PaymentRe
 	}
 	if _u.mutation.AmountCleared() {
 		_spec.ClearField(paymentrefund.FieldAmount, field.TypeInt64)
+	}
+	if value, ok := _u.mutation.Reason(); ok {
+		_spec.SetField(paymentrefund.FieldReason, field.TypeString, value)
+	}
+	if _u.mutation.ReasonCleared() {
+		_spec.ClearField(paymentrefund.FieldReason, field.TypeString)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(paymentrefund.FieldStatus, field.TypeEnum, value)

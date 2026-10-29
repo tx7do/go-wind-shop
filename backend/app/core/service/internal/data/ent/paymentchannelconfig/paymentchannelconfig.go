@@ -108,6 +108,7 @@ const DefaultChannel = ChannelPaymentChannelTypeMock
 const (
 	ChannelPaymentChannelTypeMock         Channel = "PAYMENT_CHANNEL_MOCK"
 	ChannelPaymentChannelTypeWechatNative Channel = "PAYMENT_CHANNEL_WECHAT_NATIVE"
+	ChannelPaymentChannelTypeWechatH5     Channel = "PAYMENT_CHANNEL_WECHAT_H5"
 	ChannelPaymentChannelTypeAlipayPage   Channel = "PAYMENT_CHANNEL_ALIPAY_PAGE"
 )
 
@@ -118,7 +119,7 @@ func (c Channel) String() string {
 // ChannelValidator is a validator for the "channel" field enum values. It is called by the builders before save.
 func ChannelValidator(c Channel) error {
 	switch c {
-	case ChannelPaymentChannelTypeMock, ChannelPaymentChannelTypeWechatNative, ChannelPaymentChannelTypeAlipayPage:
+	case ChannelPaymentChannelTypeMock, ChannelPaymentChannelTypeWechatNative, ChannelPaymentChannelTypeWechatH5, ChannelPaymentChannelTypeAlipayPage:
 		return nil
 	default:
 		return fmt.Errorf("paymentchannelconfig: invalid enum value for channel field: %q", c)

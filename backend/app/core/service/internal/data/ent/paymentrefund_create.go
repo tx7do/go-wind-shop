@@ -204,6 +204,20 @@ func (_c *PaymentRefundCreate) SetNillableAmount(v *int64) *PaymentRefundCreate 
 	return _c
 }
 
+// SetReason sets the "reason" field.
+func (_c *PaymentRefundCreate) SetReason(v string) *PaymentRefundCreate {
+	_c.mutation.SetReason(v)
+	return _c
+}
+
+// SetNillableReason sets the "reason" field if the given value is not nil.
+func (_c *PaymentRefundCreate) SetNillableReason(v *string) *PaymentRefundCreate {
+	if v != nil {
+		_c.SetReason(*v)
+	}
+	return _c
+}
+
 // SetStatus sets the "status" field.
 func (_c *PaymentRefundCreate) SetStatus(v paymentrefund.Status) *PaymentRefundCreate {
 	_c.mutation.SetStatus(v)
@@ -372,6 +386,10 @@ func (_c *PaymentRefundCreate) createSpec() (*PaymentRefund, *sqlgraph.CreateSpe
 	if value, ok := _c.mutation.Amount(); ok {
 		_spec.SetField(paymentrefund.FieldAmount, field.TypeInt64, value)
 		_node.Amount = &value
+	}
+	if value, ok := _c.mutation.Reason(); ok {
+		_spec.SetField(paymentrefund.FieldReason, field.TypeString, value)
+		_node.Reason = &value
 	}
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(paymentrefund.FieldStatus, field.TypeEnum, value)
@@ -660,6 +678,24 @@ func (u *PaymentRefundUpsert) AddAmount(v int64) *PaymentRefundUpsert {
 // ClearAmount clears the value of the "amount" field.
 func (u *PaymentRefundUpsert) ClearAmount() *PaymentRefundUpsert {
 	u.SetNull(paymentrefund.FieldAmount)
+	return u
+}
+
+// SetReason sets the "reason" field.
+func (u *PaymentRefundUpsert) SetReason(v string) *PaymentRefundUpsert {
+	u.Set(paymentrefund.FieldReason, v)
+	return u
+}
+
+// UpdateReason sets the "reason" field to the value that was provided on create.
+func (u *PaymentRefundUpsert) UpdateReason() *PaymentRefundUpsert {
+	u.SetExcluded(paymentrefund.FieldReason)
+	return u
+}
+
+// ClearReason clears the value of the "reason" field.
+func (u *PaymentRefundUpsert) ClearReason() *PaymentRefundUpsert {
+	u.SetNull(paymentrefund.FieldReason)
 	return u
 }
 
@@ -1005,6 +1041,27 @@ func (u *PaymentRefundUpsertOne) UpdateAmount() *PaymentRefundUpsertOne {
 func (u *PaymentRefundUpsertOne) ClearAmount() *PaymentRefundUpsertOne {
 	return u.Update(func(s *PaymentRefundUpsert) {
 		s.ClearAmount()
+	})
+}
+
+// SetReason sets the "reason" field.
+func (u *PaymentRefundUpsertOne) SetReason(v string) *PaymentRefundUpsertOne {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.SetReason(v)
+	})
+}
+
+// UpdateReason sets the "reason" field to the value that was provided on create.
+func (u *PaymentRefundUpsertOne) UpdateReason() *PaymentRefundUpsertOne {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.UpdateReason()
+	})
+}
+
+// ClearReason clears the value of the "reason" field.
+func (u *PaymentRefundUpsertOne) ClearReason() *PaymentRefundUpsertOne {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.ClearReason()
 	})
 }
 
@@ -1519,6 +1576,27 @@ func (u *PaymentRefundUpsertBulk) UpdateAmount() *PaymentRefundUpsertBulk {
 func (u *PaymentRefundUpsertBulk) ClearAmount() *PaymentRefundUpsertBulk {
 	return u.Update(func(s *PaymentRefundUpsert) {
 		s.ClearAmount()
+	})
+}
+
+// SetReason sets the "reason" field.
+func (u *PaymentRefundUpsertBulk) SetReason(v string) *PaymentRefundUpsertBulk {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.SetReason(v)
+	})
+}
+
+// UpdateReason sets the "reason" field to the value that was provided on create.
+func (u *PaymentRefundUpsertBulk) UpdateReason() *PaymentRefundUpsertBulk {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.UpdateReason()
+	})
+}
+
+// ClearReason clears the value of the "reason" field.
+func (u *PaymentRefundUpsertBulk) ClearReason() *PaymentRefundUpsertBulk {
+	return u.Update(func(s *PaymentRefundUpsert) {
+		s.ClearReason()
 	})
 }
 

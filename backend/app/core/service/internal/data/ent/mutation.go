@@ -78295,6 +78295,7 @@ type PaymentRefundMutation struct {
 	adduser_id        *int32
 	amount            *int64
 	addamount         *int64
+	reason            *string
 	status            *paymentrefund.Status
 	clearedFields     map[string]struct{}
 	done              bool
@@ -79190,6 +79191,55 @@ func (m *PaymentRefundMutation) ResetAmount() {
 	delete(m.clearedFields, paymentrefund.FieldAmount)
 }
 
+// SetReason sets the "reason" field.
+func (m *PaymentRefundMutation) SetReason(s string) {
+	m.reason = &s
+}
+
+// Reason returns the value of the "reason" field in the mutation.
+func (m *PaymentRefundMutation) Reason() (r string, exists bool) {
+	v := m.reason
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReason returns the old "reason" field's value of the PaymentRefund entity.
+// If the PaymentRefund object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PaymentRefundMutation) OldReason(ctx context.Context) (v *string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReason is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReason requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReason: %w", err)
+	}
+	return oldValue.Reason, nil
+}
+
+// ClearReason clears the value of the "reason" field.
+func (m *PaymentRefundMutation) ClearReason() {
+	m.reason = nil
+	m.clearedFields[paymentrefund.FieldReason] = struct{}{}
+}
+
+// ReasonCleared returns if the "reason" field was cleared in this mutation.
+func (m *PaymentRefundMutation) ReasonCleared() bool {
+	_, ok := m.clearedFields[paymentrefund.FieldReason]
+	return ok
+}
+
+// ResetReason resets all changes to the "reason" field.
+func (m *PaymentRefundMutation) ResetReason() {
+	m.reason = nil
+	delete(m.clearedFields, paymentrefund.FieldReason)
+}
+
 // SetStatus sets the "status" field.
 func (m *PaymentRefundMutation) SetStatus(pa paymentrefund.Status) {
 	m.status = &pa
@@ -79273,7 +79323,7 @@ func (m *PaymentRefundMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PaymentRefundMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, paymentrefund.FieldCreatedAt)
 	}
@@ -79313,6 +79363,9 @@ func (m *PaymentRefundMutation) Fields() []string {
 	if m.amount != nil {
 		fields = append(fields, paymentrefund.FieldAmount)
 	}
+	if m.reason != nil {
+		fields = append(fields, paymentrefund.FieldReason)
+	}
 	if m.status != nil {
 		fields = append(fields, paymentrefund.FieldStatus)
 	}
@@ -79350,6 +79403,8 @@ func (m *PaymentRefundMutation) Field(name string) (ent.Value, bool) {
 		return m.UserID()
 	case paymentrefund.FieldAmount:
 		return m.Amount()
+	case paymentrefund.FieldReason:
+		return m.Reason()
 	case paymentrefund.FieldStatus:
 		return m.Status()
 	}
@@ -79387,6 +79442,8 @@ func (m *PaymentRefundMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldUserID(ctx)
 	case paymentrefund.FieldAmount:
 		return m.OldAmount(ctx)
+	case paymentrefund.FieldReason:
+		return m.OldReason(ctx)
 	case paymentrefund.FieldStatus:
 		return m.OldStatus(ctx)
 	}
@@ -79488,6 +79545,13 @@ func (m *PaymentRefundMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAmount(v)
+		return nil
+	case paymentrefund.FieldReason:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReason(v)
 		return nil
 	case paymentrefund.FieldStatus:
 		v, ok := value.(paymentrefund.Status)
@@ -79652,6 +79716,9 @@ func (m *PaymentRefundMutation) ClearedFields() []string {
 	if m.FieldCleared(paymentrefund.FieldAmount) {
 		fields = append(fields, paymentrefund.FieldAmount)
 	}
+	if m.FieldCleared(paymentrefund.FieldReason) {
+		fields = append(fields, paymentrefund.FieldReason)
+	}
 	if m.FieldCleared(paymentrefund.FieldStatus) {
 		fields = append(fields, paymentrefund.FieldStatus)
 	}
@@ -79708,6 +79775,9 @@ func (m *PaymentRefundMutation) ClearField(name string) error {
 	case paymentrefund.FieldAmount:
 		m.ClearAmount()
 		return nil
+	case paymentrefund.FieldReason:
+		m.ClearReason()
+		return nil
 	case paymentrefund.FieldStatus:
 		m.ClearStatus()
 		return nil
@@ -79757,6 +79827,9 @@ func (m *PaymentRefundMutation) ResetField(name string) error {
 		return nil
 	case paymentrefund.FieldAmount:
 		m.ResetAmount()
+		return nil
+	case paymentrefund.FieldReason:
+		m.ResetReason()
 		return nil
 	case paymentrefund.FieldStatus:
 		m.ResetStatus()

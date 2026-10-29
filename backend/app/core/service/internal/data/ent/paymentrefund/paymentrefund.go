@@ -40,6 +40,8 @@ const (
 	FieldUserID = "user_id"
 	// FieldAmount holds the string denoting the amount field in the database.
 	FieldAmount = "amount"
+	// FieldReason holds the string denoting the reason field in the database.
+	FieldReason = "reason"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// Table holds the table name of the paymentrefund in the database.
@@ -62,6 +64,7 @@ var Columns = []string{
 	FieldTransactionID,
 	FieldUserID,
 	FieldAmount,
+	FieldReason,
 	FieldStatus,
 }
 
@@ -188,6 +191,11 @@ func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 // ByAmount orders the results by the amount field.
 func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAmount, opts...).ToFunc()
+}
+
+// ByReason orders the results by the reason field.
+func ByReason(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldReason, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.

@@ -119,6 +119,11 @@ func Amount(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldAmount, v))
 }
 
+// Reason applies equality check predicate on the "reason" field. It's identical to ReasonEQ.
+func Reason(v string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldEQ(FieldReason, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldCreatedAt, v))
@@ -842,6 +847,81 @@ func AmountIsNil() predicate.PaymentRefund {
 // AmountNotNil applies the NotNil predicate on the "amount" field.
 func AmountNotNil() predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNotNull(FieldAmount))
+}
+
+// ReasonEQ applies the EQ predicate on the "reason" field.
+func ReasonEQ(v string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldEQ(FieldReason, v))
+}
+
+// ReasonNEQ applies the NEQ predicate on the "reason" field.
+func ReasonNEQ(v string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldNEQ(FieldReason, v))
+}
+
+// ReasonIn applies the In predicate on the "reason" field.
+func ReasonIn(vs ...string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldIn(FieldReason, vs...))
+}
+
+// ReasonNotIn applies the NotIn predicate on the "reason" field.
+func ReasonNotIn(vs ...string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldNotIn(FieldReason, vs...))
+}
+
+// ReasonGT applies the GT predicate on the "reason" field.
+func ReasonGT(v string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldGT(FieldReason, v))
+}
+
+// ReasonGTE applies the GTE predicate on the "reason" field.
+func ReasonGTE(v string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldGTE(FieldReason, v))
+}
+
+// ReasonLT applies the LT predicate on the "reason" field.
+func ReasonLT(v string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldLT(FieldReason, v))
+}
+
+// ReasonLTE applies the LTE predicate on the "reason" field.
+func ReasonLTE(v string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldLTE(FieldReason, v))
+}
+
+// ReasonContains applies the Contains predicate on the "reason" field.
+func ReasonContains(v string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldContains(FieldReason, v))
+}
+
+// ReasonHasPrefix applies the HasPrefix predicate on the "reason" field.
+func ReasonHasPrefix(v string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldHasPrefix(FieldReason, v))
+}
+
+// ReasonHasSuffix applies the HasSuffix predicate on the "reason" field.
+func ReasonHasSuffix(v string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldHasSuffix(FieldReason, v))
+}
+
+// ReasonIsNil applies the IsNil predicate on the "reason" field.
+func ReasonIsNil() predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldIsNull(FieldReason))
+}
+
+// ReasonNotNil applies the NotNil predicate on the "reason" field.
+func ReasonNotNil() predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldNotNull(FieldReason))
+}
+
+// ReasonEqualFold applies the EqualFold predicate on the "reason" field.
+func ReasonEqualFold(v string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldEqualFold(FieldReason, v))
+}
+
+// ReasonContainsFold applies the ContainsFold predicate on the "reason" field.
+func ReasonContainsFold(v string) predicate.PaymentRefund {
+	return predicate.PaymentRefund(sql.FieldContainsFold(FieldReason, v))
 }
 
 // StatusEQ applies the EQ predicate on the "status" field.

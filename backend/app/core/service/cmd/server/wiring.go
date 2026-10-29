@@ -193,7 +193,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	paymentGatewayResolver := service.NewPaymentGatewayResolver(ctx, paymentChannelConfigService)
 	orderService := service.NewOrderService(ctx, orderRepo, orderItemRepo, skuRepo, cartItemRepo, entClient, internalMessageService, paymentGatewayResolver)
 	orderItemService := service.NewOrderItemService(ctx, orderItemRepo)
-	paymentTransactionService := service.NewPaymentTransactionService(ctx, paymentTransactionRepo, orderService, paymentChannelConfigService)
+	paymentTransactionService := service.NewPaymentTransactionService(ctx, paymentTransactionRepo, orderService, paymentChannelConfigService, paymentGatewayResolver, entClient)
 	paymentRefundService := service.NewPaymentRefundService(ctx, paymentRefundRepo, paymentTransactionRepo, paymentTransactionService, paymentGatewayResolver)
 	shippingAddressService := service.NewShippingAddressService(ctx, shippingAddressRepo)
 	shipmentService := service.NewShipmentService(ctx, shipmentRepo, entClient)
@@ -364,7 +364,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		return nil, nil, err
 	}
 
-	asynqServer := server.NewAsynqServer(ctx, taskService, orderService, userCouponService, stockAlertScannerService, productSearchService)
+	asynqServer := server.NewAsynqServer(ctx, taskService, orderService, userCouponService, stockAlertScannerService, productSearchService, paymentTransactionService)
 
 	return newApp(ctx, grpcServer, asynqServer), rollback, nil
 }

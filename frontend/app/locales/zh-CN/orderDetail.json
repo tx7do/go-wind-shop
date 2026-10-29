@@ -27,7 +27,8 @@
   "confirm": {
     "cancel": "确认取消此订单？取消后无法恢复。",
     "confirmReceipt": "确认已收到商品？确认后订单将完成。",
-    "requestRefund": "确认对此订单申请退款？"
+    "requestRefund": "确认对此订单申请退款？",
+    "requestRefundReason": "请输入退款原因（可选，将提交给商家审核）："
   },
   "result": {
     "cancelled": "订单已取消。",

@@ -399,7 +399,8 @@
     "channelType": {
       "mock": "模拟支付（演示）",
       "wechatNative": "微信支付 Native（扫码）",
-      "alipayPage": "支付宝（电脑网站支付）"
+      "alipayPage": "支付宝（电脑网站支付）",
+      "wechatH5": "微信支付 H5（手机浏览器）"
     },
     "appId": "应用 ID（appid）",
     "mchId": "商户号（mch_id）",
