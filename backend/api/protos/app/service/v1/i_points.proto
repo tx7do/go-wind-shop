@@ -37,4 +37,12 @@ service PointsService {
       get: "/app/v1/mall/points/check-in-status"
     };
   }
+
+  // 积分兑换优惠券（登录态；事务内扣积分+发券）
+  rpc ExchangePointsForCoupon (catalog.service.v1.ExchangePointsForCouponRequest) returns (catalog.service.v1.ExchangePointsForCouponResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/points/exchange-coupon"
+      body: "*"
+    };
+  }
 }

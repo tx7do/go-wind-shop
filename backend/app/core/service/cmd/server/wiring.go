@@ -192,7 +192,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cartService := service.NewCartService(ctx, cartRepo)
 	cartItemService := service.NewCartItemService(ctx, cartItemRepo)
 	wishlistService := service.NewWishlistService(ctx, wishlistRepo)
-	pointsLedgerService := service.NewPointsLedgerService(ctx, pointsLedgerRepo, entClient)
+	pointsLedgerService := service.NewPointsLedgerService(ctx, pointsLedgerRepo, entClient, couponTemplateRepo)
 	paymentChannelConfigService := service.NewPaymentChannelConfigService(ctx, paymentChannelConfigRepo)
 	paymentGatewayResolver := service.NewPaymentGatewayResolver(ctx, paymentChannelConfigService)
 	grouponService := service.NewGrouponService(ctx, grouponActivityRepo, entClient)

@@ -22,6 +22,7 @@ var _ = binding.EncodeURL
 const _ = http.SupportPackageIsVersion1
 
 const OperationPointsServiceCheckIn = "/app.service.v1.PointsService/CheckIn"
+const OperationPointsServiceExchangePointsForCoupon = "/app.service.v1.PointsService/ExchangePointsForCoupon"
 const OperationPointsServiceGetCheckInStatus = "/app.service.v1.PointsService/GetCheckInStatus"
 const OperationPointsServiceGetMyPointsBalance = "/app.service.v1.PointsService/GetMyPointsBalance"
 const OperationPointsServiceListMyPointsLedgers = "/app.service.v1.PointsService/ListMyPointsLedgers"
@@ -29,6 +30,8 @@ const OperationPointsServiceListMyPointsLedgers = "/app.service.v1.PointsService
 type PointsServiceHTTPServer interface {
 	// CheckIn 每日签到（登录态；幂等）
 	CheckIn(context.Context, *v1.CheckInRequest) (*v1.CheckInResponse, error)
+	// ExchangePointsForCoupon 积分兑换优惠券（登录态；事务内扣积分+发券）
+	ExchangePointsForCoupon(context.Context, *v1.ExchangePointsForCouponRequest) (*v1.ExchangePointsForCouponResponse, error)
 	// GetCheckInStatus 签到状态（登录态）
 	GetCheckInStatus(context.Context, *v1.GetCheckInStatusRequest) (*v1.GetCheckInStatusResponse, error)
 	// GetMyPointsBalance 我的积分余额（user 由登录态隐私层钉定）
@@ -43,6 +46,7 @@ func RegisterPointsServiceHTTPServer(s *http.Server, srv PointsServiceHTTPServer
 	r.GET("/app/v1/mall/points/ledgers", _PointsService_ListMyPointsLedgers0_HTTP_Handler(srv))
 	r.POST("/app/v1/mall/points/check-in", _PointsService_CheckIn0_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/points/check-in-status", _PointsService_GetCheckInStatus0_HTTP_Handler(srv))
+	r.POST("/app/v1/mall/points/exchange-coupon", _PointsService_ExchangePointsForCoupon0_HTTP_Handler(srv))
 }
 
 func _PointsService_GetMyPointsBalance0_HTTP_Handler(srv PointsServiceHTTPServer) func(ctx http.Context) error {
@@ -124,9 +128,33 @@ func _PointsService_GetCheckInStatus0_HTTP_Handler(srv PointsServiceHTTPServer) 
 	}
 }
 
+func _PointsService_ExchangePointsForCoupon0_HTTP_Handler(srv PointsServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v1.ExchangePointsForCouponRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPointsServiceExchangePointsForCoupon)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ExchangePointsForCoupon(ctx, req.(*v1.ExchangePointsForCouponRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v1.ExchangePointsForCouponResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PointsServiceHTTPClient interface {
 	// CheckIn 每日签到（登录态；幂等）
 	CheckIn(ctx context.Context, req *v1.CheckInRequest, opts ...http.CallOption) (rsp *v1.CheckInResponse, err error)
+	// ExchangePointsForCoupon 积分兑换优惠券（登录态；事务内扣积分+发券）
+	ExchangePointsForCoupon(ctx context.Context, req *v1.ExchangePointsForCouponRequest, opts ...http.CallOption) (rsp *v1.ExchangePointsForCouponResponse, err error)
 	// GetCheckInStatus 签到状态（登录态）
 	GetCheckInStatus(ctx context.Context, req *v1.GetCheckInStatusRequest, opts ...http.CallOption) (rsp *v1.GetCheckInStatusResponse, err error)
 	// GetMyPointsBalance 我的积分余额（user 由登录态隐私层钉定）
@@ -149,6 +177,20 @@ func (c *PointsServiceHTTPClientImpl) CheckIn(ctx context.Context, in *v1.CheckI
 	pattern := "/app/v1/mall/points/check-in"
 	path := binding.EncodeURL(pattern, in, false)
 	opts = append(opts, http.Operation(OperationPointsServiceCheckIn))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// ExchangePointsForCoupon 积分兑换优惠券（登录态；事务内扣积分+发券）
+func (c *PointsServiceHTTPClientImpl) ExchangePointsForCoupon(ctx context.Context, in *v1.ExchangePointsForCouponRequest, opts ...http.CallOption) (*v1.ExchangePointsForCouponResponse, error) {
+	var out v1.ExchangePointsForCouponResponse
+	pattern := "/app/v1/mall/points/exchange-coupon"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPointsServiceExchangePointsForCoupon))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
 	if err != nil {

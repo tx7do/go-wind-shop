@@ -53,6 +53,18 @@ func (s *PointsService) ListMyPointsLedgers(ctx context.Context, req *pagination
 	return s.pointsLedgerServiceClient.List(ctx, req)
 }
 
+// ExchangePointsForCoupon 积分兑换优惠券（登录态；BFF 强制注入 userId）。
+func (s *PointsService) ExchangePointsForCoupon(ctx context.Context, req *catalogV1.ExchangePointsForCouponRequest) (*catalogV1.ExchangePointsForCouponResponse, error) {
+	operator, err := auth.FromContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return s.pointsLedgerServiceClient.ExchangePointsForCoupon(ctx, &catalogV1.ExchangePointsForCouponRequest{
+		UserId:           operator.UserId,
+		CouponTemplateId: req.GetCouponTemplateId(),
+	})
+}
+
 // CheckIn 每日签到（登录态；BFF 强制以登录态注入 userId）。
 func (s *PointsService) CheckIn(ctx context.Context, req *catalogV1.CheckInRequest) (*catalogV1.CheckInResponse, error) {
 	operator, err := auth.FromContext(ctx)

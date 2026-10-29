@@ -9,9 +9,13 @@ import (
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
+
 	"go-wind-shop/app/core/service/internal/data"
 	"go-wind-shop/app/core/service/internal/data/ent"
+	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/pointsledger"
+	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
+
 
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 )
@@ -26,13 +30,15 @@ type PointsLedgerService struct {
 
 	repo                *data.PointsLedgerRepo
 	entClient           *entCrud.EntClient[*ent.Client]
+	couponTemplateRepo  *data.CouponTemplateRepo
 }
 
-func NewPointsLedgerService(ctx *bootstrap.Context, repo *data.PointsLedgerRepo, entClient *entCrud.EntClient[*ent.Client]) *PointsLedgerService {
+func NewPointsLedgerService(ctx *bootstrap.Context, repo *data.PointsLedgerRepo, entClient *entCrud.EntClient[*ent.Client], couponTemplateRepo *data.CouponTemplateRepo) *PointsLedgerService {
 	return &PointsLedgerService{
-		log:       logx.New(ctx.NewLoggerHelper("points-ledger/service/core-service")),
-		repo:      repo,
-		entClient: entClient,
+		log:                logx.New(ctx.NewLoggerHelper("points-ledger/service/core-service")),
+		repo:               repo,
+		entClient:          entClient,
+		couponTemplateRepo: couponTemplateRepo,
 	}
 }
 
@@ -300,3 +306,109 @@ func (s *PointsLedgerService) DeductForOrder(ctx context.Context, orderId uint32
 		Exec(ctx)
 }
 
+// ExchangePointsForCoupon 积分兑换优惠券（事务内：扣积分 + 发券）。
+// 校验：模板可兑换（points_price > 0）、余额充足、模板未领完。
+func (s *PointsLedgerService) ExchangePointsForCoupon(ctx context.Context, req *catalogV1.ExchangePointsForCouponRequest) (*catalogV1.ExchangePointsForCouponResponse, error) {
+	userId := req.GetUserId()
+	templateId := req.GetCouponTemplateId()
+	if userId == 0 || templateId == 0 {
+		return nil, catalogV1.ErrorBadRequest("user_id and coupon_template_id are required")
+	}
+
+	// 事务
+	tx, txErr := s.entClient.Client().Tx(ctx)
+	if txErr != nil {
+		return nil, catalogV1.ErrorInternalServerError("begin tx failed")
+	}
+
+	// 查模板（行锁防并发兑换超发）
+	tmpl, tErr := tx.CouponTemplate.Query().
+		Where(coupontemplate.IDEQ(templateId)).
+		ForUpdate().
+		Only(ctx)
+	if tErr != nil || tmpl == nil {
+		tx.Rollback()
+		return nil, catalogV1.ErrorBadRequest("coupon template not found")
+	}
+	if tmpl.PointsPrice <= 0 {
+		tx.Rollback()
+		return nil, catalogV1.ErrorBadRequest("coupon is not exchangeable with points")
+	}
+	pointsPrice := tmpl.PointsPrice
+
+	// 领取量校验
+	if tmpl.MaxRedemptions != nil && tmpl.RedeemedCount != nil && *tmpl.RedeemedCount >= *tmpl.MaxRedemptions {
+		tx.Rollback()
+		return nil, catalogV1.ErrorBadRequest("coupon template fully redeemed")
+	}
+
+	// 余额校验（事务内查）
+	var balRows []struct{ Sum int64 }
+	bErr := tx.PointsLedger.Query().
+		Where(pointsledger.UserIDEQ(userId)).
+		Aggregate(ent.As(ent.Sum(pointsledger.FieldDelta), "sum")).
+		Scan(ctx, &balRows)
+	if bErr != nil {
+		tx.Rollback()
+		return nil, catalogV1.ErrorInternalServerError("balance query failed")
+	}
+	balance := int64(0)
+	if len(balRows) > 0 {
+		balance = balRows[0].Sum
+	}
+	if balance < pointsPrice {
+		tx.Rollback()
+		return nil, catalogV1.ErrorBadRequest("insufficient points (need %d, have %d)", pointsPrice, balance)
+	}
+
+	// 扣积分
+	newBalance := balance - pointsPrice
+	if cErr := tx.PointsLedger.Create().
+		SetUserID(userId).
+		SetDelta(-pointsPrice).
+		SetBalanceAfter(newBalance).
+		SetType(pointsledger.TypePointsTypeDeduct).
+		SetReason("积分兑换优惠券").
+		SetCreatedAt(time.Now()).
+		Exec(ctx); cErr != nil {
+		tx.Rollback()
+		return nil, catalogV1.ErrorInternalServerError("deduct points failed")
+	}
+
+	// 发券
+	ucStatus := usercoupon.StatusUserCouponStatusUnused
+	uc, uErr := tx.UserCoupon.Create().
+		SetUserID(userId).
+		SetCouponTemplateID(templateId).
+		SetStatus(ucStatus).
+		SetCreatedAt(time.Now()).
+		Save(ctx)
+	if uErr != nil {
+		tx.Rollback()
+		return nil, catalogV1.ErrorInternalServerError("issue coupon failed")
+	}
+
+	// 模板领取计数++
+	newCount := int32(1)
+	if tmpl.RedeemedCount != nil {
+		newCount = *tmpl.RedeemedCount + 1
+	}
+	if _, rErr := tx.CouponTemplate.UpdateOneID(templateId).
+		SetRedeemedCount(newCount).
+		Save(ctx); rErr != nil {
+		tx.Rollback()
+		return nil, catalogV1.ErrorInternalServerError("update redeemed count failed")
+	}
+
+	if cErr := tx.Commit(); cErr != nil {
+		return nil, catalogV1.ErrorInternalServerError("commit exchange failed")
+	}
+
+	s.log.Infof("points exchanged for coupon: user=%d points=%d template=%d", userId, pointsPrice, templateId)
+
+	return &catalogV1.ExchangePointsForCouponResponse{
+		CouponId:       uc.ID,
+		PointsDeducted: pointsPrice,
+		Balance:        newBalance,
+	}, nil
+}

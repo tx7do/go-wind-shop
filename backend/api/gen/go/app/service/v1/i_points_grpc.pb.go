@@ -21,10 +21,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PointsService_GetMyPointsBalance_FullMethodName  = "/app.service.v1.PointsService/GetMyPointsBalance"
-	PointsService_ListMyPointsLedgers_FullMethodName = "/app.service.v1.PointsService/ListMyPointsLedgers"
-	PointsService_CheckIn_FullMethodName             = "/app.service.v1.PointsService/CheckIn"
-	PointsService_GetCheckInStatus_FullMethodName    = "/app.service.v1.PointsService/GetCheckInStatus"
+	PointsService_GetMyPointsBalance_FullMethodName      = "/app.service.v1.PointsService/GetMyPointsBalance"
+	PointsService_ListMyPointsLedgers_FullMethodName     = "/app.service.v1.PointsService/ListMyPointsLedgers"
+	PointsService_CheckIn_FullMethodName                 = "/app.service.v1.PointsService/CheckIn"
+	PointsService_GetCheckInStatus_FullMethodName        = "/app.service.v1.PointsService/GetCheckInStatus"
+	PointsService_ExchangePointsForCoupon_FullMethodName = "/app.service.v1.PointsService/ExchangePointsForCoupon"
 )
 
 // PointsServiceClient is the client API for PointsService service.
@@ -41,6 +42,8 @@ type PointsServiceClient interface {
 	CheckIn(ctx context.Context, in *v1.CheckInRequest, opts ...grpc.CallOption) (*v1.CheckInResponse, error)
 	// 签到状态（登录态）
 	GetCheckInStatus(ctx context.Context, in *v1.GetCheckInStatusRequest, opts ...grpc.CallOption) (*v1.GetCheckInStatusResponse, error)
+	// 积分兑换优惠券（登录态；事务内扣积分+发券）
+	ExchangePointsForCoupon(ctx context.Context, in *v1.ExchangePointsForCouponRequest, opts ...grpc.CallOption) (*v1.ExchangePointsForCouponResponse, error)
 }
 
 type pointsServiceClient struct {
@@ -91,6 +94,16 @@ func (c *pointsServiceClient) GetCheckInStatus(ctx context.Context, in *v1.GetCh
 	return out, nil
 }
 
+func (c *pointsServiceClient) ExchangePointsForCoupon(ctx context.Context, in *v1.ExchangePointsForCouponRequest, opts ...grpc.CallOption) (*v1.ExchangePointsForCouponResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v1.ExchangePointsForCouponResponse)
+	err := c.cc.Invoke(ctx, PointsService_ExchangePointsForCoupon_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PointsServiceServer is the server API for PointsService service.
 // All implementations must embed UnimplementedPointsServiceServer
 // for forward compatibility.
@@ -105,6 +118,8 @@ type PointsServiceServer interface {
 	CheckIn(context.Context, *v1.CheckInRequest) (*v1.CheckInResponse, error)
 	// 签到状态（登录态）
 	GetCheckInStatus(context.Context, *v1.GetCheckInStatusRequest) (*v1.GetCheckInStatusResponse, error)
+	// 积分兑换优惠券（登录态；事务内扣积分+发券）
+	ExchangePointsForCoupon(context.Context, *v1.ExchangePointsForCouponRequest) (*v1.ExchangePointsForCouponResponse, error)
 	mustEmbedUnimplementedPointsServiceServer()
 }
 
@@ -126,6 +141,9 @@ func (UnimplementedPointsServiceServer) CheckIn(context.Context, *v1.CheckInRequ
 }
 func (UnimplementedPointsServiceServer) GetCheckInStatus(context.Context, *v1.GetCheckInStatusRequest) (*v1.GetCheckInStatusResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetCheckInStatus not implemented")
+}
+func (UnimplementedPointsServiceServer) ExchangePointsForCoupon(context.Context, *v1.ExchangePointsForCouponRequest) (*v1.ExchangePointsForCouponResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ExchangePointsForCoupon not implemented")
 }
 func (UnimplementedPointsServiceServer) mustEmbedUnimplementedPointsServiceServer() {}
 func (UnimplementedPointsServiceServer) testEmbeddedByValue()                       {}
@@ -220,6 +238,24 @@ func _PointsService_GetCheckInStatus_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PointsService_ExchangePointsForCoupon_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v1.ExchangePointsForCouponRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PointsServiceServer).ExchangePointsForCoupon(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PointsService_ExchangePointsForCoupon_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PointsServiceServer).ExchangePointsForCoupon(ctx, req.(*v1.ExchangePointsForCouponRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PointsService_ServiceDesc is the grpc.ServiceDesc for PointsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +278,10 @@ var PointsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCheckInStatus",
 			Handler:    _PointsService_GetCheckInStatus_Handler,
+		},
+		{
+			MethodName: "ExchangePointsForCoupon",
+			Handler:    _PointsService_ExchangePointsForCoupon_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
