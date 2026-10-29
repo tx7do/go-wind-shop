@@ -86,9 +86,16 @@ C端 checkout
 - 对账：流水 `gateway_trade_no` 回填渠道侧交易号，`business_ref_id` 与订单对齐；
 - 超时：订单超时取消（order_sweep）与回调确认靠 `expected_status=PENDING_PAYMENT`
   乐观并发互斥——订单已取消时回调只置流水成功并告警日志，资金走退款流程；
-- 退款：管理端对 SUCCEEDED 流水创建/确认退款（联动流水 REFUNDED + 库存回补 +
-  站内信）。真实渠道的资金退回目前通过**商户平台手动操作**（或后续版本接入
-  渠道退款 API），退款记录与联动逻辑不受影响。
+- 退款：管理端对 SUCCEEDED 流水创建退款（默认 PENDING）→ 确认时**先调渠道
+  退款 API**（微信 refunddomestic / 支付宝 trade.refund；同一退款单号渠道幂等）
+  ——渠道受理才推进 SUCCEEDED，联动流水 REFUNDED + 库存回补 + 站内信；渠道
+  拒绝则退款停留 PENDING 可重试。记账型渠道（BALANCE/OFFLINE）与 MOCK 无真实
+  资金，直接放行。
+- 关单联动：订单取消/超时取消（order_sweep）后 best-effort 调渠道关单
+  （微信 closeorder / 支付宝 trade.close），让未支付流水的旧二维码/收银台
+  链接失效；渠道侧已支付的关单失败由回调路径兜底（expected_status 拦截 +
+  退款流程）。
+- 空购物车/全无效项的下单请求直接拒绝（防 0 元空单走完支付退款链路）。
 
 ## 五、验收口径
 

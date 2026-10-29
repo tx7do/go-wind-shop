@@ -75,3 +75,37 @@ func (g *AlipayPageGateway) ParseNotify(ctx context.Context, r *http.Request) (*
 		Success:        n.TradeStatus == alipay.TradeStatusSuccess,
 	}, nil
 }
+
+// CloseOrder 关闭未支付的支付宝交易（订单取消/超时后让旧收银台链接失效）。
+// 注意：alipay.trade.close 对「已支付」交易会失败——该情形由支付回调确认
+// 路径兜底，此处错误仅由调用方记录。
+func (g *AlipayPageGateway) CloseOrder(ctx context.Context, outTradeNo string) error {
+	rsp, err := g.client.TradeClose(ctx, alipay.TradeClose{
+		OutTradeNo: outTradeNo,
+	})
+	if err != nil {
+		return fmt.Errorf("alipay close order [%s] failed: %w", outTradeNo, err)
+	}
+	if rsp != nil && !rsp.Error.IsSuccess() {
+		return fmt.Errorf("alipay close order [%s] rejected: %s", outTradeNo, rsp.Error.Error())
+	}
+	return nil
+}
+
+// Refund 发起支付宝退款（alipay.trade.refund，同步受理）。
+// 同一 out_request_no 重复提交渠道幂等处理（受理成功但 FundChange=N）。
+func (g *AlipayPageGateway) Refund(ctx context.Context, req RefundRequest) error {
+	rsp, err := g.client.TradeRefund(ctx, alipay.TradeRefund{
+		OutTradeNo:   req.OutTradeNo,
+		OutRequestNo: req.OutRequestNo,
+		RefundAmount: CentsToYuanString(req.RefundCents),
+		RefundReason: req.Reason,
+	})
+	if err != nil {
+		return fmt.Errorf("alipay refund [%s/%s] failed: %w", req.OutTradeNo, req.OutRequestNo, err)
+	}
+	if rsp != nil && !rsp.Error.IsSuccess() {
+		return fmt.Errorf("alipay refund [%s/%s] rejected: %s", req.OutTradeNo, req.OutRequestNo, rsp.Error.Error())
+	}
+	return nil
+}

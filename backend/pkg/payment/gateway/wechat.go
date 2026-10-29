@@ -13,6 +13,7 @@ import (
 	"github.com/wechatpay-apiv3/wechatpay-go/utils"
 	"github.com/wechatpay-apiv3/wechatpay-go/services/payments"
 	"github.com/wechatpay-apiv3/wechatpay-go/services/payments/native"
+	"github.com/wechatpay-apiv3/wechatpay-go/services/refunddomestic"
 
 	"go-wind-shop/pkg/payment"
 )
@@ -100,6 +101,45 @@ func (g *WechatNativeGateway) ParseNotify(ctx context.Context, r *http.Request) 
 		PaidCents:      paidCents,
 		Success:        deref(transaction.TradeState) == "SUCCESS",
 	}, nil
+}
+
+// CloseOrder 关闭未支付的微信预支付单（订单取消/超时后让旧二维码失效）。
+// 渠道侧已支付时关单失败——该情形由支付回调确认路径兜底，此处错误仅记录。
+func (g *WechatNativeGateway) CloseOrder(ctx context.Context, outTradeNo string) error {
+	svc := native.NativeApiService{Client: g.client}
+	_, err := svc.CloseOrder(ctx, native.CloseOrderRequest{
+		OutTradeNo: core.String(outTradeNo),
+		Mchid:      core.String(g.mchID),
+	})
+	if err != nil {
+		return fmt.Errorf("wechat close order [%s] failed: %w", outTradeNo, err)
+	}
+	return nil
+}
+
+// Refund 发起微信退款。渠道受理（含 PROCESSING 处理中）即成功——到账由
+// 微信侧异步保证；拒绝时返回错误，调用方不得推进退款状态。
+func (g *WechatNativeGateway) Refund(ctx context.Context, req RefundRequest) error {
+	svc := refunddomestic.RefundsApiService{Client: g.client}
+	resp, _, err := svc.Create(ctx, refunddomestic.CreateRequest{
+		OutTradeNo:  core.String(req.OutTradeNo),
+		OutRefundNo: core.String(req.OutRequestNo),
+		Reason:      core.String(req.Reason),
+		Amount: &refunddomestic.AmountReq{
+			Refund:   core.Int64(req.RefundCents),
+			Total:    core.Int64(req.TotalCents),
+			Currency: core.String("CNY"),
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("wechat refund [%s/%s] failed: %w", req.OutTradeNo, req.OutRequestNo, err)
+	}
+	var status string
+	if resp != nil && resp.Status != nil {
+		status = string(*resp.Status)
+	}
+	_ = status // 受理即成功（SUCCESS/PROCESSING/CLOSED 由渠道异步推进，记账以本系统状态机为准）
+	return nil
 }
 
 func deref(s *string) string {

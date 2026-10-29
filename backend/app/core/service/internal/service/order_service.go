@@ -32,6 +32,7 @@ import (
 	entCrud "github.com/tx7do/go-crud/entgo"
 
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
+	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
 	appViewer "go-wind-shop/pkg/entgo/viewer"
 	"go-wind-shop/pkg/task"
 )
@@ -47,12 +48,13 @@ type OrderService struct {
 
 	log *logx.Helper
 
-	orderRepo             *data.OrderRepo
-	orderItemRepo         *data.OrderItemRepo
-	skuRepo               *data.SkuRepo
-	cartItemRepo          *data.CartItemRepo
-	entClient             *entCrud.EntClient[*ent.Client]
+	orderRepo              *data.OrderRepo
+	orderItemRepo          *data.OrderItemRepo
+	skuRepo                *data.SkuRepo
+	cartItemRepo           *data.CartItemRepo
+	entClient              *entCrud.EntClient[*ent.Client]
 	internalMessageService *InternalMessageService
+	gatewayResolver        *PaymentGatewayResolver
 
 	taskScheduler TaskScheduler
 }
@@ -65,6 +67,7 @@ func NewOrderService(
 	cartItemRepo *data.CartItemRepo,
 	entClient *entCrud.EntClient[*ent.Client],
 	internalMessageService *InternalMessageService,
+	gatewayResolver *PaymentGatewayResolver,
 ) *OrderService {
 	return &OrderService{
 		log:                    logx.New(ctx.NewLoggerHelper("order/service/core-service")),
@@ -74,6 +77,7 @@ func NewOrderService(
 		cartItemRepo:           cartItemRepo,
 		entClient:              entClient,
 		internalMessageService: internalMessageService,
+		gatewayResolver:        gatewayResolver,
 	}
 }
 
@@ -304,6 +308,11 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 		s.log.Errorf("query cart items failed: %v", qErr)
 		err = orderV1.ErrorInternalServerError("create order failed")
 		return nil, err
+	}
+	// 空购物车/全无效项必须拒绝：放行会产出 0 元空单（无订单项、无库存扣减），
+	// 却能走完支付/退款全链路，成为对账噪声与资损测试口。
+	if len(cartItems) == 0 {
+		return nil, orderV1.ErrorBadRequest("cart is empty")
 	}
 
 	var totalAmount int64 = 0
@@ -770,6 +779,11 @@ func (s *OrderService) ExpireOrderByTimeout(ctx context.Context, req *orderV1.Ex
 		return nil, fmt.Errorf("commit expire tx failed: %w", cErr)
 	}
 	err = nil
+
+	// 网关关单联动（best-effort，事务已提交）：让该订单未支付流水的渠道
+	// 预支付单失效——否则旧二维码/收银台链接仍可支付，回调到达时订单已取消
+	// （expected_status 拦截），产生"钱收了单没了"需人工退款的遗留。
+	s.closeGatewayPendingsBestEffort(ctx, orderId)
 
 	s.log.Infow(
 		"msg", "order expired due to timeout",
@@ -1251,3 +1265,47 @@ func (s *OrderService) restoreCouponInTx(
 	}
 }
 
+// closeGatewayPendingsBestEffort 取消/超时后的网关关单联动（事务已提交后调用）。
+// 遍历该订单仍为 PENDING 的支付流水，按支付方式解析启用渠道并关闭渠道侧
+// 预支付单。任何失败只记日志——关单失败的实际后果是渠道侧旧链接仍可支付，
+// 回调会被订单 expected_status 拦截，最终走退款流程兜底。
+func (s *OrderService) closeGatewayPendingsBestEffort(ctx context.Context, orderId uint32) {
+	pendings, qErr := s.entClient.Client().PaymentTransaction.Query().
+		Where(
+			paymenttransaction.OrderIDEQ(orderId),
+			paymenttransaction.StatusEQ(paymenttransaction.StatusPaymentTransactionStatusPending),
+		).
+		All(ctx)
+	if qErr != nil {
+		s.log.Errorf("query pending payments for gateway close of order [%d] failed: %v", orderId, qErr)
+		return
+	}
+
+	for _, txEnt := range pendings {
+		txId := txEnt.ID
+		if txId == 0 {
+			continue
+		}
+		pm := paymentV1.PaymentMethod_PAYMENT_METHOD_UNSPECIFIED
+		if txEnt.PaymentMethod != nil {
+			if v, ok := paymentV1.PaymentMethod_value[string(*txEnt.PaymentMethod)]; ok {
+				pm = paymentV1.PaymentMethod(v)
+			}
+		}
+
+		gw, rErr := s.gatewayResolver.ByPaymentMethod(ctx, pm)
+		if rErr != nil {
+			s.log.Errorf("resolve gateway for order [%d] tx [%d] close failed: %v", orderId, txId, rErr)
+			continue
+		}
+		if gw == nil {
+			// 记账型渠道（BALANCE/OFFLINE 等）无网关单可关
+			continue
+		}
+		if cErr := gw.CloseOrder(ctx, strconv.FormatUint(uint64(txId), 10)); cErr != nil {
+			s.log.Errorf("gateway close order failed: order=[%d] tx=[%d] err=%v", orderId, txId, cErr)
+		} else {
+			s.log.Infow("msg", "gateway prepay closed", "order_id", orderId, "tx_id", txId)
+		}
+	}
+}

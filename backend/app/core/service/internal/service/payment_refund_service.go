@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -13,15 +14,17 @@ import (
 	"go-wind-shop/app/core/service/internal/data"
 
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
+	"go-wind-shop/pkg/payment/gateway"
 )
 
 type PaymentRefundService struct {
 	paymentV1.UnimplementedPaymentRefundServiceServer
 
 	log *logx.Helper
-	repo                  *data.PaymentRefundRepo
-	transactionRepo       *data.PaymentTransactionRepo
-	transactionService    *PaymentTransactionService
+	repo               *data.PaymentRefundRepo
+	transactionRepo    *data.PaymentTransactionRepo
+	transactionService *PaymentTransactionService
+	gatewayResolver    *PaymentGatewayResolver
 }
 
 func NewPaymentRefundService(
@@ -29,12 +32,14 @@ func NewPaymentRefundService(
 	repo *data.PaymentRefundRepo,
 	transactionRepo *data.PaymentTransactionRepo,
 	transactionService *PaymentTransactionService,
+	gatewayResolver *PaymentGatewayResolver,
 ) *PaymentRefundService {
 	return &PaymentRefundService{
 		log:                logx.New(ctx.NewLoggerHelper("payment-refund/service/core-service")),
 		repo:               repo,
 		transactionRepo:    transactionRepo,
 		transactionService: transactionService,
+		gatewayResolver:    gatewayResolver,
 	}
 }
 
@@ -110,6 +115,12 @@ func (s *PaymentRefundService) Create(ctx context.Context, req *paymentV1.Create
 		}
 	}
 
+	// 状态机只认 PENDING 起步（Update 白名单仅 PENDING→SUCCEEDED/FAILED），
+	// 裸建记录缺省 STATUS_UNSPECIFIED 会永远无法推进，故强制补默认初始态。
+	if req.Data.GetStatus() == paymentV1.PaymentRefund_STATUS_UNSPECIFIED {
+		req.Data.Status = paymentV1.PaymentRefund_PENDING.Enum()
+	}
+
 	if err := s.repo.Create(ctx, req); err != nil {
 		return nil, err
 	}
@@ -146,6 +157,15 @@ func (s *PaymentRefundService) Update(ctx context.Context, req *paymentV1.Update
 		}
 	}
 
+	// 网关退款联动（推进 SUCCEEDED 的前置门槛）：真实渠道流水必须先拿到渠道
+	// 受理才允许推进退款状态；渠道拒绝则整体失败、退款记录停留 PENDING 可重试。
+	// 记账型渠道（BALANCE/OFFLINE）与 MOCK 渠道无真实资金，直接放行/受理即成功。
+	if targetStatus == paymentV1.PaymentRefund_SUCCEEDED {
+		if gErr := s.gatewayRefund(ctx, req.GetId()); gErr != nil {
+			return nil, gErr
+		}
+	}
+
 	if err := s.repo.Update(ctx, req); err != nil {
 		return nil, err
 	}
@@ -157,7 +177,17 @@ func (s *PaymentRefundService) Update(ctx context.Context, req *paymentV1.Update
 	// 联动走 PaymentTransactionService.Update（经支付流水状态机校验
 	// SUCCEEDED→REFUNDED），消除"联动直接打 repo 绕过状态机"的旁路。
 	if targetStatus == paymentV1.PaymentRefund_SUCCEEDED {
+		// transaction_id 以库中退款记录为准兜底：裸状态更新（仅带 status）也必须
+		// 触发联动，不能因请求体缺字段而静默跳过翻 REFUNDED/回补库存。
 		txId := req.Data.GetTransactionId()
+		if txId == 0 {
+			rec, gErr := s.repo.Get(ctx, &paymentV1.GetPaymentRefundRequest{
+				QueryBy: &paymentV1.GetPaymentRefundRequest_Id{Id: req.GetId()},
+			})
+			if gErr == nil && rec != nil {
+				txId = rec.GetTransactionId()
+			}
+		}
 		if txId != 0 {
 			tx, gErr := s.transactionRepo.Get(ctx, &paymentV1.GetPaymentTransactionRequest{
 				QueryBy: &paymentV1.GetPaymentTransactionRequest_Id{Id: txId},
@@ -241,4 +271,50 @@ func (s *PaymentRefundService) Delete(ctx context.Context, req *paymentV1.Delete
 		return nil, err
 	}
 	return &emptypb.Empty{}, nil
+}
+
+// gatewayRefund 对网关渠道流水发起渠道退款（推进 SUCCEEDED 的前置门槛）。
+// - 渠道拒绝 → 返回错误，退款记录停留 PENDING（可修数后重试，out_request_no
+//   幂等保证渠道侧不重复退）；
+// - 记账型渠道（BALANCE/OFFLINE 等）无网关语义 → 直接放行；
+// - MOCK 渠道受理即成功（不出真实资金，本地闭环可演示）。
+func (s *PaymentRefundService) gatewayRefund(ctx context.Context, refundId uint32) error {
+	refund, gErr := s.repo.Get(ctx, &paymentV1.GetPaymentRefundRequest{
+		QueryBy: &paymentV1.GetPaymentRefundRequest_Id{Id: refundId},
+	})
+	if gErr != nil || refund == nil {
+		return paymentV1.ErrorBadRequest("refund record not found")
+	}
+
+	txId := refund.GetTransactionId()
+	tx, txErr := s.transactionRepo.Get(ctx, &paymentV1.GetPaymentTransactionRequest{
+		QueryBy: &paymentV1.GetPaymentTransactionRequest_Id{Id: txId},
+	})
+	if txErr != nil || tx == nil {
+		return paymentV1.ErrorBadRequest("linked payment transaction not found")
+	}
+
+	gw, rErr := s.gatewayResolver.ByPaymentMethod(ctx, tx.GetPaymentMethod())
+	if rErr != nil {
+		s.log.Errorf("resolve gateway for refund [%d] failed: %v", refundId, rErr)
+		return paymentV1.ErrorInternalServerError("payment gateway unavailable")
+	}
+	if gw == nil {
+		// 记账型渠道：无真实资金流转，放行走既有联动
+		return nil
+	}
+
+	if rErr := gw.Refund(ctx, gateway.RefundRequest{
+		OutTradeNo:   strconv.FormatUint(uint64(txId), 10),
+		OutRequestNo: strconv.FormatUint(uint64(refundId), 10),
+		RefundCents:  refund.GetAmount(),
+		TotalCents:   tx.GetAmount(),
+		Reason:       "订单退款",
+	}); rErr != nil {
+		s.log.Errorf("gateway refund rejected: refund=[%d] tx=[%d] err=%v", refundId, txId, rErr)
+		return paymentV1.ErrorBadRequest("gateway rejected refund: %v", rErr.Error())
+	}
+
+	s.log.Infof("gateway refund accepted: refund=[%d] tx=[%d] amount=%d", refundId, txId, refund.GetAmount())
+	return nil
 }

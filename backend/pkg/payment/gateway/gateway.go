@@ -41,11 +41,31 @@ type NotifyResult struct {
 	Success        bool
 }
 
+// RefundRequest 网关退款请求
+type RefundRequest struct {
+	// 原支付的商户交易号（=支付流水 ID）
+	OutTradeNo string
+	// 商户退款单号（=退款记录 ID；同单多次退款须唯一，渠道侧幂等键）
+	OutRequestNo string
+	// 退款金额（分）
+	RefundCents int64
+	// 原订单金额（分；微信退款必传）
+	TotalCents int64
+	// 退款原因（可空）
+	Reason string
+}
+
 // Gateway 支付网关适配器接口
 type Gateway interface {
 	CreatePayment(ctx context.Context, req PayRequest) (*PayResult, error)
 	// ParseNotify 验签并解析异步通知。验签失败必须返回错误（调用方拒绝应答）。
 	ParseNotify(ctx context.Context, r *http.Request) (*NotifyResult, error)
+	// CloseOrder 关闭未支付的网关预支付单（订单取消/超时后调用，让旧二维码失效）。
+	// best-effort 语义：渠道侧已支付/不存在等失败由调用方记日志兜底。
+	CloseOrder(ctx context.Context, outTradeNo string) error
+	// Refund 向渠道发起退款。返回 nil 表示渠道已受理（异步到账由渠道保证）；
+	// 返回错误表示渠道拒绝（调用方不得推进退款状态）。
+	Refund(ctx context.Context, req RefundRequest) error
 }
 
 // New 按渠道类型构造网关适配器。credentialsJSON 为解密后的凭据明文 JSON。

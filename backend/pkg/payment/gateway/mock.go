@@ -23,3 +23,13 @@ func (g *MockGateway) CreatePayment(ctx context.Context, req PayRequest) (*PayRe
 func (g *MockGateway) ParseNotify(ctx context.Context, r *http.Request) (*NotifyResult, error) {
 	return nil, errors.New("mock gateway has no server-side notify")
 }
+
+func (g *MockGateway) CloseOrder(ctx context.Context, outTradeNo string) error {
+	// 模拟渠道无网关预支付单可关：恒成功（调用方联动路径因此无感）
+	return nil
+}
+
+func (g *MockGateway) Refund(ctx context.Context, req RefundRequest) error {
+	// 模拟渠道不出真实资金：恒成功，让退款闭环可本地演示
+	return nil
+}
