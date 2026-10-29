@@ -87,9 +87,14 @@ require (
 	github.com/google/pprof v0.0.0-20260709232956-b9395ee17fa0 // indirect
 	github.com/mitchellh/mapstructure v1.5.1-0.20220423185008-bf980b35cac4 // indirect
 	github.com/pquerna/otp v1.5.0 // indirect
+	github.com/smartwalle/alipay/v3 v3.2.31 // indirect
+	github.com/smartwalle/ncrypto v1.0.4 // indirect
+	github.com/smartwalle/ngx v1.1.2 // indirect
+	github.com/smartwalle/nsign v1.0.9 // indirect
 	github.com/tengattack/gluacrypto v0.0.0-20240324200146-54b58c95c255 // indirect
 	github.com/tx7do/go-utils/netutil v0.1.0 // indirect
 	github.com/vadv/gopher-lua-libs v0.8.0 // indirect
+	github.com/wechatpay-apiv3/wechatpay-go v0.2.21 // indirect
 	github.com/yuin/gluamapper v0.0.0-20150323120927-d836955830e7 // indirect
 	layeh.com/gopher-luar v1.0.11 // indirect
 )

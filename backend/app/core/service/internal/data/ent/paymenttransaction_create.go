@@ -246,6 +246,20 @@ func (_c *PaymentTransactionCreate) SetNillableStatus(v *paymenttransaction.Stat
 	return _c
 }
 
+// SetGatewayTradeNo sets the "gateway_trade_no" field.
+func (_c *PaymentTransactionCreate) SetGatewayTradeNo(v string) *PaymentTransactionCreate {
+	_c.mutation.SetGatewayTradeNo(v)
+	return _c
+}
+
+// SetNillableGatewayTradeNo sets the "gateway_trade_no" field if the given value is not nil.
+func (_c *PaymentTransactionCreate) SetNillableGatewayTradeNo(v *string) *PaymentTransactionCreate {
+	if v != nil {
+		_c.SetGatewayTradeNo(*v)
+	}
+	return _c
+}
+
 // SetID sets the "id" field.
 func (_c *PaymentTransactionCreate) SetID(v uint32) *PaymentTransactionCreate {
 	_c.mutation.SetID(v)
@@ -422,6 +436,10 @@ func (_c *PaymentTransactionCreate) createSpec() (*PaymentTransaction, *sqlgraph
 	if value, ok := _c.mutation.Status(); ok {
 		_spec.SetField(paymenttransaction.FieldStatus, field.TypeEnum, value)
 		_node.Status = &value
+	}
+	if value, ok := _c.mutation.GatewayTradeNo(); ok {
+		_spec.SetField(paymenttransaction.FieldGatewayTradeNo, field.TypeString, value)
+		_node.GatewayTradeNo = &value
 	}
 	return _node, _spec
 }
@@ -760,6 +778,24 @@ func (u *PaymentTransactionUpsert) UpdateStatus() *PaymentTransactionUpsert {
 // ClearStatus clears the value of the "status" field.
 func (u *PaymentTransactionUpsert) ClearStatus() *PaymentTransactionUpsert {
 	u.SetNull(paymenttransaction.FieldStatus)
+	return u
+}
+
+// SetGatewayTradeNo sets the "gateway_trade_no" field.
+func (u *PaymentTransactionUpsert) SetGatewayTradeNo(v string) *PaymentTransactionUpsert {
+	u.Set(paymenttransaction.FieldGatewayTradeNo, v)
+	return u
+}
+
+// UpdateGatewayTradeNo sets the "gateway_trade_no" field to the value that was provided on create.
+func (u *PaymentTransactionUpsert) UpdateGatewayTradeNo() *PaymentTransactionUpsert {
+	u.SetExcluded(paymenttransaction.FieldGatewayTradeNo)
+	return u
+}
+
+// ClearGatewayTradeNo clears the value of the "gateway_trade_no" field.
+func (u *PaymentTransactionUpsert) ClearGatewayTradeNo() *PaymentTransactionUpsert {
+	u.SetNull(paymenttransaction.FieldGatewayTradeNo)
 	return u
 }
 
@@ -1150,6 +1186,27 @@ func (u *PaymentTransactionUpsertOne) UpdateStatus() *PaymentTransactionUpsertOn
 func (u *PaymentTransactionUpsertOne) ClearStatus() *PaymentTransactionUpsertOne {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.ClearStatus()
+	})
+}
+
+// SetGatewayTradeNo sets the "gateway_trade_no" field.
+func (u *PaymentTransactionUpsertOne) SetGatewayTradeNo(v string) *PaymentTransactionUpsertOne {
+	return u.Update(func(s *PaymentTransactionUpsert) {
+		s.SetGatewayTradeNo(v)
+	})
+}
+
+// UpdateGatewayTradeNo sets the "gateway_trade_no" field to the value that was provided on create.
+func (u *PaymentTransactionUpsertOne) UpdateGatewayTradeNo() *PaymentTransactionUpsertOne {
+	return u.Update(func(s *PaymentTransactionUpsert) {
+		s.UpdateGatewayTradeNo()
+	})
+}
+
+// ClearGatewayTradeNo clears the value of the "gateway_trade_no" field.
+func (u *PaymentTransactionUpsertOne) ClearGatewayTradeNo() *PaymentTransactionUpsertOne {
+	return u.Update(func(s *PaymentTransactionUpsert) {
+		s.ClearGatewayTradeNo()
 	})
 }
 
@@ -1706,6 +1763,27 @@ func (u *PaymentTransactionUpsertBulk) UpdateStatus() *PaymentTransactionUpsertB
 func (u *PaymentTransactionUpsertBulk) ClearStatus() *PaymentTransactionUpsertBulk {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.ClearStatus()
+	})
+}
+
+// SetGatewayTradeNo sets the "gateway_trade_no" field.
+func (u *PaymentTransactionUpsertBulk) SetGatewayTradeNo(v string) *PaymentTransactionUpsertBulk {
+	return u.Update(func(s *PaymentTransactionUpsert) {
+		s.SetGatewayTradeNo(v)
+	})
+}
+
+// UpdateGatewayTradeNo sets the "gateway_trade_no" field to the value that was provided on create.
+func (u *PaymentTransactionUpsertBulk) UpdateGatewayTradeNo() *PaymentTransactionUpsertBulk {
+	return u.Update(func(s *PaymentTransactionUpsert) {
+		s.UpdateGatewayTradeNo()
+	})
+}
+
+// ClearGatewayTradeNo clears the value of the "gateway_trade_no" field.
+func (u *PaymentTransactionUpsertBulk) ClearGatewayTradeNo() *PaymentTransactionUpsertBulk {
+	return u.Update(func(s *PaymentTransactionUpsert) {
+		s.ClearGatewayTradeNo()
 	})
 }
 

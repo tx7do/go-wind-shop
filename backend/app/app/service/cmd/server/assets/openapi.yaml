@@ -2478,6 +2478,59 @@ paths:
                         application/json:
                             schema:
                                 $ref: '#/components/schemas/payment.service.v1.PaymentTransaction'
+    /app/v1/mall/payments/channels:
+        get:
+            tags:
+                - PaymentChannelService
+            description: 当前启用渠道（不含任何凭据/配置细节）
+            operationId: PaymentChannelService_ListEnabledChannels
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/payment.service.v1.ListEnabledChannelsResponse'
+    /app/v1/mall/payments/intent:
+        post:
+            tags:
+                - PaymentTransactionService
+            description: |-
+                创建支付意图：校验订单归属与待支付态 → 落 PENDING 流水 → 渠道网关下单，
+                 返回二维码（微信 Native）/ 跳转链接（支付宝）等 C 端拉起支付所需信息。
+            operationId: PaymentTransactionService_CreatePaymentIntent
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/payment.service.v1.CreatePaymentIntentRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/payment.service.v1.CreatePaymentIntentAppResponse'
+    /app/v1/mall/payments/mock-confirm:
+        post:
+            tags:
+                - PaymentTransactionService
+            description: 模拟渠道确认支付（仅 MOCK 渠道流水可用；开发/演示用途，不出真实资金）
+            operationId: PaymentTransactionService_MockConfirmPayment
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/payment.service.v1.MockConfirmPaymentRequest'
+                required: true
+            responses:
+                "200":
+                    description: OK
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/payment.service.v1.MockConfirmPaymentResponse'
     /app/v1/mall/product-attribute-values:
         get:
             tags:
@@ -6446,6 +6499,64 @@ components:
             properties:
                 count:
                     type: string
+        payment.service.v1.CreatePaymentIntentAppResponse:
+            type: object
+            properties:
+                transactionId:
+                    type: integer
+                    description: 支付流水ID
+                    format: uint32
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - PENDING
+                        - SUCCEEDED
+                        - FAILED
+                        - REFUNDED
+                    type: string
+                    description: 支付状态
+                    format: enum
+                payType:
+                    enum:
+                        - PAY_TYPE_UNSPECIFIED
+                        - PAY_TYPE_REDIRECT
+                        - PAY_TYPE_QR
+                        - PAY_TYPE_MOCK
+                    type: string
+                    description: 拉起方式
+                    format: enum
+                payUrl:
+                    type: string
+                    description: 支付跳转链接
+                qrCode:
+                    type: string
+                    description: 支付二维码内容
+                amount:
+                    type: string
+                    description: 应付金额（分）
+                currency:
+                    type: string
+                    description: 币种
+            description: 创建支付意图 C 端响应（不含渠道凭据）
+        payment.service.v1.CreatePaymentIntentRequest:
+            type: object
+            properties:
+                orderId:
+                    type: integer
+                    description: 关联订单ID
+                    format: uint32
+                channelId:
+                    type: integer
+                    description: 支付渠道配置ID
+                    format: uint32
+                userId:
+                    type: integer
+                    description: 支付人用户ID
+                    format: uint32
+                idempotencyKey:
+                    type: string
+                    description: 支付幂等键（租户内唯一）
+            description: 创建支付意图请求
         payment.service.v1.CreatePaymentRefundRequest:
             type: object
             properties:
@@ -6456,6 +6567,13 @@ components:
             properties:
                 data:
                     $ref: '#/components/schemas/payment.service.v1.PaymentTransaction'
+        payment.service.v1.ListEnabledChannelsResponse:
+            type: object
+            properties:
+                items:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/payment.service.v1.PaymentChannel'
         payment.service.v1.ListPaymentRefundResponse:
             type: object
             properties:
@@ -6474,6 +6592,51 @@ components:
                         $ref: '#/components/schemas/payment.service.v1.PaymentTransaction'
                 total:
                     type: string
+        payment.service.v1.MockConfirmPaymentRequest:
+            type: object
+            properties:
+                transactionId:
+                    type: integer
+                    description: 支付流水ID
+                    format: uint32
+            description: 模拟渠道确认请求（仅 MOCK 渠道流水可用；开发/演示用途）
+        payment.service.v1.MockConfirmPaymentResponse:
+            type: object
+            properties:
+                status:
+                    enum:
+                        - STATUS_UNSPECIFIED
+                        - PENDING
+                        - SUCCEEDED
+                        - FAILED
+                        - REFUNDED
+                    type: string
+                    description: 确认后状态
+                    format: enum
+            description: 模拟渠道确认响应
+        payment.service.v1.PaymentChannel:
+            type: object
+            properties:
+                id:
+                    type: integer
+                    description: 渠道配置ID
+                    format: uint32
+                name:
+                    type: string
+                    description: 渠道显示名
+                channel:
+                    enum:
+                        - PAYMENT_CHANNEL_UNSPECIFIED
+                        - PAYMENT_CHANNEL_MOCK
+                        - PAYMENT_CHANNEL_WECHAT_NATIVE
+                        - PAYMENT_CHANNEL_ALIPAY_PAGE
+                    type: string
+                    description: 渠道类型
+                    format: enum
+                sandbox:
+                    type: boolean
+                    description: 沙箱模式
+            description: C 端可见渠道（公开视图：仅展示字段，无任何配置/凭据细节）
         payment.service.v1.PaymentRefund:
             type: object
             properties:
@@ -6586,13 +6749,7 @@ components:
                         - UNIONPAY
                         - STRIPE
                         - PAYPAL
-                        - CRYPTO_BTC
-                        - CRYPTO_ETH
-                        - CRYPTO_USDT
-                        - CRYPTO_USDC
-                        - CRYPTO_TRON
-                        - CRYPTO_TON
-                        - CRYPTO_OTHER
+                        - MOCK
                         - MIXED
                         - OFFLINE
                     type: string
@@ -6611,6 +6768,9 @@ components:
                     type: string
                     description: 业务类型
                     format: enum
+                gatewayTradeNo:
+                    type: string
+                    description: 网关侧交易号
                 tenantId:
                     type: integer
                     description: 租户ID
@@ -6937,6 +7097,8 @@ tags:
       description: 订单项前台服务
     - name: OrderService
       description: 订单前台服务
+    - name: PaymentChannelService
+      description: 支付渠道前台服务（C 端结算页渠道选择；登录态）
     - name: PaymentRefundService
       description: 支付退款前台服务
     - name: PaymentTransactionService

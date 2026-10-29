@@ -33,12 +33,12 @@ type StockOpLogServiceHTTPServer interface {
 
 func RegisterStockOpLogServiceHTTPServer(s *http.Server, srv StockOpLogServiceHTTPServer) {
 	r := s.Route("/")
-	r.GET("/admin/v1/mall/stock-op-logs", _StockOpLogService_List54_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/stock-op-logs/count", _StockOpLogService_Count23_HTTP_Handler(srv))
-	r.GET("/admin/v1/mall/stock-op-logs/{id}", _StockOpLogService_Get53_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/stock-op-logs", _StockOpLogService_List55_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/stock-op-logs/count", _StockOpLogService_Count24_HTTP_Handler(srv))
+	r.GET("/admin/v1/mall/stock-op-logs/{id}", _StockOpLogService_Get54_HTTP_Handler(srv))
 }
 
-func _StockOpLogService_List54_HTTP_Handler(srv StockOpLogServiceHTTPServer) func(ctx http.Context) error {
+func _StockOpLogService_List55_HTTP_Handler(srv StockOpLogServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -57,7 +57,7 @@ func _StockOpLogService_List54_HTTP_Handler(srv StockOpLogServiceHTTPServer) fun
 	}
 }
 
-func _StockOpLogService_Count23_HTTP_Handler(srv StockOpLogServiceHTTPServer) func(ctx http.Context) error {
+func _StockOpLogService_Count24_HTTP_Handler(srv StockOpLogServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v1.PagingRequest
 		if err := ctx.BindQuery(&in); err != nil {
@@ -76,7 +76,7 @@ func _StockOpLogService_Count23_HTTP_Handler(srv StockOpLogServiceHTTPServer) fu
 	}
 }
 
-func _StockOpLogService_Get53_HTTP_Handler(srv StockOpLogServiceHTTPServer) func(ctx http.Context) error {
+func _StockOpLogService_Get54_HTTP_Handler(srv StockOpLogServiceHTTPServer) func(ctx http.Context) error {
 	return func(ctx http.Context) error {
 		var in v11.GetStockOpLogRequest
 		if err := ctx.BindQuery(&in); err != nil {

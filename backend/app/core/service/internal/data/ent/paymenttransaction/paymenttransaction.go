@@ -46,6 +46,8 @@ const (
 	FieldAmount = "amount"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// FieldGatewayTradeNo holds the string denoting the gateway_trade_no field in the database.
+	FieldGatewayTradeNo = "gateway_trade_no"
 	// Table holds the table name of the paymenttransaction in the database.
 	Table = "mall_payment_transactions"
 )
@@ -69,6 +71,7 @@ var Columns = []string{
 	FieldUserID,
 	FieldAmount,
 	FieldStatus,
+	FieldGatewayTradeNo,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -104,22 +107,16 @@ type PaymentMethod string
 
 // PaymentMethod values.
 const (
-	PaymentMethodBalance     PaymentMethod = "BALANCE"
-	PaymentMethodCredit      PaymentMethod = "CREDIT"
-	PaymentMethodWechat      PaymentMethod = "WECHAT"
-	PaymentMethodAlipay      PaymentMethod = "ALIPAY"
-	PaymentMethodUnionpay    PaymentMethod = "UNIONPAY"
-	PaymentMethodStripe      PaymentMethod = "STRIPE"
-	PaymentMethodPaypal      PaymentMethod = "PAYPAL"
-	PaymentMethodCryptoBtc   PaymentMethod = "CRYPTO_BTC"
-	PaymentMethodCryptoEth   PaymentMethod = "CRYPTO_ETH"
-	PaymentMethodCryptoUsdt  PaymentMethod = "CRYPTO_USDT"
-	PaymentMethodCryptoUsdc  PaymentMethod = "CRYPTO_USDC"
-	PaymentMethodCryptoTron  PaymentMethod = "CRYPTO_TRON"
-	PaymentMethodCryptoTon   PaymentMethod = "CRYPTO_TON"
-	PaymentMethodCryptoOther PaymentMethod = "CRYPTO_OTHER"
-	PaymentMethodMixed       PaymentMethod = "MIXED"
-	PaymentMethodOffline     PaymentMethod = "OFFLINE"
+	PaymentMethodBalance  PaymentMethod = "BALANCE"
+	PaymentMethodCredit   PaymentMethod = "CREDIT"
+	PaymentMethodWechat   PaymentMethod = "WECHAT"
+	PaymentMethodAlipay   PaymentMethod = "ALIPAY"
+	PaymentMethodUnionpay PaymentMethod = "UNIONPAY"
+	PaymentMethodStripe   PaymentMethod = "STRIPE"
+	PaymentMethodPaypal   PaymentMethod = "PAYPAL"
+	PaymentMethodMock     PaymentMethod = "MOCK"
+	PaymentMethodMixed    PaymentMethod = "MIXED"
+	PaymentMethodOffline  PaymentMethod = "OFFLINE"
 )
 
 func (pm PaymentMethod) String() string {
@@ -129,7 +126,7 @@ func (pm PaymentMethod) String() string {
 // PaymentMethodValidator is a validator for the "payment_method" field enum values. It is called by the builders before save.
 func PaymentMethodValidator(pm PaymentMethod) error {
 	switch pm {
-	case PaymentMethodBalance, PaymentMethodCredit, PaymentMethodWechat, PaymentMethodAlipay, PaymentMethodUnionpay, PaymentMethodStripe, PaymentMethodPaypal, PaymentMethodCryptoBtc, PaymentMethodCryptoEth, PaymentMethodCryptoUsdt, PaymentMethodCryptoUsdc, PaymentMethodCryptoTron, PaymentMethodCryptoTon, PaymentMethodCryptoOther, PaymentMethodMixed, PaymentMethodOffline:
+	case PaymentMethodBalance, PaymentMethodCredit, PaymentMethodWechat, PaymentMethodAlipay, PaymentMethodUnionpay, PaymentMethodStripe, PaymentMethodPaypal, PaymentMethodMock, PaymentMethodMixed, PaymentMethodOffline:
 		return nil
 	default:
 		return fmt.Errorf("paymenttransaction: invalid enum value for payment_method field: %q", pm)
@@ -275,4 +272,9 @@ func ByAmount(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByGatewayTradeNo orders the results by the gateway_trade_no field.
+func ByGatewayTradeNo(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldGatewayTradeNo, opts...).ToFunc()
 }

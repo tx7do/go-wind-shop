@@ -7,7 +7,10 @@ import {
   useListCarts,
   useListCartItems,
   useCreateOrder,
-  useCreatePaymentTransaction,
+  useListPaymentChannels,
+  useCreatePaymentIntent,
+  useMockConfirmPayment,
+  fetchGetPaymentTransaction,
   fetchGetOrderByIdempotencyKey,
   fetchListSkuPricesStore,
   fetchListSkuAttributeCombinationsStore,
@@ -26,9 +29,6 @@ import { useUserStore } from '@/stores/modules/core/user.state';
 import { queryClient } from '@/plugins/vue-query';
 import type {
   orderservicev1_Order,
-  paymentservicev1_PaymentTransaction,
-  paymentservicev1_PaymentMethod,
-  paymentservicev1_BusinessType,
 } from '@/api/generated/app/service/v1';
 
 const { t } = useI18n();
@@ -454,11 +454,190 @@ const orderMutation = useCreateOrder({
     toast.error(err?.message || t('checkout.errors.orderFailed'));
   },
 });
-const paymentMutation = useCreatePaymentTransaction({
-  onError: (err: any) => {
-    toast.error(err?.message || t('checkout.errors.paymentFailed'));
-  },
+
+// ---------- 支付渠道选择 ----------
+// 仅展示后台启用的渠道（公开视图字段）。默认选中第一个；
+// 未启用任何渠道时提示并允许跳过支付（订单保持待支付）。
+type PayChannel = {
+  id?: number;
+  name?: string;
+  channel?: string;
+  sandbox?: boolean;
+};
+const channelsQuery = useListPaymentChannels({}, { enabled: isLogin } as any);
+const payChannels = computed<PayChannel[]>(() => {
+  const items = (channelsQuery.data?.value as any)?.items ?? [];
+  return (items as PayChannel[]) ?? [];
 });
+const selectedChannelId = ref<number | undefined>(undefined);
+watch(payChannels, (list) => {
+  if (selectedChannelId.value === undefined && list.length > 0) {
+    selectedChannelId.value = list[0]?.id;
+  }
+}, { immediate: true });
+
+const CHANNEL_TYPE_KEY: Record<string, string> = {
+  PAYMENT_CHANNEL_MOCK: 'mock',
+  PAYMENT_CHANNEL_WECHAT_NATIVE: 'wechat',
+  PAYMENT_CHANNEL_ALIPAY_PAGE: 'alipay',
+};
+function channelTypeKey(ch?: PayChannel): string {
+  return CHANNEL_TYPE_KEY[ch?.channel ?? ''] ?? '';
+}
+function channelLabel(ch?: PayChannel): string {
+  const key = channelTypeKey(ch);
+  const nameKey = `checkout.payChannels.${key}`;
+  const fallback = t(nameKey);
+  // 后台可自定义渠道名；为空时回退到类型默认名
+  return ch?.name || (fallback !== nameKey ? fallback : key);
+}
+function channelIcon(ch?: PayChannel): string {
+  switch (channelTypeKey(ch)) {
+    case 'wechat': return 'logos:wechat';
+    case 'alipay': return 'logos:alipay';
+    default: return 'carbon:debugger';
+  }
+}
+
+// ---------- 支付意图 / 拉起支付 / 轮询 ----------
+const paymentIntentMutation = useCreatePaymentIntent();
+const mockConfirmMutation = useMockConfirmPayment();
+
+// 支付弹层状态：拉起方式（QR 扫码 / REDIRECT 跳转 / MOCK 模拟确认）+ 轮询
+const payDialogOpen = ref(false);
+const payDialogBusy = ref(false);
+const activeIntent = ref<{
+  transactionId?: number;
+  payType?: string;
+  payUrl?: string;
+  qrCode?: string;
+  amount?: number;
+  currency?: string;
+} | null>(null);
+const qrDataUrl = ref('');
+let pollTimer: ReturnType<typeof setInterval> | null = null;
+const POLL_INTERVAL_MS = 2500;
+const POLL_MAX_TICKS = 72; // 3 分钟
+let pollTicks = 0;
+
+function stopPolling() {
+  if (pollTimer !== null) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+}
+
+async function pollTransactionStatus() {
+  const txId = activeIntent.value?.transactionId;
+  if (!txId) return;
+  pollTicks += 1;
+  try {
+    const tx: any = await fetchGetPaymentTransaction(txId);
+    if (tx?.status === 'SUCCEEDED') {
+      onPaymentSucceeded();
+      return;
+    }
+    if (tx?.status === 'FAILED') {
+      failPayment(t('checkout.payDialog.failed'));
+      return;
+    }
+  } catch {
+    // 单次轮询失败忽略，超时统一处理
+  }
+  if (pollTicks >= POLL_MAX_TICKS) {
+    failPayment(t('checkout.payDialog.timeout'));
+  }
+}
+
+function onPaymentSucceeded() {
+  stopPolling();
+  payDialogOpen.value = false;
+  // 订单事务已在后端清空购物车，刷新缓存以反映空车状态
+  queryClient.invalidateQueries({ queryKey: ['listCarts'] });
+  queryClient.invalidateQueries({ queryKey: ['listCartItems'] });
+  queryClient.invalidateQueries({ queryKey: ['listOrders'] });
+  toast.success(t('checkout.paymentSuccess'));
+  navigateTo(localePath('/orders'));
+}
+
+function failPayment(reason?: string) {
+  stopPolling();
+  payDialogBusy.value = false;
+  toast.error(reason || t('checkout.errors.paymentFailed'));
+}
+
+async function startPolling() {
+  stopPolling();
+  pollTicks = 0;
+  pollTimer = setInterval(pollTransactionStatus, POLL_INTERVAL_MS);
+}
+
+async function openPayDialog() {
+  const ch = payChannels.value.find((c) => c.id === selectedChannelId.value);
+  if (!ch) {
+    toast.error(t('checkout.errors.noChannel'));
+    return;
+  }
+  payDialogBusy.value = true;
+  try {
+    const intent: any = await paymentIntentMutation.mutateAsync({
+      // userId 仅占位：BFF 强制以登录态覆写，防越权代付
+      userId: cartUserId.value,
+      orderId: pendingOrderId.value,
+      channelId: ch.id,
+      idempotencyKey: pendingPaymentKey.value,
+    });
+    activeIntent.value = intent;
+    qrDataUrl.value = '';
+    payDialogOpen.value = true;
+    payDialogBusy.value = false;
+    if (intent.payType === 'PAY_TYPE_QR' && intent.qrCode) {
+      // 微信 Native：code_url → 本地二维码
+      const QRCode = await import('qrcode');
+      qrDataUrl.value = await QRCode.toDataURL(intent.qrCode, { width: 220, margin: 1 });
+      startPolling();
+    } else if (intent.payType === 'PAY_TYPE_REDIRECT' && intent.payUrl) {
+      // 支付宝电脑网站支付：新窗口跳转，本页轮询支付结果
+      window.open(intent.payUrl, '_blank', 'noopener');
+      startPolling();
+    } else if (intent.payType === 'PAY_TYPE_MOCK') {
+      startPolling();
+    }
+  } catch {
+    payDialogBusy.value = false;
+    // 错误已由 onError 提示
+  }
+}
+
+async function confirmMockPay() {
+  const txId = activeIntent.value?.transactionId;
+  if (!txId) return;
+  payDialogBusy.value = true;
+  try {
+    await mockConfirmMutation.mutateAsync({ transactionId: txId });
+    onPaymentSucceeded();
+  } catch {
+    payDialogBusy.value = false;
+  }
+}
+
+function closePayDialog() {
+  stopPolling();
+  payDialogOpen.value = false;
+  toast.info(t('checkout.payDialog.laterHint'));
+  queryClient.invalidateQueries({ queryKey: ['listOrders'] });
+  navigateTo(localePath('/orders'));
+}
+
+function reopenPayPage() {
+  if (activeIntent.value?.payUrl) {
+    window.open(activeIntent.value.payUrl, '_blank', 'noopener');
+  }
+}
+
+// 下单成功后暂存的 orderId 与支付幂等键（支付意图创建使用）
+const pendingOrderId = ref<number>(0);
+const pendingPaymentKey = ref<string>( '');
 
 async function placeOrder() {
   if (!isLogin.value) {
@@ -471,6 +650,10 @@ async function placeOrder() {
   }
   if (cartItems.value.length === 0) {
     toast.error(t('checkout.errors.emptyCart'));
+    return;
+  }
+  if (payChannels.value.length === 0) {
+    toast.error(t('checkout.errors.noChannel'));
     return;
   }
 
@@ -527,34 +710,16 @@ async function placeOrder() {
     return;
   }
 
-  // 余额支付（暂固定为 BALANCE，待后端支持多支付方式后扩展选择 UI）
-  const paymentData: paymentservicev1_PaymentTransaction = {
-    userId: cartUserId.value,
-    tenantId: cartTenantId.value,
-    orderId: orderId,
-    amount: realAmount,
-    currency: 'CNY',
-    paymentMethod: 'BALANCE' as paymentservicev1_PaymentMethod,
-    businessType: 'BUSINESS_TYPE_CONSUME' as paymentservicev1_BusinessType,
-    idempotencyKey: paymentIdempotencyKey,
-    businessRefId: businessRefId,
-  } as paymentservicev1_PaymentTransaction;
-
-  try {
-    await paymentMutation.mutateAsync(paymentData);
-    // 订单事务已在后端清空购物车（扣库存+清 cart_item 同事务），
-    // 此处仅需刷新前端缓存以反映空车状态。
-    queryClient.invalidateQueries({ queryKey: ['listCarts'] });
-    queryClient.invalidateQueries({ queryKey: ['listCartItems'] });
-    // 刷新订单列表缓存，使跳转 /orders 后立即显示新订单（默认 staleTime 会导致
-    // 5 分钟内不重拉，需显式 invalidate）。
-    queryClient.invalidateQueries({ queryKey: ['listOrders'] });
-    toast.success(t('checkout.paymentSuccess'));
-    navigateTo(localePath('/orders'));
-  } catch {
-    // 错误已由 onError 处理
-  }
+  // 订单已创建（库存已扣、购物车已清），进入支付环节
+  pendingOrderId.value = orderId;
+  pendingPaymentKey.value = paymentIdempotencyKey;
+  queryClient.invalidateQueries({ queryKey: ['listCarts'] });
+  queryClient.invalidateQueries({ queryKey: ['listCartItems'] });
+  queryClient.invalidateQueries({ queryKey: ['listOrders'] });
+  await openPayDialog();
 }
+
+onUnmounted(stopPolling);
 </script>
 
 <template>
@@ -794,10 +959,41 @@ async function placeOrder() {
         </div>
         <p class="mt-1 text-[10px] text-muted-foreground">{{ t('cart.totalNote') }}</p>
 
+        <!-- 支付渠道选择 -->
+        <div v-if="payChannels.length > 0" class="mt-4">
+          <label class="mb-1.5 block text-xs text-muted-foreground">{{ t('checkout.payChannels.label') }}</label>
+          <div class="flex flex-col gap-2">
+            <button
+              v-for="ch in payChannels"
+              :key="ch.id"
+              type="button"
+              :class="cn(
+                'flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors',
+                selectedChannelId === ch.id
+                  ? 'border-primary bg-primary/5 text-foreground'
+                  : 'border-border bg-background/40 text-muted-foreground hover:border-primary/40',
+              )"
+              @click="selectedChannelId = ch.id"
+            >
+              <XIcon :icon="channelIcon(ch)" :size="18" />
+              <span class="flex-1">{{ channelLabel(ch) }}</span>
+              <span
+                v-if="ch.sandbox"
+                class="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-medium text-amber-600 dark:text-amber-400"
+              >
+                {{ t('checkout.payChannels.sandboxBadge') }}
+              </span>
+            </button>
+          </div>
+        </div>
+        <p v-else class="mt-4 rounded-lg border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
+          {{ t('checkout.payChannels.empty') }}
+        </p>
+
         <UiButton
           class="mt-5 w-full"
           size="lg"
-          :disabled="!formValid || cartItems.length === 0 || orderMutation.isPending.value || paymentMutation.isPending.value"
+          :disabled="!formValid || cartItems.length === 0 || payChannels.length === 0 || orderMutation.isPending.value || payDialogBusy"
           @click="placeOrder"
         >
           {{ t('checkout.placeOrder') }}
@@ -805,4 +1001,77 @@ async function placeOrder() {
       </div>
     </div>
   </LayoutSectionContainer>
+
+  <!-- 支付弹层：QR 扫码 / 跳转等待 / 模拟确认 三态 -->
+  <Teleport to="body">
+    <div
+      v-if="payDialogOpen"
+      class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
+      @click.self="closePayDialog"
+    >
+      <div class="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl">
+        <div class="mb-1 flex items-center justify-between">
+          <h3 class="text-lg font-bold text-foreground">{{ t('checkout.payDialog.title') }}</h3>
+          <button
+            type="button"
+            class="rounded-full p-1 text-muted-foreground transition-colors hover:bg-background/60 hover:text-foreground"
+            @click="closePayDialog"
+          >
+            <XIcon icon="carbon:close" :size="18" />
+          </button>
+        </div>
+
+        <div class="flex flex-col items-center gap-4 py-2">
+          <p class="text-2xl font-bold text-primary">
+            {{ t('mall.product.currencyCny') }}{{ ((activeIntent?.amount ?? 0) / 100).toFixed(2) }}
+          </p>
+
+          <!-- QR 扫码（微信 Native） -->
+          <template v-if="activeIntent?.payType === 'PAY_TYPE_QR'">
+            <img
+              v-if="qrDataUrl"
+              :src="qrDataUrl"
+              :alt="t('checkout.payDialog.qrAlt')"
+              class="h-[220px] w-[220px] rounded-lg border border-border bg-white p-1"
+            />
+            <UiSkeleton v-else class="h-[220px] w-[220px] rounded-lg" />
+            <p class="text-center text-xs text-muted-foreground">{{ t('checkout.payDialog.qrHint') }}</p>
+          </template>
+
+          <!-- 跳转等待（支付宝） -->
+          <template v-else-if="activeIntent?.payType === 'PAY_TYPE_REDIRECT'">
+            <XIcon icon="carbon:login" :size="48" class="text-primary" />
+            <p class="text-center text-xs text-muted-foreground">{{ t('checkout.payDialog.redirectHint') }}</p>
+            <UiButton variant="outline" size="sm" @click="reopenPayPage">
+              {{ t('checkout.payDialog.reopenPayPage') }}
+            </UiButton>
+          </template>
+
+          <!-- 模拟确认（MOCK 渠道，开发/演示） -->
+          <template v-else-if="activeIntent?.payType === 'PAY_TYPE_MOCK'">
+            <XIcon icon="carbon:debugger" :size="48" class="text-muted-foreground" />
+            <p class="text-center text-xs text-muted-foreground">{{ t('checkout.payDialog.mockHint') }}</p>
+            <UiButton
+              class="w-full"
+              :disabled="payDialogBusy"
+              @click="confirmMockPay"
+            >
+              {{ t('checkout.payDialog.mockConfirm') }}
+            </UiButton>
+          </template>
+
+          <p class="flex items-center gap-1.5 text-[10px] text-muted-foreground">
+            <span class="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-primary"></span>
+            {{ t('checkout.payDialog.polling') }}
+          </p>
+        </div>
+
+        <div class="mt-4 flex justify-center">
+          <UiButton variant="ghost" size="sm" @click="closePayDialog">
+            {{ t('checkout.payDialog.payLater') }}
+          </UiButton>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>

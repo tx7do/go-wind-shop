@@ -110,6 +110,8 @@ type Tx struct {
 	OrderItem *OrderItemClient
 	// OrgUnit is the client for interacting with the OrgUnit builders.
 	OrgUnit *OrgUnitClient
+	// PaymentChannelConfig is the client for interacting with the PaymentChannelConfig builders.
+	PaymentChannelConfig *PaymentChannelConfigClient
 	// PaymentRefund is the client for interacting with the PaymentRefund builders.
 	PaymentRefund *PaymentRefundClient
 	// PaymentTransaction is the client for interacting with the PaymentTransaction builders.
@@ -380,6 +382,7 @@ func (tx *Tx) init() {
 	tx.Order = NewOrderClient(tx.config)
 	tx.OrderItem = NewOrderItemClient(tx.config)
 	tx.OrgUnit = NewOrgUnitClient(tx.config)
+	tx.PaymentChannelConfig = NewPaymentChannelConfigClient(tx.config)
 	tx.PaymentRefund = NewPaymentRefundClient(tx.config)
 	tx.PaymentTransaction = NewPaymentTransactionClient(tx.config)
 	tx.Permission = NewPermissionClient(tx.config)

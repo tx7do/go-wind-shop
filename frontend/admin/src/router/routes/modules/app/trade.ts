@@ -170,6 +170,17 @@ const trade: RouteRecordRaw[] = [
         component: () => import("@/pages/app/trade/promotion/index.vue"),
       },
       {
+        path: "payment-channels",
+        name: "TradePaymentChannelManagement",
+        meta: {
+          order: 16,
+          icon: "lucide:credit-card",
+          title: "routes.trade.paymentChannel",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/trade/payment-channel/index.vue"),
+      },
+      {
         path: "stock-op-logs",
         name: "TradeStockOpLogManagement",
         meta: {

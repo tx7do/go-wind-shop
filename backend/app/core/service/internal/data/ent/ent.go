@@ -55,6 +55,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/order"
 	"go-wind-shop/app/core/service/internal/data/ent/orderitem"
 	"go-wind-shop/app/core/service/internal/data/ent/orgunit"
+	"go-wind-shop/app/core/service/internal/data/ent/paymentchannelconfig"
 	"go-wind-shop/app/core/service/internal/data/ent/paymentrefund"
 	"go-wind-shop/app/core/service/internal/data/ent/paymenttransaction"
 	"go-wind-shop/app/core/service/internal/data/ent/permission"
@@ -215,6 +216,7 @@ func checkColumn(t, c string) error {
 			order.Table:                            order.ValidColumn,
 			orderitem.Table:                        orderitem.ValidColumn,
 			orgunit.Table:                          orgunit.ValidColumn,
+			paymentchannelconfig.Table:             paymentchannelconfig.ValidColumn,
 			paymentrefund.Table:                    paymentrefund.ValidColumn,
 			paymenttransaction.Table:               paymenttransaction.ValidColumn,
 			permission.Table:                       permission.ValidColumn,

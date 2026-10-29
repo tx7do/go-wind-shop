@@ -247,7 +247,8 @@
   "section": {
     "basic": "Basic Information",
     "other": "Other Information",
-    "configuration": "Configuration"
+    "configuration": "Configuration",
+    "status": "Status"
   },
   "validation": {
     "required": "Please input",

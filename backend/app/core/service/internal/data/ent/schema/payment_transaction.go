@@ -63,6 +63,11 @@ func (PaymentTransaction) Fields() []ent.Field {
 			).
 			Optional().
 			Nillable(),
+
+		field.String("gateway_trade_no").
+			Comment("网关侧交易号（回调确认时回填，对账用）").
+			Optional().
+			Nillable(),
 	}
 }
 

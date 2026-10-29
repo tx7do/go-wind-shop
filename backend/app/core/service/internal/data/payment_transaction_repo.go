@@ -172,6 +172,7 @@ func (r *PaymentTransactionRepo) Create(ctx context.Context, req *paymentV1.Crea
 		SetNillableIdempotencyKey(req.Data.IdempotencyKey).
 		SetNillablePaymentMethod(r.paymentMethodConverter.ToEntity(req.Data.PaymentMethod)).
 		SetNillableBusinessType(r.businessTypeConverter.ToEntity(req.Data.BusinessType)).
+		SetNillableGatewayTradeNo(req.Data.GatewayTradeNo).
 		SetNillableTenantID(req.Data.TenantId).
 		SetNillableCreatedBy(req.Data.CreatedBy).
 		SetCreatedAt(time.Now())
@@ -220,6 +221,7 @@ func (r *PaymentTransactionRepo) Update(ctx context.Context, req *paymentV1.Upda
 				SetNillableIdempotencyKey(req.Data.IdempotencyKey).
 				SetNillablePaymentMethod(r.paymentMethodConverter.ToEntity(req.Data.PaymentMethod)).
 				SetNillableBusinessType(r.businessTypeConverter.ToEntity(req.Data.BusinessType)).
+				SetNillableGatewayTradeNo(req.Data.GatewayTradeNo).
 				SetNillableUpdatedBy(req.Data.UpdatedBy).
 				SetUpdatedAt(time.Now())
 		},

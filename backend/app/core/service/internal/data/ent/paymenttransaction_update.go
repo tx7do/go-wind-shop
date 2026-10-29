@@ -351,6 +351,26 @@ func (_u *PaymentTransactionUpdate) ClearStatus() *PaymentTransactionUpdate {
 	return _u
 }
 
+// SetGatewayTradeNo sets the "gateway_trade_no" field.
+func (_u *PaymentTransactionUpdate) SetGatewayTradeNo(v string) *PaymentTransactionUpdate {
+	_u.mutation.SetGatewayTradeNo(v)
+	return _u
+}
+
+// SetNillableGatewayTradeNo sets the "gateway_trade_no" field if the given value is not nil.
+func (_u *PaymentTransactionUpdate) SetNillableGatewayTradeNo(v *string) *PaymentTransactionUpdate {
+	if v != nil {
+		_u.SetGatewayTradeNo(*v)
+	}
+	return _u
+}
+
+// ClearGatewayTradeNo clears the value of the "gateway_trade_no" field.
+func (_u *PaymentTransactionUpdate) ClearGatewayTradeNo() *PaymentTransactionUpdate {
+	_u.mutation.ClearGatewayTradeNo()
+	return _u
+}
+
 // Mutation returns the PaymentTransactionMutation object of the builder.
 func (_u *PaymentTransactionUpdate) Mutation() *PaymentTransactionMutation {
 	return _u.mutation
@@ -528,6 +548,12 @@ func (_u *PaymentTransactionUpdate) sqlSave(ctx context.Context) (_node int, err
 	}
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(paymenttransaction.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.GatewayTradeNo(); ok {
+		_spec.SetField(paymenttransaction.FieldGatewayTradeNo, field.TypeString, value)
+	}
+	if _u.mutation.GatewayTradeNoCleared() {
+		_spec.ClearField(paymenttransaction.FieldGatewayTradeNo, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -873,6 +899,26 @@ func (_u *PaymentTransactionUpdateOne) ClearStatus() *PaymentTransactionUpdateOn
 	return _u
 }
 
+// SetGatewayTradeNo sets the "gateway_trade_no" field.
+func (_u *PaymentTransactionUpdateOne) SetGatewayTradeNo(v string) *PaymentTransactionUpdateOne {
+	_u.mutation.SetGatewayTradeNo(v)
+	return _u
+}
+
+// SetNillableGatewayTradeNo sets the "gateway_trade_no" field if the given value is not nil.
+func (_u *PaymentTransactionUpdateOne) SetNillableGatewayTradeNo(v *string) *PaymentTransactionUpdateOne {
+	if v != nil {
+		_u.SetGatewayTradeNo(*v)
+	}
+	return _u
+}
+
+// ClearGatewayTradeNo clears the value of the "gateway_trade_no" field.
+func (_u *PaymentTransactionUpdateOne) ClearGatewayTradeNo() *PaymentTransactionUpdateOne {
+	_u.mutation.ClearGatewayTradeNo()
+	return _u
+}
+
 // Mutation returns the PaymentTransactionMutation object of the builder.
 func (_u *PaymentTransactionUpdateOne) Mutation() *PaymentTransactionMutation {
 	return _u.mutation
@@ -1080,6 +1126,12 @@ func (_u *PaymentTransactionUpdateOne) sqlSave(ctx context.Context) (_node *Paym
 	}
 	if _u.mutation.StatusCleared() {
 		_spec.ClearField(paymenttransaction.FieldStatus, field.TypeEnum)
+	}
+	if value, ok := _u.mutation.GatewayTradeNo(); ok {
+		_spec.SetField(paymenttransaction.FieldGatewayTradeNo, field.TypeString, value)
+	}
+	if _u.mutation.GatewayTradeNoCleared() {
+		_spec.ClearField(paymenttransaction.FieldGatewayTradeNo, field.TypeString)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &PaymentTransaction{config: _u.config}

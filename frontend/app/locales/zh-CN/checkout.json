@@ -16,7 +16,8 @@
     "invalidForm": "请完整填写收货信息。",
     "emptyCart": "购物车为空，无法下单。",
     "orderFailed": "下单失败，请稍后重试。",
-    "paymentFailed": "支付失败，请稍后重试。"
+    "paymentFailed": "支付失败，请稍后重试。",
+    "noChannel": "请先选择支付方式。"
   },
   "steps": {
     "cart": "购物车",
@@ -31,5 +32,27 @@
   "couponNone": "不使用优惠券",
   "couponItem": "优惠券 #{{id}}",
   "discount": "优惠抵扣",
-  "promotion": "促销优惠"
+  "promotion": "促销优惠",
+  "payChannels": {
+    "label": "支付方式",
+    "mock": "模拟支付（演示）",
+    "wechat": "微信支付",
+    "alipay": "支付宝",
+    "sandboxBadge": "沙箱",
+    "empty": "商家暂未开通在线支付渠道，请联系客服或稍后再试。"
+  },
+  "payDialog": {
+    "title": "收银台",
+    "qrHint": "请使用微信「扫一扫」支付",
+    "qrAlt": "微信支付二维码",
+    "redirectHint": "已在新窗口打开支付宝收银台，完成支付后本页会自动跳转。",
+    "reopenPayPage": "重新打开支付页面",
+    "mockHint": "当前为模拟渠道，不会产生真实资金。点击下方按钮即确认支付成功。",
+    "mockConfirm": "模拟支付成功",
+    "polling": "正在等待支付结果…",
+    "payLater": "暂不支付",
+    "laterHint": "订单已保留，可稍后在「我的订单」中继续支付。",
+    "timeout": "等待支付超时，订单仍在待支付，可稍后继续。",
+    "failed": "支付未完成，请重试。"
+  }
 }

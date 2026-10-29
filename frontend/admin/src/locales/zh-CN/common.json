@@ -247,7 +247,8 @@
   "section": {
     "basic": "基本信息",
     "other": "其他信息",
-    "configuration": "关联配置"
+    "configuration": "关联配置",
+    "status": "状态"
   },
   "validation": {
     "required": "请输入",

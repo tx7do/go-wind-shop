@@ -69,6 +69,10 @@ func NewRestMiddleware(
 		appV1.OperationCommentServiceGetProductReviewSummary,
 		appV1.OperationAiChatServiceRewriteSearchQuery,
 		appV1.OperationCouponTemplateServiceList,
+
+		// 支付网关异步回调（服务端到服务端，无登录态；凭渠道验签保护）。
+		// kratos 裸路由的 operation = 路由模板（见 kratos http server）。
+		"app/v1/payments/notify/{channel}",
 	)
 
 	ms = append(ms, applogging.Server(
@@ -117,6 +121,7 @@ func NewRestServer(
 	orderService *service.OrderService,
 	orderItemService *service.OrderItemService,
 	paymentTransactionService *service.PaymentTransactionService,
+	paymentChannelService *service.PaymentChannelService,
 	paymentRefundService *service.PaymentRefundService,
 	shippingAddressService *service.ShippingAddressService,
 	shipmentService *service.ShipmentService,
@@ -161,6 +166,16 @@ func NewRestServer(
 	appV1.RegisterOrderServiceHTTPServer(srv, orderService)
 	appV1.RegisterOrderItemServiceHTTPServer(srv, orderItemService)
 	appV1.RegisterPaymentTransactionServiceHTTPServer(srv, paymentTransactionService)
+	appV1.RegisterPaymentChannelServiceHTTPServer(srv, paymentChannelService)
+
+	// 支付网关异步回调：手动注册（渠道表单/JSON 报文 + 验签应答口径，
+	// proto 生成路由不适用）。鉴权白名单放行，安全由渠道验签保证。
+	srv.Route("/").POST("/app/v1/payments/notify/{channel}", func(ctx http.Context) error {
+		status, body := paymentTransactionService.HandleNotify(
+			ctx, ctx.Vars().Get("channel"), ctx.Request(),
+		)
+		return ctx.String(status, body)
+	})
 	appV1.RegisterPaymentRefundServiceHTTPServer(srv, paymentRefundService)
 	appV1.RegisterShippingAddressServiceHTTPServer(srv, shippingAddressService)
 	appV1.RegisterShipmentServiceHTTPServer(srv, shipmentService)

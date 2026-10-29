@@ -392,5 +392,41 @@
     "deltaTip": "Positive for inbound, negative for outbound; rejected if resulting stock would be negative",
     "deltaZero": "Delta must not be zero",
     "remark": "Remark"
+  },
+  "paymentChannel": {
+    "name": "Channel Name",
+    "channel": "Channel Type",
+    "channelType": {
+      "mock": "Mock (demo)",
+      "wechatNative": "WeChat Pay Native (QR)",
+      "alipayPage": "Alipay (Page Pay)"
+    },
+    "appId": "App ID",
+    "mchId": "Merchant ID (mch_id)",
+    "sandbox": "Sandbox",
+    "sandboxOn": "Sandbox",
+    "sandboxOff": "Production",
+    "enabled": "Enabled",
+    "enabledOn": "Enabled",
+    "enabledOff": "Disabled",
+    "credentials": "Credentials",
+    "credentialsConfigured": "Configured",
+    "credentialsMissing": "Not configured",
+    "credentialsKeepPlaceholder": "Configured — leave empty to keep, enter new value to replace",
+    "sectionCredentials": "Gateway credentials (deployer's own merchant account)",
+    "mchCertSerialNo": "Merchant Cert Serial No.",
+    "apiV3Key": "APIv3 Key",
+    "privateKeyPem": "Merchant Private Key (apiclient_key.pem)",
+    "alipayPrivateKey": "Application Private Key",
+    "alipayPublicKey": "Alipay Public Key",
+    "mockNoCredentials": "Mock channel requires no credentials",
+    "mockHint": "The mock channel involves no real money and is for development/demo only. Keep it disabled in production and use real channels.",
+    "wechatNoSandbox": "WeChat Pay v3 has no sandbox; verify with small real payments on your merchant account",
+    "remark": "Remark",
+    "button": {
+      "create": "New Payment Channel",
+      "update": "Edit Payment Channel"
+    },
+    "updatedAt": "Updated At"
   }
 }

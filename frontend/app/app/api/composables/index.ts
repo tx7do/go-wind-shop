@@ -49,3 +49,4 @@ export * from './assistant';
 
 // 促销活动（C端只读 + 试算）
 export * from './promotion';
+export * from './payment';

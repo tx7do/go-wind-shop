@@ -7,6 +7,7 @@ import "google/protobuf/empty.proto";
 import "pagination/v1/pagination.proto";
 
 import "payment/service/v1/payment.proto";
+import "payment/service/v1/payment_channel_config.proto";
 
 // 支付流水前台服务
 service PaymentTransactionService {
@@ -32,6 +33,33 @@ service PaymentTransactionService {
     option (google.api.http) = {
       post: "/app/v1/mall/payment-transactions"
       body: "*"
+    };
+  }
+
+  // 创建支付意图：校验订单归属与待支付态 → 落 PENDING 流水 → 渠道网关下单，
+  // 返回二维码（微信 Native）/ 跳转链接（支付宝）等 C 端拉起支付所需信息。
+  rpc CreatePaymentIntent (payment.service.v1.CreatePaymentIntentRequest) returns (payment.service.v1.CreatePaymentIntentAppResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/payments/intent"
+      body: "*"
+    };
+  }
+
+  // 模拟渠道确认支付（仅 MOCK 渠道流水可用；开发/演示用途，不出真实资金）
+  rpc MockConfirmPayment (payment.service.v1.MockConfirmPaymentRequest) returns (payment.service.v1.MockConfirmPaymentResponse) {
+    option (google.api.http) = {
+      post: "/app/v1/mall/payments/mock-confirm"
+      body: "*"
+    };
+  }
+}
+
+// 支付渠道前台服务（C 端结算页渠道选择；登录态）
+service PaymentChannelService {
+  // 当前启用渠道（不含任何凭据/配置细节）
+  rpc ListEnabledChannels (payment.service.v1.ListEnabledChannelsRequest) returns (payment.service.v1.ListEnabledChannelsResponse) {
+    option (google.api.http) = {
+      get: "/app/v1/mall/payments/channels"
     };
   }
 }

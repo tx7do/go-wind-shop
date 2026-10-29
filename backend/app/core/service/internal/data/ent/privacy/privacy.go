@@ -1287,6 +1287,30 @@ func (f OrgUnitMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutatio
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.OrgUnitMutation", m)
 }
 
+// The PaymentChannelConfigQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type PaymentChannelConfigQueryRuleFunc func(context.Context, *ent.PaymentChannelConfigQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f PaymentChannelConfigQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PaymentChannelConfigQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.PaymentChannelConfigQuery", q)
+}
+
+// The PaymentChannelConfigMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type PaymentChannelConfigMutationRuleFunc func(context.Context, *ent.PaymentChannelConfigMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f PaymentChannelConfigMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.PaymentChannelConfigMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.PaymentChannelConfigMutation", m)
+}
+
 // The PaymentRefundQueryRuleFunc type is an adapter to allow the use of ordinary
 // functions as a query rule.
 type PaymentRefundQueryRuleFunc func(context.Context, *ent.PaymentRefundQuery) error
@@ -2500,6 +2524,8 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.OrgUnitQuery:
 		return q.Filter(), nil
+	case *ent.PaymentChannelConfigQuery:
+		return q.Filter(), nil
 	case *ent.PaymentRefundQuery:
 		return q.Filter(), nil
 	case *ent.PaymentTransactionQuery:
@@ -2694,6 +2720,8 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.OrderItemMutation:
 		return m.Filter(), nil
 	case *ent.OrgUnitMutation:
+		return m.Filter(), nil
+	case *ent.PaymentChannelConfigMutation:
 		return m.Filter(), nil
 	case *ent.PaymentRefundMutation:
 		return m.Filter(), nil

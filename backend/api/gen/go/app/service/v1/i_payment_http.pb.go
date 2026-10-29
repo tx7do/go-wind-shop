@@ -24,14 +24,21 @@ const _ = http.SupportPackageIsVersion1
 
 const OperationPaymentTransactionServiceCount = "/app.service.v1.PaymentTransactionService/Count"
 const OperationPaymentTransactionServiceCreate = "/app.service.v1.PaymentTransactionService/Create"
+const OperationPaymentTransactionServiceCreatePaymentIntent = "/app.service.v1.PaymentTransactionService/CreatePaymentIntent"
 const OperationPaymentTransactionServiceGet = "/app.service.v1.PaymentTransactionService/Get"
 const OperationPaymentTransactionServiceList = "/app.service.v1.PaymentTransactionService/List"
+const OperationPaymentTransactionServiceMockConfirmPayment = "/app.service.v1.PaymentTransactionService/MockConfirmPayment"
 
 type PaymentTransactionServiceHTTPServer interface {
 	Count(context.Context, *v1.PagingRequest) (*v11.CountPaymentTransactionResponse, error)
 	Create(context.Context, *v11.CreatePaymentTransactionRequest) (*emptypb.Empty, error)
+	// CreatePaymentIntent 创建支付意图：校验订单归属与待支付态 → 落 PENDING 流水 → 渠道网关下单，
+	// 返回二维码（微信 Native）/ 跳转链接（支付宝）等 C 端拉起支付所需信息。
+	CreatePaymentIntent(context.Context, *v11.CreatePaymentIntentRequest) (*v11.CreatePaymentIntentAppResponse, error)
 	Get(context.Context, *v11.GetPaymentTransactionRequest) (*v11.PaymentTransaction, error)
 	List(context.Context, *v1.PagingRequest) (*v11.ListPaymentTransactionResponse, error)
+	// MockConfirmPayment 模拟渠道确认支付（仅 MOCK 渠道流水可用；开发/演示用途，不出真实资金）
+	MockConfirmPayment(context.Context, *v11.MockConfirmPaymentRequest) (*v11.MockConfirmPaymentResponse, error)
 }
 
 func RegisterPaymentTransactionServiceHTTPServer(s *http.Server, srv PaymentTransactionServiceHTTPServer) {
@@ -40,6 +47,8 @@ func RegisterPaymentTransactionServiceHTTPServer(s *http.Server, srv PaymentTran
 	r.GET("/app/v1/mall/payment-transactions/count", _PaymentTransactionService_Count4_HTTP_Handler(srv))
 	r.GET("/app/v1/mall/payment-transactions/{id}", _PaymentTransactionService_Get8_HTTP_Handler(srv))
 	r.POST("/app/v1/mall/payment-transactions", _PaymentTransactionService_Create4_HTTP_Handler(srv))
+	r.POST("/app/v1/mall/payments/intent", _PaymentTransactionService_CreatePaymentIntent0_HTTP_Handler(srv))
+	r.POST("/app/v1/mall/payments/mock-confirm", _PaymentTransactionService_MockConfirmPayment0_HTTP_Handler(srv))
 }
 
 func _PaymentTransactionService_List9_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
@@ -124,11 +133,60 @@ func _PaymentTransactionService_Create4_HTTP_Handler(srv PaymentTransactionServi
 	}
 }
 
+func _PaymentTransactionService_CreatePaymentIntent0_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.CreatePaymentIntentRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentTransactionServiceCreatePaymentIntent)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.CreatePaymentIntent(ctx, req.(*v11.CreatePaymentIntentRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.CreatePaymentIntentAppResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+func _PaymentTransactionService_MockConfirmPayment0_HTTP_Handler(srv PaymentTransactionServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.MockConfirmPaymentRequest
+		if err := ctx.Bind(&in); err != nil {
+			return err
+		}
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentTransactionServiceMockConfirmPayment)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.MockConfirmPayment(ctx, req.(*v11.MockConfirmPaymentRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.MockConfirmPaymentResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
 type PaymentTransactionServiceHTTPClient interface {
 	Count(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.CountPaymentTransactionResponse, err error)
 	Create(ctx context.Context, req *v11.CreatePaymentTransactionRequest, opts ...http.CallOption) (rsp *emptypb.Empty, err error)
+	// CreatePaymentIntent 创建支付意图：校验订单归属与待支付态 → 落 PENDING 流水 → 渠道网关下单，
+	// 返回二维码（微信 Native）/ 跳转链接（支付宝）等 C 端拉起支付所需信息。
+	CreatePaymentIntent(ctx context.Context, req *v11.CreatePaymentIntentRequest, opts ...http.CallOption) (rsp *v11.CreatePaymentIntentAppResponse, err error)
 	Get(ctx context.Context, req *v11.GetPaymentTransactionRequest, opts ...http.CallOption) (rsp *v11.PaymentTransaction, err error)
 	List(ctx context.Context, req *v1.PagingRequest, opts ...http.CallOption) (rsp *v11.ListPaymentTransactionResponse, err error)
+	// MockConfirmPayment 模拟渠道确认支付（仅 MOCK 渠道流水可用；开发/演示用途，不出真实资金）
+	MockConfirmPayment(ctx context.Context, req *v11.MockConfirmPaymentRequest, opts ...http.CallOption) (rsp *v11.MockConfirmPaymentResponse, err error)
 }
 
 type PaymentTransactionServiceHTTPClientImpl struct {
@@ -165,6 +223,21 @@ func (c *PaymentTransactionServiceHTTPClientImpl) Create(ctx context.Context, in
 	return &out, nil
 }
 
+// CreatePaymentIntent 创建支付意图：校验订单归属与待支付态 → 落 PENDING 流水 → 渠道网关下单，
+// 返回二维码（微信 Native）/ 跳转链接（支付宝）等 C 端拉起支付所需信息。
+func (c *PaymentTransactionServiceHTTPClientImpl) CreatePaymentIntent(ctx context.Context, in *v11.CreatePaymentIntentRequest, opts ...http.CallOption) (*v11.CreatePaymentIntentAppResponse, error) {
+	var out v11.CreatePaymentIntentAppResponse
+	pattern := "/app/v1/mall/payments/intent"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPaymentTransactionServiceCreatePaymentIntent))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
 func (c *PaymentTransactionServiceHTTPClientImpl) Get(ctx context.Context, in *v11.GetPaymentTransactionRequest, opts ...http.CallOption) (*v11.PaymentTransaction, error) {
 	var out v11.PaymentTransaction
 	pattern := "/app/v1/mall/payment-transactions/{id}"
@@ -183,6 +256,78 @@ func (c *PaymentTransactionServiceHTTPClientImpl) List(ctx context.Context, in *
 	pattern := "/app/v1/mall/payment-transactions"
 	path := binding.EncodeURL(pattern, in, true)
 	opts = append(opts, http.Operation(OperationPaymentTransactionServiceList))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+// MockConfirmPayment 模拟渠道确认支付（仅 MOCK 渠道流水可用；开发/演示用途，不出真实资金）
+func (c *PaymentTransactionServiceHTTPClientImpl) MockConfirmPayment(ctx context.Context, in *v11.MockConfirmPaymentRequest, opts ...http.CallOption) (*v11.MockConfirmPaymentResponse, error) {
+	var out v11.MockConfirmPaymentResponse
+	pattern := "/app/v1/mall/payments/mock-confirm"
+	path := binding.EncodeURL(pattern, in, false)
+	opts = append(opts, http.Operation(OperationPaymentTransactionServiceMockConfirmPayment))
+	opts = append(opts, http.PathTemplate(pattern))
+	err := c.cc.Invoke(ctx, "POST", path, in, &out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return &out, nil
+}
+
+const OperationPaymentChannelServiceListEnabledChannels = "/app.service.v1.PaymentChannelService/ListEnabledChannels"
+
+type PaymentChannelServiceHTTPServer interface {
+	// ListEnabledChannels 当前启用渠道（不含任何凭据/配置细节）
+	ListEnabledChannels(context.Context, *v11.ListEnabledChannelsRequest) (*v11.ListEnabledChannelsResponse, error)
+}
+
+func RegisterPaymentChannelServiceHTTPServer(s *http.Server, srv PaymentChannelServiceHTTPServer) {
+	r := s.Route("/")
+	r.GET("/app/v1/mall/payments/channels", _PaymentChannelService_ListEnabledChannels0_HTTP_Handler(srv))
+}
+
+func _PaymentChannelService_ListEnabledChannels0_HTTP_Handler(srv PaymentChannelServiceHTTPServer) func(ctx http.Context) error {
+	return func(ctx http.Context) error {
+		var in v11.ListEnabledChannelsRequest
+		if err := ctx.BindQuery(&in); err != nil {
+			return err
+		}
+		http.SetOperation(ctx, OperationPaymentChannelServiceListEnabledChannels)
+		h := ctx.Middleware(func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.ListEnabledChannels(ctx, req.(*v11.ListEnabledChannelsRequest))
+		})
+		out, err := h(ctx, &in)
+		if err != nil {
+			return err
+		}
+		reply := out.(*v11.ListEnabledChannelsResponse)
+		return ctx.Result(200, reply)
+	}
+}
+
+type PaymentChannelServiceHTTPClient interface {
+	// ListEnabledChannels 当前启用渠道（不含任何凭据/配置细节）
+	ListEnabledChannels(ctx context.Context, req *v11.ListEnabledChannelsRequest, opts ...http.CallOption) (rsp *v11.ListEnabledChannelsResponse, err error)
+}
+
+type PaymentChannelServiceHTTPClientImpl struct {
+	cc *http.Client
+}
+
+func NewPaymentChannelServiceHTTPClient(client *http.Client) PaymentChannelServiceHTTPClient {
+	return &PaymentChannelServiceHTTPClientImpl{client}
+}
+
+// ListEnabledChannels 当前启用渠道（不含任何凭据/配置细节）
+func (c *PaymentChannelServiceHTTPClientImpl) ListEnabledChannels(ctx context.Context, in *v11.ListEnabledChannelsRequest, opts ...http.CallOption) (*v11.ListEnabledChannelsResponse, error) {
+	var out v11.ListEnabledChannelsResponse
+	pattern := "/app/v1/mall/payments/channels"
+	path := binding.EncodeURL(pattern, in, true)
+	opts = append(opts, http.Operation(OperationPaymentChannelServiceListEnabledChannels))
 	opts = append(opts, http.PathTemplate(pattern))
 	err := c.cc.Invoke(ctx, "GET", path, nil, &out, opts...)
 	if err != nil {

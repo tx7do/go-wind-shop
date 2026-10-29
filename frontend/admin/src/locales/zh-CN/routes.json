@@ -99,6 +99,7 @@
     "lowStock": "低库存管理台",
     "stockAlert": "库存预警管理",
     "promotion": "促销活动管理",
-    "stockOpLog": "库存操作流水"
+    "stockOpLog": "库存操作流水",
+    "paymentChannel": "支付渠道配置"
   }
 }

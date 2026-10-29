@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"fmt"
 
 	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -22,17 +24,20 @@ type PaymentTransactionService struct {
 	log *logx.Helper
 	repo         *data.PaymentTransactionRepo
 	orderService *OrderService
+	channelConfigService *PaymentChannelConfigService
 }
 
 func NewPaymentTransactionService(
 	ctx *bootstrap.Context,
 	repo *data.PaymentTransactionRepo,
 	orderService *OrderService,
+	channelConfigService *PaymentChannelConfigService,
 ) *PaymentTransactionService {
 	return &PaymentTransactionService{
-		log:          logx.New(ctx.NewLoggerHelper("payment-transaction/service/core-service")),
-		repo:         repo,
-		orderService: orderService,
+		log:                  logx.New(ctx.NewLoggerHelper("payment-transaction/service/core-service")),
+		repo:                 repo,
+		orderService:         orderService,
+		channelConfigService: channelConfigService,
 	}
 }
 
@@ -184,4 +189,192 @@ func (s *PaymentTransactionService) Delete(ctx context.Context, req *paymentV1.D
 		return nil, err
 	}
 	return &emptypb.Empty{}, nil
+}
+
+// channelPaymentMethod 渠道类型 → 流水支付方式枚举映射。
+func channelPaymentMethod(channel paymentV1.PaymentChannelType) paymentV1.PaymentMethod {
+	switch channel {
+	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_WECHAT_NATIVE:
+		return paymentV1.PaymentMethod_WECHAT
+	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_ALIPAY_PAGE:
+		return paymentV1.PaymentMethod_ALIPAY
+	case paymentV1.PaymentChannelType_PAYMENT_CHANNEL_MOCK:
+		return paymentV1.PaymentMethod_MOCK
+	default:
+		return paymentV1.PaymentMethod_PAYMENT_METHOD_UNSPECIFIED
+	}
+}
+
+// CreatePaymentIntent 创建支付意图：校验订单归属与待支付态 → 幂等落 PENDING 流水
+// → 带回渠道配置（凭据解密，仅经 core→BFF gRPC 内网传递）。
+//
+// 网关下单（二维码/跳转链接）由 BFF 执行；本方法不外联任何网关。
+// 金额取服务端订单 total_amount，不信任客户端。
+func (s *PaymentTransactionService) CreatePaymentIntent(ctx context.Context, req *paymentV1.CreatePaymentIntentRequest) (*paymentV1.CreatePaymentIntentResponse, error) {
+	if req == nil || req.GetOrderId() == 0 || req.GetChannelId() == 0 || req.GetUserId() == 0 {
+		return nil, paymentV1.ErrorBadRequest("order_id, channel_id, user_id are required")
+	}
+	if req.GetIdempotencyKey() == "" {
+		return nil, paymentV1.ErrorBadRequest("idempotency_key is required")
+	}
+
+	cfg, credJSON, err := s.channelConfigService.GetDecryptedCredentials(ctx, req.GetChannelId())
+	if err != nil {
+		return nil, err
+	}
+	// 凭据以内网明文形式经 gRPC 下发 BFF（C 端响应模型不含 credentials 字段）
+	cfg.Credentials = trans.Ptr(credJSON)
+
+	order, gErr := s.orderService.Get(ctx, &orderV1.GetOrderRequest{
+		QueryBy: &orderV1.GetOrderRequest_Id{Id: req.GetOrderId()},
+	})
+	if gErr != nil || order == nil {
+		return nil, paymentV1.ErrorBadRequest("order not found")
+	}
+	if order.GetStatus() != orderV1.Order_PENDING_PAYMENT {
+		return nil, paymentV1.ErrorBadRequest("order [%d] is not pending payment (current: %v)", order.GetId(), order.GetStatus())
+	}
+	if order.GetUserId() != req.GetUserId() {
+		return nil, paymentV1.ErrorForbidden("order does not belong to current user")
+	}
+
+	// 幂等：同租户同幂等键已有流水（重试/回调竞态）直接返回既有流水。
+	if existing := s.findByIdempotencyKey(ctx, req.GetIdempotencyKey()); existing != nil {
+		return &paymentV1.CreatePaymentIntentResponse{
+			Transaction: existing,
+			Channel:     cfg,
+			Subject:     paymentSubject(order),
+		}, nil
+	}
+
+	currency := order.GetCurrency()
+	if currency == "" {
+		currency = "CNY"
+	}
+	status := paymentV1.PaymentTransaction_PENDING
+	tx := &paymentV1.PaymentTransaction{
+		OrderId:        order.Id,
+		UserId:         trans.Ptr(req.GetUserId()),
+		Amount:         trans.Ptr(order.GetTotalAmount()),
+		Status:         &status,
+		Currency:       &currency,
+		BusinessRefId:  order.BusinessRefId,
+		IdempotencyKey: trans.Ptr(req.GetIdempotencyKey()),
+		PaymentMethod:  channelPaymentMethod(cfg.GetChannel()).Enum(),
+		BusinessType:   paymentV1.BusinessType_BUSINESS_TYPE_CONSUME.Enum(),
+		TenantId:       order.TenantId,
+		CreatedBy:      trans.Ptr(req.GetUserId()),
+	}
+	if err := s.repo.Create(ctx, &paymentV1.CreatePaymentTransactionRequest{Data: tx}); err != nil {
+		return nil, err
+	}
+
+	// Create 返回 empty，按幂等键回查拿自增 ID（并发下也天然取到唯一行）。
+	created := s.findByIdempotencyKey(ctx, req.GetIdempotencyKey())
+	if created == nil {
+		return nil, paymentV1.ErrorInternalServerError("payment transaction lookup after create failed")
+	}
+
+	s.log.Infof("payment intent created: tx=%d order=%d channel=%s amount=%d user=%d",
+		created.GetId(), order.GetId(), cfg.GetChannel(), created.GetAmount(), req.GetUserId())
+
+	return &paymentV1.CreatePaymentIntentResponse{
+		Transaction: created,
+		Channel:     cfg,
+		Subject:     paymentSubject(order),
+	}, nil
+}
+
+// ConfirmPayment 确认支付：BFF 网关回调验签后 / MOCK 渠道确认时调用。
+// 幂等：已 SUCCEEDED 直接幂等成功；金额不符拒绝；成功后推进订单 PAID。
+func (s *PaymentTransactionService) ConfirmPayment(ctx context.Context, req *paymentV1.ConfirmPaymentRequest) (*paymentV1.ConfirmPaymentResponse, error) {
+	if req == nil || req.GetTransactionId() == 0 {
+		return nil, paymentV1.ErrorBadRequest("transaction_id is required")
+	}
+
+	tx, gErr := s.repo.Get(ctx, &paymentV1.GetPaymentTransactionRequest{
+		QueryBy: &paymentV1.GetPaymentTransactionRequest_Id{Id: req.GetTransactionId()},
+	})
+	if gErr != nil || tx == nil {
+		return nil, paymentV1.ErrorBadRequest("payment transaction not found")
+	}
+
+	// 幂等重放：网关会重复回调，已成功的流水直接幂等成功。
+	if tx.GetStatus() == paymentV1.PaymentTransaction_SUCCEEDED {
+		return &paymentV1.ConfirmPaymentResponse{
+			TransactionId: tx.GetId(),
+			Status:        tx.GetStatus(),
+			OrderId:       tx.GetOrderId(),
+			FirstSuccess:  false,
+		}, nil
+	}
+	if tx.GetStatus() != paymentV1.PaymentTransaction_PENDING {
+		return nil, paymentV1.ErrorBadRequest("payment transaction [%d] is not confirmable (current: %v)", tx.GetId(), tx.GetStatus())
+	}
+
+	// 金额核验：回调金额 ≠ 应付金额 → 拒绝确认（保留 PENDING 供人工排查）。
+	if req.GetPaidAmount() != tx.GetAmount() {
+		s.log.Warnf("payment amount mismatch: tx=%d expect=%d got=%d gateway_no=%s",
+			tx.GetId(), tx.GetAmount(), req.GetPaidAmount(), req.GetGatewayTradeNo())
+		return nil, paymentV1.ErrorBadRequest("paid amount mismatch")
+	}
+
+	succeeded := paymentV1.PaymentTransaction_SUCCEEDED
+	if _, uErr := s.Update(ctx, &paymentV1.UpdatePaymentTransactionRequest{
+		Id: req.GetTransactionId(),
+		Data: &paymentV1.PaymentTransaction{
+			Status:         &succeeded,
+			GatewayTradeNo: trans.Ptr(req.GetGatewayTradeNo()),
+		},
+	}); uErr != nil {
+		return nil, uErr
+	}
+
+	// 推进关联订单 PENDING_PAYMENT→PAID（expected_status 乐观并发防覆盖，
+	// 与超时取消/确认收货的并发路径互斥）。失败不回滚流水——钱已收，订单状态
+	// 由人工/对账处理（如订单已被超时取消，走退款流程）。
+	orderId := tx.GetOrderId()
+	if orderId != 0 {
+		paid := orderV1.Order_PAID
+		if _, uErr := s.orderService.Update(ctx, &orderV1.UpdateOrderRequest{
+			Id:             orderId,
+			Data:           &orderV1.Order{Status: &paid},
+			ExpectedStatus: []orderV1.Order_Status{orderV1.Order_PENDING_PAYMENT},
+		}); uErr != nil {
+			s.log.Errorf("mark order [%d] as PAID after payment confirm failed: %v", orderId, uErr)
+		}
+	}
+
+	s.log.Infof("payment confirmed: tx=%d order=%d amount=%d gateway_no=%s first=true",
+		tx.GetId(), orderId, tx.GetAmount(), req.GetGatewayTradeNo())
+
+	return &paymentV1.ConfirmPaymentResponse{
+		TransactionId: tx.GetId(),
+		Status:        succeeded,
+		OrderId:       tx.GetOrderId(),
+		FirstSuccess:  true,
+	}, nil
+}
+
+// findByIdempotencyKey 按幂等键查流水（租户隔离由隐私层按 viewer 注入）。
+func (s *PaymentTransactionService) findByIdempotencyKey(ctx context.Context, key string) *paymentV1.PaymentTransaction {
+	ret, err := s.repo.List(ctx, &paginationV1.PagingRequest{
+		NoPaging: trans.Ptr(true),
+		FilteringType: &paginationV1.PagingRequest_Query{
+			Query: `{"idempotency_key":"` + key + `"}`,
+		},
+	})
+	if err != nil || ret == nil || len(ret.GetItems()) == 0 {
+		return nil
+	}
+	return ret.Items[0]
+}
+
+// paymentSubject 网关商品标题（订单摘要）。
+func paymentSubject(order *orderV1.Order) string {
+	ref := order.GetBusinessRefId()
+	if ref == "" {
+		ref = fmt.Sprintf("%d", order.GetId())
+	}
+	return fmt.Sprintf("订单支付 %s", ref)
 }

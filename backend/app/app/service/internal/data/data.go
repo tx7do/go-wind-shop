@@ -349,6 +349,15 @@ func NewPaymentTransactionServiceClient(ctx *bootstrap.Context, r registry.Disco
 	return paymentV1.NewPaymentTransactionServiceClient(cli)
 }
 
+func NewPaymentChannelConfigServiceClient(ctx *bootstrap.Context, r registry.Discovery) paymentV1.PaymentChannelConfigServiceClient {
+	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
+	if err != nil {
+		return nil
+	}
+
+	return paymentV1.NewPaymentChannelConfigServiceClient(cli)
+}
+
 func NewPaymentRefundServiceClient(ctx *bootstrap.Context, r registry.Discovery) paymentV1.PaymentRefundServiceClient {
 	cli, err := rpc.CreateGrpcClient(ctx.Context(), r, serviceid.NewDiscoveryName(serviceid.CoreService), ctx.GetConfig())
 	if err != nil {

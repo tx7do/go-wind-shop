@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package admin.service.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+import "pagination/v1/pagination.proto";
+
+import "payment/service/v1/payment_channel_config.proto";
+
+// 支付渠道配置管理服务（admin 全 CRUD）
+//
+// 合规约束：本服务只管理「部署方自带资质」的直连商户渠道凭据。凭据写入即
+// AES-GCM 加密落库，读取路径永不回传明文；credentials 字段仅写入有效。
+service PaymentChannelConfigService {
+  rpc List (pagination.PagingRequest) returns (payment.service.v1.ListPaymentChannelConfigResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/payment-channels"
+    };
+  }
+
+  rpc Count (pagination.PagingRequest) returns (payment.service.v1.CountPaymentChannelConfigResponse) {
+    option (google.api.http) = {
+      get: "/admin/v1/payment-channels/count"
+    };
+  }
+
+  rpc Get (payment.service.v1.GetPaymentChannelConfigRequest) returns (payment.service.v1.PaymentChannelConfig) {
+    option (google.api.http) = {
+      get: "/admin/v1/payment-channels/{id}"
+    };
+  }
+
+  rpc Create (payment.service.v1.CreatePaymentChannelConfigRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/admin/v1/payment-channels"
+      body: "*"
+    };
+  }
+
+  rpc Update (payment.service.v1.UpdatePaymentChannelConfigRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/admin/v1/payment-channels/{id}"
+      body: "*"
+    };
+  }
+
+  rpc Delete (payment.service.v1.DeletePaymentChannelConfigRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/admin/v1/payment-channels/{id}"
+    };
+  }
+}

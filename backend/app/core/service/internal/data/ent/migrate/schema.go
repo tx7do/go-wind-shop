@@ -2595,6 +2595,39 @@ var (
 			},
 		},
 	}
+	// MallPaymentChannelConfigsColumns holds the columns for the "mall_payment_channel_configs" table.
+	MallPaymentChannelConfigsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted_at", Type: field.TypeTime, Nullable: true, Comment: "删除时间"},
+		{Name: "created_by", Type: field.TypeUint32, Nullable: true, Comment: "创建者ID"},
+		{Name: "updated_by", Type: field.TypeUint32, Nullable: true, Comment: "更新者ID"},
+		{Name: "deleted_by", Type: field.TypeUint32, Nullable: true, Comment: "删除者ID"},
+		{Name: "tenant_id", Type: field.TypeUint32, Nullable: true, Comment: "租户ID", Default: 0},
+		{Name: "name", Type: field.TypeString, Comment: "渠道显示名"},
+		{Name: "channel", Type: field.TypeEnum, Nullable: true, Comment: "渠道类型", Enums: []string{"PAYMENT_CHANNEL_MOCK", "PAYMENT_CHANNEL_WECHAT_NATIVE", "PAYMENT_CHANNEL_ALIPAY_PAGE"}, Default: "PAYMENT_CHANNEL_MOCK"},
+		{Name: "app_id", Type: field.TypeString, Nullable: true, Comment: "渠道应用ID（微信 appid / 支付宝 app_id）"},
+		{Name: "mch_id", Type: field.TypeString, Nullable: true, Comment: "商户号（微信 mch_id；支付宝直连可空）"},
+		{Name: "sandbox", Type: field.TypeBool, Comment: "沙箱模式（生产部署必须为 false）", Default: true},
+		{Name: "enabled", Type: field.TypeBool, Comment: "是否启用（仅启用的渠道出现在 C 端结算页）", Default: false},
+		{Name: "credentials", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "网关凭据 JSON（AES-GCM 密文，enc: 前缀；读取路径不回填）"},
+		{Name: "remark", Type: field.TypeString, Nullable: true, Comment: "备注"},
+	}
+	// MallPaymentChannelConfigsTable holds the schema information for the "mall_payment_channel_configs" table.
+	MallPaymentChannelConfigsTable = &schema.Table{
+		Name:       "mall_payment_channel_configs",
+		Comment:    "支付渠道配置表",
+		Columns:    MallPaymentChannelConfigsColumns,
+		PrimaryKey: []*schema.Column{MallPaymentChannelConfigsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "paymentchannelconfig_tenant_id_channel",
+				Unique:  false,
+				Columns: []*schema.Column{MallPaymentChannelConfigsColumns[7], MallPaymentChannelConfigsColumns[9]},
+			},
+		},
+	}
 	// MallPaymentRefundsColumns holds the columns for the "mall_payment_refunds" table.
 	MallPaymentRefundsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeUint32, Increment: true, Comment: "id"},
@@ -2645,12 +2678,13 @@ var (
 		{Name: "currency", Type: field.TypeString, Nullable: true, Comment: "币种（ISO 4217，当前仅支持CNY）", Default: "CNY"},
 		{Name: "business_ref_id", Type: field.TypeString, Nullable: true, Comment: "业务单号"},
 		{Name: "idempotency_key", Type: field.TypeString, Nullable: true, Comment: "幂等键"},
-		{Name: "payment_method", Type: field.TypeEnum, Nullable: true, Comment: "支付方式", Enums: []string{"BALANCE", "CREDIT", "WECHAT", "ALIPAY", "UNIONPAY", "STRIPE", "PAYPAL", "CRYPTO_BTC", "CRYPTO_ETH", "CRYPTO_USDT", "CRYPTO_USDC", "CRYPTO_TRON", "CRYPTO_TON", "CRYPTO_OTHER", "MIXED", "OFFLINE"}},
+		{Name: "payment_method", Type: field.TypeEnum, Nullable: true, Comment: "支付方式", Enums: []string{"BALANCE", "CREDIT", "WECHAT", "ALIPAY", "UNIONPAY", "STRIPE", "PAYPAL", "MOCK", "MIXED", "OFFLINE"}},
 		{Name: "business_type", Type: field.TypeEnum, Nullable: true, Comment: "业务类型", Enums: []string{"BUSINESS_TYPE_RECHARGE", "BUSINESS_TYPE_CONSUME", "BUSINESS_TYPE_REFUND", "BUSINESS_TYPE_GIFT", "BUSINESS_TYPE_EXPIRE", "BUSINESS_TYPE_ADJUST", "BUSINESS_TYPE_TRANSFER"}},
 		{Name: "order_id", Type: field.TypeUint32, Nullable: true, Comment: "关联的订单ID"},
 		{Name: "user_id", Type: field.TypeUint32, Nullable: true, Comment: "用户ID"},
 		{Name: "amount", Type: field.TypeInt64, Nullable: true, Comment: "支付金额（最小货币单位，分）", Default: 0},
 		{Name: "status", Type: field.TypeEnum, Nullable: true, Comment: "支付状态", Enums: []string{"PENDING", "SUCCEEDED", "FAILED", "REFUNDED"}},
+		{Name: "gateway_trade_no", Type: field.TypeString, Nullable: true, Comment: "网关侧交易号（回调确认时回填，对账用）"},
 	}
 	// MallPaymentTransactionsTable holds the schema information for the "mall_payment_transactions" table.
 	MallPaymentTransactionsTable = &schema.Table{
@@ -4841,6 +4875,7 @@ var (
 		MallOrdersTable,
 		MallOrderItemsTable,
 		SysOrgUnitsTable,
+		MallPaymentChannelConfigsTable,
 		MallPaymentRefundsTable,
 		MallPaymentTransactionsTable,
 		SysPermissionsTable,
@@ -5141,6 +5176,11 @@ func init() {
 	SysOrgUnitsTable.ForeignKeys[0].RefTable = SysOrgUnitsTable
 	SysOrgUnitsTable.Annotation = &entsql.Annotation{
 		Table:     "sys_org_units",
+		Charset:   "utf8mb4",
+		Collation: "utf8mb4_bin",
+	}
+	MallPaymentChannelConfigsTable.Annotation = &entsql.Annotation{
+		Table:     "mall_payment_channel_configs",
 		Charset:   "utf8mb4",
 		Collation: "utf8mb4_bin",
 	}

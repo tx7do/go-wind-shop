@@ -11459,6 +11459,8 @@ export type paymentservicev1_PaymentTransaction = {
   currency?: string;
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
+  // 网关侧交易号（回调确认时回填，对账用）
+  gatewayTradeNo?: string;
   id?: number;
   idempotencyKey?: string;
   orderId?: number;
@@ -11478,21 +11480,19 @@ export type paymentservicev1_PaymentTransaction_Status =
   | 'STATUS_UNSPECIFIED'
   | 'SUCCEEDED';
 // 支付方式（须与 currency/business_type 等 mixin 的 NamedValues 对齐）
+//
+// 注意：有意不定义任何虚拟货币支付方式——按境内监管（银发〔2021〕237号文），
+// 虚拟货币作为支付手段属非法金融活动；本项目作为代码交付物不提供、不预留此类能力。
+// BALANCE/CREDIT 仅作为「线下/后台记账」语义的流水类型（不构成钱包储值体系）。
 export type paymentservicev1_PaymentMethod =
   | 'ALIPAY'
-  // 内部支付
+  // 内部记账（线下/后台人工核销，非在线储值钱包）
   | 'BALANCE'
   | 'CREDIT'
-  // 虚拟货币
-  | 'CRYPTO_BTC'
-  | 'CRYPTO_ETH'
-  | 'CRYPTO_OTHER'
-  | 'CRYPTO_TON'
-  | 'CRYPTO_TRON'
-  | 'CRYPTO_USDC'
-  | 'CRYPTO_USDT'
   // 混合 / 线下
   | 'MIXED'
+  // 模拟渠道（开发/演示，不出真实资金）
+  | 'MOCK'
   | 'OFFLINE'
   | 'PAYMENT_METHOD_UNSPECIFIED'
   | 'PAYPAL'
@@ -11812,6 +11812,297 @@ export type paymentservicev1_UpdatePaymentRefundRequest = {
 
 export type paymentservicev1_DeletePaymentRefundRequest = {
   id?: number;
+};
+
+// 支付渠道配置管理服务（admin 全 CRUD）
+//
+// 合规约束：本服务只管理「部署方自带资质」的直连商户渠道凭据。凭据写入即
+// AES-GCM 加密落库，读取路径永不回传明文；credentials 字段仅写入有效。
+export interface PaymentChannelConfigService {
+  List(
+    request: pagination_PagingRequest,
+  ): Promise<paymentservicev1_ListPaymentChannelConfigResponse>;
+  Count(
+    request: pagination_PagingRequest,
+  ): Promise<paymentservicev1_CountPaymentChannelConfigResponse>;
+  Get(
+    request: paymentservicev1_GetPaymentChannelConfigRequest,
+  ): Promise<paymentservicev1_PaymentChannelConfig>;
+  Create(
+    request: paymentservicev1_CreatePaymentChannelConfigRequest,
+  ): Promise<wellKnownEmpty>;
+  Update(
+    request: paymentservicev1_UpdatePaymentChannelConfigRequest,
+  ): Promise<wellKnownEmpty>;
+  Delete(
+    request: paymentservicev1_DeletePaymentChannelConfigRequest,
+  ): Promise<wellKnownEmpty>;
+}
+
+export function createPaymentChannelConfigServiceClient(
+  transport: ClientTransport,
+): PaymentChannelConfigService {
+  return {
+    List(request) {
+      const path = `/admin/v1/payment-channels`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PaymentChannelConfigService',
+        method: 'List',
+      }) as Promise<paymentservicev1_ListPaymentChannelConfigResponse>;
+    },
+    Count(request) {
+      const path = `/admin/v1/payment-channels/count`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.page) {
+        queryParams.push(
+          `page=${encodeURIComponent(request.page.toString())}`,
+        );
+      }
+      if (request.pageSize) {
+        queryParams.push(
+          `pageSize=${encodeURIComponent(request.pageSize.toString())}`,
+        );
+      }
+      if (request.offset) {
+        queryParams.push(
+          `offset=${encodeURIComponent(request.offset.toString())}`,
+        );
+      }
+      if (request.limit) {
+        queryParams.push(
+          `limit=${encodeURIComponent(request.limit.toString())}`,
+        );
+      }
+      if (request.token) {
+        queryParams.push(
+          `token=${encodeURIComponent(request.token.toString())}`,
+        );
+      }
+      if (request.noPaging) {
+        queryParams.push(
+          `noPaging=${encodeURIComponent(request.noPaging.toString())}`,
+        );
+      }
+      if (request.query) {
+        queryParams.push(
+          `query=${encodeURIComponent(request.query.toString())}`,
+        );
+      }
+      if (request.filter) {
+        queryParams.push(
+          `filter=${encodeURIComponent(request.filter.toString())}`,
+        );
+      }
+      if (request.filterExpr?.type) {
+        queryParams.push(
+          `filterExpr.type=${encodeURIComponent(request.filterExpr.type.toString())}`,
+        );
+      }
+      if (request.orderBy) {
+        queryParams.push(
+          `orderBy=${encodeURIComponent(request.orderBy.toString())}`,
+        );
+      }
+      if (request.fieldMask) {
+        queryParams.push(
+          `fieldMask=${encodeURIComponent(request.fieldMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PaymentChannelConfigService',
+        method: 'Count',
+      }) as Promise<paymentservicev1_CountPaymentChannelConfigResponse>;
+    },
+    Get(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/payment-channels/${request.id}`;
+      const body = null;
+      const queryParams: string[] = [];
+      if (request.viewMask) {
+        queryParams.push(
+          `viewMask=${encodeURIComponent(request.viewMask.toString())}`,
+        );
+      }
+      let uri = path;
+      if (queryParams.length > 0) {
+        uri += `?${queryParams.join('&')}`;
+      }
+      return transport.unary(uri, 'GET', body, {
+        service: 'PaymentChannelConfigService',
+        method: 'Get',
+      }) as Promise<paymentservicev1_PaymentChannelConfig>;
+    },
+    Create(request) {
+      const path = `/admin/v1/payment-channels`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PaymentChannelConfigService',
+        method: 'Create',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Update(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/payment-channels/${request.id}`;
+      const bodyMap = { ...request } as Record<string, unknown>;
+      delete bodyMap["id"];
+      const body = JSON.stringify(bodyMap);
+      return transport.unary(path, 'PUT', body, {
+        service: 'PaymentChannelConfigService',
+        method: 'Update',
+      }) as Promise<wellKnownEmpty>;
+    },
+    Delete(request) {
+      if (request.id === undefined || request.id === null) {
+        throw new Error('missing required field request.id');
+      }
+      const path = `/admin/v1/payment-channels/${request.id}`;
+      const body = null;
+      return transport.unary(path, 'DELETE', body, {
+        service: 'PaymentChannelConfigService',
+        method: 'Delete',
+      }) as Promise<wellKnownEmpty>;
+    },
+  };
+}
+export type paymentservicev1_ListPaymentChannelConfigResponse = {
+  items: paymentservicev1_PaymentChannelConfig[] | undefined;
+  total: number | undefined;
+};
+
+// 支付渠道配置
+export type paymentservicev1_PaymentChannelConfig = {
+  // 渠道应用 ID（微信 appid / 支付宝 app_id）
+  appId?: string;
+  channel?: paymentservicev1_PaymentChannelType;
+  createdAt?: wellKnownTimestamp;
+  createdBy?: number;
+  // 网关凭据（写-only）：渠道所需密钥的 JSON，落库前服务端 AES-GCM 加密。
+  // 读取路径永不回填本字段（Get/List 恒为空），改密钥 = 提交新值。
+  // 微信 Native：{"mchCertSerialNo":"...","apiV3Key":"...","privateKeyPem":"..."}
+  // 支付宝 Page：{"privateKey":"...","alipayPublicKey":"..."}
+  credentials?: string;
+  // 凭据是否已配置（读路径计算字段；替代直接暴露凭据内容）
+  credentialsConfigured?: boolean;
+  // 启用：仅启用的渠道出现在 C 端结算页
+  enabled?: boolean;
+  id?: number;
+  // 商户号（微信 mch_id；支付宝直连可空）
+  mchId?: string;
+  name?: string;
+  remark?: string;
+  // 沙箱模式：true 走渠道沙箱网关（开发/验收）；生产部署必须为 false
+  sandbox?: boolean;
+  tenantId?: number;
+  updatedAt?: wellKnownTimestamp;
+  updatedBy?: number;
+};
+
+// 支付渠道类型
+//
+// 合规约束（代码交付物定位）：仅提供「部署方自带资质」的直连商户模式适配器——
+// 交易资金由支付渠道直接清算给部署方自己的商户号，本系统不归集、不经手、
+// 不二次分配任何交易资金。多商户平台化（资金归集/分账）必须另行接入持牌
+// 机构分账产品，本枚举不提供该形态。
+export type paymentservicev1_PaymentChannelType =
+  // 支付宝电脑网站支付（page pay，直连商户）
+  | 'PAYMENT_CHANNEL_ALIPAY_PAGE'
+  // 模拟渠道：开发/演示用，不出真实资金；默认停用，生产部署应保持停用
+  | 'PAYMENT_CHANNEL_MOCK'
+  | 'PAYMENT_CHANNEL_UNSPECIFIED'
+  // 微信支付 Native（扫码支付，直连商户）
+  | 'PAYMENT_CHANNEL_WECHAT_NATIVE';
+export type paymentservicev1_CountPaymentChannelConfigResponse = {
+  count: number | undefined;
+};
+
+export type paymentservicev1_GetPaymentChannelConfigRequest = {
+  id: number | undefined;
+  viewMask?: wellKnownFieldMask;
+};
+
+export type paymentservicev1_CreatePaymentChannelConfigRequest = {
+  data: paymentservicev1_PaymentChannelConfig | undefined;
+};
+
+export type paymentservicev1_UpdatePaymentChannelConfigRequest = {
+  allowMissing?: boolean;
+  data: paymentservicev1_PaymentChannelConfig | undefined;
+  id: number | undefined;
+  updateMask?: wellKnownFieldMask;
+};
+
+export type paymentservicev1_DeletePaymentChannelConfigRequest = {
+  id: number | undefined;
 };
 
 // 权限点管理服务
@@ -19369,6 +19660,7 @@ export class ApiClient {
   private _orderItemService?: OrderItemService;
   private _orderService?: OrderService;
   private _orgUnitService?: OrgUnitService;
+  private _paymentChannelConfigService?: PaymentChannelConfigService;
   private _paymentRefundService?: PaymentRefundService;
   private _paymentTransactionService?: PaymentTransactionService;
   private _permissionAuditLogService?: PermissionAuditLogService;
@@ -19594,6 +19886,10 @@ export class ApiClient {
 
   get orgUnitService(): OrgUnitService {
     return this._orgUnitService ??= createOrgUnitServiceClient(this._transport);
+  }
+
+  get paymentChannelConfigService(): PaymentChannelConfigService {
+    return this._paymentChannelConfigService ??= createPaymentChannelConfigServiceClient(this._transport);
   }
 
   get paymentRefundService(): PaymentRefundService {

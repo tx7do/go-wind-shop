@@ -22,10 +22,12 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PaymentTransactionService_List_FullMethodName   = "/app.service.v1.PaymentTransactionService/List"
-	PaymentTransactionService_Count_FullMethodName  = "/app.service.v1.PaymentTransactionService/Count"
-	PaymentTransactionService_Get_FullMethodName    = "/app.service.v1.PaymentTransactionService/Get"
-	PaymentTransactionService_Create_FullMethodName = "/app.service.v1.PaymentTransactionService/Create"
+	PaymentTransactionService_List_FullMethodName                = "/app.service.v1.PaymentTransactionService/List"
+	PaymentTransactionService_Count_FullMethodName               = "/app.service.v1.PaymentTransactionService/Count"
+	PaymentTransactionService_Get_FullMethodName                 = "/app.service.v1.PaymentTransactionService/Get"
+	PaymentTransactionService_Create_FullMethodName              = "/app.service.v1.PaymentTransactionService/Create"
+	PaymentTransactionService_CreatePaymentIntent_FullMethodName = "/app.service.v1.PaymentTransactionService/CreatePaymentIntent"
+	PaymentTransactionService_MockConfirmPayment_FullMethodName  = "/app.service.v1.PaymentTransactionService/MockConfirmPayment"
 )
 
 // PaymentTransactionServiceClient is the client API for PaymentTransactionService service.
@@ -38,6 +40,11 @@ type PaymentTransactionServiceClient interface {
 	Count(ctx context.Context, in *v1.PagingRequest, opts ...grpc.CallOption) (*v11.CountPaymentTransactionResponse, error)
 	Get(ctx context.Context, in *v11.GetPaymentTransactionRequest, opts ...grpc.CallOption) (*v11.PaymentTransaction, error)
 	Create(ctx context.Context, in *v11.CreatePaymentTransactionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 创建支付意图：校验订单归属与待支付态 → 落 PENDING 流水 → 渠道网关下单，
+	// 返回二维码（微信 Native）/ 跳转链接（支付宝）等 C 端拉起支付所需信息。
+	CreatePaymentIntent(ctx context.Context, in *v11.CreatePaymentIntentRequest, opts ...grpc.CallOption) (*v11.CreatePaymentIntentAppResponse, error)
+	// 模拟渠道确认支付（仅 MOCK 渠道流水可用；开发/演示用途，不出真实资金）
+	MockConfirmPayment(ctx context.Context, in *v11.MockConfirmPaymentRequest, opts ...grpc.CallOption) (*v11.MockConfirmPaymentResponse, error)
 }
 
 type paymentTransactionServiceClient struct {
@@ -88,6 +95,26 @@ func (c *paymentTransactionServiceClient) Create(ctx context.Context, in *v11.Cr
 	return out, nil
 }
 
+func (c *paymentTransactionServiceClient) CreatePaymentIntent(ctx context.Context, in *v11.CreatePaymentIntentRequest, opts ...grpc.CallOption) (*v11.CreatePaymentIntentAppResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.CreatePaymentIntentAppResponse)
+	err := c.cc.Invoke(ctx, PaymentTransactionService_CreatePaymentIntent_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentTransactionServiceClient) MockConfirmPayment(ctx context.Context, in *v11.MockConfirmPaymentRequest, opts ...grpc.CallOption) (*v11.MockConfirmPaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.MockConfirmPaymentResponse)
+	err := c.cc.Invoke(ctx, PaymentTransactionService_MockConfirmPayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PaymentTransactionServiceServer is the server API for PaymentTransactionService service.
 // All implementations must embed UnimplementedPaymentTransactionServiceServer
 // for forward compatibility.
@@ -98,6 +125,11 @@ type PaymentTransactionServiceServer interface {
 	Count(context.Context, *v1.PagingRequest) (*v11.CountPaymentTransactionResponse, error)
 	Get(context.Context, *v11.GetPaymentTransactionRequest) (*v11.PaymentTransaction, error)
 	Create(context.Context, *v11.CreatePaymentTransactionRequest) (*emptypb.Empty, error)
+	// 创建支付意图：校验订单归属与待支付态 → 落 PENDING 流水 → 渠道网关下单，
+	// 返回二维码（微信 Native）/ 跳转链接（支付宝）等 C 端拉起支付所需信息。
+	CreatePaymentIntent(context.Context, *v11.CreatePaymentIntentRequest) (*v11.CreatePaymentIntentAppResponse, error)
+	// 模拟渠道确认支付（仅 MOCK 渠道流水可用；开发/演示用途，不出真实资金）
+	MockConfirmPayment(context.Context, *v11.MockConfirmPaymentRequest) (*v11.MockConfirmPaymentResponse, error)
 	mustEmbedUnimplementedPaymentTransactionServiceServer()
 }
 
@@ -119,6 +151,12 @@ func (UnimplementedPaymentTransactionServiceServer) Get(context.Context, *v11.Ge
 }
 func (UnimplementedPaymentTransactionServiceServer) Create(context.Context, *v11.CreatePaymentTransactionRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedPaymentTransactionServiceServer) CreatePaymentIntent(context.Context, *v11.CreatePaymentIntentRequest) (*v11.CreatePaymentIntentAppResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreatePaymentIntent not implemented")
+}
+func (UnimplementedPaymentTransactionServiceServer) MockConfirmPayment(context.Context, *v11.MockConfirmPaymentRequest) (*v11.MockConfirmPaymentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method MockConfirmPayment not implemented")
 }
 func (UnimplementedPaymentTransactionServiceServer) mustEmbedUnimplementedPaymentTransactionServiceServer() {
 }
@@ -214,6 +252,42 @@ func _PaymentTransactionService_Create_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PaymentTransactionService_CreatePaymentIntent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.CreatePaymentIntentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentTransactionServiceServer).CreatePaymentIntent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentTransactionService_CreatePaymentIntent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentTransactionServiceServer).CreatePaymentIntent(ctx, req.(*v11.CreatePaymentIntentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentTransactionService_MockConfirmPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.MockConfirmPaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentTransactionServiceServer).MockConfirmPayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentTransactionService_MockConfirmPayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentTransactionServiceServer).MockConfirmPayment(ctx, req.(*v11.MockConfirmPaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PaymentTransactionService_ServiceDesc is the grpc.ServiceDesc for PaymentTransactionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -236,6 +310,122 @@ var PaymentTransactionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Create",
 			Handler:    _PaymentTransactionService_Create_Handler,
+		},
+		{
+			MethodName: "CreatePaymentIntent",
+			Handler:    _PaymentTransactionService_CreatePaymentIntent_Handler,
+		},
+		{
+			MethodName: "MockConfirmPayment",
+			Handler:    _PaymentTransactionService_MockConfirmPayment_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "app/service/v1/i_payment.proto",
+}
+
+const (
+	PaymentChannelService_ListEnabledChannels_FullMethodName = "/app.service.v1.PaymentChannelService/ListEnabledChannels"
+)
+
+// PaymentChannelServiceClient is the client API for PaymentChannelService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// 支付渠道前台服务（C 端结算页渠道选择；登录态）
+type PaymentChannelServiceClient interface {
+	// 当前启用渠道（不含任何凭据/配置细节）
+	ListEnabledChannels(ctx context.Context, in *v11.ListEnabledChannelsRequest, opts ...grpc.CallOption) (*v11.ListEnabledChannelsResponse, error)
+}
+
+type paymentChannelServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewPaymentChannelServiceClient(cc grpc.ClientConnInterface) PaymentChannelServiceClient {
+	return &paymentChannelServiceClient{cc}
+}
+
+func (c *paymentChannelServiceClient) ListEnabledChannels(ctx context.Context, in *v11.ListEnabledChannelsRequest, opts ...grpc.CallOption) (*v11.ListEnabledChannelsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(v11.ListEnabledChannelsResponse)
+	err := c.cc.Invoke(ctx, PaymentChannelService_ListEnabledChannels_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// PaymentChannelServiceServer is the server API for PaymentChannelService service.
+// All implementations must embed UnimplementedPaymentChannelServiceServer
+// for forward compatibility.
+//
+// 支付渠道前台服务（C 端结算页渠道选择；登录态）
+type PaymentChannelServiceServer interface {
+	// 当前启用渠道（不含任何凭据/配置细节）
+	ListEnabledChannels(context.Context, *v11.ListEnabledChannelsRequest) (*v11.ListEnabledChannelsResponse, error)
+	mustEmbedUnimplementedPaymentChannelServiceServer()
+}
+
+// UnimplementedPaymentChannelServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedPaymentChannelServiceServer struct{}
+
+func (UnimplementedPaymentChannelServiceServer) ListEnabledChannels(context.Context, *v11.ListEnabledChannelsRequest) (*v11.ListEnabledChannelsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListEnabledChannels not implemented")
+}
+func (UnimplementedPaymentChannelServiceServer) mustEmbedUnimplementedPaymentChannelServiceServer() {}
+func (UnimplementedPaymentChannelServiceServer) testEmbeddedByValue()                               {}
+
+// UnsafePaymentChannelServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to PaymentChannelServiceServer will
+// result in compilation errors.
+type UnsafePaymentChannelServiceServer interface {
+	mustEmbedUnimplementedPaymentChannelServiceServer()
+}
+
+func RegisterPaymentChannelServiceServer(s grpc.ServiceRegistrar, srv PaymentChannelServiceServer) {
+	// If the following call panics, it indicates UnimplementedPaymentChannelServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&PaymentChannelService_ServiceDesc, srv)
+}
+
+func _PaymentChannelService_ListEnabledChannels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(v11.ListEnabledChannelsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentChannelServiceServer).ListEnabledChannels(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentChannelService_ListEnabledChannels_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentChannelServiceServer).ListEnabledChannels(ctx, req.(*v11.ListEnabledChannelsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// PaymentChannelService_ServiceDesc is the grpc.ServiceDesc for PaymentChannelService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var PaymentChannelService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "app.service.v1.PaymentChannelService",
+	HandlerType: (*PaymentChannelServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListEnabledChannels",
+			Handler:    _PaymentChannelService_ListEnabledChannels_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

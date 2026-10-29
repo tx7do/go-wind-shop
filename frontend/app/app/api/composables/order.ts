@@ -72,15 +72,24 @@ export async function fetchGetOrderStore(id: number) {
 
 // ==============================
 // 按 idempotency_key + tenant_id 查询订单（下单后回查 orderId 用）
+//
+// 注意：不能用 orderService.Get——生成的 TS 客户端对 Get 强制要求 id
+//（缺 id 直接 throw），而按幂等键查询必须走 oneof 的另一个分支。
+// 改用 List + query 字符串过滤（go-crud 把 JSON 字段映射到实体列，
+// 与购物车/流水的 query 过滤同机制），tenant 过滤由后端隐私层按 viewer 注入。
 // ==============================
 export async function fetchGetOrderByIdempotencyKey(
   idempotencyKey: string,
   tenantId: number,
 ) {
-  return await apiClient.orderService.Get({
-    idempotencyKey,
-    tenantId,
+  const resp: any = await apiClient.orderService.List({
+    page: 1,
+    pageSize: 1,
+    noPaging: false,
+    query: JSON.stringify({ idempotency_key: idempotencyKey, tenant_id: tenantId }),
   } as any);
+  const items = (resp?.items ?? []) as orderservicev1_Order[];
+  return items[0] ?? null;
 }
 
 // ==============================

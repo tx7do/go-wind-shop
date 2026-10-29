@@ -60,6 +60,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/order"
 	"go-wind-shop/app/core/service/internal/data/ent/orderitem"
 	"go-wind-shop/app/core/service/internal/data/ent/orgunit"
+	"go-wind-shop/app/core/service/internal/data/ent/paymentchannelconfig"
 	"go-wind-shop/app/core/service/internal/data/ent/paymentrefund"
 	"go-wind-shop/app/core/service/internal/data/ent/paymenttransaction"
 	"go-wind-shop/app/core/service/internal/data/ent/permission"
@@ -215,6 +216,8 @@ type Client struct {
 	OrderItem *OrderItemClient
 	// OrgUnit is the client for interacting with the OrgUnit builders.
 	OrgUnit *OrgUnitClient
+	// PaymentChannelConfig is the client for interacting with the PaymentChannelConfig builders.
+	PaymentChannelConfig *PaymentChannelConfigClient
 	// PaymentRefund is the client for interacting with the PaymentRefund builders.
 	PaymentRefund *PaymentRefundClient
 	// PaymentTransaction is the client for interacting with the PaymentTransaction builders.
@@ -365,6 +368,7 @@ func (c *Client) init() {
 	c.Order = NewOrderClient(c.config)
 	c.OrderItem = NewOrderItemClient(c.config)
 	c.OrgUnit = NewOrgUnitClient(c.config)
+	c.PaymentChannelConfig = NewPaymentChannelConfigClient(c.config)
 	c.PaymentRefund = NewPaymentRefundClient(c.config)
 	c.PaymentTransaction = NewPaymentTransactionClient(c.config)
 	c.Permission = NewPermissionClient(c.config)
@@ -551,6 +555,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Order:                            NewOrderClient(cfg),
 		OrderItem:                        NewOrderItemClient(cfg),
 		OrgUnit:                          NewOrgUnitClient(cfg),
+		PaymentChannelConfig:             NewPaymentChannelConfigClient(cfg),
 		PaymentRefund:                    NewPaymentRefundClient(cfg),
 		PaymentTransaction:               NewPaymentTransactionClient(cfg),
 		Permission:                       NewPermissionClient(cfg),
@@ -664,6 +669,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Order:                            NewOrderClient(cfg),
 		OrderItem:                        NewOrderItemClient(cfg),
 		OrgUnit:                          NewOrgUnitClient(cfg),
+		PaymentChannelConfig:             NewPaymentChannelConfigClient(cfg),
 		PaymentRefund:                    NewPaymentRefundClient(cfg),
 		PaymentTransaction:               NewPaymentTransactionClient(cfg),
 		Permission:                       NewPermissionClient(cfg),
@@ -749,10 +755,10 @@ func (c *Client) Use(hooks ...Hook) {
 		c.MembershipRole, c.Menu, c.MonitorAlertRule, c.NotificationChannel,
 		c.NotificationDelivery, c.NotificationPreference, c.NotificationRule,
 		c.NotificationTemplate, c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit,
-		c.PaymentRefund, c.PaymentTransaction, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.Plan, c.PlanModule, c.PlanQuota, c.PolicyEvaluationLog, c.Position,
-		c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
+		c.PaymentChannelConfig, c.PaymentRefund, c.PaymentTransaction, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.Plan, c.PlanModule, c.PlanQuota, c.PolicyEvaluationLog,
+		c.Position, c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
 		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
 		c.ProductTranslation, c.Promotion, c.Role, c.RoleMetadata, c.RolePermission,
 		c.Script, c.ScriptLog, c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
@@ -779,10 +785,10 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 		c.MembershipRole, c.Menu, c.MonitorAlertRule, c.NotificationChannel,
 		c.NotificationDelivery, c.NotificationPreference, c.NotificationRule,
 		c.NotificationTemplate, c.OperationAuditLog, c.Order, c.OrderItem, c.OrgUnit,
-		c.PaymentRefund, c.PaymentTransaction, c.Permission, c.PermissionApi,
-		c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu, c.PermissionPolicy,
-		c.Plan, c.PlanModule, c.PlanQuota, c.PolicyEvaluationLog, c.Position,
-		c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
+		c.PaymentChannelConfig, c.PaymentRefund, c.PaymentTransaction, c.Permission,
+		c.PermissionApi, c.PermissionAuditLog, c.PermissionGroup, c.PermissionMenu,
+		c.PermissionPolicy, c.Plan, c.PlanModule, c.PlanQuota, c.PolicyEvaluationLog,
+		c.Position, c.Product, c.ProductAttribute, c.ProductAttributeTranslation,
 		c.ProductAttributeValue, c.ProductAttributeValueTranslation,
 		c.ProductTranslation, c.Promotion, c.Role, c.RoleMetadata, c.RolePermission,
 		c.Script, c.ScriptLog, c.Shipment, c.ShippingAddress, c.ShippingRate, c.Sku,
@@ -895,6 +901,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.OrderItem.mutate(ctx, m)
 	case *OrgUnitMutation:
 		return c.OrgUnit.mutate(ctx, m)
+	case *PaymentChannelConfigMutation:
+		return c.PaymentChannelConfig.mutate(ctx, m)
 	case *PaymentRefundMutation:
 		return c.PaymentRefund.mutate(ctx, m)
 	case *PaymentTransactionMutation:
@@ -7830,6 +7838,140 @@ func (c *OrgUnitClient) mutate(ctx context.Context, m *OrgUnitMutation) (Value, 
 	}
 }
 
+// PaymentChannelConfigClient is a client for the PaymentChannelConfig schema.
+type PaymentChannelConfigClient struct {
+	config
+}
+
+// NewPaymentChannelConfigClient returns a client for the PaymentChannelConfig from the given config.
+func NewPaymentChannelConfigClient(c config) *PaymentChannelConfigClient {
+	return &PaymentChannelConfigClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `paymentchannelconfig.Hooks(f(g(h())))`.
+func (c *PaymentChannelConfigClient) Use(hooks ...Hook) {
+	c.hooks.PaymentChannelConfig = append(c.hooks.PaymentChannelConfig, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `paymentchannelconfig.Intercept(f(g(h())))`.
+func (c *PaymentChannelConfigClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PaymentChannelConfig = append(c.inters.PaymentChannelConfig, interceptors...)
+}
+
+// Create returns a builder for creating a PaymentChannelConfig entity.
+func (c *PaymentChannelConfigClient) Create() *PaymentChannelConfigCreate {
+	mutation := newPaymentChannelConfigMutation(c.config, OpCreate)
+	return &PaymentChannelConfigCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PaymentChannelConfig entities.
+func (c *PaymentChannelConfigClient) CreateBulk(builders ...*PaymentChannelConfigCreate) *PaymentChannelConfigCreateBulk {
+	return &PaymentChannelConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PaymentChannelConfigClient) MapCreateBulk(slice any, setFunc func(*PaymentChannelConfigCreate, int)) *PaymentChannelConfigCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PaymentChannelConfigCreateBulk{err: fmt.Errorf("calling to PaymentChannelConfigClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PaymentChannelConfigCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PaymentChannelConfigCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PaymentChannelConfig.
+func (c *PaymentChannelConfigClient) Update() *PaymentChannelConfigUpdate {
+	mutation := newPaymentChannelConfigMutation(c.config, OpUpdate)
+	return &PaymentChannelConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PaymentChannelConfigClient) UpdateOne(_m *PaymentChannelConfig) *PaymentChannelConfigUpdateOne {
+	mutation := newPaymentChannelConfigMutation(c.config, OpUpdateOne, withPaymentChannelConfig(_m))
+	return &PaymentChannelConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PaymentChannelConfigClient) UpdateOneID(id uint32) *PaymentChannelConfigUpdateOne {
+	mutation := newPaymentChannelConfigMutation(c.config, OpUpdateOne, withPaymentChannelConfigID(id))
+	return &PaymentChannelConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PaymentChannelConfig.
+func (c *PaymentChannelConfigClient) Delete() *PaymentChannelConfigDelete {
+	mutation := newPaymentChannelConfigMutation(c.config, OpDelete)
+	return &PaymentChannelConfigDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PaymentChannelConfigClient) DeleteOne(_m *PaymentChannelConfig) *PaymentChannelConfigDeleteOne {
+	return c.DeleteOneID(_m.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PaymentChannelConfigClient) DeleteOneID(id uint32) *PaymentChannelConfigDeleteOne {
+	builder := c.Delete().Where(paymentchannelconfig.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PaymentChannelConfigDeleteOne{builder}
+}
+
+// Query returns a query builder for PaymentChannelConfig.
+func (c *PaymentChannelConfigClient) Query() *PaymentChannelConfigQuery {
+	return &PaymentChannelConfigQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePaymentChannelConfig},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PaymentChannelConfig entity by its id.
+func (c *PaymentChannelConfigClient) Get(ctx context.Context, id uint32) (*PaymentChannelConfig, error) {
+	return c.Query().Where(paymentchannelconfig.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PaymentChannelConfigClient) GetX(ctx context.Context, id uint32) *PaymentChannelConfig {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *PaymentChannelConfigClient) Hooks() []Hook {
+	hooks := c.hooks.PaymentChannelConfig
+	return append(hooks[:len(hooks):len(hooks)], paymentchannelconfig.Hooks[:]...)
+}
+
+// Interceptors returns the client interceptors.
+func (c *PaymentChannelConfigClient) Interceptors() []Interceptor {
+	return c.inters.PaymentChannelConfig
+}
+
+func (c *PaymentChannelConfigClient) mutate(ctx context.Context, m *PaymentChannelConfigMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PaymentChannelConfigCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PaymentChannelConfigUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PaymentChannelConfigUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PaymentChannelConfigDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PaymentChannelConfig mutation op: %q", m.Op())
+	}
+}
+
 // PaymentRefundClient is a client for the PaymentRefund schema.
 type PaymentRefundClient struct {
 	config
@@ -13977,11 +14119,11 @@ type (
 		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
 		MonitorAlertRule, NotificationChannel, NotificationDelivery,
 		NotificationPreference, NotificationRule, NotificationTemplate,
-		OperationAuditLog, Order, OrderItem, OrgUnit, PaymentRefund,
-		PaymentTransaction, Permission, PermissionApi, PermissionAuditLog,
-		PermissionGroup, PermissionMenu, PermissionPolicy, Plan, PlanModule, PlanQuota,
-		PolicyEvaluationLog, Position, Product, ProductAttribute,
-		ProductAttributeTranslation, ProductAttributeValue,
+		OperationAuditLog, Order, OrderItem, OrgUnit, PaymentChannelConfig,
+		PaymentRefund, PaymentTransaction, Permission, PermissionApi,
+		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy, Plan,
+		PlanModule, PlanQuota, PolicyEvaluationLog, Position, Product,
+		ProductAttribute, ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Promotion, Role,
 		RoleMetadata, RolePermission, Script, ScriptLog, Shipment, ShippingAddress,
 		ShippingRate, Sku, SkuAttributeCombination, SkuPrice, StockAlert, StockOpLog,
@@ -13998,11 +14140,11 @@ type (
 		Membership, MembershipOrgUnit, MembershipPosition, MembershipRole, Menu,
 		MonitorAlertRule, NotificationChannel, NotificationDelivery,
 		NotificationPreference, NotificationRule, NotificationTemplate,
-		OperationAuditLog, Order, OrderItem, OrgUnit, PaymentRefund,
-		PaymentTransaction, Permission, PermissionApi, PermissionAuditLog,
-		PermissionGroup, PermissionMenu, PermissionPolicy, Plan, PlanModule, PlanQuota,
-		PolicyEvaluationLog, Position, Product, ProductAttribute,
-		ProductAttributeTranslation, ProductAttributeValue,
+		OperationAuditLog, Order, OrderItem, OrgUnit, PaymentChannelConfig,
+		PaymentRefund, PaymentTransaction, Permission, PermissionApi,
+		PermissionAuditLog, PermissionGroup, PermissionMenu, PermissionPolicy, Plan,
+		PlanModule, PlanQuota, PolicyEvaluationLog, Position, Product,
+		ProductAttribute, ProductAttributeTranslation, ProductAttributeValue,
 		ProductAttributeValueTranslation, ProductTranslation, Promotion, Role,
 		RoleMetadata, RolePermission, Script, ScriptLog, Shipment, ShippingAddress,
 		ShippingRate, Sku, SkuAttributeCombination, SkuPrice, StockAlert, StockOpLog,

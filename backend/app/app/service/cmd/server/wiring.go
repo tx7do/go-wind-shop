@@ -77,6 +77,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	orderServiceClient := data.NewOrderServiceClient(ctx, discovery)
 	orderItemServiceClient := data.NewOrderItemServiceClient(ctx, discovery)
 	paymentTransactionServiceClient := data.NewPaymentTransactionServiceClient(ctx, discovery)
+	paymentChannelConfigServiceClient := data.NewPaymentChannelConfigServiceClient(ctx, discovery)
 	paymentRefundServiceClient := data.NewPaymentRefundServiceClient(ctx, discovery)
 	shippingAddressServiceClient := data.NewShippingAddressServiceClient(ctx, discovery)
 	shipmentServiceClient := data.NewShipmentServiceClient(ctx, discovery)
@@ -109,7 +110,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	wishlistService := service.NewWishlistService(ctx, wishlistServiceClient)
 	orderService := service.NewOrderService(ctx, orderServiceClient)
 	orderItemService := service.NewOrderItemService(ctx, orderItemServiceClient)
-	paymentTransactionService := service.NewPaymentTransactionService(ctx, paymentTransactionServiceClient)
+	paymentTransactionService := service.NewPaymentTransactionService(ctx, paymentTransactionServiceClient, paymentChannelConfigServiceClient)
+	paymentChannelService := service.NewPaymentChannelService(ctx, paymentChannelConfigServiceClient)
 	paymentRefundService := service.NewPaymentRefundService(ctx, paymentRefundServiceClient)
 	shippingAddressService := service.NewShippingAddressService(ctx, shippingAddressServiceClient)
 	shipmentService := service.NewShipmentService(ctx, shipmentServiceClient)
@@ -146,6 +148,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		orderService,
 		orderItemService,
 		paymentTransactionService,
+		paymentChannelService,
 		paymentRefundService,
 		shippingAddressService,
 		shipmentService,

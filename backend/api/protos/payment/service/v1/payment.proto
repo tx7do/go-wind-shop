@@ -12,11 +12,17 @@ import "google/protobuf/field_mask.proto";
 
 import "pagination/v1/pagination.proto";
 
+import "payment/service/v1/payment_channel_config.proto";
+
 // 支付方式（须与 currency/business_type 等 mixin 的 NamedValues 对齐）
+//
+// 注意：有意不定义任何虚拟货币支付方式——按境内监管（银发〔2021〕237号文），
+// 虚拟货币作为支付手段属非法金融活动；本项目作为代码交付物不提供、不预留此类能力。
+// BALANCE/CREDIT 仅作为「线下/后台记账」语义的流水类型（不构成钱包储值体系）。
 enum PaymentMethod {
   PAYMENT_METHOD_UNSPECIFIED = 0;
 
-  // 内部支付
+  // 内部记账（线下/后台人工核销，非在线储值钱包）
   BALANCE = 1;
   CREDIT = 2;
 
@@ -27,14 +33,8 @@ enum PaymentMethod {
   STRIPE = 13;
   PAYPAL = 14;
 
-  // 虚拟货币
-  CRYPTO_BTC = 30;
-  CRYPTO_ETH = 31;
-  CRYPTO_USDT = 32;
-  CRYPTO_USDC = 33;
-  CRYPTO_TRON = 34;
-  CRYPTO_TON = 35;
-  CRYPTO_OTHER = 39;
+  // 模拟渠道（开发/演示，不出真实资金）
+  MOCK = 60;
 
   // 混合 / 线下
   MIXED = 50;
@@ -61,7 +61,106 @@ service PaymentTransactionService {
   rpc Create (CreatePaymentTransactionRequest) returns (google.protobuf.Empty) {}
   rpc Update (UpdatePaymentTransactionRequest) returns (google.protobuf.Empty) {}
   rpc Delete (DeletePaymentTransactionRequest) returns (google.protobuf.Empty) {}
+
+  // 创建支付意图：校验订单（存在/归属/待支付态）后落一条 PENDING 支付流水，
+  // 并带回所选渠道配置（凭据仅在服务间内网传递，不经 C 端）。
+  // 网关下单（拿二维码/跳转链接）由 BFF 持渠道凭据执行。
+  rpc CreatePaymentIntent (CreatePaymentIntentRequest) returns (CreatePaymentIntentResponse) {}
+
+  // 确认支付：网关回调/模拟确认经 BFF 验签后调用。
+  // 幂等：流水已 SUCCEEDED 时直接幂等成功；金额不符拒绝。
+  // 成功后推进关联订单 PENDING_PAYMENT→PAID（expected_status 乐观并发防覆盖）。
+  rpc ConfirmPayment (ConfirmPaymentRequest) returns (ConfirmPaymentResponse) {}
 }
+
+// 创建支付意图请求
+message CreatePaymentIntentRequest {
+  // 关联订单 ID
+  uint32 order_id = 1 [json_name = "orderId", (gnostic.openapi.v3.property) = {description: "关联订单ID"}];
+  // 支付渠道配置 ID
+  uint32 channel_id = 2 [json_name = "channelId", (gnostic.openapi.v3.property) = {description: "支付渠道配置ID"}];
+  // 支付人用户 ID（BFF 从登录态注入；用于订单归属校验）
+  uint32 user_id = 3 [json_name = "userId", (gnostic.openapi.v3.property) = {description: "支付人用户ID"}];
+  // 支付幂等键（租户内唯一，防重放重复落流水）
+  string idempotency_key = 4 [
+    json_name = "idempotencyKey",
+    (gnostic.openapi.v3.property) = {description: "支付幂等键（租户内唯一）"}
+  ];
+}
+
+// 创建支付意图响应
+message CreatePaymentIntentResponse {
+  // 支付流水（PENDING）
+  PaymentTransaction transaction = 1 [(gnostic.openapi.v3.property) = {description: "支付流水"}];
+  // 渠道配置（含解密后的网关凭据，仅供 BFF 内网网关下单使用；C 端响应不含本字段对应内容）
+  PaymentChannelConfig channel = 2 [(gnostic.openapi.v3.property) = {description: "渠道配置（含凭据，仅服务间）"}];
+  // 网关商品标题（订单摘要）
+  string subject = 3 [(gnostic.openapi.v3.property) = {description: "商品标题"}];
+}
+
+// 确认支付请求（BFF 网关回调验签后 / 模拟渠道确认时调用）
+message ConfirmPaymentRequest {
+  // 支付流水 ID（即网关 out_trade_no）
+  uint32 transaction_id = 1 [json_name = "transactionId", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
+  // 网关侧交易号（对账用，可空）
+  string gateway_trade_no = 2 [json_name = "gatewayTradeNo", (gnostic.openapi.v3.property) = {description: "网关侧交易号"}];
+  // 实付金额（分）；与流水金额不符时拒绝确认
+  int64 paid_amount = 3 [json_name = "paidAmount", (gnostic.openapi.v3.property) = {description: "实付金额（分）"}];
+}
+
+// 确认支付响应
+message ConfirmPaymentResponse {
+  // 支付流水 ID
+  uint32 transaction_id = 1 [json_name = "transactionId", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
+  // 确认后状态
+  PaymentTransaction.Status status = 2 [(gnostic.openapi.v3.property) = {description: "确认后状态"}];
+  // 关联订单 ID
+  uint32 order_id = 3 [json_name = "orderId", (gnostic.openapi.v3.property) = {description: "关联订单ID"}];
+  // 是否本次调用首次把流水置为 SUCCEEDED（false = 幂等重放）
+  bool first_success = 4 [json_name = "firstSuccess", (gnostic.openapi.v3.property) = {description: "是否首次确认成功"}];
+}
+
+// 模拟渠道确认请求（仅 MOCK 渠道流水可用；开发/演示用途）
+message MockConfirmPaymentRequest {
+  // 支付流水 ID
+  uint32 transaction_id = 1 [json_name = "transactionId", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
+}
+
+// 模拟渠道确认响应
+message MockConfirmPaymentResponse {
+  // 确认后状态
+  PaymentTransaction.Status status = 1 [(gnostic.openapi.v3.property) = {description: "确认后状态"}];
+}
+
+// C 端支付拉起方式
+enum PayType {
+  PAY_TYPE_UNSPECIFIED = 0;
+  // 跳转链接（支付宝电脑网站支付等）：浏览器整页跳转 pay_url
+  PAY_TYPE_REDIRECT = 1;
+  // 二维码（微信 Native）：展示 qr_code 内容扫码支付
+  PAY_TYPE_QR = 2;
+  // 模拟确认（MOCK 渠道）：C 端点「确认支付」走 mock-confirm 接口
+  PAY_TYPE_MOCK = 3;
+}
+
+// 创建支付意图 C 端响应（不含渠道凭据）
+message CreatePaymentIntentAppResponse {
+  // 支付流水 ID（轮询状态用）
+  uint32 transaction_id = 1 [json_name = "transactionId", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
+  // 支付状态（初始 PENDING）
+  PaymentTransaction.Status status = 2 [(gnostic.openapi.v3.property) = {description: "支付状态"}];
+  // 拉起方式
+  PayType pay_type = 3 [(gnostic.openapi.v3.property) = {description: "拉起方式"}];
+  // 跳转链接（pay_type=REDIRECT 时有效）
+  string pay_url = 4 [json_name = "payUrl", (gnostic.openapi.v3.property) = {description: "支付跳转链接"}];
+  // 二维码内容（pay_type=QR 时有效，如 weixin://wxpay/bizpayurl?...）
+  string qr_code = 5 [json_name = "qrCode", (gnostic.openapi.v3.property) = {description: "支付二维码内容"}];
+  // 应付金额（分）
+  int64 amount = 6 [json_name = "amount", (gnostic.openapi.v3.property) = {description: "应付金额（分）"}];
+  // 币种
+  string currency = 7 [json_name = "currency", (gnostic.openapi.v3.property) = {description: "币种"}];
+}
+
 
 // 支付退款服务
 service PaymentRefundService {
@@ -126,6 +225,12 @@ message PaymentTransaction {
   optional BusinessType business_type = 10 [
     json_name = "businessType",
     (gnostic.openapi.v3.property) = {description: "业务类型"}
+  ];
+
+  // 网关侧交易号（回调确认时回填，对账用）
+  optional string gateway_trade_no = 11 [
+    json_name = "gatewayTradeNo",
+    (gnostic.openapi.v3.property) = {description: "网关侧交易号"}
   ];
 
   // ===== 以下是 infra mixin 注入字段（高编号） =====

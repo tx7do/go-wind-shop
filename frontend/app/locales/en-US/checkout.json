@@ -16,7 +16,8 @@
     "invalidForm": "Please complete the shipping details.",
     "emptyCart": "Your cart is empty; order cannot be placed.",
     "orderFailed": "Failed to place the order. Please try again later.",
-    "paymentFailed": "Payment failed. Please try again later."
+    "paymentFailed": "Payment failed. Please try again later.",
+    "noChannel": "Please select a payment method first."
   },
   "steps": {
     "cart": "Cart",
@@ -31,5 +32,27 @@
   "couponNone": "No coupon",
   "couponItem": "Coupon #{{id}}",
   "discount": "Discount",
-  "promotion": "Promotion"
+  "promotion": "Promotion",
+  "payChannels": {
+    "label": "Payment method",
+    "mock": "Mock pay (demo)",
+    "wechat": "WeChat Pay",
+    "alipay": "Alipay",
+    "sandboxBadge": "Sandbox",
+    "empty": "No online payment channel is available yet. Please contact support."
+  },
+  "payDialog": {
+    "title": "Checkout",
+    "qrHint": "Scan the QR code with WeChat to pay",
+    "qrAlt": "WeChat Pay QR code",
+    "redirectHint": "The Alipay cashier opened in a new window. This page will update automatically once paid.",
+    "reopenPayPage": "Reopen payment page",
+    "mockHint": "This is a mock channel — no real money is involved. Click below to simulate a successful payment.",
+    "mockConfirm": "Simulate successful payment",
+    "polling": "Waiting for payment result…",
+    "payLater": "Pay later",
+    "laterHint": "Your order is saved. You can pay later from \"My Orders\".",
+    "timeout": "Timed out waiting for payment. The order stays pending; you can pay later.",
+    "failed": "Payment was not completed. Please try again."
+  }
 }

@@ -54,6 +54,7 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/order"
 	"go-wind-shop/app/core/service/internal/data/ent/orderitem"
 	"go-wind-shop/app/core/service/internal/data/ent/orgunit"
+	"go-wind-shop/app/core/service/internal/data/ent/paymentchannelconfig"
 	"go-wind-shop/app/core/service/internal/data/ent/paymentrefund"
 	"go-wind-shop/app/core/service/internal/data/ent/paymenttransaction"
 	"go-wind-shop/app/core/service/internal/data/ent/permission"
@@ -1449,6 +1450,42 @@ func init() {
 	orgunitDescID := orgunitMixinFields0[0].Descriptor()
 	// orgunit.IDValidator is a validator for the "id" field. It is called by the builders before save.
 	orgunit.IDValidator = orgunitDescID.Validators[0].(func(uint32) error)
+	paymentchannelconfigMixin := schema.PaymentChannelConfig{}.Mixin()
+	paymentchannelconfig.Policy = privacy.NewPolicies(paymentchannelconfigMixin[3], schema.PaymentChannelConfig{})
+	paymentchannelconfig.Hooks[0] = func(next ent.Mutator) ent.Mutator {
+		return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+			if err := paymentchannelconfig.Policy.EvalMutation(ctx, m); err != nil {
+				return nil, err
+			}
+			return next.Mutate(ctx, m)
+		})
+	}
+	paymentchannelconfigMixinFields0 := paymentchannelconfigMixin[0].Fields()
+	_ = paymentchannelconfigMixinFields0
+	paymentchannelconfigMixinFields3 := paymentchannelconfigMixin[3].Fields()
+	_ = paymentchannelconfigMixinFields3
+	paymentchannelconfigFields := schema.PaymentChannelConfig{}.Fields()
+	_ = paymentchannelconfigFields
+	// paymentchannelconfigDescTenantID is the schema descriptor for tenant_id field.
+	paymentchannelconfigDescTenantID := paymentchannelconfigMixinFields3[0].Descriptor()
+	// paymentchannelconfig.DefaultTenantID holds the default value on creation for the tenant_id field.
+	paymentchannelconfig.DefaultTenantID = paymentchannelconfigDescTenantID.Default.(uint32)
+	// paymentchannelconfigDescName is the schema descriptor for name field.
+	paymentchannelconfigDescName := paymentchannelconfigFields[0].Descriptor()
+	// paymentchannelconfig.NameValidator is a validator for the "name" field. It is called by the builders before save.
+	paymentchannelconfig.NameValidator = paymentchannelconfigDescName.Validators[0].(func(string) error)
+	// paymentchannelconfigDescSandbox is the schema descriptor for sandbox field.
+	paymentchannelconfigDescSandbox := paymentchannelconfigFields[4].Descriptor()
+	// paymentchannelconfig.DefaultSandbox holds the default value on creation for the sandbox field.
+	paymentchannelconfig.DefaultSandbox = paymentchannelconfigDescSandbox.Default.(bool)
+	// paymentchannelconfigDescEnabled is the schema descriptor for enabled field.
+	paymentchannelconfigDescEnabled := paymentchannelconfigFields[5].Descriptor()
+	// paymentchannelconfig.DefaultEnabled holds the default value on creation for the enabled field.
+	paymentchannelconfig.DefaultEnabled = paymentchannelconfigDescEnabled.Default.(bool)
+	// paymentchannelconfigDescID is the schema descriptor for id field.
+	paymentchannelconfigDescID := paymentchannelconfigMixinFields0[0].Descriptor()
+	// paymentchannelconfig.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	paymentchannelconfig.IDValidator = paymentchannelconfigDescID.Validators[0].(func(uint32) error)
 	paymentrefundMixin := schema.PaymentRefund{}.Mixin()
 	paymentrefund.Policy = privacy.NewPolicies(paymentrefundMixin[3], schema.PaymentRefund{})
 	paymentrefund.Hooks[0] = func(next ent.Mutator) ent.Mutator {

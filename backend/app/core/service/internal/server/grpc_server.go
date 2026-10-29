@@ -133,6 +133,7 @@ func NewGrpcServer(
 	orderItemService *service.OrderItemService,
 
 	// register:grpc-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
+		paymentChannelConfigService *service.PaymentChannelConfigService,
 		paymentTransactionService *service.PaymentTransactionService,
 		paymentRefundService *service.PaymentRefundService,
 		shippingAddressService *service.ShippingAddressService,
@@ -211,6 +212,7 @@ func NewGrpcServer(
 		orderV1.RegisterOrderServiceServer(srv, orderService)
 	orderV1.RegisterOrderItemServiceServer(srv, orderItemService)
 	paymentV1.RegisterPaymentTransactionServiceServer(srv, paymentTransactionService)
+	paymentV1.RegisterPaymentChannelConfigServiceServer(srv, paymentChannelConfigService)
 	paymentV1.RegisterPaymentRefundServiceServer(srv, paymentRefundService)
 
 	addressV1.RegisterShippingAddressServiceServer(srv, shippingAddressService)

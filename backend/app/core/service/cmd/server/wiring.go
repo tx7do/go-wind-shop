@@ -133,6 +133,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	orderItemRepo := data.NewOrderItemRepo(ctx, entClient)
 	paymentTransactionRepo := data.NewPaymentTransactionRepo(ctx, entClient)
 	paymentRefundRepo := data.NewPaymentRefundRepo(ctx, entClient)
+	paymentChannelConfigRepo := data.NewPaymentChannelConfigRepo(ctx, entClient)
 	shippingAddressRepo := data.NewShippingAddressRepo(ctx, entClient)
 	shipmentRepo := data.NewShipmentRepo(ctx, entClient)
 	couponTemplateRepo := data.NewCouponTemplateRepo(ctx, entClient)
@@ -190,7 +191,8 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	wishlistService := service.NewWishlistService(ctx, wishlistRepo)
 	orderService := service.NewOrderService(ctx, orderRepo, orderItemRepo, skuRepo, cartItemRepo, entClient, internalMessageService)
 	orderItemService := service.NewOrderItemService(ctx, orderItemRepo)
-	paymentTransactionService := service.NewPaymentTransactionService(ctx, paymentTransactionRepo, orderService)
+	paymentChannelConfigService := service.NewPaymentChannelConfigService(ctx, paymentChannelConfigRepo)
+	paymentTransactionService := service.NewPaymentTransactionService(ctx, paymentTransactionRepo, orderService, paymentChannelConfigService)
 	paymentRefundService := service.NewPaymentRefundService(ctx, paymentRefundRepo, paymentTransactionRepo, paymentTransactionService)
 	shippingAddressService := service.NewShippingAddressService(ctx, shippingAddressRepo)
 	shipmentService := service.NewShipmentService(ctx, shipmentRepo, entClient)
@@ -339,6 +341,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		wishlistService,
 		orderService,
 		orderItemService,
+		paymentChannelConfigService,
 		paymentTransactionService,
 		paymentRefundService,
 		shippingAddressService,

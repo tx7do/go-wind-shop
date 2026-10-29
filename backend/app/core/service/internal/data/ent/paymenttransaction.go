@@ -49,8 +49,10 @@ type PaymentTransaction struct {
 	// 支付金额（最小货币单位，分）
 	Amount *int64 `json:"amount,omitempty"`
 	// 支付状态
-	Status       *paymenttransaction.Status `json:"status,omitempty"`
-	selectValues sql.SelectValues
+	Status *paymenttransaction.Status `json:"status,omitempty"`
+	// 网关侧交易号（回调确认时回填，对账用）
+	GatewayTradeNo *string `json:"gateway_trade_no,omitempty"`
+	selectValues   sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -60,7 +62,7 @@ func (*PaymentTransaction) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case paymenttransaction.FieldID, paymenttransaction.FieldCreatedBy, paymenttransaction.FieldUpdatedBy, paymenttransaction.FieldDeletedBy, paymenttransaction.FieldTenantID, paymenttransaction.FieldOrderID, paymenttransaction.FieldUserID, paymenttransaction.FieldAmount:
 			values[i] = new(sql.NullInt64)
-		case paymenttransaction.FieldCurrency, paymenttransaction.FieldBusinessRefID, paymenttransaction.FieldIdempotencyKey, paymenttransaction.FieldPaymentMethod, paymenttransaction.FieldBusinessType, paymenttransaction.FieldStatus:
+		case paymenttransaction.FieldCurrency, paymenttransaction.FieldBusinessRefID, paymenttransaction.FieldIdempotencyKey, paymenttransaction.FieldPaymentMethod, paymenttransaction.FieldBusinessType, paymenttransaction.FieldStatus, paymenttransaction.FieldGatewayTradeNo:
 			values[i] = new(sql.NullString)
 		case paymenttransaction.FieldCreatedAt, paymenttransaction.FieldUpdatedAt, paymenttransaction.FieldDeletedAt:
 			values[i] = new(sql.NullTime)
@@ -197,6 +199,13 @@ func (_m *PaymentTransaction) assignValues(columns []string, values []any) error
 				_m.Status = new(paymenttransaction.Status)
 				*_m.Status = paymenttransaction.Status(value.String)
 			}
+		case paymenttransaction.FieldGatewayTradeNo:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field gateway_trade_no", values[i])
+			} else if value.Valid {
+				_m.GatewayTradeNo = new(string)
+				*_m.GatewayTradeNo = value.String
+			}
 		default:
 			_m.selectValues.Set(columns[i], values[i])
 		}
@@ -311,6 +320,11 @@ func (_m *PaymentTransaction) String() string {
 	if v := _m.Status; v != nil {
 		builder.WriteString("status=")
 		builder.WriteString(fmt.Sprintf("%v", *v))
+	}
+	builder.WriteString(", ")
+	if v := _m.GatewayTradeNo; v != nil {
+		builder.WriteString("gateway_trade_no=")
+		builder.WriteString(*v)
 	}
 	builder.WriteByte(')')
 	return builder.String()

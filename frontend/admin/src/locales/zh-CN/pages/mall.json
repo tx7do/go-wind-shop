@@ -392,5 +392,41 @@
     "deltaTip": "正数入库、负数出库；服务端行锁校验后库存不足将拒绝",
     "deltaZero": "变动量不能为 0",
     "remark": "备注"
+  },
+  "paymentChannel": {
+    "name": "渠道名称",
+    "channel": "渠道类型",
+    "channelType": {
+      "mock": "模拟支付（演示）",
+      "wechatNative": "微信支付 Native（扫码）",
+      "alipayPage": "支付宝（电脑网站支付）"
+    },
+    "appId": "应用 ID（appid）",
+    "mchId": "商户号（mch_id）",
+    "sandbox": "沙箱模式",
+    "sandboxOn": "沙箱",
+    "sandboxOff": "生产",
+    "enabled": "启用状态",
+    "enabledOn": "已启用",
+    "enabledOff": "已停用",
+    "credentials": "网关凭据",
+    "credentialsConfigured": "已配置",
+    "credentialsMissing": "未配置",
+    "credentialsKeepPlaceholder": "已配置——留空保持不变，填入新值则替换",
+    "sectionCredentials": "网关凭据（部署方自有商户资质）",
+    "mchCertSerialNo": "商户证书序列号",
+    "apiV3Key": "APIv3 密钥",
+    "privateKeyPem": "商户私钥（apiclient_key.pem）",
+    "alipayPrivateKey": "应用私钥",
+    "alipayPublicKey": "支付宝公钥",
+    "mockNoCredentials": "模拟渠道无需凭据",
+    "mockHint": "模拟渠道不出真实资金，仅用于开发/演示；生产部署请保持停用并改用真实渠道。",
+    "wechatNoSandbox": "微信支付 V3 无沙箱环境，请以真实商户号小额验收",
+    "remark": "备注",
+    "button": {
+      "create": "新增支付渠道",
+      "update": "编辑支付渠道"
+    },
+    "updatedAt": "更新时间"
   }
 }

@@ -153,6 +153,9 @@ type OrderItem func(*sql.Selector)
 // OrgUnit is the predicate function for orgunit builders.
 type OrgUnit func(*sql.Selector)
 
+// PaymentChannelConfig is the predicate function for paymentchannelconfig builders.
+type PaymentChannelConfig func(*sql.Selector)
+
 // PaymentRefund is the predicate function for paymentrefund builders.
 type PaymentRefund func(*sql.Selector)
 

@@ -119,6 +119,11 @@ func Amount(v int64) predicate.PaymentTransaction {
 	return predicate.PaymentTransaction(sql.FieldEQ(FieldAmount, v))
 }
 
+// GatewayTradeNo applies equality check predicate on the "gateway_trade_no" field. It's identical to GatewayTradeNoEQ.
+func GatewayTradeNo(v string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldEQ(FieldGatewayTradeNo, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.PaymentTransaction {
 	return predicate.PaymentTransaction(sql.FieldEQ(FieldCreatedAt, v))
@@ -932,6 +937,81 @@ func StatusIsNil() predicate.PaymentTransaction {
 // StatusNotNil applies the NotNil predicate on the "status" field.
 func StatusNotNil() predicate.PaymentTransaction {
 	return predicate.PaymentTransaction(sql.FieldNotNull(FieldStatus))
+}
+
+// GatewayTradeNoEQ applies the EQ predicate on the "gateway_trade_no" field.
+func GatewayTradeNoEQ(v string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldEQ(FieldGatewayTradeNo, v))
+}
+
+// GatewayTradeNoNEQ applies the NEQ predicate on the "gateway_trade_no" field.
+func GatewayTradeNoNEQ(v string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldNEQ(FieldGatewayTradeNo, v))
+}
+
+// GatewayTradeNoIn applies the In predicate on the "gateway_trade_no" field.
+func GatewayTradeNoIn(vs ...string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldIn(FieldGatewayTradeNo, vs...))
+}
+
+// GatewayTradeNoNotIn applies the NotIn predicate on the "gateway_trade_no" field.
+func GatewayTradeNoNotIn(vs ...string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldNotIn(FieldGatewayTradeNo, vs...))
+}
+
+// GatewayTradeNoGT applies the GT predicate on the "gateway_trade_no" field.
+func GatewayTradeNoGT(v string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldGT(FieldGatewayTradeNo, v))
+}
+
+// GatewayTradeNoGTE applies the GTE predicate on the "gateway_trade_no" field.
+func GatewayTradeNoGTE(v string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldGTE(FieldGatewayTradeNo, v))
+}
+
+// GatewayTradeNoLT applies the LT predicate on the "gateway_trade_no" field.
+func GatewayTradeNoLT(v string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldLT(FieldGatewayTradeNo, v))
+}
+
+// GatewayTradeNoLTE applies the LTE predicate on the "gateway_trade_no" field.
+func GatewayTradeNoLTE(v string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldLTE(FieldGatewayTradeNo, v))
+}
+
+// GatewayTradeNoContains applies the Contains predicate on the "gateway_trade_no" field.
+func GatewayTradeNoContains(v string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldContains(FieldGatewayTradeNo, v))
+}
+
+// GatewayTradeNoHasPrefix applies the HasPrefix predicate on the "gateway_trade_no" field.
+func GatewayTradeNoHasPrefix(v string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldHasPrefix(FieldGatewayTradeNo, v))
+}
+
+// GatewayTradeNoHasSuffix applies the HasSuffix predicate on the "gateway_trade_no" field.
+func GatewayTradeNoHasSuffix(v string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldHasSuffix(FieldGatewayTradeNo, v))
+}
+
+// GatewayTradeNoIsNil applies the IsNil predicate on the "gateway_trade_no" field.
+func GatewayTradeNoIsNil() predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldIsNull(FieldGatewayTradeNo))
+}
+
+// GatewayTradeNoNotNil applies the NotNil predicate on the "gateway_trade_no" field.
+func GatewayTradeNoNotNil() predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldNotNull(FieldGatewayTradeNo))
+}
+
+// GatewayTradeNoEqualFold applies the EqualFold predicate on the "gateway_trade_no" field.
+func GatewayTradeNoEqualFold(v string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldEqualFold(FieldGatewayTradeNo, v))
+}
+
+// GatewayTradeNoContainsFold applies the ContainsFold predicate on the "gateway_trade_no" field.
+func GatewayTradeNoContainsFold(v string) predicate.PaymentTransaction {
+	return predicate.PaymentTransaction(sql.FieldContainsFold(FieldGatewayTradeNo, v))
 }
 
 // And groups predicates with the AND operator between them.

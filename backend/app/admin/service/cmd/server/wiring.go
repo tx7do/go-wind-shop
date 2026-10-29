@@ -90,6 +90,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	shipmentServiceClient := data.NewShipmentServiceClient(ctx, discovery)
 	couponTemplateServiceClient := data.NewCouponTemplateServiceClient(ctx, discovery)
 	promotionServiceClient := data.NewPromotionServiceClient(ctx, discovery)
+	paymentChannelConfigServiceClient := data.NewPaymentChannelConfigServiceClient(ctx, discovery)
 	stockOpLogServiceClient := data.NewStockOpLogServiceClient(ctx, discovery)
 	userCouponServiceClient := data.NewUserCouponServiceClient(ctx, discovery)
 	shippingRateServiceClient := data.NewShippingRateServiceClient(ctx, discovery)
@@ -169,6 +170,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	shipmentService := service.NewShipmentService(ctx, shipmentServiceClient)
 	couponTemplateService := service.NewCouponTemplateService(ctx, couponTemplateServiceClient)
 	promotionService := service.NewPromotionService(ctx, promotionServiceClient)
+	paymentChannelConfigService := service.NewPaymentChannelConfigService(ctx, paymentChannelConfigServiceClient)
 	stockOpLogService := service.NewStockOpLogService(ctx, stockOpLogServiceClient)
 	userCouponService := service.NewUserCouponService(ctx, userCouponServiceClient)
 	shippingRateService := service.NewShippingRateService(ctx, shippingRateServiceClient)
@@ -263,6 +265,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		shipmentService,
 		couponTemplateService,
 		promotionService,
+		paymentChannelConfigService,
 		stockOpLogService,
 		userCouponService,
 		shippingRateService,

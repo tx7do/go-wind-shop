@@ -3015,6 +3015,15 @@ export interface PaymentTransactionService {
   Create(
     request: paymentservicev1_CreatePaymentTransactionRequest,
   ): Promise<wellKnownEmpty>;
+  // 创建支付意图：校验订单归属与待支付态 → 落 PENDING 流水 → 渠道网关下单，
+  // 返回二维码（微信 Native）/ 跳转链接（支付宝）等 C 端拉起支付所需信息。
+  CreatePaymentIntent(
+    request: paymentservicev1_CreatePaymentIntentRequest,
+  ): Promise<paymentservicev1_CreatePaymentIntentAppResponse>;
+  // 模拟渠道确认支付（仅 MOCK 渠道流水可用；开发/演示用途，不出真实资金）
+  MockConfirmPayment(
+    request: paymentservicev1_MockConfirmPaymentRequest,
+  ): Promise<paymentservicev1_MockConfirmPaymentResponse>;
 }
 
 export function createPaymentTransactionServiceClient(
@@ -3196,6 +3205,22 @@ export function createPaymentTransactionServiceClient(
         method: 'Create',
       }) as Promise<wellKnownEmpty>;
     },
+    CreatePaymentIntent(request) {
+      const path = `/app/v1/mall/payments/intent`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PaymentTransactionService',
+        method: 'CreatePaymentIntent',
+      }) as Promise<paymentservicev1_CreatePaymentIntentAppResponse>;
+    },
+    MockConfirmPayment(request) {
+      const path = `/app/v1/mall/payments/mock-confirm`;
+      const body = JSON.stringify(request);
+      return transport.unary(path, 'POST', body, {
+        service: 'PaymentTransactionService',
+        method: 'MockConfirmPayment',
+      }) as Promise<paymentservicev1_MockConfirmPaymentResponse>;
+    },
   };
 }
 export type paymentservicev1_ListPaymentTransactionResponse = {
@@ -3213,6 +3238,8 @@ export type paymentservicev1_PaymentTransaction = {
   currency?: string;
   deletedAt?: wellKnownTimestamp;
   deletedBy?: number;
+  // 网关侧交易号（回调确认时回填，对账用）
+  gatewayTradeNo?: string;
   id?: number;
   idempotencyKey?: string;
   orderId?: number;
@@ -3232,21 +3259,19 @@ export type paymentservicev1_PaymentTransaction_Status =
   | 'STATUS_UNSPECIFIED'
   | 'SUCCEEDED';
 // 支付方式（须与 currency/business_type 等 mixin 的 NamedValues 对齐）
+//
+// 注意：有意不定义任何虚拟货币支付方式——按境内监管（银发〔2021〕237号文），
+// 虚拟货币作为支付手段属非法金融活动；本项目作为代码交付物不提供、不预留此类能力。
+// BALANCE/CREDIT 仅作为「线下/后台记账」语义的流水类型（不构成钱包储值体系）。
 export type paymentservicev1_PaymentMethod =
   | 'ALIPAY'
-  // 内部支付
+  // 内部记账（线下/后台人工核销，非在线储值钱包）
   | 'BALANCE'
   | 'CREDIT'
-  // 虚拟货币
-  | 'CRYPTO_BTC'
-  | 'CRYPTO_ETH'
-  | 'CRYPTO_OTHER'
-  | 'CRYPTO_TON'
-  | 'CRYPTO_TRON'
-  | 'CRYPTO_USDC'
-  | 'CRYPTO_USDT'
   // 混合 / 线下
   | 'MIXED'
+  // 模拟渠道（开发/演示，不出真实资金）
+  | 'MOCK'
   | 'OFFLINE'
   | 'PAYMENT_METHOD_UNSPECIFIED'
   | 'PAYPAL'
@@ -3279,6 +3304,108 @@ export type paymentservicev1_CreatePaymentTransactionRequest = {
   data: paymentservicev1_PaymentTransaction | undefined;
 };
 
+// 创建支付意图请求
+export type paymentservicev1_CreatePaymentIntentRequest = {
+  // 支付渠道配置 ID
+  channelId: number | undefined;
+  // 支付幂等键（租户内唯一，防重放重复落流水）
+  idempotencyKey: string | undefined;
+  // 关联订单 ID
+  orderId: number | undefined;
+  // 支付人用户 ID（BFF 从登录态注入；用于订单归属校验）
+  userId: number | undefined;
+};
+
+// 创建支付意图 C 端响应（不含渠道凭据）
+export type paymentservicev1_CreatePaymentIntentAppResponse = {
+  // 应付金额（分）
+  amount: number | undefined;
+  // 币种
+  currency: string | undefined;
+  // 拉起方式
+  payType: paymentservicev1_PayType | undefined;
+  // 跳转链接（pay_type=REDIRECT 时有效）
+  payUrl: string | undefined;
+  // 二维码内容（pay_type=QR 时有效，如 weixin://wxpay/bizpayurl?...）
+  qrCode: string | undefined;
+  // 支付状态（初始 PENDING）
+  status: paymentservicev1_PaymentTransaction_Status | undefined;
+  // 支付流水 ID（轮询状态用）
+  transactionId: number | undefined;
+};
+
+// C 端支付拉起方式
+export type paymentservicev1_PayType =
+  // 模拟确认（MOCK 渠道）：C 端点「确认支付」走 mock-confirm 接口
+  | 'PAY_TYPE_MOCK'
+  // 二维码（微信 Native）：展示 qr_code 内容扫码支付
+  | 'PAY_TYPE_QR'
+  // 跳转链接（支付宝电脑网站支付等）：浏览器整页跳转 pay_url
+  | 'PAY_TYPE_REDIRECT'
+  | 'PAY_TYPE_UNSPECIFIED';
+// 模拟渠道确认请求（仅 MOCK 渠道流水可用；开发/演示用途）
+export type paymentservicev1_MockConfirmPaymentRequest = {
+  // 支付流水 ID
+  transactionId: number | undefined;
+};
+
+// 模拟渠道确认响应
+export type paymentservicev1_MockConfirmPaymentResponse = {
+  // 确认后状态
+  status: paymentservicev1_PaymentTransaction_Status | undefined;
+};
+
+// 支付渠道前台服务（C 端结算页渠道选择；登录态）
+export interface PaymentChannelService {
+  // 当前启用渠道（不含任何凭据/配置细节）
+  ListEnabledChannels(
+    request: paymentservicev1_ListEnabledChannelsRequest,
+  ): Promise<paymentservicev1_ListEnabledChannelsResponse>;
+}
+
+export function createPaymentChannelServiceClient(
+  transport: ClientTransport,
+): PaymentChannelService {
+  return {
+    ListEnabledChannels(_request) {
+      const path = `/app/v1/mall/payments/channels`;
+      const body = null;
+      return transport.unary(path, 'GET', body, {
+        service: 'PaymentChannelService',
+        method: 'ListEnabledChannels',
+      }) as Promise<paymentservicev1_ListEnabledChannelsResponse>;
+    },
+  };
+}
+export type paymentservicev1_ListEnabledChannelsRequest = {
+};
+
+export type paymentservicev1_ListEnabledChannelsResponse = {
+  items: paymentservicev1_PaymentChannel[] | undefined;
+};
+
+// C 端可见渠道（公开视图：仅展示字段，无任何配置/凭据细节）
+export type paymentservicev1_PaymentChannel = {
+  channel?: paymentservicev1_PaymentChannelType;
+  id?: number;
+  name?: string;
+  sandbox?: boolean;
+};
+
+// 支付渠道类型
+//
+// 合规约束（代码交付物定位）：仅提供「部署方自带资质」的直连商户模式适配器——
+// 交易资金由支付渠道直接清算给部署方自己的商户号，本系统不归集、不经手、
+// 不二次分配任何交易资金。多商户平台化（资金归集/分账）必须另行接入持牌
+// 机构分账产品，本枚举不提供该形态。
+export type paymentservicev1_PaymentChannelType =
+  // 支付宝电脑网站支付（page pay，直连商户）
+  | 'PAYMENT_CHANNEL_ALIPAY_PAGE'
+  // 模拟渠道：开发/演示用，不出真实资金；默认停用，生产部署应保持停用
+  | 'PAYMENT_CHANNEL_MOCK'
+  | 'PAYMENT_CHANNEL_UNSPECIFIED'
+  // 微信支付 Native（扫码支付，直连商户）
+  | 'PAYMENT_CHANNEL_WECHAT_NATIVE';
 // 支付退款前台服务
 export interface PaymentRefundService {
   List(
@@ -5570,6 +5697,7 @@ export class ApiClient {
   private _invoiceService?: InvoiceService;
   private _orderItemService?: OrderItemService;
   private _orderService?: OrderService;
+  private _paymentChannelService?: PaymentChannelService;
   private _paymentRefundService?: PaymentRefundService;
   private _paymentTransactionService?: PaymentTransactionService;
   private _productAttributeService?: ProductAttributeService;
@@ -5644,6 +5772,10 @@ export class ApiClient {
 
   get orderService(): OrderService {
     return this._orderService ??= createOrderServiceClient(this._transport);
+  }
+
+  get paymentChannelService(): PaymentChannelService {
+    return this._paymentChannelService ??= createPaymentChannelServiceClient(this._transport);
   }
 
   get paymentRefundService(): PaymentRefundService {

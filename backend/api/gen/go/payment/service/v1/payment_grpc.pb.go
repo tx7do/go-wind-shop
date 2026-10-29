@@ -21,12 +21,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	PaymentTransactionService_List_FullMethodName   = "/payment.service.v1.PaymentTransactionService/List"
-	PaymentTransactionService_Count_FullMethodName  = "/payment.service.v1.PaymentTransactionService/Count"
-	PaymentTransactionService_Get_FullMethodName    = "/payment.service.v1.PaymentTransactionService/Get"
-	PaymentTransactionService_Create_FullMethodName = "/payment.service.v1.PaymentTransactionService/Create"
-	PaymentTransactionService_Update_FullMethodName = "/payment.service.v1.PaymentTransactionService/Update"
-	PaymentTransactionService_Delete_FullMethodName = "/payment.service.v1.PaymentTransactionService/Delete"
+	PaymentTransactionService_List_FullMethodName                = "/payment.service.v1.PaymentTransactionService/List"
+	PaymentTransactionService_Count_FullMethodName               = "/payment.service.v1.PaymentTransactionService/Count"
+	PaymentTransactionService_Get_FullMethodName                 = "/payment.service.v1.PaymentTransactionService/Get"
+	PaymentTransactionService_Create_FullMethodName              = "/payment.service.v1.PaymentTransactionService/Create"
+	PaymentTransactionService_Update_FullMethodName              = "/payment.service.v1.PaymentTransactionService/Update"
+	PaymentTransactionService_Delete_FullMethodName              = "/payment.service.v1.PaymentTransactionService/Delete"
+	PaymentTransactionService_CreatePaymentIntent_FullMethodName = "/payment.service.v1.PaymentTransactionService/CreatePaymentIntent"
+	PaymentTransactionService_ConfirmPayment_FullMethodName      = "/payment.service.v1.PaymentTransactionService/ConfirmPayment"
 )
 
 // PaymentTransactionServiceClient is the client API for PaymentTransactionService service.
@@ -41,6 +43,14 @@ type PaymentTransactionServiceClient interface {
 	Create(ctx context.Context, in *CreatePaymentTransactionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Update(ctx context.Context, in *UpdatePaymentTransactionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Delete(ctx context.Context, in *DeletePaymentTransactionRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 创建支付意图：校验订单（存在/归属/待支付态）后落一条 PENDING 支付流水，
+	// 并带回所选渠道配置（凭据仅在服务间内网传递，不经 C 端）。
+	// 网关下单（拿二维码/跳转链接）由 BFF 持渠道凭据执行。
+	CreatePaymentIntent(ctx context.Context, in *CreatePaymentIntentRequest, opts ...grpc.CallOption) (*CreatePaymentIntentResponse, error)
+	// 确认支付：网关回调/模拟确认经 BFF 验签后调用。
+	// 幂等：流水已 SUCCEEDED 时直接幂等成功；金额不符拒绝。
+	// 成功后推进关联订单 PENDING_PAYMENT→PAID（expected_status 乐观并发防覆盖）。
+	ConfirmPayment(ctx context.Context, in *ConfirmPaymentRequest, opts ...grpc.CallOption) (*ConfirmPaymentResponse, error)
 }
 
 type paymentTransactionServiceClient struct {
@@ -111,6 +121,26 @@ func (c *paymentTransactionServiceClient) Delete(ctx context.Context, in *Delete
 	return out, nil
 }
 
+func (c *paymentTransactionServiceClient) CreatePaymentIntent(ctx context.Context, in *CreatePaymentIntentRequest, opts ...grpc.CallOption) (*CreatePaymentIntentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreatePaymentIntentResponse)
+	err := c.cc.Invoke(ctx, PaymentTransactionService_CreatePaymentIntent_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *paymentTransactionServiceClient) ConfirmPayment(ctx context.Context, in *ConfirmPaymentRequest, opts ...grpc.CallOption) (*ConfirmPaymentResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ConfirmPaymentResponse)
+	err := c.cc.Invoke(ctx, PaymentTransactionService_ConfirmPayment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PaymentTransactionServiceServer is the server API for PaymentTransactionService service.
 // All implementations must embed UnimplementedPaymentTransactionServiceServer
 // for forward compatibility.
@@ -123,6 +153,14 @@ type PaymentTransactionServiceServer interface {
 	Create(context.Context, *CreatePaymentTransactionRequest) (*emptypb.Empty, error)
 	Update(context.Context, *UpdatePaymentTransactionRequest) (*emptypb.Empty, error)
 	Delete(context.Context, *DeletePaymentTransactionRequest) (*emptypb.Empty, error)
+	// 创建支付意图：校验订单（存在/归属/待支付态）后落一条 PENDING 支付流水，
+	// 并带回所选渠道配置（凭据仅在服务间内网传递，不经 C 端）。
+	// 网关下单（拿二维码/跳转链接）由 BFF 持渠道凭据执行。
+	CreatePaymentIntent(context.Context, *CreatePaymentIntentRequest) (*CreatePaymentIntentResponse, error)
+	// 确认支付：网关回调/模拟确认经 BFF 验签后调用。
+	// 幂等：流水已 SUCCEEDED 时直接幂等成功；金额不符拒绝。
+	// 成功后推进关联订单 PENDING_PAYMENT→PAID（expected_status 乐观并发防覆盖）。
+	ConfirmPayment(context.Context, *ConfirmPaymentRequest) (*ConfirmPaymentResponse, error)
 	mustEmbedUnimplementedPaymentTransactionServiceServer()
 }
 
@@ -150,6 +188,12 @@ func (UnimplementedPaymentTransactionServiceServer) Update(context.Context, *Upd
 }
 func (UnimplementedPaymentTransactionServiceServer) Delete(context.Context, *DeletePaymentTransactionRequest) (*emptypb.Empty, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedPaymentTransactionServiceServer) CreatePaymentIntent(context.Context, *CreatePaymentIntentRequest) (*CreatePaymentIntentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreatePaymentIntent not implemented")
+}
+func (UnimplementedPaymentTransactionServiceServer) ConfirmPayment(context.Context, *ConfirmPaymentRequest) (*ConfirmPaymentResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ConfirmPayment not implemented")
 }
 func (UnimplementedPaymentTransactionServiceServer) mustEmbedUnimplementedPaymentTransactionServiceServer() {
 }
@@ -281,6 +325,42 @@ func _PaymentTransactionService_Delete_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PaymentTransactionService_CreatePaymentIntent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePaymentIntentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentTransactionServiceServer).CreatePaymentIntent(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentTransactionService_CreatePaymentIntent_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentTransactionServiceServer).CreatePaymentIntent(ctx, req.(*CreatePaymentIntentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PaymentTransactionService_ConfirmPayment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfirmPaymentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PaymentTransactionServiceServer).ConfirmPayment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: PaymentTransactionService_ConfirmPayment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PaymentTransactionServiceServer).ConfirmPayment(ctx, req.(*ConfirmPaymentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PaymentTransactionService_ServiceDesc is the grpc.ServiceDesc for PaymentTransactionService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -311,6 +391,14 @@ var PaymentTransactionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _PaymentTransactionService_Delete_Handler,
+		},
+		{
+			MethodName: "CreatePaymentIntent",
+			Handler:    _PaymentTransactionService_CreatePaymentIntent_Handler,
+		},
+		{
+			MethodName: "ConfirmPayment",
+			Handler:    _PaymentTransactionService_ConfirmPayment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
