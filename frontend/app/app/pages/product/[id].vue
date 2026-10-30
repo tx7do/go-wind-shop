@@ -19,20 +19,30 @@ import {
   useGetProductRating,
   useGetProductReviewSummary,
   useListActivePromotions,
-    useListActiveSeckills,
+  useListActiveSeckills,
   useListActiveGroupons,
+  useListComments,
+  useCreateComment,
+  useGetInteractionStatus,
+  useGetCounts,
+  useLike,
+  useUnlike,
 } from '@/api/composables';
-import { getCurrentLocale } from '@/utils/locale';
+import { pickTranslation } from '@/utils/translation';
+import { formatFen } from '@/utils/money';
 import { useAccessStore } from '@/stores/modules/core/access.state';
 import { useUserStore } from '@/stores/modules/core/user.state';
 import { queryClient } from '@/plugins/vue-query';
+import type {
+  commentservicev1_Comment,
+  commentservicev1_CreateCommentRequest,
+} from '@/api/generated/app/service/v1';
 
 const route = useRoute();
 const { t } = useI18n();
 const localePath = useLocalePath();
 
 const productId = computed(() => Number(route.params.id));
-const currentLocale = computed(() => getCurrentLocale());
 
 // ---------- 登录态 / 当前用户 ----------
 const accessStore = useAccessStore();
@@ -88,14 +98,6 @@ type SkuCombinationEntity = {
   attributeId?: number;
   attributeValueId?: number;
 };
-
-function pickTranslation<T extends { languageCode?: string }>(
-  translations: T[] | undefined,
-): T | undefined {
-  if (!translations || translations.length === 0) return undefined;
-  const match = translations.find((tr) => tr.languageCode === currentLocale.value);
-  return match ?? translations[0];
-}
 
 const DISPLAY_CURRENCY = 'CNY';
 
@@ -392,14 +394,12 @@ const canAddToCart = computed(() => {
   return matchedSku.value !== undefined && !isOutOfStock.value;
 });
 
-// 后端 SKU 价格 amount 以「分」存储,展示统一换算为元(两位小数)。
-const displayPrice = computed(() => {
-  const price = matchedSkuPrice.value;
-  if (!price || !price.amount) return null;
-  const fen = Number(price.amount);
-  if (Number.isNaN(fen) || fen <= 0) return null;
-  return (fen / 100).toFixed(2);
+// 后端金额一律是「分」且经 protobuf 序列化成字符串：先 Number() 再比较/展示。
+const basePriceFen = computed<number>(() => {
+  const fen = Number(matchedSkuPrice.value?.amount ?? 0);
+  return Number.isFinite(fen) && fen > 0 ? fen : 0;
 });
+const hasPrice = computed(() => basePriceFen.value > 0);
 
 // ---------- 秒杀（最高优先级价格展示） ----------
 // ListActiveSeckills 返回当前生效中且未售罄的秒杀，这里按当前商品的 SKU 匹配。
@@ -457,7 +457,7 @@ const productPromotions = computed(() => {
 // 专价活动：priority 最大者优先；仅当专价低于现价时生效（与服务端同语义）。
 const specialPricePromo = computed(() => {
   const list = productPromotions.value.filter(
-    (p) => p.promoType === 'SPECIAL_PRICE' && (p.specialPrice ?? 0) > 0,
+    (p) => p.promoType === 'SPECIAL_PRICE' && Number(p.specialPrice ?? 0) > 0,
   );
   return list.reduce<PromotionEntity | undefined>(
     (best, p) => (!best || (p.priority ?? 0) > (best.priority ?? 0) ? p : best),
@@ -465,13 +465,10 @@ const specialPricePromo = computed(() => {
   );
 });
 
-const promoPrice = computed(() => {
-  const base = displayPrice.value;
-  const sp = specialPricePromo.value;
-  if (!base || !sp?.specialPrice) return null;
-  // specialPrice 同为「分」,换算后与服务端同语义:仅低于现价时生效
-  const specialYuan = (sp.specialPrice / 100).toFixed(2);
-  return Number(specialYuan) < Number(base) ? specialYuan : null;
+const specialPriceFen = computed<number | null>(() => {
+  const base = basePriceFen.value;
+  const fen = Number(specialPricePromo.value?.specialPrice ?? 0);
+  return base > 0 && fen > 0 && fen < base ? fen : null;
 });
 
 // 秒杀（最高优先级）：当前选中 SKU 的生效秒杀，秒杀价低于现价时覆盖展示
@@ -480,12 +477,10 @@ const activeSeckillForSku = computed(() => {
   if (!sid) return undefined;
   return activeSeckills.value.find((k) => k.skuId === sid);
 });
-const seckillPrice = computed(() => {
-  const base = displayPrice.value;
-  const k = activeSeckillForSku.value;
-  if (!base || !k?.seckillPrice) return null;
-  const yuan = (k.seckillPrice / 100).toFixed(2);
-  return Number(yuan) < Number(base) ? yuan : null;
+const seckillPriceFen = computed<number | null>(() => {
+  const base = basePriceFen.value;
+  const fen = Number(activeSeckillForSku.value?.seckillPrice ?? 0);
+  return base > 0 && fen > 0 && fen < base ? fen : null;
 });
 
 // 拼团（最高优先级）：当前选中 SKU 的生效拼团，拼团价低于现价时覆盖展示
@@ -494,12 +489,10 @@ const activeGrouponForSku = computed(() => {
   if (!sid) return undefined;
   return activeGroupons.value.find((g) => g.skuId === sid);
 });
-const grouponPrice = computed(() => {
-  const base = displayPrice.value;
-  const g = activeGrouponForSku.value;
-  if (!base || !g?.groupPrice) return null;
-  const yuan = (g.groupPrice / 100).toFixed(2);
-  return Number(yuan) < Number(base) ? yuan : null;
+const grouponPriceFen = computed<number | null>(() => {
+  const base = basePriceFen.value;
+  const fen = Number(activeGrouponForSku.value?.groupPrice ?? 0);
+  return base > 0 && fen > 0 && fen < base ? fen : null;
 });
 
 // 满减角标：取减让最大的店铺级活动展示「满 X 减 Y」。
@@ -511,9 +504,43 @@ const fullReductionPromo = computed(() => {
   );
 });
 
-function yuan(fen?: number) {
-  return ((fen ?? 0) / 100).toFixed(2);
-}
+const effectivePriceFen = computed(
+  () => grouponPriceFen.value ?? seckillPriceFen.value ?? specialPriceFen.value ?? basePriceFen.value,
+);
+const hasActivePrice = computed(() => hasPrice.value && effectivePriceFen.value < basePriceFen.value);
+
+const grouponBadgeLabel = computed(() => {
+  const g = activeGrouponForSku.value;
+  if (!g) return '';
+  const name = g.name || t('mall.groupon.tag');
+  return g.groupSize ? `${name} · ${t('mall.groupon.tagSize', { size: g.groupSize })}` : name;
+});
+const seckillBadgeLabel = computed(() => activeSeckillForSku.value?.name || t('mall.seckill.tag'));
+const specialBadgeLabel = computed(
+  () => specialPricePromo.value?.name || t('mall.promotion.specialPriceTag'),
+);
+const fullReductionLabel = computed(() => {
+  const p = fullReductionPromo.value;
+  if (!p) return '';
+  return t('mall.promotion.fullReductionTag', {
+    threshold: formatFen(p.thresholdAmount),
+    reduction: formatFen(p.reductionAmount),
+  });
+});
+
+const servicePromises = computed(() => [
+  { icon: 'lucide:shield-check', label: t('mall.product.serviceAuthentic') },
+  { icon: 'lucide:truck', label: t('mall.product.serviceShipping') },
+  { icon: 'lucide:rotate-ccw', label: t('mall.product.serviceReturn') },
+]);
+
+// ---------- 主图 / 缩略图 ----------
+const galleryImages = computed<string[]>(() => {
+  const url = product.value?.imageUrl;
+  return url ? [url] : [];
+});
+const activeImageIndex = ref(0);
+const activeImage = computed(() => galleryImages.value[activeImageIndex.value]);
 
 // ---------- 当前用户的购物车（与 cart.vue 同样的按 userId 过滤逻辑） ----------
 type CartEntity = { id?: number; userId?: number };
@@ -585,6 +612,9 @@ watch(productId, () => {
   clearSelections();
   applyDefaultSelections();
   quantity.value = 1;
+  activeImageIndex.value = 0;
+  closeReply();
+  for (const k of Object.keys(likeState)) delete likeState[Number(k)];
   if (import.meta.client) scrollToTop();
 });
 
@@ -660,29 +690,253 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
     selections[attrId] = String(nv.id);
   }
 }
+
+// ---------- 评价：评论列表 / 点赞 / 回复 / 发表 ----------
+// 评论列表接口不在白名单，匿名请求会 401；未登录时只渲染空态，避免打红控制台。
+const commentQueryParams = computed(() => ({
+  objectId: productId.value,
+  contentType: 'CONTENT_TYPE_PRODUCT',
+  page: 1,
+  pageSize: 50,
+  noPaging: true,
+  sorting: [{ field: 'id', direction: 'DESC' }],
+}));
+const commentsQuery = useListComments(commentQueryParams, {
+  enabled: isLogin,
+});
+const commentsLoading = computed(() => isLogin.value && commentsQuery.isPending.value);
+const commentsError = computed(() => isLogin.value && commentsQuery.isError.value);
+const topLevelComments = computed<commentservicev1_Comment[]>(() => {
+  const items = (commentsQuery.data?.value as any)?.items ?? [];
+  return (items as commentservicev1_Comment[]).filter((c) => !c.parentId || c.parentId === 0);
+});
+
+const allCommentIds = computed<number[]>(() => {
+  const ids: number[] = [];
+  const walk = (list: commentservicev1_Comment[]) => {
+    for (const c of list) {
+      if (c.id) ids.push(c.id);
+      if (c.children && c.children.length > 0) walk(c.children as commentservicev1_Comment[]);
+    }
+  };
+  walk(topLevelComments.value);
+  return ids;
+});
+
+const commentStatusQuery = useGetInteractionStatus(
+  computed(() => ({
+    targetType: 'TARGET_TYPE_COMMENT',
+    targetIds: allCommentIds.value,
+  })),
+  {
+    enabled: computed(() => isLogin.value && allCommentIds.value.length > 0),
+    retry: false,
+  },
+);
+const commentCountsQuery = useGetCounts(
+  computed(() => ({
+    targetType: 'TARGET_TYPE_COMMENT',
+    targetIds: allCommentIds.value,
+    metrics: ['COUNTER_METRIC_LIKE'],
+  })),
+  { enabled: computed(() => allCommentIds.value.length > 0) },
+);
+
+const likeStatusMap = computed<Record<number, boolean>>(() => {
+  const map: Record<number, boolean> = {};
+  const statuses = (commentStatusQuery.data?.value as any)?.statuses;
+  if (statuses) {
+    for (const [k, v] of Object.entries(statuses)) {
+      map[Number(k)] = (v as any)?.liked ?? false;
+    }
+  }
+  return map;
+});
+
+const likeCountMap = computed<Record<number, number>>(() => {
+  const map: Record<number, number> = {};
+  const counts = (commentCountsQuery.data?.value as any)?.counts;
+  if (counts) {
+    for (const [k, v] of Object.entries(counts)) {
+      const targetId = Number(k);
+      const cm = v as any;
+      if (cm?.counts) {
+        for (const mc of cm.counts) {
+          if (mc.metric === 'COUNTER_METRIC_LIKE') {
+            map[targetId] = Number(mc.count) || 0;
+          }
+        }
+      }
+    }
+  }
+  return map;
+});
+
+const likeState = reactive<Record<number, { liked: boolean; count: number }>>({});
+
+function commentLiked(id?: number) {
+  if (!id) return false;
+  return likeState[id]?.liked ?? likeStatusMap.value[id] ?? false;
+}
+function commentLikeCount(id?: number) {
+  if (!id) return 0;
+  return likeState[id]?.count ?? likeCountMap.value[id] ?? 0;
+}
+
+const likeMutation = useLike();
+const unlikeMutation = useUnlike();
+
+async function toggleCommentLike(c: commentservicev1_Comment) {
+  if (!isLogin.value) {
+    toast.error(t('authentication.login.please_login'));
+    navigateTo(localePath('/login'));
+    return;
+  }
+  if (!c.id) return;
+  const req = { targetId: c.id, targetType: 'TARGET_TYPE_COMMENT' } as any;
+  try {
+    const resp = commentLiked(c.id)
+      ? await unlikeMutation.mutateAsync(req)
+      : await likeMutation.mutateAsync(req);
+    likeState[c.id] = { liked: !!resp?.liked, count: Number(resp?.likeCount ?? 0) };
+    queryClient.invalidateQueries({ queryKey: ['interactionStatus'] });
+    queryClient.invalidateQueries({ queryKey: ['interactionCounts'] });
+  } catch {
+    toast.error(t('common.operationFailed'));
+  }
+}
+
+const replyToId = ref<number | null>(null);
+const replyContent = ref('');
+const replyMutation = useCreateComment();
+
+function openReply(id?: number) {
+  if (!id) return;
+  replyToId.value = replyToId.value === id ? null : id;
+  replyContent.value = '';
+}
+function closeReply() {
+  replyToId.value = null;
+  replyContent.value = '';
+}
+
+async function submitReply(parentId?: number) {
+  if (parentId === undefined) return;
+  if (!isLogin.value) {
+    toast.error(t('authentication.login.please_login'));
+    navigateTo(localePath('/login'));
+    return;
+  }
+  if (!replyContent.value.trim()) return;
+  const req: commentservicev1_CreateCommentRequest = {
+    data: {
+      content: replyContent.value,
+      contentType: 'CONTENT_TYPE_PRODUCT' as any,
+      objectId: productId.value,
+      parentId,
+    } as any,
+  };
+  try {
+    await replyMutation.mutateAsync(req);
+    toast.success(t('comment.pendingApproval'));
+    closeReply();
+    queryClient.invalidateQueries({ queryKey: ['listComments'] });
+  } catch {
+    toast.error(t('common.operationFailed'));
+  }
+}
+
+const postContent = ref('');
+const postRating = ref(0);
+const postMutation = useCreateComment({
+  onSuccess: () => {
+    toast.success(t('comment.pendingApproval'));
+    postContent.value = '';
+    postRating.value = 0;
+    queryClient.invalidateQueries({ queryKey: ['listComments'] });
+  },
+  onError: () => {
+    toast.error(t('common.operationFailed'));
+  },
+});
+
+async function submitComment() {
+  if (!isLogin.value) {
+    toast.error(t('authentication.login.please_login'));
+    navigateTo(localePath('/login'));
+    return;
+  }
+  if (!postContent.value.trim()) return;
+  if (postRating.value < 1 || postRating.value > 5) return;
+
+  const req: commentservicev1_CreateCommentRequest = {
+    data: {
+      content: postContent.value,
+      rating: postRating.value,
+      contentType: 'CONTENT_TYPE_PRODUCT' as any,
+      objectId: productId.value,
+      parentId: 0,
+    } as any,
+  };
+  await postMutation.mutateAsync(req);
+}
+
+function formatCommentTime(ts: unknown): string {
+  if (!ts) return '';
+  const d = new Date(String(ts));
+  if (Number.isNaN(d.getTime())) return '';
+  const p = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+// 滚到页尾时收起吸底购买条，否则它会盖住站点页脚的链接。
+// 商品数据是客户端到达的，哨兵节点晚于 mount 才渲染，所以观察器挂在 ref 上而不是 onMounted。
+const endSentinel = ref<HTMLElement | null>(null);
+const showStickyBar = ref(true);
+let sentinelObserver: IntersectionObserver | undefined;
+
+watch(endSentinel, (el) => {
+  sentinelObserver?.disconnect();
+  if (!el || !import.meta.client) return;
+  sentinelObserver = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0];
+      if (entry) showStickyBar.value = !entry.isIntersecting;
+    },
+    { rootMargin: '0px 0px 64px 0px' },
+  );
+  sentinelObserver.observe(el);
+});
+
+onBeforeUnmount(() => sentinelObserver?.disconnect());
 </script>
 
 <template>
-  <!-- 麵包屑導航（壓縮的左對齊標題區，替代原 PageHero） -->
-  <LayoutSectionContainer class="!py-4">
-    <nav class="flex items-center gap-2 text-sm text-muted-foreground">
-      <NuxtLink :to="localePath('/')" class="hover:text-foreground">
+  <LayoutSectionContainer class="!pt-4 md:!pt-6">
+    <nav class="mb-4 flex items-center gap-2 overflow-hidden text-sm text-muted-foreground md:mb-5">
+      <NuxtLink :to="localePath('/')" class="shrink-0 transition-colors hover:text-foreground">
         {{ t('mall.category.breadcrumbHome') }}
       </NuxtLink>
-      <span>/</span>
-      <span class="text-foreground">
+      <span class="shrink-0" aria-hidden="true">/</span>
+      <span class="truncate text-foreground">
         {{ productTranslation?.name || t('mall.product.notFound') }}
       </span>
     </nav>
-  </LayoutSectionContainer>
 
-  <LayoutSectionContainer>
-    <UiSkeleton v-if="productLoading" class="h-8 w-1/2" />
+    <div v-if="productLoading" class="grid gap-6 md:grid-cols-12 md:gap-8">
+      <div class="md:col-span-5">
+        <UiSkeleton class="aspect-square w-full rounded-xl" />
+      </div>
+      <div class="flex flex-col gap-3 md:col-span-7">
+        <UiSkeleton class="h-24 w-full rounded-xl" />
+        <UiSkeleton class="h-8 w-3/4" />
+        <UiSkeleton class="h-4 w-1/2" />
+        <UiSkeleton class="h-16 w-full rounded-xl" />
+        <UiSkeleton class="h-40 w-full rounded-xl" />
+      </div>
+    </div>
 
-    <UiAppEmpty
-      v-else-if="productError"
-      variant="error"
-    >
+    <UiAppEmpty v-else-if="productError" variant="error">
       <template #action>
         <UiButton variant="outline" size="sm" @click="productQuery.refetch()">
           {{ t('ui.button.retry') }}
@@ -690,119 +944,106 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
       </template>
     </UiAppEmpty>
 
-    <div v-else-if="productTranslation" class="grid gap-8 md:grid-cols-12">
-      <!-- 左侧：商品主图（当前实体单图，不渲染轮播箭头；多图时在此扩展缩略图栏） -->
-      <div class="md:col-span-5 self-start overflow-hidden rounded-2xl border border-border bg-card md:sticky md:top-24">
-        <UiImage
-          :src="product.imageUrl"
-          :alt="productTranslation?.name || ''"
-          class="aspect-square w-full rounded-none object-cover"
-        />
+    <UiAppEmpty v-else-if="!productTranslation" :description="t('mall.product.notFound')">
+      <template #action>
+        <UiButton variant="outline" size="sm" @click="navigateTo(localePath('/'))">
+          {{ t('authentication.login.back_home') }}
+        </UiButton>
+      </template>
+    </UiAppEmpty>
+
+    <div v-else class="grid gap-6 md:grid-cols-12 md:gap-8">
+      <div class="md:col-span-5">
+        <div class="flex flex-col gap-3 md:sticky md:top-24">
+          <div class="overflow-hidden rounded-xl border border-border bg-card shadow-card">
+            <UiImage
+              :src="activeImage"
+              :alt="productTranslation.name || ''"
+              class="aspect-square w-full object-cover"
+            />
+          </div>
+          <div v-if="galleryImages.length > 0" class="flex flex-wrap gap-2">
+            <button
+              v-for="(img, i) in galleryImages"
+              :key="img + i"
+              type="button"
+              class="size-16 shrink-0 overflow-hidden rounded-lg border bg-card transition-colors"
+              :class="i === activeImageIndex ? 'border-primary' : 'border-border hover:border-primary'"
+              :aria-label="`${productTranslation.name || ''} ${i + 1}`"
+              :aria-current="i === activeImageIndex"
+              @click="activeImageIndex = i"
+            >
+              <UiImage :src="img" alt="" class="size-full object-cover" />
+            </button>
+          </div>
+        </div>
       </div>
 
-      <!-- 右侧：价格带 → 标题/收藏 → 卖点 → 评分/摘要 → 服务承诺 → SKU → 数量/按钮 -->
-      <div class="md:col-span-7 flex flex-col">
-        <!-- 价格带：进页第一视觉。活动价着色沿用 秒杀(红)>拼团(橙)>专价(品牌绿) 优先级，
-             无框线软底色带替代原表单式边框盒。 -->
-        <div v-if="displayPrice !== null" class="rounded-xl bg-muted/60 px-4 py-3">
-          <p v-if="grouponPrice !== null" class="flex flex-wrap items-baseline gap-x-2 text-orange-500">
-            <span class="text-base font-bold">{{ t('mall.product.currencyCny') }}</span>
-            <span class="text-4xl font-extrabold leading-none tracking-tight">{{ grouponPrice }}</span>
-            <span class="text-sm text-muted-foreground line-through">{{ t('mall.product.currencyCny') }}{{ displayPrice }}</span>
-          </p>
-          <p v-else-if="seckillPrice !== null" class="flex flex-wrap items-baseline gap-x-2 text-red-500">
-            <span class="text-base font-bold">{{ t('mall.product.currencyCny') }}</span>
-            <span class="text-4xl font-extrabold leading-none tracking-tight">{{ seckillPrice }}</span>
-            <span class="text-sm text-muted-foreground line-through">{{ t('mall.product.currencyCny') }}{{ displayPrice }}</span>
-          </p>
-          <p v-else-if="promoPrice !== null" class="flex flex-wrap items-baseline gap-x-2 text-primary">
-            <span class="text-base font-bold">{{ t('mall.product.currencyCny') }}</span>
-            <span class="text-4xl font-extrabold leading-none tracking-tight">{{ promoPrice }}</span>
-            <span class="text-sm text-muted-foreground line-through">{{ t('mall.product.currencyCny') }}{{ displayPrice }}</span>
-          </p>
-          <p v-else class="flex flex-wrap items-baseline gap-x-2 text-primary">
-            <span class="text-base font-bold">{{ t('mall.product.currencyCny') }}</span>
-            <span class="text-4xl font-extrabold leading-none tracking-tight">{{ displayPrice }}</span>
-          </p>
+      <div class="flex flex-col md:col-span-7">
+        <div
+          v-if="hasPrice"
+          class="rounded-xl border border-border bg-card px-4 py-3.5 shadow-card md:px-5"
+        >
+          <UiPriceTag
+            :amount="effectivePriceFen"
+            :old-amount="hasActivePrice ? basePriceFen : null"
+            size="lg"
+          />
           <div class="mt-2 flex flex-wrap items-center gap-1.5">
-            <div v-if="activeGrouponForSku" class="inline-flex items-center gap-1 rounded-full bg-orange-500/15 px-2 py-0.5 text-xs font-medium text-orange-500">
-              👥 {{ activeGrouponForSku.name || t('mall.groupon.tag') }}
-              <template v-if="activeGrouponForSku.groupSize">
-                · {{ t('mall.groupon.tagSize', { size: activeGrouponForSku.groupSize }) }}
-              </template>
-            </div>
-            <div v-else-if="activeSeckillForSku" class="inline-flex items-center gap-1 rounded-full bg-red-500/15 px-2 py-0.5 text-xs font-medium text-red-500">
-              ⚡ {{ activeSeckillForSku.name || t('mall.seckill.tag') }}
-            </div>
-            <div v-else-if="specialPricePromo" class="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
-              {{ specialPricePromo.name || t('mall.promotion.specialPriceTag') }}
-            </div>
-            <div v-else-if="fullReductionPromo" class="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-xs font-medium text-primary">
-              {{ t('mall.promotion.fullReductionTag', { threshold: yuan(fullReductionPromo.thresholdAmount), reduction: yuan(fullReductionPromo.reductionAmount) }) }}
-            </div>
+            <UiStatusBadge v-if="activeGrouponForSku" tone="warning" size="sm">
+              {{ grouponBadgeLabel }}
+            </UiStatusBadge>
+            <UiStatusBadge v-else-if="activeSeckillForSku" tone="danger" size="sm">
+              {{ seckillBadgeLabel }}
+            </UiStatusBadge>
+            <UiStatusBadge v-else-if="specialPricePromo" tone="primary" size="sm">
+              {{ specialBadgeLabel }}
+            </UiStatusBadge>
+            <UiStatusBadge v-else-if="fullReductionPromo" tone="primary" size="sm">
+              {{ fullReductionLabel }}
+            </UiStatusBadge>
           </div>
         </div>
 
-        <!-- 标题 + 收藏：收藏从独立大按钮压缩为标题旁的圆形图标钮 -->
         <div class="mt-4 flex items-start justify-between gap-3">
-          <h1 class="text-xl font-bold leading-snug text-foreground md:text-3xl">
+          <h1 class="min-w-0 text-xl font-bold leading-snug text-foreground md:text-2xl">
             {{ productTranslation.name }}
           </h1>
           <button
             type="button"
-            class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition-colors"
+            class="flex size-10 shrink-0 items-center justify-center rounded-full border bg-card transition-colors"
             :class="isFavorited
-              ? 'border-primary bg-primary/10 text-primary'
-              : 'border-border text-muted-foreground hover:border-primary/40 hover:text-primary'"
+              ? 'border-primary text-primary'
+              : 'border-border text-muted-foreground hover:border-primary hover:text-primary'"
             :aria-label="isFavorited ? t('mall.wishlist.table.action') : t('mall.wishlist.title')"
             :title="isFavorited ? t('mall.wishlist.table.action') : t('mall.wishlist.title')"
             @click="toggleFavorite"
           >
-            <XIcon icon="lucide:heart" :size="16" :class="isFavorited ? 'fill-current' : ''" />
+            <XIcon icon="lucide:heart" :size="18" :class="isFavorited ? 'fill-current' : ''" />
           </button>
         </div>
 
-        <p class="mt-1.5 text-sm text-muted-foreground">
+        <p
+          v-if="productTranslation.shortDescription"
+          class="mt-2 text-sm leading-relaxed text-muted-foreground"
+        >
           {{ productTranslation.shortDescription }}
         </p>
 
-        <!-- 商品评分聚合（只读展示） -->
-        <div class="mt-3 flex items-center gap-3">
+        <a href="#reviews" class="mt-3 flex w-fit flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
           <UiRatingStars v-if="hasRating" :value="ratingAverage" />
-          <span class="text-xs tabular-nums text-muted-foreground">
-            <template v-if="hasRating">
-              {{ t('mall.productRating.average') }}: {{ ratingAverage.toFixed(1) }} ·
-              {{ t('mall.productRating.count') }}: {{ ratingCount }}
-            </template>
-            <template v-else>
-              {{ t('mall.productRating.noRating') }}
-            </template>
+          <span v-if="hasRating">
+            {{ t('mall.productRating.average') }}
+            <span class="font-semibold tabular-nums text-foreground">{{ ratingAverage.toFixed(1) }}</span>
+            · {{ t('mall.productRating.count') }}
+            <span class="tabular-nums text-foreground">{{ ratingCount }}</span>
           </span>
-        </div>
+          <span v-else>{{ t('mall.productRating.noRating') }}</span>
+        </a>
 
-        <!-- 评论 AI 摘要（"大家说"） -->
-        <div
-          v-if="reviewSummary"
-          class="mt-3 flex items-start gap-2 rounded-xl border border-border bg-muted/40 px-3 py-2.5"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="mt-0.5 shrink-0 text-primary"
-          ><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></svg>
-          <p class="text-xs leading-relaxed text-muted-foreground">
-            <span class="mr-1 font-medium text-foreground">{{ t('mall.productRating.aiSummary') }}:</span>{{ reviewSummary }}
-          </p>
-        </div>
-
-        <!-- 服务承诺：静态信任信号（正品/退货/发货），细分隔线上下收拢 -->
-        <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1.5 border-y border-border py-3">
+        <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-y border-border py-3">
           <span
-            v-for="service in [
-              { icon: 'lucide:shield-check', label: t('mall.product.serviceAuthentic') },
-              { icon: 'lucide:rotate-ccw', label: t('mall.product.serviceReturn') },
-              { icon: 'lucide:truck', label: t('mall.product.serviceShipping') },
-            ]"
+            v-for="service in servicePromises"
             :key="service.label"
             class="flex items-center gap-1.5 text-xs text-muted-foreground"
           >
@@ -811,156 +1052,304 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
           </span>
         </div>
 
-        <!-- SKU 卡片选择器（aria-radiogroup，保留键盘可访问性） -->
-        <div v-if="selectableAttributes.length > 0" class="mt-4 flex flex-col gap-4">
-          <p class="text-sm text-muted-foreground">{{ t('mall.product.selectSku') }}</p>
-          <div v-for="attr in selectableAttributes" :key="attr.id" class="flex flex-col gap-2">
-            <label class="text-xs font-medium text-foreground">
-              {{ pickTranslation(attr.translations)?.name || '—' }}
-            </label>
-            <div
-              role="radiogroup"
-              :aria-label="pickTranslation(attr.translations)?.name || ''"
-              class="flex flex-wrap gap-2"
-              @keydown="onRadioKeydown($event, attr.id!)"
-            >
-              <button
-                v-for="val in valuesByAttribute.get(attr.id!) ?? []"
-                :key="val.id"
-                type="button"
-                role="radio"
-                :aria-checked="selections[attr.id!] === String(val.id)"
-                :class="cn(
-                  'rounded-lg border px-4 py-2 text-sm transition-colors',
-                  selections[attr.id!] === String(val.id)
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border text-foreground hover:border-primary/40',
-                )"
-                @click="selections[attr.id!] = String(val.id)"
+        <div class="mt-4 rounded-xl border border-border bg-card p-4 shadow-card md:p-5">
+          <p class="text-sm font-medium text-foreground">{{ t('mall.product.selectSku') }}</p>
+
+          <div v-if="selectableAttributes.length > 0" class="mt-3 flex flex-col gap-3">
+            <div v-for="attr in selectableAttributes" :key="attr.id" class="flex flex-col gap-2">
+              <span class="text-xs text-muted-foreground">
+                {{ pickTranslation(attr.translations)?.name || '—' }}
+              </span>
+              <div
+                role="radiogroup"
+                :aria-label="pickTranslation(attr.translations)?.name || ''"
+                class="flex flex-wrap gap-2"
+                @keydown="onRadioKeydown($event, attr.id!)"
               >
-                {{ pickTranslation(val.translations)?.displayName || '—' }}
+                <button
+                  v-for="val in valuesByAttribute.get(attr.id!) ?? []"
+                  :key="val.id"
+                  type="button"
+                  role="radio"
+                  :aria-checked="selections[attr.id!] === String(val.id)"
+                  :class="cn(
+                    'min-w-16 rounded-lg border px-4 py-2 text-sm transition-colors',
+                    selections[attr.id!] === String(val.id)
+                      ? 'border-primary bg-primary-soft font-medium text-primary-soft-foreground'
+                      : 'border-border bg-background text-foreground hover:border-primary',
+                  )"
+                  @click="selections[attr.id!] = String(val.id)"
+                >
+                  {{ pickTranslation(val.translations)?.displayName || '—' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <p v-if="allAttributesSelected && !matchedSku" class="mt-3 text-sm text-destructive">
+            {{ t('mall.product.skuUnavailable') }}
+          </p>
+          <p v-else-if="matchedSku && isOutOfStock" class="mt-3 text-sm text-destructive">
+            {{ t('mall.product.outOfStock') }}
+          </p>
+
+          <div class="mt-4 flex flex-wrap items-center gap-3">
+            <div class="flex items-center rounded-lg border border-border bg-background">
+              <button
+                type="button"
+                class="flex size-10 items-center justify-center text-foreground transition-colors hover:text-primary disabled:opacity-40"
+                :disabled="quantity <= 1"
+                aria-label="decrease quantity"
+                @click="decrementQty"
+              >
+                <XIcon icon="carbon:subtract" :size="16" />
+              </button>
+              <input
+                v-model.number="quantity"
+                type="number"
+                class="h-10 w-12 bg-transparent text-center text-sm tabular-nums text-foreground outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+                :min="1"
+                :max="matchedSkuStock"
+                readonly
+              >
+              <button
+                type="button"
+                class="flex size-10 items-center justify-center text-foreground transition-colors hover:text-primary disabled:opacity-40"
+                :disabled="quantity >= matchedSkuStock"
+                aria-label="increase quantity"
+                @click="incrementQty"
+              >
+                <XIcon icon="carbon:add" :size="16" />
               </button>
             </div>
           </div>
-        </div>
 
-        <p
-          v-if="allAttributesSelected && !matchedSku"
-          class="text-sm text-destructive"
-        >
-          {{ t('mall.product.skuUnavailable') }}
-        </p>
-        <p
-          v-else-if="matchedSku && isOutOfStock"
-          class="text-sm text-destructive"
-        >
-          {{ t('mall.product.outOfStock') }}
-        </p>
-
-        <!-- 数量框 + 双按钮：移动端仅保留数量步进（加购/立即买走吸底栏），
-             sm 及以上同行展示完整双按钮。 -->
-        <div class="mt-4 flex items-center gap-3">
-          <div class="flex w-fit items-center rounded-xl border border-border bg-card">
-            <button
-              type="button"
-              class="flex h-10 w-10 items-center justify-center text-foreground disabled:opacity-40"
-              :disabled="quantity <= 1"
-              @click="decrementQty"
-              aria-label="decrease quantity"
-            >
-              <XIcon icon="carbon:subtract" :size="16" />
-            </button>
-            <input
-              type="number"
-              class="h-10 w-12 bg-transparent text-center text-sm text-foreground outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
-              v-model.number="quantity"
-              :min="1"
-              :max="matchedSkuStock"
-              readonly
-            />
-            <button
-              type="button"
-              class="flex h-10 w-10 items-center justify-center text-foreground disabled:opacity-40"
-              :disabled="quantity >= matchedSkuStock"
-              @click="incrementQty"
-              aria-label="increase quantity"
-            >
-              <XIcon icon="carbon:add" :size="16" />
-            </button>
-          </div>
-
-          <div class="hidden flex-1 items-center gap-3 sm:flex">
+          <div class="mt-4 hidden items-center gap-3 md:flex">
             <UiButton
               variant="outline"
-              class="flex-1"
               size="lg"
+              class="flex-1"
               :disabled="!canAddToCart"
               @click="addToCartWithQty(quantity)"
             >
               <XIcon icon="carbon:shopping-cart" :size="16" class="mr-2" />
               {{ t('mall.product.addToCart') }}
             </UiButton>
-
-            <UiButton
-              class="flex-1"
-              size="lg"
-              :disabled="!canAddToCart"
-              @click="buyNow"
-            >
+            <UiButton size="lg" class="flex-1" :disabled="!canAddToCart" @click="buyNow">
               {{ t('mall.product.buyNow') }}
             </UiButton>
           </div>
         </div>
       </div>
     </div>
+  </LayoutSectionContainer>
 
-    <div
-      v-else
-      class="rounded-2xl border border-border bg-card p-12 text-center text-muted-foreground"
-    >
-      {{ t('mall.product.notFound') }}
-    </div>
-
-    <!-- 商品详情描述：小米式分线标题（居中标题 + 两侧细线），内容通栏不包盒，
-         避免长图文外再套一层大卡片在暗色下形成空洞 -->
-    <div
-      v-if="productTranslation?.longDescription"
-      class="mx-auto mt-12 w-full max-w-4xl"
-    >
-      <div class="mb-6 flex items-center gap-4">
-        <span class="h-px flex-1 bg-border" aria-hidden="true" />
-        <h2 class="text-base font-bold text-foreground">
-          {{ t('mall.product.description') }}
-        </h2>
-        <span class="h-px flex-1 bg-border" aria-hidden="true" />
-      </div>
+  <LayoutSectionContainer v-if="productTranslation?.longDescription">
+    <UiSectionHeader :title="t('mall.product.description')" />
+    <div class="rounded-xl border border-border bg-card p-4 shadow-card md:p-6">
       <ClientOnly>
-        <ContentViewer
-          :content="productTranslation.longDescription"
-          type="markdown"
-        />
+        <ContentViewer :content="productTranslation.longDescription" type="markdown" />
         <template #fallback>
-          <UiSkeleton class="h-64 w-full" />
+          <UiSkeleton class="h-24 w-full" />
         </template>
       </ClientOnly>
     </div>
   </LayoutSectionContainer>
 
-  <CommentSection :product-id="productId" />
-
-  <!-- 移动端吸底购买栏：收藏 + 加购 + 立即买常驻可见，滚动到任意位置都能下单 -->
-  <div
+  <LayoutSectionContainer
     v-if="productTranslation"
-    class="fixed bottom-0 left-0 right-0 z-40 flex items-center gap-3 border-t border-border bg-card/95 px-4 pt-3 backdrop-blur-md md:hidden dark:bg-card/90"
-    :style="{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }"
+    id="reviews"
+    class="scroll-mt-24 border-t border-border"
   >
+    <UiSectionHeader
+      :title="t('comment.sectionTitle')"
+      :description="hasRating
+        ? `${t('mall.productRating.average')} · ${t('mall.productRating.count')} ${ratingCount}`
+        : t('mall.productRating.noRating')"
+    />
+
+    <div
+      v-if="hasRating || reviewSummary"
+      class="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 shadow-card md:flex-row md:items-center md:gap-6 md:p-5"
+    >
+      <div v-if="hasRating" class="flex items-center gap-3 md:min-w-56">
+        <span class="flex items-baseline gap-1 text-foreground">
+          <span class="text-3xl font-bold tabular-nums">{{ ratingAverage.toFixed(1) }}</span>
+          <span class="text-sm text-muted-foreground">/ 5</span>
+        </span>
+        <span class="flex flex-col gap-1">
+          <UiRatingStars :value="ratingAverage" />
+          <span class="text-xs text-muted-foreground">
+            {{ t('mall.productRating.average') }} · {{ t('mall.productRating.count') }} {{ ratingCount }}
+          </span>
+        </span>
+      </div>
+
+      <div
+        v-if="reviewSummary"
+        class="flex items-start gap-2 rounded-lg bg-secondary px-3 py-2.5 md:flex-1"
+      >
+        <XIcon icon="lucide:sparkles" :size="14" class="mt-0.5 shrink-0 text-primary" />
+        <p class="text-xs leading-relaxed text-muted-foreground">
+          <span class="font-medium text-foreground">{{ t('mall.productRating.aiSummary') }}：</span>{{ reviewSummary }}
+        </p>
+      </div>
+    </div>
+
+    <div v-if="commentsLoading" class="mt-3">
+      <UiListSkeleton :rows="3" :header="false" />
+    </div>
+
+    <div v-else-if="commentsError" class="mt-3 rounded-xl border border-border bg-card">
+      <UiAppEmpty variant="error" class="py-8">
+        <template #action>
+          <UiButton variant="outline" size="sm" @click="commentsQuery.refetch()">
+            {{ t('ui.button.retry') }}
+          </UiButton>
+        </template>
+      </UiAppEmpty>
+    </div>
+
+    <div v-else-if="topLevelComments.length === 0" class="mt-3 rounded-xl border border-border bg-card">
+      <UiAppEmpty variant="noData" :description="t('comment.empty')" class="py-9" />
+    </div>
+
+    <ul v-else class="mt-3 divide-y divide-border overflow-hidden rounded-xl border border-border bg-card">
+      <li v-for="c in topLevelComments" :key="c.id" class="p-4 md:p-5">
+        <div class="flex items-start gap-3">
+          <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+            <XIcon icon="lucide:user" :size="16" />
+          </span>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <span class="text-sm font-medium text-foreground">
+                {{ t('comment.author') }} #{{ c.createdBy ?? '?' }}
+              </span>
+              <span class="text-xs text-muted-foreground">{{ formatCommentTime(c.createdAt) }}</span>
+            </div>
+
+            <div v-if="c.rating && c.rating > 0" class="mt-1">
+              <UiRatingStars :value="c.rating" :size="12" />
+            </div>
+
+            <p class="mt-1.5 whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground">
+              {{ c.content || '' }}
+            </p>
+
+            <div class="mt-2 flex items-center gap-4">
+              <button
+                type="button"
+                class="inline-flex items-center gap-1 text-xs transition-colors"
+                :class="commentLiked(c.id) ? 'text-destructive' : 'text-muted-foreground hover:text-primary'"
+                :aria-pressed="commentLiked(c.id)"
+                @click="toggleCommentLike(c)"
+              >
+                <XIcon icon="lucide:heart" :size="14" :class="commentLiked(c.id) ? 'fill-current' : ''" />
+                <span class="tabular-nums">{{ commentLikeCount(c.id) }}</span>
+              </button>
+              <button
+                v-if="isLogin"
+                type="button"
+                class="text-xs text-muted-foreground transition-colors hover:text-primary"
+                @click="openReply(c.id)"
+              >
+                {{ t('comment.reply') }}
+              </button>
+            </div>
+
+            <div v-if="replyToId === c.id" class="mt-3 flex flex-col gap-2">
+              <UiTextarea v-model="replyContent" :placeholder="t('comment.replyPlaceholder')" rows="2" />
+              <div class="flex justify-end gap-2">
+                <UiButton variant="ghost" size="sm" @click="closeReply">
+                  {{ t('common.cancel') }}
+                </UiButton>
+                <UiButton
+                  size="sm"
+                  :disabled="replyMutation.isPending.value || !replyContent.trim()"
+                  @click="submitReply(c.id)"
+                >
+                  {{ replyMutation.isPending.value ? t('common.submitting') : t('comment.submit') }}
+                </UiButton>
+              </div>
+            </div>
+
+            <ul
+              v-if="c.children && c.children.length > 0"
+              class="mt-3 flex flex-col gap-3 border-l border-border pl-3 md:pl-4"
+            >
+              <li v-for="child in c.children" :key="child.id" class="min-w-0">
+                <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                  <span class="text-xs font-medium text-foreground">
+                    {{ t('comment.author') }} #{{ child.createdBy ?? '?' }}
+                  </span>
+                  <span class="text-xs text-muted-foreground">{{ formatCommentTime(child.createdAt) }}</span>
+                </div>
+                <p class="mt-1 whitespace-pre-wrap break-words text-sm leading-relaxed text-foreground">
+                  {{ child.content || '' }}
+                </p>
+                <button
+                  type="button"
+                  class="mt-1.5 inline-flex items-center gap-1 text-xs transition-colors"
+                  :class="commentLiked(child.id) ? 'text-destructive' : 'text-muted-foreground hover:text-primary'"
+                  :aria-pressed="commentLiked(child.id)"
+                  @click="toggleCommentLike(child)"
+                >
+                  <XIcon icon="lucide:heart" :size="14" :class="commentLiked(child.id) ? 'fill-current' : ''" />
+                  <span class="tabular-nums">{{ commentLikeCount(child.id) }}</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </li>
+    </ul>
+
+    <div
+      v-if="isLogin"
+      class="mt-4 rounded-xl border border-border bg-card p-4 shadow-card md:p-5"
+    >
+      <div class="flex flex-wrap items-center gap-3">
+        <span class="text-xs text-muted-foreground">{{ t('mall.productRating.selectRating') }}</span>
+        <UiRatingInput v-model="postRating" />
+      </div>
+      <UiTextarea
+        v-model="postContent"
+        :placeholder="t('comment.postPlaceholder')"
+        class="mt-3"
+        rows="3"
+      />
+      <div class="mt-3 flex justify-end">
+        <UiButton
+          size="sm"
+          :disabled="postMutation.isPending.value || !postContent.trim() || postRating < 1 || postRating > 5"
+          @click="submitComment"
+        >
+          {{ postMutation.isPending.value ? t('common.submitting') : t('comment.submit') }}
+        </UiButton>
+      </div>
+    </div>
+
+    <div
+      v-else
+      class="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-4"
+    >
+      <p class="text-sm text-muted-foreground">{{ t('comment.loginToPost') }}</p>
+      <UiButton variant="outline" size="sm" @click="navigateTo(localePath('/login'))">
+        {{ t('authentication.login.login') }}
+      </UiButton>
+    </div>
+  </LayoutSectionContainer>
+
+  <div v-if="productTranslation" ref="endSentinel" class="h-px w-full md:hidden" aria-hidden="true" />
+
+  <UiStickyBar v-if="productTranslation && showStickyBar" above-tab-bar class="md:hidden">
     <button
       type="button"
-      class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border transition-colors"
+      class="flex size-11 shrink-0 items-center justify-center rounded-full border bg-card transition-colors"
       :class="isFavorited
         ? 'border-primary text-primary'
-        : 'border-border text-muted-foreground active:border-primary/40 active:text-primary'"
-      :aria-label="t('mall.wishlist.title')"
+        : 'border-border text-muted-foreground active:border-primary active:text-primary'"
+      :aria-label="isFavorited ? t('mall.wishlist.table.action') : t('mall.wishlist.title')"
       @click="toggleFavorite"
     >
       <XIcon icon="lucide:heart" :size="18" :class="isFavorited ? 'fill-current' : ''" />
@@ -974,12 +1363,8 @@ function onRadioKeydown(e: KeyboardEvent, attrId: number) {
       <XIcon icon="carbon:shopping-cart" :size="16" class="mr-2" />
       {{ t('mall.product.addToCart') }}
     </UiButton>
-    <UiButton
-      class="flex-1"
-      :disabled="!canAddToCart"
-      @click="buyNow"
-    >
+    <UiButton class="flex-1" :disabled="!canAddToCart" @click="buyNow">
       {{ t('mall.product.buyNow') }}
     </UiButton>
-  </div>
+  </UiStickyBar>
 </template>

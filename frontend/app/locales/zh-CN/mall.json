@@ -36,7 +36,7 @@
     "notFound": "未找到该商品。",
     "selectAttribute": "请选择",
     "skuUnavailable": "当前规格不可购买。",
-    "currencyCny": "￥",
+    "currencyCny": "¥",
     "serviceAuthentic": "正品保障",
     "serviceReturn": "七天无理由退货",
     "serviceShipping": "极速发货"
@@ -114,7 +114,7 @@
     "consecutiveDays": "连续签到 {days} 天"
   },
   "seckill": {
-    "tag": "我的积分"
+    "tag": "限时秒杀"
   },
   "groupon": {
     "tag": "拼团价",

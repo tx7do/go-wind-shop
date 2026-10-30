@@ -5,7 +5,6 @@ definePageMeta({
 })
 import { computed, ref } from 'vue';
 import { toast } from 'vue-sonner';
-import { XIcon } from '@/plugins/xicon';
 import {
   useListUserInbox,
   useMarkNotificationAsRead,
@@ -15,7 +14,6 @@ import {
 import { useAccessStore } from '@/stores/modules/core/access.state';
 
 const { t } = useI18n();
-const localePath = useLocalePath();
 
 useHead({ title: t('messages.title') });
 
@@ -73,6 +71,18 @@ const STATUS_LABEL_KEY: Record<MessageStatus, string> = {
 };
 function statusLabel(s: MessageStatus | undefined): string {
   return t(STATUS_LABEL_KEY[s ?? 'SENT']);
+}
+
+// 徽标色调：未读用品牌色，撤回用警示色，其余中性
+const STATUS_TONE: Record<MessageStatus, 'neutral' | 'primary' | 'warning' | 'danger'> = {
+  SENT: 'primary',
+  RECEIVED: 'primary',
+  READ: 'neutral',
+  REVOKED: 'warning',
+  DELETED: 'danger',
+};
+function statusTone(s: MessageStatus | undefined) {
+  return STATUS_TONE[s ?? 'SENT'];
 }
 
 function formatTime(ts: string | undefined): string {
@@ -133,30 +143,20 @@ const anyPending = computed(
     :description="t('messages.subtitle')"
     icon="lucide:message-square"
     size="sm"
-  />
+  >
+    <UiStatusBadge
+      v-if="unreadCount > 0"
+      tone="primary"
+      dot
+      :label="t('messages.unread', { count: unreadCount })"
+    />
+  </LayoutPageHero>
 
   <LayoutSectionContainer>
-    <!-- 未登录 -->
-    <div
-      v-if="!isLogin"
-      class="flex flex-col items-center gap-6 rounded-2xl border border-border bg-card p-12 text-center"
-    >
-      <XIcon icon="carbon:locked" :size="48" class="text-muted-foreground" />
-      <p class="text-lg text-muted-foreground">{{ t('authentication.login.please_login') }}</p>
-      <UiButton @click="navigateTo(localePath('/login'))">
-        {{ t('navbar.user.login') }}
-      </UiButton>
-    </div>
+    <UiAuthGate v-if="!isLogin" />
 
     <!-- 加载中 -->
-    <div v-else-if="loading" class="flex flex-col gap-3">
-      <div v-for="i in 4" :key="i" class="rounded-2xl border border-border bg-card p-5">
-        <div class="flex items-center gap-4">
-          <UiSkeleton class="h-4 w-3/4" />
-          <UiSkeleton class="h-4 w-20 ml-auto" />
-        </div>
-      </div>
-    </div>
+    <UiListSkeleton v-else-if="loading" :rows="5" :header="false" />
 
     <!-- 错误态 -->
     <UiAppEmpty
@@ -178,77 +178,78 @@ const anyPending = computed(
     />
 
     <!-- 消息列表 -->
-    <div v-else class="flex flex-col gap-3">
-      <!-- 未读计数提示 -->
-      <div v-if="unreadCount > 0" class="text-sm text-muted-foreground">
-        {{ t('messages.unread', { count: unreadCount }) }}
-      </div>
-
-      <div
-        v-for="msg in messages"
-        :key="msg.id"
-        class="rounded-2xl border border-border bg-card p-5 transition-colors"
-        :class="isUnread(msg) ? 'border-primary/40' : ''"
-      >
-        <div class="flex flex-wrap items-start justify-between gap-3">
-          <button
-            type="button"
-            class="flex min-w-0 flex-1 items-center gap-2 text-left"
-            @click="toggleDetail(msg)"
-          >
+    <div v-else class="overflow-hidden rounded-lg border border-border bg-card shadow-card">
+      <ul class="divide-y divide-border">
+        <li
+          v-for="msg in messages"
+          :key="msg.id"
+          class="transition-colors hover:bg-muted"
+        >
+          <div class="flex items-start gap-3 px-4 py-4">
+            <!-- 未读点 -->
             <span
-              v-if="isUnread(msg)"
-              class="h-2 w-2 shrink-0 rounded-full bg-primary"
+              class="mt-1.5 h-2 w-2 shrink-0 rounded-full"
+              :class="isUnread(msg) ? 'bg-primary' : 'bg-border'"
               aria-hidden="true"
             />
-            <span class="min-w-0 flex-1">
-              <span class="block truncate text-sm font-semibold text-foreground">
-                {{ msg.title || '—' }}
-              </span>
-              <span v-if="!isUnread(msg)" class="mt-0.5 block truncate text-xs text-muted-foreground">
-                {{ msg.content || '' }}
-              </span>
-            </span>
-          </button>
 
-          <div class="flex shrink-0 items-center gap-2">
-            <span class="text-[10px] text-muted-foreground">{{ formatTime(msg.receivedAt || msg.createdAt) }}</span>
-            <span
-              class="rounded-full px-2 py-0.5 text-[10px] font-medium"
-              :class="isUnread(msg) ? 'bg-primary/15 text-primary' : 'bg-muted text-muted-foreground'"
-            >
-              {{ statusLabel(msg.status) }}
-            </span>
+            <div class="min-w-0 flex-1">
+              <button
+                type="button"
+                class="block w-full text-left"
+                @click="toggleDetail(msg)"
+              >
+                <span class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span
+                    class="min-w-0 flex-1 truncate text-sm text-foreground"
+                    :class="isUnread(msg) ? 'font-semibold' : 'font-medium'"
+                  >
+                    {{ msg.title || '—' }}
+                  </span>
+                  <UiStatusBadge
+                    size="sm"
+                    :tone="statusTone(msg.status)"
+                    :label="statusLabel(msg.status)"
+                  />
+                  <span class="shrink-0 text-[11px] tabular-nums text-muted-foreground">
+                    {{ formatTime(msg.receivedAt || msg.createdAt) }}
+                  </span>
+                </span>
+                <span class="mt-1 line-clamp-2 block text-xs leading-relaxed text-muted-foreground">
+                  {{ msg.content || '—' }}
+                </span>
+              </button>
+
+              <!-- 展开的详情 -->
+              <div v-if="expandedId === msg.id && msg.content" class="mt-3 rounded-md bg-muted p-3">
+                <p class="whitespace-pre-wrap text-sm leading-relaxed text-foreground">{{ msg.content }}</p>
+              </div>
+
+              <!-- 操作 -->
+              <div class="mt-2 flex items-center justify-end gap-1">
+                <UiButton
+                  v-if="isUnread(msg)"
+                  variant="ghost"
+                  size="sm"
+                  :disabled="anyPending"
+                  @click="handleMarkRead(msg)"
+                >
+                  {{ t('messages.markRead') }}
+                </UiButton>
+                <UiButton
+                  variant="ghost"
+                  size="sm"
+                  class="text-destructive hover:text-destructive"
+                  :disabled="anyPending"
+                  @click="handleDelete(msg)"
+                >
+                  {{ t('messages.delete') }}
+                </UiButton>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <!-- 展开的详情 -->
-        <div v-if="expandedId === msg.id && msg.content" class="mt-4 border-t border-border pt-4">
-          <p class="whitespace-pre-wrap text-sm text-foreground">{{ msg.content }}</p>
-        </div>
-
-        <!-- 操作 -->
-        <div class="mt-3 flex items-center gap-2">
-          <UiButton
-            v-if="isUnread(msg)"
-            variant="ghost"
-            size="sm"
-            :disabled="anyPending"
-            @click="handleMarkRead(msg)"
-          >
-            {{ t('messages.markRead') }}
-          </UiButton>
-          <UiButton
-            variant="ghost"
-            size="sm"
-            class="text-destructive hover:text-destructive"
-            :disabled="anyPending"
-            @click="handleDelete(msg)"
-          >
-            {{ t('messages.delete') }}
-          </UiButton>
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
   </LayoutSectionContainer>
 </template>

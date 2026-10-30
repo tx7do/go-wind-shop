@@ -39,7 +39,7 @@ const isActive = (path: string) => {
             :class="cn(
               'flex items-center gap-3 rounded-lg border px-3 py-2.5 text-sm font-medium transition-all',
               isActive(item.to)
-                ? 'border-primary/20 bg-primary/5 text-primary'
+                ? 'border-primary/30 bg-primary-soft text-primary-soft-foreground'
                 : 'border-transparent text-muted-foreground hover:bg-muted hover:text-foreground',
             )"
           >
@@ -47,7 +47,7 @@ const isActive = (path: string) => {
               :class="cn(
                 'flex h-8 w-8 items-center justify-center rounded-md',
                 isActive(item.to)
-                  ? 'bg-primary/10 text-primary'
+                  ? 'bg-primary text-primary-foreground'
                   : 'bg-muted text-muted-foreground',
               )"
             >
@@ -75,7 +75,7 @@ const isActive = (path: string) => {
         </select>
       </div>
 
-      <main :key="$i18n.locale" class="flex w-full flex-1 flex-col min-w-0 pb-[calc(3.75rem+env(safe-area-inset-bottom))] md:pb-0">
+      <main :key="$i18n.locale" class="flex w-full flex-1 flex-col min-w-0 pb-[calc(var(--layout-tabbar-height)_+_env(safe-area-inset-bottom))] md:pb-0">
         <slot />
       </main>
     </div>

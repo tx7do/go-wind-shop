@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { useSearchProducts, fetchSearchSuggestions, rewriteSearchQuery } from '@/api/composables';
+import {
+  useSearchProducts,
+  fetchSearchSuggestions,
+  rewriteSearchQuery,
+  useProductPrices,
+  useProductPromos,
+} from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
 import { XIcon } from '@/plugins/xicon';
 
@@ -8,8 +14,11 @@ const route = useRoute();
 const { t } = useI18n();
 const localePath = useLocalePath();
 
-// 搜索关键字：来自 URL ?q=，同时维护本地输入框用于二次搜索。
-const keyword = computed(() => (route.query.q as string)?.trim() ?? '');
+// 搜索关键字：来自 URL ?q=（keyword 为等价的旧别名），同时维护本地输入框用于二次搜索。
+const keyword = computed(() => {
+  const raw = (route.query.q ?? route.query.keyword) as string | undefined;
+  return raw?.trim() ?? '';
+});
 const searchInput = ref(keyword.value);
 
 // URL 上 q 变化时同步到输入框（如浏览器前进/后退）。
@@ -73,13 +82,6 @@ watch(keyword, () => {
   page.value = 1;
 });
 
-function goToPage(p: number) {
-  const clamped = Math.min(Math.max(1, p), totalPages.value);
-  if (clamped !== page.value) {
-    page.value = clamped;
-  }
-}
-
 type SearchResultItem = {
   productId?: number;
   name?: string;
@@ -91,6 +93,32 @@ const results = computed<SearchResultItem[]>(() => {
   const items = (searchQuery.data?.value as any)?.items ?? [];
   return (items as SearchResultItem[]) ?? [];
 });
+
+// 搜索结果不含价格：用两次批量查询补「起」价与活动价（与首页同一套口径）。
+const resultIds = computed(() =>
+  results.value.map((r) => r.productId).filter((id): id is number => id !== undefined),
+);
+const { priceByProductId, skuIdsByProduct } = useProductPrices(resultIds);
+const { promoByProductId } = useProductPromos(resultIds, priceByProductId, skuIdsByProduct);
+
+const cards = computed(() =>
+  results.value
+    .map((r) => {
+      if (r.productId === undefined) return undefined;
+      const base = priceByProductId.value.get(r.productId);
+      const promo = promoByProductId.value.get(r.productId);
+      return {
+        id: r.productId,
+        name: r.name,
+        image: r.imageUrl,
+        priceFen: promo?.fen ?? base?.fen ?? null,
+        oldPriceFen: promo ? base?.fen ?? null : null,
+        badgeLabel: promo ? t(promo.labelKey) : undefined,
+        badgeTone: promo?.tone,
+      };
+    })
+    .filter((c): c is NonNullable<typeof c> => c !== undefined),
+);
 
 // 顶部搜索框提交：跳转到 /search?q=xxx（交由路由驱动结果）
 function submitSearch() {
@@ -149,77 +177,92 @@ function onSuggestInputBlur() {
 <template>
   <LayoutPageHero
     :title="t('search.title')"
-    :description="keyword ? t('search.resultFor', { q: keyword }) : t('search.placeholder')"
     icon="carbon:search"
     size="sm"
-  />
+  >
+    <!-- 搜索框（带输入联想下拉） -->
+    <div class="w-full max-w-xl">
+      <div class="flex items-center gap-2">
+        <div class="relative min-w-0 flex-1">
+          <XIcon
+            icon="lucide:search"
+            :size="16"
+            class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
+          <UiInput
+            v-model="searchInput"
+            class="h-11 rounded-full border-border bg-card pl-9 pr-3"
+            :placeholder="t('search.placeholder')"
+            @keyup.enter="submitSearch"
+            @blur="onSuggestInputBlur"
+          />
+          <div
+            v-if="showSuggest"
+            class="absolute inset-x-0 top-[calc(100%+0.25rem)] z-30 overflow-hidden rounded-lg border border-border bg-popover text-popover-foreground shadow-pop"
+          >
+            <button
+              v-for="s in suggestions"
+              :key="s.productId"
+              type="button"
+              class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-secondary"
+              @mousedown.prevent="pickSuggestion(s)"
+            >
+              <UiImage
+                v-if="s.imageUrl"
+                :src="s.imageUrl"
+                :alt="s.name"
+                class="size-8 shrink-0 rounded object-cover"
+              />
+              <span class="line-clamp-1">{{ s.name }}</span>
+            </button>
+          </div>
+        </div>
+        <UiButton class="h-11 shrink-0 rounded-full" @click="submitSearch">
+          <XIcon icon="carbon:search" :size="16" />
+          {{ t('search.submitSearch') }}
+        </UiButton>
+      </div>
+    </div>
+  </LayoutPageHero>
 
   <LayoutSectionContainer>
     <!-- AI 搜索改写提示条 -->
     <div
       v-if="aiKeywords?.length"
-      class="mx-auto mb-4 flex w-full max-w-xl flex-wrap items-center gap-2 rounded-xl border border-primary/30 bg-primary/5 px-3 py-2 text-xs"
+      class="mb-4 flex flex-wrap items-center gap-2 rounded-lg bg-primary-soft px-3 py-2 text-xs text-primary-soft-foreground"
     >
-      <span class="flex items-center gap-1 font-medium text-primary">
-        <XIcon icon="lucide:sparkles" width="12" height="12" />
-        {{ t('search.aiOptimized') }}:
+      <span class="flex items-center gap-1 font-semibold">
+        <XIcon icon="lucide:sparkles" :size="12" />
+        {{ t('search.aiOptimized') }}
       </span>
       <span
         v-for="kw in aiKeywords"
         :key="kw"
-        class="rounded-full bg-primary/10 px-2 py-0.5 text-primary"
+        class="rounded-full bg-card px-2 py-0.5 font-medium"
       >{{ kw }}</span>
-      <button
-        type="button"
-        class="ml-auto text-muted-foreground underline-offset-2 hover:text-primary hover:underline"
+      <UiButton
+        variant="link"
+        size="sm"
+        class="ml-auto px-0 text-xs text-primary-soft-foreground underline-offset-2 hover:underline"
         @click="restoreOriginalQuery"
       >
         {{ t('search.aiRestore') }}
-      </button>
+      </UiButton>
     </div>
 
-    <!-- 搜索框（带输入联想下拉） -->
-    <div class="relative mx-auto mb-6 w-full max-w-xl">
-      <div class="flex items-center gap-2">
-        <UiInput
-          v-model="searchInput"
-          class="h-11"
-          :placeholder="t('search.placeholder')"
-          @keyup.enter="submitSearch"
-          @blur="onSuggestInputBlur"
-        />
-        <UiButton class="h-11 shrink-0" @click="submitSearch">
-          <XIcon icon="carbon:search" :size="16" />
-          {{ t('search.submitSearch') }}
+    <!-- 无关键字 -->
+    <UiAppEmpty v-if="!keyword" :description="t('search.placeholder')">
+      <template #action>
+        <UiButton variant="outline" @click="navigateTo(localePath('/'))">
+          {{ t('ui.button.view_homepage') }}
         </UiButton>
-      </div>
-      <div
-        v-if="showSuggest"
-        class="absolute left-0 right-14 top-12 z-20 overflow-hidden rounded-xl border border-border bg-card shadow-lg"
-      >
-        <button
-          v-for="s in suggestions"
-          :key="s.productId"
-          type="button"
-          class="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-primary/5"
-          @mousedown.prevent="pickSuggestion(s)"
-        >
-          <UiImage v-if="s.imageUrl" :src="s.imageUrl" :alt="s.name" class="h-8 w-8 rounded object-cover" />
-          <span class="line-clamp-1">{{ s.name }}</span>
-        </button>
-      </div>
-    </div>
+      </template>
+    </UiAppEmpty>
 
-    <!-- 加载中 -->
-    <div v-if="loading" class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-          <UiPostCardSkeleton v-for="_, i in 8" :key="i" />
-    </div>
+    <UiListSkeleton v-else-if="loading" variant="card" :rows="8" :columns="4" />
 
     <!-- 错误态：搜索请求失败（与"无结果"区分并提供重试） -->
-    <UiAppEmpty
-      v-else-if="loadError"
-      variant="error"
-    >
+    <UiAppEmpty v-else-if="loadError" variant="error">
       <template #action>
         <UiButton variant="outline" size="sm" @click="searchQuery.refetch()">
           {{ t('ui.button.retry') }}
@@ -227,82 +270,41 @@ function onSuggestInputBlur() {
       </template>
     </UiAppEmpty>
 
-    <!-- 无关键字 -->
-    <div
-      v-else-if="!keyword"
-      class="flex flex-col items-center gap-4 rounded-2xl border border-border bg-card p-12 text-center"
-    >
-      <XIcon icon="carbon:search" :size="48" class="text-muted-foreground" />
-      <p class="text-sm text-muted-foreground">{{ t('search.placeholder') }}</p>
-    </div>
-
-    <!-- 有结果 -->
-    <div v-else-if="results.length > 0">
-      <p class="mb-4 text-sm text-muted-foreground">
-        {{ t('search.resultCount', { count: totalCount }) }}
-      </p>
-      <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        <NuxtLink
-          v-for="product in results"
-          :key="product.productId"
-          :to="localePath('/product/' + product.productId)"
-          class="group block overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-colors hover:border-primary/60 dark:shadow-none"
-        >
-          <UiImage
-            :src="product.imageUrl"
-            :alt="product.name"
-            class="aspect-square w-full rounded-none object-cover"
-          />
-          <div class="p-3">
-            <h3 class="line-clamp-2 text-sm font-semibold text-foreground dark:text-slate-200">
-              {{ product.name || '—' }}
-            </h3>
-            <div class="mt-3 flex items-center justify-between">
-              <span class="text-xs text-muted-foreground">{{ t('mall.product.viewDetail') }}</span>
-              <span class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <XIcon icon="carbon:shopping-cart" :size="14" />
-              </span>
-            </div>
-          </div>
-        </NuxtLink>
+    <template v-else-if="cards.length > 0">
+      <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+        <p class="min-w-0 text-sm font-medium text-foreground">
+          {{ t('search.resultFor', { q: keyword }) }}
+        </p>
+        <UiStatusBadge
+          tone="neutral"
+          :label="t('search.resultCount', { count: totalCount })"
+        />
       </div>
-    </div>
+
+      <div class="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+        <UiProductCard
+          v-for="card in cards"
+          :key="card.id"
+          :product-id="card.id"
+          :name="card.name"
+          :image="card.image"
+          :price-fen="card.priceFen"
+          :old-price-fen="card.oldPriceFen"
+          :badge-label="card.badgeLabel"
+          :badge-tone="card.badgeTone"
+        />
+      </div>
+
+      <UiPager v-model:page="page" :total-pages="totalPages" class="mt-6" />
+    </template>
 
     <!-- 无结果 -->
-    <div
-      v-else
-      class="flex flex-col items-center gap-4 rounded-2xl border border-border bg-card p-12 text-center"
-    >
-      <XIcon icon="carbon:document" :size="48" class="text-muted-foreground" />
-      <p class="text-sm text-muted-foreground">{{ t('search.empty', { q: keyword }) }}</p>
-      <UiButton variant="outline" @click="navigateTo(localePath('/'))">
-        {{ t('cart.continueShopping') }}
-      </UiButton>
-    </div>
-
-    <div
-      v-if="totalPages > 1"
-      class="flex items-center justify-center gap-4 py-2"
-    >
-      <UiButton
-        variant="outline"
-        size="sm"
-        :disabled="page <= 1"
-        @click="goToPage(page - 1)"
-      >
-        {{ t('ui.pagination.previous') }}
-      </UiButton>
-      <span class="text-xs tabular-nums text-muted-foreground">
-        {{ t('ui.pagination.page', { current: page, total: totalPages }) }}
-      </span>
-        <UiButton
-          variant="outline"
-          size="sm"
-          :disabled="page >= totalPages"
-          @click="goToPage(page + 1)"
-        >
-          {{ t('ui.pagination.next') }}
+    <UiAppEmpty v-else :description="t('search.empty', { q: keyword })">
+      <template #action>
+        <UiButton variant="outline" @click="navigateTo(localePath('/'))">
+          {{ t('cart.continueShopping') }}
         </UiButton>
-    </div>
+      </template>
+    </UiAppEmpty>
   </LayoutSectionContainer>
 </template>

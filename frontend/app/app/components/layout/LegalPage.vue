@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { cn } from '@/lib/utils'
-
-const props = defineProps<{
+defineProps<{
   icon: string
   title: string
   description: string
@@ -18,32 +16,23 @@ const props = defineProps<{
       size="sm"
     />
 
-    <section class="w-full py-12 max-md:py-8">
-      <div class="mx-auto max-w-4xl px-4">
-        <div :class="cn(
-          'rounded-2xl border border-border bg-card p-8 md:p-10',
-          'shadow-[0_20px_50px_rgba(0,0,0,0.15)]',
-          'transition-all duration-300',
-          'hover:border-primary/20',
-        )">
-          <ul class="space-y-5">
-            <li
-              v-for="(item, index) in items"
-              :key="index"
-              class="flex items-start gap-4 text-base leading-relaxed text-foreground max-md:text-sm"
-            >
-              <span :class="cn(
-                'shrink-0 font-mono text-sm font-bold tabular-nums',
-                'text-primary',
-                'mt-0.5 min-w-[2rem]',
-              )">
-                {{ String(index + 1).padStart(2, '0') }}.
-              </span>
-              <span>{{ item }}</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </section>
+    <LayoutSectionContainer max-width="narrow">
+      <article class="rounded-xl border border-border bg-card p-6 shadow-card md:p-10">
+        <ol class="space-y-5 md:space-y-6">
+          <li
+            v-for="(item, index) in items"
+            :key="index"
+            class="flex items-start gap-3.5 md:gap-4"
+          >
+            <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-soft font-mono text-xs font-semibold tabular-nums text-primary-soft-foreground">
+              {{ String(index + 1).padStart(2, '0') }}
+            </span>
+            <p class="min-w-0 max-w-prose flex-1 text-[15px] leading-7 text-foreground">
+              {{ item }}
+            </p>
+          </li>
+        </ol>
+      </article>
+    </LayoutSectionContainer>
   </div>
 </template>

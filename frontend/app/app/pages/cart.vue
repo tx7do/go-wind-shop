@@ -2,6 +2,7 @@
 import { computed, reactive, ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
 import { cn } from '@/lib/utils';
+import { formatFen } from '@/utils/money';
 import { XIcon } from '@/plugins/xicon';
 import {
   useListCarts,
@@ -261,14 +262,13 @@ function describeSku(skuId: number | undefined): string {
   return parts.join('，');
 }
 
-// 单价展示（分→元，两位小数）
-function unitPriceLabel(skuId: number | undefined): string {
-  if (skuId === undefined) return '';
+// 单价（分）：交给 UiPriceTag 渲染，页面里不再手拼「元」串
+function unitPriceFen(skuId: number | undefined): number | null {
+  if (skuId === undefined) return null;
   const amountStr = skuPricesMap[skuId];
-  if (!amountStr) return '';
-  const cents = parseFloat(amountStr);
-  if (Number.isNaN(cents)) return '';
-  return (cents / 100).toFixed(2);
+  if (!amountStr) return null;
+  const fen = Number(amountStr);
+  return Number.isFinite(fen) && fen > 0 ? fen : null;
 }
 
 // ---------- 选中态 ----------
@@ -336,9 +336,23 @@ const selectedAmount = computed(() => {
   }
   return sum.toFixed(2);
 });
-const selectedLabel = computed(() => `${t('mall.product.currencyCny')}${selectedAmount.value}`);
+
+// 展示用：元 → 分，交给 formatFen 出「0.00」也不会像 UiPriceTag 那样整块消失
+const selectedAmountFen = computed(() => Math.round(Number(selectedAmount.value) * 100));
+const selectedAmountText = computed(() => formatFen(selectedAmountFen.value));
 
 const selectedCount = computed(() => selectedIds.size);
+
+const showContent = computed(
+  () => isLogin.value && !itemsLoading.value && !itemsError.value && cartItems.value.length > 0,
+);
+
+const checkoutSteps = [
+  { key: 'cart', labelKey: 'checkout.steps.cart' },
+  { key: 'confirm', labelKey: 'checkout.steps.confirm' },
+  { key: 'pay', labelKey: 'checkout.steps.pay' },
+  { key: 'done', labelKey: 'checkout.steps.done' },
+];
 
 // ---------- 数量调整 / 移除 ----------
 const updateMutation = useUpdateCartItem({
@@ -388,87 +402,45 @@ function goCheckout() {
 </script>
 
 <template>
-  <!-- 交易进度条：1.购物车(当前激活) → 2.核对订单 → 3.线上支付 → 4.完成 -->
-  <LayoutSectionContainer class="!py-4">
-    <ol class="flex items-center justify-center gap-2 md:gap-4">
+  <LayoutPageHero
+    :title="t('mall.cart.title')"
+    :description="t('mall.cart.subtitle')"
+    icon="carbon:shopping-cart"
+    size="sm"
+  >
+    <!-- 交易进度：当前停在「购物车」这一步（390px 放不下四个步骤，移动端收起） -->
+    <ol class="hidden flex-wrap items-center gap-x-2 gap-y-1 text-[11px] font-medium md:flex">
       <li
-        v-for="(step, idx) in [
-          { key: 'cart', label: t('checkout.steps.cart') },
-          { key: 'confirm', label: t('checkout.steps.confirm') },
-          { key: 'pay', label: t('checkout.steps.pay') },
-          { key: 'done', label: t('checkout.steps.done') },
-        ]"
+        v-for="(step, idx) in checkoutSteps"
         :key="step.key"
-        class="flex items-center gap-2 md:gap-4"
+        class="flex items-center gap-2"
       >
-        <div class="flex flex-col items-center gap-1">
-          <span
-            :class="cn(
-              'flex h-7 w-7 items-center justify-center rounded-full border text-xs font-bold transition-colors',
-              idx === 0
-                ? 'border-primary bg-primary/10 text-primary'
-                : 'border-border text-muted-foreground',
-            )"
-          >
-            {{ idx + 1 }}
-          </span>
-          <span
-            :class="cn(
-              'text-[10px] font-medium transition-colors',
-              idx === 0
-                ? 'text-primary'
-                : 'text-muted-foreground',
-            )"
-          >
-            {{ step.label }}
-          </span>
-        </div>
         <span
-          v-if="idx < 3"
           :class="cn(
-            'h-px w-8 md:w-16 transition-colors',
-            idx < 0
-              ? 'bg-primary'
-              : 'bg-border',
+            'rounded-full px-2 py-0.5',
+            idx === 0 ? 'bg-primary-soft text-primary-soft-foreground' : 'text-muted-foreground',
           )"
+        >
+          {{ idx + 1 }}. {{ t(step.labelKey) }}
+        </span>
+        <span
+          v-if="idx < checkoutSteps.length - 1"
+          class="h-px w-3 bg-border"
+          aria-hidden="true"
         ></span>
       </li>
     </ol>
-  </LayoutSectionContainer>
+  </LayoutPageHero>
 
   <LayoutSectionContainer>
     <!-- 未登录 -->
-    <div
-      v-if="!isLogin"
-      class="flex flex-col items-center gap-6 rounded-2xl border border-border bg-card p-12 text-center"
-    >
-      <XIcon icon="carbon:locked" :size="48" class="text-muted-foreground" />
-      <p class="text-lg text-muted-foreground">{{ t('authentication.login.please_login') }}</p>
-      <UiButton @click="navigateTo(localePath('/login'))">
-        {{ t('navbar.user.login') }}
-      </UiButton>
-    </div>
+    <UiAuthGate v-if="!isLogin" />
 
     <!-- 加载中 -->
-    <div v-else-if="itemsLoading" class="rounded-2xl border border-border bg-card overflow-hidden">
-      <div class="border-b border-border bg-muted/40 px-6 py-3">
-        <UiSkeleton class="h-4 w-32" />
-      </div>
-      <div v-for="i in 3" :key="i" class="border-b border-border px-6 py-4 last:border-b-0">
-        <div class="flex items-center gap-4">
-          <UiSkeleton class="h-16 w-16 shrink-0 rounded-md" />
-          <UiSkeleton class="h-4 flex-1" />
-          <UiSkeleton class="h-8 w-16" />
-          <UiSkeleton class="h-8 w-8" />
-        </div>
-      </div>
-    </div>
+    <UiListSkeleton v-else-if="itemsLoading" :rows="3" />
 
     <!-- 错误态 -->
-    <UiAppEmpty
-      v-else-if="itemsError"
-      variant="error"
-    >
+    <UiAppEmpty v-else-if="itemsError" variant="error">
       <template #action>
         <UiButton variant="outline" size="sm" @click="cartItemsQuery.refetch()">
           {{ t('ui.button.retry') }}
@@ -477,11 +449,7 @@ function goCheckout() {
     </UiAppEmpty>
 
     <!-- 空购物车 -->
-    <UiAppEmpty
-      v-else-if="cartItems.length === 0"
-      variant="noData"
-      :description="t('cart.empty')"
-    >
+    <UiAppEmpty v-else-if="cartItems.length === 0" :description="t('cart.empty')">
       <template #action>
         <UiButton variant="outline" @click="navigateTo(localePath('/'))">
           {{ t('cart.continueShopping') }}
@@ -489,120 +457,75 @@ function goCheckout() {
       </template>
     </UiAppEmpty>
 
-    <!-- 购物车列表 + 结算看板（左右分栏） -->
-    <div v-else class="grid gap-6 md:grid-cols-12">
-      <!-- 左侧：商品清单（8 栏） -->
-      <div class="md:col-span-8 rounded-2xl border border-border bg-card overflow-hidden">
-        <!-- 表头（含全选，仅桌面网格布局展示） -->
-        <div class="hidden md:block border-b border-border bg-muted/40 px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          <div class="grid grid-cols-[32px_1fr_120px_160px_48px] items-center gap-4">
-            <span class="flex items-center gap-2">
+    <!-- 商品清单 + 结算汇总 -->
+    <div v-else class="grid gap-5 pb-24 md:grid-cols-12 md:gap-6 md:pb-0">
+      <div class="md:col-span-8">
+        <!-- 移动端：全选条 -->
+        <div class="mb-3 flex items-center justify-between md:hidden">
+          <label class="flex cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
+            <span class="relative flex size-[18px] shrink-0 items-center justify-center">
               <input
                 type="checkbox"
-                class="h-4 w-4 rounded border-border accent-[hsl(var(--primary))]"
+                class="peer size-[18px] cursor-pointer appearance-none rounded-[5px] border border-border bg-card transition-colors checked:border-primary checked:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 :checked="allSelected"
+                :aria-label="t('cart.selectAll')"
                 @change="toggleSelectAll(($event.target as HTMLInputElement).checked)"
               />
-              <span class="sr-only">{{ t('cart.selectAll') }}</span>
+              <XIcon
+                icon="carbon:checkmark"
+                :size="12"
+                class="pointer-events-none absolute text-primary-foreground opacity-0 peer-checked:opacity-100"
+              />
             </span>
-            <span>{{ t('cart.table.item') }}</span>
-            <span class="text-center">{{ t('cart.table.unitPrice') }}</span>
-            <span class="text-center">{{ t('cart.table.quantity') }}</span>
-            <span class="text-right">{{ t('cart.table.action') }}</span>
-          </div>
+            {{ t('cart.selectAll') }}
+          </label>
+          <span class="text-xs tabular-nums text-muted-foreground">
+            {{ selectedCount }} / {{ cartItems.length }}
+          </span>
         </div>
 
-        <!-- 表体 -->
-        <div
-          v-for="item in cartItems"
-          :key="item.id"
-          class="border-b border-border px-4 py-4 last:border-b-0 md:px-6"
-        >
-          <!-- 移动端卡片布局：固定五列表格在窄屏会把名称压成一字、数量列挤出屏外 -->
-          <div class="flex items-start gap-3 md:hidden">
-            <input
-              type="checkbox"
-              class="mt-7 h-4 w-4 shrink-0 rounded border-border accent-[hsl(var(--primary))]"
-              :checked="item.id !== undefined && selectedIds.has(item.id)"
-              @change="toggleSelectItem(item.id, ($event.target as HTMLInputElement).checked)"
-            />
-            <img
-              v-if="productImageUrl(item.skuId)"
-              :src="productImageUrl(item.skuId)"
-              :alt="productName(item.skuId)"
-              class="aspect-square h-18 w-18 shrink-0 rounded-lg object-cover"
-            />
-            <UiProductPlaceholder
-              v-else
-              :seed="item.skuId ?? 0"
-              class="aspect-square h-18 w-18 shrink-0 rounded-lg text-muted-foreground"
-            />
-            <div class="min-w-0 flex-1">
-              <p class="line-clamp-2 text-sm font-semibold text-foreground dark:text-slate-200">
-                {{ productName(item.skuId) || '—' }}
-              </p>
-              <p
-                v-if="describeSku(item.skuId)"
-                class="mt-1 line-clamp-1 text-xs text-muted-foreground"
-              >
-                {{ describeSku(item.skuId) }}
-              </p>
-              <div class="mt-2 flex items-center justify-between gap-2">
-                <span class="text-base font-bold tabular-nums text-primary">
-                  {{ t('mall.product.currencyCny') }}{{ unitPriceLabel(item.skuId) || '—' }}
-                </span>
-                <div class="flex items-center gap-1.5">
-                  <UiButton
-                    size="sm"
-                    variant="outline"
-                    :disabled="updateMutation.isPending.value"
-                    @click="decreaseQty(item)"
-                  >
-                    <XIcon icon="carbon:subtract" :size="14" />
-                  </UiButton>
-                  <span class="w-8 text-center text-sm tabular-nums text-foreground">
-                    {{ item.quantity ?? 0 }}
-                  </span>
-                  <UiButton
-                    size="sm"
-                    variant="outline"
-                    :disabled="updateMutation.isPending.value"
-                    @click="increaseQty(item)"
-                  >
-                    <XIcon icon="carbon:add" :size="14" />
-                  </UiButton>
-                </div>
-              </div>
-            </div>
-          </div>
+        <!-- 移动端：卡片列表 -->
+        <ul class="space-y-3 md:hidden">
+          <li
+            v-for="item in cartItems"
+            :key="item.id"
+            class="relative rounded-lg border border-border bg-card p-3 shadow-card"
+          >
+            <UiButton
+              variant="ghost"
+              size="icon"
+              class="absolute right-1 top-1 size-8 text-muted-foreground"
+              :disabled="deleteMutation.isPending.value"
+              :aria-label="t('cart.table.action')"
+              @click="removeItem(item)"
+            >
+              <XIcon icon="carbon:trash-can" :size="16" />
+            </UiButton>
 
-          <!-- 桌面网格布局（与表头列对齐） -->
-          <div class="hidden md:grid grid-cols-[32px_1fr_120px_160px_48px] items-center gap-4">
-            <!-- 单选 checkbox -->
-            <span>
-              <input
-                type="checkbox"
-                class="h-4 w-4 rounded border-border accent-[hsl(var(--primary))]"
-                :checked="item.id !== undefined && selectedIds.has(item.id)"
-                @change="toggleSelectItem(item.id, ($event.target as HTMLInputElement).checked)"
-              />
-            </span>
+            <div class="flex items-start gap-3">
+              <span class="relative mt-1 flex size-[18px] shrink-0 items-center justify-center">
+                <input
+                  type="checkbox"
+                  class="peer size-[18px] cursor-pointer appearance-none rounded-[5px] border border-border bg-card transition-colors checked:border-primary checked:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  :checked="item.id !== undefined && selectedIds.has(item.id)"
+                  :aria-label="productName(item.skuId) || t('cart.table.item')"
+                  @change="toggleSelectItem(item.id, ($event.target as HTMLInputElement).checked)"
+                />
+                <XIcon
+                  icon="carbon:checkmark"
+                  :size="12"
+                  class="pointer-events-none absolute text-primary-foreground opacity-0 peer-checked:opacity-100"
+                />
+              </span>
 
-            <!-- 商品缩略图（1:1）+ 标题 + 规格描述 -->
-            <div class="flex items-center gap-4">
-              <img
-                v-if="productImageUrl(item.skuId)"
+              <UiImage
                 :src="productImageUrl(item.skuId)"
                 :alt="productName(item.skuId)"
-                class="aspect-square h-16 w-16 shrink-0 rounded-md object-cover"
+                class="size-20 shrink-0 rounded-md object-cover"
               />
-              <UiProductPlaceholder
-                v-else
-                :seed="item.skuId ?? 0"
-                class="aspect-square h-16 w-16 shrink-0 rounded-md text-muted-foreground"
-              />
-              <div class="min-w-0">
-                <p class="line-clamp-1 text-sm font-semibold text-foreground dark:text-slate-200">
+
+              <div class="min-w-0 flex-1">
+                <p class="line-clamp-2 pr-7 text-sm font-semibold leading-snug text-foreground">
                   {{ productName(item.skuId) || '—' }}
                 </p>
                 <p
@@ -611,43 +534,144 @@ function goCheckout() {
                 >
                   {{ describeSku(item.skuId) }}
                 </p>
+
+                <div class="mt-2 flex flex-wrap items-center justify-between gap-x-2 gap-y-2">
+                  <UiPriceTag v-if="unitPriceFen(item.skuId)" :amount="unitPriceFen(item.skuId)" size="sm" />
+                  <span v-else class="text-sm text-muted-foreground">—</span>
+
+                  <div class="flex items-center gap-2">
+                    <UiButton
+                      variant="outline"
+                      size="icon"
+                      class="size-7 border-border bg-secondary text-foreground"
+                      :disabled="updateMutation.isPending.value"
+                      :aria-label="t('cart.decreaseQty')"
+                      @click="decreaseQty(item)"
+                    >
+                      <XIcon icon="carbon:subtract" :size="14" />
+                    </UiButton>
+                    <span class="min-w-6 text-center text-sm font-medium tabular-nums text-foreground">
+                      {{ item.quantity ?? 0 }}
+                    </span>
+                    <UiButton
+                      variant="outline"
+                      size="icon"
+                      class="size-7 border-border bg-secondary text-foreground"
+                      :disabled="updateMutation.isPending.value"
+                      :aria-label="t('cart.increaseQty')"
+                      @click="increaseQty(item)"
+                    >
+                      <XIcon icon="carbon:add" :size="14" />
+                    </UiButton>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <!-- 桌面端：行式列表 -->
+        <div class="hidden overflow-hidden rounded-lg border border-border bg-card shadow-card md:block">
+          <div
+            class="grid grid-cols-[24px_minmax(0,1fr)_120px_132px_40px] items-center gap-4 border-b border-border px-4 py-2.5 text-xs font-medium text-muted-foreground"
+          >
+            <span class="relative flex size-4 items-center justify-center">
+              <input
+                type="checkbox"
+                class="peer size-4 cursor-pointer appearance-none rounded border border-border bg-card transition-colors checked:border-primary checked:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                :checked="allSelected"
+                :aria-label="t('cart.selectAll')"
+                @change="toggleSelectAll(($event.target as HTMLInputElement).checked)"
+              />
+              <XIcon
+                icon="carbon:checkmark"
+                :size="11"
+                class="pointer-events-none absolute text-primary-foreground opacity-0 peer-checked:opacity-100"
+              />
+            </span>
+            <span>{{ t('cart.table.item') }}</span>
+            <span class="text-right">{{ t('cart.table.unitPrice') }}</span>
+            <span class="text-center">{{ t('cart.table.quantity') }}</span>
+            <span class="text-right">{{ t('cart.table.action') }}</span>
+          </div>
+
+          <div
+            v-for="item in cartItems"
+            :key="item.id"
+            class="grid grid-cols-[24px_minmax(0,1fr)_120px_132px_40px] items-center gap-4 border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-secondary"
+          >
+            <span class="relative flex size-4 items-center justify-center">
+              <input
+                type="checkbox"
+                class="peer size-4 cursor-pointer appearance-none rounded border border-border bg-card transition-colors checked:border-primary checked:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                :checked="item.id !== undefined && selectedIds.has(item.id)"
+                :aria-label="productName(item.skuId) || t('cart.table.item')"
+                @change="toggleSelectItem(item.id, ($event.target as HTMLInputElement).checked)"
+              />
+              <XIcon
+                icon="carbon:checkmark"
+                :size="11"
+                class="pointer-events-none absolute text-primary-foreground opacity-0 peer-checked:opacity-100"
+              />
+            </span>
+
+            <div class="flex min-w-0 items-center gap-3">
+              <UiImage
+                :src="productImageUrl(item.skuId)"
+                :alt="productName(item.skuId)"
+                class="size-14 shrink-0 rounded-md object-cover"
+              />
+              <div class="min-w-0">
+                <p class="truncate text-sm font-semibold text-foreground">
+                  {{ productName(item.skuId) || '—' }}
+                </p>
+                <p
+                  v-if="describeSku(item.skuId)"
+                  class="mt-0.5 truncate text-xs text-muted-foreground"
+                >
+                  {{ describeSku(item.skuId) }}
+                </p>
               </div>
             </div>
 
-            <!-- 单价 -->
-            <p class="text-center text-sm text-muted-foreground">
-              {{ t('mall.product.currencyCny') }}{{ unitPriceLabel(item.skuId) || '—' }}
-            </p>
+            <div class="flex justify-end">
+              <UiPriceTag v-if="unitPriceFen(item.skuId)" :amount="unitPriceFen(item.skuId)" size="sm" />
+              <span v-else class="text-sm text-muted-foreground">—</span>
+            </div>
 
-            <!-- 数量步进 -->
             <div class="flex items-center justify-center gap-2">
               <UiButton
-                size="sm"
                 variant="outline"
+                size="icon"
+                class="size-8 border-border bg-secondary text-foreground"
                 :disabled="updateMutation.isPending.value"
+                :aria-label="t('cart.decreaseQty')"
                 @click="decreaseQty(item)"
               >
                 <XIcon icon="carbon:subtract" :size="14" />
               </UiButton>
-              <span class="w-10 text-center text-sm tabular-nums text-foreground">
+              <span class="min-w-7 text-center text-sm font-medium tabular-nums text-foreground">
                 {{ item.quantity ?? 0 }}
               </span>
               <UiButton
-                size="sm"
                 variant="outline"
+                size="icon"
+                class="size-8 border-border bg-secondary text-foreground"
                 :disabled="updateMutation.isPending.value"
+                :aria-label="t('cart.increaseQty')"
                 @click="increaseQty(item)"
               >
                 <XIcon icon="carbon:add" :size="14" />
               </UiButton>
             </div>
 
-            <!-- 移除 -->
             <div class="flex justify-end">
               <UiButton
-                size="sm"
                 variant="ghost"
+                size="icon"
+                class="size-8 text-muted-foreground"
                 :disabled="deleteMutation.isPending.value"
+                :aria-label="t('cart.table.action')"
                 @click="removeItem(item)"
               >
                 <XIcon icon="carbon:trash-can" :size="16" />
@@ -657,45 +681,82 @@ function goCheckout() {
         </div>
       </div>
 
-      <!-- 右侧：结算看板（4 栏，sticky） -->
-      <div class="md:col-span-4 rounded-2xl border border-border bg-card p-6 md:sticky md:top-24 md:self-start">
-        <h2 class="mb-4 text-xl font-bold text-foreground">{{ t('cart.checkout') }}</h2>
+      <!-- 桌面端：右侧结算汇总 -->
+      <aside class="hidden md:col-span-4 md:block">
+        <div class="md:sticky md:top-24">
+          <div class="rounded-lg border border-border bg-card p-5 shadow-card">
+            <h2 class="text-base font-bold text-foreground">{{ t('cart.checkout') }}</h2>
 
-        <div class="rounded-xl border border-primary/40 bg-primary/5 p-5">
-          <p class="text-xs text-muted-foreground">{{ t('cart.selectedAmount') }}</p>
-          <p class="mt-1 text-3xl font-extrabold text-primary">
-            {{ selectedLabel }}
-          </p>
-          <p class="mt-1 text-[10px] text-muted-foreground">
-            {{ selectedCount }} {{ t('cart.table.item') }}
-          </p>
+            <div class="mt-4 rounded-lg bg-primary-soft px-4 py-3.5">
+              <p class="text-xs text-primary-soft-foreground">{{ t('cart.selectedAmount') }}</p>
+              <p class="mt-1 text-2xl font-extrabold tabular-nums text-primary-soft-foreground">
+                {{ t('mall.product.currencyCny') }}{{ selectedAmountText }}
+              </p>
+              <p class="mt-1 text-[11px] text-primary-soft-foreground">
+                {{ selectedCount }} {{ t('cart.table.item') }}
+              </p>
+            </div>
+
+            <label class="mt-4 flex cursor-pointer items-center gap-2 text-sm text-foreground">
+              <span class="relative flex size-[18px] shrink-0 items-center justify-center">
+                <input
+                  type="checkbox"
+                  class="peer size-[18px] cursor-pointer appearance-none rounded-[5px] border border-border bg-card transition-colors checked:border-primary checked:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  :checked="allSelected"
+                  :aria-label="t('cart.selectAll')"
+                  @change="toggleSelectAll(($event.target as HTMLInputElement).checked)"
+                />
+                <XIcon
+                  icon="carbon:checkmark"
+                  :size="12"
+                  class="pointer-events-none absolute text-primary-foreground opacity-0 peer-checked:opacity-100"
+                />
+              </span>
+              {{ t('cart.selectAll') }}
+            </label>
+
+            <UiButton class="mt-4 w-full" size="lg" @click="goCheckout">
+              {{ t('cart.goCheckout') }}
+            </UiButton>
+
+            <p class="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+              {{ t('cart.totalNote') }}
+            </p>
+          </div>
         </div>
-
-        <UiButton
-          class="mt-5 w-full"
-          size="lg"
-          @click="goCheckout"
-        >
-          {{ t('cart.goCheckout') }}
-        </UiButton>
-      </div>
+      </aside>
     </div>
   </LayoutSectionContainer>
 
-  <!-- 移动端吸底结算栏：合计 + 去结算常驻可见；桌面端用右侧结算看板。
-       bottom 抬高一个 Tab 栏高度，避免被底部 Tab 遮挡。 -->
-  <div
-    class="fixed bottom-[calc(3.5rem+env(safe-area-inset-bottom))] left-0 right-0 z-40 flex items-center gap-3 border-t border-border bg-card/95 px-4 pt-3 backdrop-blur-md md:hidden dark:bg-card/90"
-    :style="{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))' }"
-  >
-    <div class="min-w-0 flex-1">
-      <p class="text-[10px] text-muted-foreground">
-        {{ t('cart.selectedAmount') }}（{{ selectedCount }} {{ t('cart.table.item') }}）
+  <!-- 移动端吸底：合计 + 去结算，避让 TabBar；桌面端落在右侧汇总卡 -->
+  <UiStickyBar v-if="showContent" class="md:hidden">
+    <label class="flex shrink-0 cursor-pointer items-center gap-2 text-xs font-medium text-foreground">
+      <span class="relative flex size-[18px] shrink-0 items-center justify-center">
+        <input
+          type="checkbox"
+          class="peer size-[18px] cursor-pointer appearance-none rounded-[5px] border border-border bg-card transition-colors checked:border-primary checked:bg-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          :checked="allSelected"
+          :aria-label="t('cart.selectAll')"
+          @change="toggleSelectAll(($event.target as HTMLInputElement).checked)"
+        />
+        <XIcon
+          icon="carbon:checkmark"
+          :size="12"
+          class="pointer-events-none absolute text-primary-foreground opacity-0 peer-checked:opacity-100"
+        />
+      </span>
+      {{ t('cart.selectAll') }}
+    </label>
+
+    <div class="ml-auto flex min-w-0 flex-col items-end">
+      <span class="text-[10px] leading-none text-muted-foreground">{{ t('cart.total') }}</span>
+      <p class="mt-0.5 text-lg font-extrabold leading-none tabular-nums text-primary">
+        {{ t('mall.product.currencyCny') }}{{ selectedAmountText }}
       </p>
-      <p class="text-lg font-extrabold tabular-nums text-primary">{{ selectedLabel }}</p>
     </div>
-    <UiButton class="flex-1" size="lg" @click="goCheckout">
+
+    <UiButton class="shrink-0" size="lg" @click="goCheckout">
       {{ t('cart.goCheckout') }}
     </UiButton>
-  </div>
+  </UiStickyBar>
 </template>

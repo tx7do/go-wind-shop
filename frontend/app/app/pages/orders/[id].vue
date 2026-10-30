@@ -143,19 +143,20 @@ const STATUS_LABEL_KEY: Record<OrderStatus, string> = {
   FULFILLED: 'orderStatus.fulfilled',
   CLOSED: 'orderStatus.closed',
 };
-const STATUS_TAG_CLASS: Record<OrderStatus, string> = {
-  STATUS_UNSPECIFIED: 'bg-muted text-muted-foreground',
-  PENDING_PAYMENT: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
-  PAID: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  CANCELLED: 'bg-destructive/15 text-destructive',
-  FULFILLED: 'bg-sky-500/15 text-sky-600 dark:text-sky-400',
-  CLOSED: 'bg-muted text-muted-foreground',
+type BadgeTone = 'neutral' | 'primary' | 'success' | 'warning' | 'danger';
+const STATUS_TONE: Record<OrderStatus, BadgeTone> = {
+  STATUS_UNSPECIFIED: 'neutral',
+  PENDING_PAYMENT: 'warning',
+  PAID: 'primary',
+  FULFILLED: 'success',
+  CANCELLED: 'danger',
+  CLOSED: 'neutral',
 };
 function statusLabel(s: OrderStatus | undefined): string {
   return t('mall.' + STATUS_LABEL_KEY[s ?? 'STATUS_UNSPECIFIED']);
 }
-function statusTagClass(s: OrderStatus | undefined): string {
-  return STATUS_TAG_CLASS[s ?? 'STATUS_UNSPECIFIED'];
+function statusTone(s: OrderStatus | undefined): BadgeTone {
+  return STATUS_TONE[s ?? 'STATUS_UNSPECIFIED'];
 }
 
 function formatCreatedAt(ts: string | undefined): string {
@@ -179,13 +180,13 @@ function maskAddress(addr: string | undefined): string {
   return addr.length > 12 ? addr.slice(0, 12) + '…' : addr;
 }
 
-function displayAmount(v: number | undefined, currency?: string): string {
-  const prefix = currency === 'CNY' ? t('mall.product.currencyCny') : '';
-  // 后端金额为最小货币单位（分），展示转元；保留两位小数
-  return prefix + ((v ?? 0) / 100).toFixed(2);
+// 后端金额单位是「分」，uint64 经 protobuf JSON 下成字符串，先 Number 再交给价格标签。
+function toFen(v: number | undefined): number {
+  const fen = Number(v ?? 0);
+  return Number.isFinite(fen) ? fen : 0;
 }
 
-const orderTotalLabel = computed(() => displayAmount(order.value?.totalAmount, order.value?.currency));
+const orderTotalFen = computed(() => toFen(order.value?.totalAmount));
 
 // ---------- 订单操作 ----------
 // 状态机：PENDING_PAYMENT → PAID → FULFILLED → CLOSED；PENDING_PAYMENT → CANCELLED
@@ -388,31 +389,13 @@ const hasAnyAction = computed(
     size="sm"
   />
 
-  <LayoutSectionContainer>
-    <!-- 未登录 -->
-    <div
-      v-if="!isLogin"
-      class="flex flex-col items-center gap-6 rounded-2xl border border-border bg-card p-12 text-center"
-    >
-      <XIcon icon="carbon:locked" :size="48" class="text-muted-foreground" />
-      <p class="text-lg text-muted-foreground">{{ t('authentication.login.please_login') }}</p>
-      <UiButton @click="navigateTo(localePath('/login'))">
-        {{ t('navbar.user.login') }}
-      </UiButton>
-    </div>
+  <LayoutSectionContainer max-width="narrow">
+    <UiAuthGate v-if="!isLogin" />
 
-    <!-- 加载中 / 不存在 -->
-    <div v-else-if="orderLoading" class="rounded-2xl border border-border bg-card p-6">
-      <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <UiSkeleton v-for="i in 4" :key="i" class="h-16 w-full rounded-md" />
-      </div>
-    </div>
+    <UiListSkeleton v-else-if="orderLoading" :rows="3" variant="row" />
 
     <!-- 错误态：订单详情加载失败（网络/服务端），与"订单不存在"区分并提供重试 -->
-    <UiAppEmpty
-      v-else-if="orderError"
-      variant="error"
-    >
+    <UiAppEmpty v-else-if="orderError" variant="error">
       <template #action>
         <UiButton variant="outline" size="sm" @click="orderQuery.refetch()">
           {{ t('ui.button.retry') }}
@@ -420,139 +403,132 @@ const hasAnyAction = computed(
       </template>
     </UiAppEmpty>
 
-    <div
+    <UiAppEmpty
       v-else-if="!order"
-      class="rounded-2xl border border-border bg-card p-16 text-center text-muted-foreground"
-    >
-      {{ t('orderDetail.notFound') }}
-    </div>
+      variant="noData"
+      :description="t('orderDetail.notFound')"
+    />
 
-    <!-- 订单详情 -->
-    <div v-else class="flex flex-col gap-6">
+    <div v-else class="flex flex-col gap-3 md:gap-4">
       <!-- 状态摘要 -->
-      <div class="rounded-2xl border border-border bg-card p-6">
-        <div class="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p class="text-xs text-muted-foreground">{{ t('orderDetail.orderId') }}</p>
-            <p class="mt-1 text-lg font-bold text-foreground">#{{ order.id ?? '—' }}</p>
+      <section class="rounded-lg border border-border bg-card p-4 shadow-card md:p-5">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="text-[11px] text-muted-foreground">{{ t('orderDetail.orderId') }}</p>
+            <p class="mt-0.5 text-base font-semibold tabular-nums text-foreground">
+              #{{ order.id ?? '—' }}
+            </p>
           </div>
-          <div class="text-right">
-            <p class="text-xs text-muted-foreground">{{ t('orderDetail.status') }}</p>
-            <span
-              class="mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium"
-              :class="statusTagClass(order.status)"
-            >
-              {{ statusLabel(order.status) }}
-            </span>
+          <UiStatusBadge
+            size="md"
+            dot
+            :tone="statusTone(order.status)"
+            :label="statusLabel(order.status)"
+          />
+        </div>
+
+        <div class="mt-3.5 grid grid-cols-2 gap-3 border-t border-border pt-3.5">
+          <div class="min-w-0">
+            <p class="text-[11px] text-muted-foreground">{{ t('orderDetail.createdAt') }}</p>
+            <p class="mt-0.5 truncate text-xs tabular-nums text-foreground">
+              {{ formatCreatedAt(order.createdAt) }}
+            </p>
           </div>
-          <div class="text-right">
-            <p class="text-xs text-muted-foreground">{{ t('orderDetail.createdAt') }}</p>
-            <p class="mt-1 text-sm tabular-nums text-foreground">{{ formatCreatedAt(order.createdAt) }}</p>
-          </div>
-          <div class="text-right">
-            <p class="text-xs text-muted-foreground">{{ t('orderDetail.total') }}</p>
-            <p class="mt-1 text-lg font-bold text-primary">{{ orderTotalLabel }}</p>
+          <div class="min-w-0">
+            <p class="text-right text-[11px] text-muted-foreground">{{ t('orderDetail.total') }}</p>
+            <div class="mt-0.5 flex justify-end">
+              <UiPriceTag v-if="orderTotalFen > 0" :amount="orderTotalFen" size="md" />
+              <span v-else class="text-sm tabular-nums text-muted-foreground">¥0.00</span>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
       <!-- 收货信息 -->
-      <div class="rounded-2xl border border-border bg-card p-6">
-        <h2 class="mb-4 text-base font-bold text-foreground">{{ t('orderDetail.recipientTitle') }}</h2>
-        <div class="grid gap-4 sm:grid-cols-3">
-          <div class="rounded-md border border-border bg-background/40 p-3">
-            <p class="text-[10px] uppercase tracking-wide text-muted-foreground">
-              {{ t('orderDetail.recipientName') }}
-            </p>
-            <p class="mt-1 text-sm text-foreground">{{ order.recipientName || '—' }}</p>
+      <section class="rounded-lg border border-border bg-card p-4 shadow-card md:p-5">
+        <h2 class="text-sm font-semibold text-foreground">{{ t('orderDetail.recipientTitle') }}</h2>
+        <dl class="mt-3 flex flex-col gap-2.5">
+          <div class="flex items-start justify-between gap-4">
+            <dt class="shrink-0 text-xs text-muted-foreground">{{ t('orderDetail.recipientName') }}</dt>
+            <dd class="min-w-0 text-right text-sm text-foreground">{{ order.recipientName || '—' }}</dd>
           </div>
-          <div class="rounded-md border border-border bg-background/40 p-3">
-            <p class="text-[10px] uppercase tracking-wide text-muted-foreground">
-              {{ t('orderDetail.recipientPhone') }}
-            </p>
-            <p class="mt-1 text-sm tabular-nums text-foreground">{{ maskPhone(order.recipientPhone) }}</p>
+          <div class="flex items-start justify-between gap-4">
+            <dt class="shrink-0 text-xs text-muted-foreground">{{ t('orderDetail.recipientPhone') }}</dt>
+            <dd class="min-w-0 text-right text-sm tabular-nums text-foreground">{{ maskPhone(order.recipientPhone) }}</dd>
           </div>
-          <div class="rounded-md border border-border bg-background/40 p-3">
-            <p class="text-[10px] uppercase tracking-wide text-muted-foreground">
-              {{ t('orderDetail.shippingAddress') }}
-            </p>
-            <p class="mt-1 text-sm text-foreground">{{ maskAddress(order.shippingAddress) }}</p>
+          <div class="flex items-start justify-between gap-4">
+            <dt class="shrink-0 text-xs text-muted-foreground">{{ t('orderDetail.shippingAddress') }}</dt>
+            <dd class="min-w-0 break-words text-right text-sm text-foreground">{{ maskAddress(order.shippingAddress) }}</dd>
           </div>
-        </div>
-      </div>
+        </dl>
+      </section>
 
       <!-- 物流信息（仅已发货/已关闭订单展示） -->
-      <div v-if="showShipment" class="rounded-2xl border border-border bg-card p-6">
-        <h2 class="mb-4 text-base font-bold text-foreground">{{ t('shipment.title') }}</h2>
+      <section v-if="showShipment" class="rounded-lg border border-border bg-card p-4 shadow-card md:p-5">
+        <h2 class="text-sm font-semibold text-foreground">{{ t('shipment.title') }}</h2>
 
-        <!-- 运单信息 -->
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div class="rounded-md border border-border bg-background/40 p-3">
-            <p class="text-[10px] uppercase tracking-wide text-muted-foreground">{{ t('shipment.carrier') }}</p>
-            <p class="mt-1 text-sm text-foreground">{{ shipment?.carrier || '—' }}</p>
+        <dl class="mt-3 flex flex-col gap-2.5">
+          <div class="flex items-start justify-between gap-4">
+            <dt class="shrink-0 text-xs text-muted-foreground">{{ t('shipment.carrier') }}</dt>
+            <dd class="min-w-0 text-right text-sm text-foreground">{{ shipment?.carrier || '—' }}</dd>
           </div>
-          <div class="rounded-md border border-border bg-background/40 p-3">
-            <p class="text-[10px] uppercase tracking-wide text-muted-foreground">{{ t('shipment.trackingNumber') }}</p>
-            <p class="mt-1 text-sm tabular-nums text-foreground">{{ shipment?.trackingNumber || '—' }}</p>
+          <div class="flex items-start justify-between gap-4">
+            <dt class="shrink-0 text-xs text-muted-foreground">{{ t('shipment.trackingNumber') }}</dt>
+            <dd class="min-w-0 break-all text-right text-sm tabular-nums text-foreground">
+              {{ shipment?.trackingNumber || '—' }}
+            </dd>
           </div>
-        </div>
+        </dl>
+
+        <h3 class="mt-4 text-xs font-semibold text-muted-foreground">{{ t('shipment.timeline.title') }}</h3>
 
         <!-- 物流轨迹时间线 -->
-        <h3 class="mb-3 mt-6 text-sm font-semibold text-foreground">{{ t('shipment.timeline.title') }}</h3>
-        <div v-if="trackingEvents.length > 0" class="flex flex-col">
-          <div
+        <ol v-if="trackingEvents.length > 0" class="mt-3">
+          <li
             v-for="(ev, idx) in trackingEvents"
             :key="idx"
             class="flex gap-3"
           >
-            <!-- 时间线节点 + 连接线 -->
             <div class="flex flex-col items-center">
-              <span class="mt-1 h-2 w-2 rounded-full bg-border"></span>
-              <span v-if="idx < trackingEvents.length - 1" class="w-px flex-1 bg-border"></span>
+              <span
+                class="mt-1 size-2 shrink-0 rounded-full"
+                :class="idx === 0 ? 'bg-primary' : 'bg-border'"
+              />
+              <span v-if="idx < trackingEvents.length - 1" class="w-px flex-1 bg-border" />
             </div>
-            <!-- 事件内容 -->
-            <div class="flex-1 pb-6">
-              <p class="text-xs text-muted-foreground">{{ ev.timestamp || '—' }}</p>
-              <p class="mt-1 text-sm text-foreground">{{ ev.location || '—' }}</p>
-              <p class="mt-1 text-xs text-muted-foreground">{{ ev.description || '—' }}</p>
+            <div class="min-w-0 flex-1 pb-4">
+              <p class="text-[11px] tabular-nums text-muted-foreground">{{ ev.timestamp || '—' }}</p>
+              <p class="mt-0.5 text-sm text-foreground">{{ ev.location || '—' }}</p>
+              <p v-if="ev.description" class="mt-0.5 text-xs text-muted-foreground">{{ ev.description }}</p>
             </div>
-          </div>
-        </div>
+          </li>
+        </ol>
+
         <UiAppEmpty
           v-else
           variant="noData"
           :description="t('shipment.noTrackingDesc')"
+          class="py-6"
         />
-      </div>
+      </section>
 
       <!-- 订单项 -->
-      <div class="overflow-hidden rounded-2xl border border-border bg-card">
-        <div class="border-b border-border bg-muted/40 px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          <div class="grid grid-cols-[1fr_90px_70px_90px] items-center gap-4">
-            <span>{{ t('orderDetail.table.item') }}</span>
-            <span class="text-right">{{ t('orderDetail.table.unitPrice') }}</span>
-            <span class="text-right">{{ t('orderDetail.table.quantity') }}</span>
-            <span class="text-right">{{ t('orderDetail.table.subtotal') }}</span>
-          </div>
-        </div>
+      <section class="overflow-hidden rounded-lg border border-border bg-card shadow-card">
+        <h2 class="border-b border-border px-4 py-3 text-sm font-semibold text-foreground md:px-5">
+          {{ t('orderDetail.table.item') }}
+        </h2>
 
-        <div v-if="itemsLoading" class="flex flex-col">
-          <div v-for="i in 3" :key="i" class="border-b border-border px-6 py-4 last:border-b-0">
-            <div class="flex items-center gap-3">
-              <UiSkeleton class="h-10 w-10 shrink-0 rounded" />
-              <UiSkeleton class="h-4 flex-1" />
-              <UiSkeleton class="h-4 w-12" />
-              <UiSkeleton class="h-4 w-8" />
-              <UiSkeleton class="h-4 w-12" />
+        <div v-if="itemsLoading" class="flex flex-col gap-3 p-4 md:p-5">
+          <div v-for="i in 3" :key="i" class="flex items-center gap-3">
+            <UiSkeleton class="size-14 shrink-0 rounded-md" />
+            <div class="flex-1 space-y-2">
+              <UiSkeleton class="h-3.5 w-1/2" />
+              <UiSkeleton class="h-3 w-1/3" />
             </div>
           </div>
         </div>
 
-        <UiAppEmpty
-          v-else-if="itemsError"
-          variant="error"
-          in-container
-        >
+        <UiAppEmpty v-else-if="itemsError" variant="error" in-container>
           <template #action>
             <UiButton variant="outline" size="sm" @click="orderItemsQuery.refetch()">
               {{ t('ui.button.retry') }}
@@ -560,48 +536,52 @@ const hasAnyAction = computed(
           </template>
         </UiAppEmpty>
 
-        <div
+        <UiAppEmpty
           v-else-if="orderItems.length === 0"
-          class="px-6 py-10 text-center text-sm text-muted-foreground"
-        >
-          {{ t('orderDetail.noItems') }}
-        </div>
+          variant="noData"
+          :description="t('orderDetail.noItems')"
+          class="py-8"
+        />
 
-        <div
-          v-for="item in orderItems"
-          :key="item.id"
-          class="border-b border-border px-6 py-4 last:border-b-0"
-        >
-          <div class="grid grid-cols-[1fr_90px_70px_90px] items-center gap-4">
-            <div class="flex items-center gap-3">
-              <UiProductPlaceholder
-                :seed="item.skuId ?? 0"
-                class="h-10 w-10 shrink-0 rounded text-muted-foreground"
-              />
-              <span class="line-clamp-1 text-xs text-foreground">
-                {{ t('orderDetail.skuId') }}#{{ item.skuId ?? '—' }}
-              </span>
+        <ul v-else>
+          <li
+            v-for="item in orderItems"
+            :key="item.id"
+            class="flex gap-3 border-b border-border px-4 py-3.5 last:border-b-0 md:px-5"
+          >
+            <UiImage class="size-14 shrink-0 rounded-md border border-border object-cover md:size-16" />
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-sm font-medium text-foreground">
+                {{ t('orderDetail.skuId') }} #{{ item.skuId ?? '—' }}
+              </p>
+              <div class="mt-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                <div class="flex items-center gap-2">
+                  <UiPriceTag v-if="toFen(item.unitPrice) > 0" :amount="toFen(item.unitPrice)" size="sm" />
+                  <span v-else class="text-xs tabular-nums text-muted-foreground">¥0.00</span>
+                  <span class="text-xs tabular-nums text-muted-foreground">×{{ item.quantity ?? 0 }}</span>
+                </div>
+                <UiPriceTag v-if="toFen(item.subtotal) > 0" :amount="toFen(item.subtotal)" size="sm" />
+                <span v-else class="text-xs tabular-nums text-muted-foreground">¥0.00</span>
+              </div>
             </div>
-            <span class="text-right text-xs tabular-nums text-muted-foreground">
-              {{ displayAmount(item.unitPrice, order.currency) }}
-            </span>
-            <span class="text-right text-xs tabular-nums text-muted-foreground">
-              ×{{ item.quantity ?? 0 }}
-            </span>
-            <span class="text-right text-xs tabular-nums text-muted-foreground">
-              {{ displayAmount(item.subtotal, order.currency) }}
-            </span>
-          </div>
-        </div>
-      </div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- 合计 -->
+      <section class="flex items-center justify-between gap-4 rounded-lg border border-border bg-card px-4 py-4 shadow-card md:px-5">
+        <span class="text-sm text-muted-foreground">{{ t('orderDetail.total') }}</span>
+        <UiPriceTag v-if="orderTotalFen > 0" :amount="orderTotalFen" size="lg" />
+        <span v-else class="text-lg font-bold tabular-nums text-muted-foreground">¥0.00</span>
+      </section>
 
       <!-- 订单操作 -->
-      <div
+      <section
         v-if="hasAnyAction"
-        class="flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-card p-6"
+        class="rounded-lg border border-border bg-card p-4 shadow-card md:p-5"
       >
-        <span class="text-sm font-medium text-foreground">{{ t('orderDetail.actions.title') }}</span>
-        <div class="flex flex-wrap items-center gap-3">
+        <p class="text-sm font-semibold text-foreground">{{ t('orderDetail.actions.title') }}</p>
+        <div class="mt-3 flex flex-wrap items-center gap-2">
           <UiButton
             v-if="canPay"
             :disabled="anyActionPending"
@@ -634,10 +614,11 @@ const hasAnyAction = computed(
             {{ t('orderDetail.actions.cancel') }}
           </UiButton>
         </div>
-      </div>
+      </section>
 
-      <div class="flex justify-center">
-        <UiButton variant="outline" @click="navigateTo(localePath('/orders'))">
+      <div class="flex justify-center pt-1">
+        <UiButton variant="outline" size="sm" @click="navigateTo(localePath('/orders'))">
+          <XIcon icon="lucide:arrow-left" :size="14" />
           {{ t('orderDetail.backToList') }}
         </UiButton>
       </div>

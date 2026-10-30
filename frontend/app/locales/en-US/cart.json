@@ -10,6 +10,8 @@
   "selectAll": "Select all",
   "selectedAmount": "Selected total",
   "emptySelected": "Please select items before checkout",
+  "decreaseQty": "Decrease quantity",
+  "increaseQty": "Increase quantity",
   "table": {
     "item": "Item",
     "unitPrice": "Unit price",

@@ -16,22 +16,14 @@ const handleGithubRegister = () => {
 
 <template>
   <div class="space-y-3">
-    <button
-      type="button"
-      class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98]"
-      @click="handleGoogleRegister"
-    >
-      <XIcon icon="logos:google-icon" :size="18" />
-      {{ t('authentication.login.social_google') }}
-    </button>
+    <UiButton type="button" variant="outline" size="lg" class="w-full gap-3" @click="handleGoogleRegister">
+      <XIcon icon="mdi:google" :size="18" />
+      <span>{{ t('authentication.login.social_google') }}</span>
+    </UiButton>
 
-    <button
-      type="button"
-      class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-lg border border-border bg-card px-4 py-3 text-sm font-medium text-foreground transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98]"
-      @click="handleGithubRegister"
-    >
-      <XIcon icon="logos:github-icon" :size="18" />
-      {{ t('authentication.login.social_github') }}
-    </button>
+    <UiButton type="button" variant="outline" size="lg" class="w-full gap-3" @click="handleGithubRegister">
+      <XIcon icon="mdi:github" :size="20" />
+      <span>{{ t('authentication.login.social_github') }}</span>
+    </UiButton>
   </div>
 </template>

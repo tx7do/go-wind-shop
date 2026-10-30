@@ -107,21 +107,22 @@ const STATUS_LABEL_KEY: Record<OrderStatus, string> = {
   CLOSED: 'orderStatus.closed',
 };
 
-const STATUS_TAG_CLASS: Record<OrderStatus, string> = {
-  STATUS_UNSPECIFIED: 'bg-muted text-muted-foreground',
-  PENDING_PAYMENT: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
-  PAID: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  CANCELLED: 'bg-destructive/15 text-destructive',
-  FULFILLED: 'bg-sky-500/15 text-sky-600 dark:text-sky-400',
-  CLOSED: 'bg-muted text-muted-foreground',
+type BadgeTone = 'neutral' | 'primary' | 'success' | 'warning' | 'danger';
+const STATUS_TONE: Record<OrderStatus, BadgeTone> = {
+  STATUS_UNSPECIFIED: 'neutral',
+  PENDING_PAYMENT: 'warning',
+  PAID: 'primary',
+  FULFILLED: 'success',
+  CANCELLED: 'danger',
+  CLOSED: 'neutral',
 };
 
 function statusLabel(s: OrderStatus | undefined): string {
   const key = STATUS_LABEL_KEY[s ?? 'STATUS_UNSPECIFIED'];
   return t('mall.' + key);
 }
-function statusTagClass(s: OrderStatus | undefined): string {
-  return STATUS_TAG_CLASS[s ?? 'STATUS_UNSPECIFIED'];
+function statusTone(s: OrderStatus | undefined): BadgeTone {
+  return STATUS_TONE[s ?? 'STATUS_UNSPECIFIED'];
 }
 
 function formatCreatedAt(ts: string | undefined): string {
@@ -133,11 +134,10 @@ function formatCreatedAt(ts: string | undefined): string {
   }
 }
 
-function displayTotal(order: OrderEntity): string {
-  const currency = order.currency === 'CNY' ? t('mall.product.currencyCny') : '';
-  // 后端金额为最小货币单位（分），展示转元；保留两位小数
-  const cents = order.totalAmount ?? 0;
-  return currency + (cents / 100).toFixed(2);
+// 后端金额为最小货币单位（分），且 uint64 经 JSON 是字符串，先 Number 再交给价格标签。
+function orderTotalFen(order: OrderEntity): number {
+  const fen = Number(order.totalAmount ?? 0);
+  return Number.isFinite(fen) ? fen : 0;
 }
 
 function filterLabel(key: FilterKey): string {
@@ -154,156 +154,156 @@ function goToPage(p: number) {
     page.value = clamped;
   }
 }
+
+// pages/orders/[id].vue 是 pages/orders.vue 的子路由（Nuxt 按同名目录嵌套），
+// 父级不透出 NuxtPage 时订单详情永远渲染不出来，这里按有无 id 二选一。
+const isDetailRoute = computed(() => route.params.id !== undefined);
 </script>
 
 <template>
+  <NuxtPage v-if="isDetailRoute" />
+
   <LayoutPageHero
+    v-if="!isDetailRoute"
     :title="t('orders.title')"
     :description="t('orders.subtitle')"
     icon="carbon:document"
     size="sm"
   />
 
-  <LayoutSectionContainer>
-    <!-- 未登录 -->
-    <div
-      v-if="!isLogin"
-      class="flex flex-col items-center gap-6 rounded-2xl border border-border bg-card p-12 text-center"
-    >
-      <XIcon icon="carbon:locked" :size="48" class="text-muted-foreground" />
-      <p class="text-lg text-muted-foreground">{{ t('authentication.login.please_login') }}</p>
-      <UiButton @click="navigateTo(localePath('/login'))">
-        {{ t('navbar.user.login') }}
-      </UiButton>
-    </div>
+  <LayoutSectionContainer v-if="!isDetailRoute">
+    <UiAuthGate v-if="!isLogin" />
 
-    <!-- 加载中 -->
-    <div v-else-if="ordersLoading" class="overflow-hidden rounded-2xl border border-border bg-card">
-      <div class="border-b border-border bg-muted/40 px-6 py-3">
-        <UiSkeleton class="h-4 w-48" />
-      </div>
-      <div v-for="i in 4" :key="i" class="border-b border-border px-6 py-4 last:border-b-0">
-        <div class="flex items-center gap-4">
-          <UiSkeleton class="h-4 w-10" />
-          <UiSkeleton class="h-5 w-16" />
-          <UiSkeleton class="h-4 w-14 ml-auto" />
-          <UiSkeleton class="h-4 w-24" />
-          <UiSkeleton class="h-4 w-8" />
+    <template v-else>
+      <!-- 状态筛选：窄屏横向滚动，不做换行挤压 -->
+      <div class="-mx-4 mb-4 overflow-x-auto px-4 md:mx-0 md:mb-6 md:px-0">
+        <div class="flex w-max items-center gap-1.5 rounded-full border border-border bg-card p-1">
+          <button
+            v-for="key in FILTER_TABS"
+            :key="key"
+            type="button"
+            :class="[
+              'whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors',
+              activeFilter === key
+                ? 'bg-primary text-primary-foreground'
+                : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+            ]"
+            @click="activeFilter = key"
+          >
+            {{ filterLabel(key) }}
+          </button>
         </div>
       </div>
-    </div>
 
-    <!-- 错误态：网络/服务端错误，与"空"区分开，并提供重试 -->
-    <UiAppEmpty
-      v-else-if="ordersError"
-      variant="error"
-    >
-      <template #action>
-        <UiButton variant="outline" size="sm" @click="ordersQuery.refetch()">
-          {{ t('ui.button.retry') }}
-        </UiButton>
-      </template>
-    </UiAppEmpty>
+      <UiListSkeleton v-if="ordersLoading" :rows="6" variant="row" />
 
-    <!-- 已加载：Tab 条 + 内容 -->
-    <div v-else class="flex flex-col gap-4">
-      <!-- 状态筛选 Tab -->
-      <div
-        class="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-card p-3"
-      >
-        <button
-          v-for="key in FILTER_TABS"
-          :key="key"
-          type="button"
-          :class="[
-            'rounded-full px-4 py-1.5 text-xs font-medium transition-colors',
-            activeFilter === key
-              ? 'bg-primary text-primary-foreground'
-              : 'text-muted-foreground hover:bg-muted hover:text-foreground',
-          ]"
-          @click="activeFilter = key"
-        >
-          {{ filterLabel(key) }}
-        </button>
-      </div>
+      <!-- 错误态：网络/服务端错误，与"空"区分开，并提供重试 -->
+      <UiAppEmpty v-else-if="ordersError" variant="error">
+        <template #action>
+          <UiButton variant="outline" size="sm" @click="ordersQuery.refetch()">
+            {{ t('ui.button.retry') }}
+          </UiButton>
+        </template>
+      </UiAppEmpty>
 
       <!-- 空态：当前过滤条件下无订单 -->
       <UiAppEmpty
-        v-if="orders.length === 0"
+        v-else-if="orders.length === 0"
         variant="noData"
         :description="activeFilter === 'all' ? t('orders.empty') : t('orders.emptyFiltered')"
       />
 
-      <!-- 订单列表 -->
-      <div v-else class="overflow-x-auto rounded-2xl border border-border bg-card">
-        <div class="min-w-[700px]">
-        <div class="border-b border-border bg-muted/40 px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-          <div class="grid grid-cols-[80px_1fr_120px_140px_80px] items-center gap-4">
+      <template v-else>
+        <!-- 移动端：卡片 -->
+        <div class="flex flex-col gap-2.5 md:hidden">
+          <NuxtLink
+            v-for="order in orders"
+            :key="order.id"
+            :to="localePath('/orders/' + order.id)"
+            class="rounded-lg border border-border bg-card p-3.5 shadow-card transition-colors active:bg-muted"
+          >
+            <div class="flex items-center justify-between gap-2">
+              <span class="text-sm font-semibold tabular-nums text-foreground">
+                #{{ order.id ?? '—' }}
+              </span>
+              <UiStatusBadge
+                size="sm"
+                dot
+                :tone="statusTone(order.status)"
+                :label="statusLabel(order.status)"
+              />
+            </div>
+
+            <div class="mt-3 flex items-end justify-between gap-3">
+              <div class="min-w-0">
+                <p class="text-[11px] leading-none text-muted-foreground">
+                  {{ t('orders.table.createdAt') }}
+                </p>
+                <p class="mt-1 truncate text-xs leading-tight tabular-nums text-muted-foreground">
+                  {{ formatCreatedAt(order.createdAt) }}
+                </p>
+              </div>
+              <UiPriceTag v-if="orderTotalFen(order) > 0" :amount="orderTotalFen(order)" size="md" class="shrink-0" />
+              <span v-else class="shrink-0 text-sm tabular-nums text-muted-foreground">¥0.00</span>
+            </div>
+
+            <div class="mt-3 flex items-center justify-between border-t border-border pt-2.5">
+              <span class="text-xs font-medium text-primary">{{ t('orders.detail') }}</span>
+              <XIcon icon="lucide:chevron-right" :size="14" class="text-muted-foreground" />
+            </div>
+          </NuxtLink>
+        </div>
+
+        <!-- 桌面端：行式列表 -->
+        <div class="hidden overflow-hidden rounded-lg border border-border bg-card shadow-card md:block">
+          <div
+            class="grid grid-cols-[110px_1fr_140px_170px_70px] items-center gap-4 border-b border-border px-5 py-2.5 text-xs font-medium text-muted-foreground"
+          >
             <span>{{ t('orders.table.id') }}</span>
             <span>{{ t('orders.table.status') }}</span>
             <span class="text-right">{{ t('orders.table.total') }}</span>
             <span class="text-right">{{ t('orders.table.createdAt') }}</span>
             <span class="text-right">{{ t('orders.table.action') }}</span>
           </div>
-        </div>
 
-      <NuxtLink
-        v-for="order in orders"
-        :key="order.id"
-        :to="localePath('/orders/' + order.id)"
-        class="block border-b border-border px-6 py-4 transition-colors last:border-b-0 hover:bg-muted/30"
-      >
-        <div class="grid grid-cols-[80px_1fr_120px_140px_80px] items-center gap-4">
-          <span class="text-sm tabular-nums text-foreground">#{{ order.id ?? '—' }}</span>
-
-          <span>
-            <span
-              class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium"
-              :class="statusTagClass(order.status)"
-            >
-              {{ statusLabel(order.status) }}
+          <NuxtLink
+            v-for="order in orders"
+            :key="order.id"
+            :to="localePath('/orders/' + order.id)"
+            class="grid grid-cols-[110px_1fr_140px_170px_70px] items-center gap-4 border-b border-border px-5 py-3.5 transition-colors last:border-b-0 hover:bg-muted"
+          >
+            <span class="text-sm font-medium tabular-nums text-foreground">
+              #{{ order.id ?? '—' }}
             </span>
-          </span>
-
-          <span class="text-right text-sm tabular-nums text-muted-foreground">
-            {{ displayTotal(order) }}
-          </span>
-          <span class="text-right text-xs tabular-nums text-muted-foreground">
-            {{ formatCreatedAt(order.createdAt) }}
-          </span>
-          <span class="flex justify-end text-xs text-primary hover:underline">
-            {{ t('orders.detail') }}
-          </span>
+            <span>
+              <UiStatusBadge
+                size="sm"
+                dot
+                :tone="statusTone(order.status)"
+                :label="statusLabel(order.status)"
+              />
+            </span>
+            <span class="flex justify-end">
+              <UiPriceTag v-if="orderTotalFen(order) > 0" :amount="orderTotalFen(order)" size="sm" />
+              <span v-else class="text-sm tabular-nums text-muted-foreground">¥0.00</span>
+            </span>
+            <span class="text-right text-xs tabular-nums text-muted-foreground">
+              {{ formatCreatedAt(order.createdAt) }}
+            </span>
+            <span class="flex items-center justify-end gap-0.5 text-xs font-medium text-primary">
+              {{ t('orders.detail') }}
+              <XIcon icon="lucide:chevron-right" :size="13" />
+            </span>
+          </NuxtLink>
         </div>
-      </NuxtLink>
-      </div>
-    </div>
 
-      <!-- 分页：仅当超过一页时显示 -->
-      <div
-        v-if="totalPages > 1"
-        class="flex items-center justify-center gap-4 py-2"
-      >
-        <UiButton
-          variant="outline"
-          size="sm"
-          :disabled="page <= 1"
-          @click="goToPage(page - 1)"
-        >
-          {{ t('ui.pagination.previous') }}
-        </UiButton>
-        <span class="text-xs tabular-nums text-muted-foreground">
-          {{ t('ui.pagination.page', { current: page, total: totalPages }) }}
-        </span>
-        <UiButton
-          variant="outline"
-          size="sm"
-          :disabled="page >= totalPages"
-          @click="goToPage(page + 1)"
-        >
-          {{ t('ui.pagination.next') }}
-        </UiButton>
-      </div>
-    </div>
+        <UiPager
+          :page="page"
+          :total-pages="totalPages"
+          class="mt-5"
+          @update:page="goToPage"
+        />
+      </template>
+    </template>
   </LayoutSectionContainer>
 </template>

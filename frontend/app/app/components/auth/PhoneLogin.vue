@@ -32,21 +32,18 @@ function handleLogin() {
   // 并接入短信网关。当前 app BFF 无对应端点。
   console.log('登录信息:', { phone: phone.value, verificationCode: verificationCode.value })
 }
-
-const inputBase = 'w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15'
 </script>
 
 <template>
   <div class="space-y-4">
-    <div class="space-y-2">
-      <label for="login-phone" class="block text-sm font-medium text-foreground">
+    <div class="space-y-1.5">
+      <UiLabel for="login-phone" class="text-foreground">
         {{ t('authentication.register.phone') }}
-      </label>
-      <input
+      </UiLabel>
+      <UiInput
         id="login-phone"
         v-model="phone"
         type="tel"
-        :class="inputBase"
         :placeholder="t('authentication.login.placeholder_phone')"
         autocomplete="tel"
         autocapitalize="none"
@@ -55,16 +52,17 @@ const inputBase = 'w-full rounded-lg border border-border bg-background px-4 py-
       />
     </div>
 
-    <div class="space-y-2">
-      <label for="login-code" class="block text-sm font-medium text-foreground">
+    <div class="space-y-1.5">
+      <UiLabel for="login-code" class="text-foreground">
         {{ t('authentication.register.code') }}
-      </label>
+      </UiLabel>
       <div class="flex gap-2">
-        <input
+        <UiInput
           id="login-code"
           v-model="verificationCode"
           type="text"
-          class="flex-1 rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15"
+          inputmode="numeric"
+          class="min-w-0 flex-1"
           :placeholder="t('authentication.login.placeholder_code')"
           maxlength="6"
           autocomplete="one-time-code"
@@ -73,24 +71,20 @@ const inputBase = 'w-full rounded-lg border border-border bg-background px-4 py-
           spellcheck="false"
           @keydown.enter="handleLogin"
         />
-        <button
-          :class="[
-            'shrink-0 cursor-pointer rounded-lg border border-border bg-card px-4 py-2.5 text-sm font-medium text-foreground transition-all hover:border-primary hover:bg-primary/5 active:scale-[0.98]',
-            codeSent ? 'cursor-not-allowed opacity-60' : '',
-          ]"
+        <UiButton
+          type="button"
+          variant="outline"
+          class="shrink-0 px-4"
           :disabled="codeSent"
           @click="handleSendCode"
         >
           {{ codeSent ? `${countdown}s` : t('authentication.register.send_code') }}
-        </button>
+        </UiButton>
       </div>
     </div>
 
-    <button
-      class="w-full cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98]"
-      @click="handleLogin"
-    >
+    <UiButton type="button" size="lg" class="w-full" @click="handleLogin">
       {{ t('authentication.login.login') }}
-    </button>
+    </UiButton>
   </div>
 </template>

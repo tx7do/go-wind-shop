@@ -90,12 +90,12 @@ const handleClickLogout = async () => {
 </script>
 
 <template>
-  <header class="fixed top-0 left-0 right-0 z-1000 flex justify-center bg-background/80 backdrop-blur-md border-b border-border/50 dark:border-border/30 dark:bg-background/60">
-    <div class="flex h-(--layout-header-height) w-full max-w-300 items-center gap-6 px-4 max-md:gap-3 max-md:px-3">
+  <header class="fixed top-0 left-0 right-0 z-1000 flex justify-center bg-background/90 backdrop-blur-md border-b border-border">
+    <div class="flex h-(--layout-header-height) w-full max-w-[1200px] items-center gap-6 px-4 max-md:gap-3 max-md:px-3">
       <!-- Logo -->
       <button
         type="button"
-        class="flex shrink-0 items-center gap-2 rounded-lg p-1 transition-colors hover:bg-primary/10"
+        class="flex shrink-0 items-center gap-2 rounded-lg p-1 transition-colors hover:bg-secondary"
         aria-label="Go to homepage"
         @click="handleClickLogo"
       >
@@ -114,7 +114,7 @@ const handleClickLogout = async () => {
         <NuxtLink
           v-if="isLogin"
           :to="localePath('/messages')"
-          class="relative flex h-9 w-9 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-primary/10"
+          class="relative flex h-9 w-9 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-secondary"
           :aria-label="t('menu.my_messages')"
         >
           <!-- GoWind 风铃图标：铃身内嵌风线，与品牌标志同一笔触 -->
@@ -144,13 +144,13 @@ const handleClickLogout = async () => {
         <!-- 购物车入口（带数量徽标） -->
         <NuxtLink
           :to="localePath('/cart')"
-          class="relative flex h-9 w-9 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-primary/10"
+          class="relative flex h-9 w-9 items-center justify-center rounded-lg text-foreground transition-colors hover:bg-secondary"
           aria-label="Shopping cart"
         >
           <XIcon icon="carbon:shopping-cart" width="18" height="18" />
           <span
             v-if="cartCount > 0"
-            class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground"
+            class="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground"
           >
             {{ cartCount > 99 ? '99+' : cartCount }}
           </span>

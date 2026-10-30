@@ -67,7 +67,7 @@ const tabs = computed(() => [
 <template>
   <nav
     v-if="!isProductDetail"
-    class="fixed bottom-0 left-0 right-0 z-50 flex md:hidden border-t border-border bg-card/95 backdrop-blur-md dark:bg-card/90"
+    class="fixed bottom-0 left-0 right-0 z-50 flex md:hidden border-t border-border bg-card/95 backdrop-blur-md"
     :style="{ paddingBottom: 'env(safe-area-inset-bottom)' }"
     aria-label="Bottom navigation"
   >
@@ -75,7 +75,7 @@ const tabs = computed(() => [
       v-for="tab in tabs"
       :key="tab.label"
       :to="tab.to"
-      class="relative flex h-14 flex-1 flex-col items-center justify-center gap-0.5 transition-colors"
+      class="relative flex h-(--layout-tabbar-height) flex-1 flex-col items-center justify-center gap-0.5 transition-colors"
       :class="tab.match(currentPath) ? 'text-primary' : 'text-muted-foreground'"
       :aria-current="tab.match(currentPath) ? 'page' : undefined"
     >
@@ -83,7 +83,7 @@ const tabs = computed(() => [
         <XIcon :icon="tab.icon" :size="22" />
         <span
           v-if="tab.badge && tab.badge > 0"
-          class="absolute -right-2.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground"
+          class="absolute -right-2.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[9px] font-bold text-destructive-foreground"
         >
           {{ tab.badge > 99 ? '99+' : tab.badge }}
         </span>

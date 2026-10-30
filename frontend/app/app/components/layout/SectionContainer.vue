@@ -10,12 +10,12 @@ const props = defineProps<{
 const widthClass = computed(() =>
   props.maxWidth === 'wide' ? 'max-w-300'
     : props.maxWidth === 'narrow' ? 'max-w-3xl'
-    : 'max-w-[1200px]'
+    : 'max-w-(--layout-max-width)'
 )
 </script>
 
 <template>
-  <div :class="cn('w-full mx-auto px-8 max-md:px-4', !noPadding && 'py-12', widthClass, props.class)">
+  <div :class="cn('w-full mx-auto px-4 md:px-8', !noPadding && 'py-6 md:py-10', widthClass, props.class)">
     <slot />
   </div>
 </template>

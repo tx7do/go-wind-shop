@@ -4,13 +4,11 @@ definePageMeta({
   middleware: 'auth',
 })
 import { computed } from 'vue';
-import { XIcon } from '@/plugins/xicon';
 import { useListInvoices } from '@/api/composables';
 import { useAccessStore } from '@/stores/modules/core/access.state';
 import { useUserStore } from '@/stores/modules/core/user.state';
 
 const { t } = useI18n();
-const localePath = useLocalePath();
 
 useHead({ title: t('invoices.title') });
 
@@ -73,9 +71,19 @@ const INVOICE_TYPE_LABEL_KEY: Record<InvoiceType, string> = {
   ELECTRONIC: 'invoices.invoiceType.electronic',
   INVOICE_TYPE_UNSPECIFIED: 'invoices.invoiceType.unspecified',
 };
+type BadgeTone = 'neutral' | 'primary' | 'success' | 'warning' | 'danger';
+const INVOICE_TYPE_TONE: Record<InvoiceType, BadgeTone> = {
+  VAT_GENERAL: 'neutral',
+  VAT_SPECIAL: 'primary',
+  ELECTRONIC: 'primary',
+  INVOICE_TYPE_UNSPECIFIED: 'neutral',
+};
 
 function invoiceTypeLabel(it: InvoiceType | undefined): string {
   return t(INVOICE_TYPE_LABEL_KEY[it ?? 'INVOICE_TYPE_UNSPECIFIED']);
+}
+function invoiceTypeTone(it: InvoiceType | undefined): BadgeTone {
+  return INVOICE_TYPE_TONE[it ?? 'INVOICE_TYPE_UNSPECIFIED'];
 }
 
 function formatCreatedAt(ts: string | undefined): string {
@@ -87,9 +95,10 @@ function formatCreatedAt(ts: string | undefined): string {
   }
 }
 
-function displayAmount(v: number | undefined, currency?: string): string {
-  const prefix = currency === 'CNY' ? t('mall.product.currencyCny') : '';
-  return prefix + (v ?? 0);
+// 发票金额单位「分」，uint64 经 JSON 下成字符串，先 Number 再交给价格标签。
+function toFen(v: number | undefined): number {
+  const fen = Number(v ?? 0);
+  return Number.isFinite(fen) ? fen : 0;
 }
 </script>
 
@@ -102,38 +111,12 @@ function displayAmount(v: number | undefined, currency?: string): string {
   />
 
   <LayoutSectionContainer>
-    <!-- 未登录 -->
-    <div
-      v-if="!isLogin"
-      class="flex flex-col items-center gap-6 rounded-2xl border border-border bg-card p-12 text-center"
-    >
-      <XIcon icon="carbon:locked" :size="48" class="text-muted-foreground" />
-      <p class="text-lg text-muted-foreground">{{ t('authentication.login.please_login') }}</p>
-      <UiButton @click="navigateTo(localePath('/login'))">
-        {{ t('navbar.user.login') }}
-      </UiButton>
-    </div>
+    <UiAuthGate v-if="!isLogin" />
 
-    <!-- 加载中 -->
-    <div v-else-if="invoicesLoading" class="overflow-hidden rounded-2xl border border-border bg-card">
-      <div class="border-b border-border bg-muted/40 px-6 py-3">
-        <UiSkeleton class="h-4 w-48" />
-      </div>
-      <div v-for="i in 4" :key="i" class="border-b border-border px-6 py-4 last:border-b-0">
-        <div class="flex items-center gap-4">
-          <UiSkeleton class="h-4 w-10" />
-          <UiSkeleton class="h-5 w-20" />
-          <UiSkeleton class="h-4 w-14 ml-auto" />
-          <UiSkeleton class="h-4 w-24" />
-        </div>
-      </div>
-    </div>
+    <UiListSkeleton v-else-if="invoicesLoading" :rows="5" variant="row" />
 
     <!-- 错误态：网络/服务端错误，与"空"区分开，并提供重试 -->
-    <UiAppEmpty
-      v-else-if="invoicesError"
-      variant="error"
-    >
+    <UiAppEmpty v-else-if="invoicesError" variant="error">
       <template #action>
         <UiButton variant="outline" size="sm" @click="invoicesQuery.refetch()">
           {{ t('ui.button.retry') }}
@@ -141,80 +124,60 @@ function displayAmount(v: number | undefined, currency?: string): string {
       </template>
     </UiAppEmpty>
 
-    <!-- 已加载：空 / 列表 -->
-    <div v-else class="flex flex-col gap-4">
-      <!-- 空态 -->
-      <UiAppEmpty
-        v-if="invoices.length === 0"
-        variant="noData"
-        :description="t('invoices.empty')"
-      />
+    <UiAppEmpty
+      v-else-if="invoices.length === 0"
+      variant="noData"
+      :description="t('invoices.empty')"
+    />
 
-      <!-- 发票列表 -->
-      <div v-else class="overflow-x-auto rounded-2xl border border-border bg-card">
-        <div class="min-w-[640px]">
-          <div class="border-b border-border bg-muted/40 px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            <div class="grid grid-cols-[80px_1fr_1fr_120px_140px] items-center gap-4">
-              <span>{{ t('invoices.table.id') }}</span>
-              <span>{{ t('invoices.table.invoiceNumber') }}</span>
-              <span>{{ t('invoices.table.invoiceType') }}</span>
-              <span class="text-right">{{ t('invoices.table.amount') }}</span>
-              <span class="text-right">{{ t('invoices.table.createdAt') }}</span>
+    <template v-else>
+      <div class="overflow-hidden rounded-lg border border-border bg-card shadow-card">
+        <div
+          class="hidden grid-cols-[1fr_140px_170px] items-center gap-4 border-b border-border px-5 py-2.5 text-xs font-medium text-muted-foreground md:grid"
+        >
+          <span>{{ t('invoices.table.id') }}</span>
+          <span class="text-right">{{ t('invoices.table.amount') }}</span>
+          <span class="text-right">{{ t('invoices.table.createdAt') }}</span>
+        </div>
+
+        <div
+          v-for="invoice in invoices"
+          :key="invoice.id"
+          class="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1.5 border-b border-border px-4 py-3.5 last:border-b-0 md:grid-cols-[1fr_140px_170px] md:gap-x-4 md:px-5"
+        >
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span class="text-sm font-semibold tabular-nums text-foreground">
+                #{{ invoice.id ?? '—' }}
+              </span>
+              <UiStatusBadge
+                size="sm"
+                :tone="invoiceTypeTone(invoice.invoiceType)"
+                :label="invoiceTypeLabel(invoice.invoiceType)"
+              />
             </div>
+            <p class="mt-1 truncate text-[11px] text-muted-foreground md:text-xs">
+              {{ invoice.invoiceNumber || '—' }}
+            </p>
           </div>
 
-          <div
-            v-for="invoice in invoices"
-            :key="invoice.id"
-            class="border-b border-border px-6 py-4 last:border-b-0"
-          >
-            <div class="grid grid-cols-[80px_1fr_1fr_120px_140px] items-center gap-4">
-              <span class="text-sm tabular-nums text-foreground">#{{ invoice.id ?? '—' }}</span>
-
-              <span class="text-sm text-foreground">
-                {{ invoice.invoiceNumber || '—' }}
-              </span>
-
-              <span class="text-xs text-muted-foreground">
-                {{ invoiceTypeLabel(invoice.invoiceType) }}
-              </span>
-
-              <span class="text-right text-sm tabular-nums text-foreground">
-                {{ displayAmount(invoice.amount, invoice.currency) }}
-              </span>
-              <span class="text-right text-xs tabular-nums text-muted-foreground">
-                {{ formatCreatedAt(invoice.createdAt) }}
-              </span>
-            </div>
+          <div class="flex justify-end">
+            <UiPriceTag v-if="toFen(invoice.amount) > 0" :amount="toFen(invoice.amount)" size="md" />
+            <span v-else class="text-sm tabular-nums text-muted-foreground">¥0.00</span>
           </div>
+
+          <p class="col-span-2 text-[11px] tabular-nums text-muted-foreground md:col-span-1 md:text-right md:text-xs">
+            {{ formatCreatedAt(invoice.createdAt) }}
+          </p>
         </div>
       </div>
 
-      <!-- 分页：仅当超过一页时显示 -->
-      <div
-        v-if="totalPages > 1"
-        class="flex items-center justify-center gap-4 py-2"
-      >
-        <UiButton
-          variant="outline"
-          size="sm"
-          :disabled="page <= 1"
-          @click="goToPage(page - 1)"
-        >
-          {{ t('ui.pagination.previous') }}
-        </UiButton>
-        <span class="text-xs tabular-nums text-muted-foreground">
-          {{ t('ui.pagination.page', { current: page, total: totalPages }) }}
-        </span>
-        <UiButton
-          variant="outline"
-          size="sm"
-          :disabled="page >= totalPages"
-          @click="goToPage(page + 1)"
-        >
-          {{ t('ui.pagination.next') }}
-        </UiButton>
-      </div>
-    </div>
+      <UiPager
+        :page="page"
+        :total-pages="totalPages"
+        class="mt-5"
+        @update:page="goToPage"
+      />
+    </template>
   </LayoutSectionContainer>
 </template>

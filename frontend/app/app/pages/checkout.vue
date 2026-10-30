@@ -24,6 +24,7 @@ import {
   quoteOrderPromotions,
 } from '@/api/composables';
 import { getCurrentLocale } from '@/utils/locale';
+import { formatFen } from '@/utils/money';
 import { useAccessStore } from '@/stores/modules/core/access.state';
 import { useUserStore } from '@/stores/modules/core/user.state';
 import { queryClient } from '@/plugins/vue-query';
@@ -98,6 +99,11 @@ const cartItems = computed<CartItemEntity[]>(() => {
   return (items as CartItemEntity[]) ?? [];
 });
 const itemsLoading = computed(() => cartItemsQuery.isPending.value);
+// 没有购物车时 cartItemsQuery 因 enabled=false 会一直是 pending，
+// 只等 carts 查询落地再判空态，否则「空车」永远走不到。
+const contentLoading = computed(
+  () => cartsQuery.isPending.value || (cartId.value !== undefined && cartItemsQuery.isPending.value),
+);
 const itemsError = computed(() => cartItemsQuery.isError.value);
 
 // ---------- 属性名 / 属性值 displayName 反查 map ----------
@@ -275,6 +281,11 @@ function productImageUrl(skuId: number | undefined): string {
   if (skuId === undefined) return '';
   return productInfoMap[skuId]?.imageUrl ?? '';
 }
+// 单价（分，字符串）；UiPriceTag 自己处理空值不渲染。
+function skuPriceFen(skuId: number | undefined): string | undefined {
+  if (skuId === undefined) return undefined;
+  return skuPricesMap[skuId];
+}
 
 // 将单个 SKU 的规格组合翻译成人类可读描述，如 "颜色: 黑色，容量: 64GB"。
 // 任何一项属性名或属性值查不到时返回空串，避免显示残缺信息。
@@ -309,7 +320,6 @@ const totalAmount = computed(() => {
   }
   return sum.toFixed(2);
 });
-const totalLabel = computed(() => `${t('mall.product.currencyCny')}${totalAmount.value}`);
 
 // ---------- 促销满减试算 ----------
 // 以勾选项 (skuId, quantity) 调服务端试算：专价重算 + 满减让利。
@@ -354,10 +364,18 @@ const discountedTotal = computed(() => {
   const after = Math.max(0, before - promoDiscount.value - quoteDiscount.value);
   return after.toFixed(2);
 });
-const discountedTotalLabel = computed(() => `${t('mall.product.currencyCny')}${discountedTotal.value}`);
+
+// 展示层：上面的金额都是「元」，UiPriceTag/formatFen 要「分」，这里只做单位换算，不参与计算。
+const totalFen = computed(() => Math.round((parseFloat(totalAmount.value) || 0) * 100));
+const discountedFen = computed(() => Math.round((parseFloat(discountedTotal.value) || 0) * 100));
+const payableFen = computed(() =>
+  quoteApplicable.value || promoDiscount.value > 0 ? discountedFen.value : totalFen.value,
+);
+const promoDiscountFen = computed(() => Math.round(promoDiscount.value * 100));
+const quoteDiscountFen = computed(() => Math.round(quoteDiscount.value * 100));
 
 // 用户优惠券列表（仅本人，BFF fail-closed 注入 userId）。
-const userCouponsQuery = useListUserCoupons({} as any);
+const userCouponsQuery = useListUserCoupons({} as any, { enabled: isLogin } as any);
 
 // 可选券 = 当前 UNUSED 的券实例。
 const availableCoupons = computed(() => {
@@ -758,9 +776,9 @@ onUnmounted(stopPolling);
         <div class="flex flex-col items-center gap-1">
           <span
             :class="cn(
-              'flex h-7 w-7 items-center justify-center rounded-full border text-xs font-bold transition-colors',
+              'flex size-7 items-center justify-center rounded-full border text-xs font-bold transition-colors',
               idx === 1
-                ? 'border-primary bg-primary/10 text-primary'
+                ? 'border-primary bg-primary-soft text-primary-soft-foreground'
                 : 'border-border text-muted-foreground',
             )"
           >
@@ -768,9 +786,9 @@ onUnmounted(stopPolling);
           </span>
           <span
             :class="cn(
-              'text-[10px] font-medium transition-colors',
+              'whitespace-nowrap text-[10px] font-medium transition-colors',
               idx === 1
-                ? 'text-primary'
+                ? 'text-primary-soft-foreground'
                 : 'text-muted-foreground',
             )"
           >
@@ -781,7 +799,7 @@ onUnmounted(stopPolling);
         <span
           v-if="idx < 3"
           :class="cn(
-            'h-px w-8 md:w-16 transition-colors',
+            'h-px w-8 transition-colors md:w-16',
             idx < 1
               ? 'bg-primary'
               : 'bg-border',
@@ -793,18 +811,9 @@ onUnmounted(stopPolling);
 
   <LayoutSectionContainer>
     <!-- 未登录 -->
-    <div
-      v-if="!isLogin"
-      class="flex flex-col items-center gap-6 rounded-2xl border border-border bg-card p-12 text-center"
-    >
-      <XIcon icon="carbon:locked" :size="48" class="text-muted-foreground" />
-      <p class="text-lg text-muted-foreground">{{ t('authentication.login.please_login') }}</p>
-      <UiButton @click="navigateTo(localePath('/login'))">
-        {{ t('navbar.user.login') }}
-      </UiButton>
-    </div>
+    <UiAuthGate v-if="!isLogin" :description="t('authentication.login.please_login')" />
 
-    <div v-else class="grid gap-6 lg:grid-cols-[1fr_380px]">
+    <div v-else class="grid gap-6 pb-24 lg:grid-cols-[1fr_380px]">
       <!-- 收货信息 -->
       <div class="rounded-2xl border border-border bg-card p-6">
         <h2 class="mb-1 text-xl font-bold text-foreground">{{ t('checkout.recipientTitle') }}</h2>
@@ -817,15 +826,15 @@ onUnmounted(stopPolling);
             v-for="addr in sortedSavedAddresses"
             :key="addr.id"
             type="button"
-            class="flex items-center gap-2 rounded-lg border border-border bg-background/40 px-3 py-2 text-xs text-foreground transition-colors hover:border-primary/60"
+            class="flex items-center gap-2 rounded-lg border border-border bg-secondary px-3 py-2 text-left text-xs text-secondary-foreground transition-colors hover:border-primary/60"
             @click="useSavedAddress(addr)"
           >
-            <span
+            <UiStatusBadge
               v-if="addr.isDefault"
-              class="rounded-full bg-primary/15 px-1.5 py-0.5 text-[9px] font-medium text-primary"
-            >
-              {{ t('addresses.defaultBadge') }}
-            </span>
+              tone="primary"
+              size="sm"
+              :label="t('addresses.defaultBadge')"
+            />
             <span>{{ addressLabel(addr) }}</span>
           </button>
         </div>
@@ -870,13 +879,7 @@ onUnmounted(stopPolling);
       <div class="rounded-2xl border border-border bg-card p-6 lg:sticky lg:top-24 lg:self-start">
         <h2 class="mb-4 text-xl font-bold text-foreground">{{ t('checkout.summary') }}</h2>
 
-        <div v-if="itemsLoading" class="flex flex-col gap-3">
-          <div v-for="i in 3" :key="i" class="flex items-center gap-3 rounded-md border border-border bg-background/40 p-3">
-            <UiSkeleton class="h-10 w-10 shrink-0 rounded" />
-            <UiSkeleton class="h-4 flex-1" />
-            <UiSkeleton class="h-4 w-6" />
-          </div>
-        </div>
+        <UiListSkeleton v-if="itemsLoading" :rows="3" variant="row" :header="false" />
 
         <UiAppEmpty
           v-else-if="itemsError"
@@ -906,18 +909,18 @@ onUnmounted(stopPolling);
             <li
               v-for="item in cartItems"
               :key="item.id"
-              class="flex items-center gap-3 rounded-md border border-border bg-background/40 p-3"
+              class="flex items-center gap-3 rounded-lg border border-border bg-secondary p-3"
             >
-              <img
+              <UiImage
                 v-if="productImageUrl(item.skuId)"
                 :src="productImageUrl(item.skuId)"
                 :alt="productName(item.skuId)"
-                class="h-10 w-10 shrink-0 rounded object-cover"
+                class="size-10 shrink-0 rounded-md object-cover"
               />
               <UiProductPlaceholder
                 v-else
                 :seed="item.skuId ?? 0"
-                class="h-10 w-10 shrink-0 rounded text-muted-foreground"
+                class="size-10 shrink-0 rounded-md text-muted-foreground"
               />
               <div class="min-w-0 flex-1">
                 <p class="line-clamp-1 text-xs text-foreground">
@@ -930,7 +933,7 @@ onUnmounted(stopPolling);
                   {{ describeSku(item.skuId) }}
                 </p>
               </div>
-              <span class="text-xs tabular-nums text-muted-foreground">×{{ item.quantity ?? 0 }}</span>
+              <span class="shrink-0 text-xs tabular-nums text-muted-foreground">×{{ item.quantity ?? 0 }}</span>
             </li>
           </ul>
         </template>
@@ -962,18 +965,18 @@ onUnmounted(stopPolling);
           <span class="text-sm text-muted-foreground">
             {{ promoMatchedName || t('checkout.promotion') }}
           </span>
-          <span class="text-sm tabular-nums text-red-500">-{{ t('mall.product.currencyCny') }}{{ promoDiscount.toFixed(2) }}</span>
+          <span class="text-sm font-medium tabular-nums text-destructive">-{{ t('mall.product.currencyCny') }}{{ formatFen(promoDiscountFen) }}</span>
         </div>
 
         <!-- 折扣行（仅当试算适用时显示） -->
         <div v-if="quoteApplicable" class="flex items-center justify-between">
           <span class="text-sm text-muted-foreground">{{ t('checkout.discount') }}</span>
-          <span class="text-sm tabular-nums text-red-500">-{{ t('mall.product.currencyCny') }}{{ quoteDiscount.toFixed(2) }}</span>
+          <span class="text-sm font-medium tabular-nums text-destructive">-{{ t('mall.product.currencyCny') }}{{ formatFen(quoteDiscountFen) }}</span>
         </div>
 
-        <div class="flex items-center justify-between">
+        <div class="mt-1 flex items-center justify-between">
           <span class="text-sm text-muted-foreground">{{ t('cart.total') }}</span>
-          <span class="text-xl font-bold text-primary">{{ quoteApplicable || promoDiscount > 0 ? discountedTotalLabel : totalLabel }}</span>
+          <UiPriceTag :amount="payableFen" size="lg" />
         </div>
         <p class="mt-1 text-[10px] text-muted-foreground">{{ t('cart.totalNote') }}</p>
 
@@ -988,51 +991,58 @@ onUnmounted(stopPolling);
               :class="cn(
                 'flex items-center gap-2 rounded-lg border px-3 py-2 text-left text-sm transition-colors',
                 selectedChannelId === ch.id
-                  ? 'border-primary bg-primary/5 text-foreground'
-                  : 'border-border bg-background/40 text-muted-foreground hover:border-primary/40',
+                  ? 'border-primary bg-primary-soft text-primary-soft-foreground'
+                  : 'border-border bg-secondary text-muted-foreground hover:border-primary/40',
               )"
               @click="selectedChannelId = ch.id"
             >
               <XIcon :icon="channelIcon(ch)" :size="18" />
               <span class="flex-1">{{ channelLabel(ch) }}</span>
-              <span
+              <UiStatusBadge
                 v-if="ch.sandbox"
-                class="rounded-full bg-amber-500/15 px-1.5 py-0.5 text-[9px] font-medium text-amber-600 dark:text-amber-400"
-              >
-                {{ t('checkout.payChannels.sandboxBadge') }}
-              </span>
+                tone="warning"
+                size="sm"
+                :label="t('checkout.payChannels.sandboxBadge')"
+              />
             </button>
           </div>
         </div>
         <p v-else class="mt-4 rounded-lg border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
           {{ t('checkout.payChannels.empty') }}
         </p>
-
-        <UiButton
-          class="mt-5 w-full"
-          size="lg"
-          :disabled="!formValid || cartItems.length === 0 || payChannels.length === 0 || orderMutation.isPending.value || payDialogBusy"
-          @click="placeOrder"
-        >
-          {{ t('checkout.placeOrder') }}
-        </UiButton>
       </div>
     </div>
   </LayoutSectionContainer>
+
+  <!-- 吸底提交条：合计 + 提交订单（TabBar 之上避让） -->
+  <UiStickyBar v-if="isLogin" above-tab-bar>
+    <div class="flex min-w-0 flex-1 flex-col">
+      <span class="text-[10px] text-muted-foreground">{{ t('cart.total') }}</span>
+      <UiPriceTag :amount="payableFen" size="md" />
+    </div>
+    <UiButton
+      class="shrink-0"
+      size="lg"
+      :disabled="!formValid || cartItems.length === 0 || payChannels.length === 0 || orderMutation.isPending.value || payDialogBusy"
+      @click="placeOrder"
+    >
+      {{ t('checkout.placeOrder') }}
+    </UiButton>
+  </UiStickyBar>
 
   <!-- 支付弹层：QR 扫码 / 跳转等待 / 模拟确认 三态 -->
   <Teleport to="body">
     <div
       v-if="payDialogOpen"
-      class="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4"
+      class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/50 p-4"
       @click.self="closePayDialog"
     >
-      <div class="w-full max-w-sm rounded-2xl border border-border bg-card p-6 shadow-xl">
+      <div class="my-auto w-full max-w-sm rounded-2xl border border-border bg-card p-5 shadow-xl sm:p-6">
         <div class="mb-1 flex items-center justify-between">
           <h3 class="text-lg font-bold text-foreground">{{ t('checkout.payDialog.title') }}</h3>
           <button
             type="button"
-            class="rounded-full p-1 text-muted-foreground transition-colors hover:bg-background/60 hover:text-foreground"
+            class="rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             @click="closePayDialog"
           >
             <XIcon icon="carbon:close" :size="18" />
@@ -1041,7 +1051,7 @@ onUnmounted(stopPolling);
 
         <div class="flex flex-col items-center gap-4 py-2">
           <p class="text-2xl font-bold text-primary">
-            {{ t('mall.product.currencyCny') }}{{ ((activeIntent?.amount ?? 0) / 100).toFixed(2) }}
+            {{ t('mall.product.currencyCny') }}{{ formatFen(activeIntent?.amount) }}
           </p>
 
           <!-- QR 扫码（微信 Native） -->
@@ -1050,9 +1060,9 @@ onUnmounted(stopPolling);
               v-if="qrDataUrl"
               :src="qrDataUrl"
               :alt="t('checkout.payDialog.qrAlt')"
-              class="h-[220px] w-[220px] rounded-lg border border-border bg-white p-1"
+              class="size-[220px] max-w-full rounded-lg border border-border bg-card p-1"
             />
-            <UiSkeleton v-else class="h-[220px] w-[220px] rounded-lg" />
+            <UiSkeleton v-else class="size-[220px] max-w-full rounded-lg" />
             <p class="text-center text-xs text-muted-foreground">{{ t('checkout.payDialog.qrHint') }}</p>
           </template>
 

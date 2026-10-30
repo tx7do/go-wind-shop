@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { XIcon } from '@/plugins/xicon'
-
 type FooterLinkKey = 'about_us' | 'contact_us' | 'non_responsibility' | 'privacy_agreement' | 'terms_of_service'
 
 const { t } = useI18n()
@@ -22,55 +20,29 @@ const footerRouteMap: Record<FooterLinkKey, string> = {
   terms_of_service: '/terms',
 }
 
-const socialLinks = [
-  { key: 'twitter', name: 'Twitter', icon: 'fa:twitter' },
-  { key: 'facebook', name: 'Facebook', icon: 'fa:facebook' },
-  { key: 'instagram', name: 'Instagram', icon: 'fa:instagram' },
-  { key: 'telegram', name: 'Telegram', icon: 'fa:telegram' },
-  { key: 'wechat', name: 'WeChat', icon: 'fa:wechat' },
-  { key: 'weibo', name: 'Weibo', icon: 'fa:weibo' },
-  { key: 'qq', name: 'QQ', icon: 'fa:qq' },
-]
-
 const handleFooterLinkClick = (key: FooterLinkKey) => {
   navigateTo(localePath(footerRouteMap[key]))
 }
 </script>
 
 <template>
-  <footer class="w-full bg-card flex justify-center">
-    <div class="flex w-full max-w-300 items-center justify-between gap-4 border-t border-border px-6 py-4 text-muted-foreground min-h-18 max-md:flex-col max-md:items-start max-md:gap-3 max-md:py-4 max-md:pb-5">
-      <nav class="flex flex-wrap items-center gap-1" aria-label="Footer links">
-        <UiButton
+  <footer class="w-full border-t border-border bg-card py-6">
+    <div class="mx-auto flex w-full max-w-(--layout-max-width) flex-wrap items-center justify-between gap-x-6 gap-y-3 px-4 md:px-8">
+      <nav class="flex flex-wrap items-center gap-x-5 gap-y-2" aria-label="Footer links">
+        <button
           v-for="link in footerLinks"
           :key="link.key"
-          variant="ghost"
-          class="px-1 text-muted-foreground hover:text-foreground transition-colors"
+          type="button"
+          class="text-sm text-muted-foreground transition-colors hover:text-foreground"
           @click="handleFooterLinkClick(link.key)"
         >
           {{ t(link.labelKey) }}
-        </UiButton>
+        </button>
       </nav>
 
-      <div class="flex shrink-0 items-center gap-3 max-md:w-full max-md:justify-between">
-        <span class="text-sm whitespace-nowrap">
-          {{ t('ui.copyright') }}
-        </span>
-        <UiSeparator class="h-3.5 w-px bg-border max-md:hidden" />
-        <div class="flex items-center gap-1" aria-label="Social links">
-          <UiButton
-            v-for="social in socialLinks"
-            :key="social.key"
-            variant="ghost"
-            size="icon"
-            class="text-2xl text-muted-foreground opacity-50"
-            :aria-label="social.name"
-            disabled
-          >
-            <XIcon :icon="social.icon" />
-          </UiButton>
-        </div>
-      </div>
+      <span class="text-xs text-muted-foreground">
+        {{ t('ui.copyright') }}
+      </span>
     </div>
   </footer>
 </template>

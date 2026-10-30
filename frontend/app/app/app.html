@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<!-- 死文件，Nuxt 4 不加载它：{{ HTML_ATTRS }} 这类占位符是 Nuxt 2 的写法，
+     实测服务端返回的 HTML 里没有本文件独有的 favicon link。
+     主题防闪脚本的真正落点是 app/app.vue 的 useHead({ script })。
+     保留仅为历史参考；要恢复自定义文档模板，得先改成 <%= %> 语法并验证。 -->
 <html {{ HTML_ATTRS }}>
 <head {{ HEAD_ATTRS }}>
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
@@ -9,7 +13,8 @@
         // 与 core/preferences 的存储格式保持一致：
         //   key: gowind-shop:preferences-theme  value: {"data":"dark|light|auto","expiry":null}
         //   key: gowind-shop:preferences         value: {"data":{theme:{mode:"dark|light|auto"}},...}
-        // 仅处理 light/dark/auto 三态；解析失败则交给 CSS @media 后备。
+        // 仅处理 light/dark/auto 三态；auto 与无记录时直接问系统，把结果落成具体 class，
+        // 这样 main.css 里 .dark 是暗色 token 的唯一来源（不再有第二份会漂移的 @media 副本）。
         ;(function () {
             try {
                 var PREFIX = 'gowind-shop';
@@ -38,13 +43,12 @@
                 var mode = readMode();
                 var root = document.documentElement;
                 root.classList.remove('dark', 'light');
-                if (mode === 'dark') {
-                    root.classList.add('dark');
-                } else if (mode === 'light') {
-                    root.classList.add('light');
+                if (mode !== 'dark' && mode !== 'light') {
+                    // auto / 解析失败：按系统偏好解析成具体 class，不留给 @media 兜底
+                    mode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
                 }
-                // auto / null：不添加 class，交给 main.css 的 @media (prefers-color-scheme: dark) 后备
-            } catch (e) { /* localStorage 不可用等情况：静默，交给 CSS @media */ }
+                root.classList.add(mode);
+            } catch (e) { /* localStorage 不可用等情况：静默，页面按亮色渲染 */ }
         })();
     </script>
 </head>

@@ -21,7 +21,7 @@ const isAuthPage = computed(() => {
       :class="[
         'flex w-full flex-1 flex-col bg-background',
         // 移动端为底部 Tab 栏（详情页为吸底购买栏）让出空间，避免内容被遮挡
-        !isAuthPage && 'pt-(--layout-header-height) pb-[calc(3.75rem+env(safe-area-inset-bottom))] md:pb-0 min-h-screen',
+        !isAuthPage && 'pt-(--layout-header-height) pb-[calc(var(--layout-tabbar-height)_+_env(safe-area-inset-bottom))] md:pb-0 min-h-screen',
       ]"
     >
       <slot />

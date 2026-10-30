@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useRegister } from '@/api/composables/auth'
+import { XIcon } from '@/plugins/xicon'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
@@ -11,6 +12,8 @@ const confirmPassword = ref('')
 const loading = ref(false)
 const errorMsg = ref('')
 const successMsg = ref('')
+const passwordVisible = ref(false)
+const confirmVisible = ref(false)
 
 const isValidUsername = computed(() => {
   if (!username.value) return false
@@ -49,82 +52,114 @@ async function handleRegister() {
   }
 }
 
-const inputBase = 'w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15'
+const eyeBtn = 'absolute inset-y-0 right-0 flex w-11 cursor-pointer items-center justify-center border-none bg-transparent text-muted-foreground transition-colors hover:text-foreground'
 </script>
 
 <template>
   <div class="space-y-4">
-    <div v-if="errorMsg" class="rounded-lg border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+    <div
+      v-if="errorMsg"
+      role="alert"
+      class="rounded-lg bg-destructive-soft px-3.5 py-2.5 text-sm text-destructive-soft-foreground"
+    >
       {{ errorMsg }}
     </div>
-    <div v-if="successMsg" class="rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-primary">
+    <div
+      v-if="successMsg"
+      role="status"
+      class="rounded-lg bg-success-soft px-3.5 py-2.5 text-sm text-success-soft-foreground"
+    >
       {{ successMsg }}
     </div>
-    <!-- Username -->
-    <div class="space-y-2">
-      <label for="register-account-username" class="block text-sm font-medium text-foreground">
+
+    <div class="space-y-1.5">
+      <UiLabel for="register-account-username" class="text-foreground">
         {{ t('authentication.register.username') }}
-      </label>
-      <input
+      </UiLabel>
+      <UiInput
         id="register-account-username"
         v-model="username"
         type="text"
-        :class="[inputBase, username && !isValidUsername ? 'border-destructive focus:border-destructive focus:ring-destructive/15' : '']"
         :placeholder="t('authentication.register.input_username')"
+        :aria-invalid="Boolean(username && !isValidUsername)"
+        :class="username && !isValidUsername ? 'border-destructive' : ''"
         autocomplete="username"
         autocapitalize="none"
         autocorrect="off"
         spellcheck="false"
       />
-      <span v-if="username && !isValidUsername" class="text-xs text-destructive">
+      <span v-if="username && !isValidUsername" class="block text-xs text-destructive">
         {{ t('authentication.register.invalid_username') }}
       </span>
     </div>
 
-    <!-- Password -->
-    <div class="space-y-2">
-      <label for="register-account-password" class="block text-sm font-medium text-foreground">
+    <div class="space-y-1.5">
+      <UiLabel for="register-account-password" class="text-foreground">
         {{ t('authentication.register.password') }}
-      </label>
-      <input
-        id="register-account-password"
-        v-model="password"
-        type="password"
-        :class="[inputBase, password && !isValidPassword ? 'border-destructive focus:border-destructive focus:ring-destructive/15' : '']"
-        :placeholder="t('authentication.register.input_password')"
-        autocomplete="new-password"
-      />
-      <span v-if="password && !isValidPassword" class="text-xs text-destructive">
+      </UiLabel>
+      <div class="relative">
+        <UiInput
+          id="register-account-password"
+          v-model="password"
+          :type="passwordVisible ? 'text' : 'password'"
+          :placeholder="t('authentication.register.input_password')"
+          :aria-invalid="Boolean(password && !isValidPassword)"
+          :class="[password && !isValidPassword ? 'border-destructive' : '', 'pr-11']"
+          autocomplete="new-password"
+        />
+        <button
+          type="button"
+          :class="eyeBtn"
+          :aria-pressed="passwordVisible"
+          :aria-label="t('authentication.register.password')"
+          @click="passwordVisible = !passwordVisible"
+        >
+          <XIcon :icon="passwordVisible ? 'lucide:eye-off' : 'lucide:eye'" :size="16" />
+        </button>
+      </div>
+      <span v-if="password && !isValidPassword" class="block text-xs text-destructive">
         {{ t('authentication.register.invalid_password') }}
       </span>
     </div>
 
-    <!-- Confirm Password -->
-    <div class="space-y-2">
-      <label for="register-account-confirm-password" class="block text-sm font-medium text-foreground">
+    <div class="space-y-1.5">
+      <UiLabel for="register-account-confirm-password" class="text-foreground">
         {{ t('authentication.register.confirm_password') }}
-      </label>
-      <input
-        id="register-account-confirm-password"
-        v-model="confirmPassword"
-        type="password"
-        :class="[inputBase, confirmPassword && !isPasswordMatch ? 'border-destructive focus:border-destructive focus:ring-destructive/15' : '']"
-        :placeholder="t('authentication.register.input_confirm_password')"
-        autocomplete="new-password"
-      />
-      <span v-if="confirmPassword && !isPasswordMatch" class="text-xs text-destructive">
+      </UiLabel>
+      <div class="relative">
+        <UiInput
+          id="register-account-confirm-password"
+          v-model="confirmPassword"
+          :type="confirmVisible ? 'text' : 'password'"
+          :placeholder="t('authentication.register.input_confirm_password')"
+          :aria-invalid="Boolean(confirmPassword && !isPasswordMatch)"
+          :class="[confirmPassword && !isPasswordMatch ? 'border-destructive' : '', 'pr-11']"
+          autocomplete="new-password"
+        />
+        <button
+          type="button"
+          :class="eyeBtn"
+          :aria-pressed="confirmVisible"
+          :aria-label="t('authentication.register.confirm_password')"
+          @click="confirmVisible = !confirmVisible"
+        >
+          <XIcon :icon="confirmVisible ? 'lucide:eye-off' : 'lucide:eye'" :size="16" />
+        </button>
+      </div>
+      <span v-if="confirmPassword && !isPasswordMatch" class="block text-xs text-destructive">
         {{ t('authentication.register.password_not_match') }}
       </span>
     </div>
 
-    <!-- Register Button -->
-    <button
+    <UiButton
       type="button"
-      class="w-full cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
+      size="lg"
+      class="w-full"
       :disabled="!isFormValid || loading"
       @click="handleRegister"
     >
+      <UiSpinner v-if="loading" size="sm" class="text-primary-foreground" />
       {{ loading ? t('authentication.register.registering') : t('authentication.register.register') }}
-    </button>
+    </UiButton>
   </div>
 </template>

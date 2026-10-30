@@ -1,57 +1,39 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useListCategories, useListProducts } from '@/api/composables';
-import { getCurrentLocale } from '@/utils/locale';
+import {
+  useListCategories,
+  useListProducts,
+  useProductPrices,
+  useProductPromos,
+} from '@/api/composables';
 import { XIcon } from '@/plugins/xicon';
 import { PaginationQuery } from '@/core/transport/rest';
+import { translationName } from '@/utils/translation';
 
 const { t } = useI18n();
 const localePath = useLocalePath();
 
 useHead({ title: t('mall.home.title') });
 
-const currentLocale = computed(() => getCurrentLocale());
-
-type CategoryTranslation = {
-  name?: string;
-  description?: string;
-  languageCode?: string;
-};
 type CategoryEntity = {
   id?: number;
   imageUrl?: string;
-  translations?: CategoryTranslation[];
-};
-
-type ProductTranslation = {
-  name?: string;
-  languageCode?: string;
+  translations?: Array<{ name?: string; languageCode?: string }>;
 };
 type ProductEntity = {
   id?: number;
   imageUrl?: string;
-  translations?: ProductTranslation[];
+  translations?: Array<{ name?: string; languageCode?: string }>;
 };
-
-function pickTranslation<T extends { languageCode?: string }>(
-  translations: T[] | undefined,
-): T | undefined {
-  if (!translations || translations.length === 0) return undefined;
-  const match = translations.find((tr) => tr.languageCode === currentLocale.value);
-  return match ?? translations[0];
-}
 
 const categoriesQuery = useListCategories({
   page: 1,
   pageSize: 24,
   noPaging: false,
 });
-const categories = computed<CategoryEntity[]>(() => {
-  const items = (categoriesQuery.data?.value as any)?.items ?? [];
-  return (items as CategoryEntity[]) ?? [];
-});
-const categoriesLoading = computed(() => categoriesQuery.isLoading.value);
-const categoriesError = computed(() => categoriesQuery.isError.value);
+const categories = computed<CategoryEntity[]>(
+  () => ((categoriesQuery.data?.value as any)?.items ?? []) as CategoryEntity[],
+);
 
 const featuredQuery = useListProducts(
   new PaginationQuery({
@@ -59,58 +41,77 @@ const featuredQuery = useListProducts(
     orderBy: ['sort_order'],
   }).toRawParams(),
 );
-const featured = computed<ProductEntity[]>(() => {
-  const items = (featuredQuery.data?.value as any)?.items ?? [];
-  return (items as ProductEntity[]) ?? [];
-});
+const featured = computed<ProductEntity[]>(
+  () => ((featuredQuery.data?.value as any)?.items ?? []) as ProductEntity[],
+);
 const featuredLoading = computed(() => featuredQuery.isLoading.value);
 const featuredError = computed(() => featuredQuery.isError.value);
+
+// 商品实体里没有价格字段（价格在 SkuPrice，按 SKU 存「分」），
+// 这里用两次批量查询拿到整屏商品的「起」价与活动价，而不是每商品发两次请求。
+const productIds = computed(() =>
+  featured.value.map((p) => p.id).filter((id): id is number => id !== undefined),
+);
+const { priceByProductId, skuIdsByProduct } = useProductPrices(productIds);
+const { promoByProductId } = useProductPromos(productIds, priceByProductId, skuIdsByProduct);
+
+const cards = computed(() =>
+  featured.value
+    .map((p) => {
+      if (p.id === undefined) return undefined;
+      const base = priceByProductId.value.get(p.id);
+      const promo = promoByProductId.value.get(p.id);
+      return {
+        id: p.id,
+        name: translationName(p.translations),
+        image: p.imageUrl,
+        // 有活动时展示活动价，现价退成划线价——与详情页同一套口径
+        priceFen: promo?.fen ?? base?.fen ?? null,
+        oldPriceFen: promo ? base?.fen ?? null : null,
+        badgeLabel: promo ? t(promo.labelKey) : undefined,
+        badgeTone: promo?.tone,
+      };
+    })
+    .filter((c): c is NonNullable<typeof c> => c !== undefined),
+);
 </script>
 
 <template>
-  <!-- 首屏複合物件：PC 端左側垂直分類菜單 + 右側大寬屏 Banner（md 以上渲染） -->
-  <div class="hidden md:grid md:grid-cols-5 gap-6 px-8 mx-auto max-w-[1200px]">
-    <LayoutCategorySideMenu
-      v-if="categoriesLoading || categories.length > 0"
-      :categories="categories"
-      class="md:col-span-1"
-    />
-    <LayoutHeroBanner class="md:col-span-4" />
-  </div>
-
-  <!-- 移动端搜索入口：假输入框样式，点击跳搜索页 -->
-  <div class="px-4 pt-3 md:hidden">
+  <LayoutSectionContainer no-padding class="pt-3 md:pt-6">
+    <!-- 移动端搜索入口：假输入框样式，点击跳搜索页 -->
     <NuxtLink
       :to="localePath('/search')"
-      class="flex h-10 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm text-muted-foreground transition-colors active:border-primary/60"
-      aria-label="Search"
+      class="mb-4 flex h-10 items-center gap-2 rounded-full border border-border bg-card px-4 text-sm text-muted-foreground transition-colors active:border-primary/60 md:hidden"
+      :aria-label="t('navbar.top.search_placeholder')"
     >
       <XIcon icon="lucide:search" :size="16" />
       <span>{{ t('navbar.top.search_placeholder') }}</span>
     </NuxtLink>
-  </div>
 
-  <!-- 分类导航：移动端金刚区 -->
-  <LayoutCategoryQuickNav
-    v-if="categoriesLoading || categories.length > 0"
-    :categories="categories"
-    class="md:hidden"
-  />
+    <div class="md:grid md:grid-cols-5 md:gap-5">
+      <LayoutCategorySideMenu
+        v-if="categories.length > 0"
+        :categories="categories"
+        class="hidden self-start md:col-span-1 md:block"
+      />
+
+      <LayoutHeroBanner class="md:col-span-4" />
+
+      <LayoutCategoryQuickNav
+        v-if="categories.length > 0"
+        :categories="categories"
+        class="mt-6 md:hidden"
+      />
+    </div>
+  </LayoutSectionContainer>
 
   <!-- 精选商品 -->
   <LayoutSectionContainer>
-    <h2 class="mb-6 text-2xl font-bold text-foreground">
-      {{ t('mall.home.featured') }}
-    </h2>
+    <UiSectionHeader :title="t('mall.home.featured')" />
 
-    <div v-if="featuredLoading" class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-      <UiPostCardSkeleton v-for="_, i in 8" :key="i" />
-    </div>
+    <UiListSkeleton v-if="featuredLoading" variant="card" :rows="8" :columns="4" />
 
-    <UiAppEmpty
-      v-else-if="featuredError"
-      variant="error"
-    >
+    <UiAppEmpty v-else-if="featuredError" variant="error">
       <template #action>
         <UiButton variant="outline" size="sm" @click="featuredQuery.refetch()">
           {{ t('ui.button.retry') }}
@@ -119,34 +120,22 @@ const featuredError = computed(() => featuredQuery.isError.value);
     </UiAppEmpty>
 
     <div
-      v-else-if="featured.length > 0"
-      class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
+      v-else-if="cards.length > 0"
+      class="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
     >
-      <NuxtLink
-        v-for="product in featured"
-        :key="product.id"
-        :to="localePath('/product/' + product.id)"
-        class="group block overflow-hidden rounded-xl border border-border bg-card transition-colors hover:border-primary/60"
-      >
-        <UiImage
-          :src="product.imageUrl"
-          :alt="pickTranslation(product.translations)?.name || ''"
-          class="aspect-square w-full rounded-none object-cover"
-        />
-        <div class="p-3">
-        <h3 class="line-clamp-2 text-sm font-semibold text-foreground dark:text-slate-200">
-          {{ pickTranslation(product.translations)?.name || '—' }}
-        </h3>
-          <div class="mt-3 flex items-center justify-between">
-            <span class="text-xs text-muted-foreground">{{ t('mall.product.viewDetail') }}</span>
-            <span class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-              <XIcon icon="carbon:shopping-cart" :size="14" />
-            </span>
-          </div>
-        </div>
-      </NuxtLink>
+      <UiProductCard
+        v-for="card in cards"
+        :key="card.id"
+        :product-id="card.id"
+        :name="card.name"
+        :image="card.image"
+        :price-fen="card.priceFen"
+        :old-price-fen="card.oldPriceFen"
+        :badge-label="card.badgeLabel"
+        :badge-tone="card.badgeTone"
+      />
     </div>
 
-    <p v-else class="text-muted-foreground">{{ t('mall.loading') }}</p>
+    <UiAppEmpty v-else :description="t('common.noData')" />
   </LayoutSectionContainer>
 </template>

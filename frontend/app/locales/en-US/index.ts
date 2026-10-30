@@ -13,7 +13,7 @@ import ui from './ui.json'
 import cart from './cart.json'
 import checkout from './checkout.json'
 import orders from './orders.json'
-import orders from './coupons.json'
+import coupons from './coupons.json'
 import orderDetail from './orderDetail.json'
 import search from './search.json'
 import refunds from './refunds.json'
@@ -43,6 +43,7 @@ export default {
     cart,
     checkout,
     orders,
+    coupons,
     orderDetail,
     search,
     refunds,

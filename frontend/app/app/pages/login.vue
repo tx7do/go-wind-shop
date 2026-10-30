@@ -14,8 +14,6 @@ const tabs = computed(() => [
   { key: 'phone', label: t('authentication.login.tab_phone') },
   { key: 'other', label: t('authentication.login.tab_other') },
 ])
-
-const textBtn = 'cursor-pointer border-none bg-transparent text-sm text-primary transition-colors hover:text-primary/80 hover:underline'
 </script>
 
 <template>
@@ -33,9 +31,9 @@ const textBtn = 'cursor-pointer border-none bg-transparent text-sm text-primary 
 
     <template #switchLink>
       {{ t('authentication.login.no_account') }}
-      <button :class="textBtn" class="ml-1" @click="navigateTo(localePath('/register'))">
+      <UiButton variant="link" size="sm" class="ml-1 h-auto p-0" @click="navigateTo(localePath('/register'))">
         {{ t('authentication.login.register_now') }}
-      </button>
+      </UiButton>
     </template>
   </AuthLayout>
 </template>

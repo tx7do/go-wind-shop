@@ -16,7 +16,6 @@ import {
 import { useAccessStore } from '@/stores/modules/core/access.state';
 
 const { t } = useI18n();
-const localePath = useLocalePath();
 
 useHead({ title: t('addresses.title') });
 
@@ -221,21 +220,11 @@ function maskPhone(phone: string | undefined): string {
   />
 
   <LayoutSectionContainer>
-    <!-- 未登录 -->
-    <div
-      v-if="!isLogin"
-      class="flex flex-col items-center gap-6 rounded-2xl border border-border bg-card p-12 text-center"
-    >
-      <XIcon icon="carbon:locked" :size="48" class="text-muted-foreground" />
-      <p class="text-lg text-muted-foreground">{{ t('authentication.login.please_login') }}</p>
-      <UiButton @click="navigateTo(localePath('/login'))">
-        {{ t('navbar.user.login') }}
-      </UiButton>
-    </div>
+    <UiAuthGate v-if="!isLogin" />
 
     <div v-else class="flex flex-col gap-4">
-      <!-- 工具栏 -->
-      <div class="flex justify-end">
+      <!-- 工具栏：空态时只保留空态里的新增入口，避免两个同名按钮 -->
+      <div v-if="sortedAddresses.length > 0" class="flex justify-end">
         <UiButton @click="openCreate">
           <XIcon icon="carbon:add" :size="16" />
           {{ t('addresses.add') }}
@@ -243,15 +232,7 @@ function maskPhone(phone: string | undefined): string {
       </div>
 
       <!-- 加载中 -->
-      <div v-if="loading" class="flex flex-col gap-3">
-        <div v-for="i in 3" :key="i" class="rounded-2xl border border-border bg-card p-5">
-          <div class="flex items-center gap-4">
-            <UiSkeleton class="h-4 w-24" />
-            <UiSkeleton class="h-4 w-32" />
-            <UiSkeleton class="h-4 w-16 ml-auto" />
-          </div>
-        </div>
-      </div>
+      <UiListSkeleton v-if="loading" :rows="3" :header="false" />
 
       <!-- 错误态 -->
       <UiAppEmpty
@@ -279,80 +260,81 @@ function maskPhone(phone: string | undefined): string {
       </UiAppEmpty>
 
       <!-- 地址列表 -->
-      <div v-else class="flex flex-col gap-3">
-        <div
+      <div v-else class="grid gap-3 md:grid-cols-2 md:gap-4">
+        <article
           v-for="addr in sortedAddresses"
           :key="addr.id"
-          class="rounded-2xl border border-border bg-card p-5"
+          class="flex flex-col gap-3 rounded-lg border bg-card p-4 shadow-card md:p-5"
+          :class="addr.isDefault ? 'border-primary/40' : 'border-border'"
         >
-          <div class="flex flex-wrap items-start justify-between gap-4">
-            <div class="min-w-0 flex-1">
-              <div class="flex flex-wrap items-center gap-2">
-                <span class="text-sm font-bold text-foreground">
-                  {{ addr.recipientName || '—' }}
-                </span>
-                <span class="text-xs tabular-nums text-muted-foreground">
-                  {{ maskPhone(addr.recipientPhone) }}
-                </span>
-                <span
-                  v-if="addr.isDefault"
-                  class="rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-medium text-primary"
-                >
-                  {{ t('addresses.defaultBadge') }}
-                </span>
-                <span
-                  v-if="addr.tag"
-                  class="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground"
-                >
-                  {{ addr.tag }}
-                </span>
-              </div>
-              <p class="mt-2 text-sm text-foreground">
-                <span v-if="addr.region" class="text-muted-foreground">{{ addr.region }} </span>
-                {{ addr.detailAddress }}
-                <span v-if="addr.postalCode" class="text-muted-foreground">（{{ addr.postalCode }}）</span>
-              </p>
-            </div>
-
-            <!-- 操作 -->
-            <div class="flex shrink-0 items-center gap-2">
-              <UiButton
-                v-if="!addr.isDefault"
-                variant="ghost"
-                size="sm"
-                :disabled="anyPending"
-                @click="handleSetDefault(addr)"
-              >
-                {{ t('addresses.setDefault') }}
-              </UiButton>
-              <UiButton variant="outline" size="sm" :disabled="anyPending" @click="openEdit(addr)">
-                {{ t('addresses.edit') }}
-              </UiButton>
-              <UiButton
-                variant="ghost"
-                size="sm"
-                class="text-destructive hover:text-destructive"
-                :disabled="anyPending"
-                @click="handleDelete(addr)"
-              >
-                {{ t('addresses.delete') }}
-              </UiButton>
-            </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-sm font-semibold text-foreground">
+              {{ addr.recipientName || '—' }}
+            </span>
+            <span class="text-xs tabular-nums text-muted-foreground">
+              {{ maskPhone(addr.recipientPhone) }}
+            </span>
+            <UiStatusBadge
+              v-if="addr.isDefault"
+              tone="primary"
+              size="sm"
+              :label="t('addresses.defaultBadge')"
+            />
+            <UiStatusBadge
+              v-if="addr.tag"
+              tone="neutral"
+              size="sm"
+              :label="addr.tag"
+            />
           </div>
-        </div>
+
+          <p class="text-sm leading-relaxed text-foreground">
+            <span v-if="addr.region" class="text-muted-foreground">{{ addr.region }}</span>
+            {{ addr.detailAddress }}
+          </p>
+          <p v-if="addr.postalCode" class="text-[11px] tabular-nums text-muted-foreground">
+            {{ t('addresses.form.postalCode') }} {{ addr.postalCode }}
+          </p>
+
+          <!-- 操作 -->
+          <div class="mt-auto flex flex-wrap items-center justify-end gap-2 border-t border-border pt-3">
+            <UiButton
+              v-if="!addr.isDefault"
+              variant="ghost"
+              size="sm"
+              :disabled="anyPending"
+              @click="handleSetDefault(addr)"
+            >
+              {{ t('addresses.setDefault') }}
+            </UiButton>
+            <UiButton variant="outline" size="sm" :disabled="anyPending" @click="openEdit(addr)">
+              {{ t('addresses.edit') }}
+            </UiButton>
+            <UiButton
+              variant="ghost"
+              size="sm"
+              class="text-destructive hover:text-destructive"
+              :disabled="anyPending"
+              @click="handleDelete(addr)"
+            >
+              {{ t('addresses.delete') }}
+            </UiButton>
+          </div>
+        </article>
       </div>
     </div>
 
-    <!-- 表单弹层 -->
-    <div
-      v-if="showForm"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
-      @click.self="closeForm"
-    >
-      <div class="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-xl">
-        <h2 class="mb-4 text-lg font-bold text-foreground">{{ formTitle }}</h2>
+    <!-- 表单弹层：统一走 UiSheet 基元 -->
+    <UiSheet :open="showForm" @update:open="(v: boolean) => (showForm = v)">
+      <UiSheetContent
+        side="right"
+        class="flex w-full flex-col gap-0 overflow-y-auto p-0 sm:max-w-md"
+      >
+        <UiSheetHeader class="border-b border-border px-5 py-4 text-left md:px-6">
+          <UiSheetTitle class="text-lg font-bold text-foreground">{{ formTitle }}</UiSheetTitle>
+        </UiSheetHeader>
 
-        <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-4 px-5 py-5 md:px-6">
           <div class="flex flex-col gap-2">
             <UiLabel class="text-xs text-foreground">{{ t('addresses.form.recipientName') }}</UiLabel>
             <UiInput v-model="form.recipientName" :placeholder="t('addresses.form.recipientNamePlaceholder')" />
@@ -369,7 +351,7 @@ function maskPhone(phone: string | undefined): string {
             <UiLabel class="text-xs text-foreground">{{ t('addresses.form.detailAddress') }}</UiLabel>
             <UiTextarea v-model="form.detailAddress" :placeholder="t('addresses.form.detailAddressPlaceholder')" class="min-h-[80px]" />
           </div>
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div class="flex flex-col gap-2">
               <UiLabel class="text-xs text-foreground">{{ t('addresses.form.postalCode') }}</UiLabel>
               <UiInput v-model="form.postalCode" :placeholder="t('addresses.form.postalCodePlaceholder')" />
@@ -379,13 +361,13 @@ function maskPhone(phone: string | undefined): string {
               <UiInput v-model="form.tag" :placeholder="t('addresses.form.tagPlaceholder')" />
             </div>
           </div>
-          <label class="flex items-center gap-2 text-sm text-foreground">
-            <input v-model="form.isDefault" type="checkbox" class="h-4 w-4 rounded border-border" />
-            {{ t('addresses.form.isDefault') }}
-          </label>
+          <div class="flex items-center justify-between gap-3 rounded-lg border border-border bg-muted p-3">
+            <span class="text-sm text-foreground">{{ t('addresses.form.isDefault') }}</span>
+            <UiSwitch v-model="form.isDefault" />
+          </div>
         </div>
 
-        <div class="mt-6 flex justify-end gap-3">
+        <div class="mt-auto flex justify-end gap-3 border-t border-border px-5 py-4 md:px-6">
           <UiButton variant="outline" :disabled="anyPending" @click="closeForm">
             {{ t('addresses.form.cancel') }}
           </UiButton>
@@ -393,7 +375,7 @@ function maskPhone(phone: string | undefined): string {
             {{ t('addresses.form.save') }}
           </UiButton>
         </div>
-      </div>
-    </div>
+      </UiSheetContent>
+    </UiSheet>
   </LayoutSectionContainer>
 </template>

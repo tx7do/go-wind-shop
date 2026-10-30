@@ -33,8 +33,8 @@ onUnmounted(() => {
   if (timer) clearInterval(timer)
 })
 
-function handleInputComplete() {
-  if (code.value.length === 6) {
+function handleComplete(value: string) {
+  if (value.length === 6) {
     isCodeComplete.value = true
   }
 }
@@ -51,51 +51,42 @@ function handleConfirm() {
   // 待后端补齐邮箱验证码校验能力后，此处改调 useRegister 并附带 email + 已校验的 code。
   console.log('确认注册')
 }
+
+const resendBtn = 'cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-primary transition-colors underline-offset-4 hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline'
 </script>
 
 <template>
   <div class="space-y-4">
-    <!-- Email Hint -->
-    <div class="rounded-lg bg-primary/5 p-4 text-center">
+    <div class="rounded-lg bg-primary-soft px-4 py-3.5 text-center">
       <p class="text-sm font-medium text-foreground">{{ t('authentication.register.code_sent_title') }}</p>
-      <p class="mt-1 text-base font-semibold text-primary">{{ props.email }}</p>
+      <p class="mt-1 break-all text-base font-semibold text-primary-soft-foreground">{{ props.email }}</p>
       <p class="mt-1 text-xs text-muted-foreground">{{ t('authentication.register.code_sent_subtitle') }}</p>
     </div>
 
-    <!-- Verification Code Input -->
-    <div>
-      <input
-        v-model="code"
-        type="text"
-        maxlength="6"
-        class="w-full rounded-lg border border-border bg-background px-4 py-3 text-center text-lg tracking-widest text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none focus:ring-[3px] focus:ring-primary/15"
-        autocapitalize="none"
-        autocorrect="off"
-        spellcheck="false"
-        :placeholder="t('authentication.register.input_code')"
-        @input="handleInputComplete"
-      />
+    <div class="space-y-1.5">
+      <UiLabel for="register-email-code" class="block text-center text-foreground">
+        {{ t('authentication.register.code') }}
+      </UiLabel>
+      <div class="flex justify-center">
+        <UiOtpInput
+          id="register-email-code"
+          v-model="code"
+          :length="6"
+          :disabled="!codeSent"
+          type="number"
+          @complete="handleComplete"
+        />
+      </div>
     </div>
 
-    <!-- Resend Button -->
     <div class="text-center">
-      <button
-        class="cursor-pointer border-none bg-transparent text-sm text-primary transition-colors hover:text-primary/80 hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
-        :disabled="codeSent"
-        @click="handleResend"
-      >
+      <button type="button" :class="resendBtn" :disabled="codeSent" @click="handleResend">
         {{ codeSent ? `${codeCountdown}s ${t('authentication.register.resend_after')}` : t('authentication.register.resend') }}
       </button>
     </div>
 
-    <!-- Confirm Button -->
-    <button
-      type="button"
-      class="w-full cursor-pointer rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-all hover:bg-primary/90 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
-      :disabled="!isCodeComplete"
-      @click="handleConfirm"
-    >
+    <UiButton type="button" size="lg" class="w-full" :disabled="!isCodeComplete" @click="handleConfirm">
       {{ t('authentication.register.confirm') }}
-    </button>
+    </UiButton>
   </div>
 </template>

@@ -30,7 +30,7 @@
   "couponLabel": "Coupon",
   "couponPlaceholder": "Select a coupon",
   "couponNone": "No coupon",
-  "couponItem": "Coupon #{{id}}",
+  "couponItem": "Coupon {id}",
   "discount": "Discount",
   "promotion": "Promotion",
   "payChannels": {

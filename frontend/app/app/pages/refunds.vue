@@ -4,13 +4,11 @@ definePageMeta({
   middleware: 'auth',
 })
 import { computed } from 'vue';
-import { XIcon } from '@/plugins/xicon';
 import { useListPaymentRefunds } from '@/api/composables';
 import { useAccessStore } from '@/stores/modules/core/access.state';
 import { useUserStore } from '@/stores/modules/core/user.state';
 
 const { t } = useI18n();
-const localePath = useLocalePath();
 
 useHead({ title: t('refunds.title') });
 
@@ -32,6 +30,7 @@ type RefundEntity = {
   amount?: number;
   currency?: string;
   status?: RefundStatus;
+  reason?: string;
   createdAt?: string;
 };
 
@@ -74,18 +73,19 @@ const STATUS_LABEL_KEY: Record<RefundStatus, string> = {
   FAILED: 'refunds.status.failed',
   STATUS_UNSPECIFIED: 'refunds.status.status_unspecified',
 };
-const STATUS_TAG_CLASS: Record<RefundStatus, string> = {
-  PENDING: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
-  SUCCEEDED: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400',
-  FAILED: 'bg-destructive/15 text-destructive',
-  STATUS_UNSPECIFIED: 'bg-muted text-muted-foreground',
+type BadgeTone = 'neutral' | 'primary' | 'success' | 'warning' | 'danger';
+const STATUS_TONE: Record<RefundStatus, BadgeTone> = {
+  PENDING: 'warning',
+  SUCCEEDED: 'success',
+  FAILED: 'danger',
+  STATUS_UNSPECIFIED: 'neutral',
 };
 
 function statusLabel(s: RefundStatus | undefined): string {
   return t(STATUS_LABEL_KEY[s ?? 'STATUS_UNSPECIFIED']);
 }
-function statusTagClass(s: RefundStatus | undefined): string {
-  return STATUS_TAG_CLASS[s ?? 'STATUS_UNSPECIFIED'];
+function statusTone(s: RefundStatus | undefined): BadgeTone {
+  return STATUS_TONE[s ?? 'STATUS_UNSPECIFIED'];
 }
 
 function formatCreatedAt(ts: string | undefined): string {
@@ -97,9 +97,10 @@ function formatCreatedAt(ts: string | undefined): string {
   }
 }
 
-function displayAmount(v: number | undefined, currency?: string): string {
-  const prefix = currency === 'CNY' ? t('mall.product.currencyCny') : '';
-  return prefix + (v ?? 0);
+// 退款金额单位「分」，uint64 经 JSON 下成字符串，先 Number 再交给价格标签。
+function toFen(v: number | undefined): number {
+  const fen = Number(v ?? 0);
+  return Number.isFinite(fen) ? fen : 0;
 }
 </script>
 
@@ -112,38 +113,12 @@ function displayAmount(v: number | undefined, currency?: string): string {
   />
 
   <LayoutSectionContainer>
-    <!-- 未登录 -->
-    <div
-      v-if="!isLogin"
-      class="flex flex-col items-center gap-6 rounded-2xl border border-border bg-card p-12 text-center"
-    >
-      <XIcon icon="carbon:locked" :size="48" class="text-muted-foreground" />
-      <p class="text-lg text-muted-foreground">{{ t('authentication.login.please_login') }}</p>
-      <UiButton @click="navigateTo(localePath('/login'))">
-        {{ t('navbar.user.login') }}
-      </UiButton>
-    </div>
+    <UiAuthGate v-if="!isLogin" />
 
-    <!-- 加载中 -->
-    <div v-else-if="refundsLoading" class="overflow-hidden rounded-2xl border border-border bg-card">
-      <div class="border-b border-border bg-muted/40 px-6 py-3">
-        <UiSkeleton class="h-4 w-48" />
-      </div>
-      <div v-for="i in 4" :key="i" class="border-b border-border px-6 py-4 last:border-b-0">
-        <div class="flex items-center gap-4">
-          <UiSkeleton class="h-4 w-10" />
-          <UiSkeleton class="h-5 w-20" />
-          <UiSkeleton class="h-4 w-14 ml-auto" />
-          <UiSkeleton class="h-4 w-24" />
-        </div>
-      </div>
-    </div>
+    <UiListSkeleton v-else-if="refundsLoading" :rows="5" variant="row" />
 
     <!-- 错误态：网络/服务端错误，与"空"区分开，并提供重试 -->
-    <UiAppEmpty
-      v-else-if="refundsError"
-      variant="error"
-    >
+    <UiAppEmpty v-else-if="refundsError" variant="error">
       <template #action>
         <UiButton variant="outline" size="sm" @click="refundsQuery.refetch()">
           {{ t('ui.button.retry') }}
@@ -151,91 +126,62 @@ function displayAmount(v: number | undefined, currency?: string): string {
       </template>
     </UiAppEmpty>
 
-    <!-- 已加载：空 / 列表 -->
-    <div v-else class="flex flex-col gap-4">
-      <!-- 空态 -->
-      <UiAppEmpty
-        v-if="refunds.length === 0"
-        variant="noData"
-        :description="t('refunds.empty')"
-      />
+    <UiAppEmpty
+      v-else-if="refunds.length === 0"
+      variant="noData"
+      :description="t('refunds.empty')"
+    />
 
-      <!-- 退款列表 -->
-      <div v-else class="overflow-x-auto rounded-2xl border border-border bg-card">
-        <div class="min-w-[640px]">
-          <div class="border-b border-border bg-muted/40 px-6 py-3 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            <div class="grid grid-cols-[80px_1fr_120px_140px] items-center gap-4">
-              <span>{{ t('refunds.table.id') }}</span>
-              <span>{{ t('refunds.table.status') }}</span>
-              <span class="text-right">{{ t('refunds.table.amount') }}</span>
-              <span class="text-right">{{ t('refunds.table.createdAt') }}</span>
+    <template v-else>
+      <div class="overflow-hidden rounded-lg border border-border bg-card shadow-card">
+        <div
+          class="hidden grid-cols-[1fr_140px_170px] items-center gap-4 border-b border-border px-5 py-2.5 text-xs font-medium text-muted-foreground md:grid"
+        >
+          <span>{{ t('refunds.table.status') }}</span>
+          <span class="text-right">{{ t('refunds.table.amount') }}</span>
+          <span class="text-right">{{ t('refunds.table.createdAt') }}</span>
+        </div>
+
+        <div
+          v-for="refund in refunds"
+          :key="refund.id"
+          class="grid grid-cols-[1fr_auto] items-center gap-x-3 gap-y-1.5 border-b border-border px-4 py-3.5 last:border-b-0 md:grid-cols-[1fr_140px_170px] md:gap-x-4 md:px-5"
+        >
+          <div class="min-w-0">
+            <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span class="text-sm font-semibold tabular-nums text-foreground">
+                #{{ refund.id ?? '—' }}
+              </span>
+              <UiStatusBadge size="sm" dot :tone="statusTone(refund.status)" :label="statusLabel(refund.status)" />
             </div>
+            <p class="mt-1 truncate text-[11px] text-muted-foreground md:text-xs">
+              {{ t('refunds.table.transactionId') }} #{{ refund.transactionId ?? '—' }}
+            </p>
+            <p
+              v-if="refund.reason"
+              class="mt-0.5 line-clamp-2 break-words text-[11px] text-muted-foreground md:text-xs"
+            >
+              {{ t('refunds.table.reason') }}：{{ refund.reason }}
+            </p>
           </div>
 
-          <div
-            v-for="refund in refunds"
-            :key="refund.id"
-            class="border-b border-border px-6 py-4 last:border-b-0"
-          >
-            <div class="grid grid-cols-[80px_1fr_120px_140px] items-center gap-4">
-              <span class="text-sm tabular-nums text-foreground">#{{ refund.id ?? '—' }}</span>
-
-              <div class="flex flex-col gap-1">
-                <div class="flex items-center gap-2">
-                  <span
-                    class="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium"
-                    :class="statusTagClass(refund.status)"
-                  >
-                    {{ statusLabel(refund.status) }}
-                  </span>
-                  <span class="text-[10px] text-muted-foreground">
-                    {{ t('refunds.table.transactionId') }} #{{ refund.transactionId ?? '—' }}
-                  </span>
-                </div>
-                <span
-                  v-if="refund.reason"
-                  class="line-clamp-2 text-[10px] text-muted-foreground"
-                >
-                  {{ t('refunds.table.reason') }}：{{ refund.reason }}
-                </span>
-              </div>
-
-              <span class="text-right text-sm tabular-nums text-foreground">
-                {{ displayAmount(refund.amount, refund.currency) }}
-              </span>
-              <span class="text-right text-xs tabular-nums text-muted-foreground">
-                {{ formatCreatedAt(refund.createdAt) }}
-              </span>
-            </div>
+          <div class="flex justify-end">
+            <UiPriceTag v-if="toFen(refund.amount) > 0" :amount="toFen(refund.amount)" size="md" />
+            <span v-else class="text-sm tabular-nums text-muted-foreground">¥0.00</span>
           </div>
+
+          <p class="col-span-2 text-[11px] tabular-nums text-muted-foreground md:col-span-1 md:text-right md:text-xs">
+            {{ formatCreatedAt(refund.createdAt) }}
+          </p>
         </div>
       </div>
 
-      <!-- 分页：仅当超过一页时显示 -->
-      <div
-        v-if="totalPages > 1"
-        class="flex items-center justify-center gap-4 py-2"
-      >
-        <UiButton
-          variant="outline"
-          size="sm"
-          :disabled="page <= 1"
-          @click="goToPage(page - 1)"
-        >
-          {{ t('ui.pagination.previous') }}
-        </UiButton>
-        <span class="text-xs tabular-nums text-muted-foreground">
-          {{ t('ui.pagination.page', { current: page, total: totalPages }) }}
-        </span>
-        <UiButton
-          variant="outline"
-          size="sm"
-          :disabled="page >= totalPages"
-          @click="goToPage(page + 1)"
-        >
-          {{ t('ui.pagination.next') }}
-        </UiButton>
-      </div>
-    </div>
+      <UiPager
+        :page="page"
+        :total-pages="totalPages"
+        class="mt-5"
+        @update:page="goToPage"
+      />
+    </template>
   </LayoutSectionContainer>
 </template>

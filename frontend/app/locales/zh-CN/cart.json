@@ -10,6 +10,8 @@
   "selectAll": "全选",
   "selectedAmount": "已选商品总额",
   "emptySelected": "请勾选商品后再结算",
+  "decreaseQty": "减少数量",
+  "increaseQty": "增加数量",
   "table": {
     "item": "商品",
     "unitPrice": "单价",

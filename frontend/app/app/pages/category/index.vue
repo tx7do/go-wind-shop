@@ -2,30 +2,17 @@
 import { XIcon } from '@/plugins/xicon'
 import { useListCategories } from '@/api/composables'
 import { categoryIconFor } from '@/utils/category-icon'
-import { getCurrentLocale } from '@/utils/locale'
+import { translationName } from '@/utils/translation'
 
 const { t } = useI18n()
 const localePath = useLocalePath()
 
 useHead({ title: t('mall.category.title') })
 
-const currentLocale = computed(() => getCurrentLocale())
-
-type CategoryTranslation = {
-  name?: string
-  languageCode?: string
-}
 type CategoryEntity = {
   id?: number
   imageUrl?: string
-  translations?: CategoryTranslation[]
-}
-
-function pickTranslation<T extends { languageCode?: string }>(
-  translations: T[] | undefined,
-): T | undefined {
-  if (!translations || translations.length === 0) return undefined
-  return translations.find((tr) => tr.languageCode === currentLocale.value) ?? translations[0]
+  translations?: Array<{ name?: string; languageCode?: string }>
 }
 
 const categoriesQuery = useListCategories({
@@ -49,9 +36,7 @@ const isError = computed(() => categoriesQuery.isError.value)
   />
 
   <LayoutSectionContainer>
-    <div v-if="loading" class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-      <UiCategoryCardSkeleton v-for="_, i in 8" :key="i" />
-    </div>
+    <UiListSkeleton v-if="loading" variant="card" :rows="8" :columns="4" />
 
     <UiAppEmpty v-else-if="isError" variant="error">
       <template #action>
@@ -61,7 +46,7 @@ const isError = computed(() => categoriesQuery.isError.value)
       </template>
     </UiAppEmpty>
 
-    <UiAppEmpty v-else-if="categories.length === 0" variant="noData">
+    <UiAppEmpty v-else-if="categories.length === 0" :description="t('common.noData')">
       <template #action>
         <UiButton variant="outline" @click="navigateTo(localePath('/'))">
           {{ t('cart.continueShopping') }}
@@ -69,27 +54,24 @@ const isError = computed(() => categoriesQuery.isError.value)
       </template>
     </UiAppEmpty>
 
-    <div v-else class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+    <div v-else class="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
       <NuxtLink
         v-for="cat in categories"
         :key="cat.id"
         :to="localePath('/category/' + cat.id)"
-        class="group flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-6 transition-colors hover:border-primary/60"
+        class="group flex flex-col items-center gap-3 rounded-lg border border-border bg-card px-3 py-5 shadow-card transition-colors hover:border-primary/60"
       >
-        <UiImage
-          v-if="cat.imageUrl"
-          :src="cat.imageUrl"
-          :alt="pickTranslation(cat.translations)?.name || ''"
-          class="h-16 w-16 rounded-xl object-cover"
-        />
-        <span
-          v-else
-          class="flex h-16 w-16 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground"
-        >
-          <XIcon :icon="categoryIconFor(cat.id)" :size="28" />
+        <span class="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-primary-soft text-primary-soft-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+          <UiImage
+            v-if="cat.imageUrl"
+            :src="cat.imageUrl"
+            :alt="translationName(cat.translations)"
+            class="size-14 object-cover"
+          />
+          <XIcon v-else :icon="categoryIconFor(cat.id)" :size="26" />
         </span>
-        <span class="line-clamp-1 text-sm font-medium text-foreground dark:text-slate-200">
-          {{ pickTranslation(cat.translations)?.name || '—' }}
+        <span class="line-clamp-1 w-full text-center text-sm font-medium text-foreground">
+          {{ translationName(cat.translations) }}
         </span>
       </NuxtLink>
     </div>

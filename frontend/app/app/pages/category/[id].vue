@@ -1,16 +1,22 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { useGetCategory, useListCategories, useListProducts, useListBrands } from '@/api/composables';
-import { getCurrentLocale } from '@/utils/locale';
+import {
+  useGetCategory,
+  useListCategories,
+  useListProducts,
+  useListBrands,
+  useProductPrices,
+  useProductPromos,
+} from '@/api/composables';
 import { XIcon } from '@/plugins/xicon';
 import { PaginationQuery } from '@/core/transport/rest';
+import { pickTranslation, translationName } from '@/utils/translation';
 
 const route = useRoute();
 const { t } = useI18n();
 const localePath = useLocalePath();
 
 const categoryId = computed(() => Number(route.params.id));
-const currentLocale = computed(() => getCurrentLocale());
 
 type CategoryTranslation = {
   name?: string;
@@ -35,14 +41,6 @@ type ProductEntity = {
   translations?: ProductTranslation[];
 };
 
-function pickTranslation<T extends { languageCode?: string }>(
-  translations: T[] | undefined,
-): T | undefined {
-  if (!translations || translations.length === 0) return undefined;
-  const match = translations.find((tr) => tr.languageCode === currentLocale.value);
-  return match ?? translations[0];
-}
-
 // 类目详情（Get 注入 locale，返回匹配语言的翻译）
 const categoryQuery = useGetCategory(computed(() => categoryId.value), {
   enabled: computed(() => categoryId.value > 0),
@@ -51,7 +49,6 @@ const category = computed<CategoryEntity | undefined>(() => {
   return categoryQuery.data?.value as CategoryEntity | undefined;
 });
 const categoryLoading = computed(() => categoryQuery.isPending.value);
-const categoryError = computed(() => categoryQuery.isError.value);
 const categoryTranslation = computed(() =>
   pickTranslation(category.value?.translations),
 );
@@ -64,7 +61,7 @@ watch(categoryId, () => {
   if (import.meta.client) scrollToTop();
 });
 
-// 同级分类列表（用于 FilterSidebar 分类切换）
+// 同级分类列表（用于分类切换）
 const categoriesQuery = useListCategories({
   page: 1,
   pageSize: 24,
@@ -75,7 +72,7 @@ const categories = computed<CategoryEntity[]>(() => {
   return (items as CategoryEntity[]) ?? [];
 });
 
-// 品牌列表（用于 FilterSidebar 品牌筛选）
+// 品牌列表（用于品牌筛选）
 const brandsQuery = useListBrands({
   page: 1,
   pageSize: 24,
@@ -90,6 +87,17 @@ const brands = computed<BrandEntity[]>(() => {
 const selectedSort = ref<'featured' | 'latest'>('featured');
 // 品牌筛选状态：undefined 表示不筛选，否则按 brandId 过滤
 const selectedBrandId = ref<number | undefined>(undefined);
+
+const sortOptions: Array<{ key: 'featured' | 'latest'; labelKey: string }> = [
+  { key: 'featured', labelKey: 'mall.category.sortFeatured' },
+  { key: 'latest', labelKey: 'mall.category.sortLatest' },
+];
+
+// 品牌筛选单选取值：选中未选中的品牌则设为当前，再次点击已选中的品牌则取消。
+function toggleBrand(brandId?: number) {
+  if (brandId === undefined) return;
+  selectedBrandId.value = selectedBrandId.value === brandId ? undefined : brandId;
+}
 
 // 该分类下的商品（按 categoryId 过滤 + 可选 brandId + 排序）
 // 排序走 orderBy 字符串数组（后端 ListWithPaging 的 orderByStringConverter 路径，
@@ -124,61 +132,227 @@ const productsError = computed(() => productsQuery.isError.value);
 const totalCount = computed(() => (productsQuery.data?.value as any)?.total ?? 0);
 const totalPages = computed(() => Math.max(1, Math.ceil(totalCount.value / PAGE_SIZE)));
 
+// 商品实体里没有价格字段（价格在 SkuPrice，按 SKU 存「分」），
+// 两次批量查询拿整屏商品的「起」价与活动价，避免每商品各发两次请求。
+const productIds = computed(() =>
+  products.value.map((p) => p.id).filter((id): id is number => id !== undefined),
+);
+const { priceByProductId, skuIdsByProduct } = useProductPrices(productIds);
+const { promoByProductId } = useProductPromos(productIds, priceByProductId, skuIdsByProduct);
+
+const cards = computed(() =>
+  products.value
+    .map((p) => {
+      if (p.id === undefined) return undefined;
+      const base = priceByProductId.value.get(p.id);
+      const promo = promoByProductId.value.get(p.id);
+      return {
+        id: p.id,
+        name: translationName(p.translations),
+        image: p.imageUrl,
+        priceFen: promo?.fen ?? base?.fen ?? null,
+        oldPriceFen: promo ? base?.fen ?? null : null,
+        badgeLabel: promo ? t(promo.labelKey) : undefined,
+        badgeTone: promo?.tone,
+      };
+    })
+    .filter((c): c is NonNullable<typeof c> => c !== undefined),
+);
+
 // 切换分类/品牌/排序时回到第 1 页，避免停留在越界页码。
 watch([selectedSort, selectedBrandId, categoryId], () => {
   page.value = 1;
 });
-
-function goToPage(p: number) {
-  const clamped = Math.min(Math.max(1, p), totalPages.value);
-  if (clamped !== page.value) {
-    page.value = clamped;
-  }
-}
 </script>
 
 <template>
-  <!-- 麵包屑導航（壓縮的左對齊標題區，替代原 PageHero） -->
-  <LayoutSectionContainer class="!py-4">
-    <nav class="flex items-center gap-2 text-sm text-muted-foreground">
-      <NuxtLink :to="localePath('/')" class="hover:text-foreground">
+  <LayoutSectionContainer no-padding class="pt-3 md:pt-5">
+    <nav class="flex items-center gap-1.5 text-xs text-muted-foreground md:text-sm">
+      <NuxtLink
+        :to="localePath('/')"
+        class="shrink-0 transition-colors hover:text-foreground"
+      >
         {{ t('mall.category.breadcrumbHome') }}
       </NuxtLink>
-      <span>/</span>
-      <span class="text-foreground">
-        <UiSkeleton v-if="categoryLoading" class="h-4 w-24" />
-        <template v-else>
-          {{ categoryTranslation?.name || t('mall.category.products') }}
-        </template>
+      <XIcon
+        v-if="categoryLoading || category"
+        icon="lucide:chevron-right"
+        :size="12"
+        class="shrink-0 text-muted-foreground"
+      />
+      <UiSkeleton v-if="categoryLoading" class="h-3.5 w-24" />
+      <span v-else-if="category" class="line-clamp-1 min-w-0 font-medium text-foreground">
+        {{ translationName(category.translations) }}
       </span>
     </nav>
   </LayoutSectionContainer>
 
-  <!-- 左右分欄：PC 端 FilterSidebar(1/4) + 商品區(3/4)，移動端單列 -->
-  <LayoutSectionContainer class="grid grid-cols-1 gap-6 md:grid-cols-4">
-    <CategoryFilterSidebar
-      :categories="categories"
-      :brands="brands"
-      :current-category-id="categoryId"
-      :selected-brand-id="selectedBrandId"
-      class="md:col-span-1"
-      @update:selected-brand-id="selectedBrandId = $event"
-    />
+  <LayoutSectionContainer class="md:grid md:grid-cols-[13rem_1fr] md:items-start md:gap-6 md:pt-5">
+    <aside
+      v-if="(categories.length > 0 || brands.length > 0) && (categoryLoading || category)"
+      class="hidden md:block"
+    >
+      <div class="sticky top-[calc(var(--layout-header-height)+1rem)] rounded-lg border border-border bg-card p-4 shadow-card">
+        <h2 class="mb-3 text-sm font-bold text-foreground">
+          {{ t('mall.category.filters') }}
+        </h2>
 
-    <div class="md:col-span-3">
-      <CategorySortBar
-        v-model="selectedSort"
-        class="mb-4"
-      />
+        <div v-if="categories.length > 0">
+          <p class="mb-2 text-xs font-semibold text-muted-foreground">
+            {{ t('mall.category.filterCategories') }}
+          </p>
+          <ul class="space-y-0.5">
+            <li v-for="cat in categories" :key="cat.id">
+              <NuxtLink
+                :to="localePath('/category/' + cat.id)"
+                :class="[
+                  'flex items-center rounded-md px-2.5 py-2 text-sm transition-colors',
+                  cat.id === categoryId
+                    ? 'bg-primary-soft font-medium text-primary-soft-foreground'
+                    : 'text-foreground hover:bg-secondary',
+                ]"
+              >
+                <span class="truncate">{{ translationName(cat.translations) }}</span>
+              </NuxtLink>
+            </li>
+          </ul>
+        </div>
 
-      <div v-if="productsLoading" class="grid grid-cols-2 gap-4 md:grid-cols-3">
-        <UiPostCardSkeleton v-for="_, i in 6" :key="i" />
+        <div v-if="brands.length > 0" class="mt-5 border-t border-border pt-4">
+          <p class="mb-2 text-xs font-semibold text-muted-foreground">
+            {{ t('mall.category.filterBrands') }}
+          </p>
+          <ul class="space-y-0.5">
+            <li v-for="brand in brands" :key="brand.id">
+              <UiButton
+                type="button"
+                variant="ghost"
+                :class="[
+                  'h-auto w-full justify-start gap-2 rounded-md px-2.5 py-2 text-left text-sm',
+                  brand.id === selectedBrandId
+                    ? 'bg-primary-soft font-medium text-primary-soft-foreground'
+                    : 'text-foreground',
+                ]"
+                :aria-pressed="brand.id === selectedBrandId"
+                @click="toggleBrand(brand.id)"
+              >
+                <XIcon
+                  v-if="brand.id === selectedBrandId"
+                  icon="lucide:check"
+                  class="shrink-0"
+                />
+                <span class="truncate">{{ translationName(brand.translations) }}</span>
+              </UiButton>
+            </li>
+          </ul>
+          <UiButton
+            v-if="selectedBrandId !== undefined"
+            variant="link"
+            size="sm"
+            class="mt-2 px-0 text-xs"
+            @click="selectedBrandId = undefined"
+          >
+            {{ t('common.reset') }}
+          </UiButton>
+        </div>
+      </div>
+    </aside>
+
+    <div class="min-w-0">
+      <div
+        v-if="categoryLoading || category"
+        class="mb-4 flex flex-wrap items-start justify-between gap-3"
+      >
+        <div class="min-w-0">
+          <h1 class="line-clamp-1 text-lg font-bold text-foreground md:text-xl">
+            <UiSkeleton v-if="categoryLoading" class="h-6 w-32" />
+            <template v-else>{{ translationName(category?.translations) }}</template>
+          </h1>
+          <p class="mt-1 line-clamp-2 text-xs text-muted-foreground md:text-sm">
+            {{ categoryTranslation?.description || t('mall.category.products') }}
+          </p>
+        </div>
+
+        <div class="flex shrink-0 items-center gap-2">
+          <span class="text-xs font-medium text-muted-foreground">
+            {{ t('mall.category.sortBy') }}
+          </span>
+          <UiSelect v-model="selectedSort">
+            <UiSelectTrigger class="h-8 w-[7.5rem] text-xs md:text-sm">
+              <UiSelectValue />
+            </UiSelectTrigger>
+            <UiSelectContent>
+              <UiSelectItem
+                v-for="opt in sortOptions"
+                :key="opt.key"
+                :value="opt.key"
+              >
+                {{ t(opt.labelKey) }}
+              </UiSelectItem>
+            </UiSelectContent>
+          </UiSelect>
+        </div>
       </div>
 
-      <UiAppEmpty
-        v-else-if="productsError"
-        variant="error"
-      >
+      <div v-if="categoryLoading || category" class="mb-3 space-y-2 md:hidden">
+        <div
+          v-if="categories.length > 0"
+          class="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 no-scrollbar"
+        >
+          <NuxtLink
+            v-for="cat in categories"
+            :key="cat.id"
+            :to="localePath('/category/' + cat.id)"
+            :class="[
+              'shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors',
+              cat.id === categoryId
+                ? 'border-primary bg-primary-soft text-primary-soft-foreground'
+                : 'border-border bg-card text-foreground',
+            ]"
+          >
+            {{ translationName(cat.translations) }}
+          </NuxtLink>
+        </div>
+
+        <div
+          v-if="brands.length > 0"
+          class="-mx-4 flex items-center gap-2 overflow-x-auto px-4 pb-1 no-scrollbar"
+        >
+          <span class="shrink-0 text-xs text-muted-foreground">
+            {{ t('mall.category.filterBrands') }}
+          </span>
+          <UiButton
+            v-for="brand in brands"
+            :key="brand.id"
+            type="button"
+            variant="outline"
+            size="sm"
+            :class="[
+              'shrink-0 rounded-full',
+              brand.id === selectedBrandId
+                ? 'border-primary bg-primary-soft text-primary-soft-foreground'
+                : '',
+            ]"
+            :aria-pressed="brand.id === selectedBrandId"
+            @click="toggleBrand(brand.id)"
+          >
+            {{ translationName(brand.translations) }}
+          </UiButton>
+          <UiButton
+            v-if="selectedBrandId !== undefined"
+            variant="link"
+            size="sm"
+            class="shrink-0 px-0 text-xs"
+            @click="selectedBrandId = undefined"
+          >
+            {{ t('common.reset') }}
+          </UiButton>
+        </div>
+      </div>
+
+      <UiListSkeleton v-if="productsLoading" variant="card" :rows="6" :columns="3" />
+
+      <UiAppEmpty v-else-if="productsError" variant="error">
         <template #action>
           <UiButton variant="outline" size="sm" @click="productsQuery.refetch()">
             {{ t('ui.button.retry') }}
@@ -186,40 +360,7 @@ function goToPage(p: number) {
         </template>
       </UiAppEmpty>
 
-      <div
-        v-else-if="products.length > 0"
-        class="grid grid-cols-2 gap-4 md:grid-cols-3"
-      >
-        <NuxtLink
-          v-for="product in products"
-          :key="product.id"
-          :to="localePath('/product/' + product.id)"
-          class="group block overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-colors hover:border-primary/60 dark:shadow-none"
-        >
-          <UiImage
-            :src="product.imageUrl"
-            :alt="pickTranslation(product.translations)?.name || ''"
-            class="aspect-square w-full rounded-none object-cover"
-          />
-          <div class="p-3">
-            <h3 class="line-clamp-2 text-sm font-semibold text-foreground dark:text-slate-200">
-              {{ pickTranslation(product.translations)?.name || '—' }}
-            </h3>
-            <div class="mt-3 flex items-center justify-between">
-              <span class="text-xs text-muted-foreground">{{ t('mall.product.viewDetail') }}</span>
-              <span class="flex h-7 w-7 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <XIcon icon="carbon:shopping-cart" :size="14" />
-              </span>
-            </div>
-          </div>
-        </NuxtLink>
-      </div>
-
-      <UiAppEmpty
-        v-else-if="!category"
-        variant="noData"
-        :description="t('mall.category.notFound')"
-      >
+      <UiAppEmpty v-else-if="!categoryLoading && !category" :description="t('mall.category.notFound')">
         <template #action>
           <UiButton variant="outline" @click="navigateTo(localePath('/'))">
             {{ t('cart.continueShopping') }}
@@ -227,11 +368,21 @@ function goToPage(p: number) {
         </template>
       </UiAppEmpty>
 
-      <UiAppEmpty
-        v-else
-        variant="noData"
-        :description="t('mall.category.empty')"
-      >
+      <div v-else-if="cards.length > 0" class="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4">
+        <UiProductCard
+          v-for="card in cards"
+          :key="card.id"
+          :product-id="card.id"
+          :name="card.name"
+          :image="card.image"
+          :price-fen="card.priceFen"
+          :old-price-fen="card.oldPriceFen"
+          :badge-label="card.badgeLabel"
+          :badge-tone="card.badgeTone"
+        />
+      </div>
+
+      <UiAppEmpty v-else :description="t('mall.category.empty')">
         <template #action>
           <UiButton variant="outline" @click="navigateTo(localePath('/'))">
             {{ t('cart.continueShopping') }}
@@ -239,30 +390,7 @@ function goToPage(p: number) {
         </template>
       </UiAppEmpty>
 
-      <div
-        v-if="totalPages > 1"
-        class="flex items-center justify-center gap-4 py-2"
-      >
-        <UiButton
-          variant="outline"
-          size="sm"
-          :disabled="page <= 1"
-          @click="goToPage(page - 1)"
-        >
-          {{ t('ui.pagination.previous') }}
-        </UiButton>
-        <span class="text-xs tabular-nums text-muted-foreground">
-          {{ t('ui.pagination.page', { current: page, total: totalPages }) }}
-        </span>
-        <UiButton
-          variant="outline"
-          size="sm"
-          :disabled="page >= totalPages"
-          @click="goToPage(page + 1)"
-        >
-          {{ t('ui.pagination.next') }}
-        </UiButton>
-      </div>
+      <UiPager v-model:page="page" :total-pages="totalPages" class="mt-6" />
     </div>
   </LayoutSectionContainer>
 </template>
