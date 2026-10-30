@@ -16,6 +16,8 @@
     --color-popover-foreground: hsl(var(--popover-foreground));
     --color-primary: hsl(var(--primary));
     --color-primary-foreground: hsl(var(--primary-foreground));
+    --color-primary-soft: hsl(var(--primary-soft));
+    --color-primary-soft-foreground: hsl(var(--primary-soft-foreground));
     --color-secondary: hsl(var(--secondary));
     --color-secondary-foreground: hsl(var(--secondary-foreground));
     --color-muted: hsl(var(--muted));
@@ -28,74 +30,129 @@
     --color-success-foreground: hsl(var(--success-foreground));
     --color-warning: hsl(var(--warning));
     --color-warning-foreground: hsl(var(--warning-foreground));
+    /* 状态徽标用的「浅底 + 同色系墨字」成对 token。
+       成对是必须的：bg-success/15 这类透明度写法在亮色里是淡色、在暗色里叠 dark card
+       还是深色，同一种墨字在两态里一个过一个不过（暗色 warning 实测 1.34，深墨落深底）。
+       底和字一起随主题定义，页面侧只写一次类名。 */
+    --color-success-soft: hsl(var(--success-soft));
+    --color-success-soft-foreground: hsl(var(--success-soft-foreground));
+    --color-warning-soft: hsl(var(--warning-soft));
+    --color-warning-soft-foreground: hsl(var(--warning-soft-foreground));
+    --color-destructive-soft: hsl(var(--destructive-soft));
+    --color-destructive-soft-foreground: hsl(var(--destructive-soft-foreground));
     --color-border: hsl(var(--border));
     --color-input: hsl(var(--input));
     --color-ring: hsl(var(--ring));
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
     --radius-sm: calc(var(--radius) - 4px);
+    /* xl / 2xl 也收拢到同一个几何 token：A 稿的卡片、Hero、分类砖、弹层都是 12px，
+       而 v4 默认 rounded-2xl=16px 会把弹层/卡片带偏（页面里已有 rounded-2xl 的写法）。
+       rounded-full 不受影响（搜索胶囊、徽标仍用满圆）。 */
+    --radius-xl: var(--radius);
+    --radius-2xl: var(--radius);
+    /* shadow-card / shadow-pop 两个工具类，值随主题切换（亮=柔和双层投影，暗=none 靠描边分层） */
+    --shadow-card: var(--ui-shadow-card);
+    --shadow-pop: var(--ui-shadow-pop);
 }
 
 /* ==========================================
- * 浅色模式 (Light Mode) — 疾風掠影
+ * 浅色模式 (Light Mode) — 方案 A · 留绿 + 中性版面
  * ========================================== */
+
+/* 每个数值后面括号里是 WCAG 对比度（node hsl→rgb 与 Chromium computed style
+ * 两把尺各量过，结果一致）。判据是「这条颜色在它会出现的所有底色上都过 AA」，
+ * 不是「在白底上过 AA」——所以 --muted-foreground 比 A 稿的 slate-500 深一档：
+ * slate-500 在白卡上 4.76 勉强过，落到页面灰底 (--background) 只有 4.47，
+ * 而正文级的次要文字（销量、章节副标题、空态说明）正好大量落在灰底上。 */
 :root {
     /* 声明浅色配色：让浏览器原生控件（滚动条、日期选择器、autofill 背景等）
        与页面浅色主题一致，避免暗色原生控件在浅色页面上突兀。 */
     color-scheme: light;
 
-    /* 核心背景 */
-    --background: 210 40% 98%;
-    --foreground: 224 71.4% 4.1%;
+    /* 核心背景：#F6F8FA 版面灰 / #FFFFFF 卡片白 / #E6EAEF 描边 */
+    --background: 210 28.6% 97.3%;
+    --foreground: 222.2 47.4% 11.2%;
 
     --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
+    --card-foreground: 222.2 47.4% 11.2%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
+    --popover-foreground: 222.2 47.4% 11.2%;
 
-    /* 核心主色：極光電能綠 */
-    --primary: 142.1 76.2% 36.3%;
+    /* 主色：極光電能綠 green-700 #15803D —— 白字 5.02，作文字色对白底 5.02 */
+    --primary: 142.4 71.9% 29.2%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 93.1%;
-    --secondary-foreground: 224 71.4% 4.1%;
+    /* 主色浅底：徽标/分类砖/Hero 这类"绿底绿字"的场合用它，不要用 bg-primary/15
+       （实测 bg-primary/15 + text-primary 只有 4.09，不过 AA）。
+       底上用 --primary 也差 0.02（4.48），所以配一档更深的绿墨。 */
+    --primary-soft: 135 37.5% 93.7%;
+    --primary-soft-foreground: 142.4 71.9% 24%;
 
-    --muted: 210 40% 93.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --secondary: 213.3 22% 92%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
-    /* 點綴：賽博科技藍 */
-    --accent: 217.2 91.2% 59.8%;
-    --accent-foreground: 224 71.4% 4.1%;
+    --muted: 213.3 22% 92%;
+    --muted-foreground: 215.4 16.3% 43%;
 
-    --destructive: 0 84.2% 60.2%;
+    /* 點綴 → 中性高亮：--accent 的实际消费者是下拉/单选 focus 背景与
+       PreferencesPanel 的 hover 底色，语义是"悬停高亮"而不是品牌色。
+       原来这里是饱和蓝 217.2 91.2% 59.8%，在绿色品牌页面上属于串色，
+       改成与 --muted 同值（shadcn 官方浅色主题里 accent/muted 也是同值）。 */
+    --accent: 213.3 22% 92%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    /* green-700 的做法同样用在红上：填充按钮要白字过 AA，就不能用 red-500
+       （#EF4444 + 白字实测 3.61）。red-700 + 白字 6.20，作文字色 6.47，
+       bg-destructive/15 徽标上 5.01，三条腿都过。 */
+    --destructive: 0 73.3% 41.8%;
     --destructive-foreground: 0 0% 98%;
 
-    --success: 142.1 76.2% 36.3%;
+    /* success 与 primary 拉开色相（159 vs 142），否则状态色与品牌色无法区分 */
+    --success: 158.9 64% 30%;
     --success-foreground: 0 0% 98%;
 
     --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 98%;
+    --warning-foreground: 30 90% 8%;
 
-    --border: 214.3 32% 88%;
-    --input: 214.3 32% 88%;
-    --ring: 142.1 76.2% 36.3%;
+    /* 状态徽标成对 token（浅底 + 同色系深墨）。括号里是浏览器 canvas 合成后复量的
+       ink-on-soft 比值，见 components/ui/status-badge。 */
+    --success-soft: 152 62% 93%;
+    --success-soft-foreground: 158.9 64% 26%; /* 5.69 */
+    --warning-soft: 43 96% 88%;
+    --warning-soft-foreground: 30 90% 8%;     /* 15.24 */
+    --destructive-soft: 0 86% 97%;
+    --destructive-soft-foreground: 0 73.3% 41.8%; /* 5.87 */
 
-    --radius: 0.6rem;
+    --border: 213.3 22% 92%;
+    --input: 213.3 22% 92%;
+    --ring: 142.4 71.9% 29.2%;
+
+    /* A 稿圆角 12px；--radius-md/sm 由它 -2/-4 派生 ⇒ 10px / 8px */
+    --radius: 0.75rem;
+
+    /* 卡片柔和双层投影；暗色下整张版面靠描边+表面明度分层，投影关掉 */
+    --ui-shadow-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 4px 12px rgba(15, 23, 42, 0.05);
+    --ui-shadow-pop: 0 2px 6px rgba(15, 23, 42, 0.08), 0 12px 32px rgba(15, 23, 42, 0.12);
 
     /* 布局尺寸 */
     --layout-header-height: 64px;
     --layout-footer-height: 200px;
     --layout-max-width: 1200px;
+    /* 移动端底部 Tab 栏高度。TabBar 自身、页面内容底部留白、吸底操作条避让
+       都读这一个值（原来 h-14 / 3.75rem / 3.5rem 三处各写各的）。 */
+    --layout-tabbar-height: 3.5rem;
 
-    /* Hero 渐变背景 */
-    --hero-gradient-from: hsl(142, 70%, 96%);
-    --hero-gradient-via: hsl(142, 50%, 98%);
-    --hero-gradient-to: hsl(var(--background));
+    /* Hero 背景：由主题 token 组成的渐变，页面不再各自手写 hsl 或用内联 style。
+       只在 :root 声明一次即可跟随主题——.dark 与 :root 落在同一个 <html> 元素上，
+       这里 var() 的替换按 <html> 的最终值发生，暗色自动换血。 */
+    --hero-gradient: linear-gradient(to bottom, hsl(var(--primary-soft)), hsl(var(--card)) 55%, hsl(var(--background)));
+    --hero-banner-gradient: linear-gradient(135deg, hsl(var(--primary-soft)), hsl(var(--card)) 70%);
 }
 
 /* ==========================================
- * 深色模式 (Dark Mode) — 暗夜疾行
+ * 深色模式 (Dark Mode) — 方案 A · 暗夜中性（不带蓝）
  * ========================================== */
 
 /* JS 精确控制：通过 .dark / .light class 切换 */
@@ -104,91 +161,99 @@
        与页面暗色主题一致，避免亮色原生控件在暗色页面上突兀。 */
     color-scheme: dark;
 
-    --background: 224 45% 6%;
-    --foreground: 210 20% 98%;
+    /* 原暗底是 224 45% 6%（明显偏蓝），A 稿改成 213.3 29% 6.1% 的中性黑灰，
+       明度层级 bg 6.1% → card 11% → hover 14.3% → border 17.6%（对 card 1.23，
+       只做分区不做文字载体）。 */
+    --background: 213.3 29% 6.1%;
+    --foreground: 216 25% 92.2%;
 
-    --card: 222.2 40% 14%;
-    --card-foreground: 210 20% 98%;
+    --card: 214.3 25% 11%;
+    --card-foreground: 216 25% 92.2%;
 
-    --popover: 222.2 40% 14%;
-    --popover-foreground: 210 20% 98%;
+    --popover: 214.3 25% 11%;
+    --popover-foreground: 216 25% 92.2%;
 
-    /* 核心主色：霓虹電能綠 */
-    --primary: 142.1 86.2% 50.3%;
-    --primary-foreground: 0 0% 100%;
+    /* 主色从霓虹绿 142.1 86.2% 50.3% 收到 A 稿的 #2FBF63，深绿墨 #04150A 作 CTA 字色。
+       亮绿当底绝不能配白字（原霓虹绿 + 白字只有 1.56）。
+       收饱和度后仍留够腿：CTA 7.84、作正文色对 card 7.22 / 对 bg 8.01、浅底徽标 6.45。 */
+    --primary: 141.7 60.5% 46.7%;
+    --primary-foreground: 141.2 68% 4.9%;
 
-    --secondary: 217.2 32.6% 13.5%;
-    --secondary-foreground: 210 20% 98%;
+    --primary-soft: 140.9 39% 11.6%;
+    --primary-soft-foreground: 141.7 60.5% 53%;
 
-    --muted: 217.2 32.6% 13.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --secondary: 211.8 23.3% 14.3%;
+    --secondary-foreground: 216 25% 92.2%;
 
-    --accent: 217.2 91.2% 59.8%;
-    --accent-foreground: 210 20% 98%;
+    --muted: 211.8 23.3% 14.3%;
+    --muted-foreground: 214 14.7% 60%;
 
-    --destructive: 0 62.8% 50%;
-    --destructive-foreground: 0 0% 98%;
+    --accent: 211.8 23.3% 14.3%;
+    --accent-foreground: 216 25% 92.2%;
 
-    --success: 142.1 86.2% 50.3%;
-    --success-foreground: 0 0% 98%;
+    /* 暗色红要同时当"文字色"和"15% 浅底上的文字色"，red-600 级别太暗（对 card 3.0 左右）。
+       取 357 90% 70%：对 card 6.14、对 bg 6.81、bg-destructive/15 上 4.98，
+       填充按钮配深红墨 6.77。 */
+    --destructive: 357 90% 70%;
+    --destructive-foreground: 356 75% 8%;
+
+    --success: 162.1 90% 45%;
+    --success-foreground: 162 90% 6%;
 
     --warning: 38 92% 55%;
-    --warning-foreground: 0 0% 98%;
+    --warning-foreground: 30 90% 8%;
 
-    --border: 217.2 32% 22%;
-    --input: 217.2 32% 22%;
-    --ring: 142.1 86.2% 50.3%;
+    /* 暗色的徽标底是"深一档的同色"，墨字必须反过来变亮。
+       原来徽标写 bg-warning/15 + text-warning-foreground：透明度叠在深卡上仍是深色，
+       深墨落深底，实机复量只有 1.34（拼团角标在暗色下几乎读不出）。 */
+    --success-soft: 160 40% 13%;
+    --success-soft-foreground: 162.1 90% 45%; /* 7.93 */
+    --warning-soft: 36 45% 16%;
+    --warning-soft-foreground: 45 95% 70%;    /* 9.59 */
+    --destructive-soft: 356 45% 17%;
+    --destructive-soft-foreground: 357 90% 70%; /* 5.49 */
 
-    /* Hero 渐变背景 */
-    --hero-gradient-from: hsl(222, 40%, 9%);
-    --hero-gradient-via: hsl(222, 40%, 12%);
-    --hero-gradient-to: hsl(var(--background));
+    --border: 213 22.2% 17.6%;
+    --input: 213 22.2% 17.6%;
+    --ring: 141.7 60.5% 46.7%;
+
+    /* 暗色不靠投影分层，卡片用描边+表面明度 */
+    --ui-shadow-card: none;
+    --ui-shadow-pop: none;
 }
 
-/* 纯 CSS 后备：JS 未执行前，浏览器自动跟随系统暗色偏好。
- * 等价于 .dark 的变量值，选择器用 :root:not(.light) 确保
- * 手动亮色模式优先于系统偏好。 */
-@media (prefers-color-scheme: dark) {
-    :root:not(.light) {
-        --background: 224 45% 6%;
-        --foreground: 210 20% 98%;
+/* 暗色 token 只有 .dark 一份来源：app/app.vue 的首屏防闪脚本与 update-css-variables.ts
+ * 都会把 auto 解析成具体的 .dark/.light class，所以这里不再需要 @media 副本。
+ * 曾经存在一份 :root:not(.light) 的副本，它与 .dark 的 --card/--border 已经漂移，
+ * 导致"系统暗色"和"手动暗色"是两套暗色。加副本前请先读这段。 */
 
-        --card: 222.2 47.4% 11%;
-        --card-foreground: 210 20% 98%;
+/* 商品图不重做（沿用图源原样），只在暗色下压 8% 亮度，
+ * 避免白底商品图在 --background(#0B0F14) 的暗底上反光刺眼。仅作用于 UiImage（商品图），
+ * logo / 头像 / 富文本插图不带 .ui-image，不受影响。 */
+.dark img.ui-image {
+    filter: brightness(0.92);
+}
 
-        --popover: 222.2 47.4% 11%;
-        --popover-foreground: 210 20% 98%;
-
-        --primary: 142.1 86.2% 50.3%;
-        --primary-foreground: 0 0% 100%;
-
-        --secondary: 217.2 32.6% 13.5%;
-        --secondary-foreground: 210 20% 98%;
-
-        --muted: 217.2 32.6% 13.5%;
-        --muted-foreground: 215 20.2% 65.1%;
-
-        --accent: 217.2 91.2% 59.8%;
-        --accent-foreground: 210 20% 98%;
-
-        --destructive: 0 62.8% 50%;
-        --destructive-foreground: 0 0% 98%;
-
-        --success: 142.1 86.2% 50.3%;
-        --success-foreground: 0 0% 98%;
-
-        --warning: 38 92% 55%;
-        --warning-foreground: 0 0% 98%;
-
-        --border: 217.2 32.6% 17.5%;
-        --input: 217.2 32.6% 17.5%;
-        --ring: 142.1 86.2% 50.3%;
-
-        /* Hero 渐变背景 */
-        --hero-gradient-from: hsl(222, 47%, 11%);
-        --hero-gradient-via: hsl(222, 47%, 14%);
-        --hero-gradient-to: hsl(var(--background));
-    }
+/* vue-sonner 的 rich-colors 自带一套调色板，浅色 success 那对只有 4.26:1（实机复量），
+ * 而且和品牌色不同源。这里把它的四个语义色改挂到我们的成对 token 上。
+ * 多带一个 [data-sonner-theme] 是为了压过它按主题写的那两条规则
+ * （同权重时由注入顺序决定，实测它后者居上）。 */
+:root [data-sonner-toaster][data-sonner-theme] {
+    --normal-bg: hsl(var(--card));
+    --normal-border: hsl(var(--border));
+    --normal-text: hsl(var(--foreground));
+    --success-bg: hsl(var(--success-soft));
+    --success-border: hsl(var(--success-soft-foreground) / 0.3);
+    --success-text: hsl(var(--success-soft-foreground));
+    --error-bg: hsl(var(--destructive-soft));
+    --error-border: hsl(var(--destructive-soft-foreground) / 0.3);
+    --error-text: hsl(var(--destructive-soft-foreground));
+    --warning-bg: hsl(var(--warning-soft));
+    --warning-border: hsl(var(--warning-soft-foreground) / 0.3);
+    --warning-text: hsl(var(--warning-soft-foreground));
+    --info-bg: hsl(var(--primary-soft));
+    --info-border: hsl(var(--primary-soft-foreground) / 0.3);
+    --info-text: hsl(var(--primary-soft-foreground));
 }
 
 /* ========== 基础重置 ========== */
@@ -234,45 +299,15 @@ html {
     scrollbar-width: none;
 }
 
-/* ========== Scroll Reveal Animation ========== */
-.scroll-reveal-item {
-    opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+/* ========== Hero 背景 ==========
+ * 两个方向不同、用途不同的主题渐变。做成类而不是内联 style：
+ * 内联 style 优先级高于任何样式表，会把主题来源绕开（圆角就是这么漂掉的）。 */
+@utility hero-band {
+    background-image: var(--hero-gradient);
 }
 
-.scroll-reveal-item.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.scroll-reveal-item:nth-child(1) { transition-delay: 0.08s; }
-.scroll-reveal-item:nth-child(2) { transition-delay: 0.16s; }
-.scroll-reveal-item:nth-child(3) { transition-delay: 0.24s; }
-.scroll-reveal-item:nth-child(4) { transition-delay: 0.32s; }
-.scroll-reveal-item:nth-child(5) { transition-delay: 0.4s; }
-.scroll-reveal-item:nth-child(6) { transition-delay: 0.48s; }
-.scroll-reveal-item:nth-child(7) { transition-delay: 0.56s; }
-.scroll-reveal-item:nth-child(8) { transition-delay: 0.64s; }
-
-/* ========== Categories Grid / Carousel Visibility ========== */
-.desktop-grid { display: grid; }
-.mobile-carousel { display: none; }
-@media (max-width: 900px) {
-    .desktop-grid { display: none; }
-    .mobile-carousel { display: block; }
-}
-
-/* ========== Scroll Reveal Section ========== */
-.scroll-reveal .section-header {
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUpSection 0.6s ease-out 0.2s forwards;
-}
-
-@keyframes fadeInUpSection {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+@utility hero-banner {
+    background-image: var(--hero-banner-gradient);
 }
 
 /* ========== 主题切换图标微动效 ========== */

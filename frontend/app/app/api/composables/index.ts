@@ -18,6 +18,7 @@ export * from './category';
 export * from './product';
 export * from './product-attribute';
 export * from './product-attribute-value';
+export * from './product-price';
 export * from './sku';
 export * from './sku-price';
 export * from './sku-attribute-combination';

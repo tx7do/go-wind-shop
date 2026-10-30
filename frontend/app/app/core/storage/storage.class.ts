@@ -672,13 +672,17 @@ class StorageManager implements IStorageCache {
 
   private checkAndEvict(): void {
     const { maxItems, maxUsageMB } = this.options;
-    if (maxItems === 0 && maxUsageMB === 0) return;
+    // maxItems / maxUsageMB 为 0 表示该维度不限量，不能当成"上限 0"参与比较，
+    // 否则每次写入都会把包括自己在内的全部条目淘汰掉。
+    const isOver = (items: number, usage: number) =>
+      (maxItems > 0 && items > maxItems) ||
+      (maxUsageMB > 0 && usage > maxUsageMB * 1024 * 1024);
 
     const allMeta = this.getAllMeta();
     let currentItems = allMeta.size;
     let currentUsage = Array.from(allMeta.values()).reduce((sum, m) => sum + m.s, 0);
 
-    if (currentItems <= maxItems && currentUsage <= maxUsageMB * 1024 * 1024) return;
+    if (!isOver(currentItems, currentUsage)) return;
 
     // 排序策略
     const sortedKeys = this.sortByEvictionPriority(allMeta);
@@ -686,7 +690,7 @@ class StorageManager implements IStorageCache {
     const keysToEvict: string[] = [];
 
     for (const key of sortedKeys) {
-      if (currentItems <= maxItems && currentUsage <= maxUsageMB * 1024 * 1024) break;
+      if (!isOver(currentItems, currentUsage)) break;
       keysToEvict.push(key);
       currentItems--;
       currentUsage -= allMeta.get(key)!.s;
