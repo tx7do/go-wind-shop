@@ -101,6 +101,17 @@ const mall: RouteRecordRaw[] = [
         },
         component: () => import("@/pages/app/mall/sku/index.vue"),
       },
+      {
+        path: "comments",
+        name: "MallCommentManagement",
+        meta: {
+          order: 7,
+          icon: "lucide:message-square",
+          title: "routes.mall.comment",
+          authority: ["sys:platform_admin"],
+        },
+        component: () => import("@/pages/app/mall/comment/index.vue"),
+      },
     ],
   },
 ];

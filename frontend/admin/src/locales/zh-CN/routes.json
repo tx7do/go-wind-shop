@@ -81,10 +81,15 @@
     "productEdit": "编辑商品",
     "productAttribute": "属性管理",
     "productAttributeValue": "属性值管理",
-    "sku": "SKU管理"
+    "sku": "SKU管理",
+    "comment": "评论审核"
   },
   "trade": {
     "moduleName": "交易管理",
+    "orderFulfillment": "订单履约",
+    "paymentFinance": "支付财务",
+    "marketingMember": "营销会员",
+    "inventoryLogistics": "库存物流",
     "order": "订单管理",
     "paymentTransaction": "支付流水",
     "refund": "退款管理",
@@ -94,7 +99,6 @@
     "taxRate": "税率规则",
     "couponTemplate": "优惠券模板",
     "userCoupon": "用户优惠券",
-    "comment": "评论审核",
     "invoice": "发票",
     "lowStock": "低库存管理台",
     "stockAlert": "库存预警管理",

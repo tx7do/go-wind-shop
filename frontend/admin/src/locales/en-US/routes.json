@@ -81,10 +81,15 @@
     "productEdit": "Edit Product",
     "productAttribute": "Attribute Management",
     "productAttributeValue": "Attribute Value Management",
-    "sku": "SKU Management"
+    "sku": "SKU Management",
+    "comment": "Comment Moderation"
   },
   "trade": {
     "moduleName": "Trade Management",
+    "orderFulfillment": "Orders & Fulfillment",
+    "paymentFinance": "Payments & Finance",
+    "marketingMember": "Marketing & Membership",
+    "inventoryLogistics": "Inventory & Logistics",
     "order": "Order Management",
     "paymentTransaction": "Payment Transaction",
     "refund": "Refund Management",
@@ -94,7 +99,6 @@
     "taxRate": "Tax Rate",
     "couponTemplate": "Coupon Template",
     "userCoupon": "User Coupon",
-    "comment": "Comment Moderation",
     "invoice": "Invoice",
     "lowStock": "Low-Stock Management",
     "stockAlert": "Stock Alert Management",
