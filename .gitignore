@@ -30,3 +30,7 @@ go.work.sum
 
 # ZCode agent session data
 .zcode/
+
+# 测试运行产物：截图 / 服务日志 / 会话 token / 抓包 json，一律不进库
+/gui-test-screenshots/
+/.playwright-mcp/
