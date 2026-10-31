@@ -23,9 +23,17 @@ const { mutateAsync: deleteSeckill } = useDeleteSeckillActivity();
 const pageRef = ref();
 const drawerRef = ref();
 
-const STATUS_KEY: Record<string, string> = {
-  ACTIVE: "active",
-  INACTIVE: "inactive",
+const seckillStatusLabelMap: Record<string, string> = {
+  ACTIVE: $t("pages.mall.seckill.statusLabel.active"),
+  INACTIVE: $t("pages.mall.seckill.statusLabel.inactive"),
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const seckillStatusTagTypeMap: Record<
+  string,
+  "success" | "primary" | "warning" | "danger" | "info"
+> = {
+  ACTIVE: "success",
+  INACTIVE: "info",
 };
 
 const pageConfig = computed<ProPageConfig>(() => ({
@@ -113,8 +121,9 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.seckill.status"),
         minWidth: 90,
         align: "left",
-        formatter: (row: any) =>
-          $t(`pages.mall.seckill.statusLabel.${STATUS_KEY[row.status] ?? "active"}`),
+        cellType: "tag",
+        tagTypeMap: seckillStatusTagTypeMap,
+        labelMap: seckillStatusLabelMap,
       },
       {
         prop: "action",
