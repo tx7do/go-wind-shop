@@ -29,7 +29,33 @@
         <ElCard shadow="never" class="edit-card">
           <template #header>
             <div class="flex w-full items-center justify-between">
-              <span>{{ $t("common.section.basic") }}</span>
+              <div class="flex items-center gap-3">
+                <span>{{ $t("common.section.basic") }}</span>
+                <!-- 语言切换器（CMS 范式）：单表单实例，切换即编辑对应语言的翻译；
+                     ✓/✗ 标记该语言是否已有翻译（按 name 是否非空判定） -->
+                <ElSelect
+                  :model-value="editingLocale"
+                  size="small"
+                  style="width: 180px"
+                  @change="handleEditingLocaleChange"
+                >
+                  <ElOption
+                    v-for="lang in languageOptions"
+                    :key="lang.code"
+                    :value="lang.code"
+                    :label="lang.label"
+                  >
+                    <span class="flex items-center justify-between w-full">
+                      <span>{{ lang.label }}</span>
+                      <IconifyIcon
+                        :icon="lang.hasTranslation ? 'lucide:check' : 'lucide:x'"
+                        :class="lang.hasTranslation ? 'text-success' : 'text-warning'"
+                        class="ml-2 h-3.5 w-3.5"
+                      />
+                    </span>
+                  </ElOption>
+                </ElSelect>
+              </div>
               <ElButton
                 size="small"
                 type="primary"
@@ -90,13 +116,6 @@
               />
             </ElFormItem>
           </ElForm>
-
-          <!-- 多语言翻译 -->
-          <TranslationTabs
-            v-if="formData.translations"
-            v-model="formData.translations"
-            :fields="translationFields"
-          />
         </ElCard>
       </ElCol>
 
@@ -193,11 +212,10 @@ import {
   fetchGetProduct,
   fetchListCategories,
   fetchListBrands,
+  fetchListLanguages,
 } from "@/api/composables";
 import { Editor, EditorType } from "@/components/Editor";
 import { $t, useI18n } from "@/core/i18n";
-import TranslationTabs from "@/components/Pro/TranslationTabs/index.vue";
-import type { TranslationFieldConfig } from "@/components/Pro/TranslationTabs/types";
 import { PaginationQuery } from "@/core/transport/rest";
 import { generateAiText } from "@/api/composables/ai-chat";
 import { Icon as IconifyIcon } from "@iconify/vue";
@@ -227,6 +245,73 @@ const formRef = ref<FormInstance>();
 
 const categoryOptions = ref<{ value: any; label: string }[]>([]);
 const brandOptions = ref<{ value: any; label: string }[]>([]);
+
+// ── 语言切换器（CMS 范式）：单一内容表单，editingLocale 决定当前编辑的语言。
+//    切语言 = 暂存旧语言表单值进 translations → 回填新语言翻译。
+const editingLocale = ref(locale.value);
+const languages = ref<any[]>([]);
+const languageOptions = computed(() =>
+  languages.value.map((l: any) => ({
+    code: l.languageCode,
+    label: l.nativeName || l.languageName || l.languageCode,
+    hasTranslation:
+      (formData.translations || []).some(
+        (t: any) => t?.languageCode === l.languageCode && !!t?.name
+      ) || (isCreate && l.languageCode === editingLocale.value),
+  }))
+);
+
+async function loadLanguages() {
+  try {
+    const resp = await fetchListLanguages(
+      new PaginationQuery({ paging: { page: 1, pageSize: 999 } })
+    );
+    languages.value = (resp.items || []).filter((l: any) => l.isEnabled === true);
+  } catch {
+    languages.value = [];
+  }
+}
+
+// 切语言：先把旧语言的表单值暂存进 translations，再回填新语言翻译。
+// 注意不能用 v-model：ElSelect 先行更新 editingLocale 会让下方守卫误判"没切换"，
+// 从而跳过暂存/回填（受控写法：:model-value + @change 手动推进）。
+function handleEditingLocaleChange(newLocale: string) {
+  if (!newLocale || newLocale === editingLocale.value) return;
+  const known = languages.value.some((l: any) => l.languageCode === newLocale);
+  const target = known ? newLocale : editingLocale.value;
+  if (target === editingLocale.value) return;
+  syncLocaleIntoTranslations(editingLocale.value);
+  editingLocale.value = target;
+  loadLocaleIntoForm(target);
+}
+
+function loadLocaleIntoForm(code: string) {
+  const entry = (formData.translations || []).find((t: any) => t?.languageCode === code);
+  formData.name = entry?.name ?? "";
+  formData.slug = entry?.slug ?? "";
+  formData.shortDescription = entry?.shortDescription ?? "";
+  formData.longDescription = entry?.longDescription ?? "";
+  formRef.value?.clearValidate();
+}
+
+function syncLocaleIntoTranslations(code: string) {
+  if (!Array.isArray(formData.translations)) {
+    formData.translations = [];
+  }
+  const empty =
+    !formData.name && !formData.slug && !formData.shortDescription && !formData.longDescription;
+  let entry = formData.translations.find((t: any) => t?.languageCode === code);
+  if (!entry) {
+    // 该语言完全没填过内容：不产生空翻译条目（避免提交脏数据）
+    if (empty) return;
+    entry = { languageCode: code };
+    formData.translations.push(entry);
+  }
+  entry.name = formData.name;
+  entry.slug = formData.slug;
+  entry.shortDescription = formData.shortDescription;
+  entry.longDescription = formData.longDescription;
+}
 
 const formData = reactive<{
   name: string;
@@ -312,18 +397,6 @@ async function handleAiGenerateCopy() {
   }
 }
 
-const translationFields: TranslationFieldConfig[] = [
-  { prop: "name", label: $t("pages.mall.product.name"), type: "input" },
-  { prop: "slug", label: $t("pages.mall.product.slug"), type: "input" },
-  { prop: "shortDescription", label: $t("pages.mall.product.shortDescription"), type: "textarea" },
-  {
-    prop: "longDescription",
-    label: $t("pages.mall.product.longDescription"),
-    type: "richtext",
-    editorHeight: 280,
-  },
-];
-
 // 加载类目/品牌下拉选项（label 按 UI 当前语言取翻译，未命中回落 #id）
 function getTranslationField(row: any, field: string): string {
   const translations = Array.isArray(row?.translations) ? row.translations : [];
@@ -351,21 +424,18 @@ async function loadOptions() {
   }
 }
 
-// 编辑模式：拉取商品详情回填
+// 编辑模式：拉取商品详情回填（translations 全量留存，表单按 editingLocale 取值）
 async function loadProduct() {
   if (isCreate || !currentId) return;
   try {
     const resp: any = await fetchGetProduct({ id: currentId });
-    formData.name = getTranslationField(resp, "name");
-    formData.slug = getTranslationField(resp, "slug") || resp.slug || "";
-    formData.shortDescription = getTranslationField(resp, "shortDescription");
-    formData.longDescription = getTranslationField(resp, "longDescription");
+    formData.translations = Array.isArray(resp.translations) ? resp.translations : [];
+    loadLocaleIntoForm(editingLocale.value);
     formData.status = resp.status ?? "PRODUCT_STATUS_DRAFT";
     formData.categoryId = resp.categoryId;
     formData.brandId = resp.brandId;
     formData.sortOrder = resp.sortOrder ?? 1;
     formData.imageUrl = resp.imageUrl ?? "";
-    formData.translations = Array.isArray(resp.translations) ? resp.translations : [];
     // 回填完成：以当前状态为干净基线
     formBaseline = formSnapshot();
   } catch {
@@ -375,11 +445,12 @@ async function loadProduct() {
 }
 
 // ── 脏数据守卫：回填完成记基线，离开（取消/路由跳转）前比对确认 ──
+// 基线只看 translations（表单字段已同步其中）+ locale 无关设置字段
 let formBaseline = "";
 
 function formSnapshot(): string {
-  const { name, slug, shortDescription, longDescription, status, categoryId, brandId, sortOrder, imageUrl, translations } = formData;
-  return JSON.stringify({ name, slug, shortDescription, longDescription, status, categoryId, brandId, sortOrder, imageUrl, translations });
+  const { status, categoryId, brandId, sortOrder, imageUrl, translations } = formData;
+  return JSON.stringify({ status, categoryId, brandId, sortOrder, imageUrl, translations });
 }
 
 function isFormDirty(): boolean {
@@ -413,9 +484,9 @@ async function handleSubmit() {
     await formRef.value.validate();
     submitLoading.value = true;
 
-    // 主表单的 name/slug/描述 属当前语言——同步回 translations 对应语言条目后，
+    // 表单编辑的翻译先落回 translations 对应语言条目，
     // 只提交 Product 消息认识的字段（protojson 严格模式拒绝未知字段）。
-    syncCurrentLocaleIntoTranslations();
+    syncLocaleIntoTranslations(editingLocale.value);
     const { name: _n, slug: _s, shortDescription: _sd, longDescription: _ld, ...values } = {
       ...formData,
     };
@@ -445,24 +516,9 @@ async function handleSubmit() {
 }
 
 
-// 主表单（当前语言）文本同步回 translations 对应语言条目，提交时随 translations 一起发送。
-function syncCurrentLocaleIntoTranslations() {
-  if (!Array.isArray(formData.translations)) {
-    formData.translations = [];
-  }
-  let entry = formData.translations.find((t: any) => t?.languageCode === locale.value);
-  if (!entry) {
-    entry = { languageCode: locale.value };
-    formData.translations.push(entry);
-  }
-  entry.name = formData.name;
-  entry.slug = formData.slug;
-  entry.shortDescription = formData.shortDescription;
-  entry.longDescription = formData.longDescription;
-}
-
 onMounted(() => {
   loadOptions();
+  loadLanguages();
   loadProduct();
   // 新建模式没有异步回填，直接记基线；编辑模式在 loadProduct 回填后重记
   if (isCreate) {
