@@ -30,6 +30,39 @@ const CHANNEL_LABEL_KEY: Record<string, string> = {
   PAYMENT_CHANNEL_ALIPAY_PAGE: "alipayPage",
 };
 
+// bool 列 → tag 文案 + 语义色映射（labelMap 走字符串键）
+// 启用=success/停用=info；沙箱=warning（提醒非生产）/生产=primary；凭据缺失=danger 提示风险
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const enabledTagTypeMap: Record<string, "success" | "primary" | "warning" | "danger" | "info"> = {
+  true: "success",
+  false: "info",
+};
+const enabledLabelMap: Record<string, string> = {
+  true: $t("pages.mall.paymentChannel.enabledOn"),
+  false: $t("pages.mall.paymentChannel.enabledOff"),
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const sandboxTagTypeMap: Record<string, "success" | "primary" | "warning" | "danger" | "info"> = {
+  true: "warning",
+  false: "primary",
+};
+const sandboxLabelMap: Record<string, string> = {
+  true: $t("pages.mall.paymentChannel.sandboxOn"),
+  false: $t("pages.mall.paymentChannel.sandboxOff"),
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const credentialsTagTypeMap: Record<
+  string,
+  "success" | "primary" | "warning" | "danger" | "info"
+> = {
+  true: "success",
+  false: "danger",
+};
+const credentialsLabelMap: Record<string, string> = {
+  true: $t("pages.mall.paymentChannel.credentialsConfigured"),
+  false: $t("pages.mall.paymentChannel.credentialsMissing"),
+};
+
 const pageConfig = computed<ProPageConfig>(() => ({
   skeleton: true,
   search: {
@@ -90,30 +123,27 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.paymentChannel.sandbox"),
         minWidth: 90,
         align: "left",
-        formatter: (row: any) =>
-          row.sandbox
-            ? $t("pages.mall.paymentChannel.sandboxOn")
-            : $t("pages.mall.paymentChannel.sandboxOff"),
+        cellType: "tag",
+        tagTypeMap: sandboxTagTypeMap,
+        labelMap: sandboxLabelMap,
       },
       {
         prop: "enabled",
         label: $t("pages.mall.paymentChannel.enabled"),
         minWidth: 90,
         align: "left",
-        formatter: (row: any) =>
-          row.enabled
-            ? $t("pages.mall.paymentChannel.enabledOn")
-            : $t("pages.mall.paymentChannel.enabledOff"),
+        cellType: "tag",
+        tagTypeMap: enabledTagTypeMap,
+        labelMap: enabledLabelMap,
       },
       {
         prop: "credentialsConfigured",
         label: $t("pages.mall.paymentChannel.credentials"),
-        minWidth: 100,
+        minWidth: 110,
         align: "left",
-        formatter: (row: any) =>
-          row.credentialsConfigured
-            ? $t("pages.mall.paymentChannel.credentialsConfigured")
-            : $t("pages.mall.paymentChannel.credentialsMissing"),
+        cellType: "tag",
+        tagTypeMap: credentialsTagTypeMap,
+        labelMap: credentialsLabelMap,
       },
       {
         prop: "updatedAt",
