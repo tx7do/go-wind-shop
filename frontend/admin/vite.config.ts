@@ -75,6 +75,9 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     ] as PluginOption[],
     // 预加载项目必需的组件（精简列表，Vite 8 + ElementPlusResolver 自动处理组件样式）
     optimizeDeps: {
+      // @go-wind/editor-vue 产物含 monaco ?worker 导入，依赖优化器处理不了——排除走源码链路
+      // （配方同 go-wind-admin vue-element 端 vite.config）
+      exclude: ["@go-wind/editor-vue"],
       include: [
         "vue",
         "vue-router",
@@ -90,6 +93,17 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
         "@element-plus/icons-vue",
         "element-plus/es/locale/lang/en",
         "element-plus/es/locale/lang/zh-cn",
+        // 被 exclude 的 editor-vue 子树其传递依赖同样不预构建，其中几类是裸 CJS，
+        // 浏览器解析不了 default/具名导出——装根依赖 + 显式纳入预构建补互操作
+        // （配方同 go-wind-admin vue-element 端；pnpm 严格布局下传递依赖根解析不到）：
+        //   - lowlight 深引 highlight.js/lib/*（es/*.js 只是转发到 lib/*.js 的 CJS 实现）
+        //   - ajv（monaco json 链）/ json-editor-vue / json-source-map（json-editor 链）
+        "lowlight",
+        "highlight.js",
+        "highlight.js/lib/core",
+        "ajv",
+        "json-editor-vue",
+        "json-source-map",
       ],
     },
     // 构建配置

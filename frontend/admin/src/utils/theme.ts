@@ -153,8 +153,10 @@ export function generateColorVariables(themeConfig: {
   variables["--el-color-error-dark-2"] = variables["--el-color-danger-dark-2"];
 
   // ====================== 信息色（Info）======================
-  // 使用主题色作为信息色的基础
-  const colorInfo = colorPrimary;
+  // 中性灰（EP 出厂值），不跟随主题色：info 承载"已取消/已关闭"等中性语义，
+  // 若指到主色，亮色下与 primary 标签（已支付）同色不可辨（2026-10-31 分析页实测）。
+  // 暗色侧 _dark-mode.scss 本就把 info 标签覆为石板灰，亮色对齐同语义。
+  const colorInfo = "#909399";
   variables["--el-color-info"] = colorInfo;
 
   for (let i = 1; i <= 9; i++) {

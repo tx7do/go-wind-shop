@@ -64,26 +64,39 @@
             v-else-if="inboxItems.length === 0"
             :description="$t('pages.dashboard.workspace.myMessages.empty')"
           />
-          <div v-else class="inbox-list">
-            <div
-              v-for="item in inboxItems"
-              :key="item.id"
-              class="inbox-item"
-              @click="router.push('/internal-message/inbox')"
-            >
-              <span
-                class="inbox-item__dot"
-                :class="{ 'inbox-item__dot--unread': item.status === 'RECEIVED' }"
-              />
-              <span
-                class="inbox-item__title"
-                :class="{ 'inbox-item__title--unread': item.status === 'RECEIVED' }"
+          <template v-else>
+            <div class="pane-list inbox-list">
+              <div
+                v-for="item in inboxItems"
+                :key="item.id"
+                class="inbox-item"
+                @click="router.push('/internal-message/inbox')"
               >
-                {{ item.title || "-" }}
-              </span>
-              <span class="inbox-item__time">{{ formatDateTime(item.createdAt ?? "") }}</span>
+                <span
+                  class="inbox-item__dot"
+                  :class="{ 'inbox-item__dot--unread': item.status === 'RECEIVED' }"
+                />
+                <span
+                  class="inbox-item__title"
+                  :class="{ 'inbox-item__title--unread': item.status === 'RECEIVED' }"
+                >
+                  {{ item.title || "-" }}
+                </span>
+                <span class="inbox-item__time">{{ formatDateTime(item.createdAt ?? "") }}</span>
+              </div>
             </div>
-          </div>
+            <div class="pane-pagination">
+              <el-pagination
+                v-model:current-page="inboxPage"
+                size="small"
+                background
+                layout="total, prev, pager, next"
+                :total="inboxTotal"
+                :page-size="PANE_PAGE_SIZE"
+                :pager-count="5"
+              />
+            </div>
+          </template>
         </el-card>
       </el-col>
 
@@ -106,25 +119,38 @@
             :description="sessionsQuery.error.value?.message"
           />
           <el-empty
-            v-else-if="(sessionsQuery.data.value?.items ?? []).length === 0"
+            v-else-if="allSessions.length === 0"
             :description="$t('pages.dashboard.workspace.mySessions.empty')"
           />
-          <div v-else class="session-list">
-            <div v-for="item in sessionsQuery.data.value?.items ?? []" :key="item.jti" class="session-item">
-              <div class="session-item__tags">
-                <el-tag :type="item.clientType === 'app' ? 'warning' : 'primary'" effect="light">
-                  {{ item.clientType === "app"
-                    ? $t("pages.online_session.clientApp")
-                    : $t("pages.online_session.clientAdmin") }}
-                </el-tag>
-                <el-tag v-if="item.current" type="success" effect="light">
-                  {{ $t("pages.online_session.currentSession") }}
-                </el-tag>
-                <span class="session-item__ip">{{ item.ipAddress || "-" }}</span>
+          <template v-else>
+            <div class="pane-list session-list">
+              <div v-for="item in sessionItems" :key="item.jti" class="session-item">
+                <div class="session-item__tags">
+                  <el-tag :type="item.clientType === 'app' ? 'warning' : 'primary'" effect="light">
+                    {{ item.clientType === "app"
+                      ? $t("pages.online_session.clientApp")
+                      : $t("pages.online_session.clientAdmin") }}
+                  </el-tag>
+                  <el-tag v-if="item.current" type="success" effect="light">
+                    {{ $t("pages.online_session.currentSession") }}
+                  </el-tag>
+                  <span class="session-item__ip">{{ item.ipAddress || "-" }}</span>
+                </div>
+                <span class="session-item__time">{{ formatDateTime(item.loginAt ?? "") }}</span>
               </div>
-              <span class="session-item__time">{{ formatDateTime(item.loginAt ?? "") }}</span>
             </div>
-          </div>
+            <div class="pane-pagination">
+              <el-pagination
+                v-model:current-page="sessionPage"
+                size="small"
+                background
+                layout="total, prev, pager, next"
+                :total="sessionTotal"
+                :page-size="PANE_PAGE_SIZE"
+                :pager-count="5"
+              />
+            </div>
+          </template>
         </el-card>
       </el-col>
     </el-row>
@@ -132,8 +158,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import { keepPreviousData } from "@tanstack/vue-query";
 import SvgIcon from "@/components/SvgIcon/index.vue";
 import { $t, i18n } from "@/core/i18n";
 import { useAppUserStore } from "@/stores";
@@ -213,17 +240,48 @@ const unreadQuery = useListUserInbox(
 );
 const unreadCount = computed(() => unreadQuery.data.value?.total ?? 0);
 
+// ============================================================
+// 两卡分页：站内信走服务端分页（PaginationQuery 按页换实例，vue-query
+// 深解包 queryKey 后逐页分缓存）；活跃会话的 ListMyOnlineSession 后端
+// 无分页参数（个人维度量少），取全量后客户端切片，UI 与站内信对齐。
+// 每页行数与 .pane-list 固定高度（7 × 40px）联动，两卡等高不受
+// 末页/单页数据量影响。
+// ============================================================
+const PANE_PAGE_SIZE = 7;
+
+const inboxPage = ref(1);
 const inboxRecentQuery = useListUserInbox(
-  new PaginationQuery({
-    // 7 行恰好填满等高后的卡片（与活跃会话卡等高，见上方 min-height 注释）
-    paging: { page: 1, pageSize: 7 },
-    formValues: { recipient_user_id: String(userStore.userInfo?.id ?? "") },
-  }),
-  { enabled: hasUserId }
+  computed(
+    () =>
+      new PaginationQuery({
+        paging: { page: inboxPage.value, pageSize: PANE_PAGE_SIZE },
+        formValues: { recipient_user_id: String(userStore.userInfo?.id ?? "") },
+      })
+  ),
+  // 翻页取数期间保留上一页数据，列表不闪空态
+  { enabled: hasUserId, placeholderData: keepPreviousData }
 );
 const inboxItems = computed(() => inboxRecentQuery.data.value?.items ?? []);
+const inboxTotal = computed(() => Number(inboxRecentQuery.data.value?.total ?? 0));
 
 const sessionsQuery = useListMyOnlineSessions();
+const allSessions = computed(() => sessionsQuery.data.value?.items ?? []);
+const sessionTotal = computed(() => allSessions.value.length);
+const sessionPage = ref(1);
+const sessionItems = computed(() => {
+  const start = (sessionPage.value - 1) * PANE_PAGE_SIZE;
+  return allSessions.value.slice(start, start + PANE_PAGE_SIZE);
+});
+
+// 总数收缩（会话在他处被吊销/过期）时把页码拉回合法范围
+watch(sessionTotal, (total) => {
+  const maxPage = Math.max(1, Math.ceil(total / PANE_PAGE_SIZE));
+  if (sessionPage.value > maxPage) sessionPage.value = maxPage;
+});
+watch(inboxTotal, (total) => {
+  const maxPage = Math.max(1, Math.ceil(total / PANE_PAGE_SIZE));
+  if (inboxPage.value > maxPage) inboxPage.value = maxPage;
+});
 </script>
 
 <style lang="scss" scoped>
@@ -248,6 +306,12 @@ const sessionsQuery = useListMyOnlineSessions();
 
 .pane-col .pane-card {
   width: 100%;
+}
+
+/* 卡体纵排：成功态 = 定高列表 + 贴底分页脚（margin-top:auto），两卡脚注对齐 */
+.pane-col .pane-card :deep(.el-card__body) {
+  display: flex;
+  flex-direction: column;
 }
 
 @media (min-width: 768px) {
@@ -317,11 +381,36 @@ const sessionsQuery = useListMyOnlineSessions();
   }
 }
 
+/* 列表区固定 7 行高（PANE_PAGE_SIZE × 行高 40px，行高压成等值保证两卡行对齐）；
+   overflow hidden 兜底异常数据量，末页不满 7 行也不塌高度 */
+.pane-list {
+  height: 280px;
+  overflow: hidden;
+}
+
+/* 两卡分页脚注：结构一致保证等高；贴底对齐。pager-count 压到 5 后正常
+   单行放得下；el-pagination 自身 nowrap，这里放开 wrap + 卡体 auto 贴底，
+   超窄卡片时 total 与页码换行而不裁剪 */
+.pane-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+  padding-top: 12px;
+
+  :deep(.el-pagination) {
+    flex-wrap: wrap;
+    justify-content: center;
+    row-gap: 4px;
+  }
+}
+
 .inbox-item {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 4px;
+  height: 40px;
+  padding: 0 4px;
+  box-sizing: border-box;
   cursor: pointer;
   border-bottom: 1px solid var(--el-border-color-extra-light);
 
@@ -368,7 +457,9 @@ const sessionsQuery = useListMyOnlineSessions();
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 9px 4px;
+  height: 40px;
+  padding: 0 4px;
+  box-sizing: border-box;
   border-bottom: 1px solid var(--el-border-color-extra-light);
 
   &:last-child {

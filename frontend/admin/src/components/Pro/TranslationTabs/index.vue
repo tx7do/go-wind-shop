@@ -1,6 +1,8 @@
 <template>
   <div class="translation-tabs">
-    <ElDivider content-position="left">{{ $t("common.section.basic") }}</ElDivider>
+    <ElDivider v-if="title !== ''" content-position="left">
+      {{ title || $t("common.section.translations") }}
+    </ElDivider>
     <ElTabs v-model="activeName" type="border-card">
       <ElTabPane
         v-for="(lang, index) in languages"
@@ -23,6 +25,13 @@
               :rows="4"
               :placeholder="$t('common.placeholder.input')"
             />
+            <Editor
+              v-else-if="field.type === 'richtext'"
+              v-model="getOrCreateEntry(lang.languageCode!)![field.prop]"
+              :editor-type="EditorType.RICH_TEXT"
+              :height="field.editorHeight ?? 240"
+              :placeholder="$t('common.placeholder.input')"
+            />
             <ElInputNumber
               v-else-if="field.type === 'input-number'"
               v-model="getOrCreateEntry(lang.languageCode!)![field.prop]"
@@ -37,6 +46,7 @@
 
 <script lang="ts" setup>
 import { ref, unref, watchEffect } from "vue";
+import { Editor, EditorType } from "@/components/Editor";
 import { fetchListLanguages } from "@/api/composables";
 import { PaginationQuery } from "@/core/transport/rest";
 import { $t, i18n } from "@/core/i18n";
@@ -47,6 +57,8 @@ defineOptions({ name: "TranslationTabs" });
 const props = defineProps<{
   modelValue: any[];
   fields: TranslationFieldConfig[];
+  /** 分区标题；空串隐藏 divider（宿主已有"基本信息"头时不重复），缺省"多语言翻译" */
+  title?: string;
 }>();
 
 const emit = defineEmits<{

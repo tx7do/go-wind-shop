@@ -40,17 +40,17 @@
 
       <ElFormItem :label="$t('pages.mall.invoice.invoiceType')" prop="invoiceType">
         <ElSelect v-model="formData.invoiceType" :placeholder="$t('common.placeholder.select')">
-          <ElOption label="增值税普通发票" value="VAT_GENERAL" />
-          <ElOption label="增值税专用发票" value="VAT_SPECIAL" />
-          <ElOption label="电子发票" value="ELECTRONIC" />
+          <ElOption :label="$t('pages.mall.invoice.typeLabel.VAT_GENERAL')" value="VAT_GENERAL" />
+          <ElOption :label="$t('pages.mall.invoice.typeLabel.VAT_SPECIAL')" value="VAT_SPECIAL" />
+          <ElOption :label="$t('pages.mall.invoice.typeLabel.ELECTRONIC')" value="ELECTRONIC" />
         </ElSelect>
       </ElFormItem>
 
       <ElFormItem :label="$t('pages.mall.invoice.status')" prop="status">
         <ElSelect v-model="formData.status" :placeholder="$t('common.placeholder.select')">
-          <ElOption label="待开" value="PENDING" />
-          <ElOption label="已开" value="ISSUED" />
-          <ElOption label="已作废" value="CANCELLED" />
+          <ElOption :label="$t('pages.mall.invoice.statusLabel.PENDING')" value="PENDING" />
+          <ElOption :label="$t('pages.mall.invoice.statusLabel.ISSUED')" value="ISSUED" />
+          <ElOption :label="$t('pages.mall.invoice.statusLabel.CANCELLED')" value="CANCELLED" />
         </ElSelect>
       </ElFormItem>
 

@@ -138,7 +138,7 @@
               <el-tag
                 v-if="scope.row.status && orderStatusLabelMap[scope.row.status]"
                 size="small"
-                effect="dark"
+                effect="plain"
                 round
                 :type="orderStatusTagTypeMap[scope.row.status] ?? 'info'"
               >

@@ -408,18 +408,21 @@ body,
    （utils/theme.ts）在亮色下把 dark-N 重定义为向白混，越「dark」越浅。
    :not(.el-tag--plain) 抬到 (0,3,0)——EP 的 tag 组件样式经 resolver 按需注入在应用样式
    之后，同特异性必被压回，必须靠特异性取胜；plain 变体沿用 _layouts.scss 的既有校准。
+   还须排除 .el-tag--dark（实底填充，文字该走 EP 原生白字）：var 压深配方是按
+   「浅 tint 底」量的，吃到实底上就是深字配深底（2026-10-31 分析页 effect="dark"
+   标签整列不可读的根因）；dark 效果由 _dark-mode.scss 暗色接管、亮色走 EP 原生。
    primary 基色对白 ≈4.9:1 已达标，保持品牌色不动；暗色模式由 _dark-mode.scss
    按语义色 !important 接管 color，不受此 var 影响。 */
-.el-tag.el-tag--success:not(.el-tag--plain) {
+.el-tag.el-tag--success:not(.el-tag--plain):not(.el-tag--dark) {
   --el-tag-text-color: color-mix(in srgb, var(--el-color-success) 60%, black);
 }
-.el-tag.el-tag--warning:not(.el-tag--plain) {
+.el-tag.el-tag--warning:not(.el-tag--plain):not(.el-tag--dark) {
   --el-tag-text-color: color-mix(in srgb, var(--el-color-warning) 60%, black);
 }
-.el-tag.el-tag--danger:not(.el-tag--plain) {
+.el-tag.el-tag--danger:not(.el-tag--plain):not(.el-tag--dark) {
   --el-tag-text-color: color-mix(in srgb, var(--el-color-danger) 60%, black);
 }
-.el-tag.el-tag--info:not(.el-tag--plain) {
+.el-tag.el-tag--info:not(.el-tag--plain):not(.el-tag--dark) {
   --el-tag-text-color: color-mix(in srgb, var(--el-color-info) 60%, black);
 }
 
@@ -479,6 +482,19 @@ body,
 /* 确保关键区域的字重跟随全局 --el-font-weight-primary 变量 */
 .el-table {
   font-size: 14px; // 表格基础字号
+}
+
+/* 行/单元格背景过渡必须全局禁用（不限暗色）：EP 给
+ * .el-table--enable-row-transition td 挂 `transition: background-color .25s`，
+ * 主题切换时行背景（CSS 变量驱动）在 Chromium 上会把过渡终帧画丢——
+ * computed 已是新主题值、paint 停在旧主题值：
+ *   暗→亮：斑马纹/整行残留 #111827 暗块（2026-10-31 hover 场景实测）；
+ *   亮→暗：条纹残留 #fafafa 白块。
+ * 暗色的行背景另由 _dark-mode.scss !important 钉死（该文件同步有一份
+ * transition:none，双保险）；这个 .25s 渐变纯属装饰，丢帧前提下直接全局禁。
+ * 2026-10-31 分析页 hover 场景实测（暗色悬停中切亮 → hover 行残留暗块）。 */
+.el-table--enable-row-transition .el-table__body td.el-table__cell {
+  transition: none !important;
 }
 
 .el-table__cell {
@@ -648,19 +664,22 @@ html.dark {
 }
 
 /* ---------- Tag（light/plain 效果）：文字档；dark 效果由 EP 自己的白字规则胜出 ---------- */
-.el-tag.el-tag--primary {
+/* 排除 .el-tag--dark 不是可选修饰：--gowind-*-text 是按「浅底上作前景」标定的文字档，
+   !important 会连 dark 效果的实底一起命中、把 EP 原生白字规则压掉
+   （下方注释原有的「dark 效果由 EP 胜出」从未成立——无排除即全效果命中）。 */
+.el-tag.el-tag--primary:not(.el-tag--dark) {
   --el-tag-text-color: var(--gowind-primary-text) !important;
 }
 
-.el-tag.el-tag--success {
+.el-tag.el-tag--success:not(.el-tag--dark) {
   --el-tag-text-color: var(--gowind-success-text) !important;
 }
 
-.el-tag.el-tag--warning {
+.el-tag.el-tag--warning:not(.el-tag--dark) {
   --el-tag-text-color: var(--gowind-warning-text) !important;
 }
 
-.el-tag.el-tag--danger {
+.el-tag.el-tag--danger:not(.el-tag--dark) {
   --el-tag-text-color: var(--gowind-danger-text) !important;
 }
 

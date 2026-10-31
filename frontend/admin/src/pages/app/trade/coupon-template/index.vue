@@ -23,6 +23,45 @@ const { mutateAsync: deleteCouponTemplate } = useDeleteCouponTemplate();
 const pageRef = ref();
 const drawerRef = ref();
 
+// 折扣类型/模板状态/可领取 → tag 文案 + 语义色映射
+// （FIXED_AMOUNT=primary 满减、PERCENTAGE=warning 折扣；ACTIVE=success 生效、INACTIVE=info 停用；
+//   claimable 是 bool，labelMap 走字符串键）
+const couponTypeLabelMap: Record<string, string> = {
+  DISCOUNT_TYPE_UNSPECIFIED: $t("pages.mall.couponTemplate.typeLabel.DISCOUNT_TYPE_UNSPECIFIED"),
+  FIXED_AMOUNT: $t("pages.mall.couponTemplate.typeLabel.FIXED_AMOUNT"),
+  PERCENTAGE: $t("pages.mall.couponTemplate.typeLabel.PERCENTAGE"),
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const couponTypeTagTypeMap: Record<
+  string,
+  "success" | "primary" | "warning" | "danger" | "info"
+> = {
+  FIXED_AMOUNT: "primary",
+  PERCENTAGE: "warning",
+};
+const couponStatusLabelMap: Record<string, string> = {
+  STATUS_UNSPECIFIED: $t("pages.mall.couponTemplate.statusLabel.STATUS_UNSPECIFIED"),
+  ACTIVE: $t("pages.mall.couponTemplate.statusLabel.ACTIVE"),
+  INACTIVE: $t("pages.mall.couponTemplate.statusLabel.INACTIVE"),
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const couponStatusTagTypeMap: Record<
+  string,
+  "success" | "primary" | "warning" | "danger" | "info"
+> = {
+  ACTIVE: "success",
+  INACTIVE: "info",
+};
+const claimableLabelMap: Record<string, string> = {
+  true: $t("pages.mall.couponTemplate.claimableLabel.true"),
+  false: $t("pages.mall.couponTemplate.claimableLabel.false"),
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const claimableTagTypeMap: Record<string, "success" | "primary" | "warning" | "danger" | "info"> = {
+  true: "success",
+  false: "info",
+};
+
 const pageConfig = computed<ProPageConfig>(() => ({
   skeleton: true,
   search: {
@@ -61,8 +100,9 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.couponTemplate.discountType"),
         minWidth: 120,
         align: "left",
-        formatter: (row: any) =>
-          $t(`pages.mall.couponTemplate.typeLabel.${row.discountType}`, row.discountType ?? ""),
+        cellType: "tag",
+        tagTypeMap: couponTypeTagTypeMap,
+        labelMap: couponTypeLabelMap,
       },
       {
         prop: "discountValue",
@@ -113,8 +153,9 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.couponTemplate.status"),
         minWidth: 100,
         align: "left",
-        formatter: (row: any) =>
-          $t(`pages.mall.couponTemplate.statusLabel.${row.status}`, row.status ?? ""),
+        cellType: "tag",
+        tagTypeMap: couponStatusTagTypeMap,
+        labelMap: couponStatusLabelMap,
       },
       {
         prop: "claimable",
@@ -122,6 +163,8 @@ const pageConfig = computed<ProPageConfig>(() => ({
         minWidth: 100,
         align: "left",
         cellType: "tag",
+        tagTypeMap: claimableTagTypeMap,
+        labelMap: claimableLabelMap,
       },
       {
         prop: "createdAt",

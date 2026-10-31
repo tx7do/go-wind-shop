@@ -1,4 +1,5 @@
-import { computed } from "vue";
+import { computed, toValue } from "vue";
+import type { Ref } from "vue";
 import type { TagType } from "./shared";
 import {
   useMutation,
@@ -201,8 +202,13 @@ export function useDeleteMessageCategory(
 // ==============================
 // 消息接收者管理（用户收件箱）
 // ==============================
+// 查询源：静态实例或按页派生的响应式实例（ComputedRef 归入 Ref）
+type InboxQuerySource = PaginationQuery | Ref<PaginationQuery>;
+
 export function useListUserInbox(
-  query: PaginationQuery,
+  // 支持 ref/computed：分页场景每页换一个 PaginationQuery，queryKey 由 vue-query
+  // 深解包 queryKey 后逐页分缓存；queryFn 取值时 toValue 读到当前页的实例。
+  query: InboxQuerySource,
   // queryKey/queryFn 由本 hook 固定构造，调用方只传行为选项（如 enabled）
   options?: Omit<
     UseQueryOptions<internal_messageservicev1_ListUserInboxResponse, Error>,
@@ -211,7 +217,8 @@ export function useListUserInbox(
 ) {
   return useQuery({
     queryKey: ["listUserInbox", query],
-    queryFn: () => apiClient.internalMessageRecipientService.ListUserInbox(query.toRawParams()),
+    queryFn: () =>
+      apiClient.internalMessageRecipientService.ListUserInbox(toValue(query).toRawParams()),
     ...options,
   });
 }

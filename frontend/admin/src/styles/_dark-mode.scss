@@ -681,6 +681,17 @@ html.dark {
 
     // 表格数据行
     .el-table__body-wrapper {
+      // 背景过渡必须禁掉：EP 给 .el-table--enable-row-transition td 挂了
+      // `transition: background-color .25s`，主题切换时行背景（含 CSS 变量驱动的
+      // 斑马纹）在 Chromium 上会把这个过渡的终帧画丢——computed 已是新主题值、
+      // paint 停在旧主题的 #fafafa（亮色斑马纹），整行发白，重载页面才自愈
+      // （2026-10-31 分析页暗→亮→暗实测，像素取证）。暗色下行背景全部由本文件
+      // !important 钉死，过渡既不参与也不需要。
+      .el-table__row,
+      .el-table__row td.el-table__cell {
+        transition: none !important;
+      }
+
       .el-table__row {
         // 奇数行背景
         &:nth-child(odd) {

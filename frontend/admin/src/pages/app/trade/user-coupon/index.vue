@@ -23,6 +23,23 @@ const { mutateAsync: deleteUserCoupon } = useDeleteUserCoupon();
 const pageRef = ref();
 const drawerRef = ref();
 
+// 券实例状态 → 文案 + 语义色映射（UNUSED=primary 可用、USED=success 已核销、EXPIRED=info 失效）
+const userCouponStatusLabelMap: Record<string, string> = {
+  STATUS_UNSPECIFIED: $t("pages.mall.userCoupon.statusLabel.STATUS_UNSPECIFIED"),
+  UNUSED: $t("pages.mall.userCoupon.statusLabel.UNUSED"),
+  USED: $t("pages.mall.userCoupon.statusLabel.USED"),
+  EXPIRED: $t("pages.mall.userCoupon.statusLabel.EXPIRED"),
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const userCouponStatusTagTypeMap: Record<
+  string,
+  "success" | "primary" | "warning" | "danger" | "info"
+> = {
+  UNUSED: "primary",
+  USED: "success",
+  EXPIRED: "info",
+};
+
 const pageConfig = computed<ProPageConfig>(() => ({
   skeleton: true,
   search: {
@@ -80,6 +97,9 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.userCoupon.status"),
         minWidth: 100,
         align: "left",
+        cellType: "tag",
+        tagTypeMap: userCouponStatusTagTypeMap,
+        labelMap: userCouponStatusLabelMap,
       },
       {
         prop: "createdAt",

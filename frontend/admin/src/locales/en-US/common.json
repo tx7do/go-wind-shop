@@ -247,6 +247,7 @@
   },
   "section": {
     "basic": "Basic Information",
+    "translations": "Translations",
     "other": "Other Information",
     "configuration": "Configuration",
     "status": "Status"

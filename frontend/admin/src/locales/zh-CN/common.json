@@ -247,6 +247,7 @@
   },
   "section": {
     "basic": "基本信息",
+    "translations": "多语言翻译",
     "other": "其他信息",
     "configuration": "关联配置",
     "status": "状态"

@@ -238,6 +238,10 @@
     "redeemedCount": "Redeemed Count",
     "status": "Status",
     "claimable": "Claimable",
+    "claimableLabel": {
+      "true": "Claimable",
+      "false": "Not claimable"
+    },
     "currency": "Currency",
     "createdAt": "Created At",
     "button": {
@@ -245,10 +249,12 @@
       "update": "Edit Coupon Template"
     },
     "typeLabel": {
+      "DISCOUNT_TYPE_UNSPECIFIED": "Unknown",
       "FIXED_AMOUNT": "Fixed amount",
       "PERCENTAGE": "Percentage"
     },
     "statusLabel": {
+      "STATUS_UNSPECIFIED": "Unknown",
       "ACTIVE": "Active",
       "INACTIVE": "Inactive"
     }
@@ -311,6 +317,13 @@
     "userId": "User ID",
     "couponTemplateId": "Template ID",
     "status": "Status",
+    "statusLabel": {
+      "STATUS_UNSPECIFIED": "Unknown",
+      "UNUSED": "Unused",
+      "USED": "Redeemed",
+      "EXPIRED": "Expired"
+    },
+    "statusTip": "Issued as Unused by default; Redeemed/Expired are for offline backfill",
     "createdAt": "Created At",
     "button": {
       "create": "Issue Coupon"
@@ -356,6 +369,18 @@
     "invoiceNumber": "Invoice Number",
     "invoiceType": "Invoice Type",
     "status": "Status",
+    "typeLabel": {
+      "INVOICE_TYPE_UNSPECIFIED": "Unknown",
+      "VAT_GENERAL": "VAT General Invoice",
+      "VAT_SPECIAL": "VAT Special Invoice",
+      "ELECTRONIC": "E-Invoice"
+    },
+    "statusLabel": {
+      "STATUS_UNSPECIFIED": "Unknown",
+      "PENDING": "Pending",
+      "ISSUED": "Issued",
+      "CANCELLED": "Voided"
+    },
     "buyerName": "Buyer Name",
     "buyerTaxId": "Buyer Tax ID",
     "buyerAddress": "Buyer Address",

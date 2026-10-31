@@ -238,6 +238,10 @@
     "redeemedCount": "已核销次数",
     "status": "状态",
     "claimable": "可领取",
+    "claimableLabel": {
+      "true": "可领取",
+      "false": "不可领取"
+    },
     "currency": "币种",
     "createdAt": "创建时间",
     "button": {
@@ -245,10 +249,12 @@
       "update": "编辑优惠券模板"
     },
     "typeLabel": {
+      "DISCOUNT_TYPE_UNSPECIFIED": "未知",
       "FIXED_AMOUNT": "固定金额",
       "PERCENTAGE": "折扣百分比"
     },
     "statusLabel": {
+      "STATUS_UNSPECIFIED": "未知",
       "ACTIVE": "生效",
       "INACTIVE": "停用"
     }
@@ -311,6 +317,13 @@
     "userId": "用户ID",
     "couponTemplateId": "模板ID",
     "status": "状态",
+    "statusLabel": {
+      "STATUS_UNSPECIFIED": "未知",
+      "UNUSED": "未使用",
+      "USED": "已核销",
+      "EXPIRED": "已过期"
+    },
+    "statusTip": "发放默认为未使用；已核销/已过期用于线下补录",
     "createdAt": "创建时间",
     "button": {
       "create": "发放优惠券"
@@ -356,6 +369,18 @@
     "invoiceNumber": "发票号",
     "invoiceType": "发票类型",
     "status": "状态",
+    "typeLabel": {
+      "INVOICE_TYPE_UNSPECIFIED": "未知",
+      "VAT_GENERAL": "增值税普通发票",
+      "VAT_SPECIAL": "增值税专用发票",
+      "ELECTRONIC": "电子发票"
+    },
+    "statusLabel": {
+      "STATUS_UNSPECIFIED": "未知",
+      "PENDING": "待开",
+      "ISSUED": "已开",
+      "CANCELLED": "已作废"
+    },
     "buyerName": "购方名称",
     "buyerTaxId": "购方税号",
     "buyerAddress": "购方地址",

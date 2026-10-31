@@ -23,6 +23,28 @@ const { mutateAsync: deleteInvoice } = useDeleteInvoice();
 const pageRef = ref();
 const drawerRef = ref();
 
+// 发票类型/状态 → 文案 + 语义色映射（语义配色对齐 trade/order 页：
+// PENDING=warning 进行中、ISSUED/CANCELLED 按 完成态=success / 废弃态=info）
+const invoiceTypeLabelMap: Record<string, string> = {
+  INVOICE_TYPE_UNSPECIFIED: $t("pages.mall.invoice.typeLabel.INVOICE_TYPE_UNSPECIFIED"),
+  VAT_GENERAL: $t("pages.mall.invoice.typeLabel.VAT_GENERAL"),
+  VAT_SPECIAL: $t("pages.mall.invoice.typeLabel.VAT_SPECIAL"),
+  ELECTRONIC: $t("pages.mall.invoice.typeLabel.ELECTRONIC"),
+};
+const invoiceStatusLabelMap: Record<string, string> = {
+  STATUS_UNSPECIFIED: $t("pages.mall.invoice.statusLabel.STATUS_UNSPECIFIED"),
+  PENDING: $t("pages.mall.invoice.statusLabel.PENDING"),
+  ISSUED: $t("pages.mall.invoice.statusLabel.ISSUED"),
+  CANCELLED: $t("pages.mall.invoice.statusLabel.CANCELLED"),
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const invoiceStatusTagTypeMap: Record<string, "success" | "primary" | "warning" | "danger" | "info"> =
+  {
+    PENDING: "warning",
+    ISSUED: "success",
+    CANCELLED: "info",
+  };
+
 const pageConfig = computed<ProPageConfig>(() => ({
   skeleton: true,
   search: {
@@ -77,14 +99,18 @@ const pageConfig = computed<ProPageConfig>(() => ({
       {
         prop: "invoiceType",
         label: $t("pages.mall.invoice.invoiceType"),
-        minWidth: 120,
+        minWidth: 140,
         align: "left",
+        formatter: (row: any) => invoiceTypeLabelMap[row.invoiceType] ?? row.invoiceType ?? "—",
       },
       {
         prop: "status",
         label: $t("pages.mall.invoice.status"),
         minWidth: 100,
         align: "left",
+        cellType: "tag",
+        tagTypeMap: invoiceStatusTagTypeMap,
+        labelMap: invoiceStatusLabelMap,
       },
       {
         prop: "buyerName",

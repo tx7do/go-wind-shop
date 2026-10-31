@@ -33,6 +33,16 @@
           style="width: 100%"
         />
       </ElFormItem>
+
+      <ElFormItem :label="$t('pages.mall.userCoupon.status')" prop="status">
+        <ElSelect v-model="formData.status" :placeholder="$t('common.placeholder.select')">
+          <ElOption :label="$t('pages.mall.userCoupon.statusLabel.UNUSED')" value="UNUSED" />
+          <ElOption :label="$t('pages.mall.userCoupon.statusLabel.USED')" value="USED" />
+          <ElOption :label="$t('pages.mall.userCoupon.statusLabel.EXPIRED')" value="EXPIRED" />
+        </ElSelect>
+        <!-- 发券默认"未使用"；选"已核销/已过期"用于线下补录场景 -->
+        <div class="form-tip">{{ $t("pages.mall.userCoupon.statusTip") }}</div>
+      </ElFormItem>
     </ElForm>
 
     <template #footer>
@@ -137,6 +147,13 @@ defineExpose({
 <style lang="scss" scoped>
 .drawer-form {
   padding-right: 10px;
+}
+
+.form-tip {
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--el-text-color-secondary);
 }
 
 .drawer-footer {

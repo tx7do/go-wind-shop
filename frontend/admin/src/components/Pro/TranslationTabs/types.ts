@@ -4,5 +4,7 @@
 export interface TranslationFieldConfig {
   prop: string;
   label: string;
-  type: "input" | "textarea" | "input-number";
+  type: "input" | "textarea" | "input-number" | "richtext";
+  /** richtext 专用：编辑器高度（px），缺省 240 */
+  editorHeight?: number;
 }

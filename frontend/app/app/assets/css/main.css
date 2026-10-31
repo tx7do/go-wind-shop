@@ -80,15 +80,15 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 47.4% 11.2%;
 
-    /* 主色：極光電能綠 green-700 #15803D —— 白字 5.02，作文字色对白底 5.02 */
-    --primary: 142.4 71.9% 29.2%;
+    /* 主色：中性墨黑（无品牌色方案）——白字 17.3，作文字色对白底同值。
+       填充按钮、链接、选中态共用同一支墨，层级靠明度而不是色相。 */
+    --primary: 240 8% 11%;
     --primary-foreground: 0 0% 100%;
 
-    /* 主色浅底：徽标/分类砖/Hero 这类"绿底绿字"的场合用它，不要用 bg-primary/15
-       （实测 bg-primary/15 + text-primary 只有 4.09，不过 AA）。
-       底上用 --primary 也差 0.02（4.48），所以配一档更深的绿墨。 */
-    --primary-soft: 135 37.5% 93.7%;
-    --primary-soft-foreground: 142.4 71.9% 24%;
+    /* 主色浅底：徽标/分类砖/Hero 的"浅底深墨"场合用它，不要用 bg-primary/15
+       （透明度写法在两态不可控）。底与字成对定义，页面侧只写一次类名。 */
+    --primary-soft: 240 5% 96%;
+    --primary-soft-foreground: 240 8% 13%;
 
     --secondary: 213.3 22% 92%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -103,13 +103,13 @@
     --accent: 213.3 22% 92%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
-    /* green-700 的做法同样用在红上：填充按钮要白字过 AA，就不能用 red-500
+    /* 填充按钮白字过 AA 这套做法同样用在红上：不能用 red-500
        （#EF4444 + 白字实测 3.61）。red-700 + 白字 6.20，作文字色 6.47，
        bg-destructive/15 徽标上 5.01，三条腿都过。 */
     --destructive: 0 73.3% 41.8%;
     --destructive-foreground: 0 0% 98%;
 
-    /* success 与 primary 拉开色相（159 vs 142），否则状态色与品牌色无法区分 */
+    /* primary 已是中性墨，状态色与主操作不再撞色；绿/黄/红三支保留语义 */
     --success: 158.9 64% 30%;
     --success-foreground: 0 0% 98%;
 
@@ -127,7 +127,7 @@
 
     --border: 213.3 22% 92%;
     --input: 213.3 22% 92%;
-    --ring: 142.4 71.9% 29.2%;
+    --ring: 240 8% 11%;
 
     /* A 稿圆角 12px；--radius-md/sm 由它 -2/-4 派生 ⇒ 10px / 8px */
     --radius: 0.75rem;
@@ -173,14 +173,13 @@
     --popover: 214.3 25% 11%;
     --popover-foreground: 216 25% 92.2%;
 
-    /* 主色从霓虹绿 142.1 86.2% 50.3% 收到 A 稿的 #2FBF63，深绿墨 #04150A 作 CTA 字色。
-       亮绿当底绝不能配白字（原霓虹绿 + 白字只有 1.56）。
-       收饱和度后仍留够腿：CTA 7.84、作正文色对 card 7.22 / 对 bg 8.01、浅底徽标 6.45。 */
-    --primary: 141.7 60.5% 46.7%;
-    --primary-foreground: 141.2 68% 4.9%;
+    /* 主色：近白 #F0F0F0 作暗态 CTA 底，深墨作字（15.6:1）。
+       无品牌色方案下，主操作靠黑白反差而不是色相。 */
+    --primary: 0 0% 94%;
+    --primary-foreground: 240 8% 5%;
 
-    --primary-soft: 140.9 39% 11.6%;
-    --primary-soft-foreground: 141.7 60.5% 53%;
+    --primary-soft: 240 5% 16%;
+    --primary-soft-foreground: 0 0% 90%;
 
     --secondary: 211.8 23.3% 14.3%;
     --secondary-foreground: 216 25% 92.2%;
@@ -215,7 +214,7 @@
 
     --border: 213 22.2% 17.6%;
     --input: 213 22.2% 17.6%;
-    --ring: 141.7 60.5% 46.7%;
+    --ring: 0 0% 80%;
 
     /* 暗色不靠投影分层，卡片用描边+表面明度 */
     --ui-shadow-card: none;

@@ -20,14 +20,17 @@ class FileUploader {
       formData.append(key, value);
     });
 
-    // 注意：不要手动设置 Content-Type 为 'multipart/form-data'。
-    // 浏览器在发送 FormData 时会自动生成带 boundary 的
-    // 'multipart/form-data; boundary=----WebKitFormBoundaryXXX'，
-    // 手动写死会导致 boundary 丢失，后端无法解析请求体。
-    // 这里显式删除调用方可能误传的 Content-Type，确保由浏览器自动设置。
-    const headers: Record<string, any> = { ...config?.headers };
-    delete headers["Content-Type"];
-    delete headers["content-type"];
+    // 注意：必须显式声明 multipart/form-data 覆盖实例默认头。axios 实例默认
+    // Content-Type 是 application/json（request-client.ts 构造处），而 axios v1 对
+    // 「JSON content-type + FormData 数据」会走 formDataToJSON 把表单序列化成 JSON——
+    // 后端按 protojson 解 bytes 字段直接 400（2026-10-31 编辑器传图实测）。
+    // 之前「只 delete 调用级 header」动不了实例默认值，等于没删。
+    // 显式给 multipart 后，axios 的 xhr 适配器检测到 FormData 会摘掉该头交由
+    // 浏览器自动补 boundary（浏览器生成的才带正确 boundary，不能写死完整头）。
+    const headers: Record<string, any> = {
+      "Content-Type": "multipart/form-data",
+      ...config?.headers,
+    };
     const finalConfig: AxiosRequestConfig = { ...config, headers };
 
     // 使用 request 方法代替 post 方法，避免类型推断问题

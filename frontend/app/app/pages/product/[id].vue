@@ -112,6 +112,13 @@ const productLoading = computed(() => productQuery.isPending.value);
 const productError = computed(() => productQuery.isError.value);
 const productTranslation = computed(() => pickTranslation(product.value?.translations));
 
+// 详情渲染模式自适应：富文本编辑器落库的是 HTML（<p>/<h2>/<img>…），走 html 分支
+// 直接消毒渲染；历史纯文本/Markdown 数据不含标签，回落 markdown 分支保持段落换行
+const detailContentType = computed<'html' | 'markdown'>(() => {
+  const content = productTranslation.value?.longDescription ?? '';
+  return /<\/?[a-z][^>]*>/i.test(content) ? 'html' : 'markdown';
+});
+
 useHead({ title: () => productTranslation.value?.name || '' });
 
 // ---------- SKU 列表 ----------
@@ -1195,7 +1202,7 @@ onBeforeUnmount(() => sentinelObserver?.disconnect());
     <UiSectionHeader :title="t('mall.product.description')" />
     <div class="rounded-xl border border-border bg-card p-4 shadow-card md:p-6">
       <ClientOnly>
-        <ContentViewer :content="productTranslation.longDescription" type="markdown" />
+        <ContentViewer :content="productTranslation.longDescription" :type="detailContentType" />
         <template #fallback>
           <UiSkeleton class="h-24 w-full" />
         </template>

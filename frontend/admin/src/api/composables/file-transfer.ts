@@ -82,6 +82,7 @@ async function downloadFile(bucketName: string, objectName: string, preferPresig
 
 /**
  * 上传文件到MinIO
+ * @returns 上传响应（UploadFileResponse：objectName 即可内嵌的下载 URL，presignedUrl 为预签名直传链接）
  */
 export async function uploadFile(
   bucketName: string,
@@ -95,7 +96,7 @@ export async function uploadFile(
     fileDirectory,
   });
 
-  await RequestClient.getInstance().upload(
+  return await RequestClient.getInstance().upload(
     "admin/v1/file/upload",
     {
       file: fileData,
@@ -149,7 +150,8 @@ export function useUploadFile(
 ) {
   return useMutation({
     mutationFn: async ({ bucketName, fileDirectory, file, method = "post", onUploadProgress }) => {
-      return uploadFile(bucketName, fileDirectory, file, method, onUploadProgress);
+      // 上传统一走 uploadFile（返回响应）；本 hook 语义是"传完即成功"，不外泄响应
+      await uploadFile(bucketName, fileDirectory, file, method, onUploadProgress);
     },
     ...options,
   });

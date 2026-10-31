@@ -82,10 +82,10 @@
               :label="$t('pages.mall.product.longDescription')"
               prop="longDescription"
             >
-              <ElInput
+              <Editor
                 v-model="formData.longDescription"
-                type="textarea"
-                :rows="8"
+                :editor-type="EditorType.RICH_TEXT"
+                :height="360"
                 :placeholder="$t('common.placeholder.input')"
               />
             </ElFormItem>
@@ -194,6 +194,7 @@ import {
   fetchListCategories,
   fetchListBrands,
 } from "@/api/composables";
+import { Editor, EditorType } from "@/components/Editor";
 import { $t, useI18n } from "@/core/i18n";
 import TranslationTabs from "@/components/Pro/TranslationTabs/index.vue";
 import type { TranslationFieldConfig } from "@/components/Pro/TranslationTabs/types";
@@ -280,7 +281,7 @@ async function handleAiGenerateCopy() {
     const resp: any = await generateAiText({
       system:
         "你是电商文案专家。根据商品信息输出 JSON 对象：" +
-        '{"shortDescription": "60字左右的中文卖点简述", "longDescription": "300字左右的中文商品详情，可用短段落"}。' +
+        '{"shortDescription": "60字左右的中文卖点简述", "longDescription": "300字左右的中文商品详情，用简单 HTML 段落书写（只允许 <p> 标签分段，如 "<p>第一段</p><p>第二段</p>"，禁止其他标签与属性）}。' +
         "只输出 JSON 本身，不要 Markdown 代码块标记或任何解释。",
       prompt:
         `商品名称：${name || "（未命名，参考下方提示）"}
@@ -315,7 +316,12 @@ const translationFields: TranslationFieldConfig[] = [
   { prop: "name", label: $t("pages.mall.product.name"), type: "input" },
   { prop: "slug", label: $t("pages.mall.product.slug"), type: "input" },
   { prop: "shortDescription", label: $t("pages.mall.product.shortDescription"), type: "textarea" },
-  { prop: "longDescription", label: $t("pages.mall.product.longDescription"), type: "textarea" },
+  {
+    prop: "longDescription",
+    label: $t("pages.mall.product.longDescription"),
+    type: "richtext",
+    editorHeight: 280,
+  },
 ];
 
 // 加载类目/品牌下拉选项（label 按 UI 当前语言取翻译，未命中回落 #id）
@@ -422,6 +428,8 @@ async function handleSubmit() {
       ElMessage.success($t("common.notification.updateSuccess"));
     }
 
+    // 已落库：以当前表单为新基线，否则跳转路由时脏守卫会把刚保存的内容误判为未保存改动
+    formBaseline = formSnapshot();
     router.push("/mall/products");
   } catch (error) {
     if (error !== false) {

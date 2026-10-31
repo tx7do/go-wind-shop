@@ -34,6 +34,16 @@ const commentStatusLabelMap: Record<string, string> = {
   STATUS_REJECTED: $t("pages.mall.comment.statusLabel.STATUS_REJECTED"),
   STATUS_SPAM: $t("pages.mall.comment.statusLabel.STATUS_SPAM"),
 };
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const commentStatusTagTypeMap: Record<
+  string,
+  "success" | "primary" | "warning" | "danger" | "info"
+> = {
+  STATUS_PENDING: "warning",
+  STATUS_APPROVED: "success",
+  STATUS_REJECTED: "danger",
+  STATUS_SPAM: "info",
+};
 
 const pageConfig = computed<ProPageConfig>(() => ({
   skeleton: true,
@@ -88,7 +98,9 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.comment.status"),
         minWidth: 100,
         align: "left",
-        formatter: (row: any) => commentStatusLabelMap[row.status] ?? row.status ?? "",
+        cellType: "tag",
+        tagTypeMap: commentStatusTagTypeMap,
+        labelMap: commentStatusLabelMap,
       },
       {
         prop: "createdBy",
