@@ -274,6 +274,7 @@
       "update": "编辑运费模板"
     },
     "statusLabel": {
+      "STATUS_UNSPECIFIED": "未知",
       "ACTIVE": "生效",
       "INACTIVE": "停用"
     }

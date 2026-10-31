@@ -274,6 +274,7 @@
       "update": "Edit Shipping Rate"
     },
     "statusLabel": {
+      "STATUS_UNSPECIFIED": "Unknown",
       "ACTIVE": "Active",
       "INACTIVE": "Inactive"
     }

@@ -23,6 +23,21 @@ const { mutateAsync: deleteShippingRate } = useDeleteShippingRate();
 const pageRef = ref();
 const drawerRef = ref();
 
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const shippingRateStatusLabelMap: Record<string, string> = {
+  STATUS_UNSPECIFIED: $t("pages.mall.shippingRate.statusLabel.STATUS_UNSPECIFIED"),
+  ACTIVE: $t("pages.mall.shippingRate.statusLabel.ACTIVE"),
+  INACTIVE: $t("pages.mall.shippingRate.statusLabel.INACTIVE"),
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const shippingRateStatusTagTypeMap: Record<
+  string,
+  "success" | "primary" | "warning" | "danger" | "info"
+> = {
+  ACTIVE: "success",
+  INACTIVE: "info",
+};
+
 const pageConfig = computed<ProPageConfig>(() => ({
   skeleton: true,
   search: {
@@ -79,8 +94,9 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.shippingRate.status"),
         minWidth: 100,
         align: "left",
-        formatter: (row: any) =>
-          $t(`pages.mall.shippingRate.statusLabel.${row.status}`, row.status ?? ""),
+        cellType: "tag",
+        tagTypeMap: shippingRateStatusTagTypeMap,
+        labelMap: shippingRateStatusLabelMap,
       },
       {
         prop: "currency",
