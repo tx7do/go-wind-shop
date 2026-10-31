@@ -154,7 +154,8 @@
       "ALIPAY": "支付宝",
       "WECHAT": "微信支付",
       "BALANCE": "余额支付",
-      "CARD": "银行卡"
+      "CARD": "银行卡",
+      "MOCK": "模拟支付"
     },
     "businessTypeLabel": {
       "BUSINESS_TYPE_CONSUME": "消费",

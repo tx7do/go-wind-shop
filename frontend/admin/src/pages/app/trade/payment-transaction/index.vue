@@ -43,12 +43,34 @@ const paymentMethodLabelMap: Record<string, string> = {
   WECHAT: $t("pages.mall.paymentTransaction.methodLabel.WECHAT"),
   BALANCE: $t("pages.mall.paymentTransaction.methodLabel.BALANCE"),
   CARD: $t("pages.mall.paymentTransaction.methodLabel.CARD"),
+  MOCK: $t("pages.mall.paymentTransaction.methodLabel.MOCK"),
 };
 
 const businessTypeLabelMap: Record<string, string> = {
   BUSINESS_TYPE_CONSUME: $t("pages.mall.paymentTransaction.businessTypeLabel.BUSINESS_TYPE_CONSUME"),
   BUSINESS_TYPE_REFUND: $t("pages.mall.paymentTransaction.businessTypeLabel.BUSINESS_TYPE_REFUND"),
   BUSINESS_TYPE_RECHARGE: $t("pages.mall.paymentTransaction.businessTypeLabel.BUSINESS_TYPE_RECHARGE"),
+};
+
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const paymentMethodTagTypeMap: Record<
+  string,
+  "success" | "primary" | "warning" | "danger" | "info"
+> = {
+  ALIPAY: "primary",
+  WECHAT: "success",
+  BALANCE: "warning",
+  CARD: "info",
+  MOCK: "info",
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const businessTypeTagTypeMap: Record<
+  string,
+  "success" | "primary" | "warning" | "danger" | "info"
+> = {
+  BUSINESS_TYPE_CONSUME: "primary",
+  BUSINESS_TYPE_REFUND: "warning",
+  BUSINESS_TYPE_RECHARGE: "success",
 };
 
 const pageConfig = computed<ProPageConfig>(() => ({
@@ -130,13 +152,17 @@ const pageConfig = computed<ProPageConfig>(() => ({
         prop: "paymentMethod",
         label: $t("pages.mall.paymentTransaction.paymentMethod"),
         minWidth: 120,
-        formatter: (row: any) => paymentMethodLabelMap[row.paymentMethod] ?? row.paymentMethod ?? "",
+        cellType: "tag",
+        tagTypeMap: paymentMethodTagTypeMap,
+        labelMap: paymentMethodLabelMap,
       },
       {
         prop: "businessType",
         label: $t("pages.mall.paymentTransaction.businessType"),
         minWidth: 120,
-        formatter: (row: any) => businessTypeLabelMap[row.businessType] ?? row.businessType ?? "",
+        cellType: "tag",
+        tagTypeMap: businessTypeTagTypeMap,
+        labelMap: businessTypeLabelMap,
       },
       {
         prop: "createdAt",

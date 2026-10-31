@@ -154,7 +154,8 @@
       "ALIPAY": "Alipay",
       "WECHAT": "WeChat Pay",
       "BALANCE": "Balance",
-      "CARD": "Card"
+      "CARD": "Card",
+      "MOCK": "Mock"
     },
     "businessTypeLabel": {
       "BUSINESS_TYPE_CONSUME": "Consume",
