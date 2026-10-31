@@ -99,7 +99,7 @@ const handleClickLogout = async () => {
         aria-label="Go to homepage"
         @click="handleClickLogo"
       >
-        <img src="/logo.svg" alt="GoWind" width="36" height="36" class="h-9 w-9 shrink-0 max-md:h-8 max-md:w-8" />
+        <LayoutBrandLogo class="h-9 w-9 shrink-0 max-md:h-8 max-md:w-8" />
         <span class="text-lg font-bold text-primary whitespace-nowrap max-md:hidden">
           {{ t('app.title') }}
         </span>

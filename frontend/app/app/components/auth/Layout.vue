@@ -26,7 +26,7 @@ const tabActive = 'bg-card font-semibold text-primary-soft-foreground shadow-sm'
 
     <!-- 移动端品牌条：品牌故事压缩成一条，不和表单抢首屏 -->
     <div class="flex items-center gap-3 border-b border-border px-5 py-4 pr-32 lg:hidden">
-      <img src="/logo.svg" :alt="t('authentication.login.logo_alt')" class="h-9 w-auto shrink-0" />
+      <LayoutBrandLogo class="h-9 w-auto shrink-0" />
       <div class="min-w-0">
         <p class="truncate text-base font-bold leading-tight text-foreground">
           {{ t('authentication.login.brand_title') }}
@@ -40,7 +40,7 @@ const tabActive = 'bg-card font-semibold text-primary-soft-foreground shadow-sm'
     <div class="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center px-4 py-8 md:px-8 md:py-12 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16">
       <!-- 桌面品牌故事（<lg 收起，不与表单抢宽度） -->
       <div class="hidden lg:flex lg:flex-col">
-        <img src="/logo.svg" :alt="t('authentication.login.logo_alt')" class="h-14 w-auto self-start" />
+        <LayoutBrandLogo class="h-14 w-auto self-start" />
 
         <h1 class="mt-7 text-3xl font-bold leading-tight tracking-tight text-foreground">
           {{ t('authentication.login.brand_title') }}

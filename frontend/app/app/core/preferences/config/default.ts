@@ -29,7 +29,7 @@ const defaultPreferences: Preferences = {
     // 与 assets/css/main.css 的 :root 保持同一组值；这四项目前没有消费者
     // （偏好面板选色是写不读的，updateCSSVariables 也不再落 --radius），
     // 只作为 schema 的声明值存在。
-    colorPrimary: "142.4 71.9% 29.2%",
+    colorPrimary: "157.2 44.6% 25.5%",
     colorSuccess: "158.9 64% 30%",
     colorWarning: "38 92% 50%",
     colorDestructive: "0 73.3% 41.8%",

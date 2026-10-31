@@ -80,15 +80,22 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 47.4% 11.2%;
 
-    /* 主色：中性墨黑（无品牌色方案）——白字 17.3，作文字色对白底同值。
-       填充按钮、链接、选中态共用同一支墨，层级靠明度而不是色相。 */
-    --primary: 240 8% 11%;
+    /* 品牌深绿 #245E48：低饱和、只做识别与关键操作（主按钮/激活态/少量图标）。
+       白字 7.58、作文字色对白底 7.58、落浅绿底 6.54，三条腿都过 AA。
+       大面积背景不用它——Hero/页面底色仍是中性灰白。 */
+    --primary: 157.2 44.6% 25.5%;
     --primary-foreground: 0 0% 100%;
 
-    /* 主色浅底：徽标/分类砖/Hero 的"浅底深墨"场合用它，不要用 bg-primary/15
-       （透明度写法在两态不可控）。底与字成对定义，页面侧只写一次类名。 */
-    --primary-soft: 240 5% 96%;
-    --primary-soft-foreground: 240 8% 13%;
+    /* 徽标三档渐变：#1F4F3C → #245E48 → #2C6B52。徽标是内联 SVG，
+       stop-color 直接读这三个变量，换主题时跟着 .dark 一起换血。 */
+    --logo-from: #1f4f3c;
+    --logo-mid: #245e48;
+    --logo-to: #2c6b52;
+
+    /* 品牌浅绿 #E8F0ED：徽标/分类砖/选中态这类"浅底绿墨"的场合用它。
+       底与字成对定义，不要用 bg-primary/15 的透明度写法（两态不可控）。 */
+    --primary-soft: 157.5 21.1% 92.5%;
+    --primary-soft-foreground: 156.3 22.2% 16.5%;
 
     --secondary: 213.3 22% 92%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -109,7 +116,8 @@
     --destructive: 0 73.3% 41.8%;
     --destructive-foreground: 0 0% 98%;
 
-    /* primary 已是中性墨，状态色与主操作不再撞色；绿/黄/红三支保留语义 */
+    /* 状态色与品牌绿分开：成功色比主色更亮更饱和一档，但收在 64% 饱和度，
+       不是荧光绿；黄/红继续各自承担警示与错误。 */
     --success: 158.9 64% 30%;
     --success-foreground: 0 0% 98%;
 
@@ -127,7 +135,7 @@
 
     --border: 213.3 22% 92%;
     --input: 213.3 22% 92%;
-    --ring: 240 8% 11%;
+    --ring: 157.2 44.6% 25.5%;
 
     /* A 稿圆角 12px；--radius-md/sm 由它 -2/-4 派生 ⇒ 10px / 8px */
     --radius: 0.75rem;
@@ -144,11 +152,12 @@
        都读这一个值（原来 h-14 / 3.75rem / 3.5rem 三处各写各的）。 */
     --layout-tabbar-height: 3.5rem;
 
-    /* Hero 背景：由主题 token 组成的渐变，页面不再各自手写 hsl 或用内联 style。
-       只在 :root 声明一次即可跟随主题——.dark 与 :root 落在同一个 <html> 元素上，
-       这里 var() 的替换按 <html> 的最终值发生，暗色自动换血。 */
-    --hero-gradient: linear-gradient(to bottom, hsl(var(--primary-soft)), hsl(var(--card)) 55%, hsl(var(--background)));
-    --hero-banner-gradient: linear-gradient(135deg, hsl(var(--primary-soft)), hsl(var(--card)) 70%);
+    /* Hero 背景：黑灰白版面的一部分，不跟品牌绿走——绿色只做点缀，
+       大促主视觉若要颜色，应该在活动页单独用橙/红，而不是把全站底色染绿。
+       只在 :root 声明一次即可跟随主题：.dark 与 :root 落在同一个 <html>，
+       var() 的替换按 <html> 的最终值发生，暗色自动换血。 */
+    --hero-gradient: linear-gradient(to bottom, hsl(var(--secondary)), hsl(var(--card)) 55%, hsl(var(--background)));
+    --hero-banner-gradient: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--card)) 70%);
 }
 
 /* ==========================================
@@ -173,13 +182,20 @@
     --popover: 214.3 25% 11%;
     --popover-foreground: 216 25% 92.2%;
 
-    /* 主色：近白 #F0F0F0 作暗态 CTA 底，深墨作字（15.6:1）。
-       无品牌色方案下，主操作靠黑白反差而不是色相。 */
-    --primary: 0 0% 94%;
-    --primary-foreground: 240 8% 5%;
+    /* 暗色品牌绿 #4F9E7E：保持"深绿"观感，只比浅色提一档明度，不荧光。
+       作 CTA 底配近黑墨 5.92，作文字色对 card 5.38 / 对 bg 5.97。 */
+    --primary: 155.7 33.3% 46.5%;
+    --primary-foreground: 154 45% 5%;
 
-    --primary-soft: 240 5% 16%;
-    --primary-soft-foreground: 0 0% 90%;
+    /* 暗底上三档整体提亮：#45A183 对 bg 6.11 / 对 card 5.51，
+       最暗的一档也不沉进背景（描边类图形按 3:1 判）。 */
+    --logo-from: #45a183;
+    --logo-mid: #4f9e7e;
+    --logo-to: #6fbf9b;
+
+    /* 暗色浅底是"深一档的绿"，墨字反过来提亮（9.53） */
+    --primary-soft: 157 30% 13%;
+    --primary-soft-foreground: 153.9 44.9% 72.9%;
 
     --secondary: 211.8 23.3% 14.3%;
     --secondary-foreground: 216 25% 92.2%;
@@ -196,8 +212,9 @@
     --destructive: 357 90% 70%;
     --destructive-foreground: 356 75% 8%;
 
-    --success: 162.1 90% 45%;
-    --success-foreground: 162 90% 6%;
+    /* 成功绿比品牌绿亮一档，但收在 50% 饱和度：原来是 90%（荧光感） */
+    --success: 157.5 50.4% 49.8%;
+    --success-foreground: 156 60% 5%;
 
     --warning: 38 92% 55%;
     --warning-foreground: 30 90% 8%;
@@ -205,8 +222,8 @@
     /* 暗色的徽标底是"深一档的同色"，墨字必须反过来变亮。
        原来徽标写 bg-warning/15 + text-warning-foreground：透明度叠在深卡上仍是深色，
        深墨落深底，实机复量只有 1.34（拼团角标在暗色下几乎读不出）。 */
-    --success-soft: 160 40% 13%;
-    --success-soft-foreground: 162.1 90% 45%; /* 7.93 */
+    --success-soft: 155 32% 14%;
+    --success-soft-foreground: 157.5 50.4% 49.8%; /* 7.47 */
     --warning-soft: 36 45% 16%;
     --warning-soft-foreground: 45 95% 70%;    /* 9.59 */
     --destructive-soft: 356 45% 17%;
@@ -214,7 +231,7 @@
 
     --border: 213 22.2% 17.6%;
     --input: 213 22.2% 17.6%;
-    --ring: 0 0% 80%;
+    --ring: 156.3 42.6% 60.4%;
 
     /* 暗色不靠投影分层，卡片用描边+表面明度 */
     --ui-shadow-card: none;
