@@ -26,7 +26,18 @@ const pageRef = ref();
 const drawerRef = ref();
 const groupsDrawerRef = ref();
 
-const STATUS_KEY: Record<string, string> = { ACTIVE: "active", INACTIVE: "inactive" };
+const grouponStatusLabelMap: Record<string, string> = {
+  ACTIVE: $t("pages.mall.groupon.statusLabel.active"),
+  INACTIVE: $t("pages.mall.groupon.statusLabel.inactive"),
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const grouponStatusTagTypeMap: Record<
+  string,
+  "success" | "primary" | "warning" | "danger" | "info"
+> = {
+  ACTIVE: "success",
+  INACTIVE: "info",
+};
 
 const pageConfig = computed<ProPageConfig>(() => ({
   skeleton: true,
@@ -68,8 +79,9 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.groupon.status"),
         minWidth: 90,
         align: "left",
-        formatter: (row: any) =>
-          $t(`pages.mall.groupon.statusLabel.${STATUS_KEY[row.status] ?? "active"}`),
+        cellType: "tag",
+        tagTypeMap: grouponStatusTagTypeMap,
+        labelMap: grouponStatusLabelMap,
       },
       {
         prop: "action",
