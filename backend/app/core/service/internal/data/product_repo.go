@@ -649,6 +649,89 @@ func (r *ProductRepo) ListActiveProductIDs(ctx context.Context) ([]uint32, error
 	return ids, nil
 }
 
+// ProductLanguagePair 是应入索引的 (商品, 语言) 对，与 ES 文档 docID
+// {product_id}_{language} 一一对应。
+type ProductLanguagePair struct {
+	ProductID uint32
+	Language  string
+}
+
+// ListActiveProductLanguagePairs 列出全部 ACTIVE 商品的应入索引 (product_id, language) 集合。
+//
+// 与 GetReindexDocuments 同口径：仅统计未删除、且 name/short_description/
+// long_description 不全为空的翻译。供 ProductSearchService.ReindexAll 做孤儿
+// 文档清扫时的期望集合。
+func (r *ProductRepo) ListActiveProductLanguagePairs(ctx context.Context) ([]ProductLanguagePair, error) {
+	// 1. ACTIVE 且未删除的商品 ID（与 ListActiveProductIDs 同过滤，多带 deleted_at）
+	productEntities, err := r.entClient.Client().Product.Query().
+		Where(product.DeletedAtIsNil()).
+		Select(product.FieldID, product.FieldStatus).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("list products for reindex pairs failed: %s", err.Error())
+		return nil, catalogV1.ErrorInternalServerError("list products for reindex pairs failed")
+	}
+
+	activeIDs := make([]uint32, 0, len(productEntities))
+	for _, e := range productEntities {
+		if e == nil {
+			continue
+		}
+		if e.Status != nil && string(*e.Status) == "PRODUCT_STATUS_ACTIVE" {
+			activeIDs = append(activeIDs, e.ID)
+		}
+	}
+	if len(activeIDs) == 0 {
+		return []ProductLanguagePair{}, nil
+	}
+
+	// 2. 这些商品的未删除翻译，按"应入索引"口径过滤
+	translationEntities, err := r.entClient.Client().ProductTranslation.Query().
+		Where(
+			productTranslation.ProductIDIn(activeIDs...),
+			productTranslation.DeletedAtIsNil(),
+		).
+		Select(
+			productTranslation.FieldProductID,
+			productTranslation.FieldLanguageCode,
+			productTranslation.FieldName,
+			productTranslation.FieldShortDescription,
+			productTranslation.FieldLongDescription,
+		).
+		All(ctx)
+	if err != nil {
+		r.log.Errorf("list translations for reindex pairs failed: %s", err.Error())
+		return nil, catalogV1.ErrorInternalServerError("list translations for reindex pairs failed")
+	}
+
+	pairs := make([]ProductLanguagePair, 0, len(translationEntities))
+	for _, t := range translationEntities {
+		if t == nil || t.ProductID == nil || t.LanguageCode == nil {
+			continue
+		}
+		// 与 GetReindexDocuments 相同的跳过规则：name 和 descriptions 均空不入索引
+		name := stringValue(t.Name)
+		shortDesc := stringValue(t.ShortDescription)
+		longDesc := stringValue(t.LongDescription)
+		if name == "" && shortDesc == "" && longDesc == "" {
+			continue
+		}
+		pairs = append(pairs, ProductLanguagePair{
+			ProductID: *t.ProductID,
+			Language:  *t.LanguageCode,
+		})
+	}
+	return pairs, nil
+}
+
+// stringValue 取字符串指针的值，nil 返回空串。
+func stringValue(v *string) string {
+	if v == nil {
+		return ""
+	}
+	return *v
+}
+
 // GetAvailableLanguages 返回指定商品在 DB 中实际存在的翻译语言列表。
 // 供 ProductSearchService.ReindexProduct 的 delete 操作枚举删除使用。
 func (r *ProductRepo) GetAvailableLanguages(ctx context.Context, productID uint32) ([]string, error) {

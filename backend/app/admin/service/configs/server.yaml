@@ -46,7 +46,8 @@ server:
       enable_circuit_breaker: true
       enable_metadata: true
 
-  # asynq Inspector（TaskMonitorService 系统任务巡检只读用；与 core 同一 redis db1）
+  # asynq Inspector（TaskMonitorService 系统任务巡检只读用；与 core 同一 asynq 专库 db11，
+  # 不要用 db1——本机 wms/im 等其他项目的 asynq 也在 db1，会互相抢 asynq:{default} 队列任务）
   asynq:
-    uri: "redis://:*Abcd123456@redis:6379/1"
+    uri: "redis://:*Abcd123456@redis:6379/11"
     codec: "json"

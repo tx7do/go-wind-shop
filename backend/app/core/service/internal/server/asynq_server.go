@@ -59,6 +59,11 @@ func NewAsynqServer(ctx *bootstrap.Context, taskService *service.TaskService, or
 	if err = asynq.RegisterSubscriber(srv, task.SearchReindexTaskType, productSearchService.ReindexProduct); err != nil {
 		log.Error(err)
 	}
+	// 注册商品搜索周期全量重索引任务处理器（以 DB 为准双向收敛 ES 索引：
+	// 补漏 upsert 种子数据/丢失任务 + 清扫孤儿文档，兜底单条任务覆盖不到的场景）。
+	if err = asynq.RegisterSubscriber(srv, task.SearchReindexAllTaskType, productSearchService.HandleReindexAll); err != nil {
+		log.Error(err)
+	}
 	// 注册支付对账周期任务处理器（扫描陈旧 PENDING 流水主动查渠道自愈：
 	// 回调丢失则补确认推进订单；渠道已关闭则收敛流水状态）。
 	if err = asynq.RegisterSubscriber(srv, task.PaymentReconcileTaskType, paymentTransactionService.HandlePaymentReconcile); err != nil {

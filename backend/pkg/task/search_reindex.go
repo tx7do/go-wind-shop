@@ -20,6 +20,9 @@ package task
 const (
 	// SearchReindexTaskType 单条重索引任务的 asynq 任务类型。
 	SearchReindexTaskType = "search.reindex"
+
+	// SearchReindexAllTaskType 周期全量重索引任务的 asynq 任务类型。
+	SearchReindexAllTaskType = "search.reindex_all"
 )
 
 // SearchReindexPayload 单条重索引任务的 payload。
@@ -33,4 +36,9 @@ type SearchReindexPayload struct {
 	Entity string `json:"entity"`
 	ID     uint32 `json:"id"`
 	Op     string `json:"op"`
+}
+
+// SearchReindexAllTaskData 全量重索引任务的载荷（周期性任务，无实体 ID）。
+type SearchReindexAllTaskData struct {
+	Name string `json:"name"`
 }

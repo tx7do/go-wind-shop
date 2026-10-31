@@ -61,6 +61,12 @@ type ProductSuggestion struct {
 	ImageUrl  string `json:"image_url"`
 }
 
+// ProductDocRef 是扫描索引得到的文档坐标（全量重索引的孤儿清扫用）。
+type ProductDocRef struct {
+	ProductID string
+	Language  string
+}
+
 // ProductSearchHit 是搜索结果中的单条命中，只暴露最小字段集。
 type ProductSearchHit struct {
 	ProductID string
@@ -294,6 +300,52 @@ func (r *ProductSearchRepo) SearchProducts(
 	}
 
 	return result, nil
+}
+
+// ListAllProductDocRefs 扫描 products 索引，返回全部文档的 (product_id, language)。
+//
+// 供 ReindexAll 做孤儿清扫：ES 中存在而 DB 期望集合中没有的文档即为孤儿。
+// wrapper 无 scroll/search_after，用 match_all + from/size 封顶（与搜索分页同一上限），
+// 超出上限的文档本轮不参与清扫（宁可漏删不可误删，下轮继续）。
+func (r *ProductSearchRepo) ListAllProductDocRefs(ctx context.Context) ([]ProductDocRef, error) {
+	if r.esClient == nil {
+		return nil, errors.New("opensearch client is nil")
+	}
+
+	dsl := map[string]any{"match_all": map[string]any{}}
+	searchResult, err := r.esClient.SearchWithHighlight(
+		ctx,
+		productSearchIndexName,
+		dsl,
+		nil,
+		[]string{"product_id", "language"},
+		nil,
+		0,
+		maxProductSearchResultFrom,
+	)
+	if err != nil {
+		r.log.Errorf("scan all product docs failed: %v", err)
+		return nil, err
+	}
+
+	if total := searchResult.Hits.Total.Value; total > maxProductSearchResultFrom {
+		r.log.Warnf("products index has %d docs, scan capped at %d, orphan cleanup partial this round",
+			total, maxProductSearchResultFrom)
+	}
+
+	refs := make([]ProductDocRef, 0, len(searchResult.Hits.Hits))
+	for _, hit := range searchResult.Hits.Hits {
+		var src struct {
+			ProductID string `json:"product_id"`
+			Language  string `json:"language"`
+		}
+		if err := json.Unmarshal(hit.Source, &src); err != nil {
+			r.log.Warnf("unmarshal product doc ref failed: %v", err)
+			continue
+		}
+		refs = append(refs, ProductDocRef{ProductID: src.ProductID, Language: src.Language})
+	}
+	return refs, nil
 }
 
 // SuggestProductNames 搜索联想：按商品名前缀短语匹配返回候选。
