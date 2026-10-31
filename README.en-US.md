@@ -24,6 +24,7 @@ GoWind Shop is an enterprise-grade multi-language e-commerce platform built for 
 - **Contract-driven (Protobuf-first)**: interfaces, data models, and error codes use proto as the single source of truth, auto-generating Go / TypeScript / OpenAPI.
 - **Three-service BFF architecture**: `admin` / `app` thin gateways plus a `core` implementation, decoupling business logic from the transport layer.
 - **Full-stack code generation**: Ent schema → ORM, one-click CRUD scaffolding.
+- **Storefront rewrite**: 20 pages rebuilt on a unified design system with light/dark themes and a mobile sticky navigation.
 - **Production-ready**: JWT authentication, Casbin / OPA authorization, SSE push, Asynq async tasks, OpenTelemetry tracing, Swagger docs, one-click Docker deployment.
 
 ---
@@ -164,8 +165,8 @@ cd frontend/app && pnpm dev
 | **Stock Operation Logs** (append-only audit) | **Message Center** (order notifications · unread marks) |
 | ![Order Management](gui-test-screenshots/admin-orders.png) | ![My Orders](gui-test-screenshots/app-orders.png) |
 | **Order Management** (state machine + cancel/close) | **My Orders** (full lifecycle states) |
-| ![Product Detail](gui-test-screenshots/app-product-promo.png) |  |
-| **Product Detail** (special-price strike-through · promo badge · reviews) |  |
+| ![Product Detail](gui-test-screenshots/app-product-promo.png) | ![Storefront Home · Dark Theme](gui-test-screenshots/app-home-dark.png) |
+| **Product Detail** (groupon price strike-through · promo badge · reviews) | **Storefront Home · Dark Theme** (one-click toggle) |
 
 ### Commerce
 
@@ -180,7 +181,7 @@ cd frontend/app && pnpm dev
 | Order Management | Order and order detail management, with an optimistic-concurrency order state machine. |
 | Order Automation | Auto-cancel of unpaid orders after timeout (delayed task + periodic sweep) and auto-confirm receipt after the shipment window. |
 | Order Notifications | In-app notifications to buyers across the full lifecycle: payment, shipment, cancellation, receipt confirmation, and refund. |
-| Search | OpenSearch full-text search with type-ahead suggestions (product name prefix phrase matching). |
+| Search | OpenSearch full-text search with type-ahead suggestions (product name prefix phrase matching) and AI query rewriting (natural language → retrieval keyword groups); a periodic ReindexAll full re-index keeps the index convergent. |
 | Promotions | Product special prices, store-wide full reductions, flash sales (seckill), and group buying (groupon) — unified pricing within the checkout transaction with priority groupon > seckill > special price, stackable with coupons up to a floor of zero. |
 | Stock Operation Logs | Append-only audit: order deductions, cancel/refund restorations, and manual adjustments are all traced. |
 | Flash Sale (Seckill) | SKU-level limited-time flash sales with seckill price as the highest-priority override, row-level locking to prevent overselling, and per-user purchase limits. |

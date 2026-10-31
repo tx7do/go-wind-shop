@@ -24,6 +24,7 @@ GoWind Shop（风行商城）是一套面向出海场景的企业级多语言电
 - **契约驱动（Protobuf-first）**：接口、数据模型、错误码均以 proto 为单一事实源，自动生成 Go / TypeScript / OpenAPI
 - **三服务 BFF 架构**：`admin` / `app` 瘦网关 + `core` 核心实现，业务逻辑与传输层解耦
 - **全栈代码生成**：Ent Schema → ORM，一键 CRUD 脚手架
+- **店铺前台全站重写**：20 个页面统一设计基元，亮暗双主题、移动端吸底导航
 - **生产就绪**：JWT 鉴权、Casbin / OPA 授权、SSE 推送、Asynq 异步任务、OpenTelemetry 链路追踪、Swagger 文档、Docker 一键部署
 
 ---
@@ -164,8 +165,8 @@ cd frontend/app && pnpm dev
 | **库存操作流水**（append-only 审计） | **消息中心**（订单状态通知 · 未读标记） |
 | ![订单管理](gui-test-screenshots/admin-orders.png) | ![我的订单](gui-test-screenshots/app-orders.png) |
 | **订单管理**（状态机 + 取消/关闭） | **我的订单**（全生命周期状态） |
-| ![商品详情](gui-test-screenshots/app-product-promo.png) |  |
-| **商品详情**（专价划线价 · 活动角标 · 评论区） |  |
+| ![商品详情](gui-test-screenshots/app-product-promo.png) | ![店铺首页 · 暗色主题](gui-test-screenshots/app-home-dark.png) |
+| **商品详情**（拼团价划线 · 拼团角标 · 评论区） | **店铺首页 · 暗色主题**（一键切换） |
 
 ### 商品与交易
 
@@ -180,7 +181,7 @@ cd frontend/app && pnpm dev
 | 订单管理 | 订单与订单明细管理，含订单状态机（乐观并发推进） |
 | 订单自动化 | 超时未支付自动取消（延时任务 + 周期兜底清扫）、发货超期自动确认收货 |
 | 订单通知 | 支付/发货/取消/确认收货/退款全链路站内信通知买家 |
-| 搜索 | OpenSearch 全文检索 + 输入联想（商品名前缀短语匹配） |
+| 搜索 | OpenSearch 全文检索 + 输入联想（商品名前缀短语匹配）+ AI 查询改写（自然语言→检索关键词组），ReindexAll 周期全量重索引双向收敛兜底 |
 | 促销活动 | 商品专价、店铺满减、秒杀、拼团——下单事务内统一计价，优先级拼团 > 秒杀 > 专价，与优惠券叠加封顶 |
 | 库存操作流水 | append-only 审计：下单扣减、取消/退款回补、手动调整全留痕 |
 | 秒杀 | SKU 级限时限量抢购，秒杀价最高优先级覆盖结算价，行锁防超卖 + 每人限购 |
