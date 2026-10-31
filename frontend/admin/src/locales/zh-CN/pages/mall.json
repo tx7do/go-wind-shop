@@ -308,7 +308,7 @@
       "update": "编辑税率规则"
     },
     "statusLabel": {
-      "ACTIVE": "生效",
+      "STATUS_UNSPECIFIED": "未知",      "ACTIVE": "生效",
       "INACTIVE": "停用"
     }
   },

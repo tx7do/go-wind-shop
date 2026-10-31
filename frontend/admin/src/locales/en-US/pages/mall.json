@@ -308,7 +308,7 @@
       "update": "Edit Tax Rate"
     },
     "statusLabel": {
-      "ACTIVE": "Active",
+      "STATUS_UNSPECIFIED": "Unknown",      "ACTIVE": "Active",
       "INACTIVE": "Inactive"
     }
   },
