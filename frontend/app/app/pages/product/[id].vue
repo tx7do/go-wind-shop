@@ -193,13 +193,14 @@ const ratingQuery = useGetProductRating(
   computed(() => ({ productId: productId.value })),
   { enabled: computed(() => productId.value > 0) },
 );
+// wire 上的 int64 是字符串（count 返回 "5"），不能按 typeof number 判断
 const ratingAverage = computed<number>(() => {
-  const v = (ratingQuery.data?.value as any)?.average;
-  return typeof v === 'number' ? v : 0;
+  const v = Number((ratingQuery.data?.value as any)?.average);
+  return Number.isFinite(v) ? v : 0;
 });
 const ratingCount = computed<number>(() => {
-  const v = (ratingQuery.data?.value as any)?.count;
-  return typeof v === 'number' ? v : 0;
+  const v = Number((ratingQuery.data?.value as any)?.count);
+  return Number.isFinite(v) ? v : 0;
 });
 const hasRating = computed(() => ratingCount.value > 0 && ratingAverage.value > 0);
 
