@@ -237,14 +237,53 @@ const valuesByAttribute = computed(() => {
   return map;
 });
 
-// 可选属性：只保留确实挂了属性值的属性。属性表是全局数据，可能存在
-// 「有属性名但该属性一个值都没配」的脏数据——这种属性渲染不出任何规格 chip，
-// 用户永远无法选中它；若参与「是否选满」判断会让 matchedSku 永远为空，
-// 整页价格隐藏、按钮禁用（购买链路死锁）。空属性应直接视为单 SKU 商品。
+// SKU 组合与价格：先声明，供下面的「本品可售规格」推导使用（由 skus watch 填充）。
+const combosReady = ref(false);
+const skuCombinationsMap = reactive<Record<number, Map<number, number>>>({});
+const skuPricesMap = reactive<Record<number, SkuPriceEntity[]>>({});
+
+// 属性表是全局数据（无 product_id）：每个详情页都能拿到「颜色/配色/版本/存储/尺码/套餐」。
+// 不按本品 SKU 组合收口的话，耳机页会冒出尺码 S/M/L；而且默认选中取的是全局第一个值，
+// 凑不出任何组合 ⇒ matchedSku 为空 ⇒ 价格卡片 v-if=hasPrice 整块不渲染、两个购买按钮禁用。
+// 所以属性与属性值都以本品组合里真实出现过的 id 为准；没有组合的商品视为单 SKU。
+const productAttributeIds = computed(() => {
+  const ids = new Set<number>();
+  for (const combos of Object.values(skuCombinationsMap)) {
+    for (const attrId of combos.keys()) ids.add(attrId);
+  }
+  return ids;
+});
+const productValueIds = computed(() => {
+  const ids = new Set<number>();
+  for (const combos of Object.values(skuCombinationsMap)) {
+    for (const valId of combos.values()) ids.add(valId);
+  }
+  return ids;
+});
+
 const selectableAttributes = computed<AttributeEntity[]>(() => {
+  if (!combosReady.value) return [];
+  const attrIds = productAttributeIds.value;
+  const valIds = productValueIds.value;
+  if (attrIds.size === 0 || valIds.size === 0) return [];
   return attributes.value.filter(
-    (attr) => attr.id !== undefined && (valuesByAttribute.value.get(attr.id)?.length ?? 0) > 0,
+    (attr) =>
+      attr.id !== undefined
+      && attrIds.has(attr.id)
+      && (valuesByAttribute.value.get(attr.id) ?? []).some(
+        (v) => v.id !== undefined && valIds.has(v.id),
+      ),
   );
+});
+
+const productValuesByAttribute = computed(() => {
+  const valIds = productValueIds.value;
+  const map = new Map<number, AttributeEntity[]>();
+  for (const [attrId, vals] of valuesByAttribute.value) {
+    const kept = vals.filter((v) => v.id !== undefined && valIds.has(v.id));
+    if (kept.length > 0) map.set(attrId, kept);
+  }
+  return map;
 });
 
 // ---------- 用户选择 ----------
@@ -257,18 +296,14 @@ function clearSelections() {
   }
 }
 
-// 为每个尚无选中值的属性设默认选中其第一个值，使页面初始即有完整选中态，
-// 便于用户直观看到当前 SKU 与价格。
-// 属性/属性值表为全局数据、与 productId 无关，故默认值与具体商品无关。
+// 为每个可选属性设置默认值；已选值若不属于本品可售集合（例如来自全局属性表的旧值），
+// 改选本品第一个可用值，保证首屏就能匹配到 SKU 并展示价格。
 function applyDefaultSelections() {
-  const attrs = attributes.value;
-  const valsMap = valuesByAttribute.value;
-  if (!attrs || attrs.length === 0 || !valsMap || valsMap.size === 0) return;
-  for (const attr of attrs) {
+  for (const attr of selectableAttributes.value) {
     if (attr.id === undefined) continue;
-    if (selections[attr.id] !== undefined) continue;
-    const vals = valsMap.get(attr.id);
+    const vals = productValuesByAttribute.value.get(attr.id);
     if (!vals || vals.length === 0) continue;
+    if (vals.some((v) => String(v.id) === selections[attr.id])) continue;
     const first = vals[0];
     if (first?.id !== undefined) {
       selections[attr.id] = String(first.id);
@@ -276,19 +311,30 @@ function applyDefaultSelections() {
   }
 }
 
-// 属性/属性值数据加载完成后应用默认选中。
-watch([attributes, valuesByAttribute], applyDefaultSelections, { immediate: true });
+// 组合数据到达后：先清掉已不在可选集合里的选择，再补默认值。
+watch(
+  [selectableAttributes, productValuesByAttribute],
+  () => {
+    const available = new Set(selectableAttributes.value.map((a) => a.id));
+    for (const key of Object.keys(selections)) {
+      if (!available.has(Number(key))) delete selections[Number(key)];
+    }
+    applyDefaultSelections();
+  },
+  { immediate: true },
+);
 
 // ---------- 每个 SKU 的属性组合 & 价格（通过 fetch*Store 在 watch 中拉取） ----------
-const skuCombinationsMap = reactive<Record<number, Map<number, number>>>({});
-const skuPricesMap = reactive<Record<number, SkuPriceEntity[]>>({});
-
 watch(
   skus,
   async (list) => {
+    combosReady.value = false;
     for (const k of Object.keys(skuCombinationsMap)) delete skuCombinationsMap[Number(k)];
     for (const k of Object.keys(skuPricesMap)) delete skuPricesMap[Number(k)];
-    if (!list || list.length === 0) return;
+    if (!list || list.length === 0) {
+      combosReady.value = true;
+      return;
+    }
     await Promise.all(
       list.map(async (sku) => {
         if (sku.id === undefined) return;
@@ -324,6 +370,7 @@ watch(
         }
       }),
     );
+    combosReady.value = true;
   },
   { immediate: true },
 );
@@ -671,7 +718,7 @@ async function buyNow() {
 
 // ---------- SKU 卡片选择器：键盘方向键在当前组内切换 ----------
 function onRadioKeydown(e: KeyboardEvent, attrId: number) {
-  const vals = valuesByAttribute.value.get(attrId) ?? [];
+  const vals = productValuesByAttribute.value.get(attrId) ?? [];
   if (vals.length === 0) return;
   const cur = selections[attrId];
   let idx = vals.findIndex((v) => v.id !== undefined && String(v.id) === cur);
@@ -1067,7 +1114,7 @@ onBeforeUnmount(() => sentinelObserver?.disconnect());
                 @keydown="onRadioKeydown($event, attr.id!)"
               >
                 <button
-                  v-for="val in valuesByAttribute.get(attr.id!) ?? []"
+                  v-for="val in productValuesByAttribute.get(attr.id!) ?? []"
                   :key="val.id"
                   type="button"
                   role="radio"

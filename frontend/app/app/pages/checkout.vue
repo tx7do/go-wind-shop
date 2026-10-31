@@ -670,6 +670,15 @@ function reopenPayPage() {
 const pendingOrderId = ref<number>(0);
 const pendingPaymentKey = ref<string>( '');
 
+const placeDisabled = computed(
+  () =>
+    !formValid.value
+    || cartItems.value.length === 0
+    || payChannels.value.length === 0
+    || orderMutation.isPending.value
+    || payDialogBusy.value,
+);
+
 async function placeOrder() {
   if (!isLogin.value) {
     navigateTo(localePath('/login'));
@@ -1010,12 +1019,17 @@ onUnmounted(stopPolling);
         <p v-else class="mt-4 rounded-lg border border-dashed border-border px-3 py-2 text-xs text-muted-foreground">
           {{ t('checkout.payChannels.empty') }}
         </p>
+
+        <!-- 桌面端提交入口（移动端由吸底条承担） -->
+        <UiButton class="mt-5 hidden w-full md:flex" size="lg" :disabled="placeDisabled" @click="placeOrder">
+          {{ t('checkout.placeOrder') }}
+        </UiButton>
       </div>
     </div>
   </LayoutSectionContainer>
 
-  <!-- 吸底提交条：合计 + 提交订单（TabBar 之上避让） -->
-  <UiStickyBar v-if="isLogin" above-tab-bar>
+  <!-- 吸底提交条：合计 + 提交订单（仅移动端；桌面用摘要卡里的提交按钮，避免两个 CTA 叠在视口底部） -->
+  <UiStickyBar v-if="isLogin" above-tab-bar class="md:hidden">
     <div class="flex min-w-0 flex-1 flex-col">
       <span class="text-[10px] text-muted-foreground">{{ t('cart.total') }}</span>
       <UiPriceTag :amount="payableFen" size="md" />
@@ -1023,7 +1037,7 @@ onUnmounted(stopPolling);
     <UiButton
       class="shrink-0"
       size="lg"
-      :disabled="!formValid || cartItems.length === 0 || payChannels.length === 0 || orderMutation.isPending.value || payDialogBusy"
+      :disabled="placeDisabled"
       @click="placeOrder"
     >
       {{ t('checkout.placeOrder') }}
