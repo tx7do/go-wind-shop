@@ -28,6 +28,16 @@ const commentTypeLabelMap: Record<string, string> = {
   CONTENT_TYPE_POST: $t("pages.mall.comment.typeLabel.CONTENT_TYPE_POST"),
 };
 
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const commentTypeTagTypeMap: Record<
+  string,
+  "success" | "primary" | "warning" | "danger" | "info"
+> = {
+  CONTENT_TYPE_PRODUCT: "primary",
+  CONTENT_TYPE_SHOP: "warning",
+  CONTENT_TYPE_POST: "info",
+};
+
 const commentStatusLabelMap: Record<string, string> = {
   STATUS_PENDING: $t("pages.mall.comment.statusLabel.STATUS_PENDING"),
   STATUS_APPROVED: $t("pages.mall.comment.statusLabel.STATUS_APPROVED"),
@@ -79,7 +89,9 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.comment.contentType"),
         minWidth: 100,
         align: "left",
-        formatter: (row: any) => commentTypeLabelMap[row.contentType] ?? row.contentType ?? "",
+        cellType: "tag",
+        tagTypeMap: commentTypeTagTypeMap,
+        labelMap: commentTypeLabelMap,
       },
       {
         prop: "objectId",
