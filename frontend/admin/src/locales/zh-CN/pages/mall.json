@@ -517,7 +517,10 @@
     "type": "类型",
     "typeLabel": {
       "earn": "入账",
-      "deduct": "回冲"
+      "deduct": "回冲",
+      "redeem": "兑换",
+      "adjust": "调整",
+      "checkIn": "签到"
     },
     "delta": "变动",
     "balanceAfter": "变动后余额",

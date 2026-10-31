@@ -16,9 +16,30 @@ import { $t } from "@/core/i18n";
 
 const pageRef = ref();
 
-const TYPE_KEY: Record<string, string> = {
-  EARN: "earn",
-  DEDUCT: "deduct",
+// 类型 → tag 文案 + 语义色映射。存量数据两套命名混存（短名 EARN/REDEEM/ADJUST
+// 为早期种子；POINTS_TYPE_* 为 proto 全称），映射两套都铺。
+// 语义：加分/正向（入账/签到）=success，扣减（回冲/兑换）=warning，调整=info。
+const pointsTypeLabelMap: Record<string, string> = {
+  EARN: $t("pages.mall.points.typeLabel.earn"),
+  POINTS_TYPE_EARN: $t("pages.mall.points.typeLabel.earn"),
+  POINTS_TYPE_CHECK_IN: $t("pages.mall.points.typeLabel.checkIn"),
+  DEDUCT: $t("pages.mall.points.typeLabel.deduct"),
+  POINTS_TYPE_DEDUCT: $t("pages.mall.points.typeLabel.deduct"),
+  REDEEM: $t("pages.mall.points.typeLabel.redeem"),
+  ADJUST: $t("pages.mall.points.typeLabel.adjust"),
+};
+// @ts-ignore - intentional incomplete record mirroring existing convention
+const pointsTypeTagTypeMap: Record<
+  string,
+  "success" | "primary" | "warning" | "danger" | "info"
+> = {
+  EARN: "success",
+  POINTS_TYPE_EARN: "success",
+  POINTS_TYPE_CHECK_IN: "success",
+  DEDUCT: "warning",
+  POINTS_TYPE_DEDUCT: "warning",
+  REDEEM: "warning",
+  ADJUST: "info",
 };
 
 const pageConfig = computed<ProPageConfig>(() => ({
@@ -62,8 +83,9 @@ const pageConfig = computed<ProPageConfig>(() => ({
         label: $t("pages.mall.points.type"),
         minWidth: 100,
         align: "left",
-        formatter: (row: any) =>
-          $t(`pages.mall.points.typeLabel.${TYPE_KEY[row.type] ?? "earn"}`),
+        cellType: "tag",
+        tagTypeMap: pointsTypeTagTypeMap,
+        labelMap: pointsTypeLabelMap,
       },
       {
         prop: "delta",

@@ -517,7 +517,10 @@
     "type": "Type",
     "typeLabel": {
       "earn": "Earn",
-      "deduct": "Deduct"
+      "deduct": "Deduct",
+      "redeem": "Redeem",
+      "adjust": "Adjust",
+      "checkIn": "Check-in"
     },
     "delta": "Delta",
     "balanceAfter": "Balance After",
