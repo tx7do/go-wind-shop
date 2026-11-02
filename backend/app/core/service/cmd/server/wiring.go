@@ -379,5 +379,9 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 
 	asynqServer := server.NewAsynqServer(ctx, taskService, orderService, userCouponService, stockAlertScannerService, productSearchService, paymentTransactionService, grouponService)
 
+	// 启动引导：products 索引缺失（全新部署）时补模板+初始全量重索引，让搜索
+	// 开箱即用。内部异步执行、幂等，失败仅记日志，不影响装配与启动。
+	productSearchService.BootstrapSearchIndex()
+
 	return newApp(ctx, grpcServer, asynqServer), rollback, nil
 }

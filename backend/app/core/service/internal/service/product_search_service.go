@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"strconv"
+	"time"
 
 	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -289,4 +290,42 @@ func (s *ProductSearchService) SearchSuggestions(
 		size = 8
 	}
 	return s.productSearchRepo.SuggestProductNames(ctx, query, language, status, size)
+}
+
+// BootstrapSearchIndex 服务启动引导：products 索引缺失（全新部署，DB 任务表里也
+// 还没配周期 ReindexAll）时，补建索引模板并立即做一次全量重索引，让搜索开箱
+// 即用；索引已存在则什么都不做（增量靠双写钩子，兜底靠周期任务）。
+//
+// 由 wiring 在服务装配后调用；内部异步执行。OpenSearch 可能比 core 后就绪
+// （如 compose 同时拉起），短重试后放弃，等周期任务或下次重启兜底——全程仅记
+// 日志，不影响服务启动。
+func (s *ProductSearchService) BootstrapSearchIndex() {
+	go func() {
+		ctx := appViewer.NewSystemViewerContext(context.Background())
+
+		const attempts = 5
+		for i := 1; i <= attempts; i++ {
+			exists, err := s.productSearchRepo.IndexExists(ctx)
+			if err != nil {
+				if i == attempts {
+					s.log.Warnf("bootstrap search index: check failed after %d attempts, give up (等周期任务或下次重启): %v",
+						attempts, err)
+					return
+				}
+				time.Sleep(5 * time.Second)
+				continue
+			}
+			if exists {
+				return
+			}
+			break
+		}
+
+		s.log.Infof("bootstrap search index: products index missing, run initial reindex")
+		if err := s.ReindexAll(ctx); err != nil {
+			s.log.Errorf("bootstrap search index: initial reindex failed: %v", err)
+			return
+		}
+		s.log.Infof("bootstrap search index: initial reindex done")
+	}()
 }

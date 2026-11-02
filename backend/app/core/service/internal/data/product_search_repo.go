@@ -189,6 +189,34 @@ func (r *ProductSearchRepo) DeleteProduct(ctx context.Context, productID uint32,
 	return nil
 }
 
+// IndexExists 检查 products 索引是否已创建（启动引导判断是否需要初始重索引用）。
+func (r *ProductSearchRepo) IndexExists(ctx context.Context) (bool, error) {
+	if r.esClient == nil {
+		return false, errors.New("opensearch client is nil")
+	}
+	return r.esClient.IndexExists(ctx, productSearchIndexName)
+}
+
+// ensureProductsIndex 确认 products 索引可检索，返回索引是否存在。
+// 索引缺失（全新 OpenSearch、还没有任何 reindex 写入过）时顺手补建索引模板并
+// 返回 false，调用方据此以空结果降级而非报错；OpenSearch 本身不可达则原样返回错误。
+func (r *ProductSearchRepo) ensureProductsIndex(ctx context.Context) (bool, error) {
+	if r.esClient == nil {
+		return false, errors.New("opensearch client is nil")
+	}
+	exists, err := r.esClient.IndexExists(ctx, productSearchIndexName)
+	if err != nil {
+		return false, err
+	}
+	if exists {
+		return true, nil
+	}
+	if err := r.EnsureIndexTemplate(ctx); err != nil {
+		return false, err
+	}
+	return false, nil
+}
+
 // SearchProducts 执行前台全文搜索。
 //
 // 安全保证：
@@ -233,6 +261,17 @@ func (r *ProductSearchRepo) SearchProducts(
 	from := page * pageSize
 	if from > maxProductSearchResultFrom {
 		from = maxProductSearchResultFrom
+	}
+
+	// 索引还不存在（全新部署、还没有任何 reindex 写入）：以空结果降级，
+	// 让前台拿到空列表而非 500；等启动引导/周期重索引建好索引后自然恢复。
+	indexed, err := r.ensureProductsIndex(ctx)
+	if err != nil {
+		r.log.Errorf("check products index failed: %v", err)
+		return result, err
+	}
+	if !indexed {
+		return result, nil
 	}
 
 	// 构建 DSL：filter（访问控制，不参与评分）+ must（相关性评分）
@@ -373,6 +412,16 @@ func (r *ProductSearchRepo) SuggestProductNames(
 	}
 	if size > 20 {
 		size = 20
+	}
+
+	// 索引缺失时与 SearchProducts 同口径降级：返回空联想而非报错。
+	indexed, err := r.ensureProductsIndex(ctx)
+	if err != nil {
+		r.log.Errorf("check products index failed: %v", err)
+		return suggestions, err
+	}
+	if !indexed {
+		return suggestions, nil
 	}
 
 	dsl := map[string]any{

@@ -95,7 +95,10 @@ func (s *ProductService) SearchProducts(ctx context.Context, req *catalogV1.Sear
 
 	result, err := s.productSearchService.Search(ctx, query, language, int(req.GetPage()), int(req.GetPageSize()))
 	if err != nil {
-		return nil, catalogV1.ErrorInternalServerError("search products failed")
+		// 真实原因带进 metadata：RPC 层错误日志里 cause 恒为 nil，没这个排查时
+		// 只能再去翻 repo 层日志（如 OpenSearch 不可达 vs index_not_found）。
+		rpcErr := catalogV1.ErrorInternalServerError("search products failed")
+		return nil, rpcErr.WithMetadata(map[string]string{"cause": err.Error()})
 	}
 
 	items := make([]*catalogV1.SearchProductHit, 0, len(result.Hits))
@@ -128,7 +131,8 @@ func (s *ProductService) SearchProductSuggestions(ctx context.Context, req *cata
 
 	suggestions, err := s.productSearchService.SearchSuggestions(ctx, query, language, int(req.GetSize()))
 	if err != nil {
-		return nil, catalogV1.ErrorInternalServerError("search suggestions failed")
+		rpcErr := catalogV1.ErrorInternalServerError("search suggestions failed")
+		return nil, rpcErr.WithMetadata(map[string]string{"cause": err.Error()})
 	}
 
 	items := make([]*catalogV1.SearchProductSuggestionsResponse_Suggestion, 0, len(suggestions))
