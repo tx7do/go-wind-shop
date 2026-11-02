@@ -67,6 +67,15 @@ core-service (gRPC，业务实现与数据访问)
 
 ---
 
+## 在线演示
+
+| 站点 | 地址 |
+|------|------|
+| 店铺前台 | <https://shop.gowind.cloud> |
+| 管理后台 | <https://admin.shop.gowind.cloud> |
+
+---
+
 ## 快速开始
 
 ### 环境要求

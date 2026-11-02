@@ -108,8 +108,8 @@ const handleClickLogout = async () => {
       <!-- 全局搜索（桌面端；移动端首页顶部有搜索入口） -->
       <LayoutSearchBar />
 
-      <!-- 功能按钮区 -->
-      <div class="flex shrink-0 items-center gap-1">
+      <!-- 功能按钮区：ml-auto 吸收搜索框 max-w-80 封顶后的剩余空间，始终贴右缘 -->
+      <div class="ml-auto flex shrink-0 items-center gap-1">
         <!-- 消息中心入口（带未读徽标，仅登录后展示） -->
         <NuxtLink
           v-if="isLogin"

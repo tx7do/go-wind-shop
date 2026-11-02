@@ -67,6 +67,15 @@ core-service (gRPC, business implementation and data access)
 
 ---
 
+## Online Demo
+
+| Site | URL |
+|------|------|
+| Storefront | <https://shop.gowind.cloud> |
+| Admin Console | <https://admin.shop.gowind.cloud> |
+
+---
+
 ## Quick Start
 
 ### Environment Requirements

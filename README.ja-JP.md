@@ -67,6 +67,15 @@ core-service (gRPC、業務実装とデータアクセス)
 
 ---
 
+## オンラインデモ
+
+| サイト | URL |
+|------|------|
+| 店舗フロント | <https://shop.gowind.cloud> |
+| 管理画面 | <https://admin.shop.gowind.cloud> |
+
+---
+
 ## クイックスタート
 
 ### 環境要件

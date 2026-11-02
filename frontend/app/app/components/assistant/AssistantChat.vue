@@ -62,7 +62,7 @@ function scrollToBottom() {
 let sseBound = false
 
 function sseTargetUrl(): string | null {
-  const base = runtimeConfig.public?.NUXT_PUBLIC_SSE_URL as string | undefined
+  const base = runtimeConfig.public?.sseUrl as string | undefined
   const token = String(accessStore.accessToken?.value ?? '')
   if (!base || !token) return null
   return `${base}?stream=${encodeURIComponent(token)}&token=${encodeURIComponent(token)}`
