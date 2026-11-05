@@ -3691,6 +3691,7 @@ var (
 		{Name: "is_protected", Type: field.TypeBool, Comment: "是否受保护的角色", Default: false},
 		{Name: "field_permissions", Type: field.TypeJSON, Nullable: true, Comment: "字段权限配置（角色在各资源上隐藏的字段集，黑名单语义）"},
 		{Name: "type", Type: field.TypeEnum, Comment: "角色类型", Enums: []string{"SYSTEM", "TEMPLATE", "TENANT"}, Default: "TENANT"},
+		{Name: "parent_id", Type: field.TypeUint32, Nullable: true, Comment: "父角色ID，0表示无父级"},
 	}
 	// SysRolesTable holds the schema information for the "sys_roles" table.
 	SysRolesTable = &schema.Table{
@@ -3733,6 +3734,11 @@ var (
 				Name:    "idx_sys_roles_status",
 				Unique:  false,
 				Columns: []*schema.Column{SysRolesColumns[11]},
+			},
+			{
+				Name:    "idx_sys_roles_parent_id",
+				Unique:  false,
+				Columns: []*schema.Column{SysRolesColumns[17]},
 			},
 			{
 				Name:    "idx_sys_roles_sort_order",
