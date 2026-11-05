@@ -39,13 +39,25 @@ func (s *PlanQuotaService) Get(ctx context.Context, req *identityV1.GetPlanQuota
 }
 
 func (s *PlanQuotaService) Create(ctx context.Context, req *identityV1.CreatePlanQuotaRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "plan management"); err != nil {
+		return nil, err
+	}
+
 	return s.planQuotaClient.Create(ctx, req)
 }
 
 func (s *PlanQuotaService) Update(ctx context.Context, req *identityV1.UpdatePlanQuotaRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "plan management"); err != nil {
+		return nil, err
+	}
+
 	return s.planQuotaClient.Update(ctx, req)
 }
 
 func (s *PlanQuotaService) Delete(ctx context.Context, req *identityV1.DeletePlanQuotaRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "plan management"); err != nil {
+		return nil, err
+	}
+
 	return s.planQuotaClient.Delete(ctx, req)
 }

@@ -39,13 +39,25 @@ func (s *PlanModuleService) Get(ctx context.Context, req *identityV1.GetPlanModu
 }
 
 func (s *PlanModuleService) Create(ctx context.Context, req *identityV1.CreatePlanModuleRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "plan management"); err != nil {
+		return nil, err
+	}
+
 	return s.planModuleClient.Create(ctx, req)
 }
 
 func (s *PlanModuleService) Update(ctx context.Context, req *identityV1.UpdatePlanModuleRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "plan management"); err != nil {
+		return nil, err
+	}
+
 	return s.planModuleClient.Update(ctx, req)
 }
 
 func (s *PlanModuleService) Delete(ctx context.Context, req *identityV1.DeletePlanModuleRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "plan management"); err != nil {
+		return nil, err
+	}
+
 	return s.planModuleClient.Delete(ctx, req)
 }

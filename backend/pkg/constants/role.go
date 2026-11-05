@@ -46,3 +46,12 @@ func ExtractRoleCodeFromTemplate(roleCode string) string {
 	}
 	return roleCode
 }
+
+// IsReservedRoleCode 判断角色码是否为系统保留，不可通过角色 CRUD API 创建/修改。
+// platform: / template: 命名空间与内置租户管理员码在程序里承载身份判定语义，
+// 用户自建角色一旦占用即可伪装成内置身份越权。
+func IsReservedRoleCode(roleCode string) bool {
+	return roleCode == TenantAdminRoleCode ||
+		IsPlatformRoleCode(roleCode) ||
+		IsTemplateRoleCode(roleCode)
+}

@@ -42,6 +42,10 @@ func (s *LanguageService) Get(ctx context.Context, req *dictV1.GetLanguageReques
 }
 
 func (s *LanguageService) Create(ctx context.Context, req *dictV1.CreateLanguageRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "language management"); err != nil {
+		return nil, err
+	}
+
 	if req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -62,6 +66,10 @@ func (s *LanguageService) Create(ctx context.Context, req *dictV1.CreateLanguage
 }
 
 func (s *LanguageService) Update(ctx context.Context, req *dictV1.UpdateLanguageRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "language management"); err != nil {
+		return nil, err
+	}
+
 	if req.Data == nil {
 		return nil, adminV1.ErrorBadRequest("invalid parameter")
 	}
@@ -87,5 +95,9 @@ func (s *LanguageService) Update(ctx context.Context, req *dictV1.UpdateLanguage
 }
 
 func (s *LanguageService) Delete(ctx context.Context, req *dictV1.DeleteLanguageRequest) (*emptypb.Empty, error) {
+	if err := requirePlatformAdmin(ctx, s.log, "language management"); err != nil {
+		return nil, err
+	}
+
 	return s.languageServiceClient.Delete(ctx, req)
 }
