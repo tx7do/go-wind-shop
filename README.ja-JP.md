@@ -56,7 +56,7 @@ core-service (gRPC、業務実装とデータアクセス)
 <tr><th>階層</th><th>技術</th></tr>
 <tr><td><strong>バックエンドフレームワーク</strong></td><td><code>Golang</code> · <code>go-kratos v2</code> · <code>Protobuf / Buf</code></td></tr>
 <tr><td><strong>ORM</strong></td><td><code>entgo.io/ent</code> · <code>PostgreSQL</code> · <code>MySQL</code></td></tr>
-<tr><td><strong>ミドルウェア</strong></td><td><code>Redis</code> · <code>MinIO</code>（S3 互換オブジェクトストレージ） · <code>ElasticSearch / OpenSearch</code> · <code>etcd</code>（サービスディスカバリ）</td></tr>
+<tr><td><strong>ミドルウェア</strong></td><td><code>Redis</code> · <code>SeaweedFS</code>（S3 互換オブジェクトストレージ。MinIO コミュニティ版の保守終了後の代替で、コンテナサービス名は minio を継続使用） · <code>ElasticSearch / OpenSearch</code> · <code>etcd</code>（サービスディスカバリ）</td></tr>
 <tr><td><strong>認証・認可</strong></td><td><code>kratos-authn</code>（JWT HS256） · <code>kratos-authz</code>（Casbin / OPA）</td></tr>
 <tr><td><strong>リアルタイム通信</strong></td><td><code>SSE</code>（サーバープッシュ） · <code>Asynq</code>（非同期タスク）</td></tr>
 <tr><td><strong>分散</strong></td><td><code>OpenTelemetry + Jaeger</code>（トレーシング） · <code>DTM</code>（分散トランザクション）</td></tr>

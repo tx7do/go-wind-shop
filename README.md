@@ -56,7 +56,7 @@ core-service (gRPC，业务实现与数据访问)
 <tr><th>层级</th><th>技术</th></tr>
 <tr><td><strong>后端框架</strong></td><td><code>Golang</code> · <code>go-kratos v2</code> · <code>Protobuf / Buf</code></td></tr>
 <tr><td><strong>ORM</strong></td><td><code>entgo.io/ent</code> · <code>PostgreSQL</code> · <code>MySQL</code></td></tr>
-<tr><td><strong>中间件</strong></td><td><code>Redis</code> · <code>MinIO</code>（S3 兼容对象存储） · <code>ElasticSearch / OpenSearch</code> · <code>etcd</code>（服务发现）</td></tr>
+<tr><td><strong>中间件</strong></td><td><code>Redis</code> · <code>SeaweedFS</code>（S3 兼容对象存储，MinIO 社区版停维护后的替代，容器服务名沿用 minio） · <code>ElasticSearch / OpenSearch</code> · <code>etcd</code>（服务发现）</td></tr>
 <tr><td><strong>认证授权</strong></td><td><code>kratos-authn</code>（JWT HS256） · <code>kratos-authz</code>（Casbin / OPA）</td></tr>
 <tr><td><strong>实时通信</strong></td><td><code>SSE</code>（服务端推送） · <code>Asynq</code>（异步任务）</td></tr>
 <tr><td><strong>分布式</strong></td><td><code>OpenTelemetry + Jaeger</code>（链路追踪） · <code>DTM</code>（分布式事务）</td></tr>

@@ -56,7 +56,7 @@ core-service (gRPC, business implementation and data access)
 <tr><th>Layer</th><th>Technology</th></tr>
 <tr><td><strong>Backend framework</strong></td><td><code>Golang</code> · <code>go-kratos v2</code> · <code>Protobuf / Buf</code></td></tr>
 <tr><td><strong>ORM</strong></td><td><code>entgo.io/ent</code> · <code>PostgreSQL</code> · <code>MySQL</code></td></tr>
-<tr><td><strong>Middleware</strong></td><td><code>Redis</code> · <code>MinIO</code> (S3-compatible object storage) · <code>ElasticSearch / OpenSearch</code> · <code>etcd</code> (service discovery)</td></tr>
+<tr><td><strong>Middleware</strong></td><td><code>Redis</code> · <code>SeaweedFS</code> (S3-compatible object storage — the replacement after MinIO Community went unmaintained; the container service name stays minio) · <code>ElasticSearch / OpenSearch</code> · <code>etcd</code> (service discovery)</td></tr>
 <tr><td><strong>Authentication & Authorization</strong></td><td><code>kratos-authn</code> (JWT HS256) · <code>kratos-authz</code> (Casbin / OPA)</td></tr>
 <tr><td><strong>Real-time communication</strong></td><td><code>SSE</code> (server push) · <code>Asynq</code> (async tasks)</td></tr>
 <tr><td><strong>Distributed</strong></td><td><code>OpenTelemetry + Jaeger</code> (tracing) · <code>DTM</code> (distributed transactions)</td></tr>
