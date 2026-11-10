@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	appV1 "go-wind-shop/api/gen/go/app/service/v1"
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"

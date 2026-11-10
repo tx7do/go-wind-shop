@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.SeckillActivity {
+func ID(id int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.SeckillActivity {
+func IDEQ(id int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.SeckillActivity {
+func IDNEQ(id int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.SeckillActivity {
+func IDIn(ids ...int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.SeckillActivity {
+func IDNotIn(ids ...int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.SeckillActivity {
+func IDGT(id int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.SeckillActivity {
+func IDGTE(id int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.SeckillActivity {
+func IDLT(id int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.SeckillActivity {
+func IDLTE(id int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.SeckillActivity {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.SeckillActivity {
+func CreatedBy(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.SeckillActivity {
+func UpdatedBy(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.SeckillActivity {
+func DeletedBy(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.SeckillActivity {
+func TenantID(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -95,7 +95,7 @@ func Name(v string) predicate.SeckillActivity {
 }
 
 // SkuID applies equality check predicate on the "sku_id" field. It's identical to SkuIDEQ.
-func SkuID(v uint32) predicate.SeckillActivity {
+func SkuID(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldEQ(FieldSkuID, v))
 }
 
@@ -290,42 +290,42 @@ func DeletedAtNotNil() predicate.SeckillActivity {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.SeckillActivity {
+func CreatedByEQ(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.SeckillActivity {
+func CreatedByNEQ(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.SeckillActivity {
+func CreatedByIn(vs ...int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.SeckillActivity {
+func CreatedByNotIn(vs ...int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.SeckillActivity {
+func CreatedByGT(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.SeckillActivity {
+func CreatedByGTE(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.SeckillActivity {
+func CreatedByLT(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.SeckillActivity {
+func CreatedByLTE(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -340,42 +340,42 @@ func CreatedByNotNil() predicate.SeckillActivity {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.SeckillActivity {
+func UpdatedByEQ(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.SeckillActivity {
+func UpdatedByNEQ(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.SeckillActivity {
+func UpdatedByIn(vs ...int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.SeckillActivity {
+func UpdatedByNotIn(vs ...int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.SeckillActivity {
+func UpdatedByGT(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.SeckillActivity {
+func UpdatedByGTE(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.SeckillActivity {
+func UpdatedByLT(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.SeckillActivity {
+func UpdatedByLTE(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -390,42 +390,42 @@ func UpdatedByNotNil() predicate.SeckillActivity {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.SeckillActivity {
+func DeletedByEQ(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.SeckillActivity {
+func DeletedByNEQ(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.SeckillActivity {
+func DeletedByIn(vs ...int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.SeckillActivity {
+func DeletedByNotIn(vs ...int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.SeckillActivity {
+func DeletedByGT(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.SeckillActivity {
+func DeletedByGTE(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.SeckillActivity {
+func DeletedByLT(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.SeckillActivity {
+func DeletedByLTE(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -440,42 +440,42 @@ func DeletedByNotNil() predicate.SeckillActivity {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.SeckillActivity {
+func TenantIDEQ(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.SeckillActivity {
+func TenantIDNEQ(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.SeckillActivity {
+func TenantIDIn(vs ...int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.SeckillActivity {
+func TenantIDNotIn(vs ...int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.SeckillActivity {
+func TenantIDGT(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.SeckillActivity {
+func TenantIDGTE(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.SeckillActivity {
+func TenantIDLT(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.SeckillActivity {
+func TenantIDLTE(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -555,42 +555,42 @@ func NameContainsFold(v string) predicate.SeckillActivity {
 }
 
 // SkuIDEQ applies the EQ predicate on the "sku_id" field.
-func SkuIDEQ(v uint32) predicate.SeckillActivity {
+func SkuIDEQ(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldEQ(FieldSkuID, v))
 }
 
 // SkuIDNEQ applies the NEQ predicate on the "sku_id" field.
-func SkuIDNEQ(v uint32) predicate.SeckillActivity {
+func SkuIDNEQ(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldNEQ(FieldSkuID, v))
 }
 
 // SkuIDIn applies the In predicate on the "sku_id" field.
-func SkuIDIn(vs ...uint32) predicate.SeckillActivity {
+func SkuIDIn(vs ...int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldIn(FieldSkuID, vs...))
 }
 
 // SkuIDNotIn applies the NotIn predicate on the "sku_id" field.
-func SkuIDNotIn(vs ...uint32) predicate.SeckillActivity {
+func SkuIDNotIn(vs ...int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldNotIn(FieldSkuID, vs...))
 }
 
 // SkuIDGT applies the GT predicate on the "sku_id" field.
-func SkuIDGT(v uint32) predicate.SeckillActivity {
+func SkuIDGT(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldGT(FieldSkuID, v))
 }
 
 // SkuIDGTE applies the GTE predicate on the "sku_id" field.
-func SkuIDGTE(v uint32) predicate.SeckillActivity {
+func SkuIDGTE(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldGTE(FieldSkuID, v))
 }
 
 // SkuIDLT applies the LT predicate on the "sku_id" field.
-func SkuIDLT(v uint32) predicate.SeckillActivity {
+func SkuIDLT(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldLT(FieldSkuID, v))
 }
 
 // SkuIDLTE applies the LTE predicate on the "sku_id" field.
-func SkuIDLTE(v uint32) predicate.SeckillActivity {
+func SkuIDLTE(v int64) predicate.SeckillActivity {
 	return predicate.SeckillActivity(sql.FieldLTE(FieldSkuID, v))
 }
 

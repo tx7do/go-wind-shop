@@ -65,13 +65,13 @@ func (_c *SeckillActivityCreate) SetNillableDeletedAt(v *time.Time) *SeckillActi
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *SeckillActivityCreate) SetCreatedBy(v uint32) *SeckillActivityCreate {
+func (_c *SeckillActivityCreate) SetCreatedBy(v int64) *SeckillActivityCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *SeckillActivityCreate) SetNillableCreatedBy(v *uint32) *SeckillActivityCreate {
+func (_c *SeckillActivityCreate) SetNillableCreatedBy(v *int64) *SeckillActivityCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *SeckillActivityCreate) SetNillableCreatedBy(v *uint32) *SeckillActivit
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *SeckillActivityCreate) SetUpdatedBy(v uint32) *SeckillActivityCreate {
+func (_c *SeckillActivityCreate) SetUpdatedBy(v int64) *SeckillActivityCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *SeckillActivityCreate) SetNillableUpdatedBy(v *uint32) *SeckillActivityCreate {
+func (_c *SeckillActivityCreate) SetNillableUpdatedBy(v *int64) *SeckillActivityCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *SeckillActivityCreate) SetNillableUpdatedBy(v *uint32) *SeckillActivit
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *SeckillActivityCreate) SetDeletedBy(v uint32) *SeckillActivityCreate {
+func (_c *SeckillActivityCreate) SetDeletedBy(v int64) *SeckillActivityCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *SeckillActivityCreate) SetNillableDeletedBy(v *uint32) *SeckillActivityCreate {
+func (_c *SeckillActivityCreate) SetNillableDeletedBy(v *int64) *SeckillActivityCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *SeckillActivityCreate) SetNillableDeletedBy(v *uint32) *SeckillActivit
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *SeckillActivityCreate) SetTenantID(v uint32) *SeckillActivityCreate {
+func (_c *SeckillActivityCreate) SetTenantID(v int64) *SeckillActivityCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *SeckillActivityCreate) SetNillableTenantID(v *uint32) *SeckillActivityCreate {
+func (_c *SeckillActivityCreate) SetNillableTenantID(v *int64) *SeckillActivityCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -127,13 +127,13 @@ func (_c *SeckillActivityCreate) SetName(v string) *SeckillActivityCreate {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (_c *SeckillActivityCreate) SetSkuID(v uint32) *SeckillActivityCreate {
+func (_c *SeckillActivityCreate) SetSkuID(v int64) *SeckillActivityCreate {
 	_c.mutation.SetSkuID(v)
 	return _c
 }
 
 // SetNillableSkuID sets the "sku_id" field if the given value is not nil.
-func (_c *SeckillActivityCreate) SetNillableSkuID(v *uint32) *SeckillActivityCreate {
+func (_c *SeckillActivityCreate) SetNillableSkuID(v *int64) *SeckillActivityCreate {
 	if v != nil {
 		_c.SetSkuID(*v)
 	}
@@ -267,7 +267,7 @@ func (_c *SeckillActivityCreate) SetNillableStatus(v *seckillactivity.Status) *S
 }
 
 // SetID sets the "id" field.
-func (_c *SeckillActivityCreate) SetID(v uint32) *SeckillActivityCreate {
+func (_c *SeckillActivityCreate) SetID(v int64) *SeckillActivityCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -392,7 +392,7 @@ func (_c *SeckillActivityCreate) sqlSave(ctx context.Context) (*SeckillActivity,
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -402,7 +402,7 @@ func (_c *SeckillActivityCreate) sqlSave(ctx context.Context) (*SeckillActivity,
 func (_c *SeckillActivityCreate) createSpec() (*SeckillActivity, *sqlgraph.CreateSpec) {
 	var (
 		_node = &SeckillActivity{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(seckillactivity.Table, sqlgraph.NewFieldSpec(seckillactivity.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(seckillactivity.Table, sqlgraph.NewFieldSpec(seckillactivity.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -422,19 +422,19 @@ func (_c *SeckillActivityCreate) createSpec() (*SeckillActivity, *sqlgraph.Creat
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(seckillactivity.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(seckillactivity.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(seckillactivity.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(seckillactivity.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(seckillactivity.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(seckillactivity.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(seckillactivity.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(seckillactivity.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -442,7 +442,7 @@ func (_c *SeckillActivityCreate) createSpec() (*SeckillActivity, *sqlgraph.Creat
 		_node.Name = value
 	}
 	if value, ok := _c.mutation.SkuID(); ok {
-		_spec.SetField(seckillactivity.FieldSkuID, field.TypeUint32, value)
+		_spec.SetField(seckillactivity.FieldSkuID, field.TypeInt64, value)
 		_node.SkuID = &value
 	}
 	if value, ok := _c.mutation.SeckillPrice(); ok {
@@ -570,7 +570,7 @@ func (u *SeckillActivityUpsert) ClearDeletedAt() *SeckillActivityUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SeckillActivityUpsert) SetCreatedBy(v uint32) *SeckillActivityUpsert {
+func (u *SeckillActivityUpsert) SetCreatedBy(v int64) *SeckillActivityUpsert {
 	u.Set(seckillactivity.FieldCreatedBy, v)
 	return u
 }
@@ -582,7 +582,7 @@ func (u *SeckillActivityUpsert) UpdateCreatedBy() *SeckillActivityUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SeckillActivityUpsert) AddCreatedBy(v uint32) *SeckillActivityUpsert {
+func (u *SeckillActivityUpsert) AddCreatedBy(v int64) *SeckillActivityUpsert {
 	u.Add(seckillactivity.FieldCreatedBy, v)
 	return u
 }
@@ -594,7 +594,7 @@ func (u *SeckillActivityUpsert) ClearCreatedBy() *SeckillActivityUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SeckillActivityUpsert) SetUpdatedBy(v uint32) *SeckillActivityUpsert {
+func (u *SeckillActivityUpsert) SetUpdatedBy(v int64) *SeckillActivityUpsert {
 	u.Set(seckillactivity.FieldUpdatedBy, v)
 	return u
 }
@@ -606,7 +606,7 @@ func (u *SeckillActivityUpsert) UpdateUpdatedBy() *SeckillActivityUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SeckillActivityUpsert) AddUpdatedBy(v uint32) *SeckillActivityUpsert {
+func (u *SeckillActivityUpsert) AddUpdatedBy(v int64) *SeckillActivityUpsert {
 	u.Add(seckillactivity.FieldUpdatedBy, v)
 	return u
 }
@@ -618,7 +618,7 @@ func (u *SeckillActivityUpsert) ClearUpdatedBy() *SeckillActivityUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SeckillActivityUpsert) SetDeletedBy(v uint32) *SeckillActivityUpsert {
+func (u *SeckillActivityUpsert) SetDeletedBy(v int64) *SeckillActivityUpsert {
 	u.Set(seckillactivity.FieldDeletedBy, v)
 	return u
 }
@@ -630,7 +630,7 @@ func (u *SeckillActivityUpsert) UpdateDeletedBy() *SeckillActivityUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SeckillActivityUpsert) AddDeletedBy(v uint32) *SeckillActivityUpsert {
+func (u *SeckillActivityUpsert) AddDeletedBy(v int64) *SeckillActivityUpsert {
 	u.Add(seckillactivity.FieldDeletedBy, v)
 	return u
 }
@@ -654,7 +654,7 @@ func (u *SeckillActivityUpsert) UpdateName() *SeckillActivityUpsert {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *SeckillActivityUpsert) SetSkuID(v uint32) *SeckillActivityUpsert {
+func (u *SeckillActivityUpsert) SetSkuID(v int64) *SeckillActivityUpsert {
 	u.Set(seckillactivity.FieldSkuID, v)
 	return u
 }
@@ -666,7 +666,7 @@ func (u *SeckillActivityUpsert) UpdateSkuID() *SeckillActivityUpsert {
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *SeckillActivityUpsert) AddSkuID(v uint32) *SeckillActivityUpsert {
+func (u *SeckillActivityUpsert) AddSkuID(v int64) *SeckillActivityUpsert {
 	u.Add(seckillactivity.FieldSkuID, v)
 	return u
 }
@@ -942,14 +942,14 @@ func (u *SeckillActivityUpsertOne) ClearDeletedAt() *SeckillActivityUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SeckillActivityUpsertOne) SetCreatedBy(v uint32) *SeckillActivityUpsertOne {
+func (u *SeckillActivityUpsertOne) SetCreatedBy(v int64) *SeckillActivityUpsertOne {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SeckillActivityUpsertOne) AddCreatedBy(v uint32) *SeckillActivityUpsertOne {
+func (u *SeckillActivityUpsertOne) AddCreatedBy(v int64) *SeckillActivityUpsertOne {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -970,14 +970,14 @@ func (u *SeckillActivityUpsertOne) ClearCreatedBy() *SeckillActivityUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SeckillActivityUpsertOne) SetUpdatedBy(v uint32) *SeckillActivityUpsertOne {
+func (u *SeckillActivityUpsertOne) SetUpdatedBy(v int64) *SeckillActivityUpsertOne {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SeckillActivityUpsertOne) AddUpdatedBy(v uint32) *SeckillActivityUpsertOne {
+func (u *SeckillActivityUpsertOne) AddUpdatedBy(v int64) *SeckillActivityUpsertOne {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -998,14 +998,14 @@ func (u *SeckillActivityUpsertOne) ClearUpdatedBy() *SeckillActivityUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SeckillActivityUpsertOne) SetDeletedBy(v uint32) *SeckillActivityUpsertOne {
+func (u *SeckillActivityUpsertOne) SetDeletedBy(v int64) *SeckillActivityUpsertOne {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SeckillActivityUpsertOne) AddDeletedBy(v uint32) *SeckillActivityUpsertOne {
+func (u *SeckillActivityUpsertOne) AddDeletedBy(v int64) *SeckillActivityUpsertOne {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1040,14 +1040,14 @@ func (u *SeckillActivityUpsertOne) UpdateName() *SeckillActivityUpsertOne {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *SeckillActivityUpsertOne) SetSkuID(v uint32) *SeckillActivityUpsertOne {
+func (u *SeckillActivityUpsertOne) SetSkuID(v int64) *SeckillActivityUpsertOne {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.SetSkuID(v)
 	})
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *SeckillActivityUpsertOne) AddSkuID(v uint32) *SeckillActivityUpsertOne {
+func (u *SeckillActivityUpsertOne) AddSkuID(v int64) *SeckillActivityUpsertOne {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.AddSkuID(v)
 	})
@@ -1279,7 +1279,7 @@ func (u *SeckillActivityUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SeckillActivityUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *SeckillActivityUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1288,7 +1288,7 @@ func (u *SeckillActivityUpsertOne) ID(ctx context.Context) (id uint32, err error
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SeckillActivityUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *SeckillActivityUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1345,7 +1345,7 @@ func (_c *SeckillActivityCreateBulk) Save(ctx context.Context) ([]*SeckillActivi
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1526,14 +1526,14 @@ func (u *SeckillActivityUpsertBulk) ClearDeletedAt() *SeckillActivityUpsertBulk 
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SeckillActivityUpsertBulk) SetCreatedBy(v uint32) *SeckillActivityUpsertBulk {
+func (u *SeckillActivityUpsertBulk) SetCreatedBy(v int64) *SeckillActivityUpsertBulk {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SeckillActivityUpsertBulk) AddCreatedBy(v uint32) *SeckillActivityUpsertBulk {
+func (u *SeckillActivityUpsertBulk) AddCreatedBy(v int64) *SeckillActivityUpsertBulk {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1554,14 +1554,14 @@ func (u *SeckillActivityUpsertBulk) ClearCreatedBy() *SeckillActivityUpsertBulk 
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SeckillActivityUpsertBulk) SetUpdatedBy(v uint32) *SeckillActivityUpsertBulk {
+func (u *SeckillActivityUpsertBulk) SetUpdatedBy(v int64) *SeckillActivityUpsertBulk {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SeckillActivityUpsertBulk) AddUpdatedBy(v uint32) *SeckillActivityUpsertBulk {
+func (u *SeckillActivityUpsertBulk) AddUpdatedBy(v int64) *SeckillActivityUpsertBulk {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1582,14 +1582,14 @@ func (u *SeckillActivityUpsertBulk) ClearUpdatedBy() *SeckillActivityUpsertBulk 
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SeckillActivityUpsertBulk) SetDeletedBy(v uint32) *SeckillActivityUpsertBulk {
+func (u *SeckillActivityUpsertBulk) SetDeletedBy(v int64) *SeckillActivityUpsertBulk {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SeckillActivityUpsertBulk) AddDeletedBy(v uint32) *SeckillActivityUpsertBulk {
+func (u *SeckillActivityUpsertBulk) AddDeletedBy(v int64) *SeckillActivityUpsertBulk {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1624,14 +1624,14 @@ func (u *SeckillActivityUpsertBulk) UpdateName() *SeckillActivityUpsertBulk {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *SeckillActivityUpsertBulk) SetSkuID(v uint32) *SeckillActivityUpsertBulk {
+func (u *SeckillActivityUpsertBulk) SetSkuID(v int64) *SeckillActivityUpsertBulk {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.SetSkuID(v)
 	})
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *SeckillActivityUpsertBulk) AddSkuID(v uint32) *SeckillActivityUpsertBulk {
+func (u *SeckillActivityUpsertBulk) AddSkuID(v int64) *SeckillActivityUpsertBulk {
 	return u.Update(func(s *SeckillActivityUpsert) {
 		s.AddSkuID(v)
 	})

@@ -4,14 +4,14 @@ import (
 	"context"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	appViewer "go-wind-shop/pkg/entgo/viewer"
 	"go-wind-shop/pkg/constants"
+	appViewer "go-wind-shop/pkg/entgo/viewer"
 
 	configV1 "go-wind-shop/api/gen/go/config/service/v1"
 
@@ -24,7 +24,7 @@ import (
 type ConfigService struct {
 	configV1.UnimplementedConfigServiceServer
 
-	log *logx.Helper
+	log        *logx.Helper
 	configRepo *data.ConfigRepo
 }
 

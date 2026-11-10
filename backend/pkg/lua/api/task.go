@@ -1,14 +1,14 @@
 package api
 
 import (
-	"go-wind-shop/pkg/logx"
 	lua "github.com/yuin/gopher-lua"
+	"go-wind-shop/pkg/logx"
 )
 
 // TaskHandlerRegistry stores Lua-based task handlers
 type TaskHandlerRegistry struct {
 	handlers map[string]*LuaTaskHandler
-	logger *logx.Helper
+	logger   *logx.Helper
 	engine   VMManager
 }
 
@@ -61,13 +61,14 @@ func RegisterTask(L *lua.LState, engine VMManager, logger *logx.Helper) {
 
 // registerTaskHandler is the Lua API function to register a task handler
 // Usage:
-//   task.register_handler("my_handler", "Description", function(ctx)
-//     -- handler logic
-//     return true
-//   end, {
-//     required = {"field1", "field2"},
-//     optional = {field3 = "default", field4 = 123}
-//   })
+//
+//	task.register_handler("my_handler", "Description", function(ctx)
+//	  -- handler logic
+//	  return true
+//	end, {
+//	  required = {"field1", "field2"},
+//	  optional = {field3 = "default", field4 = 123}
+//	})
 func registerTaskHandler(L *lua.LState) int {
 	// Get arguments
 	name := L.CheckString(1)

@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.GrouponGroup {
+func ID(id int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.GrouponGroup {
+func IDEQ(id int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.GrouponGroup {
+func IDNEQ(id int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.GrouponGroup {
+func IDIn(ids ...int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.GrouponGroup {
+func IDNotIn(ids ...int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.GrouponGroup {
+func IDGT(id int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.GrouponGroup {
+func IDGTE(id int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.GrouponGroup {
+func IDLT(id int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.GrouponGroup {
+func IDLTE(id int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,17 +70,17 @@ func DeletedAt(v time.Time) predicate.GrouponGroup {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.GrouponGroup {
+func TenantID(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldEQ(FieldTenantID, v))
 }
 
 // ActivityID applies equality check predicate on the "activity_id" field. It's identical to ActivityIDEQ.
-func ActivityID(v uint32) predicate.GrouponGroup {
+func ActivityID(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldEQ(FieldActivityID, v))
 }
 
 // LeaderOrderID applies equality check predicate on the "leader_order_id" field. It's identical to LeaderOrderIDEQ.
-func LeaderOrderID(v uint32) predicate.GrouponGroup {
+func LeaderOrderID(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldEQ(FieldLeaderOrderID, v))
 }
 
@@ -255,42 +255,42 @@ func DeletedAtNotNil() predicate.GrouponGroup {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.GrouponGroup {
+func TenantIDEQ(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.GrouponGroup {
+func TenantIDNEQ(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.GrouponGroup {
+func TenantIDIn(vs ...int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.GrouponGroup {
+func TenantIDNotIn(vs ...int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.GrouponGroup {
+func TenantIDGT(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.GrouponGroup {
+func TenantIDGTE(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.GrouponGroup {
+func TenantIDLT(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.GrouponGroup {
+func TenantIDLTE(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -305,42 +305,42 @@ func TenantIDNotNil() predicate.GrouponGroup {
 }
 
 // ActivityIDEQ applies the EQ predicate on the "activity_id" field.
-func ActivityIDEQ(v uint32) predicate.GrouponGroup {
+func ActivityIDEQ(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldEQ(FieldActivityID, v))
 }
 
 // ActivityIDNEQ applies the NEQ predicate on the "activity_id" field.
-func ActivityIDNEQ(v uint32) predicate.GrouponGroup {
+func ActivityIDNEQ(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldNEQ(FieldActivityID, v))
 }
 
 // ActivityIDIn applies the In predicate on the "activity_id" field.
-func ActivityIDIn(vs ...uint32) predicate.GrouponGroup {
+func ActivityIDIn(vs ...int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldIn(FieldActivityID, vs...))
 }
 
 // ActivityIDNotIn applies the NotIn predicate on the "activity_id" field.
-func ActivityIDNotIn(vs ...uint32) predicate.GrouponGroup {
+func ActivityIDNotIn(vs ...int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldNotIn(FieldActivityID, vs...))
 }
 
 // ActivityIDGT applies the GT predicate on the "activity_id" field.
-func ActivityIDGT(v uint32) predicate.GrouponGroup {
+func ActivityIDGT(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldGT(FieldActivityID, v))
 }
 
 // ActivityIDGTE applies the GTE predicate on the "activity_id" field.
-func ActivityIDGTE(v uint32) predicate.GrouponGroup {
+func ActivityIDGTE(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldGTE(FieldActivityID, v))
 }
 
 // ActivityIDLT applies the LT predicate on the "activity_id" field.
-func ActivityIDLT(v uint32) predicate.GrouponGroup {
+func ActivityIDLT(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldLT(FieldActivityID, v))
 }
 
 // ActivityIDLTE applies the LTE predicate on the "activity_id" field.
-func ActivityIDLTE(v uint32) predicate.GrouponGroup {
+func ActivityIDLTE(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldLTE(FieldActivityID, v))
 }
 
@@ -355,42 +355,42 @@ func ActivityIDNotNil() predicate.GrouponGroup {
 }
 
 // LeaderOrderIDEQ applies the EQ predicate on the "leader_order_id" field.
-func LeaderOrderIDEQ(v uint32) predicate.GrouponGroup {
+func LeaderOrderIDEQ(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldEQ(FieldLeaderOrderID, v))
 }
 
 // LeaderOrderIDNEQ applies the NEQ predicate on the "leader_order_id" field.
-func LeaderOrderIDNEQ(v uint32) predicate.GrouponGroup {
+func LeaderOrderIDNEQ(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldNEQ(FieldLeaderOrderID, v))
 }
 
 // LeaderOrderIDIn applies the In predicate on the "leader_order_id" field.
-func LeaderOrderIDIn(vs ...uint32) predicate.GrouponGroup {
+func LeaderOrderIDIn(vs ...int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldIn(FieldLeaderOrderID, vs...))
 }
 
 // LeaderOrderIDNotIn applies the NotIn predicate on the "leader_order_id" field.
-func LeaderOrderIDNotIn(vs ...uint32) predicate.GrouponGroup {
+func LeaderOrderIDNotIn(vs ...int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldNotIn(FieldLeaderOrderID, vs...))
 }
 
 // LeaderOrderIDGT applies the GT predicate on the "leader_order_id" field.
-func LeaderOrderIDGT(v uint32) predicate.GrouponGroup {
+func LeaderOrderIDGT(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldGT(FieldLeaderOrderID, v))
 }
 
 // LeaderOrderIDGTE applies the GTE predicate on the "leader_order_id" field.
-func LeaderOrderIDGTE(v uint32) predicate.GrouponGroup {
+func LeaderOrderIDGTE(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldGTE(FieldLeaderOrderID, v))
 }
 
 // LeaderOrderIDLT applies the LT predicate on the "leader_order_id" field.
-func LeaderOrderIDLT(v uint32) predicate.GrouponGroup {
+func LeaderOrderIDLT(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldLT(FieldLeaderOrderID, v))
 }
 
 // LeaderOrderIDLTE applies the LTE predicate on the "leader_order_id" field.
-func LeaderOrderIDLTE(v uint32) predicate.GrouponGroup {
+func LeaderOrderIDLTE(v int64) predicate.GrouponGroup {
 	return predicate.GrouponGroup(sql.FieldLTE(FieldLeaderOrderID, v))
 }
 

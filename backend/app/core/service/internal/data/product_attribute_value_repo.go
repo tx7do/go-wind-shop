@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -24,7 +24,7 @@ import (
 
 type ProductAttributeValueRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.ProductAttributeValue, ent.ProductAttributeValue]
 
@@ -114,7 +114,7 @@ func (r *ProductAttributeValueRepo) List(ctx context.Context, req *paginationV1.
 	}, nil
 }
 
-func (r *ProductAttributeValueRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *ProductAttributeValueRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().ProductAttributeValue.Query().
 		Where(productattributevalue.IDEQ(id)).
 		Exist(ctx)
@@ -371,7 +371,7 @@ func (r *ProductAttributeValueRepo) Delete(ctx context.Context, req *catalogV1.D
 	return err
 }
 
-func (r *ProductAttributeValueRepo) TranslationExists(ctx context.Context, valueId uint32, languageCode string) (bool, error) {
+func (r *ProductAttributeValueRepo) TranslationExists(ctx context.Context, valueId int64, languageCode string) (bool, error) {
 	return r.productAttributeValueTranslationRepo.TranslationExists(ctx, valueId, languageCode)
 }
 
@@ -421,7 +421,7 @@ func (r *ProductAttributeValueRepo) GetTranslation(ctx context.Context, req *cat
 	return r.productAttributeValueTranslationRepo.GetTranslation(ctx, req.GetId(), req.GetLocale())
 }
 
-func (r *ProductAttributeValueRepo) ListTranslations(ctx context.Context, valueId uint32) ([]*catalogV1.ProductAttributeValueTranslation, error) {
+func (r *ProductAttributeValueRepo) ListTranslations(ctx context.Context, valueId int64) ([]*catalogV1.ProductAttributeValueTranslation, error) {
 	return r.productAttributeValueTranslationRepo.ListTranslations(ctx, valueId, "", nil)
 }
 
@@ -429,6 +429,6 @@ func (r *ProductAttributeValueRepo) DeleteTranslation(ctx context.Context, req *
 	return r.productAttributeValueTranslationRepo.DeleteTranslation(ctx, req)
 }
 
-func (r *ProductAttributeValueRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, valueID uint32) error {
+func (r *ProductAttributeValueRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, valueID int64) error {
 	return r.productAttributeValueTranslationRepo.CleanTranslations(ctx, tx, valueID)
 }

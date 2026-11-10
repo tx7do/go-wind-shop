@@ -81,12 +81,11 @@ export async function fetchGetInternalMessage(
 }
 
 export function useUpdateInternalMessage(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.internalMessageService.UpdateMessage({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.internalMessageService.UpdateMessage({ id: String(id),
         data: { ...values },
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),
@@ -173,12 +172,11 @@ export function useCreateMessageCategory(
 }
 
 export function useUpdateMessageCategory(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.internalMessageCategoryService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.internalMessageCategoryService.Update({ id: String(id),
         data: { ...values },
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),

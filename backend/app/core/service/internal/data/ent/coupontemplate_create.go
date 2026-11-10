@@ -65,13 +65,13 @@ func (_c *CouponTemplateCreate) SetNillableDeletedAt(v *time.Time) *CouponTempla
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *CouponTemplateCreate) SetCreatedBy(v uint32) *CouponTemplateCreate {
+func (_c *CouponTemplateCreate) SetCreatedBy(v int64) *CouponTemplateCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *CouponTemplateCreate) SetNillableCreatedBy(v *uint32) *CouponTemplateCreate {
+func (_c *CouponTemplateCreate) SetNillableCreatedBy(v *int64) *CouponTemplateCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *CouponTemplateCreate) SetNillableCreatedBy(v *uint32) *CouponTemplateC
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *CouponTemplateCreate) SetUpdatedBy(v uint32) *CouponTemplateCreate {
+func (_c *CouponTemplateCreate) SetUpdatedBy(v int64) *CouponTemplateCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *CouponTemplateCreate) SetNillableUpdatedBy(v *uint32) *CouponTemplateCreate {
+func (_c *CouponTemplateCreate) SetNillableUpdatedBy(v *int64) *CouponTemplateCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *CouponTemplateCreate) SetNillableUpdatedBy(v *uint32) *CouponTemplateC
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *CouponTemplateCreate) SetDeletedBy(v uint32) *CouponTemplateCreate {
+func (_c *CouponTemplateCreate) SetDeletedBy(v int64) *CouponTemplateCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *CouponTemplateCreate) SetNillableDeletedBy(v *uint32) *CouponTemplateCreate {
+func (_c *CouponTemplateCreate) SetNillableDeletedBy(v *int64) *CouponTemplateCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *CouponTemplateCreate) SetNillableDeletedBy(v *uint32) *CouponTemplateC
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *CouponTemplateCreate) SetTenantID(v uint32) *CouponTemplateCreate {
+func (_c *CouponTemplateCreate) SetTenantID(v int64) *CouponTemplateCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *CouponTemplateCreate) SetNillableTenantID(v *uint32) *CouponTemplateCreate {
+func (_c *CouponTemplateCreate) SetNillableTenantID(v *int64) *CouponTemplateCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -289,7 +289,7 @@ func (_c *CouponTemplateCreate) SetNillableClaimable(v *bool) *CouponTemplateCre
 }
 
 // SetID sets the "id" field.
-func (_c *CouponTemplateCreate) SetID(v uint32) *CouponTemplateCreate {
+func (_c *CouponTemplateCreate) SetID(v int64) *CouponTemplateCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -406,7 +406,7 @@ func (_c *CouponTemplateCreate) sqlSave(ctx context.Context) (*CouponTemplate, e
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -416,7 +416,7 @@ func (_c *CouponTemplateCreate) sqlSave(ctx context.Context) (*CouponTemplate, e
 func (_c *CouponTemplateCreate) createSpec() (*CouponTemplate, *sqlgraph.CreateSpec) {
 	var (
 		_node = &CouponTemplate{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(coupontemplate.Table, sqlgraph.NewFieldSpec(coupontemplate.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(coupontemplate.Table, sqlgraph.NewFieldSpec(coupontemplate.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -436,19 +436,19 @@ func (_c *CouponTemplateCreate) createSpec() (*CouponTemplate, *sqlgraph.CreateS
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(coupontemplate.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(coupontemplate.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(coupontemplate.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(coupontemplate.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(coupontemplate.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(coupontemplate.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(coupontemplate.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(coupontemplate.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Currency(); ok {
@@ -588,7 +588,7 @@ func (u *CouponTemplateUpsert) ClearDeletedAt() *CouponTemplateUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CouponTemplateUpsert) SetCreatedBy(v uint32) *CouponTemplateUpsert {
+func (u *CouponTemplateUpsert) SetCreatedBy(v int64) *CouponTemplateUpsert {
 	u.Set(coupontemplate.FieldCreatedBy, v)
 	return u
 }
@@ -600,7 +600,7 @@ func (u *CouponTemplateUpsert) UpdateCreatedBy() *CouponTemplateUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CouponTemplateUpsert) AddCreatedBy(v uint32) *CouponTemplateUpsert {
+func (u *CouponTemplateUpsert) AddCreatedBy(v int64) *CouponTemplateUpsert {
 	u.Add(coupontemplate.FieldCreatedBy, v)
 	return u
 }
@@ -612,7 +612,7 @@ func (u *CouponTemplateUpsert) ClearCreatedBy() *CouponTemplateUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CouponTemplateUpsert) SetUpdatedBy(v uint32) *CouponTemplateUpsert {
+func (u *CouponTemplateUpsert) SetUpdatedBy(v int64) *CouponTemplateUpsert {
 	u.Set(coupontemplate.FieldUpdatedBy, v)
 	return u
 }
@@ -624,7 +624,7 @@ func (u *CouponTemplateUpsert) UpdateUpdatedBy() *CouponTemplateUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CouponTemplateUpsert) AddUpdatedBy(v uint32) *CouponTemplateUpsert {
+func (u *CouponTemplateUpsert) AddUpdatedBy(v int64) *CouponTemplateUpsert {
 	u.Add(coupontemplate.FieldUpdatedBy, v)
 	return u
 }
@@ -636,7 +636,7 @@ func (u *CouponTemplateUpsert) ClearUpdatedBy() *CouponTemplateUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CouponTemplateUpsert) SetDeletedBy(v uint32) *CouponTemplateUpsert {
+func (u *CouponTemplateUpsert) SetDeletedBy(v int64) *CouponTemplateUpsert {
 	u.Set(coupontemplate.FieldDeletedBy, v)
 	return u
 }
@@ -648,7 +648,7 @@ func (u *CouponTemplateUpsert) UpdateDeletedBy() *CouponTemplateUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CouponTemplateUpsert) AddDeletedBy(v uint32) *CouponTemplateUpsert {
+func (u *CouponTemplateUpsert) AddDeletedBy(v int64) *CouponTemplateUpsert {
 	u.Add(coupontemplate.FieldDeletedBy, v)
 	return u
 }
@@ -1002,14 +1002,14 @@ func (u *CouponTemplateUpsertOne) ClearDeletedAt() *CouponTemplateUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CouponTemplateUpsertOne) SetCreatedBy(v uint32) *CouponTemplateUpsertOne {
+func (u *CouponTemplateUpsertOne) SetCreatedBy(v int64) *CouponTemplateUpsertOne {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CouponTemplateUpsertOne) AddCreatedBy(v uint32) *CouponTemplateUpsertOne {
+func (u *CouponTemplateUpsertOne) AddCreatedBy(v int64) *CouponTemplateUpsertOne {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1030,14 +1030,14 @@ func (u *CouponTemplateUpsertOne) ClearCreatedBy() *CouponTemplateUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CouponTemplateUpsertOne) SetUpdatedBy(v uint32) *CouponTemplateUpsertOne {
+func (u *CouponTemplateUpsertOne) SetUpdatedBy(v int64) *CouponTemplateUpsertOne {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CouponTemplateUpsertOne) AddUpdatedBy(v uint32) *CouponTemplateUpsertOne {
+func (u *CouponTemplateUpsertOne) AddUpdatedBy(v int64) *CouponTemplateUpsertOne {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1058,14 +1058,14 @@ func (u *CouponTemplateUpsertOne) ClearUpdatedBy() *CouponTemplateUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CouponTemplateUpsertOne) SetDeletedBy(v uint32) *CouponTemplateUpsertOne {
+func (u *CouponTemplateUpsertOne) SetDeletedBy(v int64) *CouponTemplateUpsertOne {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CouponTemplateUpsertOne) AddDeletedBy(v uint32) *CouponTemplateUpsertOne {
+func (u *CouponTemplateUpsertOne) AddDeletedBy(v int64) *CouponTemplateUpsertOne {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1388,7 +1388,7 @@ func (u *CouponTemplateUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CouponTemplateUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *CouponTemplateUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1397,7 +1397,7 @@ func (u *CouponTemplateUpsertOne) ID(ctx context.Context) (id uint32, err error)
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CouponTemplateUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *CouponTemplateUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1454,7 +1454,7 @@ func (_c *CouponTemplateCreateBulk) Save(ctx context.Context) ([]*CouponTemplate
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1635,14 +1635,14 @@ func (u *CouponTemplateUpsertBulk) ClearDeletedAt() *CouponTemplateUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CouponTemplateUpsertBulk) SetCreatedBy(v uint32) *CouponTemplateUpsertBulk {
+func (u *CouponTemplateUpsertBulk) SetCreatedBy(v int64) *CouponTemplateUpsertBulk {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CouponTemplateUpsertBulk) AddCreatedBy(v uint32) *CouponTemplateUpsertBulk {
+func (u *CouponTemplateUpsertBulk) AddCreatedBy(v int64) *CouponTemplateUpsertBulk {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1663,14 +1663,14 @@ func (u *CouponTemplateUpsertBulk) ClearCreatedBy() *CouponTemplateUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CouponTemplateUpsertBulk) SetUpdatedBy(v uint32) *CouponTemplateUpsertBulk {
+func (u *CouponTemplateUpsertBulk) SetUpdatedBy(v int64) *CouponTemplateUpsertBulk {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CouponTemplateUpsertBulk) AddUpdatedBy(v uint32) *CouponTemplateUpsertBulk {
+func (u *CouponTemplateUpsertBulk) AddUpdatedBy(v int64) *CouponTemplateUpsertBulk {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1691,14 +1691,14 @@ func (u *CouponTemplateUpsertBulk) ClearUpdatedBy() *CouponTemplateUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CouponTemplateUpsertBulk) SetDeletedBy(v uint32) *CouponTemplateUpsertBulk {
+func (u *CouponTemplateUpsertBulk) SetDeletedBy(v int64) *CouponTemplateUpsertBulk {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CouponTemplateUpsertBulk) AddDeletedBy(v uint32) *CouponTemplateUpsertBulk {
+func (u *CouponTemplateUpsertBulk) AddDeletedBy(v int64) *CouponTemplateUpsertBulk {
 	return u.Update(func(s *CouponTemplateUpsert) {
 		s.AddDeletedBy(v)
 	})

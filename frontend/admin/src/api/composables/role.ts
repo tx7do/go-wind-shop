@@ -67,12 +67,11 @@ export function useCreateRole(options?: UseMutationOptions<{}, Error, Record<str
 }
 
 export function useUpdateRole(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.roleService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.roleService.Update({ id: String(id),
         data: { ...values } as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),

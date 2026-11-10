@@ -1,8 +1,8 @@
 package client
 
 import (
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/redis/go-redis/v9"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"go-wind-shop/pkg/logx"
 	"go-wind-shop/pkg/redisx"
 )

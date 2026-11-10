@@ -1,10 +1,10 @@
 package eventbus_test
 
 import (
-	"go-wind-shop/pkg/logx"
-	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
 	"fmt"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
+	"go-wind-shop/pkg/logx"
 	"time"
 
 	"go-wind-shop/pkg/eventbus"

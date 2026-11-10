@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -23,7 +23,7 @@ import (
 
 type InternalMessageRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper          *mapper.CopierMapper[internalMessageV1.InternalMessage, ent.InternalMessage]
 	statusConverter *mapper.EnumTypeConverter[internalMessageV1.InternalMessage_Status, internalmessage.Status]
@@ -106,7 +106,7 @@ func (r *InternalMessageRepo) List(ctx context.Context, req *paginationV1.Paging
 	}, nil
 }
 
-func (r *InternalMessageRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *InternalMessageRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().InternalMessage.Query().
 		Where(internalmessage.IDEQ(id)).
 		Exist(ctx)
@@ -210,7 +210,7 @@ func (r *InternalMessageRepo) Update(ctx context.Context, req *internalMessageV1
 	return err
 }
 
-func (r *InternalMessageRepo) Delete(ctx context.Context, id uint32) error {
+func (r *InternalMessageRepo) Delete(ctx context.Context, id int64) error {
 	if id == 0 {
 		return internalMessageV1.ErrorBadRequest("invalid parameter")
 	}

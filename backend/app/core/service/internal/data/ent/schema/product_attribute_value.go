@@ -28,7 +28,7 @@ func (ProductAttributeValue) Annotations() []schema.Annotation {
 
 func (ProductAttributeValue) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("attribute_id").
+		field.Int64("attribute_id").
 			Comment("所属属性ID").
 			Optional().
 			Nillable(),
@@ -37,9 +37,9 @@ func (ProductAttributeValue) Fields() []ent.Field {
 
 func (ProductAttributeValue) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.SortOrder{},
 	}
 }

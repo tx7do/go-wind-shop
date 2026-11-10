@@ -4,10 +4,10 @@ import (
 	"context"
 	"strconv"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-crud/viewer"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data"
 
@@ -27,7 +27,7 @@ type InteractionAdminService struct {
 
 	interactionRepo       *data.InteractionRepo
 	operationAuditLogRepo *data.OperationAuditLogRepo
-	log *logx.Helper
+	log                   *logx.Helper
 }
 
 func NewInteractionAdminService(
@@ -44,7 +44,7 @@ func NewInteractionAdminService(
 
 // requireAdminOperator 校验调用者为平台/系统管理员，返回操作人的 (tenantID, userID)。
 // 非管理员上下文一律 403。
-func (s *InteractionAdminService) requireAdminOperator(ctx context.Context) (operatorTenantID, operatorUserID uint32, err error) {
+func (s *InteractionAdminService) requireAdminOperator(ctx context.Context) (operatorTenantID, operatorUserID int64, err error) {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist || vc == nil {
 		return 0, 0, interactionV1.ErrorUnauthorized("operator identity required")
@@ -52,11 +52,11 @@ func (s *InteractionAdminService) requireAdminOperator(ctx context.Context) (ope
 	if !(vc.IsPlatformContext() || vc.IsSystemContext()) {
 		return 0, 0, interactionV1.ErrorForbidden("platform admin only")
 	}
-	return uint32(vc.TenantID()), uint32(vc.UserID()), nil
+	return int64(vc.TenantID()), int64(vc.UserID()), nil
 }
 
 // writeAudit 写一条 OperationAuditLog（Action=DELETE）。resourceID 标识被操作目标。
-func (s *InteractionAdminService) writeAudit(ctx context.Context, operatorTenantID, operatorUserID uint32, resourceType, resourceID string, success bool) {
+func (s *InteractionAdminService) writeAudit(ctx context.Context, operatorTenantID, operatorUserID int64, resourceType, resourceID string, success bool) {
 	req := &auditV1.CreateOperationAuditLogRequest{
 		Data: &auditV1.OperationAuditLog{
 			TenantId:     trans.Ptr(operatorTenantID),
@@ -80,11 +80,11 @@ func (s *InteractionAdminService) PurgeTargetInteractions(ctx context.Context, r
 
 	affected, err := s.interactionRepo.PurgeTargetInteractions(ctx, req.GetTargetType(), req.GetTargetId())
 	s.writeAudit(ctx, opTid, opUid, "interaction_counter",
-		strconv.FormatUint(uint64(req.GetTargetId()), 10), err == nil)
+		strconv.FormatInt(int64(req.GetTargetId()), 10), err == nil)
 	if err != nil {
 		return nil, err
 	}
-	return &interactionV1.PurgeTargetInteractionsResponse{AffectedRows: affected}, nil
+	return &interactionV1.PurgeTargetInteractionsResponse{AffectedRows: uint32(affected)}, nil
 }
 
 func (s *InteractionAdminService) PurgeUserInteractions(ctx context.Context, req *interactionV1.PurgeUserInteractionsRequest) (*interactionV1.PurgeUserInteractionsResponse, error) {
@@ -95,11 +95,11 @@ func (s *InteractionAdminService) PurgeUserInteractions(ctx context.Context, req
 
 	affected, err := s.interactionRepo.PurgeUserInteractions(ctx, req.GetUserId())
 	s.writeAudit(ctx, opTid, opUid, "interaction_user_ledger",
-		strconv.FormatUint(uint64(req.GetUserId()), 10), err == nil)
+		strconv.FormatInt(int64(req.GetUserId()), 10), err == nil)
 	if err != nil {
 		return nil, err
 	}
-	return &interactionV1.PurgeUserInteractionsResponse{AffectedRows: affected}, nil
+	return &interactionV1.PurgeUserInteractionsResponse{AffectedRows: uint32(affected)}, nil
 }
 
 func (s *InteractionAdminService) ResetCounter(ctx context.Context, req *interactionV1.ResetCounterRequest) (*interactionV1.ResetCounterResponse, error) {
@@ -110,7 +110,7 @@ func (s *InteractionAdminService) ResetCounter(ctx context.Context, req *interac
 
 	recount, err := s.interactionRepo.ResetCounter(ctx, req.GetTargetType(), req.GetTargetId(), req.GetMetric())
 	s.writeAudit(ctx, opTid, opUid, "interaction_counter_reset",
-		strconv.FormatUint(uint64(req.GetTargetId()), 10), err == nil)
+		strconv.FormatInt(int64(req.GetTargetId()), 10), err == nil)
 	if err != nil {
 		return nil, err
 	}

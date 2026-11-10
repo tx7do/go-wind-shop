@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -24,7 +24,7 @@ import (
 
 type ApiRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper         *mapper.CopierMapper[permissionV1.Api, ent.Api]
 	scopeConverter *mapper.EnumTypeConverter[permissionV1.Api_Scope, api.Scope]
@@ -85,7 +85,7 @@ func (r *ApiRepo) Count(ctx context.Context, req *paginationV1.PagingRequest) (*
 	}
 
 	return &permissionV1.CountApiResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 
@@ -110,7 +110,7 @@ func (r *ApiRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*p
 	}, nil
 }
 
-func (r *ApiRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *ApiRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Api.Query().
 		Where(api.IDEQ(id)).
 		Exist(ctx)
@@ -169,7 +169,7 @@ func (r *ApiRepo) GetApiByEndpoint(ctx context.Context, path, method string) (*p
 }
 
 // GetApiByIDs 根据ID列表获取API资源
-func (r *ApiRepo) GetApiByIDs(ctx context.Context, ids []uint32) ([]*permissionV1.Api, error) {
+func (r *ApiRepo) GetApiByIDs(ctx context.Context, ids []int64) ([]*permissionV1.Api, error) {
 	if len(ids) == 0 {
 		return nil, permissionV1.ErrorBadRequest("invalid parameter")
 	}

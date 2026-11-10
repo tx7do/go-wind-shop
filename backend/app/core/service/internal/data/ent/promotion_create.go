@@ -65,13 +65,13 @@ func (_c *PromotionCreate) SetNillableDeletedAt(v *time.Time) *PromotionCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *PromotionCreate) SetCreatedBy(v uint32) *PromotionCreate {
+func (_c *PromotionCreate) SetCreatedBy(v int64) *PromotionCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *PromotionCreate) SetNillableCreatedBy(v *uint32) *PromotionCreate {
+func (_c *PromotionCreate) SetNillableCreatedBy(v *int64) *PromotionCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *PromotionCreate) SetNillableCreatedBy(v *uint32) *PromotionCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *PromotionCreate) SetUpdatedBy(v uint32) *PromotionCreate {
+func (_c *PromotionCreate) SetUpdatedBy(v int64) *PromotionCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *PromotionCreate) SetNillableUpdatedBy(v *uint32) *PromotionCreate {
+func (_c *PromotionCreate) SetNillableUpdatedBy(v *int64) *PromotionCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *PromotionCreate) SetNillableUpdatedBy(v *uint32) *PromotionCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *PromotionCreate) SetDeletedBy(v uint32) *PromotionCreate {
+func (_c *PromotionCreate) SetDeletedBy(v int64) *PromotionCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *PromotionCreate) SetNillableDeletedBy(v *uint32) *PromotionCreate {
+func (_c *PromotionCreate) SetNillableDeletedBy(v *int64) *PromotionCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *PromotionCreate) SetNillableDeletedBy(v *uint32) *PromotionCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PromotionCreate) SetTenantID(v uint32) *PromotionCreate {
+func (_c *PromotionCreate) SetTenantID(v int64) *PromotionCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PromotionCreate) SetNillableTenantID(v *uint32) *PromotionCreate {
+func (_c *PromotionCreate) SetNillableTenantID(v *int64) *PromotionCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -163,13 +163,13 @@ func (_c *PromotionCreate) SetNillablePromoType(v *promotion.PromoType) *Promoti
 }
 
 // SetProductID sets the "product_id" field.
-func (_c *PromotionCreate) SetProductID(v uint32) *PromotionCreate {
+func (_c *PromotionCreate) SetProductID(v int64) *PromotionCreate {
 	_c.mutation.SetProductID(v)
 	return _c
 }
 
 // SetNillableProductID sets the "product_id" field if the given value is not nil.
-func (_c *PromotionCreate) SetNillableProductID(v *uint32) *PromotionCreate {
+func (_c *PromotionCreate) SetNillableProductID(v *int64) *PromotionCreate {
 	if v != nil {
 		_c.SetProductID(*v)
 	}
@@ -275,7 +275,7 @@ func (_c *PromotionCreate) SetNillableStatus(v *promotion.Status) *PromotionCrea
 }
 
 // SetID sets the "id" field.
-func (_c *PromotionCreate) SetID(v uint32) *PromotionCreate {
+func (_c *PromotionCreate) SetID(v int64) *PromotionCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -381,7 +381,7 @@ func (_c *PromotionCreate) sqlSave(ctx context.Context) (*Promotion, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -391,7 +391,7 @@ func (_c *PromotionCreate) sqlSave(ctx context.Context) (*Promotion, error) {
 func (_c *PromotionCreate) createSpec() (*Promotion, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Promotion{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(promotion.Table, sqlgraph.NewFieldSpec(promotion.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(promotion.Table, sqlgraph.NewFieldSpec(promotion.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -411,19 +411,19 @@ func (_c *PromotionCreate) createSpec() (*Promotion, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(promotion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(promotion.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(promotion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(promotion.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(promotion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(promotion.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(promotion.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(promotion.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Currency(); ok {
@@ -439,7 +439,7 @@ func (_c *PromotionCreate) createSpec() (*Promotion, *sqlgraph.CreateSpec) {
 		_node.PromoType = &value
 	}
 	if value, ok := _c.mutation.ProductID(); ok {
-		_spec.SetField(promotion.FieldProductID, field.TypeUint32, value)
+		_spec.SetField(promotion.FieldProductID, field.TypeInt64, value)
 		_node.ProductID = &value
 	}
 	if value, ok := _c.mutation.SpecialPrice(); ok {
@@ -559,7 +559,7 @@ func (u *PromotionUpsert) ClearDeletedAt() *PromotionUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PromotionUpsert) SetCreatedBy(v uint32) *PromotionUpsert {
+func (u *PromotionUpsert) SetCreatedBy(v int64) *PromotionUpsert {
 	u.Set(promotion.FieldCreatedBy, v)
 	return u
 }
@@ -571,7 +571,7 @@ func (u *PromotionUpsert) UpdateCreatedBy() *PromotionUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PromotionUpsert) AddCreatedBy(v uint32) *PromotionUpsert {
+func (u *PromotionUpsert) AddCreatedBy(v int64) *PromotionUpsert {
 	u.Add(promotion.FieldCreatedBy, v)
 	return u
 }
@@ -583,7 +583,7 @@ func (u *PromotionUpsert) ClearCreatedBy() *PromotionUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PromotionUpsert) SetUpdatedBy(v uint32) *PromotionUpsert {
+func (u *PromotionUpsert) SetUpdatedBy(v int64) *PromotionUpsert {
 	u.Set(promotion.FieldUpdatedBy, v)
 	return u
 }
@@ -595,7 +595,7 @@ func (u *PromotionUpsert) UpdateUpdatedBy() *PromotionUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PromotionUpsert) AddUpdatedBy(v uint32) *PromotionUpsert {
+func (u *PromotionUpsert) AddUpdatedBy(v int64) *PromotionUpsert {
 	u.Add(promotion.FieldUpdatedBy, v)
 	return u
 }
@@ -607,7 +607,7 @@ func (u *PromotionUpsert) ClearUpdatedBy() *PromotionUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PromotionUpsert) SetDeletedBy(v uint32) *PromotionUpsert {
+func (u *PromotionUpsert) SetDeletedBy(v int64) *PromotionUpsert {
 	u.Set(promotion.FieldDeletedBy, v)
 	return u
 }
@@ -619,7 +619,7 @@ func (u *PromotionUpsert) UpdateDeletedBy() *PromotionUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PromotionUpsert) AddDeletedBy(v uint32) *PromotionUpsert {
+func (u *PromotionUpsert) AddDeletedBy(v int64) *PromotionUpsert {
 	u.Add(promotion.FieldDeletedBy, v)
 	return u
 }
@@ -685,7 +685,7 @@ func (u *PromotionUpsert) ClearPromoType() *PromotionUpsert {
 }
 
 // SetProductID sets the "product_id" field.
-func (u *PromotionUpsert) SetProductID(v uint32) *PromotionUpsert {
+func (u *PromotionUpsert) SetProductID(v int64) *PromotionUpsert {
 	u.Set(promotion.FieldProductID, v)
 	return u
 }
@@ -697,7 +697,7 @@ func (u *PromotionUpsert) UpdateProductID() *PromotionUpsert {
 }
 
 // AddProductID adds v to the "product_id" field.
-func (u *PromotionUpsert) AddProductID(v uint32) *PromotionUpsert {
+func (u *PromotionUpsert) AddProductID(v int64) *PromotionUpsert {
 	u.Add(promotion.FieldProductID, v)
 	return u
 }
@@ -955,14 +955,14 @@ func (u *PromotionUpsertOne) ClearDeletedAt() *PromotionUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PromotionUpsertOne) SetCreatedBy(v uint32) *PromotionUpsertOne {
+func (u *PromotionUpsertOne) SetCreatedBy(v int64) *PromotionUpsertOne {
 	return u.Update(func(s *PromotionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PromotionUpsertOne) AddCreatedBy(v uint32) *PromotionUpsertOne {
+func (u *PromotionUpsertOne) AddCreatedBy(v int64) *PromotionUpsertOne {
 	return u.Update(func(s *PromotionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -983,14 +983,14 @@ func (u *PromotionUpsertOne) ClearCreatedBy() *PromotionUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PromotionUpsertOne) SetUpdatedBy(v uint32) *PromotionUpsertOne {
+func (u *PromotionUpsertOne) SetUpdatedBy(v int64) *PromotionUpsertOne {
 	return u.Update(func(s *PromotionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PromotionUpsertOne) AddUpdatedBy(v uint32) *PromotionUpsertOne {
+func (u *PromotionUpsertOne) AddUpdatedBy(v int64) *PromotionUpsertOne {
 	return u.Update(func(s *PromotionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1011,14 +1011,14 @@ func (u *PromotionUpsertOne) ClearUpdatedBy() *PromotionUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PromotionUpsertOne) SetDeletedBy(v uint32) *PromotionUpsertOne {
+func (u *PromotionUpsertOne) SetDeletedBy(v int64) *PromotionUpsertOne {
 	return u.Update(func(s *PromotionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PromotionUpsertOne) AddDeletedBy(v uint32) *PromotionUpsertOne {
+func (u *PromotionUpsertOne) AddDeletedBy(v int64) *PromotionUpsertOne {
 	return u.Update(func(s *PromotionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1102,14 +1102,14 @@ func (u *PromotionUpsertOne) ClearPromoType() *PromotionUpsertOne {
 }
 
 // SetProductID sets the "product_id" field.
-func (u *PromotionUpsertOne) SetProductID(v uint32) *PromotionUpsertOne {
+func (u *PromotionUpsertOne) SetProductID(v int64) *PromotionUpsertOne {
 	return u.Update(func(s *PromotionUpsert) {
 		s.SetProductID(v)
 	})
 }
 
 // AddProductID adds v to the "product_id" field.
-func (u *PromotionUpsertOne) AddProductID(v uint32) *PromotionUpsertOne {
+func (u *PromotionUpsertOne) AddProductID(v int64) *PromotionUpsertOne {
 	return u.Update(func(s *PromotionUpsert) {
 		s.AddProductID(v)
 	})
@@ -1320,7 +1320,7 @@ func (u *PromotionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PromotionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *PromotionUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1329,7 +1329,7 @@ func (u *PromotionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PromotionUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *PromotionUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1386,7 +1386,7 @@ func (_c *PromotionCreateBulk) Save(ctx context.Context) ([]*Promotion, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1567,14 +1567,14 @@ func (u *PromotionUpsertBulk) ClearDeletedAt() *PromotionUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PromotionUpsertBulk) SetCreatedBy(v uint32) *PromotionUpsertBulk {
+func (u *PromotionUpsertBulk) SetCreatedBy(v int64) *PromotionUpsertBulk {
 	return u.Update(func(s *PromotionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PromotionUpsertBulk) AddCreatedBy(v uint32) *PromotionUpsertBulk {
+func (u *PromotionUpsertBulk) AddCreatedBy(v int64) *PromotionUpsertBulk {
 	return u.Update(func(s *PromotionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1595,14 +1595,14 @@ func (u *PromotionUpsertBulk) ClearCreatedBy() *PromotionUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PromotionUpsertBulk) SetUpdatedBy(v uint32) *PromotionUpsertBulk {
+func (u *PromotionUpsertBulk) SetUpdatedBy(v int64) *PromotionUpsertBulk {
 	return u.Update(func(s *PromotionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PromotionUpsertBulk) AddUpdatedBy(v uint32) *PromotionUpsertBulk {
+func (u *PromotionUpsertBulk) AddUpdatedBy(v int64) *PromotionUpsertBulk {
 	return u.Update(func(s *PromotionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1623,14 +1623,14 @@ func (u *PromotionUpsertBulk) ClearUpdatedBy() *PromotionUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PromotionUpsertBulk) SetDeletedBy(v uint32) *PromotionUpsertBulk {
+func (u *PromotionUpsertBulk) SetDeletedBy(v int64) *PromotionUpsertBulk {
 	return u.Update(func(s *PromotionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PromotionUpsertBulk) AddDeletedBy(v uint32) *PromotionUpsertBulk {
+func (u *PromotionUpsertBulk) AddDeletedBy(v int64) *PromotionUpsertBulk {
 	return u.Update(func(s *PromotionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1714,14 +1714,14 @@ func (u *PromotionUpsertBulk) ClearPromoType() *PromotionUpsertBulk {
 }
 
 // SetProductID sets the "product_id" field.
-func (u *PromotionUpsertBulk) SetProductID(v uint32) *PromotionUpsertBulk {
+func (u *PromotionUpsertBulk) SetProductID(v int64) *PromotionUpsertBulk {
 	return u.Update(func(s *PromotionUpsert) {
 		s.SetProductID(v)
 	})
 }
 
 // AddProductID adds v to the "product_id" field.
-func (u *PromotionUpsertBulk) AddProductID(v uint32) *PromotionUpsertBulk {
+func (u *PromotionUpsertBulk) AddProductID(v int64) *PromotionUpsertBulk {
 	return u.Update(func(s *PromotionUpsert) {
 		s.AddProductID(v)
 	})

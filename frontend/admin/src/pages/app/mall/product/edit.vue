@@ -428,7 +428,7 @@ async function loadOptions() {
 async function loadProduct() {
   if (isCreate || !currentId) return;
   try {
-    const resp: any = await fetchGetProduct({ id: currentId });
+    const resp: any = await fetchGetProduct({ id: String(currentId) });
     formData.translations = Array.isArray(resp.translations) ? resp.translations : [];
     loadLocaleIntoForm(editingLocale.value);
     formData.status = resp.status ?? "PRODUCT_STATUS_DRAFT";

@@ -76,12 +76,11 @@ export function useCreateSkuAttributeCombination(
 }
 
 export function useUpdateSkuAttributeCombination(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.skuAttributeCombinationService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.skuAttributeCombinationService.Update({ id: String(id),
         data: { ...values },
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),

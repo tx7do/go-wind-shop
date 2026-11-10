@@ -23,7 +23,7 @@ import (
 
 type BrandTranslationRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.BrandTranslation, ent.BrandTranslation]
 
@@ -66,7 +66,7 @@ func (r *BrandTranslationRepo) init() {
 func (r *BrandTranslationRepo) CleanTranslations(
 	ctx context.Context,
 	tx *ent.Tx,
-	brandID uint32,
+	brandID int64,
 ) error {
 	if _, err := tx.BrandTranslation.Delete().
 		Where(
@@ -79,7 +79,7 @@ func (r *BrandTranslationRepo) CleanTranslations(
 	return nil
 }
 
-func (r *BrandTranslationRepo) ListTranslations(ctx context.Context, brandID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*catalogV1.BrandTranslation, error) {
+func (r *BrandTranslationRepo) ListTranslations(ctx context.Context, brandID int64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*catalogV1.BrandTranslation, error) {
 	builder := r.entClient.Client().BrandTranslation.Query().
 		Where(
 			brandtranslation.BrandIDEQ(brandID),
@@ -117,7 +117,7 @@ func (r *BrandTranslationRepo) ListTranslations(ctx context.Context, brandID uin
 	return dtos, nil
 }
 
-func (r *BrandTranslationRepo) GetTranslation(ctx context.Context, brandID uint32, languageCode string) (*catalogV1.BrandTranslation, error) {
+func (r *BrandTranslationRepo) GetTranslation(ctx context.Context, brandID int64, languageCode string) (*catalogV1.BrandTranslation, error) {
 	q := r.entClient.Client().BrandTranslation.Query().
 		Where(
 			brandtranslation.BrandIDEQ(brandID),
@@ -185,7 +185,7 @@ func (r *BrandTranslationRepo) CreateTranslation(ctx context.Context, data *cata
 	return r.mapper.ToDTO(entity), nil
 }
 
-func (r *BrandTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, data *catalogV1.BrandTranslation, updateMask *fieldmaskpb.FieldMask) (*catalogV1.BrandTranslation, error) {
+func (r *BrandTranslationRepo) UpdateTranslation(ctx context.Context, id int64, data *catalogV1.BrandTranslation, updateMask *fieldmaskpb.FieldMask) (*catalogV1.BrandTranslation, error) {
 	if data == nil {
 		return nil, nil
 	}
@@ -216,7 +216,7 @@ func (r *BrandTranslationRepo) UpdateTranslation(ctx context.Context, id uint32,
 }
 
 // TranslationExists checks if a translation exists for the given brand ID and language code.
-func (r *BrandTranslationRepo) TranslationExists(ctx context.Context, brandId uint32, languageCode string) (bool, error) {
+func (r *BrandTranslationRepo) TranslationExists(ctx context.Context, brandId int64, languageCode string) (bool, error) {
 	c, err := r.entClient.Client().BrandTranslation.Query().
 		Where(
 			brandtranslation.BrandIDEQ(brandId),
@@ -232,7 +232,7 @@ func (r *BrandTranslationRepo) TranslationExists(ctx context.Context, brandId ui
 }
 
 // ListAvailedLanguages lists the language codes of all translations available for the given brand ID.
-func (r *BrandTranslationRepo) ListAvailedLanguages(ctx context.Context, brandId uint32) ([]string, error) {
+func (r *BrandTranslationRepo) ListAvailedLanguages(ctx context.Context, brandId int64) ([]string, error) {
 	entities, err := r.entClient.Client().BrandTranslation.Query().
 		Where(
 			brandtranslation.BrandIDEQ(brandId),

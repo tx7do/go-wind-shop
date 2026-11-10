@@ -70,14 +70,14 @@ func (_u *ProductAttributeTranslationUpdate) ClearDeletedAt() *ProductAttributeT
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ProductAttributeTranslationUpdate) SetCreatedBy(v uint32) *ProductAttributeTranslationUpdate {
+func (_u *ProductAttributeTranslationUpdate) SetCreatedBy(v int64) *ProductAttributeTranslationUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ProductAttributeTranslationUpdate) SetNillableCreatedBy(v *uint32) *ProductAttributeTranslationUpdate {
+func (_u *ProductAttributeTranslationUpdate) SetNillableCreatedBy(v *int64) *ProductAttributeTranslationUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *ProductAttributeTranslationUpdate) SetNillableCreatedBy(v *uint32) *Pr
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ProductAttributeTranslationUpdate) AddCreatedBy(v int32) *ProductAttributeTranslationUpdate {
+func (_u *ProductAttributeTranslationUpdate) AddCreatedBy(v int64) *ProductAttributeTranslationUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *ProductAttributeTranslationUpdate) ClearCreatedBy() *ProductAttributeT
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ProductAttributeTranslationUpdate) SetUpdatedBy(v uint32) *ProductAttributeTranslationUpdate {
+func (_u *ProductAttributeTranslationUpdate) SetUpdatedBy(v int64) *ProductAttributeTranslationUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ProductAttributeTranslationUpdate) SetNillableUpdatedBy(v *uint32) *ProductAttributeTranslationUpdate {
+func (_u *ProductAttributeTranslationUpdate) SetNillableUpdatedBy(v *int64) *ProductAttributeTranslationUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *ProductAttributeTranslationUpdate) SetNillableUpdatedBy(v *uint32) *Pr
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ProductAttributeTranslationUpdate) AddUpdatedBy(v int32) *ProductAttributeTranslationUpdate {
+func (_u *ProductAttributeTranslationUpdate) AddUpdatedBy(v int64) *ProductAttributeTranslationUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *ProductAttributeTranslationUpdate) ClearUpdatedBy() *ProductAttributeT
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ProductAttributeTranslationUpdate) SetDeletedBy(v uint32) *ProductAttributeTranslationUpdate {
+func (_u *ProductAttributeTranslationUpdate) SetDeletedBy(v int64) *ProductAttributeTranslationUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ProductAttributeTranslationUpdate) SetNillableDeletedBy(v *uint32) *ProductAttributeTranslationUpdate {
+func (_u *ProductAttributeTranslationUpdate) SetNillableDeletedBy(v *int64) *ProductAttributeTranslationUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *ProductAttributeTranslationUpdate) SetNillableDeletedBy(v *uint32) *Pr
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ProductAttributeTranslationUpdate) AddDeletedBy(v int32) *ProductAttributeTranslationUpdate {
+func (_u *ProductAttributeTranslationUpdate) AddDeletedBy(v int64) *ProductAttributeTranslationUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *ProductAttributeTranslationUpdate) ClearDeletedBy() *ProductAttributeT
 }
 
 // SetAttributeID sets the "attribute_id" field.
-func (_u *ProductAttributeTranslationUpdate) SetAttributeID(v uint32) *ProductAttributeTranslationUpdate {
+func (_u *ProductAttributeTranslationUpdate) SetAttributeID(v int64) *ProductAttributeTranslationUpdate {
 	_u.mutation.ResetAttributeID()
 	_u.mutation.SetAttributeID(v)
 	return _u
 }
 
 // SetNillableAttributeID sets the "attribute_id" field if the given value is not nil.
-func (_u *ProductAttributeTranslationUpdate) SetNillableAttributeID(v *uint32) *ProductAttributeTranslationUpdate {
+func (_u *ProductAttributeTranslationUpdate) SetNillableAttributeID(v *int64) *ProductAttributeTranslationUpdate {
 	if v != nil {
 		_u.SetAttributeID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *ProductAttributeTranslationUpdate) SetNillableAttributeID(v *uint32) *
 }
 
 // AddAttributeID adds value to the "attribute_id" field.
-func (_u *ProductAttributeTranslationUpdate) AddAttributeID(v int32) *ProductAttributeTranslationUpdate {
+func (_u *ProductAttributeTranslationUpdate) AddAttributeID(v int64) *ProductAttributeTranslationUpdate {
 	_u.mutation.AddAttributeID(v)
 	return _u
 }
@@ -256,7 +256,7 @@ func (_u *ProductAttributeTranslationUpdate) Modify(modifiers ...func(u *sql.Upd
 }
 
 func (_u *ProductAttributeTranslationUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(productattributetranslation.Table, productattributetranslation.Columns, sqlgraph.NewFieldSpec(productattributetranslation.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(productattributetranslation.Table, productattributetranslation.Columns, sqlgraph.NewFieldSpec(productattributetranslation.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -280,40 +280,40 @@ func (_u *ProductAttributeTranslationUpdate) sqlSave(ctx context.Context) (_node
 		_spec.ClearField(productattributetranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(productattributetranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(productattributetranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(productattributetranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(productattributetranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(productattributetranslation.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(productattributetranslation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(productattributetranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(productattributetranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(productattributetranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(productattributetranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(productattributetranslation.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(productattributetranslation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(productattributetranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(productattributetranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(productattributetranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(productattributetranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(productattributetranslation.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(productattributetranslation.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.AttributeID(); ok {
-		_spec.SetField(productattributetranslation.FieldAttributeID, field.TypeUint32, value)
+		_spec.SetField(productattributetranslation.FieldAttributeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedAttributeID(); ok {
-		_spec.AddField(productattributetranslation.FieldAttributeID, field.TypeUint32, value)
+		_spec.AddField(productattributetranslation.FieldAttributeID, field.TypeInt64, value)
 	}
 	if _u.mutation.AttributeIDCleared() {
-		_spec.ClearField(productattributetranslation.FieldAttributeID, field.TypeUint32)
+		_spec.ClearField(productattributetranslation.FieldAttributeID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(productattributetranslation.FieldLanguageCode, field.TypeString, value)
@@ -390,14 +390,14 @@ func (_u *ProductAttributeTranslationUpdateOne) ClearDeletedAt() *ProductAttribu
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ProductAttributeTranslationUpdateOne) SetCreatedBy(v uint32) *ProductAttributeTranslationUpdateOne {
+func (_u *ProductAttributeTranslationUpdateOne) SetCreatedBy(v int64) *ProductAttributeTranslationUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ProductAttributeTranslationUpdateOne) SetNillableCreatedBy(v *uint32) *ProductAttributeTranslationUpdateOne {
+func (_u *ProductAttributeTranslationUpdateOne) SetNillableCreatedBy(v *int64) *ProductAttributeTranslationUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -405,7 +405,7 @@ func (_u *ProductAttributeTranslationUpdateOne) SetNillableCreatedBy(v *uint32) 
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ProductAttributeTranslationUpdateOne) AddCreatedBy(v int32) *ProductAttributeTranslationUpdateOne {
+func (_u *ProductAttributeTranslationUpdateOne) AddCreatedBy(v int64) *ProductAttributeTranslationUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -417,14 +417,14 @@ func (_u *ProductAttributeTranslationUpdateOne) ClearCreatedBy() *ProductAttribu
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ProductAttributeTranslationUpdateOne) SetUpdatedBy(v uint32) *ProductAttributeTranslationUpdateOne {
+func (_u *ProductAttributeTranslationUpdateOne) SetUpdatedBy(v int64) *ProductAttributeTranslationUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ProductAttributeTranslationUpdateOne) SetNillableUpdatedBy(v *uint32) *ProductAttributeTranslationUpdateOne {
+func (_u *ProductAttributeTranslationUpdateOne) SetNillableUpdatedBy(v *int64) *ProductAttributeTranslationUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -432,7 +432,7 @@ func (_u *ProductAttributeTranslationUpdateOne) SetNillableUpdatedBy(v *uint32) 
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ProductAttributeTranslationUpdateOne) AddUpdatedBy(v int32) *ProductAttributeTranslationUpdateOne {
+func (_u *ProductAttributeTranslationUpdateOne) AddUpdatedBy(v int64) *ProductAttributeTranslationUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -444,14 +444,14 @@ func (_u *ProductAttributeTranslationUpdateOne) ClearUpdatedBy() *ProductAttribu
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ProductAttributeTranslationUpdateOne) SetDeletedBy(v uint32) *ProductAttributeTranslationUpdateOne {
+func (_u *ProductAttributeTranslationUpdateOne) SetDeletedBy(v int64) *ProductAttributeTranslationUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ProductAttributeTranslationUpdateOne) SetNillableDeletedBy(v *uint32) *ProductAttributeTranslationUpdateOne {
+func (_u *ProductAttributeTranslationUpdateOne) SetNillableDeletedBy(v *int64) *ProductAttributeTranslationUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -459,7 +459,7 @@ func (_u *ProductAttributeTranslationUpdateOne) SetNillableDeletedBy(v *uint32) 
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ProductAttributeTranslationUpdateOne) AddDeletedBy(v int32) *ProductAttributeTranslationUpdateOne {
+func (_u *ProductAttributeTranslationUpdateOne) AddDeletedBy(v int64) *ProductAttributeTranslationUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -471,14 +471,14 @@ func (_u *ProductAttributeTranslationUpdateOne) ClearDeletedBy() *ProductAttribu
 }
 
 // SetAttributeID sets the "attribute_id" field.
-func (_u *ProductAttributeTranslationUpdateOne) SetAttributeID(v uint32) *ProductAttributeTranslationUpdateOne {
+func (_u *ProductAttributeTranslationUpdateOne) SetAttributeID(v int64) *ProductAttributeTranslationUpdateOne {
 	_u.mutation.ResetAttributeID()
 	_u.mutation.SetAttributeID(v)
 	return _u
 }
 
 // SetNillableAttributeID sets the "attribute_id" field if the given value is not nil.
-func (_u *ProductAttributeTranslationUpdateOne) SetNillableAttributeID(v *uint32) *ProductAttributeTranslationUpdateOne {
+func (_u *ProductAttributeTranslationUpdateOne) SetNillableAttributeID(v *int64) *ProductAttributeTranslationUpdateOne {
 	if v != nil {
 		_u.SetAttributeID(*v)
 	}
@@ -486,7 +486,7 @@ func (_u *ProductAttributeTranslationUpdateOne) SetNillableAttributeID(v *uint32
 }
 
 // AddAttributeID adds value to the "attribute_id" field.
-func (_u *ProductAttributeTranslationUpdateOne) AddAttributeID(v int32) *ProductAttributeTranslationUpdateOne {
+func (_u *ProductAttributeTranslationUpdateOne) AddAttributeID(v int64) *ProductAttributeTranslationUpdateOne {
 	_u.mutation.AddAttributeID(v)
 	return _u
 }
@@ -589,7 +589,7 @@ func (_u *ProductAttributeTranslationUpdateOne) Modify(modifiers ...func(u *sql.
 }
 
 func (_u *ProductAttributeTranslationUpdateOne) sqlSave(ctx context.Context) (_node *ProductAttributeTranslation, err error) {
-	_spec := sqlgraph.NewUpdateSpec(productattributetranslation.Table, productattributetranslation.Columns, sqlgraph.NewFieldSpec(productattributetranslation.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(productattributetranslation.Table, productattributetranslation.Columns, sqlgraph.NewFieldSpec(productattributetranslation.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ProductAttributeTranslation.id" for update`)}
@@ -630,40 +630,40 @@ func (_u *ProductAttributeTranslationUpdateOne) sqlSave(ctx context.Context) (_n
 		_spec.ClearField(productattributetranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(productattributetranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(productattributetranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(productattributetranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(productattributetranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(productattributetranslation.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(productattributetranslation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(productattributetranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(productattributetranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(productattributetranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(productattributetranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(productattributetranslation.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(productattributetranslation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(productattributetranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(productattributetranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(productattributetranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(productattributetranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(productattributetranslation.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(productattributetranslation.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.AttributeID(); ok {
-		_spec.SetField(productattributetranslation.FieldAttributeID, field.TypeUint32, value)
+		_spec.SetField(productattributetranslation.FieldAttributeID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedAttributeID(); ok {
-		_spec.AddField(productattributetranslation.FieldAttributeID, field.TypeUint32, value)
+		_spec.AddField(productattributetranslation.FieldAttributeID, field.TypeInt64, value)
 	}
 	if _u.mutation.AttributeIDCleared() {
-		_spec.ClearField(productattributetranslation.FieldAttributeID, field.TypeUint32)
+		_spec.ClearField(productattributetranslation.FieldAttributeID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(productattributetranslation.FieldLanguageCode, field.TypeString, value)

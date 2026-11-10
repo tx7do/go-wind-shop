@@ -34,12 +34,12 @@ func (StockOpLog) Annotations() []schema.Annotation {
 
 func (StockOpLog) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("sku_id").
+		field.Int64("sku_id").
 			Comment("SKU ID").
 			Optional().
 			Nillable(),
 
-		field.Uint32("product_id").
+		field.Int64("product_id").
 			Comment("所属商品ID（冗余，便于按商品聚合查询）").
 			Optional().
 			Nillable(),
@@ -73,7 +73,7 @@ func (StockOpLog) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("ref_id").
+		field.Int64("ref_id").
 			Comment("关联业务ID（订单ID等，手动调整为 0）").
 			Default(0).
 			Optional().
@@ -88,9 +88,9 @@ func (StockOpLog) Fields() []ent.Field {
 
 func (StockOpLog) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 	}
 }
 

@@ -6,15 +6,15 @@ import (
 	"strconv"
 	"strings"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
 
-	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
+	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
 )
 
@@ -73,18 +73,18 @@ func (s *InternalMessageRecipientService) Create(ctx context.Context, req *inter
 // INTERNAL_MESSAGE 事件的 EMAIL 路由需要邮箱地址，而本链路持有的是收件人
 // uid——这里解析 sys_users.email；未配置邮箱回落 uid 字符串（既有行为，
 // EMAIL 渠道投递以 FAILED 呈现而非误发）。INTERNAL 渠道不消费 Target。
-func (s *InternalMessageRecipientService) notificationTargetFor(ctx context.Context, uid uint32) string {
+func (s *InternalMessageRecipientService) notificationTargetFor(ctx context.Context, uid int64) string {
 	u, uErr := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
 		QueryBy: &identityV1.GetUserRequest_Id{Id: uid},
 	})
 	if uErr != nil || u == nil {
 		s.log.Warnf("notification target: read user [%d] failed: %v", uid, uErr)
-		return strconv.FormatUint(uint64(uid), 10)
+		return strconv.FormatInt(int64(uid), 10)
 	}
 	if strings.TrimSpace(u.GetEmail()) != "" {
 		return u.GetEmail()
 	}
-	return strconv.FormatUint(uint64(uid), 10)
+	return strconv.FormatInt(int64(uid), 10)
 }
 
 func NewInternalMessageRecipientService(

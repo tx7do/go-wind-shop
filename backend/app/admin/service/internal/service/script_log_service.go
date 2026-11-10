@@ -8,7 +8,6 @@ import (
 
 	scriptV1 "go-wind-shop/api/gen/go/script/service/v1"
 	"go-wind-shop/pkg/logx"
-
 )
 
 type ScriptLogService struct {

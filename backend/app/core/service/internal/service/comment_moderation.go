@@ -104,9 +104,9 @@ func (s *CommentService) runCommentModeration(ctx context.Context, content strin
 		_ = s.aiDeps.UsageLogRepo.Create(ctx, &data.UsageRecord{
 			ProviderID:       provider.ID,
 			ModelName:        model,
-			PromptTokens:     uint32(resp.Usage.PromptTokens),
-			CompletionTokens: uint32(resp.Usage.CompletionTokens),
-			TotalTokens:      uint32(resp.Usage.TotalTokens),
+			PromptTokens:     int64(resp.Usage.PromptTokens),
+			CompletionTokens: int64(resp.Usage.CompletionTokens),
+			TotalTokens:      int64(resp.Usage.TotalTokens),
 		})
 	}
 

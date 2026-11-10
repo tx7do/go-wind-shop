@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
@@ -14,14 +14,14 @@ import (
 
 type MemberTierService struct {
 	adminV1.MemberTierServiceHTTPServer
-	log *logx.Helper
+	log                     *logx.Helper
 	memberTierServiceClient catalogV1.MemberTierServiceClient
 }
 
 func NewMemberTierService(ctx *bootstrap.Context, memberTierServiceClient catalogV1.MemberTierServiceClient) *MemberTierService {
 	return &MemberTierService{
-		log:                      logx.New(ctx.NewLoggerHelper("member-tier/service/admin-service")),
-		memberTierServiceClient:  memberTierServiceClient,
+		log:                     logx.New(ctx.NewLoggerHelper("member-tier/service/admin-service")),
+		memberTierServiceClient: memberTierServiceClient,
 	}
 }
 

@@ -81,13 +81,12 @@ export function useUpdateNotificationRule(
   options?: UseMutationOptions<
     {},
     Error,
-    { id: number; data: notificationservicev1_NotificationRule }
+    { id: number | string; data: notificationservicev1_NotificationRule }
   >
 ) {
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: notificationservicev1_NotificationRule }) =>
-      apiClient.notificationRuleService.UpdateNotificationRule({
-        id,
+    mutationFn: ({ id, data } : { id: number | string; data: notificationservicev1_NotificationRule }) =>
+      apiClient.notificationRuleService.UpdateNotificationRule({ id: String(id),
         data,
         updateMask: UPDATE_MASK,
       }),
@@ -110,7 +109,7 @@ export function useDeleteNotificationRule(
 /**
  * 测试投递：按这条规则当场走一遍完整投递链。
  *
- * 这是 body:"*" 的自定义 RPC，收**扁平**请求体 { id, target }：多包一层 { data } 会被
+ * 这是 body:"*" 的自定义 RPC，收**扁平**请求体 { id: String(id), target }：多包一层 { data } 会被
  * protojson 当未知字段丢掉，接口照样 200、字段全为空。
  *
  * 异步规则回的是 SENDING 而不是 SENT —— 结论落在队列那一趟，页面上要按台账状态如实显示，

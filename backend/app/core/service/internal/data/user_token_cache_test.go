@@ -1,8 +1,8 @@
 package data
 
 import (
-	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"testing"
 	"time"
 
@@ -53,7 +53,7 @@ func TestUserTokenCache_BasicOperations(t *testing.T) {
 	assert.NotNil(t, repo)
 
 	clientType := authenticationV1.ClientType_app
-	var userId uint32 = 123
+	var userId int64 = 123
 
 	// 用于接收验证结果，避免重复短声明导致重定义
 	var valid bool
@@ -155,7 +155,7 @@ func TestUserTokenCache_VerifyAndRevokeTokenPair(t *testing.T) {
 	repo := NewUserTokenCache(bctx, rdb)
 
 	clientType := authenticationV1.ClientType_app
-	var userId uint32 = 456
+	var userId int64 = 456
 	jti := "jti-atomic"
 	atVal := "access_atomic"
 	rtVal := "refresh_atomic"

@@ -39,17 +39,17 @@ func (CartItem) Annotations() []schema.Annotation {
 
 func (CartItem) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("cart_id").
+		field.Int64("cart_id").
 			Comment("关联的购物车ID").
 			Optional().
 			Nillable(),
 
-		field.Uint32("user_id").
+		field.Int64("user_id").
 			Comment("用户ID（随所属购物车归属，由隐私层强制）").
 			Optional().
 			Nillable(),
 
-		field.Uint32("sku_id").
+		field.Int64("sku_id").
 			Comment("关联的 SKU ID").
 			Optional().
 			Nillable(),
@@ -64,10 +64,10 @@ func (CartItem) Fields() []ent.Field {
 
 func (CartItem) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 	}
 }
 

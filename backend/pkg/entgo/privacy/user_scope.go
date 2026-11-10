@@ -84,8 +84,8 @@ func (u UserPrivacy) EvalMutation(ctx context.Context, m ent.Mutation) error {
 	if u.userColumn() != "user_id" {
 		return nil
 	}
-	if s, ok := m.(interface{ SetUserID(uint32) }); ok {
-		s.SetUserID(uint32(uid))
+	if s, ok := m.(interface{ SetUserID(int64) }); ok {
+		s.SetUserID(int64(uid))
 		return nil
 	}
 	// 兜底：反射 SetField
@@ -98,7 +98,7 @@ func (u UserPrivacy) EvalMutation(ctx context.Context, m ent.Mutation) error {
 }
 
 // injectUserWhere 在查询上注入 columnName = uid 过滤（通过反射调用 query.Where）。
-func injectUserWhere(query ent.Query, uid uint64, columnName string) error {
+func injectUserWhere(query ent.Query, uid int64, columnName string) error {
 	rv := reflect.ValueOf(query)
 	mf := rv.MethodByName("Where")
 	if !mf.IsValid() || mf.Kind() != reflect.Func {
@@ -133,7 +133,7 @@ func injectUserWhere(query ent.Query, uid uint64, columnName string) error {
 }
 
 // injectUserWhereMutation 在 mutation（Update/Delete）上注入 columnName = uid 过滤。
-func injectUserWhereMutation(m ent.Mutation, uid uint64, columnName string) error {
+func injectUserWhereMutation(m ent.Mutation, uid int64, columnName string) error {
 	rv := reflect.ValueOf(m)
 	mf := rv.MethodByName("Where")
 	if !mf.IsValid() || mf.Kind() != reflect.Func {

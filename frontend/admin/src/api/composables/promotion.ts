@@ -68,12 +68,11 @@ export function useCreatePromotion(
 }
 
 export function useUpdatePromotion(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.promotionService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.promotionService.Update({ id: String(id),
         data: { ...values },
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),
@@ -82,11 +81,11 @@ export function useUpdatePromotion(
 }
 
 export function useDeletePromotion(
-  options?: UseMutationOptions<{}, Error, { id: number }>
+  options?: UseMutationOptions<{}, Error, { id: number | string }>
 ) {
   return useMutation({
-    mutationFn: ({ id }: { id: number }) =>
-      apiClient.promotionService.Delete({ id }),
+    mutationFn: ({ id } : { id: number | string }) =>
+      apiClient.promotionService.Delete({ id: String(id) }),
     ...options,
   });
 }

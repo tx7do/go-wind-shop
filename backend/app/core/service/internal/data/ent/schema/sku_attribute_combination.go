@@ -28,17 +28,17 @@ func (SkuAttributeCombination) Annotations() []schema.Annotation {
 
 func (SkuAttributeCombination) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("sku_id").
+		field.Int64("sku_id").
 			Comment("关联的 SKU ID").
 			Optional().
 			Nillable(),
 
-		field.Uint32("attribute_id").
+		field.Int64("attribute_id").
 			Comment("属性ID").
 			Optional().
 			Nillable(),
 
-		field.Uint32("attribute_value_id").
+		field.Int64("attribute_value_id").
 			Comment("属性值ID").
 			Optional().
 			Nillable(),
@@ -47,9 +47,9 @@ func (SkuAttributeCombination) Fields() []ent.Field {
 
 func (SkuAttributeCombination) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 	}
 }
 

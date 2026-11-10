@@ -43,12 +43,12 @@ func (Category) Fields() []ent.Field {
 
 func (Category) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.SortOrder{},
 		mixin.TreePath{},
-		mixin.Tree[Category]{},
+		mixin.Tree64[Category]{},
 	}
 }
 

@@ -28,7 +28,7 @@
             :key="conv.id"
             class="conv-item"
             :class="{ 'is-active': activeId === conv.id }"
-            @click="activeId = conv.id"
+            @click="activeId = String(conv.id)"
           >
             <div class="conv-item__text">
               <span class="conv-item__title">{{ conv.title || `#${conv.id}` }}</span>
@@ -245,7 +245,7 @@ function renderMarkdown(content: string): string {
 
 // ── 会话 ──────────────────────────────────────────────────────────
 const conversations = ref<AiConversation[]>([]);
-const activeId = ref<number | undefined>(undefined);
+const activeId = ref<string | undefined>(undefined);
 
 // 仅在首次拉到列表时自动选中最近会话：写在 loadConversations 里会让「新建对话」
 // 立刻被重新选中顶回去，空态与"新会话"标题都渲染不出来
@@ -265,7 +265,7 @@ async function loadConversations() {
     conversations.value = (r.items || []) as AiConversation[];
     if (!autoSelected && conversations.value.length > 0) {
       autoSelected = true;
-      activeId.value = conversations.value[0]!.id;
+      activeId.value = String(conversations.value[0]!.id);
     }
   } catch (error) {
     console.error("load ai conversations failed:", error);
@@ -332,7 +332,7 @@ function handleChunk(data: ChatChunk) {
   if (!data || typeof data !== "object" || !data.conversationId) return;
   // 只渲染当前打开会话的片段；其余会话的 chunk 静默丢弃（响应到达后列表刷新）。
   // 新会话（activeId 未定）放行：首条消息的会话由响应才创建，过滤会让新会话流式全丢。
-  if (activeId.value !== undefined && data.conversationId !== activeId.value) return;
+  if (activeId.value !== undefined && String(data.conversationId) !== String(activeId.value)) return;
   streamingText.value += data.delta || "";
   scrollToBottom();
 }
@@ -340,7 +340,7 @@ function handleChunk(data: ChatChunk) {
 function handleToolEvent(data: ChatToolEvent) {
   if (!data || typeof data !== "object" || !data.name) return;
   // 同 handleChunk：新会话（activeId 未定）放行，工具帧才对首条消息可见
-  if (activeId.value !== undefined && data.conversationId !== activeId.value) return;
+  if (activeId.value !== undefined && String(data.conversationId) !== String(activeId.value)) return;
   toolCalls.value.push(data);
   scrollToBottom();
 }
@@ -389,9 +389,9 @@ async function handleSend() {
   scrollToBottom();
   try {
     const resp = await sendAiChat({
-      conversationId: activeId.value ?? 0,
+      conversationId: activeId.value ?? "0",
       content,
-      knowledgeBaseId: knowledgeBaseId.value ?? 0,
+      knowledgeBaseId: knowledgeBaseId.value ? String(knowledgeBaseId.value) : "0",
     });
     input.value = "";
     streamingText.value = "";
@@ -399,7 +399,7 @@ async function handleSend() {
     if (resp.conversation?.id) {
       const exists = conversations.value.some((c) => c.id === resp.conversation!.id);
       if (!exists) {
-        activeId.value = resp.conversation.id;
+        activeId.value = String(resp.conversation.id);
         await loadConversations();
       }
     }

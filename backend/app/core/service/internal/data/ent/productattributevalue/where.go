@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.ProductAttributeValue {
+func ID(id int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.ProductAttributeValue {
+func IDEQ(id int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.ProductAttributeValue {
+func IDNEQ(id int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.ProductAttributeValue {
+func IDIn(ids ...int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.ProductAttributeValue {
+func IDNotIn(ids ...int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.ProductAttributeValue {
+func IDGT(id int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.ProductAttributeValue {
+func IDGTE(id int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.ProductAttributeValue {
+func IDLT(id int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.ProductAttributeValue {
+func IDLTE(id int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,17 +70,17 @@ func DeletedAt(v time.Time) predicate.ProductAttributeValue {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.ProductAttributeValue {
+func CreatedBy(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.ProductAttributeValue {
+func UpdatedBy(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.ProductAttributeValue {
+func DeletedBy(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldEQ(FieldDeletedBy, v))
 }
 
@@ -90,7 +90,7 @@ func SortOrder(v uint32) predicate.ProductAttributeValue {
 }
 
 // AttributeID applies equality check predicate on the "attribute_id" field. It's identical to AttributeIDEQ.
-func AttributeID(v uint32) predicate.ProductAttributeValue {
+func AttributeID(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldEQ(FieldAttributeID, v))
 }
 
@@ -245,42 +245,42 @@ func DeletedAtNotNil() predicate.ProductAttributeValue {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.ProductAttributeValue {
+func CreatedByEQ(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.ProductAttributeValue {
+func CreatedByNEQ(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.ProductAttributeValue {
+func CreatedByIn(vs ...int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.ProductAttributeValue {
+func CreatedByNotIn(vs ...int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.ProductAttributeValue {
+func CreatedByGT(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.ProductAttributeValue {
+func CreatedByGTE(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.ProductAttributeValue {
+func CreatedByLT(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.ProductAttributeValue {
+func CreatedByLTE(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -295,42 +295,42 @@ func CreatedByNotNil() predicate.ProductAttributeValue {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.ProductAttributeValue {
+func UpdatedByEQ(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.ProductAttributeValue {
+func UpdatedByNEQ(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.ProductAttributeValue {
+func UpdatedByIn(vs ...int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.ProductAttributeValue {
+func UpdatedByNotIn(vs ...int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.ProductAttributeValue {
+func UpdatedByGT(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.ProductAttributeValue {
+func UpdatedByGTE(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.ProductAttributeValue {
+func UpdatedByLT(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.ProductAttributeValue {
+func UpdatedByLTE(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -345,42 +345,42 @@ func UpdatedByNotNil() predicate.ProductAttributeValue {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.ProductAttributeValue {
+func DeletedByEQ(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.ProductAttributeValue {
+func DeletedByNEQ(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.ProductAttributeValue {
+func DeletedByIn(vs ...int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.ProductAttributeValue {
+func DeletedByNotIn(vs ...int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.ProductAttributeValue {
+func DeletedByGT(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.ProductAttributeValue {
+func DeletedByGTE(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.ProductAttributeValue {
+func DeletedByLT(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.ProductAttributeValue {
+func DeletedByLTE(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -445,42 +445,42 @@ func SortOrderNotNil() predicate.ProductAttributeValue {
 }
 
 // AttributeIDEQ applies the EQ predicate on the "attribute_id" field.
-func AttributeIDEQ(v uint32) predicate.ProductAttributeValue {
+func AttributeIDEQ(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldEQ(FieldAttributeID, v))
 }
 
 // AttributeIDNEQ applies the NEQ predicate on the "attribute_id" field.
-func AttributeIDNEQ(v uint32) predicate.ProductAttributeValue {
+func AttributeIDNEQ(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldNEQ(FieldAttributeID, v))
 }
 
 // AttributeIDIn applies the In predicate on the "attribute_id" field.
-func AttributeIDIn(vs ...uint32) predicate.ProductAttributeValue {
+func AttributeIDIn(vs ...int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldIn(FieldAttributeID, vs...))
 }
 
 // AttributeIDNotIn applies the NotIn predicate on the "attribute_id" field.
-func AttributeIDNotIn(vs ...uint32) predicate.ProductAttributeValue {
+func AttributeIDNotIn(vs ...int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldNotIn(FieldAttributeID, vs...))
 }
 
 // AttributeIDGT applies the GT predicate on the "attribute_id" field.
-func AttributeIDGT(v uint32) predicate.ProductAttributeValue {
+func AttributeIDGT(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldGT(FieldAttributeID, v))
 }
 
 // AttributeIDGTE applies the GTE predicate on the "attribute_id" field.
-func AttributeIDGTE(v uint32) predicate.ProductAttributeValue {
+func AttributeIDGTE(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldGTE(FieldAttributeID, v))
 }
 
 // AttributeIDLT applies the LT predicate on the "attribute_id" field.
-func AttributeIDLT(v uint32) predicate.ProductAttributeValue {
+func AttributeIDLT(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldLT(FieldAttributeID, v))
 }
 
 // AttributeIDLTE applies the LTE predicate on the "attribute_id" field.
-func AttributeIDLTE(v uint32) predicate.ProductAttributeValue {
+func AttributeIDLTE(v int64) predicate.ProductAttributeValue {
 	return predicate.ProductAttributeValue(sql.FieldLTE(FieldAttributeID, v))
 }
 

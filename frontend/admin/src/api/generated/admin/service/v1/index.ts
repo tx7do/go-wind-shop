@@ -15,6 +15,10 @@ export interface ClientTransport {
     meta: TransportMeta,
   ): Promise<unknown>;
   serverStream<T>(path: string, meta: TransportMeta): ServerStream<T>;
+  // Raw byte chunks for google.api.HttpBody server streams: the first
+  // chunk's content type rides the HTTP response Content-Type header,
+  // every chunk is raw payload bytes (no JSON framing).
+  byteStream(path: string, meta: TransportMeta): ServerStream<Uint8Array>;
   duplexStream<TIn, TOut>(path: string, meta: TransportMeta): DuplexStream<TIn, TOut>;
 }
 
@@ -325,7 +329,7 @@ export type pagination_PagingRequest = {
   // 是否不分页，如果为true，则page和pageSize参数无效。
   noPaging?: boolean;
   // 跳过的记录数（从0开始，默认0）
-  offset?: number;
+  offset?: string;
   // 排序条件
   orderBy?: string;
   // 当前页码（从1开始，默认1）
@@ -476,24 +480,24 @@ type wellKnownFieldMask = string;
 // 查询访问凭证列表 - 回应
 export type access_keyservicev1_ListAccessKeyResponse = {
   items: access_keyservicev1_AccessKey[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // OpenAPI 访问凭证（AK/SK）
 export type access_keyservicev1_AccessKey = {
   accessKey?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   expiresAt?: wellKnownTimestamp;
-  id?: number;
+  id?: string;
   lastUsedAt?: wellKnownTimestamp;
   name?: string;
   status?: access_keyservicev1_AccessKey_Status;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 凭证状态
@@ -508,7 +512,7 @@ type wellKnownTimestamp = string;
 // 查询访问凭证详情 - 请求
 export type access_keyservicev1_GetAccessKeyRequest = {
   accessKey?: string;
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -527,7 +531,7 @@ export type access_keyservicev1_CreateAccessKeyResponse = {
 export type access_keyservicev1_UpdateAccessKeyRequest = {
   allowMissing?: boolean;
   data: access_keyservicev1_AccessKey | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -536,12 +540,12 @@ type wellKnownEmpty = Record<never, never>;
 
 // 删除访问凭证 - 请求
 export type access_keyservicev1_DeleteAccessKeyRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 重置密钥 - 请求
 export type access_keyservicev1_ResetAccessKeySecretRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 令牌交换 - 请求（机器对机器：AK/SK 换取短期 JWT）
@@ -984,28 +988,28 @@ export function createAiAgentServiceClient(
 // 查询列表 - 回应
 export type aiservicev1_ListAiAgentAppsResponse = {
   items: aiservicev1_AiAgentApp[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // Agent 编排应用
 export type aiservicev1_AiAgentApp = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   description?: string;
   enabled?: boolean;
   // 图 DSL（JSON：nodes/edges；节点五种、模板与条件表达式语义见设计文档 §2）
   graph?: string;
-  id?: number;
+  id?: string;
   name?: string;
   // 创建/更新入参带出（与 AiConversation 同口径）：租户隔离 mixin 无创建钩子，租户必须显式写
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 查询详情 - 请求
 export type aiservicev1_GetAiAgentAppRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 创建 - 请求
@@ -1016,13 +1020,13 @@ export type aiservicev1_CreateAiAgentAppRequest = {
 // 更新 - 请求
 export type aiservicev1_UpdateAiAgentAppRequest = {
   data: aiservicev1_AiAgentApp | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除 - 请求
 export type aiservicev1_DeleteAiAgentAppRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 审批裁决运行 - 请求
@@ -1030,17 +1034,17 @@ export type aiservicev1_ApproveAgentRunRequest = {
   approved: boolean | undefined;
   // 审批意见（驳回时写入运行 error；批准时注入挂起节点 note 变量）
   note: string | undefined;
-  runId: number | undefined;
+  runId: string | undefined;
 };
 
 // Agent 运行记录
 export type aiservicev1_AiAgentRun = {
-  appId?: number;
+  appId?: string;
   completionTokens?: number;
   createdAt?: wellKnownTimestamp;
   durationMs?: number;
   error?: string;
-  id?: number;
+  id?: string;
   // 运行入参（JSON 对象：start 节点 inputVars 的 name → 值）
   input?: string;
   output?: string;
@@ -1064,7 +1068,7 @@ export type aiservicev1_AiAgentRun_Status =
   | 'WAITING_APPROVAL';
 // 试运行 - 请求
 export type aiservicev1_RunAiAgentAppRequest = {
-  id: number | undefined;
+  id: string | undefined;
   // 运行入参：start 节点声明的输入变量名 → 值（JSON 对象字符串）
   input: { [key: string]: string } | undefined;
 };
@@ -1072,12 +1076,12 @@ export type aiservicev1_RunAiAgentAppRequest = {
 // 运行台账列表 - 回应
 export type aiservicev1_ListAiAgentRunsResponse = {
   items: aiservicev1_AiAgentRun[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 运行详情 - 请求
 export type aiservicev1_GetAiAgentRunRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // AI 对话服务（表单助手）
@@ -1128,12 +1132,12 @@ export type aiservicev1_ChatRequest = {
   content?: string;
   // 上下文商品ID：用户当前正在浏览的商品（C端商品页"问AI"入口携带）。
   // core 将商品摘要注入 system prompt，让回答围绕该商品展开；0=无上下文。
-  contextProductId?: number;
-  conversationId?: number;
-  knowledgeBaseId?: number;
-  operatorTenantId?: number;
-  operatorUserId?: number;
-  providerId?: number;
+  contextProductId?: string;
+  conversationId?: string;
+  knowledgeBaseId?: string;
+  operatorTenantId?: string;
+  operatorUserId?: string;
+  providerId?: string;
 };
 
 // 发起对话 - 回应
@@ -1147,38 +1151,38 @@ export type aiservicev1_ChatResponse = {
 // AI 对话会话
 export type aiservicev1_AiConversation = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   lastMessageAt?: wellKnownTimestamp;
-  providerId?: number;
-  tenantId?: number;
+  providerId?: string;
+  tenantId?: string;
   title?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  userId?: number;
+  updatedBy?: string;
+  userId?: string;
 };
 
 // AI 对话消息
 export type aiservicev1_AiMessage = {
   completionTokens?: number;
   content?: string;
-  conversationId?: number;
+  conversationId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   durationMs?: number;
   errorMessage?: string;
-  id?: number;
+  id?: string;
   modelName?: string;
   promptTokens?: number;
   role?: aiservicev1_AiRole;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  userId?: number;
+  updatedBy?: string;
+  userId?: string;
 };
 
 // 消息角色
@@ -1193,8 +1197,8 @@ export type aiservicev1_AiRole =
 export type aiservicev1_GenerateRequest = {
   // 最大生成 token 数；0=用模型默认
   maxTokens?: number;
-  operatorTenantId?: number;
-  operatorUserId?: number;
+  operatorTenantId?: string;
+  operatorUserId?: string;
   // 用户提示（任务描述 + 素材文本）
   prompt?: string;
   // 系统提示（角色/风格约束），可空
@@ -1503,12 +1507,12 @@ export function createAiConversationServiceClient(
 // 查询会话列表 - 回应
 export type aiservicev1_ListAiConversationResponse = {
   items: aiservicev1_AiConversation[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 查询会话详情 - 请求
 export type aiservicev1_GetAiConversationRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -1516,13 +1520,13 @@ export type aiservicev1_GetAiConversationRequest = {
 export type aiservicev1_UpdateAiConversationRequest = {
   allowMissing?: boolean;
   data: aiservicev1_AiConversation | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除会话 - 请求
 export type aiservicev1_DeleteAiConversationRequest = {
-  id?: number;
+  id?: string;
 };
 
 // AI 知识库管理服务（RAG）
@@ -1775,30 +1779,30 @@ export function createAiKnowledgeBaseServiceClient(
 // 查询知识库列表 - 回应
 export type aiservicev1_ListAiKnowledgeBaseResponse = {
   items: aiservicev1_AiKnowledgeBase[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // AI 知识库
 export type aiservicev1_AiKnowledgeBase = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   docCount?: number;
   embeddingModel?: string;
-  id?: number;
+  id?: string;
   name?: string;
-  providerId?: number;
-  tenantId?: number;
+  providerId?: string;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  userId?: number;
+  updatedBy?: string;
+  userId?: string;
 };
 
 // 查询知识库详情 - 请求
 export type aiservicev1_GetAiKnowledgeBaseRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -1811,18 +1815,18 @@ export type aiservicev1_CreateAiKnowledgeBaseRequest = {
 export type aiservicev1_UpdateAiKnowledgeBaseRequest = {
   allowMissing?: boolean;
   data: aiservicev1_AiKnowledgeBase | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除知识库 - 请求
 export type aiservicev1_DeleteAiKnowledgeBaseRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 上传文档 - 请求（纯文本；内容直接随请求体传输）
 export type aiservicev1_UploadAiDocRequest = {
-  baseId: number | undefined;
+  baseId: string | undefined;
   content: string | undefined;
   name: string | undefined;
 };
@@ -1835,20 +1839,20 @@ export type aiservicev1_UploadAiDocResponse = {
 
 // AI 文档
 export type aiservicev1_AiDoc = {
-  baseId?: number;
+  baseId?: string;
   chunkCount?: number;
   createdAt?: wellKnownTimestamp;
   errorMessage?: string;
-  id?: number;
+  id?: string;
   name?: string;
   status?: string;
-  tenantId?: number;
-  userId?: number;
+  tenantId?: string;
+  userId?: string;
 };
 
 // 上传文档文件 - 请求（文件字节经 protojson 即 base64 字符串传输）
 export type aiservicev1_UploadAiDocFileRequest = {
-  baseId: number | undefined;
+  baseId: string | undefined;
   contentBase64: string | undefined;
   docName?: string;
   fileName: string | undefined;
@@ -1856,24 +1860,24 @@ export type aiservicev1_UploadAiDocFileRequest = {
 
 // 查询文档列表 - 请求
 export type aiservicev1_ListAiDocsRequest = {
-  baseId: number | undefined;
+  baseId: string | undefined;
 };
 
 // 查询文档列表 - 回应
 export type aiservicev1_ListAiDocsResponse = {
   items: aiservicev1_AiDoc[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 删除文档 - 请求
 export type aiservicev1_DeleteAiDocRequest = {
-  baseId: number | undefined;
-  id: number | undefined;
+  baseId: string | undefined;
+  id: string | undefined;
 };
 
 // 检索 - 请求
 export type aiservicev1_SearchAiKnowledgeRequest = {
-  baseId: number | undefined;
+  baseId: string | undefined;
   query: string | undefined;
   topK?: number;
 };
@@ -1894,7 +1898,7 @@ export type aiservicev1_KnowledgeHit = {
 // 重索引 - 请求
 export type aiservicev1_ReindexDocsRequest = {
   // 知识库ID；0 表示全部知识库
-  baseId?: number;
+  baseId?: string;
 };
 
 // AI 对话消息服务
@@ -1997,12 +2001,12 @@ export function createAiMessageServiceClient(
 // 查询消息列表 - 回应
 export type aiservicev1_ListAiMessageResponse = {
   items: aiservicev1_AiMessage[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 删除消息 - 请求
 export type aiservicev1_DeleteAiMessageRequest = {
-  id?: number;
+  id?: string;
 };
 
 // AI 模型提供商管理服务
@@ -2159,7 +2163,7 @@ export function createAiProviderServiceClient(
 // 查询 AI 提供商列表 - 回应
 export type aiservicev1_ListAiProviderResponse = {
   items: aiservicev1_AiProvider[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // AI 模型提供商（一行 = 一个可调用的模型端点配置）
@@ -2168,10 +2172,10 @@ export type aiservicev1_AiProvider = {
   apiKeyHint?: string;
   baseUrl?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   isDefault?: boolean;
   isEnabled?: boolean;
   localHost?: string;
@@ -2184,7 +2188,7 @@ export type aiservicev1_AiProvider = {
   systemPrompt?: string;
   timeoutSeconds?: number;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 模型部署形态
@@ -2194,7 +2198,7 @@ export type aiservicev1_AiProvider_ModelType =
   | 'MODEL_TYPE_UNSPECIFIED';
 // 查询 AI 提供商详情 - 请求
 export type aiservicev1_GetAiProviderRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -2207,13 +2211,13 @@ export type aiservicev1_CreateAiProviderRequest = {
 export type aiservicev1_UpdateAiProviderRequest = {
   allowMissing?: boolean;
   data: aiservicev1_AiProvider | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除 AI 提供商 - 请求
 export type aiservicev1_DeleteAiProviderRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 智能问数服务（NL → 只读 SQL → 结构化结果）
@@ -2377,22 +2381,22 @@ export function createAiUsageLogServiceClient(
 // 查询用量流水列表 - 回应
 export type aiservicev1_ListAiUsageLogResponse = {
   items: aiservicev1_AiUsageLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // AI 调用用量流水（每次成功的模型调用一行；配额按 total_tokens 聚合）
 export type aiservicev1_AiUsageLog = {
   completionTokens?: number;
-  conversationId?: number;
+  conversationId?: string;
   createdAt?: wellKnownTimestamp;
   durationMs?: number;
-  id?: number;
+  id?: string;
   modelName?: string;
   promptTokens?: number;
-  providerId?: number;
-  tenantId?: number;
+  providerId?: string;
+  tenantId?: string;
   totalTokens?: number;
-  userId?: number;
+  userId?: string;
 };
 
 // 当月用量汇总 - 回应
@@ -2401,7 +2405,7 @@ export type aiservicev1_UsageSummaryResponse = {
   monthCalls: number | undefined;
   monthTokens: number | undefined;
   quotaConfigured: boolean | undefined;
-  quotaLimit: number | undefined;
+  quotaLimit: string | undefined;
 };
 
 // 用量细分行（provider × 模型 维度聚合）
@@ -2410,7 +2414,7 @@ export type aiservicev1_UsageBreakdown = {
   completionTokens: number | undefined;
   modelName: string | undefined;
   promptTokens: number | undefined;
-  providerId: number | undefined;
+  providerId: string | undefined;
   providerName: string | undefined;
   totalTokens: number | undefined;
 };
@@ -2593,17 +2597,17 @@ export function createApiServiceClient(
 // 查询列表 - 回应
 export type permissionservicev1_ListApiResponse = {
   items: permissionservicev1_Api[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // API资源
 export type permissionservicev1_Api = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
-  id?: number;
+  id?: string;
   method?: string;
   module?: string;
   moduleDescription?: string;
@@ -2612,7 +2616,7 @@ export type permissionservicev1_Api = {
   scope?: permissionservicev1_Api_Scope;
   status?: permissionservicev1_Api_Status;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // API作用域
@@ -2626,7 +2630,7 @@ export type permissionservicev1_Api_Status =
   | 'ON';
 // 查询 - 请求
 export type permissionservicev1_GetApiRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -2639,13 +2643,13 @@ export type permissionservicev1_CreateApiRequest = {
 export type permissionservicev1_UpdateApiRequest = {
   allowMissing?: boolean;
   data: permissionservicev1_Api | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除 - 请求
 export type permissionservicev1_DeleteApiRequest = {
-  id?: number;
+  id?: string;
 };
 
 // API审计日志管理服务
@@ -2758,7 +2762,7 @@ export function createApiAuditLogServiceClient(
 // 查询API审计日志列表 - 回应
 export type auditservicev1_ListApiAuditLogResponse = {
   items: auditservicev1_ApiAuditLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 接口审计日志
@@ -2771,7 +2775,7 @@ export type auditservicev1_ApiAuditLog = {
   deviceInfo?: auditservicev1_DeviceInfo;
   geoLocation?: auditservicev1_GeoLocation;
   httpMethod?: string;
-  id?: number;
+  id?: string;
   ipAddress?: string;
   latencyMs?: number;
   logHash?: string;
@@ -2787,10 +2791,10 @@ export type auditservicev1_ApiAuditLog = {
   spanId?: string;
   statusCode?: number;
   success?: boolean;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   traceId?: string;
-  userId?: number;
+  userId?: string;
   username?: string;
 };
 
@@ -2800,8 +2804,8 @@ export type auditservicev1_GeoLocation = {
   city?: string;
   countryCode?: string;
   isp?: string;
-  latitude?: number;
-  longitude?: number;
+  latitude?: string;
+  longitude?: string;
   province?: string;
 };
 
@@ -2843,7 +2847,7 @@ export type auditservicev1_DeviceInfo_DeviceType =
   | 'TABLET';
 // 查询API审计日志详情 - 请求
 export type auditservicev1_GetApiAuditLogRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -2935,7 +2939,7 @@ export type authenticationservicev1_LoginRequest = {
   refresh_token?: string;
   scope?: string;
   tenant_code?: string;
-  user_id?: number;
+  user_id?: string;
   username?: string;
 };
 
@@ -2953,11 +2957,11 @@ export type authenticationservicev1_ClientType =
 // 用户登录 - 回应
 export type authenticationservicev1_LoginResponse = {
   access_token: string | undefined;
-  expires_in: number | undefined;
+  expires_in: string | undefined;
   id_token?: string;
   // MFA 挑战操作标识。非空表示登录需二次验证，此时 access_token 为空。
   mfa_operation_id?: string;
-  refresh_expires_in?: number;
+  refresh_expires_in?: string;
   refresh_token?: string;
   scope?: string;
   token_type: authenticationservicev1_TokenType | undefined;
@@ -3348,48 +3352,48 @@ export function createBrandServiceClient(
 // 品牌列表 - 答复
 export type catalogservicev1_ListBrandResponse = {
   items: catalogservicev1_Brand[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 品牌
 export type catalogservicev1_Brand = {
   availableLanguages: string[] | undefined;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   logoUrl?: string;
   sortOrder?: number;
   translations: catalogservicev1_BrandTranslation[] | undefined;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 品牌翻译
 export type catalogservicev1_BrandTranslation = {
-  brandId?: number;
+  brandId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
-  id?: number;
+  id?: string;
   languageCode?: string;
   name?: string;
   slug?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type catalogservicev1_CountBrandResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 // 品牌数据 - 请求
 export type catalogservicev1_GetBrandRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   locale?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -3407,17 +3411,17 @@ export type catalogservicev1_BatchCreateBrandsRequest = {
 export type catalogservicev1_UpdateBrandRequest = {
   allowMissing?: boolean;
   data: catalogservicev1_Brand | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除品牌 - 请求
 export type catalogservicev1_DeleteBrandRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type catalogservicev1_BrandTranslationExistsRequest = {
-  brandId: number | undefined;
+  brandId: string | undefined;
   languageCode: string | undefined;
 };
 
@@ -3431,17 +3435,17 @@ export type catalogservicev1_CreateBrandTranslationRequest = {
 
 export type catalogservicev1_UpdateBrandTranslationRequest = {
   data: catalogservicev1_BrandTranslation | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeleteBrandTranslationRequest = {
-  id?: number;
+  id?: string;
   identifier?: catalogservicev1_BrandTranslationIdentifier;
 };
 
 export type catalogservicev1_BrandTranslationIdentifier = {
-  brandId: number | undefined;
+  brandId: string | undefined;
   languageCode: string | undefined;
 };
 
@@ -3687,29 +3691,29 @@ export function createCartServiceClient(
 }
 export type cartservicev1_ListCartResponse = {
   items: cartservicev1_Cart[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 购物车
 export type cartservicev1_Cart = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  tenantId?: number;
+  deletedBy?: string;
+  id?: string;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  userId?: number;
+  updatedBy?: string;
+  userId?: string;
 };
 
 export type cartservicev1_CountCartResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type cartservicev1_GetCartRequest = {
-  id?: number;
-  userId?: number;
+  id?: string;
+  userId?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -3724,12 +3728,12 @@ export type cartservicev1_BatchCreateCartsRequest = {
 export type cartservicev1_UpdateCartRequest = {
   allowMissing?: boolean;
   data: cartservicev1_Cart | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type cartservicev1_DeleteCartRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 购物车项管理服务
@@ -3969,30 +3973,30 @@ export function createCartItemServiceClient(
 }
 export type cartservicev1_ListCartItemResponse = {
   items: cartservicev1_CartItem[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 购物车项
 export type cartservicev1_CartItem = {
-  cartId?: number;
+  cartId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   quantity?: number;
-  skuId?: number;
-  tenantId?: number;
+  skuId?: string;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type cartservicev1_CountCartItemResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type cartservicev1_GetCartItemRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -4007,12 +4011,12 @@ export type cartservicev1_BatchCreateCartItemsRequest = {
 export type cartservicev1_UpdateCartItemRequest = {
   allowMissing?: boolean;
   data: cartservicev1_CartItem | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type cartservicev1_DeleteCartItemRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 商品类目管理服务
@@ -4382,7 +4386,7 @@ export function createCategoryServiceClient(
 // 类目列表 - 答复
 export type catalogservicev1_ListCategoryResponse = {
   items: catalogservicev1_Category[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 商品类目
@@ -4390,45 +4394,45 @@ export type catalogservicev1_Category = {
   availableLanguages: string[] | undefined;
   children: catalogservicev1_Category[] | undefined;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   depth?: number;
-  id?: number;
+  id?: string;
   imageUrl?: string;
-  parentId?: number;
+  parentId?: string;
   path?: string;
   sortOrder?: number;
   translations: catalogservicev1_CategoryTranslation[] | undefined;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 类目翻译
 export type catalogservicev1_CategoryTranslation = {
-  categoryId?: number;
+  categoryId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   fullPath?: string;
-  id?: number;
+  id?: string;
   languageCode?: string;
   name?: string;
   slug?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type catalogservicev1_CountCategoryResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 // 类目数据 - 请求
 export type catalogservicev1_GetCategoryRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   locale?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -4446,17 +4450,17 @@ export type catalogservicev1_BatchCreateCategoriesRequest = {
 export type catalogservicev1_UpdateCategoryRequest = {
   allowMissing?: boolean;
   data: catalogservicev1_Category | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除类目 - 请求
 export type catalogservicev1_DeleteCategoryRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type catalogservicev1_CategoryTranslationExistsRequest = {
-  categoryId: number | undefined;
+  categoryId: string | undefined;
   languageCode: string | undefined;
 };
 
@@ -4470,17 +4474,17 @@ export type catalogservicev1_CreateCategoryTranslationRequest = {
 
 export type catalogservicev1_UpdateCategoryTranslationRequest = {
   data: catalogservicev1_CategoryTranslation | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeleteCategoryTranslationRequest = {
-  id?: number;
+  id?: string;
   identifier?: catalogservicev1_CategoryTranslationIdentifier;
 };
 
 export type catalogservicev1_CategoryTranslationIdentifier = {
-  categoryId: number | undefined;
+  categoryId: string | undefined;
   languageCode: string | undefined;
 };
 
@@ -4711,7 +4715,7 @@ export function createCommentServiceClient(
 // 回应 - 评论列表
 export type commentservicev1_ListCommentResponse = {
   items: commentservicev1_Comment[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 商品评论
@@ -4720,17 +4724,17 @@ export type commentservicev1_Comment = {
   content?: string;
   contentType?: commentservicev1_Comment_ContentType;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  objectId?: number;
-  parentId?: number;
+  deletedBy?: string;
+  id?: string;
+  objectId?: string;
+  parentId?: string;
   rating?: number;
   status?: commentservicev1_Comment_Status;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 内容类型
@@ -4745,12 +4749,12 @@ export type commentservicev1_Comment_Status =
   | 'STATUS_SPAM'
   | 'STATUS_UNSPECIFIED';
 export type commentservicev1_CountCommentResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 // 请求 - 评论数据
 export type commentservicev1_GetCommentRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -4763,13 +4767,13 @@ export type commentservicev1_CreateCommentRequest = {
 export type commentservicev1_UpdateCommentRequest = {
   allowMissing?: boolean;
   data: commentservicev1_Comment | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 请求 - 删除评论
 export type commentservicev1_DeleteCommentRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 系统参数管理服务
@@ -4926,21 +4930,21 @@ export function createConfigServiceClient(
 // 查询系统参数列表 - 回应
 export type configservicev1_ListConfigResponse = {
   items: configservicev1_Config[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 系统参数（动态 KV 运行时配置；区别于字典管理的业务枚举，本表只承载平台全局系统开关）
 export type configservicev1_Config = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   isBuiltIn?: boolean;
   key?: string;
   name?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   value?: string;
   valueType?: configservicev1_Config_ConfigValueType;
 };
@@ -4953,7 +4957,7 @@ export type configservicev1_Config_ConfigValueType =
   | 'STRING';
 // 查询系统参数 - 请求
 export type configservicev1_GetConfigRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -4966,13 +4970,13 @@ export type configservicev1_CreateConfigRequest = {
 export type configservicev1_UpdateConfigRequest = {
   allowMissing?: boolean;
   data: configservicev1_Config | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除系统参数 - 请求
 export type configservicev1_DeleteConfigRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 优惠券模板管理服务（admin 全 CRUD）
@@ -5201,30 +5205,30 @@ export function createCouponTemplateServiceClient(
 }
 export type couponservicev1_ListCouponTemplateResponse = {
   items: couponservicev1_CouponTemplate[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 优惠券模板
 export type couponservicev1_CouponTemplate = {
   claimable?: boolean;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   currency?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   discountPercentage?: number;
   discountType?: couponservicev1_CouponTemplate_DiscountType;
-  discountValue?: number;
-  id?: number;
+  discountValue?: string;
+  id?: string;
   maxRedemptions?: number;
   maxRedemptionsPerUser?: number;
   // 积分兑换价（0=不可兑换，>0 可用积分兑换）
-  pointsPrice?: number;
+  pointsPrice?: string;
   redeemedCount?: number;
   status?: couponservicev1_CouponTemplate_Status;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   validFrom?: wellKnownTimestamp;
   validUntil?: wellKnownTimestamp;
 };
@@ -5240,11 +5244,11 @@ export type couponservicev1_CouponTemplate_Status =
   | 'INACTIVE'
   | 'STATUS_UNSPECIFIED';
 export type couponservicev1_CountCouponTemplateResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type couponservicev1_GetCouponTemplateRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -5255,12 +5259,12 @@ export type couponservicev1_CreateCouponTemplateRequest = {
 export type couponservicev1_UpdateCouponTemplateRequest = {
   allowMissing?: boolean;
   data: couponservicev1_CouponTemplate | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type couponservicev1_DeleteCouponTemplateRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 用户优惠券发放管理服务（admin：发放/查询/删除，无 Update、无 Quote）
@@ -5473,25 +5477,25 @@ export function createUserCouponServiceClient(
 }
 export type couponservicev1_ListUserCouponResponse = {
   items: couponservicev1_UserCoupon[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 用户优惠券实例
 export type couponservicev1_UserCoupon = {
-  appliedDiscountAmount?: number;
-  couponTemplateId?: number;
+  appliedDiscountAmount?: string;
+  couponTemplateId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   redeemedAt?: wellKnownTimestamp;
-  redeemedOrderId?: number;
+  redeemedOrderId?: string;
   status?: couponservicev1_UserCoupon_Status;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  userId?: number;
+  updatedBy?: string;
+  userId?: string;
 };
 
 // 券实例状态
@@ -5501,11 +5505,11 @@ export type couponservicev1_UserCoupon_Status =
   | 'UNUSED'
   | 'USED';
 export type couponservicev1_CountUserCouponResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type couponservicev1_GetUserCouponRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -5514,7 +5518,7 @@ export type couponservicev1_CreateUserCouponRequest = {
 };
 
 export type couponservicev1_DeleteUserCouponRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 数据访问审计日志管理服务
@@ -5627,7 +5631,7 @@ export function createDataAccessAuditLogServiceClient(
 // 查询数据访问审计日志列表 - 回应
 export type auditservicev1_ListDataAccessAuditLogResponse = {
   items: auditservicev1_DataAccessAuditLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 数据访问审计日志
@@ -5641,7 +5645,7 @@ export type auditservicev1_DataAccessAuditLog = {
   dataMasked?: boolean;
   dataSource?: string;
   dbUser?: string;
-  id?: number;
+  id?: string;
   ipAddress?: string;
   latencyMs?: number;
   logHash?: string;
@@ -5653,9 +5657,9 @@ export type auditservicev1_DataAccessAuditLog = {
   sqlText?: string;
   success?: boolean;
   tableName?: string;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
-  userId?: number;
+  userId?: string;
   username?: string;
 };
 
@@ -5689,7 +5693,7 @@ export type auditservicev1_SensitiveLevel =
   | 'SENSITIVE_LEVEL_UNSPECIFIED';
 // 查询数据访问审计日志详情 - 请求
 export type auditservicev1_GetDataAccessAuditLogRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -5858,27 +5862,27 @@ export function createDictEntryServiceClient(
 // 查询字典项列表 - 回应
 export type dictservicev1_ListDictEntryResponse = {
   items: dictservicev1_DictEntry[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 字典项
 export type dictservicev1_DictEntry = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   currentI18n?: dictservicev1_DictEntryI18n;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   entryValue?: string;
   i18n: { [key: string]: dictservicev1_DictEntryI18n } | undefined;
-  id?: number;
+  id?: string;
   isEnabled?: boolean;
   numericValue?: number;
   sortOrder?: number;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
-  typeId?: number;
+  typeId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 字典项多语言信息
@@ -5898,13 +5902,13 @@ export type dictservicev1_CreateDictEntryRequest = {
 export type dictservicev1_UpdateDictEntryRequest = {
   allowMissing?: boolean;
   data: dictservicev1_DictEntry | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 批量删除字典 - 请求
 export type dictservicev1_DeleteDictEntryRequest = {
-  ids: number[] | undefined;
+  ids: string[] | undefined;
 };
 
 export type dictservicev1_ListDictEntryByTypeCodeRequest = {
@@ -6116,30 +6120,30 @@ export function createDictTypeServiceClient(
 // 查询字典类型列表 - 回应
 export type dictservicev1_ListDictTypeResponse = {
   items: dictservicev1_DictType[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 字典类型
 export type dictservicev1_DictType = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   isEnabled?: boolean;
   sortOrder?: number;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   typeCode?: string;
   typeName?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 查询字典类型详情 - 请求
 export type dictservicev1_GetDictTypeRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -6152,13 +6156,13 @@ export type dictservicev1_CreateDictTypeRequest = {
 export type dictservicev1_UpdateDictTypeRequest = {
   allowMissing?: boolean;
   data: dictservicev1_DictType | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 批量删除字典 - 请求
 export type dictservicev1_DeleteDictTypeRequest = {
-  ids: number[] | undefined;
+  ids: string[] | undefined;
 };
 
 // 文件管理服务
@@ -6315,7 +6319,7 @@ export function createFileServiceClient(
 // 查询列表 - 回应
 export type storageservicev1_ListFileResponse = {
   items: storageservicev1_File[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 文件
@@ -6323,25 +6327,25 @@ export type storageservicev1_File = {
   bucketName?: string;
   contentHash?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   extension?: string;
   fileDirectory?: string;
   fileGuid?: string;
   fileName?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   linkUrl?: string;
   provider?: storageservicev1_OSSProvider;
   saveFileName?: string;
-  size?: number;
+  size?: string;
   sizeFormat?: string;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // OSS供应商
@@ -6358,7 +6362,7 @@ export type storageservicev1_OSSProvider =
   | 'TENCENT';
 // 查询 - 请求
 export type storageservicev1_GetFileRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -6371,13 +6375,13 @@ export type storageservicev1_CreateFileRequest = {
 export type storageservicev1_UpdateFileRequest = {
   allowMissing?: boolean;
   data: storageservicev1_File | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除 - 请求
 export type storageservicev1_DeleteFileRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 文件传输服务
@@ -6491,12 +6495,12 @@ export type storageservicev1_DownloadFileRequest = {
   acceptMime?: string;
   disposition?: string;
   downloadUrl?: string;
-  fileId?: number;
+  fileId?: string;
   preferPresignedUrl?: boolean;
   presignExpireSeconds?: number;
-  rangeEnd?: number;
+  rangeEnd?: string;
   // 可选的分段下载范围（闭区间 start，开区间 end；为 0/0 表示全量）
-  rangeStart?: number;
+  rangeStart?: string;
   storageObject?: storageservicev1_StorageObject;
 };
 
@@ -6513,7 +6517,7 @@ export type storageservicev1_DownloadFileResponse = {
   downloadUrl?: string;
   file?: string;
   mime: string | undefined;
-  size: number | undefined;
+  size: string | undefined;
   sourceFileName: string | undefined;
   storagePath: string | undefined;
   updatedAt?: wellKnownTimestamp;
@@ -6523,11 +6527,11 @@ export type storageservicev1_UploadFileRequest = {
   file?: string;
   mime?: string;
   presign?: storageservicev1_PresignOption;
-  size?: number;
+  size?: string;
   sourceFileName?: string;
   storageObject: storageservicev1_StorageObject | undefined;
-  tenantId?: number;
-  userId?: number;
+  tenantId?: string;
+  userId?: string;
 };
 
 // 预签名选项
@@ -6785,25 +6789,25 @@ export function createGrouponActivityServiceClient(
 }
 export type catalogservicev1_ListGrouponActivityResponse = {
   items: catalogservicev1_GrouponActivity[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 拼团活动
 export type catalogservicev1_GrouponActivity = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   currency?: string;
-  groupPrice?: number;
+  groupPrice?: string;
   groupSize?: number;
   groupValidHours?: number;
-  id?: number;
+  id?: string;
   name?: string;
   perUserLimit?: number;
-  skuId?: number;
+  skuId?: string;
   status?: catalogservicev1_GrouponActivity_Status;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   validFrom?: wellKnownTimestamp;
   validUntil?: wellKnownTimestamp;
 };
@@ -6813,11 +6817,11 @@ export type catalogservicev1_GrouponActivity_Status =
   | 'INACTIVE'
   | 'STATUS_UNSPECIFIED';
 export type catalogservicev1_CountGrouponActivityResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type catalogservicev1_GetGrouponActivityRequest = {
-  id: number | undefined;
+  id: string | undefined;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -6827,31 +6831,31 @@ export type catalogservicev1_CreateGrouponActivityRequest = {
 
 export type catalogservicev1_UpdateGrouponActivityRequest = {
   data: catalogservicev1_GrouponActivity | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask?: wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeleteGrouponActivityRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 export type catalogservicev1_ListGrouponGroupsRequest = {
-  activityId: number | undefined;
+  activityId: string | undefined;
   status?: string;
 };
 
 export type catalogservicev1_ListGrouponGroupResponse = {
   items: catalogservicev1_GrouponGroup[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 拼团
 export type catalogservicev1_GrouponGroup = {
-  activityId?: number;
+  activityId?: string;
   createdAt?: wellKnownTimestamp;
   expireAt?: wellKnownTimestamp;
-  id?: number;
-  leaderOrderId?: number;
+  id?: string;
+  leaderOrderId?: string;
   memberCount?: number;
   paidCount?: number;
   status?: catalogservicev1_GrouponGroup_Status;
@@ -6920,7 +6924,7 @@ export function createInteractionAdminServiceClient(
   };
 }
 export type interactionservicev1_PurgeTargetInteractionsRequest = {
-  targetId: number | undefined;
+  targetId: string | undefined;
   targetType: interactionservicev1_TargetType | undefined;
 };
 
@@ -6933,7 +6937,7 @@ export type interactionservicev1_PurgeTargetInteractionsResponse = {
 };
 
 export type interactionservicev1_PurgeUserInteractionsRequest = {
-  userId: number | undefined;
+  userId: string | undefined;
 };
 
 export type interactionservicev1_PurgeUserInteractionsResponse = {
@@ -6942,7 +6946,7 @@ export type interactionservicev1_PurgeUserInteractionsResponse = {
 
 export type interactionservicev1_ResetCounterRequest = {
   metric: interactionservicev1_CounterMetric | undefined;
-  targetId: number | undefined;
+  targetId: string | undefined;
   targetType: interactionservicev1_TargetType | undefined;
 };
 
@@ -6951,7 +6955,7 @@ export type interactionservicev1_CounterMetric =
   | 'COUNTER_METRIC_LIKE'
   | 'COUNTER_METRIC_UNSPECIFIED';
 export type interactionservicev1_ResetCounterResponse = {
-  recount: number | undefined;
+  recount: string | undefined;
 };
 
 // 站内信消息管理服务
@@ -7120,30 +7124,30 @@ export function createInternalMessageServiceClient(
 // 查询站内信消息列表 - 回应
 export type internal_messageservicev1_ListInternalMessageResponse = {
   items: internal_messageservicev1_InternalMessage[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 站内信消息
 export type internal_messageservicev1_InternalMessage = {
-  categoryId?: number;
+  categoryId?: string;
   categoryName?: string;
   content?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
-  senderId?: number;
+  id?: string;
+  senderId?: string;
   senderName?: string;
   status?: internal_messageservicev1_InternalMessage_Status;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   title?: string;
   type?: internal_messageservicev1_InternalMessage_Type;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 消息状态
@@ -7161,7 +7165,7 @@ export type internal_messageservicev1_InternalMessage_Type =
   | 'PRIVATE';
 // 查询站内信消息详情 - 请求
 export type internal_messageservicev1_GetInternalMessageRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -7169,34 +7173,34 @@ export type internal_messageservicev1_GetInternalMessageRequest = {
 export type internal_messageservicev1_UpdateInternalMessageRequest = {
   allowMissing?: boolean;
   data: internal_messageservicev1_InternalMessage | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除站内信消息 - 请求
 export type internal_messageservicev1_DeleteInternalMessageRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type internal_messageservicev1_SendMessageRequest = {
-  categoryId?: number;
+  categoryId?: string;
   content: string | undefined;
-  conversationId?: number;
-  recipientUserId?: number;
-  sendUserId?: number;
+  conversationId?: string;
+  recipientUserId?: string;
+  sendUserId?: string;
   targetAll?: boolean;
-  targetUserIds: number[] | undefined;
+  targetUserIds: string[] | undefined;
   title?: string;
   type: internal_messageservicev1_InternalMessage_Type | undefined;
 };
 
 export type internal_messageservicev1_SendMessageResponse = {
-  messageId: number | undefined;
+  messageId: string | undefined;
 };
 
 export type internal_messageservicev1_RevokeMessageRequest = {
-  messageId: number | undefined;
-  userId: number | undefined;
+  messageId: string | undefined;
+  userId: string | undefined;
 };
 
 // 站内信消息分类管理服务
@@ -7353,30 +7357,30 @@ export function createInternalMessageCategoryServiceClient(
 // 查询站内信消息分类列表 - 回应
 export type internal_messageservicev1_ListInternalMessageCategoryResponse = {
   items: internal_messageservicev1_InternalMessageCategory[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 站内信消息分类
 export type internal_messageservicev1_InternalMessageCategory = {
   code?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   iconUrl?: string;
-  id?: number;
+  id?: string;
   isEnabled?: boolean;
   name?: string;
   sortOrder?: number;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 查询站内信消息分类详情 - 请求
 export type internal_messageservicev1_GetInternalMessageCategoryRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -7389,13 +7393,13 @@ export type internal_messageservicev1_CreateInternalMessageCategoryRequest = {
 export type internal_messageservicev1_UpdateInternalMessageCategoryRequest = {
   allowMissing?: boolean;
   data: internal_messageservicev1_InternalMessageCategory | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除站内信消息分类 - 请求
 export type internal_messageservicev1_DeleteInternalMessageCategoryRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 站内信消息管理服务
@@ -7506,27 +7510,27 @@ export function createInternalMessageRecipientServiceClient(
 }
 export type internal_messageservicev1_ListUserInboxResponse = {
   items: internal_messageservicev1_InternalMessageRecipient[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 站内信消息用户接收信息
 export type internal_messageservicev1_InternalMessageRecipient = {
   content?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  messageId?: number;
+  deletedBy?: string;
+  id?: string;
+  messageId?: string;
   readAt?: wellKnownTimestamp;
   receivedAt?: wellKnownTimestamp;
-  recipientUserId?: number;
+  recipientUserId?: string;
   status?: internal_messageservicev1_InternalMessageRecipient_Status;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   title?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 消息状态
@@ -7537,13 +7541,13 @@ export type internal_messageservicev1_InternalMessageRecipient_Status =
   | 'REVOKED'
   | 'SENT';
 export type internal_messageservicev1_DeleteNotificationFromInboxRequest = {
-  recipientIds: number[] | undefined;
-  userId: number | undefined;
+  recipientIds: string[] | undefined;
+  userId: string | undefined;
 };
 
 export type internal_messageservicev1_MarkNotificationAsReadRequest = {
-  recipientIds: number[] | undefined;
-  userId: number | undefined;
+  recipientIds: string[] | undefined;
+  userId: string | undefined;
 };
 
 // 发票管理服务（admin 全 CRUD）
@@ -7772,30 +7776,30 @@ export function createInvoiceServiceClient(
 }
 export type invoiceservicev1_ListInvoiceResponse = {
   items: invoiceservicev1_Invoice[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 发票
 export type invoiceservicev1_Invoice = {
-  amount?: number;
+  amount?: string;
   buyerAddress?: string;
   buyerName?: string;
   buyerPhone?: string;
   buyerTaxId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   currency?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   invoiceNumber?: string;
   invoiceType?: invoiceservicev1_Invoice_InvoiceType;
-  orderId?: number;
+  orderId?: string;
   status?: invoiceservicev1_Invoice_Status;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  userId?: number;
+  updatedBy?: string;
+  userId?: string;
 };
 
 // 发票类型
@@ -7811,11 +7815,11 @@ export type invoiceservicev1_Invoice_Status =
   | 'PENDING'
   | 'STATUS_UNSPECIFIED';
 export type invoiceservicev1_CountInvoiceResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type invoiceservicev1_GetInvoiceRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -7826,12 +7830,12 @@ export type invoiceservicev1_CreateInvoiceRequest = {
 export type invoiceservicev1_UpdateInvoiceRequest = {
   allowMissing?: boolean;
   data: invoiceservicev1_Invoice | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type invoiceservicev1_DeleteInvoiceRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 语言管理服务
@@ -8012,16 +8016,16 @@ export function createLanguageServiceClient(
 // 语言列表 - 答复
 export type dictservicev1_ListLanguageResponse = {
   items: dictservicev1_Language[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 语言
 export type dictservicev1_Language = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   isDefault?: boolean;
   isEnabled?: boolean;
   languageCode?: string;
@@ -8029,13 +8033,13 @@ export type dictservicev1_Language = {
   nativeName?: string;
   sortOrder?: number;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 语言数据 - 请求
 export type dictservicev1_GetLanguageRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -8048,13 +8052,13 @@ export type dictservicev1_CreateLanguageRequest = {
 export type dictservicev1_UpdateLanguageRequest = {
   allowMissing?: boolean;
   data: dictservicev1_Language | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除语言 - 请求
 export type dictservicev1_DeleteLanguageRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type dictservicev1_BatchCreateLanguagesRequest = {
@@ -8171,7 +8175,7 @@ export function createLoginAuditLogServiceClient(
 // 查询登录审计日志列表 - 回应
 export type auditservicev1_ListLoginAuditLogResponse = {
   items: auditservicev1_LoginAuditLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 登录审计日志
@@ -8181,7 +8185,7 @@ export type auditservicev1_LoginAuditLog = {
   deviceInfo?: auditservicev1_DeviceInfo;
   failureReason?: string;
   geoLocation?: auditservicev1_GeoLocation;
-  id?: number;
+  id?: string;
   ipAddress?: string;
   logHash?: string;
   loginMethod?: auditservicev1_LoginAuditLog_LoginMethod;
@@ -8193,10 +8197,10 @@ export type auditservicev1_LoginAuditLog = {
   sessionId?: string;
   signature?: string;
   status?: auditservicev1_LoginAuditLog_Status;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   traceId?: string;
-  userId?: number;
+  userId?: string;
   username?: string;
 };
 
@@ -8232,7 +8236,7 @@ export type auditservicev1_LoginAuditLog_RiskLevel =
   | 'RISK_LEVEL_UNSPECIFIED';
 // 查询登录审计日志详情 - 请求
 export type auditservicev1_GetLoginAuditLogRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -8390,26 +8394,26 @@ export function createLoginPolicyServiceClient(
 // 查询登录策略列表 - 回应
 export type authenticationservicev1_ListLoginPolicyResponse = {
   items: authenticationservicev1_LoginPolicy[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 登录策略
 export type authenticationservicev1_LoginPolicy = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   method?: authenticationservicev1_LoginPolicy_Method;
   reason?: string;
-  targetId?: number;
-  tenantId?: number;
+  targetId?: string;
+  tenantId?: string;
   tenantName?: string;
   type?: authenticationservicev1_LoginPolicy_Type;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   value?: string;
 };
 
@@ -8428,7 +8432,7 @@ export type authenticationservicev1_LoginPolicy_Method =
   | 'TIME';
 // 查询登录策略详情 - 请求
 export type authenticationservicev1_GetLoginPolicyRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -8441,13 +8445,13 @@ export type authenticationservicev1_CreateLoginPolicyRequest = {
 export type authenticationservicev1_UpdateLoginPolicyRequest = {
   allowMissing?: boolean;
   data: authenticationservicev1_LoginPolicy | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除登录策略 - 请求
 export type authenticationservicev1_DeleteLoginPolicyRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 会员等级管理服务（admin 全 CRUD）
@@ -8669,7 +8673,7 @@ export function createMemberTierServiceClient(
 }
 export type catalogservicev1_ListMemberTierResponse = {
   items: catalogservicev1_MemberTier[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 会员等级
@@ -8677,13 +8681,13 @@ export type catalogservicev1_MemberTier = {
   badgeIcon?: string;
   createdAt?: wellKnownTimestamp;
   currency?: string;
-  id?: number;
+  id?: string;
   level?: number;
-  minSpend?: number;
+  minSpend?: string;
   name?: string;
   pointsMultiplier?: number;
   status?: catalogservicev1_MemberTier_Status;
-  tenantId?: number;
+  tenantId?: string;
 };
 
 export type catalogservicev1_MemberTier_Status =
@@ -8691,11 +8695,11 @@ export type catalogservicev1_MemberTier_Status =
   | 'INACTIVE'
   | 'STATUS_UNSPECIFIED';
 export type catalogservicev1_CountMemberTierResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type catalogservicev1_GetMemberTierRequest = {
-  id: number | undefined;
+  id: string | undefined;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -8705,12 +8709,12 @@ export type catalogservicev1_CreateMemberTierRequest = {
 
 export type catalogservicev1_UpdateMemberTierRequest = {
   data: catalogservicev1_MemberTier | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask?: wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeleteMemberTierRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 后台菜单管理服务
@@ -8888,7 +8892,7 @@ export function createMenuServiceClient(
 // 查询菜单列表 - 回应
 export type permissionservicev1_ListMenuResponse = {
   items: permissionservicev1_Menu[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 菜单
@@ -8901,19 +8905,19 @@ export type permissionservicev1_Menu = {
   // Behaviors: OPTIONAL
   component?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   meta?: permissionservicev1_MenuMeta;
   //
   // Behaviors: OPTIONAL
   name?: string;
-  parentId?: number;
+  parentId?: string;
   //
   // Behaviors: OPTIONAL
   path?: string;
@@ -8923,7 +8927,7 @@ export type permissionservicev1_Menu = {
   status?: permissionservicev1_Menu_Status;
   type?: permissionservicev1_Menu_Type;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 菜单状态
@@ -8939,7 +8943,7 @@ export type permissionservicev1_Menu_Type =
   | 'MENU';
 // 查询菜单详情 - 请求
 export type permissionservicev1_GetMenuRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -8961,14 +8965,14 @@ export type permissionservicev1_CreateMenuRequest = {
 export type permissionservicev1_UpdateMenuRequest = {
   allowMissing?: boolean;
   data: permissionservicev1_Menu | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除菜单 - 请求
 export type permissionservicev1_DeleteMenuRequest = {
-  id?: number;
-  operatorId?: number;
+  id?: string;
+  operatorId?: string;
 };
 
 // MFA（多因素认证）服务 HTTP 桥接。
@@ -9216,7 +9220,7 @@ export type authenticationservicev1_DisableMFARequest = {
   totpCode?: string;
   // 管理端重置：指定目标用户（不传=操作当前登录用户）。
   // 仅平台管理员可指定他人，用于用户认证器丢失时的救援解绑（按 method 清空该用户全部因子）。
-  userId?: number;
+  userId?: string;
   webauthn?: authenticationservicev1_WebAuthnAssertion;
 };
 
@@ -9388,7 +9392,7 @@ export function createMonitorAlertServiceClient(
 }
 export type monitor_alertservicev1_ListMonitorAlertRuleResponse = {
   items: monitor_alertservicev1_MonitorAlertRule[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 监控告警规则：指标阈值 → 触发通知。
@@ -9400,8 +9404,8 @@ export type monitor_alertservicev1_MonitorAlertRule = {
   // 重复告警冷却（分钟）：持续越限时按此间隔重发，默认 30
   cooldownMinutes?: number;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
-  id?: number;
+  createdBy?: string;
+  id?: string;
   isEnabled?: boolean;
   lastAlertedAt?: wellKnownTimestamp;
   // —— 以下为评估器回写状态（只读） ——
@@ -9416,7 +9420,7 @@ export type monitor_alertservicev1_MonitorAlertRule = {
   target?: string;
   threshold?: number;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 监控指标（评估器支持的全集；新增指标 = 枚举加值 + evaluator 补取数分支）。
@@ -9449,7 +9453,7 @@ export type notificationservicev1_Channel =
   | 'SMS'
   | 'WEBHOOK';
 export type monitor_alertservicev1_GetMonitorAlertRuleRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 export type monitor_alertservicev1_CreateMonitorAlertRuleRequest = {
@@ -9458,12 +9462,12 @@ export type monitor_alertservicev1_CreateMonitorAlertRuleRequest = {
 
 export type monitor_alertservicev1_UpdateMonitorAlertRuleRequest = {
   data: monitor_alertservicev1_MonitorAlertRule | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask?: wellKnownFieldMask;
 };
 
 export type monitor_alertservicev1_DeleteMonitorAlertRuleRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 手动触发一轮评估（管理页「立即评估」）；返回各启用规则的求值结论
@@ -9484,7 +9488,7 @@ export type monitor_alertservicev1_EvaluateMonitorAlertsResponse_RuleOutcome = {
   notified: boolean | undefined;
   // 未发通知的原因（未越限未恢复 / 冷却中 / 采集失败）
   reason?: string;
-  ruleId: number | undefined;
+  ruleId: string | undefined;
 };
 
 // 服务监控查询服务（只读聚合视图；采集在 core 进程内完成）。
@@ -9524,11 +9528,11 @@ export type server_monitorservicev1_ServerMonitorInfo = {
 // Go 运行时信息
 export type server_monitorservicev1_GoRuntimeInfo = {
   gcCycles?: number;
-  memAllocBytes?: number;
-  memSysBytes?: number;
+  memAllocBytes?: string;
+  memSysBytes?: string;
   numGoroutine?: number;
   startedAt?: wellKnownTimestamp;
-  uptimeSeconds?: number;
+  uptimeSeconds?: string;
   version?: string;
 };
 
@@ -9579,7 +9583,7 @@ export type redis_cacheservicev1_GetRedisCacheMonitorRequest = {
 
 // Redis缓存监控信息
 export type redis_cacheservicev1_RedisCacheMonitorInfo = {
-  dbSize: number | undefined;
+  dbSize: string | undefined;
   sections: redis_cacheservicev1_InfoSection[] | undefined;
   slowlog: redis_cacheservicev1_SlowLogEntry[] | undefined;
 };
@@ -9602,8 +9606,8 @@ export type redis_cacheservicev1_SlowLogEntry = {
   clientAddr: string | undefined;
   clientName: string | undefined;
   createdAt: undefined | wellKnownTimestamp;
-  durationUsec: number | undefined;
-  id: number | undefined;
+  durationUsec: string | undefined;
+  id: string | undefined;
 };
 
 // 通知投递台账管理服务（平台级只读视图）。
@@ -9711,7 +9715,7 @@ export function createNotificationServiceClient(
 // 查询投递台账列表 - 回应
 export type notificationservicev1_ListNotificationDeliveryResponse = {
   items: notificationservicev1_NotificationDelivery[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 一条通知 × 一个渠道 × 一个收件人 = 一行投递台账。
@@ -9721,17 +9725,17 @@ export type notificationservicev1_NotificationDelivery = {
   // 因此 attempts>0 而 status 仍为 SENDING = 拨过号但没回写结论。
   attempts?: number;
   channel?: notificationservicev1_Channel;
-  channelId?: number;
+  channelId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   eventType?: notificationservicev1_EventType;
-  id?: number;
+  id?: string;
   lastError?: string;
   // 服务商侧消息/请求 ID（阿里云 RequestId、IM 响应 ID 等，拿得到就带），跨系统对账有据可查
   receiptProviderId?: string;
-  recipientUserId?: number;
+  recipientUserId?: string;
   // 产生本条投递的业务对象主键，含义由 event_type 决定（INTERNAL_MESSAGE → internal_messages.id）。
-  relatedId?: number;
+  relatedId?: string;
   // 一次派发意图的标识：调用方不传则服务端生成 UUID。唯一性按 (request_id, channel) 组合。
   requestId?: string;
   sentAt?: wellKnownTimestamp;
@@ -9739,7 +9743,7 @@ export type notificationservicev1_NotificationDelivery = {
   // 脱敏后的投递目标：邮箱留首字符+域名，其余留末 4 位；INTERNAL 原样存用户 ID 十进制串
   target?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 业务事件类型。路由（事件 → 渠道 / 是否异步）由 notification_rules 表决定，
@@ -9766,7 +9770,7 @@ export type notificationservicev1_DeliveryStatus =
   | 'SKIPPED';
 // 查询投递台账详情 - 请求
 export type notificationservicev1_GetNotificationDeliveryRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 通知渠道管理服务（平台级配置）
@@ -9958,20 +9962,20 @@ export function createNotificationChannelServiceClient(
 // 查询通知渠道列表 - 回应
 export type notificationservicev1_ListNotificationChannelResponse = {
   items: notificationservicev1_NotificationChannel[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 通知渠道
 export type notificationservicev1_NotificationChannel = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   enabled?: boolean;
   // 密码不回传：仅创建/更新时写入；hasPassword 标识是否已配置
   hasPassword?: boolean;
   hasSmsAccessSecret?: boolean;
   // 密钥不回传：与 password 同一条约定，仅写入时接收
   hasWebhookSecret?: boolean;
-  id?: number;
+  id?: string;
   name?: string;
   remark?: string;
   // 扩展渠道配置整包（JSON；读回显是脱敏后的 JSON 串，sensitive 字段恒为空串——留空 = 不修改）
@@ -9991,7 +9995,7 @@ export type notificationservicev1_NotificationChannel = {
   smtpUsername?: string;
   type?: notificationservicev1_NotificationChannel_Type;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   // 可用占位符：{{title}} {{content}} {{event_type}} {{timestamp}} {{sign}} {{nonce}}
   // {{recipient_user_id}} {{related_id}} {{delivered_at}}；替换按 JSON 字符串转义进行，
   // 渲染结果必须是合法 JSON。CUSTOM 风格下 {{sign}} 不可用（它要盖住正文本身）。
@@ -10069,7 +10073,7 @@ export type notificationservicev1_NotificationChannel_SmsProvider =
   | 'TENCENT';
 // 查询通知渠道详情 - 请求
 export type notificationservicev1_GetNotificationChannelRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 创建通知渠道 - 请求
@@ -10088,7 +10092,7 @@ export type notificationservicev1_CreateNotificationChannelRequest = {
 // 更新通知渠道 - 请求
 export type notificationservicev1_UpdateNotificationChannelRequest = {
   data: notificationservicev1_NotificationChannel | undefined;
-  id: number | undefined;
+  id: string | undefined;
   // 明文密码；留空表示不修改已存密码
   password?: string;
   // 扩展渠道配置明文 JSON；sensitive 字段留空 = 保留已存值
@@ -10102,12 +10106,12 @@ export type notificationservicev1_UpdateNotificationChannelRequest = {
 
 // 删除通知渠道 - 请求
 export type notificationservicev1_DeleteNotificationChannelRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 发送测试邮件 - 请求
 export type notificationservicev1_SendTestEmailRequest = {
-  id: number | undefined;
+  id: string | undefined;
   recipient: string | undefined;
 };
 
@@ -10119,7 +10123,7 @@ export type notificationservicev1_SendTestEmailResponse = {
 
 // 发送测试消息（扩展渠道/短信通用：按渠道类型解析收件人格式）
 export type notificationservicev1_SendTestRequest = {
-  id: number | undefined;
+  id: string | undefined;
   // 收件目标：EMAIL 为邮箱地址，SMS 为手机号（E.164 或纯号码均可）
   recipient: string | undefined;
 };
@@ -10202,7 +10206,7 @@ export function createNotificationPreferenceServiceClient(
 // 刻意无租户维度：偏好跟人走，全链 fail-open（读不到偏好 = 不静音不退订）。
 export type notificationservicev1_NotificationPreference = {
   // 退订的站内信分类 ID 列表（预留：CMS v1 无全员广播，无执行点，仅落库）
-  mutedCategoryIds: number[] | undefined;
+  mutedCategoryIds: string[] | undefined;
   // 是否启用实时推送静音时段：只抑制 SSE 实时推送（角标即时性），
   // 收件行照常落库，用户打开收件箱仍能看到全部消息。
   quietEnabled?: boolean;
@@ -10212,12 +10216,12 @@ export type notificationservicev1_NotificationPreference = {
   // 静音开始：自当日 00:00 起的分钟数（0-1439），默认 1320（22:00）。
   quietStartMinute?: number;
   updatedAt?: wellKnownTimestamp;
-  userId?: number;
+  userId?: string;
 };
 
 // 更新自己的通知偏好（字段全量提交；未登录不可用）。
 export type notificationservicev1_UpdateNotificationPreferenceRequest = {
-  mutedCategoryIds: number[] | undefined;
+  mutedCategoryIds: string[] | undefined;
   quietEnabled?: boolean;
   quietEndMinute?: number;
   quietStartMinute?: number;
@@ -10230,7 +10234,7 @@ export type notificationservicev1_ListMyNotificationCategoriesResponse = {
 
 // 可退订分类的精简项（只取 id + 名称，避免拖整个分类实体）。
 export type notificationservicev1_NotificationCategoryItem = {
-  id?: number;
+  id?: string;
   name?: string;
 };
 
@@ -10395,28 +10399,28 @@ export function createNotificationRuleServiceClient(
 // 查询路由规则列表 - 回应
 export type notificationservicev1_ListNotificationRuleResponse = {
   items: notificationservicev1_NotificationRule[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 一条业务事件类型 → 一行规则（event_type 唯一）
 export type notificationservicev1_NotificationRule = {
   channel?: notificationservicev1_Channel;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   eventType?: notificationservicev1_EventType;
-  id?: number;
+  id?: string;
   // 异步 = 入队 asynq、请求立刻拿到 SENDING；同步 = 当场拨号并回写结论。
   // 判据是"调用方需不需要这次投递的结论"，与渠道无关。
   isAsync?: boolean;
   isEnabled?: boolean;
   remark?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 查询路由规则详情 - 请求
 export type notificationservicev1_GetNotificationRuleRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 创建路由规则 - 请求
@@ -10427,13 +10431,13 @@ export type notificationservicev1_CreateNotificationRuleRequest = {
 // 更新路由规则 - 请求
 export type notificationservicev1_UpdateNotificationRuleRequest = {
   data: notificationservicev1_NotificationRule | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除路由规则 - 请求
 export type notificationservicev1_DeleteNotificationRuleRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 测试投递 - 请求。
@@ -10444,14 +10448,14 @@ export type notificationservicev1_DeleteNotificationRuleRequest = {
 // INTERNAL 规则拒绝测试（站内信投递由业务动作驱动，无"测试文案"语义）。
 export type notificationservicev1_TestDispatchNotificationRequest = {
   content?: string;
-  id: number | undefined;
+  id: string | undefined;
   target?: string;
   title?: string;
 };
 
 // 测试投递 - 回应。台账行号一并回传：报错时拿它去投递记录页查这一条。
 export type notificationservicev1_TestDispatchNotificationResponse = {
-  deliveryId: number | undefined;
+  deliveryId: string | undefined;
   status: notificationservicev1_DeliveryStatus | undefined;
 };
 
@@ -10615,7 +10619,7 @@ export function createNotificationTemplateServiceClient(
 }
 export type notificationservicev1_ListNotificationTemplateResponse = {
   items: notificationservicev1_NotificationTemplate[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 通知模板：可复用的标题/正文占位模板（{{var}}），平台全局、code 全局唯一。
@@ -10625,7 +10629,7 @@ export type notificationservicev1_NotificationTemplate = {
   // 正文模板，支持 {{var}} 占位符
   contentTemplate?: string;
   createdAt?: wellKnownTimestamp;
-  id?: number;
+  id?: string;
   isEnabled?: boolean;
   name?: string;
   remark?: string;
@@ -10635,7 +10639,7 @@ export type notificationservicev1_NotificationTemplate = {
 };
 
 export type notificationservicev1_GetNotificationTemplateRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 export type notificationservicev1_CreateNotificationTemplateRequest = {
@@ -10644,19 +10648,19 @@ export type notificationservicev1_CreateNotificationTemplateRequest = {
 
 export type notificationservicev1_UpdateNotificationTemplateRequest = {
   data: notificationservicev1_NotificationTemplate | undefined;
-  id: number | undefined;
+  id: string | undefined;
   // 字段掩码：留空更新全部字段
   updateMask?: wellKnownFieldMask;
 };
 
 export type notificationservicev1_DeleteNotificationTemplateRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 按变量集试渲染（管理页预览；发送不经过这里）
 export type notificationservicev1_RenderNotificationTemplateRequest = {
   // 被渲染的模板 ID
-  id: number | undefined;
+  id: string | undefined;
   // 变量集：占位符名 → 值；模板引用了变量集里没有的占位符时整个渲染报错
   variables: { [key: string]: string } | undefined;
 };
@@ -10772,7 +10776,7 @@ export type online_sessionservicev1_ListOnlineSessionRequest = {
 // 查询在线会话列表 - 回应
 export type online_sessionservicev1_ListOnlineSessionResponse = {
   items: online_sessionservicev1_OnlineSession[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 在线会话
@@ -10784,9 +10788,9 @@ export type online_sessionservicev1_OnlineSession = {
   // 会话令牌对 ID（JWT jti，唯一标识一次令牌签发）
   jti?: string;
   loginAt?: wellKnownTimestamp;
-  tenantId?: number;
+  tenantId?: string;
   userAgent?: string;
-  userId?: number;
+  userId?: string;
   username?: string;
 };
 
@@ -10794,7 +10798,7 @@ export type online_sessionservicev1_OnlineSession = {
 export type online_sessionservicev1_ForceLogoutSessionRequest = {
   clientType?: authenticationservicev1_ClientType;
   jti?: string;
-  userId?: number;
+  userId?: string;
 };
 
 // 强制下线指定会话 - 回应
@@ -10806,14 +10810,14 @@ export type online_sessionservicev1_ForceLogoutSessionResponse = {
 // user_id 与当前 jti 显式传入（current_jti 用于标记"当前会话"）。
 export type online_sessionservicev1_ListMyOnlineSessionRequest = {
   currentJti?: string;
-  userId?: number;
+  userId?: string;
 };
 
 // 当前用户强制下线自己的指定会话 - 请求
 export type online_sessionservicev1_RevokeMyOnlineSessionRequest = {
   clientType?: authenticationservicev1_ClientType;
   jti?: string;
-  userId?: number;
+  userId?: string;
 };
 
 // 当前用户强制下线自己的指定会话 - 回应
@@ -10930,7 +10934,7 @@ export function createOperationAuditLogServiceClient(
 // 查询操作审计日志列表 - 回应
 export type auditservicev1_ListOperationAuditLogResponse = {
   items: auditservicev1_OperationAuditLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 操作审计日志
@@ -10941,7 +10945,7 @@ export type auditservicev1_OperationAuditLog = {
   createdAt?: wellKnownTimestamp;
   failureReason?: string;
   geoLocation?: auditservicev1_GeoLocation;
-  id?: number;
+  id?: string;
   ipAddress?: string;
   logHash?: string;
   requestId?: string;
@@ -10950,10 +10954,10 @@ export type auditservicev1_OperationAuditLog = {
   sensitiveLevel?: auditservicev1_SensitiveLevel;
   signature?: string;
   success?: boolean;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   traceId?: string;
-  userId?: number;
+  userId?: string;
   username?: string;
 };
 
@@ -10971,7 +10975,7 @@ export type auditservicev1_OperationAuditLog_ActionType =
   | 'UPDATE';
 // 查询操作审计日志详情 - 请求
 export type auditservicev1_GetOperationAuditLogRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -11200,36 +11204,36 @@ export function createOrderServiceClient(
 }
 export type orderservicev1_ListOrderResponse = {
   items: orderservicev1_Order[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 订单
 export type orderservicev1_Order = {
   businessRefId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   currency?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  discountAmount?: number;
+  deletedBy?: string;
+  discountAmount?: string;
   // 拼团：参与的活动与团（下单事务写入；参团/开团载体）
-  grouponActivityId?: number;
-  grouponGroupId?: number;
-  id?: number;
+  grouponActivityId?: string;
+  grouponGroupId?: string;
+  id?: string;
   idempotencyKey?: string;
-  originalAmount?: number;
+  originalAmount?: string;
   recipientName?: string;
   recipientPhone?: string;
   shippingAddress?: string;
-  shippingFee?: number;
+  shippingFee?: string;
   shippingRegion?: string;
   status?: orderservicev1_Order_Status;
-  taxAmount?: number;
-  tenantId?: number;
-  totalAmount?: number;
+  taxAmount?: string;
+  tenantId?: string;
+  totalAmount?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  userId?: number;
+  updatedBy?: string;
+  userId?: string;
 };
 
 // 订单状态
@@ -11247,14 +11251,14 @@ export type orderservicev1_Order_Status =
   | 'PENDING_PAYMENT'
   | 'STATUS_UNSPECIFIED';
 export type orderservicev1_CountOrderResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type orderservicev1_GetOrderRequest = {
-  id?: number;
+  id?: string;
   idempotencyKey?: string;
   // 按 idempotency_key 查询时必须携带的租户ID（唯一索引为 tenant_id + idempotency_key）。
-  tenantId?: number;
+  tenantId?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -11265,12 +11269,12 @@ export type orderservicev1_UpdateOrderRequest = {
   // 否则 affected_rows=0 返回 Conflict。留空表示不校验。
   // 用于并发场景下防止终态被覆盖。
   expectedStatus: orderservicev1_Order_Status[] | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type orderservicev1_DeleteOrderRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 订单项管理服务
@@ -11510,32 +11514,32 @@ export function createOrderItemServiceClient(
 }
 export type orderservicev1_ListOrderItemResponse = {
   items: orderservicev1_OrderItem[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 订单项
 export type orderservicev1_OrderItem = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  orderId?: number;
+  deletedBy?: string;
+  id?: string;
+  orderId?: string;
   quantity?: number;
-  skuId?: number;
+  skuId?: string;
   skuSnapshot?: string;
-  subtotal?: number;
-  unitPrice?: number;
+  subtotal?: string;
+  unitPrice?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type orderservicev1_CountOrderItemResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type orderservicev1_GetOrderItemRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -11550,12 +11554,12 @@ export type orderservicev1_BatchCreateOrderItemsRequest = {
 export type orderservicev1_UpdateOrderItemRequest = {
   allowMissing?: boolean;
   data: orderservicev1_OrderItem | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type orderservicev1_DeleteOrderItemRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 组织单元服务
@@ -11712,7 +11716,7 @@ export function createOrgUnitServiceClient(
 // 获取组织单元列表 - 答复
 export type identityservicev1_ListOrgUnitResponse = {
   items: identityservicev1_OrgUnit[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 组织单元
@@ -11722,26 +11726,26 @@ export type identityservicev1_OrgUnit = {
   businessScopes: string[] | undefined;
   children: identityservicev1_OrgUnit[] | undefined;
   code?: string;
-  contactUserId?: number;
+  contactUserId?: string;
   contactUserName?: string;
   country?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   email?: string;
   endAt?: wellKnownTimestamp;
   externalId?: string;
-  id?: number;
+  id?: string;
   isLegalEntity?: boolean;
   latitude?: number;
-  leaderId?: number;
+  leaderId?: string;
   leaderName?: string;
-  legalEntityOrgId?: number;
+  legalEntityOrgId?: string;
   longitude?: number;
   name?: string;
-  parentId?: number;
+  parentId?: string;
   path?: string;
   permissionTags: string[] | undefined;
   phone?: string;
@@ -11751,12 +11755,12 @@ export type identityservicev1_OrgUnit = {
   startAt?: wellKnownTimestamp;
   status?: identityservicev1_OrgUnit_Status;
   taxId?: string;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   timezone?: string;
   type?: identityservicev1_OrgUnit_Type;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 组织单元类型
@@ -11777,7 +11781,7 @@ export type identityservicev1_OrgUnit_Status =
   | 'ON';
 // 获取组织单元数据 - 请求
 export type identityservicev1_GetOrgUnitRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -11790,13 +11794,13 @@ export type identityservicev1_CreateOrgUnitRequest = {
 export type identityservicev1_UpdateOrgUnitRequest = {
   allowMissing?: boolean;
   data: identityservicev1_OrgUnit | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除组织单元 - 请求
 export type identityservicev1_DeleteOrgUnitRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 支付流水管理服务
@@ -12035,30 +12039,30 @@ export function createPaymentTransactionServiceClient(
 }
 export type paymentservicev1_ListPaymentTransactionResponse = {
   items: paymentservicev1_PaymentTransaction[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 支付流水
 export type paymentservicev1_PaymentTransaction = {
-  amount?: number;
+  amount?: string;
   businessRefId?: string;
   businessType?: paymentservicev1_BusinessType;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   currency?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   // 网关侧交易号（回调确认时回填，对账用）
   gatewayTradeNo?: string;
-  id?: number;
+  id?: string;
   idempotencyKey?: string;
-  orderId?: number;
+  orderId?: string;
   paymentMethod?: paymentservicev1_PaymentMethod;
   status?: paymentservicev1_PaymentTransaction_Status;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  userId?: number;
+  updatedBy?: string;
+  userId?: string;
 };
 
 // 支付状态
@@ -12100,13 +12104,13 @@ export type paymentservicev1_BusinessType =
   | 'BUSINESS_TYPE_TRANSFER'
   | 'BUSINESS_TYPE_UNSPECIFIED';
 export type paymentservicev1_CountPaymentTransactionResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type paymentservicev1_GetPaymentTransactionRequest = {
   businessRefId?: string;
-  id?: number;
-  tenantId?: number;
+  id?: string;
+  tenantId?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -12117,12 +12121,12 @@ export type paymentservicev1_CreatePaymentTransactionRequest = {
 export type paymentservicev1_UpdatePaymentTransactionRequest = {
   allowMissing?: boolean;
   data: paymentservicev1_PaymentTransaction | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type paymentservicev1_DeletePaymentTransactionRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 支付退款管理服务
@@ -12351,28 +12355,28 @@ export function createPaymentRefundServiceClient(
 }
 export type paymentservicev1_ListPaymentRefundResponse = {
   items: paymentservicev1_PaymentRefund[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 支付退款
 export type paymentservicev1_PaymentRefund = {
-  amount?: number;
+  amount?: string;
   businessRefId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   currency?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   idempotencyKey?: string;
   // 退款原因（买家售后申请时填写）
   reason?: string;
   status?: paymentservicev1_PaymentRefund_Status;
-  tenantId?: number;
-  transactionId?: number;
+  tenantId?: string;
+  transactionId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  userId?: number;
+  updatedBy?: string;
+  userId?: string;
 };
 
 // 退款状态
@@ -12382,11 +12386,11 @@ export type paymentservicev1_PaymentRefund_Status =
   | 'STATUS_UNSPECIFIED'
   | 'SUCCEEDED';
 export type paymentservicev1_CountPaymentRefundResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type paymentservicev1_GetPaymentRefundRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -12397,12 +12401,12 @@ export type paymentservicev1_CreatePaymentRefundRequest = {
 export type paymentservicev1_UpdatePaymentRefundRequest = {
   allowMissing?: boolean;
   data: paymentservicev1_PaymentRefund | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type paymentservicev1_DeletePaymentRefundRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 支付渠道配置管理服务（admin 全 CRUD）
@@ -12627,7 +12631,7 @@ export function createPaymentChannelConfigServiceClient(
 }
 export type paymentservicev1_ListPaymentChannelConfigResponse = {
   items: paymentservicev1_PaymentChannelConfig[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 支付渠道配置
@@ -12636,7 +12640,7 @@ export type paymentservicev1_PaymentChannelConfig = {
   appId?: string;
   channel?: paymentservicev1_PaymentChannelType;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   // 网关凭据（写-only）：渠道所需密钥的 JSON，落库前服务端 AES-GCM 加密。
   // 读取路径永不回填本字段（Get/List 恒为空），改密钥 = 提交新值。
   // 微信 Native：{"mchCertSerialNo":"...","apiV3Key":"...","privateKeyPem":"..."}
@@ -12646,16 +12650,16 @@ export type paymentservicev1_PaymentChannelConfig = {
   credentialsConfigured?: boolean;
   // 启用：仅启用的渠道出现在 C 端结算页
   enabled?: boolean;
-  id?: number;
+  id?: string;
   // 商户号（微信 mch_id；支付宝直连可空）
   mchId?: string;
   name?: string;
   remark?: string;
   // 沙箱模式：true 走渠道沙箱网关（开发/验收）；生产部署必须为 false
   sandbox?: boolean;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 支付渠道类型
@@ -12675,11 +12679,11 @@ export type paymentservicev1_PaymentChannelType =
   // 微信支付 Native（扫码支付，直连商户）
   | 'PAYMENT_CHANNEL_WECHAT_NATIVE';
 export type paymentservicev1_CountPaymentChannelConfigResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type paymentservicev1_GetPaymentChannelConfigRequest = {
-  id: number | undefined;
+  id: string | undefined;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -12690,12 +12694,12 @@ export type paymentservicev1_CreatePaymentChannelConfigRequest = {
 export type paymentservicev1_UpdatePaymentChannelConfigRequest = {
   allowMissing?: boolean;
   data: paymentservicev1_PaymentChannelConfig | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask?: wellKnownFieldMask;
 };
 
 export type paymentservicev1_DeletePaymentChannelConfigRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 权限点管理服务
@@ -12884,26 +12888,26 @@ export function createPermissionServiceClient(
 // 查询列表 - 回应
 export type permissionservicev1_ListPermissionResponse = {
   items: permissionservicev1_Permission[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 权限点
 export type permissionservicev1_Permission = {
-  apiIds: number[] | undefined;
+  apiIds: string[] | undefined;
   code?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
-  groupId?: number;
+  groupId?: string;
   groupName?: string;
-  id?: number;
-  menuIds: number[] | undefined;
+  id?: string;
+  menuIds: string[] | undefined;
   name?: string;
   status?: permissionservicev1_Permission_Status;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 权限点状态
@@ -12913,7 +12917,7 @@ export type permissionservicev1_Permission_Status =
 // 查询 - 请求
 export type permissionservicev1_GetPermissionRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -12926,15 +12930,15 @@ export type permissionservicev1_CreatePermissionRequest = {
 export type permissionservicev1_UpdatePermissionRequest = {
   allowMissing?: boolean;
   data: permissionservicev1_Permission | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除 - 请求
 export type permissionservicev1_DeletePermissionRequest = {
   code?: string;
-  groupId?: number;
-  id?: number;
+  groupId?: string;
+  id?: string;
 };
 
 // 权限变更审计日志服务
@@ -13047,19 +13051,19 @@ export function createPermissionAuditLogServiceClient(
 // 查询权限变更审计日志列表 - 回应
 export type auditservicev1_ListPermissionAuditLogResponse = {
   items: auditservicev1_PermissionAuditLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 权限变更审计日志
 export type auditservicev1_PermissionAuditLog = {
   action?: auditservicev1_PermissionAuditLog_ActionType;
   createdAt?: wellKnownTimestamp;
-  id?: number;
+  id?: string;
   ipAddress?: string;
   logHash?: string;
   newValue?: string;
   oldValue?: string;
-  operatorId?: number;
+  operatorId?: string;
   operatorName?: string;
   reason?: string;
   requestId?: string;
@@ -13067,7 +13071,7 @@ export type auditservicev1_PermissionAuditLog = {
   targetId?: string;
   targetName?: string;
   targetType?: string;
-  tenantId?: number;
+  tenantId?: string;
 };
 
 // 变更动作
@@ -13090,7 +13094,7 @@ export type auditservicev1_PermissionAuditLog_ActionType =
   | 'UPDATE';
 // 查询权限变更审计日志详情 - 请求
 export type auditservicev1_GetPermissionAuditLogRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -13248,26 +13252,26 @@ export function createPermissionGroupServiceClient(
 // 查询列表 - 回应
 export type permissionservicev1_ListPermissionGroupResponse = {
   items: permissionservicev1_PermissionGroup[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 权限组
 export type permissionservicev1_PermissionGroup = {
   children: permissionservicev1_PermissionGroup[] | undefined;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
-  id?: number;
+  id?: string;
   module?: string;
   name?: string;
-  parentId?: number;
+  parentId?: string;
   path?: string;
   sortOrder?: number;
   status?: permissionservicev1_PermissionGroup_Status;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 状态
@@ -13276,7 +13280,7 @@ export type permissionservicev1_PermissionGroup_Status =
   | 'ON';
 // 查询 - 请求
 export type permissionservicev1_GetPermissionGroupRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -13289,13 +13293,13 @@ export type permissionservicev1_CreatePermissionGroupRequest = {
 export type permissionservicev1_UpdatePermissionGroupRequest = {
   allowMissing?: boolean;
   data: permissionservicev1_PermissionGroup | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除 - 请求
 export type permissionservicev1_DeletePermissionGroupRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 套餐管理服务
@@ -13459,23 +13463,23 @@ export function createPlanServiceClient(
 // 套餐列表 - 答复
 export type identityservicev1_ListPlanResponse = {
   items: identityservicev1_Plan[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 套餐
 export type identityservicev1_Plan = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   dataRetentionDays?: number;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   expiryPolicy?: identityservicev1_Plan_ExpiryPolicy;
-  id?: number;
+  id?: string;
   name?: string;
   remark?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   version?: identityservicev1_Plan_Version;
 };
 
@@ -13493,7 +13497,7 @@ export type identityservicev1_Plan_ExpiryPolicy =
   | 'READONLY';
 // 套餐数据 - 请求
 export type identityservicev1_GetPlanRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -13506,13 +13510,13 @@ export type identityservicev1_CreatePlanRequest = {
 export type identityservicev1_UpdatePlanRequest = {
   allowMissing?: boolean;
   data: identityservicev1_Plan | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除套餐 - 请求
 export type identityservicev1_DeletePlanRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 套餐模块白名单管理服务
@@ -13676,20 +13680,20 @@ export function createPlanModuleServiceClient(
 // 套餐模块列表 - 答复
 export type identityservicev1_ListPlanModuleResponse = {
   items: identityservicev1_PlanModule[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 套餐模块
 export type identityservicev1_PlanModule = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   module?: identityservicev1_Module;
-  planId?: number;
+  planId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 业务功能模块
@@ -13708,7 +13712,7 @@ export type identityservicev1_Module =
   | 'TENANT';
 // 套餐模块数据 - 请求
 export type identityservicev1_GetPlanModuleRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -13721,13 +13725,13 @@ export type identityservicev1_CreatePlanModuleRequest = {
 export type identityservicev1_UpdatePlanModuleRequest = {
   allowMissing?: boolean;
   data: identityservicev1_PlanModule | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除套餐模块 - 请求
 export type identityservicev1_DeletePlanModuleRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 套餐配额管理服务
@@ -13866,21 +13870,21 @@ export function createPlanQuotaServiceClient(
 // 套餐配额列表 - 答复
 export type identityservicev1_ListPlanQuotaResponse = {
   items: identityservicev1_PlanQuota[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 套餐配额
 export type identityservicev1_PlanQuota = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  planId?: number;
+  deletedBy?: string;
+  id?: string;
+  planId?: string;
   quotaType?: identityservicev1_PlanQuota_QuotaType;
-  quotaValue?: number;
+  quotaValue?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 配额类型
@@ -13899,13 +13903,13 @@ export type identityservicev1_CreatePlanQuotaRequest = {
 export type identityservicev1_UpdatePlanQuotaRequest = {
   allowMissing?: boolean;
   data: identityservicev1_PlanQuota | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除套餐配额 - 请求
 export type identityservicev1_DeletePlanQuotaRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 积分台账管理服务（admin 只读；台账 append-only，入账/回冲由交易链路驱动）
@@ -14086,19 +14090,19 @@ export function createPointsLedgerServiceClient(
 }
 export type catalogservicev1_ListPointsLedgerResponse = {
   items: catalogservicev1_PointsLedger[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 积分台账
 export type catalogservicev1_PointsLedger = {
-  balanceAfter?: number;
+  balanceAfter?: string;
   createdAt?: wellKnownTimestamp;
-  delta?: number;
-  id?: number;
+  delta?: string;
+  id?: string;
   reason?: string;
-  refOrderId?: number;
+  refOrderId?: string;
   type?: catalogservicev1_PointsLedgerType;
-  userId?: number;
+  userId?: string;
 };
 
 // 积分类型
@@ -14108,11 +14112,11 @@ export type catalogservicev1_PointsLedgerType =
   | 'POINTS_TYPE_EARN'
   | 'POINTS_TYPE_UNSPECIFIED';
 export type catalogservicev1_CountPointsLedgerResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type catalogservicev1_GetPointsLedgerRequest = {
-  id: number | undefined;
+  id: string | undefined;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -14226,7 +14230,7 @@ export function createPolicyEvaluationLogServiceClient(
 // 查询策略评估日志列表 - 回应
 export type permissionservicev1_ListPolicyEvaluationLogResponse = {
   items: permissionservicev1_PolicyEvaluationLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 策略评估日志
@@ -14234,25 +14238,25 @@ export type permissionservicev1_PolicyEvaluationLog = {
   createdAt?: wellKnownTimestamp;
   effectDetails?: string;
   evaluationContext?: string;
-  id?: number;
+  id?: string;
   ipAddress?: string;
   logHash?: string;
-  membershipId?: number;
-  permissionId?: number;
-  policyId?: number;
+  membershipId?: string;
+  permissionId?: string;
+  policyId?: string;
   requestMethod?: string;
   requestPath?: string;
   result?: boolean;
   scopeSql?: string;
   signature?: string;
-  tenantId?: number;
+  tenantId?: string;
   traceId?: string;
-  userId?: number;
+  userId?: string;
 };
 
 // 查询策略评估日志详情 - 请求
 export type permissionservicev1_GetPolicyEvaluationLogRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -14420,38 +14424,38 @@ export function createPositionServiceClient(
 // 获取职位列表 - 答复
 export type identityservicev1_ListPositionResponse = {
   items: identityservicev1_Position[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 职位
 export type identityservicev1_Position = {
   code?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   endAt?: wellKnownTimestamp;
   headcount?: number;
-  id?: number;
+  id?: string;
   isKeyPosition?: boolean;
   jobFamily?: string;
   jobGrade?: string;
   level?: number;
   name?: string;
-  orgUnitId?: number;
+  orgUnitId?: string;
   orgUnitName?: string;
   remark?: string;
-  reportsToPositionId?: number;
+  reportsToPositionId?: string;
   reportsToPositionName?: string;
   sortOrder?: number;
   startAt?: wellKnownTimestamp;
   status?: identityservicev1_Position_Status;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   type?: identityservicev1_Position_Type;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 职位状态
@@ -14469,7 +14473,7 @@ export type identityservicev1_Position_Type =
 // 获取职位数据 - 请求
 export type identityservicev1_GetPositionRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   name?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -14483,13 +14487,13 @@ export type identityservicev1_CreatePositionRequest = {
 export type identityservicev1_UpdatePositionRequest = {
   allowMissing?: boolean;
   data: identityservicev1_Position | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除职位 - 请求
 export type identityservicev1_DeletePositionRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 商品管理服务
@@ -14859,25 +14863,25 @@ export function createProductServiceClient(
 // 商品列表 - 答复
 export type catalogservicev1_ListProductResponse = {
   items: catalogservicev1_Product[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 商品
 export type catalogservicev1_Product = {
   availableLanguages: string[] | undefined;
-  brandId?: number;
-  categoryId?: number;
+  brandId?: string;
+  categoryId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   imageUrl?: string;
   sortOrder?: number;
   status?: catalogservicev1_Product_ProductStatus;
   translations: catalogservicev1_ProductTranslation[] | undefined;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 商品状态
@@ -14889,28 +14893,28 @@ export type catalogservicev1_Product_ProductStatus =
 // 商品翻译
 export type catalogservicev1_ProductTranslation = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   languageCode?: string;
   longDescription?: string;
   name?: string;
-  productId?: number;
+  productId?: string;
   shortDescription?: string;
   slug?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type catalogservicev1_CountProductResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 // 商品数据 - 请求
 export type catalogservicev1_GetProductRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   locale?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -14928,18 +14932,18 @@ export type catalogservicev1_BatchCreateProductsRequest = {
 export type catalogservicev1_UpdateProductRequest = {
   allowMissing?: boolean;
   data: catalogservicev1_Product | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除商品 - 请求
 export type catalogservicev1_DeleteProductRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type catalogservicev1_ProductTranslationExistsRequest = {
   languageCode: string | undefined;
-  productId: number | undefined;
+  productId: string | undefined;
 };
 
 export type catalogservicev1_ProductTranslationExistsResponse = {
@@ -14952,18 +14956,18 @@ export type catalogservicev1_CreateProductTranslationRequest = {
 
 export type catalogservicev1_UpdateProductTranslationRequest = {
   data: catalogservicev1_ProductTranslation | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeleteProductTranslationRequest = {
-  id?: number;
+  id?: string;
   identifier?: catalogservicev1_ProductTranslationIdentifier;
 };
 
 export type catalogservicev1_ProductTranslationIdentifier = {
   languageCode: string | undefined;
-  productId: number | undefined;
+  productId: string | undefined;
 };
 
 // 商品属性管理服务
@@ -15322,41 +15326,41 @@ export function createProductAttributeServiceClient(
 }
 export type catalogservicev1_ListProductAttributeResponse = {
   items: catalogservicev1_ProductAttribute[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 export type catalogservicev1_ProductAttribute = {
   availableLanguages: string[] | undefined;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   sortOrder?: number;
   translations: catalogservicev1_ProductAttributeTranslation[] | undefined;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type catalogservicev1_ProductAttributeTranslation = {
-  attributeId?: number;
+  attributeId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   languageCode?: string;
   name?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type catalogservicev1_CountProductAttributeResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type catalogservicev1_GetProductAttributeRequest = {
-  id?: number;
+  id?: string;
   locale?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -15372,16 +15376,16 @@ export type catalogservicev1_BatchCreateProductAttributesRequest = {
 export type catalogservicev1_UpdateProductAttributeRequest = {
   allowMissing?: boolean;
   data: catalogservicev1_ProductAttribute | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeleteProductAttributeRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type catalogservicev1_ProductAttributeTranslationExistsRequest = {
-  attributeId: number | undefined;
+  attributeId: string | undefined;
   languageCode: string | undefined;
 };
 
@@ -15395,17 +15399,17 @@ export type catalogservicev1_CreateProductAttributeTranslationRequest = {
 
 export type catalogservicev1_UpdateProductAttributeTranslationRequest = {
   data: catalogservicev1_ProductAttributeTranslation | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeleteProductAttributeTranslationRequest = {
-  id?: number;
+  id?: string;
   identifier?: catalogservicev1_ProductAttributeTranslationIdentifier;
 };
 
 export type catalogservicev1_ProductAttributeTranslationIdentifier = {
-  attributeId: number | undefined;
+  attributeId: string | undefined;
   languageCode: string | undefined;
 };
 
@@ -15765,42 +15769,42 @@ export function createProductAttributeValueServiceClient(
 }
 export type catalogservicev1_ListProductAttributeValueResponse = {
   items: catalogservicev1_ProductAttributeValue[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 export type catalogservicev1_ProductAttributeValue = {
-  attributeId?: number;
+  attributeId?: string;
   availableLanguages: string[] | undefined;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   sortOrder?: number;
   translations: catalogservicev1_ProductAttributeValueTranslation[] | undefined;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type catalogservicev1_ProductAttributeValueTranslation = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   displayName?: string;
-  id?: number;
+  id?: string;
   languageCode?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  valueId?: number;
+  updatedBy?: string;
+  valueId?: string;
 };
 
 export type catalogservicev1_CountProductAttributeValueResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type catalogservicev1_GetProductAttributeValueRequest = {
-  id?: number;
+  id?: string;
   locale?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -15816,17 +15820,17 @@ export type catalogservicev1_BatchCreateProductAttributeValuesRequest = {
 export type catalogservicev1_UpdateProductAttributeValueRequest = {
   allowMissing?: boolean;
   data: catalogservicev1_ProductAttributeValue | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeleteProductAttributeValueRequest = {
-  id?: number;
+  id?: string;
 };
 
 export type catalogservicev1_ProductAttributeValueTranslationExistsRequest = {
   languageCode: string | undefined;
-  valueId: number | undefined;
+  valueId: string | undefined;
 };
 
 export type catalogservicev1_ProductAttributeValueTranslationExistsResponse = {
@@ -15839,18 +15843,18 @@ export type catalogservicev1_CreateProductAttributeValueTranslationRequest = {
 
 export type catalogservicev1_UpdateProductAttributeValueTranslationRequest = {
   data: catalogservicev1_ProductAttributeValueTranslation | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeleteProductAttributeValueTranslationRequest = {
-  id?: number;
+  id?: string;
   identifier?: catalogservicev1_ProductAttributeValueTranslationIdentifier;
 };
 
 export type catalogservicev1_ProductAttributeValueTranslationIdentifier = {
   languageCode: string | undefined;
-  valueId: number | undefined;
+  valueId: string | undefined;
 };
 
 // 促销活动管理服务（admin 全 CRUD）
@@ -16072,28 +16076,28 @@ export function createPromotionServiceClient(
 }
 export type catalogservicev1_ListPromotionResponse = {
   items: catalogservicev1_Promotion[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 促销活动
 export type catalogservicev1_Promotion = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   currency?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   name?: string;
   priority?: number;
-  productId?: number;
+  productId?: string;
   promoType?: catalogservicev1_Promotion_PromoType;
-  reductionAmount?: number;
-  specialPrice?: number;
+  reductionAmount?: string;
+  specialPrice?: string;
   status?: catalogservicev1_Promotion_Status;
-  tenantId?: number;
-  thresholdAmount?: number;
+  tenantId?: string;
+  thresholdAmount?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   validFrom?: wellKnownTimestamp;
   validUntil?: wellKnownTimestamp;
 };
@@ -16109,11 +16113,11 @@ export type catalogservicev1_Promotion_Status =
   | 'INACTIVE'
   | 'STATUS_UNSPECIFIED';
 export type catalogservicev1_CountPromotionResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type catalogservicev1_GetPromotionRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -16124,12 +16128,12 @@ export type catalogservicev1_CreatePromotionRequest = {
 export type catalogservicev1_UpdatePromotionRequest = {
   allowMissing?: boolean;
   data: catalogservicev1_Promotion | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeletePromotionRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 角色管理服务
@@ -16311,31 +16315,31 @@ export function createRoleServiceClient(
 // 角色列表 - 答复
 export type permissionservicev1_ListRoleResponse = {
   items: permissionservicev1_Role[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 角色
 export type permissionservicev1_Role = {
   code?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   fieldPermissions: permissionservicev1_RoleFieldPermission[] | undefined;
-  id?: number;
+  id?: string;
   isProtected?: boolean;
   name?: string;
-  parentId?: number;
+  parentId?: string;
   parentName?: string;
-  permissions: number[] | undefined;
+  permissions: string[] | undefined;
   sortOrder?: number;
   status?: permissionservicev1_Role_Status;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   type?: permissionservicev1_Role_Type;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 角色状态
@@ -16355,7 +16359,7 @@ export type permissionservicev1_RoleFieldPermission = {
 // 角色数据 - 请求
 export type permissionservicev1_GetRoleRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   name?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -16369,15 +16373,15 @@ export type permissionservicev1_CreateRoleRequest = {
 export type permissionservicev1_UpdateRoleRequest = {
   allowMissing?: boolean;
   data: permissionservicev1_Role | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除角色 - 请求
 export type permissionservicev1_DeleteRoleRequest = {
   code?: string;
-  id?: number;
-  tenantId?: number;
+  id?: string;
+  tenantId?: string;
 };
 
 // 脚本管理服务（平台管理员）
@@ -16676,26 +16680,26 @@ export function createScriptServiceClient(
 // 查询脚本列表 - 回应
 export type scriptservicev1_ListScriptsResponse = {
   items: scriptservicev1_Script[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 脚本
 export type scriptservicev1_Script = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   critical?: boolean;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   hookPoint?: string;
-  id?: number;
+  id?: string;
   isEnabled?: boolean;
   language?: scriptservicev1_Language;
   name?: string;
   priority?: number;
   source?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   version?: number;
 };
 
@@ -16706,12 +16710,12 @@ export type scriptservicev1_Language =
   // Lua（gopher-lua，沙箱完整，推荐）
   | 'LUA';
 export type scriptservicev1_CountScriptsResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 // 查询脚本详情 - 请求
 export type scriptservicev1_GetScriptRequest = {
-  id?: number;
+  id?: string;
   name?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -16725,13 +16729,13 @@ export type scriptservicev1_CreateScriptRequest = {
 export type scriptservicev1_UpdateScriptRequest = {
   allowMissing?: boolean;
   data: scriptservicev1_Script | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除脚本 - 请求
 export type scriptservicev1_DeleteScriptRequest = {
-  ids: number[] | undefined;
+  ids: string[] | undefined;
 };
 
 // 试运行脚本 - 请求
@@ -16739,7 +16743,7 @@ export type scriptservicev1_TestRunScriptRequest = {
   // 运行未保存的草稿（name/language/source 必填）
   draft?: scriptservicev1_Script;
   // 运行已保存的脚本
-  id?: number;
+  id?: string;
   // 执行上下文初始数据（值以 JSON 字符串提供）
   input: { [key: string]: string } | undefined;
 };
@@ -16748,7 +16752,7 @@ export type scriptservicev1_TestRunScriptRequest = {
 export type scriptservicev1_TestRunScriptResponse = {
   // 上下文数据快照（键值均以 JSON 字符串编码）
   context: { [key: string]: string } | undefined;
-  durationMs: number | undefined;
+  durationMs: string | undefined;
   error: string | undefined;
   success: boolean | undefined;
 };
@@ -16936,18 +16940,18 @@ export function createScriptLogServiceClient(
 // 查询脚本执行日志列表 - 回应
 export type scriptservicev1_ListScriptLogsResponse = {
   items: scriptservicev1_ScriptLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 脚本执行日志
 export type scriptservicev1_ScriptLog = {
   createdAt?: wellKnownTimestamp;
-  durationMs?: number;
+  durationMs?: string;
   error?: string;
   hookPoint?: string;
-  id?: number;
+  id?: string;
   language?: string;
-  scriptId?: number;
+  scriptId?: string;
   scriptName?: string;
   success?: boolean;
   triggerType?: string;
@@ -16955,7 +16959,7 @@ export type scriptservicev1_ScriptLog = {
 };
 
 export type scriptservicev1_CountScriptLogsResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 // 清理日志 - 请求（删除 created_at 早于 before 的日志）
@@ -16965,7 +16969,7 @@ export type scriptservicev1_PurgeScriptLogsRequest = {
 
 // 清理日志 - 回应
 export type scriptservicev1_PurgeScriptLogsResponse = {
-  deleted: number | undefined;
+  deleted: string | undefined;
 };
 
 // 秒杀活动管理服务（admin 全 CRUD）
@@ -17187,26 +17191,26 @@ export function createSeckillActivityServiceClient(
 }
 export type catalogservicev1_ListSeckillActivityResponse = {
   items: catalogservicev1_SeckillActivity[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 秒杀活动
 export type catalogservicev1_SeckillActivity = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   currency?: string;
-  id?: number;
+  id?: string;
   name?: string;
   perUserLimit?: number;
   priority?: number;
-  seckillPrice?: number;
-  skuId?: number;
+  seckillPrice?: string;
+  skuId?: string;
   soldCount?: number;
   status?: catalogservicev1_SeckillActivity_Status;
-  tenantId?: number;
+  tenantId?: string;
   totalStock?: number;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   validFrom?: wellKnownTimestamp;
   validUntil?: wellKnownTimestamp;
 };
@@ -17217,11 +17221,11 @@ export type catalogservicev1_SeckillActivity_Status =
   | 'INACTIVE'
   | 'STATUS_UNSPECIFIED';
 export type catalogservicev1_CountSeckillActivityResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type catalogservicev1_GetSeckillActivityRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -17232,12 +17236,12 @@ export type catalogservicev1_CreateSeckillActivityRequest = {
 export type catalogservicev1_UpdateSeckillActivityRequest = {
   allowMissing?: boolean;
   data: catalogservicev1_SeckillActivity | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask?: wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeleteSeckillActivityRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 物流单管理服务（admin 侧，卖家运营可读写）
@@ -17466,25 +17470,25 @@ export function createShipmentServiceClient(
 }
 export type shippingservicev1_ListShipmentResponse = {
   items: shippingservicev1_Shipment[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 物流单
 export type shippingservicev1_Shipment = {
   carrier?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  orderId?: number;
+  deletedBy?: string;
+  id?: string;
+  orderId?: string;
   status?: shippingservicev1_Shipment_Status;
-  tenantId?: number;
+  tenantId?: string;
   trackingEvents?: string;
   trackingNumber?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
-  userId?: number;
+  updatedBy?: string;
+  userId?: string;
 };
 
 // 物流单状态
@@ -17500,11 +17504,11 @@ export type shippingservicev1_Shipment_Status =
   | 'SHIPPED'
   | 'STATUS_UNSPECIFIED';
 export type shippingservicev1_CountShipmentResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type shippingservicev1_GetShipmentRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -17518,12 +17522,12 @@ export type shippingservicev1_UpdateShipmentRequest = {
   // 状态前置条件（乐观状态机）：仅当物流单当前 status ∈ expected_status 时更新才生效，
   // 否则 affected_rows=0 返回 Conflict。留空表示不校验。
   expectedStatus: shippingservicev1_Shipment_Status[] | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type shippingservicev1_DeleteShipmentRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 运费模板管理服务（admin 全 CRUD）
@@ -17752,24 +17756,24 @@ export function createShippingRateServiceClient(
 }
 export type shippingservicev1_ListShippingRateResponse = {
   items: shippingservicev1_ShippingRate[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 运费模板
 export type shippingservicev1_ShippingRate = {
-  baseFee?: number;
+  baseFee?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   currency?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  perUnitFee?: number;
+  deletedBy?: string;
+  id?: string;
+  perUnitFee?: string;
   region?: string;
   status?: shippingservicev1_ShippingRate_Status;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 模板状态
@@ -17778,11 +17782,11 @@ export type shippingservicev1_ShippingRate_Status =
   | 'INACTIVE'
   | 'STATUS_UNSPECIFIED';
 export type shippingservicev1_CountShippingRateResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type shippingservicev1_GetShippingRateRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -17793,12 +17797,12 @@ export type shippingservicev1_CreateShippingRateRequest = {
 export type shippingservicev1_UpdateShippingRateRequest = {
   allowMissing?: boolean;
   data: shippingservicev1_ShippingRate | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type shippingservicev1_DeleteShippingRateRequest = {
-  id?: number;
+  id?: string;
 };
 
 // SKU 管理服务
@@ -18067,29 +18071,29 @@ export function createSkuServiceClient(
 }
 export type catalogservicev1_ListSkuResponse = {
   items: catalogservicev1_Sku[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 export type catalogservicev1_Sku = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  productId?: number;
+  deletedBy?: string;
+  id?: string;
+  productId?: string;
   skuCode?: string;
   stockQty?: number;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type catalogservicev1_CountSkuResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type catalogservicev1_GetSkuRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -18104,18 +18108,18 @@ export type catalogservicev1_BatchCreateSkusRequest = {
 export type catalogservicev1_UpdateSkuRequest = {
   allowMissing?: boolean;
   data: catalogservicev1_Sku | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeleteSkuRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 手动调整库存 - 请求
 export type catalogservicev1_AdjustSkuStockRequest = {
   delta: number | undefined;
-  id: number | undefined;
+  id: string | undefined;
   remark?: string;
 };
 
@@ -18363,24 +18367,24 @@ export function createSkuPriceServiceClient(
 }
 export type catalogservicev1_ListSkuPriceResponse = {
   items: catalogservicev1_SkuPrice[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 export type catalogservicev1_SkuPrice = {
   amount?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   currency?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  skuId?: number;
+  deletedBy?: string;
+  id?: string;
+  skuId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type catalogservicev1_GetSkuPriceRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -18395,12 +18399,12 @@ export type catalogservicev1_BatchCreateSkuPricesRequest = {
 export type catalogservicev1_UpdateSkuPriceRequest = {
   allowMissing?: boolean;
   data: catalogservicev1_SkuPrice | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeleteSkuPriceRequest = {
-  id?: number;
+  id?: string;
 };
 
 // SKU 属性组合管理服务
@@ -18647,28 +18651,28 @@ export function createSkuAttributeCombinationServiceClient(
 }
 export type catalogservicev1_ListSkuAttributeCombinationResponse = {
   items: catalogservicev1_SkuAttributeCombination[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 export type catalogservicev1_SkuAttributeCombination = {
-  attributeId?: number;
-  attributeValueId?: number;
+  attributeId?: string;
+  attributeValueId?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
-  skuId?: number;
+  deletedBy?: string;
+  id?: string;
+  skuId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 export type catalogservicev1_CountSkuAttributeCombinationResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type catalogservicev1_GetSkuAttributeCombinationRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -18683,12 +18687,12 @@ export type catalogservicev1_BatchCreateSkuAttributeCombinationsRequest = {
 export type catalogservicev1_UpdateSkuAttributeCombinationRequest = {
   allowMissing?: boolean;
   data: catalogservicev1_SkuAttributeCombination | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type catalogservicev1_DeleteSkuAttributeCombinationRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 库存预警记录管理服务（admin 裁剪：仅 List/Get/Update，Update 唯一允许标记 RESOLVED）
@@ -18814,20 +18818,20 @@ export function createStockAlertServiceClient(
 }
 export type catalogservicev1_ListStockAlertResponse = {
   items: catalogservicev1_StockAlert[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 库存预警记录
 export type catalogservicev1_StockAlert = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
-  id?: number;
-  skuId?: number;
+  createdBy?: string;
+  id?: string;
+  skuId?: string;
   status?: catalogservicev1_StockAlert_Status;
   stockQtyAtTrigger?: number;
   threshold?: number;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 告警状态
@@ -18836,14 +18840,14 @@ export type catalogservicev1_StockAlert_Status =
   | 'RESOLVED'
   | 'STATUS_UNSPECIFIED';
 export type catalogservicev1_GetStockAlertRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
 export type catalogservicev1_UpdateStockAlertRequest = {
   allowMissing?: boolean;
   data: catalogservicev1_StockAlert | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
@@ -19025,20 +19029,20 @@ export function createStockOpLogServiceClient(
 }
 export type catalogservicev1_ListStockOpLogResponse = {
   items: catalogservicev1_StockOpLog[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 库存操作流水
 export type catalogservicev1_StockOpLog = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   delta?: number;
-  id?: number;
-  productId?: number;
+  id?: string;
+  productId?: string;
   reason?: catalogservicev1_StockOpLog_Reason;
-  refId?: number;
+  refId?: string;
   remark?: string;
-  skuId?: number;
+  skuId?: string;
   stockAfter?: number;
   stockBefore?: number;
 };
@@ -19051,11 +19055,11 @@ export type catalogservicev1_StockOpLog_Reason =
   | 'REASON_UNSPECIFIED'
   | 'REFUND_RESTORE';
 export type catalogservicev1_CountStockOpLogResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type catalogservicev1_GetStockOpLogRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -19310,22 +19314,22 @@ export function createTaskServiceClient(
 // 查询调度任务列表 - 回应
 export type taskservicev1_ListTaskResponse = {
   items: taskservicev1_Task[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 调度任务
 export type taskservicev1_Task = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   //
   // Behaviors: OPTIONAL
   cronSpec?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   enable?: boolean;
   //
   // Behaviors: OPTIONAL
-  id?: number;
+  id?: string;
   remark?: string;
   //
   // Behaviors: OPTIONAL
@@ -19333,7 +19337,7 @@ export type taskservicev1_Task = {
   //
   // Behaviors: OPTIONAL
   taskPayload?: string;
-  tenantId?: number;
+  tenantId?: string;
   //
   // Behaviors: OPTIONAL
   type?: taskservicev1_Task_Type;
@@ -19341,7 +19345,7 @@ export type taskservicev1_Task = {
   // Behaviors: OPTIONAL
   typeName?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 调度任务类型
@@ -19388,7 +19392,7 @@ type wellKnownDuration = string;
 
 // 查询调度任务详情 - 请求
 export type taskservicev1_GetTaskRequest = {
-  id?: number;
+  id?: string;
   //
   // Behaviors: OPTIONAL
   typeName?: string;
@@ -19404,13 +19408,13 @@ export type taskservicev1_CreateTaskRequest = {
 export type taskservicev1_UpdateTaskRequest = {
   allowMissing?: boolean;
   data: taskservicev1_Task | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除调度任务 - 请求
 export type taskservicev1_DeleteTaskRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 任务类型名称列表 - 回应
@@ -19733,23 +19737,23 @@ export function createTaxRateServiceClient(
 }
 export type taxservicev1_ListTaxRateResponse = {
   items: taxservicev1_TaxRate[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 税率规则
 export type taxservicev1_TaxRate = {
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   currency?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   region?: string;
   status?: taxservicev1_TaxRate_Status;
   taxRate?: number;
-  tenantId?: number;
+  tenantId?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 规则状态
@@ -19758,11 +19762,11 @@ export type taxservicev1_TaxRate_Status =
   | 'INACTIVE'
   | 'STATUS_UNSPECIFIED';
 export type taxservicev1_CountTaxRateResponse = {
-  count: number | undefined;
+  count: string | undefined;
 };
 
 export type taxservicev1_GetTaxRateRequest = {
-  id?: number;
+  id?: string;
   viewMask?: wellKnownFieldMask;
 };
 
@@ -19773,12 +19777,12 @@ export type taxservicev1_CreateTaxRateRequest = {
 export type taxservicev1_UpdateTaxRateRequest = {
   allowMissing?: boolean;
   data: taxservicev1_TaxRate | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 export type taxservicev1_DeleteTaxRateRequest = {
-  id?: number;
+  id?: string;
 };
 
 // 租户管理服务
@@ -20025,27 +20029,27 @@ export function createTenantServiceClient(
 // 租户列表 - 答复
 export type identityservicev1_ListTenantResponse = {
   items: identityservicev1_Tenant[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 租户
 export type identityservicev1_Tenant = {
-  adminUserId?: number;
+  adminUserId?: string;
   adminUserName?: string;
   auditStatus?: identityservicev1_Tenant_AuditStatus;
   code?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   domain?: string;
   expiredAt?: wellKnownTimestamp;
-  id?: number;
+  id?: string;
   industry?: string;
   logoUrl?: string;
   memberCount?: number;
   name?: string;
-  planId?: number;
+  planId?: string;
   remark?: string;
   status?: identityservicev1_Tenant_Status;
   subscriptionAt?: wellKnownTimestamp;
@@ -20053,7 +20057,7 @@ export type identityservicev1_Tenant = {
   type?: identityservicev1_Tenant_Type;
   unsubscribeAt?: wellKnownTimestamp;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
 };
 
 // 租户类型
@@ -20079,7 +20083,7 @@ export type identityservicev1_Tenant_AuditStatus =
 // 租户数据 - 请求
 export type identityservicev1_GetTenantRequest = {
   code?: string;
-  id?: number;
+  id?: string;
   name?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -20093,19 +20097,19 @@ export type identityservicev1_CreateTenantRequest = {
 export type identityservicev1_UpdateTenantRequest = {
   allowMissing?: boolean;
   data: identityservicev1_Tenant | undefined;
-  id: number | undefined;
+  id: string | undefined;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除租户 - 请求
 export type identityservicev1_DeleteTenantRequest = {
   code?: string;
-  id?: number;
+  id?: string;
 };
 
 // 创建租户及管理员用户 - 请求
 export type identityservicev1_CreateTenantWithAdminUserRequest = {
-  operatorUserId?: number;
+  operatorUserId?: string;
   password: string | undefined;
   tenant: identityservicev1_Tenant | undefined;
   user: identityservicev1_User | undefined;
@@ -20115,45 +20119,45 @@ export type identityservicev1_CreateTenantWithAdminUserRequest = {
 export type identityservicev1_User = {
   address?: string;
   avatar?: string;
-  commentCount?: number;
+  commentCount?: string;
   createdAt?: wellKnownTimestamp;
-  createdBy?: number;
+  createdBy?: string;
   deletedAt?: wellKnownTimestamp;
-  deletedBy?: number;
+  deletedBy?: string;
   description?: string;
   email?: string;
-  followers?: number;
-  following?: number;
+  followers?: string;
+  following?: string;
   gender?: identityservicev1_User_Gender;
-  id?: number;
+  id?: string;
   lastLoginAt?: wellKnownTimestamp;
   lastLoginIp?: string;
-  likeCount?: number;
+  likeCount?: string;
   lockedUntil?: wellKnownTimestamp;
   mobile?: string;
   nickname?: string;
-  orgUnitId?: number;
-  orgUnitIds: number[] | undefined;
+  orgUnitId?: string;
+  orgUnitIds: string[] | undefined;
   orgUnitName?: string;
   orgUnitNames: string[] | undefined;
-  positionId?: number;
-  positionIds: number[] | undefined;
+  positionId?: string;
+  positionIds: string[] | undefined;
   positionName?: string;
   positionNames: string[] | undefined;
-  postCount?: number;
+  postCount?: string;
   realname?: string;
   region?: string;
   remark?: string;
-  roleId?: number;
-  roleIds: number[] | undefined;
+  roleId?: string;
+  roleIds: string[] | undefined;
   roleNames: string[] | undefined;
   roles: string[] | undefined;
   status?: identityservicev1_User_Status;
   telephone?: string;
-  tenantId?: number;
+  tenantId?: string;
   tenantName?: string;
   updatedAt?: wellKnownTimestamp;
-  updatedBy?: number;
+  updatedBy?: string;
   username?: string;
 };
 
@@ -20182,29 +20186,29 @@ export type identityservicev1_TenantExistsResponse = {
 };
 
 export type identityservicev1_GetTenantUsageRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 租户用量与配额
 export type identityservicev1_TenantUsage = {
-  apiCallCount: number | undefined;
-  planId?: number;
+  apiCallCount: string | undefined;
+  planId?: string;
   planName?: string;
   quotas: identityservicev1_QuotaUsage[] | undefined;
-  storageUsedBytes: number | undefined;
-  tenantId: number | undefined;
-  userCount: number | undefined;
+  storageUsedBytes: string | undefined;
+  tenantId: string | undefined;
+  userCount: string | undefined;
 };
 
 // 配额用量项
 export type identityservicev1_QuotaUsage = {
   quotaType: identityservicev1_PlanQuota_QuotaType | undefined;
-  quotaValue: number | undefined;
+  quotaValue: string | undefined;
 };
 
 // 清理租户数据 - 请求
 export type identityservicev1_CleanupTenantDataRequest = {
-  id: number | undefined;
+  id: string | undefined;
 };
 
 // 用户管理服务
@@ -20489,12 +20493,12 @@ export function createUserServiceClient(
 // 获取用户列表 - 答复
 export type identityservicev1_ListUserResponse = {
   items: identityservicev1_User[] | undefined;
-  total: number | undefined;
+  total: string | undefined;
 };
 
 // 获取用户数据 - 请求
 export type identityservicev1_GetUserRequest = {
-  id?: number;
+  id?: string;
   username?: string;
   viewMask?: wellKnownFieldMask;
 };
@@ -20511,21 +20515,21 @@ export type identityservicev1_UpdateUserRequest = {
   //
   // Behaviors: REQUIRED
   data: identityservicev1_User | undefined;
-  id: number | undefined;
+  id: string | undefined;
   password?: string;
   updateMask: undefined | wellKnownFieldMask;
 };
 
 // 删除用户 - 请求
 export type identityservicev1_DeleteUserRequest = {
-  deletedBy?: number;
-  id?: number;
+  deletedBy?: string;
+  id?: string;
   username?: string;
 };
 
 // 用户是否存在 - 请求
 export type identityservicev1_UserExistsRequest = {
-  id?: number;
+  id?: string;
   username?: string;
 };
 
@@ -20537,7 +20541,7 @@ export type identityservicev1_UserExistsResponse = {
 // 强制修改用户密码（不验证） - 请求
 export type identityservicev1_EditUserPasswordRequest = {
   newPassword: string | undefined;
-  userId: number | undefined;
+  userId: string | undefined;
 };
 
 // 用户个人资料服务

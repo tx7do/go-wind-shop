@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -17,7 +17,7 @@ import (
 // List 仅限本人会话的消息（经会话归属校验）。
 type AiMessageService struct {
 	aiV1.UnimplementedAiMessageServiceServer
-	log *logx.Helper
+	log  *logx.Helper
 	repo *data.AiMessageRepo
 }
 

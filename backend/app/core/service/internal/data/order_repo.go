@@ -1,8 +1,8 @@
 package data
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
+	"go-wind-shop/pkg/logx"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -23,7 +23,7 @@ import (
 
 type OrderRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[orderV1.Order, ent.Order]
 
@@ -106,7 +106,7 @@ func (r *OrderRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (
 	}, nil
 }
 
-func (r *OrderRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *OrderRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Order.Query().
 		Where(order.IDEQ(id)).
 		Exist(ctx)

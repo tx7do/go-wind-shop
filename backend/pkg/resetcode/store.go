@@ -22,9 +22,9 @@ import (
 )
 
 const (
-	keyPrefix    = "gws:pwdreset:"
+	keyPrefix     = "gws:pwdreset:"
 	attemptSuffix = ":attempts"
-	defaultTTL   = 10 * time.Minute
+	defaultTTL    = 10 * time.Minute
 	// MaxAttempts 单个验证码允许的最大错误尝试次数，超限作废验证码。
 	MaxAttempts = 5
 )
@@ -35,10 +35,11 @@ const (
 // ARGV[1] = 用户输入的验证码, ARGV[2] = MaxAttempts, ARGV[3] = TTL(秒)
 //
 // 返回值：
-//   "1"           验证码正确，已删除 codeKey 与 attemptsKey
-//   "0"           验证码错误，已 INCR attemptsKey（未达上限）
-//   "TOO_MANY"    尝试次数已达上限，codeKey 已删除
-//   "NO_CODE"     codeKey 不存在（已过期或从未生成）
+//
+//	"1"           验证码正确，已删除 codeKey 与 attemptsKey
+//	"0"           验证码错误，已 INCR attemptsKey（未达上限）
+//	"TOO_MANY"    尝试次数已达上限，codeKey 已删除
+//	"NO_CODE"     codeKey 不存在（已过期或从未生成）
 //
 // 所有读写在 Redis 单线程内原子执行，并发请求不会越过 MaxAttempts 上限。
 const verifyScript = `

@@ -24,8 +24,8 @@ import (
 	"strconv"
 	"strings"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/mailer"
+	"go-wind-shop/pkg/logx"
 )
 
 const (

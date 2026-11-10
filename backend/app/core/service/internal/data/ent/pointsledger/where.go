@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.PointsLedger {
+func ID(id int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.PointsLedger {
+func IDEQ(id int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.PointsLedger {
+func IDNEQ(id int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.PointsLedger {
+func IDIn(ids ...int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.PointsLedger {
+func IDNotIn(ids ...int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.PointsLedger {
+func IDGT(id int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.PointsLedger {
+func IDGTE(id int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.PointsLedger {
+func IDLT(id int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.PointsLedger {
+func IDLTE(id int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,12 +70,12 @@ func DeletedAt(v time.Time) predicate.PointsLedger {
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.PointsLedger {
+func TenantID(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldEQ(FieldTenantID, v))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint32) predicate.PointsLedger {
+func UserID(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldEQ(FieldUserID, v))
 }
 
@@ -95,7 +95,7 @@ func Reason(v string) predicate.PointsLedger {
 }
 
 // RefOrderID applies equality check predicate on the "ref_order_id" field. It's identical to RefOrderIDEQ.
-func RefOrderID(v uint32) predicate.PointsLedger {
+func RefOrderID(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldEQ(FieldRefOrderID, v))
 }
 
@@ -250,42 +250,42 @@ func DeletedAtNotNil() predicate.PointsLedger {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.PointsLedger {
+func TenantIDEQ(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.PointsLedger {
+func TenantIDNEQ(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.PointsLedger {
+func TenantIDIn(vs ...int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.PointsLedger {
+func TenantIDNotIn(vs ...int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.PointsLedger {
+func TenantIDGT(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.PointsLedger {
+func TenantIDGTE(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.PointsLedger {
+func TenantIDLT(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.PointsLedger {
+func TenantIDLTE(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -300,42 +300,42 @@ func TenantIDNotNil() predicate.PointsLedger {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint32) predicate.PointsLedger {
+func UserIDEQ(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint32) predicate.PointsLedger {
+func UserIDNEQ(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint32) predicate.PointsLedger {
+func UserIDIn(vs ...int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint32) predicate.PointsLedger {
+func UserIDNotIn(vs ...int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uint32) predicate.PointsLedger {
+func UserIDGT(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldGT(FieldUserID, v))
 }
 
 // UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uint32) predicate.PointsLedger {
+func UserIDGTE(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldGTE(FieldUserID, v))
 }
 
 // UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uint32) predicate.PointsLedger {
+func UserIDLT(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldLT(FieldUserID, v))
 }
 
 // UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uint32) predicate.PointsLedger {
+func UserIDLTE(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldLTE(FieldUserID, v))
 }
 
@@ -525,42 +525,42 @@ func ReasonContainsFold(v string) predicate.PointsLedger {
 }
 
 // RefOrderIDEQ applies the EQ predicate on the "ref_order_id" field.
-func RefOrderIDEQ(v uint32) predicate.PointsLedger {
+func RefOrderIDEQ(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldEQ(FieldRefOrderID, v))
 }
 
 // RefOrderIDNEQ applies the NEQ predicate on the "ref_order_id" field.
-func RefOrderIDNEQ(v uint32) predicate.PointsLedger {
+func RefOrderIDNEQ(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldNEQ(FieldRefOrderID, v))
 }
 
 // RefOrderIDIn applies the In predicate on the "ref_order_id" field.
-func RefOrderIDIn(vs ...uint32) predicate.PointsLedger {
+func RefOrderIDIn(vs ...int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldIn(FieldRefOrderID, vs...))
 }
 
 // RefOrderIDNotIn applies the NotIn predicate on the "ref_order_id" field.
-func RefOrderIDNotIn(vs ...uint32) predicate.PointsLedger {
+func RefOrderIDNotIn(vs ...int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldNotIn(FieldRefOrderID, vs...))
 }
 
 // RefOrderIDGT applies the GT predicate on the "ref_order_id" field.
-func RefOrderIDGT(v uint32) predicate.PointsLedger {
+func RefOrderIDGT(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldGT(FieldRefOrderID, v))
 }
 
 // RefOrderIDGTE applies the GTE predicate on the "ref_order_id" field.
-func RefOrderIDGTE(v uint32) predicate.PointsLedger {
+func RefOrderIDGTE(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldGTE(FieldRefOrderID, v))
 }
 
 // RefOrderIDLT applies the LT predicate on the "ref_order_id" field.
-func RefOrderIDLT(v uint32) predicate.PointsLedger {
+func RefOrderIDLT(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldLT(FieldRefOrderID, v))
 }
 
 // RefOrderIDLTE applies the LTE predicate on the "ref_order_id" field.
-func RefOrderIDLTE(v uint32) predicate.PointsLedger {
+func RefOrderIDLTE(v int64) predicate.PointsLedger {
 	return predicate.PointsLedger(sql.FieldLTE(FieldRefOrderID, v))
 }
 

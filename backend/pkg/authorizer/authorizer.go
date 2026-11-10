@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"go-wind-shop/pkg/logx"
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
+	"go-wind-shop/pkg/logx"
 
 	authzEngine "github.com/tx7do/kratos-authz/engine"
 	"github.com/tx7do/kratos-authz/engine/casbin"

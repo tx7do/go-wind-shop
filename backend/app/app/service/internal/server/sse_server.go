@@ -1,9 +1,9 @@
 package server
 
 import (
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/kratos-bootstrap/transport/sse"
+	"go-wind-shop/pkg/logx"
 
 	sseServer "github.com/tx7do/kratos-transport/transport/sse"
 

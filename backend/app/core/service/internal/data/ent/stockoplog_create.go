@@ -65,13 +65,13 @@ func (_c *StockOpLogCreate) SetNillableDeletedAt(v *time.Time) *StockOpLogCreate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *StockOpLogCreate) SetCreatedBy(v uint32) *StockOpLogCreate {
+func (_c *StockOpLogCreate) SetCreatedBy(v int64) *StockOpLogCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *StockOpLogCreate) SetNillableCreatedBy(v *uint32) *StockOpLogCreate {
+func (_c *StockOpLogCreate) SetNillableCreatedBy(v *int64) *StockOpLogCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *StockOpLogCreate) SetNillableCreatedBy(v *uint32) *StockOpLogCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *StockOpLogCreate) SetUpdatedBy(v uint32) *StockOpLogCreate {
+func (_c *StockOpLogCreate) SetUpdatedBy(v int64) *StockOpLogCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *StockOpLogCreate) SetNillableUpdatedBy(v *uint32) *StockOpLogCreate {
+func (_c *StockOpLogCreate) SetNillableUpdatedBy(v *int64) *StockOpLogCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *StockOpLogCreate) SetNillableUpdatedBy(v *uint32) *StockOpLogCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *StockOpLogCreate) SetDeletedBy(v uint32) *StockOpLogCreate {
+func (_c *StockOpLogCreate) SetDeletedBy(v int64) *StockOpLogCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *StockOpLogCreate) SetNillableDeletedBy(v *uint32) *StockOpLogCreate {
+func (_c *StockOpLogCreate) SetNillableDeletedBy(v *int64) *StockOpLogCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *StockOpLogCreate) SetNillableDeletedBy(v *uint32) *StockOpLogCreate {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (_c *StockOpLogCreate) SetSkuID(v uint32) *StockOpLogCreate {
+func (_c *StockOpLogCreate) SetSkuID(v int64) *StockOpLogCreate {
 	_c.mutation.SetSkuID(v)
 	return _c
 }
 
 // SetNillableSkuID sets the "sku_id" field if the given value is not nil.
-func (_c *StockOpLogCreate) SetNillableSkuID(v *uint32) *StockOpLogCreate {
+func (_c *StockOpLogCreate) SetNillableSkuID(v *int64) *StockOpLogCreate {
 	if v != nil {
 		_c.SetSkuID(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *StockOpLogCreate) SetNillableSkuID(v *uint32) *StockOpLogCreate {
 }
 
 // SetProductID sets the "product_id" field.
-func (_c *StockOpLogCreate) SetProductID(v uint32) *StockOpLogCreate {
+func (_c *StockOpLogCreate) SetProductID(v int64) *StockOpLogCreate {
 	_c.mutation.SetProductID(v)
 	return _c
 }
 
 // SetNillableProductID sets the "product_id" field if the given value is not nil.
-func (_c *StockOpLogCreate) SetNillableProductID(v *uint32) *StockOpLogCreate {
+func (_c *StockOpLogCreate) SetNillableProductID(v *int64) *StockOpLogCreate {
 	if v != nil {
 		_c.SetProductID(*v)
 	}
@@ -191,13 +191,13 @@ func (_c *StockOpLogCreate) SetNillableReason(v *stockoplog.Reason) *StockOpLogC
 }
 
 // SetRefID sets the "ref_id" field.
-func (_c *StockOpLogCreate) SetRefID(v uint32) *StockOpLogCreate {
+func (_c *StockOpLogCreate) SetRefID(v int64) *StockOpLogCreate {
 	_c.mutation.SetRefID(v)
 	return _c
 }
 
 // SetNillableRefID sets the "ref_id" field if the given value is not nil.
-func (_c *StockOpLogCreate) SetNillableRefID(v *uint32) *StockOpLogCreate {
+func (_c *StockOpLogCreate) SetNillableRefID(v *int64) *StockOpLogCreate {
 	if v != nil {
 		_c.SetRefID(*v)
 	}
@@ -219,7 +219,7 @@ func (_c *StockOpLogCreate) SetNillableRemark(v *string) *StockOpLogCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *StockOpLogCreate) SetID(v uint32) *StockOpLogCreate {
+func (_c *StockOpLogCreate) SetID(v int64) *StockOpLogCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -305,7 +305,7 @@ func (_c *StockOpLogCreate) sqlSave(ctx context.Context) (*StockOpLog, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -315,7 +315,7 @@ func (_c *StockOpLogCreate) sqlSave(ctx context.Context) (*StockOpLog, error) {
 func (_c *StockOpLogCreate) createSpec() (*StockOpLog, *sqlgraph.CreateSpec) {
 	var (
 		_node = &StockOpLog{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(stockoplog.Table, sqlgraph.NewFieldSpec(stockoplog.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(stockoplog.Table, sqlgraph.NewFieldSpec(stockoplog.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -335,23 +335,23 @@ func (_c *StockOpLogCreate) createSpec() (*StockOpLog, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(stockoplog.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(stockoplog.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(stockoplog.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(stockoplog.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(stockoplog.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(stockoplog.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.SkuID(); ok {
-		_spec.SetField(stockoplog.FieldSkuID, field.TypeUint32, value)
+		_spec.SetField(stockoplog.FieldSkuID, field.TypeInt64, value)
 		_node.SkuID = &value
 	}
 	if value, ok := _c.mutation.ProductID(); ok {
-		_spec.SetField(stockoplog.FieldProductID, field.TypeUint32, value)
+		_spec.SetField(stockoplog.FieldProductID, field.TypeInt64, value)
 		_node.ProductID = &value
 	}
 	if value, ok := _c.mutation.Delta(); ok {
@@ -371,7 +371,7 @@ func (_c *StockOpLogCreate) createSpec() (*StockOpLog, *sqlgraph.CreateSpec) {
 		_node.Reason = &value
 	}
 	if value, ok := _c.mutation.RefID(); ok {
-		_spec.SetField(stockoplog.FieldRefID, field.TypeUint32, value)
+		_spec.SetField(stockoplog.FieldRefID, field.TypeInt64, value)
 		_node.RefID = &value
 	}
 	if value, ok := _c.mutation.Remark(); ok {
@@ -467,7 +467,7 @@ func (u *StockOpLogUpsert) ClearDeletedAt() *StockOpLogUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockOpLogUpsert) SetCreatedBy(v uint32) *StockOpLogUpsert {
+func (u *StockOpLogUpsert) SetCreatedBy(v int64) *StockOpLogUpsert {
 	u.Set(stockoplog.FieldCreatedBy, v)
 	return u
 }
@@ -479,7 +479,7 @@ func (u *StockOpLogUpsert) UpdateCreatedBy() *StockOpLogUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockOpLogUpsert) AddCreatedBy(v uint32) *StockOpLogUpsert {
+func (u *StockOpLogUpsert) AddCreatedBy(v int64) *StockOpLogUpsert {
 	u.Add(stockoplog.FieldCreatedBy, v)
 	return u
 }
@@ -491,7 +491,7 @@ func (u *StockOpLogUpsert) ClearCreatedBy() *StockOpLogUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockOpLogUpsert) SetUpdatedBy(v uint32) *StockOpLogUpsert {
+func (u *StockOpLogUpsert) SetUpdatedBy(v int64) *StockOpLogUpsert {
 	u.Set(stockoplog.FieldUpdatedBy, v)
 	return u
 }
@@ -503,7 +503,7 @@ func (u *StockOpLogUpsert) UpdateUpdatedBy() *StockOpLogUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockOpLogUpsert) AddUpdatedBy(v uint32) *StockOpLogUpsert {
+func (u *StockOpLogUpsert) AddUpdatedBy(v int64) *StockOpLogUpsert {
 	u.Add(stockoplog.FieldUpdatedBy, v)
 	return u
 }
@@ -515,7 +515,7 @@ func (u *StockOpLogUpsert) ClearUpdatedBy() *StockOpLogUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockOpLogUpsert) SetDeletedBy(v uint32) *StockOpLogUpsert {
+func (u *StockOpLogUpsert) SetDeletedBy(v int64) *StockOpLogUpsert {
 	u.Set(stockoplog.FieldDeletedBy, v)
 	return u
 }
@@ -527,7 +527,7 @@ func (u *StockOpLogUpsert) UpdateDeletedBy() *StockOpLogUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockOpLogUpsert) AddDeletedBy(v uint32) *StockOpLogUpsert {
+func (u *StockOpLogUpsert) AddDeletedBy(v int64) *StockOpLogUpsert {
 	u.Add(stockoplog.FieldDeletedBy, v)
 	return u
 }
@@ -539,7 +539,7 @@ func (u *StockOpLogUpsert) ClearDeletedBy() *StockOpLogUpsert {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *StockOpLogUpsert) SetSkuID(v uint32) *StockOpLogUpsert {
+func (u *StockOpLogUpsert) SetSkuID(v int64) *StockOpLogUpsert {
 	u.Set(stockoplog.FieldSkuID, v)
 	return u
 }
@@ -551,7 +551,7 @@ func (u *StockOpLogUpsert) UpdateSkuID() *StockOpLogUpsert {
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *StockOpLogUpsert) AddSkuID(v uint32) *StockOpLogUpsert {
+func (u *StockOpLogUpsert) AddSkuID(v int64) *StockOpLogUpsert {
 	u.Add(stockoplog.FieldSkuID, v)
 	return u
 }
@@ -563,7 +563,7 @@ func (u *StockOpLogUpsert) ClearSkuID() *StockOpLogUpsert {
 }
 
 // SetProductID sets the "product_id" field.
-func (u *StockOpLogUpsert) SetProductID(v uint32) *StockOpLogUpsert {
+func (u *StockOpLogUpsert) SetProductID(v int64) *StockOpLogUpsert {
 	u.Set(stockoplog.FieldProductID, v)
 	return u
 }
@@ -575,7 +575,7 @@ func (u *StockOpLogUpsert) UpdateProductID() *StockOpLogUpsert {
 }
 
 // AddProductID adds v to the "product_id" field.
-func (u *StockOpLogUpsert) AddProductID(v uint32) *StockOpLogUpsert {
+func (u *StockOpLogUpsert) AddProductID(v int64) *StockOpLogUpsert {
 	u.Add(stockoplog.FieldProductID, v)
 	return u
 }
@@ -677,7 +677,7 @@ func (u *StockOpLogUpsert) ClearReason() *StockOpLogUpsert {
 }
 
 // SetRefID sets the "ref_id" field.
-func (u *StockOpLogUpsert) SetRefID(v uint32) *StockOpLogUpsert {
+func (u *StockOpLogUpsert) SetRefID(v int64) *StockOpLogUpsert {
 	u.Set(stockoplog.FieldRefID, v)
 	return u
 }
@@ -689,7 +689,7 @@ func (u *StockOpLogUpsert) UpdateRefID() *StockOpLogUpsert {
 }
 
 // AddRefID adds v to the "ref_id" field.
-func (u *StockOpLogUpsert) AddRefID(v uint32) *StockOpLogUpsert {
+func (u *StockOpLogUpsert) AddRefID(v int64) *StockOpLogUpsert {
 	u.Add(stockoplog.FieldRefID, v)
 	return u
 }
@@ -812,14 +812,14 @@ func (u *StockOpLogUpsertOne) ClearDeletedAt() *StockOpLogUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockOpLogUpsertOne) SetCreatedBy(v uint32) *StockOpLogUpsertOne {
+func (u *StockOpLogUpsertOne) SetCreatedBy(v int64) *StockOpLogUpsertOne {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockOpLogUpsertOne) AddCreatedBy(v uint32) *StockOpLogUpsertOne {
+func (u *StockOpLogUpsertOne) AddCreatedBy(v int64) *StockOpLogUpsertOne {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -840,14 +840,14 @@ func (u *StockOpLogUpsertOne) ClearCreatedBy() *StockOpLogUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockOpLogUpsertOne) SetUpdatedBy(v uint32) *StockOpLogUpsertOne {
+func (u *StockOpLogUpsertOne) SetUpdatedBy(v int64) *StockOpLogUpsertOne {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockOpLogUpsertOne) AddUpdatedBy(v uint32) *StockOpLogUpsertOne {
+func (u *StockOpLogUpsertOne) AddUpdatedBy(v int64) *StockOpLogUpsertOne {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -868,14 +868,14 @@ func (u *StockOpLogUpsertOne) ClearUpdatedBy() *StockOpLogUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockOpLogUpsertOne) SetDeletedBy(v uint32) *StockOpLogUpsertOne {
+func (u *StockOpLogUpsertOne) SetDeletedBy(v int64) *StockOpLogUpsertOne {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockOpLogUpsertOne) AddDeletedBy(v uint32) *StockOpLogUpsertOne {
+func (u *StockOpLogUpsertOne) AddDeletedBy(v int64) *StockOpLogUpsertOne {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -896,14 +896,14 @@ func (u *StockOpLogUpsertOne) ClearDeletedBy() *StockOpLogUpsertOne {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *StockOpLogUpsertOne) SetSkuID(v uint32) *StockOpLogUpsertOne {
+func (u *StockOpLogUpsertOne) SetSkuID(v int64) *StockOpLogUpsertOne {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.SetSkuID(v)
 	})
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *StockOpLogUpsertOne) AddSkuID(v uint32) *StockOpLogUpsertOne {
+func (u *StockOpLogUpsertOne) AddSkuID(v int64) *StockOpLogUpsertOne {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.AddSkuID(v)
 	})
@@ -924,14 +924,14 @@ func (u *StockOpLogUpsertOne) ClearSkuID() *StockOpLogUpsertOne {
 }
 
 // SetProductID sets the "product_id" field.
-func (u *StockOpLogUpsertOne) SetProductID(v uint32) *StockOpLogUpsertOne {
+func (u *StockOpLogUpsertOne) SetProductID(v int64) *StockOpLogUpsertOne {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.SetProductID(v)
 	})
 }
 
 // AddProductID adds v to the "product_id" field.
-func (u *StockOpLogUpsertOne) AddProductID(v uint32) *StockOpLogUpsertOne {
+func (u *StockOpLogUpsertOne) AddProductID(v int64) *StockOpLogUpsertOne {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.AddProductID(v)
 	})
@@ -1057,14 +1057,14 @@ func (u *StockOpLogUpsertOne) ClearReason() *StockOpLogUpsertOne {
 }
 
 // SetRefID sets the "ref_id" field.
-func (u *StockOpLogUpsertOne) SetRefID(v uint32) *StockOpLogUpsertOne {
+func (u *StockOpLogUpsertOne) SetRefID(v int64) *StockOpLogUpsertOne {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.SetRefID(v)
 	})
 }
 
 // AddRefID adds v to the "ref_id" field.
-func (u *StockOpLogUpsertOne) AddRefID(v uint32) *StockOpLogUpsertOne {
+func (u *StockOpLogUpsertOne) AddRefID(v int64) *StockOpLogUpsertOne {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.AddRefID(v)
 	})
@@ -1121,7 +1121,7 @@ func (u *StockOpLogUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *StockOpLogUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *StockOpLogUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1130,7 +1130,7 @@ func (u *StockOpLogUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *StockOpLogUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *StockOpLogUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1187,7 +1187,7 @@ func (_c *StockOpLogCreateBulk) Save(ctx context.Context) ([]*StockOpLog, error)
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1365,14 +1365,14 @@ func (u *StockOpLogUpsertBulk) ClearDeletedAt() *StockOpLogUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockOpLogUpsertBulk) SetCreatedBy(v uint32) *StockOpLogUpsertBulk {
+func (u *StockOpLogUpsertBulk) SetCreatedBy(v int64) *StockOpLogUpsertBulk {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockOpLogUpsertBulk) AddCreatedBy(v uint32) *StockOpLogUpsertBulk {
+func (u *StockOpLogUpsertBulk) AddCreatedBy(v int64) *StockOpLogUpsertBulk {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1393,14 +1393,14 @@ func (u *StockOpLogUpsertBulk) ClearCreatedBy() *StockOpLogUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockOpLogUpsertBulk) SetUpdatedBy(v uint32) *StockOpLogUpsertBulk {
+func (u *StockOpLogUpsertBulk) SetUpdatedBy(v int64) *StockOpLogUpsertBulk {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockOpLogUpsertBulk) AddUpdatedBy(v uint32) *StockOpLogUpsertBulk {
+func (u *StockOpLogUpsertBulk) AddUpdatedBy(v int64) *StockOpLogUpsertBulk {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1421,14 +1421,14 @@ func (u *StockOpLogUpsertBulk) ClearUpdatedBy() *StockOpLogUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockOpLogUpsertBulk) SetDeletedBy(v uint32) *StockOpLogUpsertBulk {
+func (u *StockOpLogUpsertBulk) SetDeletedBy(v int64) *StockOpLogUpsertBulk {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockOpLogUpsertBulk) AddDeletedBy(v uint32) *StockOpLogUpsertBulk {
+func (u *StockOpLogUpsertBulk) AddDeletedBy(v int64) *StockOpLogUpsertBulk {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1449,14 +1449,14 @@ func (u *StockOpLogUpsertBulk) ClearDeletedBy() *StockOpLogUpsertBulk {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *StockOpLogUpsertBulk) SetSkuID(v uint32) *StockOpLogUpsertBulk {
+func (u *StockOpLogUpsertBulk) SetSkuID(v int64) *StockOpLogUpsertBulk {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.SetSkuID(v)
 	})
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *StockOpLogUpsertBulk) AddSkuID(v uint32) *StockOpLogUpsertBulk {
+func (u *StockOpLogUpsertBulk) AddSkuID(v int64) *StockOpLogUpsertBulk {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.AddSkuID(v)
 	})
@@ -1477,14 +1477,14 @@ func (u *StockOpLogUpsertBulk) ClearSkuID() *StockOpLogUpsertBulk {
 }
 
 // SetProductID sets the "product_id" field.
-func (u *StockOpLogUpsertBulk) SetProductID(v uint32) *StockOpLogUpsertBulk {
+func (u *StockOpLogUpsertBulk) SetProductID(v int64) *StockOpLogUpsertBulk {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.SetProductID(v)
 	})
 }
 
 // AddProductID adds v to the "product_id" field.
-func (u *StockOpLogUpsertBulk) AddProductID(v uint32) *StockOpLogUpsertBulk {
+func (u *StockOpLogUpsertBulk) AddProductID(v int64) *StockOpLogUpsertBulk {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.AddProductID(v)
 	})
@@ -1610,14 +1610,14 @@ func (u *StockOpLogUpsertBulk) ClearReason() *StockOpLogUpsertBulk {
 }
 
 // SetRefID sets the "ref_id" field.
-func (u *StockOpLogUpsertBulk) SetRefID(v uint32) *StockOpLogUpsertBulk {
+func (u *StockOpLogUpsertBulk) SetRefID(v int64) *StockOpLogUpsertBulk {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.SetRefID(v)
 	})
 }
 
 // AddRefID adds v to the "ref_id" field.
-func (u *StockOpLogUpsertBulk) AddRefID(v uint32) *StockOpLogUpsertBulk {
+func (u *StockOpLogUpsertBulk) AddRefID(v int64) *StockOpLogUpsertBulk {
 	return u.Update(func(s *StockOpLogUpsert) {
 		s.AddRefID(v)
 	})

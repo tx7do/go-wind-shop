@@ -167,7 +167,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 		seckillService,
 		userCouponService,
 		couponTemplateService,
-		promotionService,		commentService,
+		promotionService, commentService,
 		interactionService,
 		invoiceService,
 		aiChatService,

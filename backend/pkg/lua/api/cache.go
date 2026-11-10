@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 	lua "github.com/yuin/gopher-lua"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/pkg/lua/internal/convert"
 )

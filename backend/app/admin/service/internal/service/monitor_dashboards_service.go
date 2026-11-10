@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
 	redisCacheV1 "go-wind-shop/api/gen/go/redis_cache/service/v1"
@@ -15,7 +15,7 @@ import (
 type ServerMonitorService struct {
 	adminV1.ServerMonitorServiceHTTPServer
 
-	log *logx.Helper
+	log              *logx.Helper
 	serverMonitorCli serverMonitorV1.ServerMonitorServiceClient
 }
 
@@ -39,7 +39,7 @@ func (s *ServerMonitorService) Get(ctx context.Context, req *serverMonitorV1.Get
 type RedisCacheMonitorService struct {
 	adminV1.RedisCacheMonitorServiceHTTPServer
 
-	log *logx.Helper
+	log           *logx.Helper
 	redisCacheCli redisCacheV1.RedisCacheMonitorServiceClient
 }
 

@@ -6,8 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/google/uuid"
+	"go-wind-shop/pkg/logx"
 )
 
 // Context represents the execution context for a Lua script
@@ -17,7 +17,7 @@ type Context struct {
 	Data       map[string]interface{} // Input/output data
 	User       *UserContext           // Current user info
 	Request    *HTTPContext           // HTTP request info
-	Logger *logx.Helper            // Logger instance
+	Logger     *logx.Helper           // Logger instance
 	Cancel     context.Context        // Cancellation context
 	Stopped    bool                   // Set to true if script calls stop()
 	StopReason string                 // Reason for stopping
@@ -27,11 +27,11 @@ type Context struct {
 
 // UserContext contains user information
 type UserContext struct {
-	ID       uint32   `json:"id"`
+	ID       int64    `json:"id"`
 	Username string   `json:"username"`
 	Email    string   `json:"email"`
 	Roles    []string `json:"roles"`
-	TenantID uint32   `json:"tenant_id"`
+	TenantID int64    `json:"tenant_id"`
 }
 
 // HTTPContext contains HTTP request information

@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/trans"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"google.golang.org/protobuf/types/known/fieldmaskpb"
 
 	authenticationV1 "go-wind-shop/api/gen/go/authentication/service/v1"
@@ -60,7 +60,7 @@ func recordSessionMetaAt(
 		LoginAt:   loginAt,
 	}
 
-authenticator.SaveSessionMeta(
+	authenticator.SaveSessionMeta(
 		ctx,
 		clientType,
 		tokenPayload.GetUserId(),
@@ -69,7 +69,7 @@ authenticator.SaveSessionMeta(
 		authenticator.GetRefreshTokenExpires(clientType),
 	)
 }
-func recordUserLastLogin(ctx context.Context, log *bLogger.Helper, userRepo data.UserRepo, userID uint32, clientIP string) {
+func recordUserLastLogin(ctx context.Context, log *bLogger.Helper, userRepo data.UserRepo, userID int64, clientIP string) {
 	if userID == 0 || userRepo == nil {
 		return
 	}
@@ -90,4 +90,3 @@ func recordUserLastLogin(ctx context.Context, log *bLogger.Helper, userRepo data
 		log.Errorf(ctx, "record last login for user [%d] failed: %s", userID, uerr.Error())
 	}
 }
-

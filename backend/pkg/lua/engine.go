@@ -1,16 +1,16 @@
 package lua
 
 import (
-	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
 	"fmt"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"reflect"
 	"sync"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 	lua "github.com/yuin/gopher-lua"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/pkg/eventbus"
 	"go-wind-shop/pkg/lua/api"
@@ -30,7 +30,7 @@ type CallbackInfo struct {
 type Engine struct {
 	config          *Config
 	pool            *vmPool
-	logger *logx.Helper
+	logger          *logx.Helper
 	registry        *hook.Registry
 	rdb             *redis.Client              // Redis client for cache operations
 	eventbusManager *eventbus.Manager          // EventBus manager
@@ -524,7 +524,7 @@ func extractScriptFields(script interface{}) (*hook.Script, bool) {
 
 	// Extract fields
 	hookScript := &hook.Script{
-		ID:          0, // auto-generated (hook.Script uses uint32)
+		ID:          0, // auto-generated (hook.Script uses int64)
 		Name:        getStringField("Name"),
 		Hook:        getStringField("Hook"),
 		Source:      getStringField("Source"),

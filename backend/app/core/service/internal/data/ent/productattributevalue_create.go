@@ -65,13 +65,13 @@ func (_c *ProductAttributeValueCreate) SetNillableDeletedAt(v *time.Time) *Produ
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ProductAttributeValueCreate) SetCreatedBy(v uint32) *ProductAttributeValueCreate {
+func (_c *ProductAttributeValueCreate) SetCreatedBy(v int64) *ProductAttributeValueCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ProductAttributeValueCreate) SetNillableCreatedBy(v *uint32) *ProductAttributeValueCreate {
+func (_c *ProductAttributeValueCreate) SetNillableCreatedBy(v *int64) *ProductAttributeValueCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ProductAttributeValueCreate) SetNillableCreatedBy(v *uint32) *ProductA
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ProductAttributeValueCreate) SetUpdatedBy(v uint32) *ProductAttributeValueCreate {
+func (_c *ProductAttributeValueCreate) SetUpdatedBy(v int64) *ProductAttributeValueCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ProductAttributeValueCreate) SetNillableUpdatedBy(v *uint32) *ProductAttributeValueCreate {
+func (_c *ProductAttributeValueCreate) SetNillableUpdatedBy(v *int64) *ProductAttributeValueCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ProductAttributeValueCreate) SetNillableUpdatedBy(v *uint32) *ProductA
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ProductAttributeValueCreate) SetDeletedBy(v uint32) *ProductAttributeValueCreate {
+func (_c *ProductAttributeValueCreate) SetDeletedBy(v int64) *ProductAttributeValueCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ProductAttributeValueCreate) SetNillableDeletedBy(v *uint32) *ProductAttributeValueCreate {
+func (_c *ProductAttributeValueCreate) SetNillableDeletedBy(v *int64) *ProductAttributeValueCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *ProductAttributeValueCreate) SetNillableSortOrder(v *uint32) *ProductA
 }
 
 // SetAttributeID sets the "attribute_id" field.
-func (_c *ProductAttributeValueCreate) SetAttributeID(v uint32) *ProductAttributeValueCreate {
+func (_c *ProductAttributeValueCreate) SetAttributeID(v int64) *ProductAttributeValueCreate {
 	_c.mutation.SetAttributeID(v)
 	return _c
 }
 
 // SetNillableAttributeID sets the "attribute_id" field if the given value is not nil.
-func (_c *ProductAttributeValueCreate) SetNillableAttributeID(v *uint32) *ProductAttributeValueCreate {
+func (_c *ProductAttributeValueCreate) SetNillableAttributeID(v *int64) *ProductAttributeValueCreate {
 	if v != nil {
 		_c.SetAttributeID(*v)
 	}
@@ -135,7 +135,7 @@ func (_c *ProductAttributeValueCreate) SetNillableAttributeID(v *uint32) *Produc
 }
 
 // SetID sets the "id" field.
-func (_c *ProductAttributeValueCreate) SetID(v uint32) *ProductAttributeValueCreate {
+func (_c *ProductAttributeValueCreate) SetID(v int64) *ProductAttributeValueCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -204,7 +204,7 @@ func (_c *ProductAttributeValueCreate) sqlSave(ctx context.Context) (*ProductAtt
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -214,7 +214,7 @@ func (_c *ProductAttributeValueCreate) sqlSave(ctx context.Context) (*ProductAtt
 func (_c *ProductAttributeValueCreate) createSpec() (*ProductAttributeValue, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ProductAttributeValue{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(productattributevalue.Table, sqlgraph.NewFieldSpec(productattributevalue.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(productattributevalue.Table, sqlgraph.NewFieldSpec(productattributevalue.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -234,15 +234,15 @@ func (_c *ProductAttributeValueCreate) createSpec() (*ProductAttributeValue, *sq
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(productattributevalue.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(productattributevalue.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(productattributevalue.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(productattributevalue.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(productattributevalue.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(productattributevalue.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.SortOrder(); ok {
@@ -250,7 +250,7 @@ func (_c *ProductAttributeValueCreate) createSpec() (*ProductAttributeValue, *sq
 		_node.SortOrder = &value
 	}
 	if value, ok := _c.mutation.AttributeID(); ok {
-		_spec.SetField(productattributevalue.FieldAttributeID, field.TypeUint32, value)
+		_spec.SetField(productattributevalue.FieldAttributeID, field.TypeInt64, value)
 		_node.AttributeID = &value
 	}
 	return _node, _spec
@@ -342,7 +342,7 @@ func (u *ProductAttributeValueUpsert) ClearDeletedAt() *ProductAttributeValueUps
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ProductAttributeValueUpsert) SetCreatedBy(v uint32) *ProductAttributeValueUpsert {
+func (u *ProductAttributeValueUpsert) SetCreatedBy(v int64) *ProductAttributeValueUpsert {
 	u.Set(productattributevalue.FieldCreatedBy, v)
 	return u
 }
@@ -354,7 +354,7 @@ func (u *ProductAttributeValueUpsert) UpdateCreatedBy() *ProductAttributeValueUp
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ProductAttributeValueUpsert) AddCreatedBy(v uint32) *ProductAttributeValueUpsert {
+func (u *ProductAttributeValueUpsert) AddCreatedBy(v int64) *ProductAttributeValueUpsert {
 	u.Add(productattributevalue.FieldCreatedBy, v)
 	return u
 }
@@ -366,7 +366,7 @@ func (u *ProductAttributeValueUpsert) ClearCreatedBy() *ProductAttributeValueUps
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ProductAttributeValueUpsert) SetUpdatedBy(v uint32) *ProductAttributeValueUpsert {
+func (u *ProductAttributeValueUpsert) SetUpdatedBy(v int64) *ProductAttributeValueUpsert {
 	u.Set(productattributevalue.FieldUpdatedBy, v)
 	return u
 }
@@ -378,7 +378,7 @@ func (u *ProductAttributeValueUpsert) UpdateUpdatedBy() *ProductAttributeValueUp
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ProductAttributeValueUpsert) AddUpdatedBy(v uint32) *ProductAttributeValueUpsert {
+func (u *ProductAttributeValueUpsert) AddUpdatedBy(v int64) *ProductAttributeValueUpsert {
 	u.Add(productattributevalue.FieldUpdatedBy, v)
 	return u
 }
@@ -390,7 +390,7 @@ func (u *ProductAttributeValueUpsert) ClearUpdatedBy() *ProductAttributeValueUps
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ProductAttributeValueUpsert) SetDeletedBy(v uint32) *ProductAttributeValueUpsert {
+func (u *ProductAttributeValueUpsert) SetDeletedBy(v int64) *ProductAttributeValueUpsert {
 	u.Set(productattributevalue.FieldDeletedBy, v)
 	return u
 }
@@ -402,7 +402,7 @@ func (u *ProductAttributeValueUpsert) UpdateDeletedBy() *ProductAttributeValueUp
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ProductAttributeValueUpsert) AddDeletedBy(v uint32) *ProductAttributeValueUpsert {
+func (u *ProductAttributeValueUpsert) AddDeletedBy(v int64) *ProductAttributeValueUpsert {
 	u.Add(productattributevalue.FieldDeletedBy, v)
 	return u
 }
@@ -438,7 +438,7 @@ func (u *ProductAttributeValueUpsert) ClearSortOrder() *ProductAttributeValueUps
 }
 
 // SetAttributeID sets the "attribute_id" field.
-func (u *ProductAttributeValueUpsert) SetAttributeID(v uint32) *ProductAttributeValueUpsert {
+func (u *ProductAttributeValueUpsert) SetAttributeID(v int64) *ProductAttributeValueUpsert {
 	u.Set(productattributevalue.FieldAttributeID, v)
 	return u
 }
@@ -450,7 +450,7 @@ func (u *ProductAttributeValueUpsert) UpdateAttributeID() *ProductAttributeValue
 }
 
 // AddAttributeID adds v to the "attribute_id" field.
-func (u *ProductAttributeValueUpsert) AddAttributeID(v uint32) *ProductAttributeValueUpsert {
+func (u *ProductAttributeValueUpsert) AddAttributeID(v int64) *ProductAttributeValueUpsert {
 	u.Add(productattributevalue.FieldAttributeID, v)
 	return u
 }
@@ -555,14 +555,14 @@ func (u *ProductAttributeValueUpsertOne) ClearDeletedAt() *ProductAttributeValue
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ProductAttributeValueUpsertOne) SetCreatedBy(v uint32) *ProductAttributeValueUpsertOne {
+func (u *ProductAttributeValueUpsertOne) SetCreatedBy(v int64) *ProductAttributeValueUpsertOne {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ProductAttributeValueUpsertOne) AddCreatedBy(v uint32) *ProductAttributeValueUpsertOne {
+func (u *ProductAttributeValueUpsertOne) AddCreatedBy(v int64) *ProductAttributeValueUpsertOne {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -583,14 +583,14 @@ func (u *ProductAttributeValueUpsertOne) ClearCreatedBy() *ProductAttributeValue
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ProductAttributeValueUpsertOne) SetUpdatedBy(v uint32) *ProductAttributeValueUpsertOne {
+func (u *ProductAttributeValueUpsertOne) SetUpdatedBy(v int64) *ProductAttributeValueUpsertOne {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ProductAttributeValueUpsertOne) AddUpdatedBy(v uint32) *ProductAttributeValueUpsertOne {
+func (u *ProductAttributeValueUpsertOne) AddUpdatedBy(v int64) *ProductAttributeValueUpsertOne {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -611,14 +611,14 @@ func (u *ProductAttributeValueUpsertOne) ClearUpdatedBy() *ProductAttributeValue
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ProductAttributeValueUpsertOne) SetDeletedBy(v uint32) *ProductAttributeValueUpsertOne {
+func (u *ProductAttributeValueUpsertOne) SetDeletedBy(v int64) *ProductAttributeValueUpsertOne {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ProductAttributeValueUpsertOne) AddDeletedBy(v uint32) *ProductAttributeValueUpsertOne {
+func (u *ProductAttributeValueUpsertOne) AddDeletedBy(v int64) *ProductAttributeValueUpsertOne {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -667,14 +667,14 @@ func (u *ProductAttributeValueUpsertOne) ClearSortOrder() *ProductAttributeValue
 }
 
 // SetAttributeID sets the "attribute_id" field.
-func (u *ProductAttributeValueUpsertOne) SetAttributeID(v uint32) *ProductAttributeValueUpsertOne {
+func (u *ProductAttributeValueUpsertOne) SetAttributeID(v int64) *ProductAttributeValueUpsertOne {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.SetAttributeID(v)
 	})
 }
 
 // AddAttributeID adds v to the "attribute_id" field.
-func (u *ProductAttributeValueUpsertOne) AddAttributeID(v uint32) *ProductAttributeValueUpsertOne {
+func (u *ProductAttributeValueUpsertOne) AddAttributeID(v int64) *ProductAttributeValueUpsertOne {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.AddAttributeID(v)
 	})
@@ -710,7 +710,7 @@ func (u *ProductAttributeValueUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ProductAttributeValueUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *ProductAttributeValueUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -719,7 +719,7 @@ func (u *ProductAttributeValueUpsertOne) ID(ctx context.Context) (id uint32, err
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ProductAttributeValueUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *ProductAttributeValueUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -776,7 +776,7 @@ func (_c *ProductAttributeValueCreateBulk) Save(ctx context.Context) ([]*Product
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -954,14 +954,14 @@ func (u *ProductAttributeValueUpsertBulk) ClearDeletedAt() *ProductAttributeValu
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ProductAttributeValueUpsertBulk) SetCreatedBy(v uint32) *ProductAttributeValueUpsertBulk {
+func (u *ProductAttributeValueUpsertBulk) SetCreatedBy(v int64) *ProductAttributeValueUpsertBulk {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ProductAttributeValueUpsertBulk) AddCreatedBy(v uint32) *ProductAttributeValueUpsertBulk {
+func (u *ProductAttributeValueUpsertBulk) AddCreatedBy(v int64) *ProductAttributeValueUpsertBulk {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -982,14 +982,14 @@ func (u *ProductAttributeValueUpsertBulk) ClearCreatedBy() *ProductAttributeValu
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ProductAttributeValueUpsertBulk) SetUpdatedBy(v uint32) *ProductAttributeValueUpsertBulk {
+func (u *ProductAttributeValueUpsertBulk) SetUpdatedBy(v int64) *ProductAttributeValueUpsertBulk {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ProductAttributeValueUpsertBulk) AddUpdatedBy(v uint32) *ProductAttributeValueUpsertBulk {
+func (u *ProductAttributeValueUpsertBulk) AddUpdatedBy(v int64) *ProductAttributeValueUpsertBulk {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1010,14 +1010,14 @@ func (u *ProductAttributeValueUpsertBulk) ClearUpdatedBy() *ProductAttributeValu
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ProductAttributeValueUpsertBulk) SetDeletedBy(v uint32) *ProductAttributeValueUpsertBulk {
+func (u *ProductAttributeValueUpsertBulk) SetDeletedBy(v int64) *ProductAttributeValueUpsertBulk {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ProductAttributeValueUpsertBulk) AddDeletedBy(v uint32) *ProductAttributeValueUpsertBulk {
+func (u *ProductAttributeValueUpsertBulk) AddDeletedBy(v int64) *ProductAttributeValueUpsertBulk {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1066,14 +1066,14 @@ func (u *ProductAttributeValueUpsertBulk) ClearSortOrder() *ProductAttributeValu
 }
 
 // SetAttributeID sets the "attribute_id" field.
-func (u *ProductAttributeValueUpsertBulk) SetAttributeID(v uint32) *ProductAttributeValueUpsertBulk {
+func (u *ProductAttributeValueUpsertBulk) SetAttributeID(v int64) *ProductAttributeValueUpsertBulk {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.SetAttributeID(v)
 	})
 }
 
 // AddAttributeID adds v to the "attribute_id" field.
-func (u *ProductAttributeValueUpsertBulk) AddAttributeID(v uint32) *ProductAttributeValueUpsertBulk {
+func (u *ProductAttributeValueUpsertBulk) AddAttributeID(v int64) *ProductAttributeValueUpsertBulk {
 	return u.Update(func(s *ProductAttributeValueUpsert) {
 		s.AddAttributeID(v)
 	})

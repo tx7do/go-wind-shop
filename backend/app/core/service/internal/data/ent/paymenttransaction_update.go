@@ -70,14 +70,14 @@ func (_u *PaymentTransactionUpdate) ClearDeletedAt() *PaymentTransactionUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PaymentTransactionUpdate) SetCreatedBy(v uint32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) SetCreatedBy(v int64) *PaymentTransactionUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PaymentTransactionUpdate) SetNillableCreatedBy(v *uint32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) SetNillableCreatedBy(v *int64) *PaymentTransactionUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *PaymentTransactionUpdate) SetNillableCreatedBy(v *uint32) *PaymentTran
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PaymentTransactionUpdate) AddCreatedBy(v int32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) AddCreatedBy(v int64) *PaymentTransactionUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *PaymentTransactionUpdate) ClearCreatedBy() *PaymentTransactionUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PaymentTransactionUpdate) SetUpdatedBy(v uint32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) SetUpdatedBy(v int64) *PaymentTransactionUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PaymentTransactionUpdate) SetNillableUpdatedBy(v *uint32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) SetNillableUpdatedBy(v *int64) *PaymentTransactionUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *PaymentTransactionUpdate) SetNillableUpdatedBy(v *uint32) *PaymentTran
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PaymentTransactionUpdate) AddUpdatedBy(v int32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) AddUpdatedBy(v int64) *PaymentTransactionUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *PaymentTransactionUpdate) ClearUpdatedBy() *PaymentTransactionUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PaymentTransactionUpdate) SetDeletedBy(v uint32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) SetDeletedBy(v int64) *PaymentTransactionUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PaymentTransactionUpdate) SetNillableDeletedBy(v *uint32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) SetNillableDeletedBy(v *int64) *PaymentTransactionUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *PaymentTransactionUpdate) SetNillableDeletedBy(v *uint32) *PaymentTran
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PaymentTransactionUpdate) AddDeletedBy(v int32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) AddDeletedBy(v int64) *PaymentTransactionUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -251,14 +251,14 @@ func (_u *PaymentTransactionUpdate) ClearBusinessType() *PaymentTransactionUpdat
 }
 
 // SetOrderID sets the "order_id" field.
-func (_u *PaymentTransactionUpdate) SetOrderID(v uint32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) SetOrderID(v int64) *PaymentTransactionUpdate {
 	_u.mutation.ResetOrderID()
 	_u.mutation.SetOrderID(v)
 	return _u
 }
 
 // SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (_u *PaymentTransactionUpdate) SetNillableOrderID(v *uint32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) SetNillableOrderID(v *int64) *PaymentTransactionUpdate {
 	if v != nil {
 		_u.SetOrderID(*v)
 	}
@@ -266,7 +266,7 @@ func (_u *PaymentTransactionUpdate) SetNillableOrderID(v *uint32) *PaymentTransa
 }
 
 // AddOrderID adds value to the "order_id" field.
-func (_u *PaymentTransactionUpdate) AddOrderID(v int32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) AddOrderID(v int64) *PaymentTransactionUpdate {
 	_u.mutation.AddOrderID(v)
 	return _u
 }
@@ -278,14 +278,14 @@ func (_u *PaymentTransactionUpdate) ClearOrderID() *PaymentTransactionUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *PaymentTransactionUpdate) SetUserID(v uint32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) SetUserID(v int64) *PaymentTransactionUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *PaymentTransactionUpdate) SetNillableUserID(v *uint32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) SetNillableUserID(v *int64) *PaymentTransactionUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -293,7 +293,7 @@ func (_u *PaymentTransactionUpdate) SetNillableUserID(v *uint32) *PaymentTransac
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *PaymentTransactionUpdate) AddUserID(v int32) *PaymentTransactionUpdate {
+func (_u *PaymentTransactionUpdate) AddUserID(v int64) *PaymentTransactionUpdate {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -433,7 +433,7 @@ func (_u *PaymentTransactionUpdate) sqlSave(ctx context.Context) (_node int, err
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(paymenttransaction.Table, paymenttransaction.Columns, sqlgraph.NewFieldSpec(paymenttransaction.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(paymenttransaction.Table, paymenttransaction.Columns, sqlgraph.NewFieldSpec(paymenttransaction.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -457,34 +457,34 @@ func (_u *PaymentTransactionUpdate) sqlSave(ctx context.Context) (_node int, err
 		_spec.ClearField(paymenttransaction.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(paymenttransaction.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(paymenttransaction.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(paymenttransaction.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(paymenttransaction.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(paymenttransaction.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(paymenttransaction.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(paymenttransaction.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(paymenttransaction.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(paymenttransaction.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(paymenttransaction.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(paymenttransaction.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(paymenttransaction.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(paymenttransaction.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(paymenttransaction.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(paymenttransaction.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(paymenttransaction.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(paymenttransaction.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(paymenttransaction.FieldCurrency, field.TypeString, value)
@@ -517,22 +517,22 @@ func (_u *PaymentTransactionUpdate) sqlSave(ctx context.Context) (_node int, err
 		_spec.ClearField(paymenttransaction.FieldBusinessType, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.OrderID(); ok {
-		_spec.SetField(paymenttransaction.FieldOrderID, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOrderID(); ok {
-		_spec.AddField(paymenttransaction.FieldOrderID, field.TypeUint32, value)
+		_spec.AddField(paymenttransaction.FieldOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.OrderIDCleared() {
-		_spec.ClearField(paymenttransaction.FieldOrderID, field.TypeUint32)
+		_spec.ClearField(paymenttransaction.FieldOrderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(paymenttransaction.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(paymenttransaction.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(paymenttransaction.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(paymenttransaction.FieldUserID, field.TypeUint32)
+		_spec.ClearField(paymenttransaction.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(paymenttransaction.FieldAmount, field.TypeInt64, value)
@@ -618,14 +618,14 @@ func (_u *PaymentTransactionUpdateOne) ClearDeletedAt() *PaymentTransactionUpdat
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PaymentTransactionUpdateOne) SetCreatedBy(v uint32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) SetCreatedBy(v int64) *PaymentTransactionUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PaymentTransactionUpdateOne) SetNillableCreatedBy(v *uint32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) SetNillableCreatedBy(v *int64) *PaymentTransactionUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -633,7 +633,7 @@ func (_u *PaymentTransactionUpdateOne) SetNillableCreatedBy(v *uint32) *PaymentT
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PaymentTransactionUpdateOne) AddCreatedBy(v int32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) AddCreatedBy(v int64) *PaymentTransactionUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -645,14 +645,14 @@ func (_u *PaymentTransactionUpdateOne) ClearCreatedBy() *PaymentTransactionUpdat
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PaymentTransactionUpdateOne) SetUpdatedBy(v uint32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) SetUpdatedBy(v int64) *PaymentTransactionUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PaymentTransactionUpdateOne) SetNillableUpdatedBy(v *uint32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) SetNillableUpdatedBy(v *int64) *PaymentTransactionUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -660,7 +660,7 @@ func (_u *PaymentTransactionUpdateOne) SetNillableUpdatedBy(v *uint32) *PaymentT
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PaymentTransactionUpdateOne) AddUpdatedBy(v int32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) AddUpdatedBy(v int64) *PaymentTransactionUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -672,14 +672,14 @@ func (_u *PaymentTransactionUpdateOne) ClearUpdatedBy() *PaymentTransactionUpdat
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PaymentTransactionUpdateOne) SetDeletedBy(v uint32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) SetDeletedBy(v int64) *PaymentTransactionUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PaymentTransactionUpdateOne) SetNillableDeletedBy(v *uint32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) SetNillableDeletedBy(v *int64) *PaymentTransactionUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -687,7 +687,7 @@ func (_u *PaymentTransactionUpdateOne) SetNillableDeletedBy(v *uint32) *PaymentT
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PaymentTransactionUpdateOne) AddDeletedBy(v int32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) AddDeletedBy(v int64) *PaymentTransactionUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -799,14 +799,14 @@ func (_u *PaymentTransactionUpdateOne) ClearBusinessType() *PaymentTransactionUp
 }
 
 // SetOrderID sets the "order_id" field.
-func (_u *PaymentTransactionUpdateOne) SetOrderID(v uint32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) SetOrderID(v int64) *PaymentTransactionUpdateOne {
 	_u.mutation.ResetOrderID()
 	_u.mutation.SetOrderID(v)
 	return _u
 }
 
 // SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (_u *PaymentTransactionUpdateOne) SetNillableOrderID(v *uint32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) SetNillableOrderID(v *int64) *PaymentTransactionUpdateOne {
 	if v != nil {
 		_u.SetOrderID(*v)
 	}
@@ -814,7 +814,7 @@ func (_u *PaymentTransactionUpdateOne) SetNillableOrderID(v *uint32) *PaymentTra
 }
 
 // AddOrderID adds value to the "order_id" field.
-func (_u *PaymentTransactionUpdateOne) AddOrderID(v int32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) AddOrderID(v int64) *PaymentTransactionUpdateOne {
 	_u.mutation.AddOrderID(v)
 	return _u
 }
@@ -826,14 +826,14 @@ func (_u *PaymentTransactionUpdateOne) ClearOrderID() *PaymentTransactionUpdateO
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *PaymentTransactionUpdateOne) SetUserID(v uint32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) SetUserID(v int64) *PaymentTransactionUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *PaymentTransactionUpdateOne) SetNillableUserID(v *uint32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) SetNillableUserID(v *int64) *PaymentTransactionUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -841,7 +841,7 @@ func (_u *PaymentTransactionUpdateOne) SetNillableUserID(v *uint32) *PaymentTran
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *PaymentTransactionUpdateOne) AddUserID(v int32) *PaymentTransactionUpdateOne {
+func (_u *PaymentTransactionUpdateOne) AddUserID(v int64) *PaymentTransactionUpdateOne {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -994,7 +994,7 @@ func (_u *PaymentTransactionUpdateOne) sqlSave(ctx context.Context) (_node *Paym
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(paymenttransaction.Table, paymenttransaction.Columns, sqlgraph.NewFieldSpec(paymenttransaction.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(paymenttransaction.Table, paymenttransaction.Columns, sqlgraph.NewFieldSpec(paymenttransaction.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PaymentTransaction.id" for update`)}
@@ -1035,34 +1035,34 @@ func (_u *PaymentTransactionUpdateOne) sqlSave(ctx context.Context) (_node *Paym
 		_spec.ClearField(paymenttransaction.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(paymenttransaction.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(paymenttransaction.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(paymenttransaction.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(paymenttransaction.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(paymenttransaction.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(paymenttransaction.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(paymenttransaction.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(paymenttransaction.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(paymenttransaction.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(paymenttransaction.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(paymenttransaction.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(paymenttransaction.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(paymenttransaction.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(paymenttransaction.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(paymenttransaction.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(paymenttransaction.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(paymenttransaction.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(paymenttransaction.FieldCurrency, field.TypeString, value)
@@ -1095,22 +1095,22 @@ func (_u *PaymentTransactionUpdateOne) sqlSave(ctx context.Context) (_node *Paym
 		_spec.ClearField(paymenttransaction.FieldBusinessType, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.OrderID(); ok {
-		_spec.SetField(paymenttransaction.FieldOrderID, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOrderID(); ok {
-		_spec.AddField(paymenttransaction.FieldOrderID, field.TypeUint32, value)
+		_spec.AddField(paymenttransaction.FieldOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.OrderIDCleared() {
-		_spec.ClearField(paymenttransaction.FieldOrderID, field.TypeUint32)
+		_spec.ClearField(paymenttransaction.FieldOrderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(paymenttransaction.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(paymenttransaction.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(paymenttransaction.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(paymenttransaction.FieldUserID, field.TypeUint32)
+		_spec.ClearField(paymenttransaction.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(paymenttransaction.FieldAmount, field.TypeInt64, value)

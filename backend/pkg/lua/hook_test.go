@@ -1,9 +1,9 @@
 package lua
 
 import (
-	"go-wind-shop/pkg/logx"
-	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
+	"go-wind-shop/pkg/logx"
 	"testing"
 
 	lua "github.com/yuin/gopher-lua"

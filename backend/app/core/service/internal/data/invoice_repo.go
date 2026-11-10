@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -23,7 +23,7 @@ import (
 
 type InvoiceRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[invoiceV1.Invoice, ent.Invoice]
 
@@ -42,11 +42,11 @@ type InvoiceRepo struct {
 
 func NewInvoiceRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *InvoiceRepo {
 	repo := &InvoiceRepo{
-		log:                   logx.New(ctx.NewLoggerHelper("invoice/repo/core-service")),
-		entClient:             entClient,
-		mapper:                mapper.NewCopierMapper[invoiceV1.Invoice, ent.Invoice](),
-		statusConverter:       mapper.NewEnumTypeConverter[invoiceV1.Invoice_Status, invoice.Status](invoiceV1.Invoice_Status_name, invoiceV1.Invoice_Status_value),
-		invoiceTypeConverter:  mapper.NewEnumTypeConverter[invoiceV1.Invoice_InvoiceType, invoice.InvoiceType](invoiceV1.Invoice_InvoiceType_name, invoiceV1.Invoice_InvoiceType_value),
+		log:                  logx.New(ctx.NewLoggerHelper("invoice/repo/core-service")),
+		entClient:            entClient,
+		mapper:               mapper.NewCopierMapper[invoiceV1.Invoice, ent.Invoice](),
+		statusConverter:      mapper.NewEnumTypeConverter[invoiceV1.Invoice_Status, invoice.Status](invoiceV1.Invoice_Status_name, invoiceV1.Invoice_Status_value),
+		invoiceTypeConverter: mapper.NewEnumTypeConverter[invoiceV1.Invoice_InvoiceType, invoice.InvoiceType](invoiceV1.Invoice_InvoiceType_name, invoiceV1.Invoice_InvoiceType_value),
 	}
 
 	repo.init()
@@ -109,7 +109,7 @@ func (r *InvoiceRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 	}, nil
 }
 
-func (r *InvoiceRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *InvoiceRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Invoice.Query().
 		Where(invoice.IDEQ(id)).
 		Exist(ctx)

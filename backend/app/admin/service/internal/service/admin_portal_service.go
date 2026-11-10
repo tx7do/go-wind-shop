@@ -1,9 +1,10 @@
 package service
 
-import (	"go-wind-shop/pkg/logx"
+import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go-wind-shop/pkg/logx"
 	"strings"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -47,7 +48,7 @@ func NewRouterService(
 	}
 }
 
-func (s *AdminPortalService) menuListToQueryString(menus []uint32, onlyButton bool) string {
+func (s *AdminPortalService) menuListToQueryString(menus []int64, onlyButton bool) string {
 	var ids []string
 	for _, menu := range menus {
 		ids = append(ids, fmt.Sprintf("\"%d\"", menu))
@@ -72,7 +73,7 @@ func (s *AdminPortalService) menuListToQueryString(menus []uint32, onlyButton bo
 }
 
 // queryMultipleRolesMenusByRoleIds 使用RoleIDs查询菜单，即多个角色的菜单
-func (s *AdminPortalService) queryMultipleRolesMenusByRoleIds(ctx context.Context, roleIDs []uint32) ([]uint32, error) {
+func (s *AdminPortalService) queryMultipleRolesMenusByRoleIds(ctx context.Context, roleIDs []int64) ([]int64, error) {
 	if len(roleIDs) == 0 {
 		s.log.Warnf("user has no roles assigned")
 		return nil, nil
@@ -136,8 +137,7 @@ func (s *AdminPortalService) GetMyPermissionCode(ctx context.Context, _ *emptypb
 		return nil, adminV1.ErrorInternalServerError("list permission codes by ids failed")
 	}
 
-	
-// 字段权限隐藏字段：按用户角色集合聚合（"资源.字段" 串，前端列显隐）
+	// 字段权限隐藏字段：按用户角色集合聚合（"资源.字段" 串，前端列显隐）
 	user, uErr := s.userServiceClient.Get(ctx, &identityV1.GetUserRequest{
 		QueryBy: &identityV1.GetUserRequest_Id{Id: operator.GetUserId()},
 	})
@@ -152,7 +152,7 @@ func (s *AdminPortalService) GetMyPermissionCode(ctx context.Context, _ *emptypb
 		s.log.Errorf("list hidden fields by role ids failed [%s]", hErr.Error())
 		return nil, adminV1.ErrorInternalServerError("list hidden fields failed")
 	}
-return &adminV1.ListPermissionCodeResponse{
+	return &adminV1.ListPermissionCodeResponse{
 		Codes:        permissionCodeResp.PermissionCodes,
 		HiddenFields: hiddenFieldsResp.HiddenFields,
 	}, nil

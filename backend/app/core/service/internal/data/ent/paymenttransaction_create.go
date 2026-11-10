@@ -65,13 +65,13 @@ func (_c *PaymentTransactionCreate) SetNillableDeletedAt(v *time.Time) *PaymentT
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *PaymentTransactionCreate) SetCreatedBy(v uint32) *PaymentTransactionCreate {
+func (_c *PaymentTransactionCreate) SetCreatedBy(v int64) *PaymentTransactionCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *PaymentTransactionCreate) SetNillableCreatedBy(v *uint32) *PaymentTransactionCreate {
+func (_c *PaymentTransactionCreate) SetNillableCreatedBy(v *int64) *PaymentTransactionCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *PaymentTransactionCreate) SetNillableCreatedBy(v *uint32) *PaymentTran
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *PaymentTransactionCreate) SetUpdatedBy(v uint32) *PaymentTransactionCreate {
+func (_c *PaymentTransactionCreate) SetUpdatedBy(v int64) *PaymentTransactionCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *PaymentTransactionCreate) SetNillableUpdatedBy(v *uint32) *PaymentTransactionCreate {
+func (_c *PaymentTransactionCreate) SetNillableUpdatedBy(v *int64) *PaymentTransactionCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *PaymentTransactionCreate) SetNillableUpdatedBy(v *uint32) *PaymentTran
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *PaymentTransactionCreate) SetDeletedBy(v uint32) *PaymentTransactionCreate {
+func (_c *PaymentTransactionCreate) SetDeletedBy(v int64) *PaymentTransactionCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *PaymentTransactionCreate) SetNillableDeletedBy(v *uint32) *PaymentTransactionCreate {
+func (_c *PaymentTransactionCreate) SetNillableDeletedBy(v *int64) *PaymentTransactionCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *PaymentTransactionCreate) SetNillableDeletedBy(v *uint32) *PaymentTran
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PaymentTransactionCreate) SetTenantID(v uint32) *PaymentTransactionCreate {
+func (_c *PaymentTransactionCreate) SetTenantID(v int64) *PaymentTransactionCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PaymentTransactionCreate) SetNillableTenantID(v *uint32) *PaymentTransactionCreate {
+func (_c *PaymentTransactionCreate) SetNillableTenantID(v *int64) *PaymentTransactionCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -191,13 +191,13 @@ func (_c *PaymentTransactionCreate) SetNillableBusinessType(v *paymenttransactio
 }
 
 // SetOrderID sets the "order_id" field.
-func (_c *PaymentTransactionCreate) SetOrderID(v uint32) *PaymentTransactionCreate {
+func (_c *PaymentTransactionCreate) SetOrderID(v int64) *PaymentTransactionCreate {
 	_c.mutation.SetOrderID(v)
 	return _c
 }
 
 // SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (_c *PaymentTransactionCreate) SetNillableOrderID(v *uint32) *PaymentTransactionCreate {
+func (_c *PaymentTransactionCreate) SetNillableOrderID(v *int64) *PaymentTransactionCreate {
 	if v != nil {
 		_c.SetOrderID(*v)
 	}
@@ -205,13 +205,13 @@ func (_c *PaymentTransactionCreate) SetNillableOrderID(v *uint32) *PaymentTransa
 }
 
 // SetUserID sets the "user_id" field.
-func (_c *PaymentTransactionCreate) SetUserID(v uint32) *PaymentTransactionCreate {
+func (_c *PaymentTransactionCreate) SetUserID(v int64) *PaymentTransactionCreate {
 	_c.mutation.SetUserID(v)
 	return _c
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_c *PaymentTransactionCreate) SetNillableUserID(v *uint32) *PaymentTransactionCreate {
+func (_c *PaymentTransactionCreate) SetNillableUserID(v *int64) *PaymentTransactionCreate {
 	if v != nil {
 		_c.SetUserID(*v)
 	}
@@ -261,7 +261,7 @@ func (_c *PaymentTransactionCreate) SetNillableGatewayTradeNo(v *string) *Paymen
 }
 
 // SetID sets the "id" field.
-func (_c *PaymentTransactionCreate) SetID(v uint32) *PaymentTransactionCreate {
+func (_c *PaymentTransactionCreate) SetID(v int64) *PaymentTransactionCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -356,7 +356,7 @@ func (_c *PaymentTransactionCreate) sqlSave(ctx context.Context) (*PaymentTransa
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -366,7 +366,7 @@ func (_c *PaymentTransactionCreate) sqlSave(ctx context.Context) (*PaymentTransa
 func (_c *PaymentTransactionCreate) createSpec() (*PaymentTransaction, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PaymentTransaction{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(paymenttransaction.Table, sqlgraph.NewFieldSpec(paymenttransaction.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(paymenttransaction.Table, sqlgraph.NewFieldSpec(paymenttransaction.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -386,19 +386,19 @@ func (_c *PaymentTransactionCreate) createSpec() (*PaymentTransaction, *sqlgraph
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(paymenttransaction.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(paymenttransaction.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(paymenttransaction.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(paymenttransaction.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Currency(); ok {
@@ -422,11 +422,11 @@ func (_c *PaymentTransactionCreate) createSpec() (*PaymentTransaction, *sqlgraph
 		_node.BusinessType = &value
 	}
 	if value, ok := _c.mutation.OrderID(); ok {
-		_spec.SetField(paymenttransaction.FieldOrderID, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldOrderID, field.TypeInt64, value)
 		_node.OrderID = &value
 	}
 	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(paymenttransaction.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(paymenttransaction.FieldUserID, field.TypeInt64, value)
 		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.Amount(); ok {
@@ -530,7 +530,7 @@ func (u *PaymentTransactionUpsert) ClearDeletedAt() *PaymentTransactionUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PaymentTransactionUpsert) SetCreatedBy(v uint32) *PaymentTransactionUpsert {
+func (u *PaymentTransactionUpsert) SetCreatedBy(v int64) *PaymentTransactionUpsert {
 	u.Set(paymenttransaction.FieldCreatedBy, v)
 	return u
 }
@@ -542,7 +542,7 @@ func (u *PaymentTransactionUpsert) UpdateCreatedBy() *PaymentTransactionUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PaymentTransactionUpsert) AddCreatedBy(v uint32) *PaymentTransactionUpsert {
+func (u *PaymentTransactionUpsert) AddCreatedBy(v int64) *PaymentTransactionUpsert {
 	u.Add(paymenttransaction.FieldCreatedBy, v)
 	return u
 }
@@ -554,7 +554,7 @@ func (u *PaymentTransactionUpsert) ClearCreatedBy() *PaymentTransactionUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PaymentTransactionUpsert) SetUpdatedBy(v uint32) *PaymentTransactionUpsert {
+func (u *PaymentTransactionUpsert) SetUpdatedBy(v int64) *PaymentTransactionUpsert {
 	u.Set(paymenttransaction.FieldUpdatedBy, v)
 	return u
 }
@@ -566,7 +566,7 @@ func (u *PaymentTransactionUpsert) UpdateUpdatedBy() *PaymentTransactionUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PaymentTransactionUpsert) AddUpdatedBy(v uint32) *PaymentTransactionUpsert {
+func (u *PaymentTransactionUpsert) AddUpdatedBy(v int64) *PaymentTransactionUpsert {
 	u.Add(paymenttransaction.FieldUpdatedBy, v)
 	return u
 }
@@ -578,7 +578,7 @@ func (u *PaymentTransactionUpsert) ClearUpdatedBy() *PaymentTransactionUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PaymentTransactionUpsert) SetDeletedBy(v uint32) *PaymentTransactionUpsert {
+func (u *PaymentTransactionUpsert) SetDeletedBy(v int64) *PaymentTransactionUpsert {
 	u.Set(paymenttransaction.FieldDeletedBy, v)
 	return u
 }
@@ -590,7 +590,7 @@ func (u *PaymentTransactionUpsert) UpdateDeletedBy() *PaymentTransactionUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PaymentTransactionUpsert) AddDeletedBy(v uint32) *PaymentTransactionUpsert {
+func (u *PaymentTransactionUpsert) AddDeletedBy(v int64) *PaymentTransactionUpsert {
 	u.Add(paymenttransaction.FieldDeletedBy, v)
 	return u
 }
@@ -692,7 +692,7 @@ func (u *PaymentTransactionUpsert) ClearBusinessType() *PaymentTransactionUpsert
 }
 
 // SetOrderID sets the "order_id" field.
-func (u *PaymentTransactionUpsert) SetOrderID(v uint32) *PaymentTransactionUpsert {
+func (u *PaymentTransactionUpsert) SetOrderID(v int64) *PaymentTransactionUpsert {
 	u.Set(paymenttransaction.FieldOrderID, v)
 	return u
 }
@@ -704,7 +704,7 @@ func (u *PaymentTransactionUpsert) UpdateOrderID() *PaymentTransactionUpsert {
 }
 
 // AddOrderID adds v to the "order_id" field.
-func (u *PaymentTransactionUpsert) AddOrderID(v uint32) *PaymentTransactionUpsert {
+func (u *PaymentTransactionUpsert) AddOrderID(v int64) *PaymentTransactionUpsert {
 	u.Add(paymenttransaction.FieldOrderID, v)
 	return u
 }
@@ -716,7 +716,7 @@ func (u *PaymentTransactionUpsert) ClearOrderID() *PaymentTransactionUpsert {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *PaymentTransactionUpsert) SetUserID(v uint32) *PaymentTransactionUpsert {
+func (u *PaymentTransactionUpsert) SetUserID(v int64) *PaymentTransactionUpsert {
 	u.Set(paymenttransaction.FieldUserID, v)
 	return u
 }
@@ -728,7 +728,7 @@ func (u *PaymentTransactionUpsert) UpdateUserID() *PaymentTransactionUpsert {
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *PaymentTransactionUpsert) AddUserID(v uint32) *PaymentTransactionUpsert {
+func (u *PaymentTransactionUpsert) AddUserID(v int64) *PaymentTransactionUpsert {
 	u.Add(paymenttransaction.FieldUserID, v)
 	return u
 }
@@ -896,14 +896,14 @@ func (u *PaymentTransactionUpsertOne) ClearDeletedAt() *PaymentTransactionUpsert
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PaymentTransactionUpsertOne) SetCreatedBy(v uint32) *PaymentTransactionUpsertOne {
+func (u *PaymentTransactionUpsertOne) SetCreatedBy(v int64) *PaymentTransactionUpsertOne {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PaymentTransactionUpsertOne) AddCreatedBy(v uint32) *PaymentTransactionUpsertOne {
+func (u *PaymentTransactionUpsertOne) AddCreatedBy(v int64) *PaymentTransactionUpsertOne {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -924,14 +924,14 @@ func (u *PaymentTransactionUpsertOne) ClearCreatedBy() *PaymentTransactionUpsert
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PaymentTransactionUpsertOne) SetUpdatedBy(v uint32) *PaymentTransactionUpsertOne {
+func (u *PaymentTransactionUpsertOne) SetUpdatedBy(v int64) *PaymentTransactionUpsertOne {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PaymentTransactionUpsertOne) AddUpdatedBy(v uint32) *PaymentTransactionUpsertOne {
+func (u *PaymentTransactionUpsertOne) AddUpdatedBy(v int64) *PaymentTransactionUpsertOne {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -952,14 +952,14 @@ func (u *PaymentTransactionUpsertOne) ClearUpdatedBy() *PaymentTransactionUpsert
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PaymentTransactionUpsertOne) SetDeletedBy(v uint32) *PaymentTransactionUpsertOne {
+func (u *PaymentTransactionUpsertOne) SetDeletedBy(v int64) *PaymentTransactionUpsertOne {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PaymentTransactionUpsertOne) AddDeletedBy(v uint32) *PaymentTransactionUpsertOne {
+func (u *PaymentTransactionUpsertOne) AddDeletedBy(v int64) *PaymentTransactionUpsertOne {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1085,14 +1085,14 @@ func (u *PaymentTransactionUpsertOne) ClearBusinessType() *PaymentTransactionUps
 }
 
 // SetOrderID sets the "order_id" field.
-func (u *PaymentTransactionUpsertOne) SetOrderID(v uint32) *PaymentTransactionUpsertOne {
+func (u *PaymentTransactionUpsertOne) SetOrderID(v int64) *PaymentTransactionUpsertOne {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.SetOrderID(v)
 	})
 }
 
 // AddOrderID adds v to the "order_id" field.
-func (u *PaymentTransactionUpsertOne) AddOrderID(v uint32) *PaymentTransactionUpsertOne {
+func (u *PaymentTransactionUpsertOne) AddOrderID(v int64) *PaymentTransactionUpsertOne {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.AddOrderID(v)
 	})
@@ -1113,14 +1113,14 @@ func (u *PaymentTransactionUpsertOne) ClearOrderID() *PaymentTransactionUpsertOn
 }
 
 // SetUserID sets the "user_id" field.
-func (u *PaymentTransactionUpsertOne) SetUserID(v uint32) *PaymentTransactionUpsertOne {
+func (u *PaymentTransactionUpsertOne) SetUserID(v int64) *PaymentTransactionUpsertOne {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *PaymentTransactionUpsertOne) AddUserID(v uint32) *PaymentTransactionUpsertOne {
+func (u *PaymentTransactionUpsertOne) AddUserID(v int64) *PaymentTransactionUpsertOne {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.AddUserID(v)
 	})
@@ -1226,7 +1226,7 @@ func (u *PaymentTransactionUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PaymentTransactionUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *PaymentTransactionUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1235,7 +1235,7 @@ func (u *PaymentTransactionUpsertOne) ID(ctx context.Context) (id uint32, err er
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PaymentTransactionUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *PaymentTransactionUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1292,7 +1292,7 @@ func (_c *PaymentTransactionCreateBulk) Save(ctx context.Context) ([]*PaymentTra
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1473,14 +1473,14 @@ func (u *PaymentTransactionUpsertBulk) ClearDeletedAt() *PaymentTransactionUpser
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PaymentTransactionUpsertBulk) SetCreatedBy(v uint32) *PaymentTransactionUpsertBulk {
+func (u *PaymentTransactionUpsertBulk) SetCreatedBy(v int64) *PaymentTransactionUpsertBulk {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PaymentTransactionUpsertBulk) AddCreatedBy(v uint32) *PaymentTransactionUpsertBulk {
+func (u *PaymentTransactionUpsertBulk) AddCreatedBy(v int64) *PaymentTransactionUpsertBulk {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1501,14 +1501,14 @@ func (u *PaymentTransactionUpsertBulk) ClearCreatedBy() *PaymentTransactionUpser
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PaymentTransactionUpsertBulk) SetUpdatedBy(v uint32) *PaymentTransactionUpsertBulk {
+func (u *PaymentTransactionUpsertBulk) SetUpdatedBy(v int64) *PaymentTransactionUpsertBulk {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PaymentTransactionUpsertBulk) AddUpdatedBy(v uint32) *PaymentTransactionUpsertBulk {
+func (u *PaymentTransactionUpsertBulk) AddUpdatedBy(v int64) *PaymentTransactionUpsertBulk {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1529,14 +1529,14 @@ func (u *PaymentTransactionUpsertBulk) ClearUpdatedBy() *PaymentTransactionUpser
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PaymentTransactionUpsertBulk) SetDeletedBy(v uint32) *PaymentTransactionUpsertBulk {
+func (u *PaymentTransactionUpsertBulk) SetDeletedBy(v int64) *PaymentTransactionUpsertBulk {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PaymentTransactionUpsertBulk) AddDeletedBy(v uint32) *PaymentTransactionUpsertBulk {
+func (u *PaymentTransactionUpsertBulk) AddDeletedBy(v int64) *PaymentTransactionUpsertBulk {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1662,14 +1662,14 @@ func (u *PaymentTransactionUpsertBulk) ClearBusinessType() *PaymentTransactionUp
 }
 
 // SetOrderID sets the "order_id" field.
-func (u *PaymentTransactionUpsertBulk) SetOrderID(v uint32) *PaymentTransactionUpsertBulk {
+func (u *PaymentTransactionUpsertBulk) SetOrderID(v int64) *PaymentTransactionUpsertBulk {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.SetOrderID(v)
 	})
 }
 
 // AddOrderID adds v to the "order_id" field.
-func (u *PaymentTransactionUpsertBulk) AddOrderID(v uint32) *PaymentTransactionUpsertBulk {
+func (u *PaymentTransactionUpsertBulk) AddOrderID(v int64) *PaymentTransactionUpsertBulk {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.AddOrderID(v)
 	})
@@ -1690,14 +1690,14 @@ func (u *PaymentTransactionUpsertBulk) ClearOrderID() *PaymentTransactionUpsertB
 }
 
 // SetUserID sets the "user_id" field.
-func (u *PaymentTransactionUpsertBulk) SetUserID(v uint32) *PaymentTransactionUpsertBulk {
+func (u *PaymentTransactionUpsertBulk) SetUserID(v int64) *PaymentTransactionUpsertBulk {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *PaymentTransactionUpsertBulk) AddUserID(v uint32) *PaymentTransactionUpsertBulk {
+func (u *PaymentTransactionUpsertBulk) AddUserID(v int64) *PaymentTransactionUpsertBulk {
 	return u.Update(func(s *PaymentTransactionUpsert) {
 		s.AddUserID(v)
 	})

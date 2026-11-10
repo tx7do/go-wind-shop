@@ -70,14 +70,14 @@ func (_u *GrouponGroupUpdate) ClearDeletedAt() *GrouponGroupUpdate {
 }
 
 // SetActivityID sets the "activity_id" field.
-func (_u *GrouponGroupUpdate) SetActivityID(v uint32) *GrouponGroupUpdate {
+func (_u *GrouponGroupUpdate) SetActivityID(v int64) *GrouponGroupUpdate {
 	_u.mutation.ResetActivityID()
 	_u.mutation.SetActivityID(v)
 	return _u
 }
 
 // SetNillableActivityID sets the "activity_id" field if the given value is not nil.
-func (_u *GrouponGroupUpdate) SetNillableActivityID(v *uint32) *GrouponGroupUpdate {
+func (_u *GrouponGroupUpdate) SetNillableActivityID(v *int64) *GrouponGroupUpdate {
 	if v != nil {
 		_u.SetActivityID(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *GrouponGroupUpdate) SetNillableActivityID(v *uint32) *GrouponGroupUpda
 }
 
 // AddActivityID adds value to the "activity_id" field.
-func (_u *GrouponGroupUpdate) AddActivityID(v int32) *GrouponGroupUpdate {
+func (_u *GrouponGroupUpdate) AddActivityID(v int64) *GrouponGroupUpdate {
 	_u.mutation.AddActivityID(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *GrouponGroupUpdate) ClearActivityID() *GrouponGroupUpdate {
 }
 
 // SetLeaderOrderID sets the "leader_order_id" field.
-func (_u *GrouponGroupUpdate) SetLeaderOrderID(v uint32) *GrouponGroupUpdate {
+func (_u *GrouponGroupUpdate) SetLeaderOrderID(v int64) *GrouponGroupUpdate {
 	_u.mutation.ResetLeaderOrderID()
 	_u.mutation.SetLeaderOrderID(v)
 	return _u
 }
 
 // SetNillableLeaderOrderID sets the "leader_order_id" field if the given value is not nil.
-func (_u *GrouponGroupUpdate) SetNillableLeaderOrderID(v *uint32) *GrouponGroupUpdate {
+func (_u *GrouponGroupUpdate) SetNillableLeaderOrderID(v *int64) *GrouponGroupUpdate {
 	if v != nil {
 		_u.SetLeaderOrderID(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *GrouponGroupUpdate) SetNillableLeaderOrderID(v *uint32) *GrouponGroupU
 }
 
 // AddLeaderOrderID adds value to the "leader_order_id" field.
-func (_u *GrouponGroupUpdate) AddLeaderOrderID(v int32) *GrouponGroupUpdate {
+func (_u *GrouponGroupUpdate) AddLeaderOrderID(v int64) *GrouponGroupUpdate {
 	_u.mutation.AddLeaderOrderID(v)
 	return _u
 }
@@ -278,7 +278,7 @@ func (_u *GrouponGroupUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(groupongroup.Table, groupongroup.Columns, sqlgraph.NewFieldSpec(groupongroup.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(groupongroup.Table, groupongroup.Columns, sqlgraph.NewFieldSpec(groupongroup.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -302,25 +302,25 @@ func (_u *GrouponGroupUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(groupongroup.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(groupongroup.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(groupongroup.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ActivityID(); ok {
-		_spec.SetField(groupongroup.FieldActivityID, field.TypeUint32, value)
+		_spec.SetField(groupongroup.FieldActivityID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedActivityID(); ok {
-		_spec.AddField(groupongroup.FieldActivityID, field.TypeUint32, value)
+		_spec.AddField(groupongroup.FieldActivityID, field.TypeInt64, value)
 	}
 	if _u.mutation.ActivityIDCleared() {
-		_spec.ClearField(groupongroup.FieldActivityID, field.TypeUint32)
+		_spec.ClearField(groupongroup.FieldActivityID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LeaderOrderID(); ok {
-		_spec.SetField(groupongroup.FieldLeaderOrderID, field.TypeUint32, value)
+		_spec.SetField(groupongroup.FieldLeaderOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedLeaderOrderID(); ok {
-		_spec.AddField(groupongroup.FieldLeaderOrderID, field.TypeUint32, value)
+		_spec.AddField(groupongroup.FieldLeaderOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.LeaderOrderIDCleared() {
-		_spec.ClearField(groupongroup.FieldLeaderOrderID, field.TypeUint32)
+		_spec.ClearField(groupongroup.FieldLeaderOrderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.MemberCount(); ok {
 		_spec.SetField(groupongroup.FieldMemberCount, field.TypeInt32, value)
@@ -415,14 +415,14 @@ func (_u *GrouponGroupUpdateOne) ClearDeletedAt() *GrouponGroupUpdateOne {
 }
 
 // SetActivityID sets the "activity_id" field.
-func (_u *GrouponGroupUpdateOne) SetActivityID(v uint32) *GrouponGroupUpdateOne {
+func (_u *GrouponGroupUpdateOne) SetActivityID(v int64) *GrouponGroupUpdateOne {
 	_u.mutation.ResetActivityID()
 	_u.mutation.SetActivityID(v)
 	return _u
 }
 
 // SetNillableActivityID sets the "activity_id" field if the given value is not nil.
-func (_u *GrouponGroupUpdateOne) SetNillableActivityID(v *uint32) *GrouponGroupUpdateOne {
+func (_u *GrouponGroupUpdateOne) SetNillableActivityID(v *int64) *GrouponGroupUpdateOne {
 	if v != nil {
 		_u.SetActivityID(*v)
 	}
@@ -430,7 +430,7 @@ func (_u *GrouponGroupUpdateOne) SetNillableActivityID(v *uint32) *GrouponGroupU
 }
 
 // AddActivityID adds value to the "activity_id" field.
-func (_u *GrouponGroupUpdateOne) AddActivityID(v int32) *GrouponGroupUpdateOne {
+func (_u *GrouponGroupUpdateOne) AddActivityID(v int64) *GrouponGroupUpdateOne {
 	_u.mutation.AddActivityID(v)
 	return _u
 }
@@ -442,14 +442,14 @@ func (_u *GrouponGroupUpdateOne) ClearActivityID() *GrouponGroupUpdateOne {
 }
 
 // SetLeaderOrderID sets the "leader_order_id" field.
-func (_u *GrouponGroupUpdateOne) SetLeaderOrderID(v uint32) *GrouponGroupUpdateOne {
+func (_u *GrouponGroupUpdateOne) SetLeaderOrderID(v int64) *GrouponGroupUpdateOne {
 	_u.mutation.ResetLeaderOrderID()
 	_u.mutation.SetLeaderOrderID(v)
 	return _u
 }
 
 // SetNillableLeaderOrderID sets the "leader_order_id" field if the given value is not nil.
-func (_u *GrouponGroupUpdateOne) SetNillableLeaderOrderID(v *uint32) *GrouponGroupUpdateOne {
+func (_u *GrouponGroupUpdateOne) SetNillableLeaderOrderID(v *int64) *GrouponGroupUpdateOne {
 	if v != nil {
 		_u.SetLeaderOrderID(*v)
 	}
@@ -457,7 +457,7 @@ func (_u *GrouponGroupUpdateOne) SetNillableLeaderOrderID(v *uint32) *GrouponGro
 }
 
 // AddLeaderOrderID adds value to the "leader_order_id" field.
-func (_u *GrouponGroupUpdateOne) AddLeaderOrderID(v int32) *GrouponGroupUpdateOne {
+func (_u *GrouponGroupUpdateOne) AddLeaderOrderID(v int64) *GrouponGroupUpdateOne {
 	_u.mutation.AddLeaderOrderID(v)
 	return _u
 }
@@ -636,7 +636,7 @@ func (_u *GrouponGroupUpdateOne) sqlSave(ctx context.Context) (_node *GrouponGro
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(groupongroup.Table, groupongroup.Columns, sqlgraph.NewFieldSpec(groupongroup.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(groupongroup.Table, groupongroup.Columns, sqlgraph.NewFieldSpec(groupongroup.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "GrouponGroup.id" for update`)}
@@ -677,25 +677,25 @@ func (_u *GrouponGroupUpdateOne) sqlSave(ctx context.Context) (_node *GrouponGro
 		_spec.ClearField(groupongroup.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(groupongroup.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(groupongroup.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ActivityID(); ok {
-		_spec.SetField(groupongroup.FieldActivityID, field.TypeUint32, value)
+		_spec.SetField(groupongroup.FieldActivityID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedActivityID(); ok {
-		_spec.AddField(groupongroup.FieldActivityID, field.TypeUint32, value)
+		_spec.AddField(groupongroup.FieldActivityID, field.TypeInt64, value)
 	}
 	if _u.mutation.ActivityIDCleared() {
-		_spec.ClearField(groupongroup.FieldActivityID, field.TypeUint32)
+		_spec.ClearField(groupongroup.FieldActivityID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LeaderOrderID(); ok {
-		_spec.SetField(groupongroup.FieldLeaderOrderID, field.TypeUint32, value)
+		_spec.SetField(groupongroup.FieldLeaderOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedLeaderOrderID(); ok {
-		_spec.AddField(groupongroup.FieldLeaderOrderID, field.TypeUint32, value)
+		_spec.AddField(groupongroup.FieldLeaderOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.LeaderOrderIDCleared() {
-		_spec.ClearField(groupongroup.FieldLeaderOrderID, field.TypeUint32)
+		_spec.ClearField(groupongroup.FieldLeaderOrderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.MemberCount(); ok {
 		_spec.SetField(groupongroup.FieldMemberCount, field.TypeInt32, value)

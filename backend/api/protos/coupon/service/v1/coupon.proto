@@ -56,7 +56,7 @@ message CouponTemplate {
     INACTIVE = 2;        // 停用（运营 kill-switch）
   }
 
-  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "模板ID"}];
+  optional int64 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "模板ID"}];
 
   optional DiscountType discount_type = 2 [
     json_name = "discountType",
@@ -123,11 +123,11 @@ message CouponTemplate {
 
   // ===== 以下是 infra mixin 注入字段（高编号） =====
 
-  optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
+  optional int64 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
-  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
@@ -144,14 +144,14 @@ message UserCoupon {
     EXPIRED = 3;   // 已过期
   }
 
-  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "券实例ID"}];
+  optional int64 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "券实例ID"}];
 
-  optional uint32 user_id = 2 [
+  optional int64 user_id = 2 [
     json_name = "userId",
     (gnostic.openapi.v3.property) = {description: "归属用户ID（由隐私层强制）"}
   ];
 
-  optional uint32 coupon_template_id = 3 [
+  optional int64 coupon_template_id = 3 [
     json_name = "couponTemplateId",
     (gnostic.openapi.v3.property) = {description: "关联的优惠券模板ID"}
   ];
@@ -166,7 +166,7 @@ message UserCoupon {
     (gnostic.openapi.v3.property) = {description: "核销时间（status=USED 时填写，返还时清空）"}
   ];
 
-  optional uint32 redeemed_order_id = 6 [
+  optional int64 redeemed_order_id = 6 [
     json_name = "redeemedOrderId",
     (gnostic.openapi.v3.property) = {description: "核销时关联的订单ID（UNUSED 时为空）"}
   ];
@@ -178,23 +178,23 @@ message UserCoupon {
 
   // ===== 以下是 infra mixin 注入字段（高编号） =====
 
-  optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
+  optional int64 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
-  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
   optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
 }
 
-message ListCouponTemplateResponse { repeated CouponTemplate items = 1; uint64 total = 2; }
-message ListUserCouponResponse { repeated UserCoupon items = 1; uint64 total = 2; }
+message ListCouponTemplateResponse { repeated CouponTemplate items = 1; int64 total = 2; }
+message ListUserCouponResponse { repeated UserCoupon items = 1; int64 total = 2; }
 
 message GetCouponTemplateRequest {
   oneof query_by {
-    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+    int64 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
   }
   optional google.protobuf.FieldMask view_mask = 100 [
     json_name = "viewMask",
@@ -204,7 +204,7 @@ message GetCouponTemplateRequest {
 
 message GetUserCouponRequest {
   oneof query_by {
-    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+    int64 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
   }
   optional google.protobuf.FieldMask view_mask = 100 [
     json_name = "viewMask",
@@ -214,7 +214,7 @@ message GetUserCouponRequest {
 
 message CreateCouponTemplateRequest { CouponTemplate data = 1; }
 message UpdateCouponTemplateRequest {
-  uint32 id = 1;
+  int64 id = 1;
   CouponTemplate data = 2;
   google.protobuf.FieldMask update_mask = 3 [
     (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
@@ -227,14 +227,14 @@ message UpdateCouponTemplateRequest {
 }
 message DeleteCouponTemplateRequest {
   oneof query_by {
-    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+    int64 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
   }
 }
-message CountCouponTemplateResponse { uint64 count = 1; }
+message CountCouponTemplateResponse { int64 count = 1; }
 
 message CreateUserCouponRequest { UserCoupon data = 1; }
 message UpdateUserCouponRequest {
-  uint32 id = 1;
+  int64 id = 1;
   UserCoupon data = 2;
   google.protobuf.FieldMask update_mask = 3 [
     (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
@@ -247,15 +247,15 @@ message UpdateUserCouponRequest {
 }
 message DeleteUserCouponRequest {
   oneof query_by {
-    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+    int64 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
   }
 }
-message CountUserCouponResponse { uint64 count = 1; }
+message CountUserCouponResponse { int64 count = 1; }
 
 // ===== 试算（报价预览） =====
 
 message QuoteRequest {
-  optional uint32 user_coupon_id = 1 [
+  optional int64 user_coupon_id = 1 [
     json_name = "userCouponId",
     (gnostic.openapi.v3.property) = {description: "要试算的券实例ID"}
   ];
@@ -271,5 +271,5 @@ message QuoteResponse {
 // 请求 - 领取优惠券（买家自助）
 // 仅带模板 ID；user_id 由 core 从 viewer 强制，客户端不可伪造。
 message ClaimCouponRequest {
-  uint32 coupon_template_id = 1 [json_name = "couponTemplateId", (gnostic.openapi.v3.property) = {description: "要领取的优惠券模板ID"}];
+  int64 coupon_template_id = 1 [json_name = "couponTemplateId", (gnostic.openapi.v3.property) = {description: "要领取的优惠券模板ID"}];
 }

@@ -70,14 +70,14 @@ func (_u *PaymentRefundUpdate) ClearDeletedAt() *PaymentRefundUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PaymentRefundUpdate) SetCreatedBy(v uint32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) SetCreatedBy(v int64) *PaymentRefundUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PaymentRefundUpdate) SetNillableCreatedBy(v *uint32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) SetNillableCreatedBy(v *int64) *PaymentRefundUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *PaymentRefundUpdate) SetNillableCreatedBy(v *uint32) *PaymentRefundUpd
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PaymentRefundUpdate) AddCreatedBy(v int32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) AddCreatedBy(v int64) *PaymentRefundUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *PaymentRefundUpdate) ClearCreatedBy() *PaymentRefundUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PaymentRefundUpdate) SetUpdatedBy(v uint32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) SetUpdatedBy(v int64) *PaymentRefundUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PaymentRefundUpdate) SetNillableUpdatedBy(v *uint32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) SetNillableUpdatedBy(v *int64) *PaymentRefundUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *PaymentRefundUpdate) SetNillableUpdatedBy(v *uint32) *PaymentRefundUpd
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PaymentRefundUpdate) AddUpdatedBy(v int32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) AddUpdatedBy(v int64) *PaymentRefundUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *PaymentRefundUpdate) ClearUpdatedBy() *PaymentRefundUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PaymentRefundUpdate) SetDeletedBy(v uint32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) SetDeletedBy(v int64) *PaymentRefundUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PaymentRefundUpdate) SetNillableDeletedBy(v *uint32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) SetNillableDeletedBy(v *int64) *PaymentRefundUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *PaymentRefundUpdate) SetNillableDeletedBy(v *uint32) *PaymentRefundUpd
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PaymentRefundUpdate) AddDeletedBy(v int32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) AddDeletedBy(v int64) *PaymentRefundUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -211,14 +211,14 @@ func (_u *PaymentRefundUpdate) ClearIdempotencyKey() *PaymentRefundUpdate {
 }
 
 // SetTransactionID sets the "transaction_id" field.
-func (_u *PaymentRefundUpdate) SetTransactionID(v uint32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) SetTransactionID(v int64) *PaymentRefundUpdate {
 	_u.mutation.ResetTransactionID()
 	_u.mutation.SetTransactionID(v)
 	return _u
 }
 
 // SetNillableTransactionID sets the "transaction_id" field if the given value is not nil.
-func (_u *PaymentRefundUpdate) SetNillableTransactionID(v *uint32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) SetNillableTransactionID(v *int64) *PaymentRefundUpdate {
 	if v != nil {
 		_u.SetTransactionID(*v)
 	}
@@ -226,7 +226,7 @@ func (_u *PaymentRefundUpdate) SetNillableTransactionID(v *uint32) *PaymentRefun
 }
 
 // AddTransactionID adds value to the "transaction_id" field.
-func (_u *PaymentRefundUpdate) AddTransactionID(v int32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) AddTransactionID(v int64) *PaymentRefundUpdate {
 	_u.mutation.AddTransactionID(v)
 	return _u
 }
@@ -238,14 +238,14 @@ func (_u *PaymentRefundUpdate) ClearTransactionID() *PaymentRefundUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *PaymentRefundUpdate) SetUserID(v uint32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) SetUserID(v int64) *PaymentRefundUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *PaymentRefundUpdate) SetNillableUserID(v *uint32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) SetNillableUserID(v *int64) *PaymentRefundUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -253,7 +253,7 @@ func (_u *PaymentRefundUpdate) SetNillableUserID(v *uint32) *PaymentRefundUpdate
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *PaymentRefundUpdate) AddUserID(v int32) *PaymentRefundUpdate {
+func (_u *PaymentRefundUpdate) AddUserID(v int64) *PaymentRefundUpdate {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -383,7 +383,7 @@ func (_u *PaymentRefundUpdate) sqlSave(ctx context.Context) (_node int, err erro
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(paymentrefund.Table, paymentrefund.Columns, sqlgraph.NewFieldSpec(paymentrefund.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(paymentrefund.Table, paymentrefund.Columns, sqlgraph.NewFieldSpec(paymentrefund.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -407,34 +407,34 @@ func (_u *PaymentRefundUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		_spec.ClearField(paymentrefund.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(paymentrefund.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(paymentrefund.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(paymentrefund.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(paymentrefund.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(paymentrefund.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(paymentrefund.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(paymentrefund.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(paymentrefund.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(paymentrefund.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(paymentrefund.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(paymentrefund.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(paymentrefund.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(paymentrefund.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(paymentrefund.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(paymentrefund.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(paymentrefund.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(paymentrefund.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(paymentrefund.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(paymentrefund.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(paymentrefund.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(paymentrefund.FieldCurrency, field.TypeString, value)
@@ -455,22 +455,22 @@ func (_u *PaymentRefundUpdate) sqlSave(ctx context.Context) (_node int, err erro
 		_spec.ClearField(paymentrefund.FieldIdempotencyKey, field.TypeString)
 	}
 	if value, ok := _u.mutation.TransactionID(); ok {
-		_spec.SetField(paymentrefund.FieldTransactionID, field.TypeUint32, value)
+		_spec.SetField(paymentrefund.FieldTransactionID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTransactionID(); ok {
-		_spec.AddField(paymentrefund.FieldTransactionID, field.TypeUint32, value)
+		_spec.AddField(paymentrefund.FieldTransactionID, field.TypeInt64, value)
 	}
 	if _u.mutation.TransactionIDCleared() {
-		_spec.ClearField(paymentrefund.FieldTransactionID, field.TypeUint32)
+		_spec.ClearField(paymentrefund.FieldTransactionID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(paymentrefund.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(paymentrefund.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(paymentrefund.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(paymentrefund.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(paymentrefund.FieldUserID, field.TypeUint32)
+		_spec.ClearField(paymentrefund.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(paymentrefund.FieldAmount, field.TypeInt64, value)
@@ -556,14 +556,14 @@ func (_u *PaymentRefundUpdateOne) ClearDeletedAt() *PaymentRefundUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PaymentRefundUpdateOne) SetCreatedBy(v uint32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) SetCreatedBy(v int64) *PaymentRefundUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PaymentRefundUpdateOne) SetNillableCreatedBy(v *uint32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) SetNillableCreatedBy(v *int64) *PaymentRefundUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -571,7 +571,7 @@ func (_u *PaymentRefundUpdateOne) SetNillableCreatedBy(v *uint32) *PaymentRefund
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PaymentRefundUpdateOne) AddCreatedBy(v int32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) AddCreatedBy(v int64) *PaymentRefundUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -583,14 +583,14 @@ func (_u *PaymentRefundUpdateOne) ClearCreatedBy() *PaymentRefundUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PaymentRefundUpdateOne) SetUpdatedBy(v uint32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) SetUpdatedBy(v int64) *PaymentRefundUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PaymentRefundUpdateOne) SetNillableUpdatedBy(v *uint32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) SetNillableUpdatedBy(v *int64) *PaymentRefundUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -598,7 +598,7 @@ func (_u *PaymentRefundUpdateOne) SetNillableUpdatedBy(v *uint32) *PaymentRefund
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PaymentRefundUpdateOne) AddUpdatedBy(v int32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) AddUpdatedBy(v int64) *PaymentRefundUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -610,14 +610,14 @@ func (_u *PaymentRefundUpdateOne) ClearUpdatedBy() *PaymentRefundUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PaymentRefundUpdateOne) SetDeletedBy(v uint32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) SetDeletedBy(v int64) *PaymentRefundUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PaymentRefundUpdateOne) SetNillableDeletedBy(v *uint32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) SetNillableDeletedBy(v *int64) *PaymentRefundUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -625,7 +625,7 @@ func (_u *PaymentRefundUpdateOne) SetNillableDeletedBy(v *uint32) *PaymentRefund
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PaymentRefundUpdateOne) AddDeletedBy(v int32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) AddDeletedBy(v int64) *PaymentRefundUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -697,14 +697,14 @@ func (_u *PaymentRefundUpdateOne) ClearIdempotencyKey() *PaymentRefundUpdateOne 
 }
 
 // SetTransactionID sets the "transaction_id" field.
-func (_u *PaymentRefundUpdateOne) SetTransactionID(v uint32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) SetTransactionID(v int64) *PaymentRefundUpdateOne {
 	_u.mutation.ResetTransactionID()
 	_u.mutation.SetTransactionID(v)
 	return _u
 }
 
 // SetNillableTransactionID sets the "transaction_id" field if the given value is not nil.
-func (_u *PaymentRefundUpdateOne) SetNillableTransactionID(v *uint32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) SetNillableTransactionID(v *int64) *PaymentRefundUpdateOne {
 	if v != nil {
 		_u.SetTransactionID(*v)
 	}
@@ -712,7 +712,7 @@ func (_u *PaymentRefundUpdateOne) SetNillableTransactionID(v *uint32) *PaymentRe
 }
 
 // AddTransactionID adds value to the "transaction_id" field.
-func (_u *PaymentRefundUpdateOne) AddTransactionID(v int32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) AddTransactionID(v int64) *PaymentRefundUpdateOne {
 	_u.mutation.AddTransactionID(v)
 	return _u
 }
@@ -724,14 +724,14 @@ func (_u *PaymentRefundUpdateOne) ClearTransactionID() *PaymentRefundUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *PaymentRefundUpdateOne) SetUserID(v uint32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) SetUserID(v int64) *PaymentRefundUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *PaymentRefundUpdateOne) SetNillableUserID(v *uint32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) SetNillableUserID(v *int64) *PaymentRefundUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -739,7 +739,7 @@ func (_u *PaymentRefundUpdateOne) SetNillableUserID(v *uint32) *PaymentRefundUpd
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *PaymentRefundUpdateOne) AddUserID(v int32) *PaymentRefundUpdateOne {
+func (_u *PaymentRefundUpdateOne) AddUserID(v int64) *PaymentRefundUpdateOne {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -882,7 +882,7 @@ func (_u *PaymentRefundUpdateOne) sqlSave(ctx context.Context) (_node *PaymentRe
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(paymentrefund.Table, paymentrefund.Columns, sqlgraph.NewFieldSpec(paymentrefund.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(paymentrefund.Table, paymentrefund.Columns, sqlgraph.NewFieldSpec(paymentrefund.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PaymentRefund.id" for update`)}
@@ -923,34 +923,34 @@ func (_u *PaymentRefundUpdateOne) sqlSave(ctx context.Context) (_node *PaymentRe
 		_spec.ClearField(paymentrefund.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(paymentrefund.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(paymentrefund.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(paymentrefund.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(paymentrefund.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(paymentrefund.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(paymentrefund.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(paymentrefund.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(paymentrefund.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(paymentrefund.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(paymentrefund.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(paymentrefund.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(paymentrefund.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(paymentrefund.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(paymentrefund.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(paymentrefund.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(paymentrefund.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(paymentrefund.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(paymentrefund.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(paymentrefund.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(paymentrefund.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(paymentrefund.FieldCurrency, field.TypeString, value)
@@ -971,22 +971,22 @@ func (_u *PaymentRefundUpdateOne) sqlSave(ctx context.Context) (_node *PaymentRe
 		_spec.ClearField(paymentrefund.FieldIdempotencyKey, field.TypeString)
 	}
 	if value, ok := _u.mutation.TransactionID(); ok {
-		_spec.SetField(paymentrefund.FieldTransactionID, field.TypeUint32, value)
+		_spec.SetField(paymentrefund.FieldTransactionID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedTransactionID(); ok {
-		_spec.AddField(paymentrefund.FieldTransactionID, field.TypeUint32, value)
+		_spec.AddField(paymentrefund.FieldTransactionID, field.TypeInt64, value)
 	}
 	if _u.mutation.TransactionIDCleared() {
-		_spec.ClearField(paymentrefund.FieldTransactionID, field.TypeUint32)
+		_spec.ClearField(paymentrefund.FieldTransactionID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(paymentrefund.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(paymentrefund.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(paymentrefund.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(paymentrefund.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(paymentrefund.FieldUserID, field.TypeUint32)
+		_spec.ClearField(paymentrefund.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Amount(); ok {
 		_spec.SetField(paymentrefund.FieldAmount, field.TypeInt64, value)

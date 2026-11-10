@@ -65,13 +65,13 @@ func (_c *PaymentChannelConfigCreate) SetNillableDeletedAt(v *time.Time) *Paymen
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *PaymentChannelConfigCreate) SetCreatedBy(v uint32) *PaymentChannelConfigCreate {
+func (_c *PaymentChannelConfigCreate) SetCreatedBy(v int64) *PaymentChannelConfigCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *PaymentChannelConfigCreate) SetNillableCreatedBy(v *uint32) *PaymentChannelConfigCreate {
+func (_c *PaymentChannelConfigCreate) SetNillableCreatedBy(v *int64) *PaymentChannelConfigCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *PaymentChannelConfigCreate) SetNillableCreatedBy(v *uint32) *PaymentCh
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *PaymentChannelConfigCreate) SetUpdatedBy(v uint32) *PaymentChannelConfigCreate {
+func (_c *PaymentChannelConfigCreate) SetUpdatedBy(v int64) *PaymentChannelConfigCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *PaymentChannelConfigCreate) SetNillableUpdatedBy(v *uint32) *PaymentChannelConfigCreate {
+func (_c *PaymentChannelConfigCreate) SetNillableUpdatedBy(v *int64) *PaymentChannelConfigCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *PaymentChannelConfigCreate) SetNillableUpdatedBy(v *uint32) *PaymentCh
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *PaymentChannelConfigCreate) SetDeletedBy(v uint32) *PaymentChannelConfigCreate {
+func (_c *PaymentChannelConfigCreate) SetDeletedBy(v int64) *PaymentChannelConfigCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *PaymentChannelConfigCreate) SetNillableDeletedBy(v *uint32) *PaymentChannelConfigCreate {
+func (_c *PaymentChannelConfigCreate) SetNillableDeletedBy(v *int64) *PaymentChannelConfigCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *PaymentChannelConfigCreate) SetNillableDeletedBy(v *uint32) *PaymentCh
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PaymentChannelConfigCreate) SetTenantID(v uint32) *PaymentChannelConfigCreate {
+func (_c *PaymentChannelConfigCreate) SetTenantID(v int64) *PaymentChannelConfigCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PaymentChannelConfigCreate) SetNillableTenantID(v *uint32) *PaymentChannelConfigCreate {
+func (_c *PaymentChannelConfigCreate) SetNillableTenantID(v *int64) *PaymentChannelConfigCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -225,7 +225,7 @@ func (_c *PaymentChannelConfigCreate) SetNillableRemark(v *string) *PaymentChann
 }
 
 // SetID sets the "id" field.
-func (_c *PaymentChannelConfigCreate) SetID(v uint32) *PaymentChannelConfigCreate {
+func (_c *PaymentChannelConfigCreate) SetID(v int64) *PaymentChannelConfigCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -328,7 +328,7 @@ func (_c *PaymentChannelConfigCreate) sqlSave(ctx context.Context) (*PaymentChan
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -338,7 +338,7 @@ func (_c *PaymentChannelConfigCreate) sqlSave(ctx context.Context) (*PaymentChan
 func (_c *PaymentChannelConfigCreate) createSpec() (*PaymentChannelConfig, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PaymentChannelConfig{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(paymentchannelconfig.Table, sqlgraph.NewFieldSpec(paymentchannelconfig.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(paymentchannelconfig.Table, sqlgraph.NewFieldSpec(paymentchannelconfig.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -358,19 +358,19 @@ func (_c *PaymentChannelConfigCreate) createSpec() (*PaymentChannelConfig, *sqlg
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(paymentchannelconfig.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(paymentchannelconfig.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(paymentchannelconfig.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(paymentchannelconfig.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(paymentchannelconfig.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(paymentchannelconfig.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(paymentchannelconfig.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(paymentchannelconfig.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -494,7 +494,7 @@ func (u *PaymentChannelConfigUpsert) ClearDeletedAt() *PaymentChannelConfigUpser
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PaymentChannelConfigUpsert) SetCreatedBy(v uint32) *PaymentChannelConfigUpsert {
+func (u *PaymentChannelConfigUpsert) SetCreatedBy(v int64) *PaymentChannelConfigUpsert {
 	u.Set(paymentchannelconfig.FieldCreatedBy, v)
 	return u
 }
@@ -506,7 +506,7 @@ func (u *PaymentChannelConfigUpsert) UpdateCreatedBy() *PaymentChannelConfigUpse
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PaymentChannelConfigUpsert) AddCreatedBy(v uint32) *PaymentChannelConfigUpsert {
+func (u *PaymentChannelConfigUpsert) AddCreatedBy(v int64) *PaymentChannelConfigUpsert {
 	u.Add(paymentchannelconfig.FieldCreatedBy, v)
 	return u
 }
@@ -518,7 +518,7 @@ func (u *PaymentChannelConfigUpsert) ClearCreatedBy() *PaymentChannelConfigUpser
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PaymentChannelConfigUpsert) SetUpdatedBy(v uint32) *PaymentChannelConfigUpsert {
+func (u *PaymentChannelConfigUpsert) SetUpdatedBy(v int64) *PaymentChannelConfigUpsert {
 	u.Set(paymentchannelconfig.FieldUpdatedBy, v)
 	return u
 }
@@ -530,7 +530,7 @@ func (u *PaymentChannelConfigUpsert) UpdateUpdatedBy() *PaymentChannelConfigUpse
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PaymentChannelConfigUpsert) AddUpdatedBy(v uint32) *PaymentChannelConfigUpsert {
+func (u *PaymentChannelConfigUpsert) AddUpdatedBy(v int64) *PaymentChannelConfigUpsert {
 	u.Add(paymentchannelconfig.FieldUpdatedBy, v)
 	return u
 }
@@ -542,7 +542,7 @@ func (u *PaymentChannelConfigUpsert) ClearUpdatedBy() *PaymentChannelConfigUpser
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PaymentChannelConfigUpsert) SetDeletedBy(v uint32) *PaymentChannelConfigUpsert {
+func (u *PaymentChannelConfigUpsert) SetDeletedBy(v int64) *PaymentChannelConfigUpsert {
 	u.Set(paymentchannelconfig.FieldDeletedBy, v)
 	return u
 }
@@ -554,7 +554,7 @@ func (u *PaymentChannelConfigUpsert) UpdateDeletedBy() *PaymentChannelConfigUpse
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PaymentChannelConfigUpsert) AddDeletedBy(v uint32) *PaymentChannelConfigUpsert {
+func (u *PaymentChannelConfigUpsert) AddDeletedBy(v int64) *PaymentChannelConfigUpsert {
 	u.Add(paymentchannelconfig.FieldDeletedBy, v)
 	return u
 }
@@ -788,14 +788,14 @@ func (u *PaymentChannelConfigUpsertOne) ClearDeletedAt() *PaymentChannelConfigUp
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PaymentChannelConfigUpsertOne) SetCreatedBy(v uint32) *PaymentChannelConfigUpsertOne {
+func (u *PaymentChannelConfigUpsertOne) SetCreatedBy(v int64) *PaymentChannelConfigUpsertOne {
 	return u.Update(func(s *PaymentChannelConfigUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PaymentChannelConfigUpsertOne) AddCreatedBy(v uint32) *PaymentChannelConfigUpsertOne {
+func (u *PaymentChannelConfigUpsertOne) AddCreatedBy(v int64) *PaymentChannelConfigUpsertOne {
 	return u.Update(func(s *PaymentChannelConfigUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -816,14 +816,14 @@ func (u *PaymentChannelConfigUpsertOne) ClearCreatedBy() *PaymentChannelConfigUp
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PaymentChannelConfigUpsertOne) SetUpdatedBy(v uint32) *PaymentChannelConfigUpsertOne {
+func (u *PaymentChannelConfigUpsertOne) SetUpdatedBy(v int64) *PaymentChannelConfigUpsertOne {
 	return u.Update(func(s *PaymentChannelConfigUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PaymentChannelConfigUpsertOne) AddUpdatedBy(v uint32) *PaymentChannelConfigUpsertOne {
+func (u *PaymentChannelConfigUpsertOne) AddUpdatedBy(v int64) *PaymentChannelConfigUpsertOne {
 	return u.Update(func(s *PaymentChannelConfigUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -844,14 +844,14 @@ func (u *PaymentChannelConfigUpsertOne) ClearUpdatedBy() *PaymentChannelConfigUp
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PaymentChannelConfigUpsertOne) SetDeletedBy(v uint32) *PaymentChannelConfigUpsertOne {
+func (u *PaymentChannelConfigUpsertOne) SetDeletedBy(v int64) *PaymentChannelConfigUpsertOne {
 	return u.Update(func(s *PaymentChannelConfigUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PaymentChannelConfigUpsertOne) AddDeletedBy(v uint32) *PaymentChannelConfigUpsertOne {
+func (u *PaymentChannelConfigUpsertOne) AddDeletedBy(v int64) *PaymentChannelConfigUpsertOne {
 	return u.Update(func(s *PaymentChannelConfigUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1034,7 +1034,7 @@ func (u *PaymentChannelConfigUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PaymentChannelConfigUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *PaymentChannelConfigUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1043,7 +1043,7 @@ func (u *PaymentChannelConfigUpsertOne) ID(ctx context.Context) (id uint32, err 
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PaymentChannelConfigUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *PaymentChannelConfigUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1100,7 +1100,7 @@ func (_c *PaymentChannelConfigCreateBulk) Save(ctx context.Context) ([]*PaymentC
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1281,14 +1281,14 @@ func (u *PaymentChannelConfigUpsertBulk) ClearDeletedAt() *PaymentChannelConfigU
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *PaymentChannelConfigUpsertBulk) SetCreatedBy(v uint32) *PaymentChannelConfigUpsertBulk {
+func (u *PaymentChannelConfigUpsertBulk) SetCreatedBy(v int64) *PaymentChannelConfigUpsertBulk {
 	return u.Update(func(s *PaymentChannelConfigUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *PaymentChannelConfigUpsertBulk) AddCreatedBy(v uint32) *PaymentChannelConfigUpsertBulk {
+func (u *PaymentChannelConfigUpsertBulk) AddCreatedBy(v int64) *PaymentChannelConfigUpsertBulk {
 	return u.Update(func(s *PaymentChannelConfigUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1309,14 +1309,14 @@ func (u *PaymentChannelConfigUpsertBulk) ClearCreatedBy() *PaymentChannelConfigU
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *PaymentChannelConfigUpsertBulk) SetUpdatedBy(v uint32) *PaymentChannelConfigUpsertBulk {
+func (u *PaymentChannelConfigUpsertBulk) SetUpdatedBy(v int64) *PaymentChannelConfigUpsertBulk {
 	return u.Update(func(s *PaymentChannelConfigUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *PaymentChannelConfigUpsertBulk) AddUpdatedBy(v uint32) *PaymentChannelConfigUpsertBulk {
+func (u *PaymentChannelConfigUpsertBulk) AddUpdatedBy(v int64) *PaymentChannelConfigUpsertBulk {
 	return u.Update(func(s *PaymentChannelConfigUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1337,14 +1337,14 @@ func (u *PaymentChannelConfigUpsertBulk) ClearUpdatedBy() *PaymentChannelConfigU
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *PaymentChannelConfigUpsertBulk) SetDeletedBy(v uint32) *PaymentChannelConfigUpsertBulk {
+func (u *PaymentChannelConfigUpsertBulk) SetDeletedBy(v int64) *PaymentChannelConfigUpsertBulk {
 	return u.Update(func(s *PaymentChannelConfigUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *PaymentChannelConfigUpsertBulk) AddDeletedBy(v uint32) *PaymentChannelConfigUpsertBulk {
+func (u *PaymentChannelConfigUpsertBulk) AddDeletedBy(v int64) *PaymentChannelConfigUpsertBulk {
 	return u.Update(func(s *PaymentChannelConfigUpsert) {
 		s.AddDeletedBy(v)
 	})

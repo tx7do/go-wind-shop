@@ -39,7 +39,7 @@ export async function refreshToken(request: RefreshTokenParams) {
   return apiClient.authenticationService.RefreshToken({
     grant_type: "refresh_token",
     refresh_token: request.refresh_token ?? "",
-    user_id: request.user_id,
+    user_id: request.user_id != null ? String(request.user_id) : undefined,
     jti: request.jti,
   });
 }

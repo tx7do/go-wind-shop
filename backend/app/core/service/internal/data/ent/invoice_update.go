@@ -70,14 +70,14 @@ func (_u *InvoiceUpdate) ClearDeletedAt() *InvoiceUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *InvoiceUpdate) SetCreatedBy(v uint32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) SetCreatedBy(v int64) *InvoiceUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *InvoiceUpdate) SetNillableCreatedBy(v *uint32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) SetNillableCreatedBy(v *int64) *InvoiceUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *InvoiceUpdate) SetNillableCreatedBy(v *uint32) *InvoiceUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *InvoiceUpdate) AddCreatedBy(v int32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) AddCreatedBy(v int64) *InvoiceUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *InvoiceUpdate) ClearCreatedBy() *InvoiceUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *InvoiceUpdate) SetUpdatedBy(v uint32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) SetUpdatedBy(v int64) *InvoiceUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *InvoiceUpdate) SetNillableUpdatedBy(v *uint32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) SetNillableUpdatedBy(v *int64) *InvoiceUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *InvoiceUpdate) SetNillableUpdatedBy(v *uint32) *InvoiceUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *InvoiceUpdate) AddUpdatedBy(v int32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) AddUpdatedBy(v int64) *InvoiceUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *InvoiceUpdate) ClearUpdatedBy() *InvoiceUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *InvoiceUpdate) SetDeletedBy(v uint32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) SetDeletedBy(v int64) *InvoiceUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *InvoiceUpdate) SetNillableDeletedBy(v *uint32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) SetNillableDeletedBy(v *int64) *InvoiceUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *InvoiceUpdate) SetNillableDeletedBy(v *uint32) *InvoiceUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *InvoiceUpdate) AddDeletedBy(v int32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) AddDeletedBy(v int64) *InvoiceUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -171,14 +171,14 @@ func (_u *InvoiceUpdate) ClearCurrency() *InvoiceUpdate {
 }
 
 // SetOrderID sets the "order_id" field.
-func (_u *InvoiceUpdate) SetOrderID(v uint32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) SetOrderID(v int64) *InvoiceUpdate {
 	_u.mutation.ResetOrderID()
 	_u.mutation.SetOrderID(v)
 	return _u
 }
 
 // SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (_u *InvoiceUpdate) SetNillableOrderID(v *uint32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) SetNillableOrderID(v *int64) *InvoiceUpdate {
 	if v != nil {
 		_u.SetOrderID(*v)
 	}
@@ -186,7 +186,7 @@ func (_u *InvoiceUpdate) SetNillableOrderID(v *uint32) *InvoiceUpdate {
 }
 
 // AddOrderID adds value to the "order_id" field.
-func (_u *InvoiceUpdate) AddOrderID(v int32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) AddOrderID(v int64) *InvoiceUpdate {
 	_u.mutation.AddOrderID(v)
 	return _u
 }
@@ -198,14 +198,14 @@ func (_u *InvoiceUpdate) ClearOrderID() *InvoiceUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *InvoiceUpdate) SetUserID(v uint32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) SetUserID(v int64) *InvoiceUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *InvoiceUpdate) SetNillableUserID(v *uint32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) SetNillableUserID(v *int64) *InvoiceUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -213,7 +213,7 @@ func (_u *InvoiceUpdate) SetNillableUserID(v *uint32) *InvoiceUpdate {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *InvoiceUpdate) AddUserID(v int32) *InvoiceUpdate {
+func (_u *InvoiceUpdate) AddUserID(v int64) *InvoiceUpdate {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -448,7 +448,7 @@ func (_u *InvoiceUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(invoice.Table, invoice.Columns, sqlgraph.NewFieldSpec(invoice.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(invoice.Table, invoice.Columns, sqlgraph.NewFieldSpec(invoice.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -472,34 +472,34 @@ func (_u *InvoiceUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(invoice.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(invoice.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(invoice.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(invoice.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(invoice.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(invoice.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(invoice.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(invoice.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(invoice.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(invoice.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(invoice.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(invoice.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(invoice.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(invoice.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(invoice.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(invoice.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(invoice.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(invoice.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(invoice.FieldCurrency, field.TypeString, value)
@@ -508,22 +508,22 @@ func (_u *InvoiceUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(invoice.FieldCurrency, field.TypeString)
 	}
 	if value, ok := _u.mutation.OrderID(); ok {
-		_spec.SetField(invoice.FieldOrderID, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOrderID(); ok {
-		_spec.AddField(invoice.FieldOrderID, field.TypeUint32, value)
+		_spec.AddField(invoice.FieldOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.OrderIDCleared() {
-		_spec.ClearField(invoice.FieldOrderID, field.TypeUint32)
+		_spec.ClearField(invoice.FieldOrderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(invoice.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(invoice.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(invoice.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(invoice.FieldUserID, field.TypeUint32)
+		_spec.ClearField(invoice.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.InvoiceNumber(); ok {
 		_spec.SetField(invoice.FieldInvoiceNumber, field.TypeString, value)
@@ -639,14 +639,14 @@ func (_u *InvoiceUpdateOne) ClearDeletedAt() *InvoiceUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *InvoiceUpdateOne) SetCreatedBy(v uint32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) SetCreatedBy(v int64) *InvoiceUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *InvoiceUpdateOne) SetNillableCreatedBy(v *uint32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) SetNillableCreatedBy(v *int64) *InvoiceUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -654,7 +654,7 @@ func (_u *InvoiceUpdateOne) SetNillableCreatedBy(v *uint32) *InvoiceUpdateOne {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *InvoiceUpdateOne) AddCreatedBy(v int32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) AddCreatedBy(v int64) *InvoiceUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -666,14 +666,14 @@ func (_u *InvoiceUpdateOne) ClearCreatedBy() *InvoiceUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *InvoiceUpdateOne) SetUpdatedBy(v uint32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) SetUpdatedBy(v int64) *InvoiceUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *InvoiceUpdateOne) SetNillableUpdatedBy(v *uint32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) SetNillableUpdatedBy(v *int64) *InvoiceUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -681,7 +681,7 @@ func (_u *InvoiceUpdateOne) SetNillableUpdatedBy(v *uint32) *InvoiceUpdateOne {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *InvoiceUpdateOne) AddUpdatedBy(v int32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) AddUpdatedBy(v int64) *InvoiceUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -693,14 +693,14 @@ func (_u *InvoiceUpdateOne) ClearUpdatedBy() *InvoiceUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *InvoiceUpdateOne) SetDeletedBy(v uint32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) SetDeletedBy(v int64) *InvoiceUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *InvoiceUpdateOne) SetNillableDeletedBy(v *uint32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) SetNillableDeletedBy(v *int64) *InvoiceUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -708,7 +708,7 @@ func (_u *InvoiceUpdateOne) SetNillableDeletedBy(v *uint32) *InvoiceUpdateOne {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *InvoiceUpdateOne) AddDeletedBy(v int32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) AddDeletedBy(v int64) *InvoiceUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -740,14 +740,14 @@ func (_u *InvoiceUpdateOne) ClearCurrency() *InvoiceUpdateOne {
 }
 
 // SetOrderID sets the "order_id" field.
-func (_u *InvoiceUpdateOne) SetOrderID(v uint32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) SetOrderID(v int64) *InvoiceUpdateOne {
 	_u.mutation.ResetOrderID()
 	_u.mutation.SetOrderID(v)
 	return _u
 }
 
 // SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (_u *InvoiceUpdateOne) SetNillableOrderID(v *uint32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) SetNillableOrderID(v *int64) *InvoiceUpdateOne {
 	if v != nil {
 		_u.SetOrderID(*v)
 	}
@@ -755,7 +755,7 @@ func (_u *InvoiceUpdateOne) SetNillableOrderID(v *uint32) *InvoiceUpdateOne {
 }
 
 // AddOrderID adds value to the "order_id" field.
-func (_u *InvoiceUpdateOne) AddOrderID(v int32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) AddOrderID(v int64) *InvoiceUpdateOne {
 	_u.mutation.AddOrderID(v)
 	return _u
 }
@@ -767,14 +767,14 @@ func (_u *InvoiceUpdateOne) ClearOrderID() *InvoiceUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *InvoiceUpdateOne) SetUserID(v uint32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) SetUserID(v int64) *InvoiceUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *InvoiceUpdateOne) SetNillableUserID(v *uint32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) SetNillableUserID(v *int64) *InvoiceUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -782,7 +782,7 @@ func (_u *InvoiceUpdateOne) SetNillableUserID(v *uint32) *InvoiceUpdateOne {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *InvoiceUpdateOne) AddUserID(v int32) *InvoiceUpdateOne {
+func (_u *InvoiceUpdateOne) AddUserID(v int64) *InvoiceUpdateOne {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -1030,7 +1030,7 @@ func (_u *InvoiceUpdateOne) sqlSave(ctx context.Context) (_node *Invoice, err er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(invoice.Table, invoice.Columns, sqlgraph.NewFieldSpec(invoice.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(invoice.Table, invoice.Columns, sqlgraph.NewFieldSpec(invoice.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Invoice.id" for update`)}
@@ -1071,34 +1071,34 @@ func (_u *InvoiceUpdateOne) sqlSave(ctx context.Context) (_node *Invoice, err er
 		_spec.ClearField(invoice.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(invoice.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(invoice.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(invoice.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(invoice.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(invoice.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(invoice.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(invoice.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(invoice.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(invoice.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(invoice.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(invoice.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(invoice.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(invoice.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(invoice.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(invoice.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(invoice.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(invoice.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(invoice.FieldCurrency, field.TypeString, value)
@@ -1107,22 +1107,22 @@ func (_u *InvoiceUpdateOne) sqlSave(ctx context.Context) (_node *Invoice, err er
 		_spec.ClearField(invoice.FieldCurrency, field.TypeString)
 	}
 	if value, ok := _u.mutation.OrderID(); ok {
-		_spec.SetField(invoice.FieldOrderID, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOrderID(); ok {
-		_spec.AddField(invoice.FieldOrderID, field.TypeUint32, value)
+		_spec.AddField(invoice.FieldOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.OrderIDCleared() {
-		_spec.ClearField(invoice.FieldOrderID, field.TypeUint32)
+		_spec.ClearField(invoice.FieldOrderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(invoice.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(invoice.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(invoice.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(invoice.FieldUserID, field.TypeUint32)
+		_spec.ClearField(invoice.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.InvoiceNumber(); ok {
 		_spec.SetField(invoice.FieldInvoiceNumber, field.TypeString, value)

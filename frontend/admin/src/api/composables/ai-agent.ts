@@ -17,25 +17,24 @@ export async function createAiAgentApp(data: Record<string, any>) {
 
 /** 更新 Agent 应用；updateMask 显式列举业务字段 */
 export async function updateAiAgentApp(
-  id: number,
+  id: number | string,
   values: Record<string, any>,
   updateMask?: string,
 ) {
-  return apiClient.aiAgentService.Update({
-    id,
+  return apiClient.aiAgentService.Update({ id: String(id),
     data: values as any,
     updateMask,
   });
 }
 
 /** 删除 Agent 应用 */
-export async function deleteAiAgentApp(id: number) {
-  return apiClient.aiAgentService.Delete({ id });
+export async function deleteAiAgentApp(id: number | string) {
+  return apiClient.aiAgentService.Delete({ id: String(id) });
 }
 
 /** 试运行：同步执行图并返回含 trace 的运行记录 */
-export async function runAiAgentApp(id: number, input: Record<string, string>) {
-  return apiClient.aiAgentService.Run({ id, input });
+export async function runAiAgentApp(id: number | string, input: Record<string, string>) {
+  return apiClient.aiAgentService.Run({ id: String(id), input });
 }
 
 /** 某应用的运行台账（appId eq 过滤） */

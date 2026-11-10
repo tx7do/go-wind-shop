@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -23,13 +23,13 @@ import (
 
 type PaymentTransactionRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[paymentV1.PaymentTransaction, ent.PaymentTransaction]
 
-	statusConverter         *mapper.EnumTypeConverter[paymentV1.PaymentTransaction_Status, paymenttransaction.Status]
-	paymentMethodConverter  *mapper.EnumTypeConverter[paymentV1.PaymentMethod, paymenttransaction.PaymentMethod]
-	businessTypeConverter   *mapper.EnumTypeConverter[paymentV1.BusinessType, paymenttransaction.BusinessType]
+	statusConverter        *mapper.EnumTypeConverter[paymentV1.PaymentTransaction_Status, paymenttransaction.Status]
+	paymentMethodConverter *mapper.EnumTypeConverter[paymentV1.PaymentMethod, paymenttransaction.PaymentMethod]
+	businessTypeConverter  *mapper.EnumTypeConverter[paymentV1.BusinessType, paymenttransaction.BusinessType]
 
 	repository *entCrud.Repository[
 		ent.PaymentTransactionQuery, ent.PaymentTransactionSelect,
@@ -43,12 +43,12 @@ type PaymentTransactionRepo struct {
 
 func NewPaymentTransactionRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *PaymentTransactionRepo {
 	repo := &PaymentTransactionRepo{
-		log:                     logx.New(ctx.NewLoggerHelper("payment-transaction/repo/core-service")),
-		entClient:               entClient,
-		mapper:                  mapper.NewCopierMapper[paymentV1.PaymentTransaction, ent.PaymentTransaction](),
-		statusConverter:         mapper.NewEnumTypeConverter[paymentV1.PaymentTransaction_Status, paymenttransaction.Status](paymentV1.PaymentTransaction_Status_name, paymentV1.PaymentTransaction_Status_value),
-		paymentMethodConverter:  mapper.NewEnumTypeConverter[paymentV1.PaymentMethod, paymenttransaction.PaymentMethod](paymentV1.PaymentMethod_name, paymentV1.PaymentMethod_value),
-		businessTypeConverter:   mapper.NewEnumTypeConverter[paymentV1.BusinessType, paymenttransaction.BusinessType](paymentV1.BusinessType_name, paymentV1.BusinessType_value),
+		log:                    logx.New(ctx.NewLoggerHelper("payment-transaction/repo/core-service")),
+		entClient:              entClient,
+		mapper:                 mapper.NewCopierMapper[paymentV1.PaymentTransaction, ent.PaymentTransaction](),
+		statusConverter:        mapper.NewEnumTypeConverter[paymentV1.PaymentTransaction_Status, paymenttransaction.Status](paymentV1.PaymentTransaction_Status_name, paymentV1.PaymentTransaction_Status_value),
+		paymentMethodConverter: mapper.NewEnumTypeConverter[paymentV1.PaymentMethod, paymenttransaction.PaymentMethod](paymentV1.PaymentMethod_name, paymentV1.PaymentMethod_value),
+		businessTypeConverter:  mapper.NewEnumTypeConverter[paymentV1.BusinessType, paymenttransaction.BusinessType](paymentV1.BusinessType_name, paymentV1.BusinessType_value),
 	}
 
 	repo.init()
@@ -112,7 +112,7 @@ func (r *PaymentTransactionRepo) List(ctx context.Context, req *paginationV1.Pag
 	}, nil
 }
 
-func (r *PaymentTransactionRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *PaymentTransactionRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().PaymentTransaction.Query().
 		Where(paymenttransaction.IDEQ(id)).
 		Exist(ctx)

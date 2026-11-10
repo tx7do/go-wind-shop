@@ -65,13 +65,13 @@ func (_c *CartCreate) SetNillableDeletedAt(v *time.Time) *CartCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *CartCreate) SetCreatedBy(v uint32) *CartCreate {
+func (_c *CartCreate) SetCreatedBy(v int64) *CartCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *CartCreate) SetNillableCreatedBy(v *uint32) *CartCreate {
+func (_c *CartCreate) SetNillableCreatedBy(v *int64) *CartCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *CartCreate) SetNillableCreatedBy(v *uint32) *CartCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *CartCreate) SetUpdatedBy(v uint32) *CartCreate {
+func (_c *CartCreate) SetUpdatedBy(v int64) *CartCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *CartCreate) SetNillableUpdatedBy(v *uint32) *CartCreate {
+func (_c *CartCreate) SetNillableUpdatedBy(v *int64) *CartCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *CartCreate) SetNillableUpdatedBy(v *uint32) *CartCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *CartCreate) SetDeletedBy(v uint32) *CartCreate {
+func (_c *CartCreate) SetDeletedBy(v int64) *CartCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *CartCreate) SetNillableDeletedBy(v *uint32) *CartCreate {
+func (_c *CartCreate) SetNillableDeletedBy(v *int64) *CartCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *CartCreate) SetNillableDeletedBy(v *uint32) *CartCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *CartCreate) SetTenantID(v uint32) *CartCreate {
+func (_c *CartCreate) SetTenantID(v int64) *CartCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *CartCreate) SetNillableTenantID(v *uint32) *CartCreate {
+func (_c *CartCreate) SetNillableTenantID(v *int64) *CartCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *CartCreate) SetNillableTenantID(v *uint32) *CartCreate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_c *CartCreate) SetUserID(v uint32) *CartCreate {
+func (_c *CartCreate) SetUserID(v int64) *CartCreate {
 	_c.mutation.SetUserID(v)
 	return _c
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_c *CartCreate) SetNillableUserID(v *uint32) *CartCreate {
+func (_c *CartCreate) SetNillableUserID(v *int64) *CartCreate {
 	if v != nil {
 		_c.SetUserID(*v)
 	}
@@ -135,7 +135,7 @@ func (_c *CartCreate) SetNillableUserID(v *uint32) *CartCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *CartCreate) SetID(v uint32) *CartCreate {
+func (_c *CartCreate) SetID(v int64) *CartCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -207,7 +207,7 @@ func (_c *CartCreate) sqlSave(ctx context.Context) (*Cart, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -217,7 +217,7 @@ func (_c *CartCreate) sqlSave(ctx context.Context) (*Cart, error) {
 func (_c *CartCreate) createSpec() (*Cart, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Cart{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(cart.Table, sqlgraph.NewFieldSpec(cart.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(cart.Table, sqlgraph.NewFieldSpec(cart.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -237,23 +237,23 @@ func (_c *CartCreate) createSpec() (*Cart, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(cart.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(cart.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(cart.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(cart.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(cart.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(cart.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(cart.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(cart.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(cart.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(cart.FieldUserID, field.TypeInt64, value)
 		_node.UserID = &value
 	}
 	return _node, _spec
@@ -345,7 +345,7 @@ func (u *CartUpsert) ClearDeletedAt() *CartUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CartUpsert) SetCreatedBy(v uint32) *CartUpsert {
+func (u *CartUpsert) SetCreatedBy(v int64) *CartUpsert {
 	u.Set(cart.FieldCreatedBy, v)
 	return u
 }
@@ -357,7 +357,7 @@ func (u *CartUpsert) UpdateCreatedBy() *CartUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CartUpsert) AddCreatedBy(v uint32) *CartUpsert {
+func (u *CartUpsert) AddCreatedBy(v int64) *CartUpsert {
 	u.Add(cart.FieldCreatedBy, v)
 	return u
 }
@@ -369,7 +369,7 @@ func (u *CartUpsert) ClearCreatedBy() *CartUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CartUpsert) SetUpdatedBy(v uint32) *CartUpsert {
+func (u *CartUpsert) SetUpdatedBy(v int64) *CartUpsert {
 	u.Set(cart.FieldUpdatedBy, v)
 	return u
 }
@@ -381,7 +381,7 @@ func (u *CartUpsert) UpdateUpdatedBy() *CartUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CartUpsert) AddUpdatedBy(v uint32) *CartUpsert {
+func (u *CartUpsert) AddUpdatedBy(v int64) *CartUpsert {
 	u.Add(cart.FieldUpdatedBy, v)
 	return u
 }
@@ -393,7 +393,7 @@ func (u *CartUpsert) ClearUpdatedBy() *CartUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CartUpsert) SetDeletedBy(v uint32) *CartUpsert {
+func (u *CartUpsert) SetDeletedBy(v int64) *CartUpsert {
 	u.Set(cart.FieldDeletedBy, v)
 	return u
 }
@@ -405,7 +405,7 @@ func (u *CartUpsert) UpdateDeletedBy() *CartUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CartUpsert) AddDeletedBy(v uint32) *CartUpsert {
+func (u *CartUpsert) AddDeletedBy(v int64) *CartUpsert {
 	u.Add(cart.FieldDeletedBy, v)
 	return u
 }
@@ -417,7 +417,7 @@ func (u *CartUpsert) ClearDeletedBy() *CartUpsert {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *CartUpsert) SetUserID(v uint32) *CartUpsert {
+func (u *CartUpsert) SetUserID(v int64) *CartUpsert {
 	u.Set(cart.FieldUserID, v)
 	return u
 }
@@ -429,7 +429,7 @@ func (u *CartUpsert) UpdateUserID() *CartUpsert {
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *CartUpsert) AddUserID(v uint32) *CartUpsert {
+func (u *CartUpsert) AddUserID(v int64) *CartUpsert {
 	u.Add(cart.FieldUserID, v)
 	return u
 }
@@ -537,14 +537,14 @@ func (u *CartUpsertOne) ClearDeletedAt() *CartUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CartUpsertOne) SetCreatedBy(v uint32) *CartUpsertOne {
+func (u *CartUpsertOne) SetCreatedBy(v int64) *CartUpsertOne {
 	return u.Update(func(s *CartUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CartUpsertOne) AddCreatedBy(v uint32) *CartUpsertOne {
+func (u *CartUpsertOne) AddCreatedBy(v int64) *CartUpsertOne {
 	return u.Update(func(s *CartUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -565,14 +565,14 @@ func (u *CartUpsertOne) ClearCreatedBy() *CartUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CartUpsertOne) SetUpdatedBy(v uint32) *CartUpsertOne {
+func (u *CartUpsertOne) SetUpdatedBy(v int64) *CartUpsertOne {
 	return u.Update(func(s *CartUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CartUpsertOne) AddUpdatedBy(v uint32) *CartUpsertOne {
+func (u *CartUpsertOne) AddUpdatedBy(v int64) *CartUpsertOne {
 	return u.Update(func(s *CartUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -593,14 +593,14 @@ func (u *CartUpsertOne) ClearUpdatedBy() *CartUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CartUpsertOne) SetDeletedBy(v uint32) *CartUpsertOne {
+func (u *CartUpsertOne) SetDeletedBy(v int64) *CartUpsertOne {
 	return u.Update(func(s *CartUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CartUpsertOne) AddDeletedBy(v uint32) *CartUpsertOne {
+func (u *CartUpsertOne) AddDeletedBy(v int64) *CartUpsertOne {
 	return u.Update(func(s *CartUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -621,14 +621,14 @@ func (u *CartUpsertOne) ClearDeletedBy() *CartUpsertOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *CartUpsertOne) SetUserID(v uint32) *CartUpsertOne {
+func (u *CartUpsertOne) SetUserID(v int64) *CartUpsertOne {
 	return u.Update(func(s *CartUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *CartUpsertOne) AddUserID(v uint32) *CartUpsertOne {
+func (u *CartUpsertOne) AddUserID(v int64) *CartUpsertOne {
 	return u.Update(func(s *CartUpsert) {
 		s.AddUserID(v)
 	})
@@ -664,7 +664,7 @@ func (u *CartUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *CartUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *CartUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -673,7 +673,7 @@ func (u *CartUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *CartUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *CartUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -730,7 +730,7 @@ func (_c *CartCreateBulk) Save(ctx context.Context) ([]*Cart, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -911,14 +911,14 @@ func (u *CartUpsertBulk) ClearDeletedAt() *CartUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *CartUpsertBulk) SetCreatedBy(v uint32) *CartUpsertBulk {
+func (u *CartUpsertBulk) SetCreatedBy(v int64) *CartUpsertBulk {
 	return u.Update(func(s *CartUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *CartUpsertBulk) AddCreatedBy(v uint32) *CartUpsertBulk {
+func (u *CartUpsertBulk) AddCreatedBy(v int64) *CartUpsertBulk {
 	return u.Update(func(s *CartUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -939,14 +939,14 @@ func (u *CartUpsertBulk) ClearCreatedBy() *CartUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *CartUpsertBulk) SetUpdatedBy(v uint32) *CartUpsertBulk {
+func (u *CartUpsertBulk) SetUpdatedBy(v int64) *CartUpsertBulk {
 	return u.Update(func(s *CartUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *CartUpsertBulk) AddUpdatedBy(v uint32) *CartUpsertBulk {
+func (u *CartUpsertBulk) AddUpdatedBy(v int64) *CartUpsertBulk {
 	return u.Update(func(s *CartUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -967,14 +967,14 @@ func (u *CartUpsertBulk) ClearUpdatedBy() *CartUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *CartUpsertBulk) SetDeletedBy(v uint32) *CartUpsertBulk {
+func (u *CartUpsertBulk) SetDeletedBy(v int64) *CartUpsertBulk {
 	return u.Update(func(s *CartUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *CartUpsertBulk) AddDeletedBy(v uint32) *CartUpsertBulk {
+func (u *CartUpsertBulk) AddDeletedBy(v int64) *CartUpsertBulk {
 	return u.Update(func(s *CartUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -995,14 +995,14 @@ func (u *CartUpsertBulk) ClearDeletedBy() *CartUpsertBulk {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *CartUpsertBulk) SetUserID(v uint32) *CartUpsertBulk {
+func (u *CartUpsertBulk) SetUserID(v int64) *CartUpsertBulk {
 	return u.Update(func(s *CartUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *CartUpsertBulk) AddUserID(v uint32) *CartUpsertBulk {
+func (u *CartUpsertBulk) AddUserID(v int64) *CartUpsertBulk {
 	return u.Update(func(s *CartUpsert) {
 		s.AddUserID(v)
 	})

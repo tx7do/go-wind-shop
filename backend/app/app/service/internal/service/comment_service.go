@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	appV1 "go-wind-shop/api/gen/go/app/service/v1"
@@ -55,7 +55,7 @@ func (s *CommentService) List(ctx context.Context, req *paginationV1.PagingReque
 			}
 		}
 		resp.Items = filtered
-		resp.Total = uint64(len(filtered))
+		resp.Total = int64(len(filtered))
 	}
 
 	return resp, nil
@@ -161,7 +161,7 @@ func (s *CommentService) GetProductReviewSummary(ctx context.Context, req *appV1
 }
 
 // ensureCommentOwner 校验指定评论的 created_by 是否等于操作者 userID，不等返回 Forbidden。
-func (s *CommentService) ensureCommentOwner(ctx context.Context, commentID uint32, userID uint32) error {
+func (s *CommentService) ensureCommentOwner(ctx context.Context, commentID int64, userID int64) error {
 	resp, err := s.commentClient.Get(ctx, &commentV1.GetCommentRequest{
 		QueryBy: &commentV1.GetCommentRequest_Id{Id: commentID},
 	})

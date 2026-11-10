@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.Wishlist {
+func ID(id int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.Wishlist {
+func IDEQ(id int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.Wishlist {
+func IDNEQ(id int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.Wishlist {
+func IDIn(ids ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.Wishlist {
+func IDNotIn(ids ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.Wishlist {
+func IDGT(id int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.Wishlist {
+func IDGTE(id int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.Wishlist {
+func IDLT(id int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.Wishlist {
+func IDLTE(id int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,32 +70,32 @@ func DeletedAt(v time.Time) predicate.Wishlist {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.Wishlist {
+func CreatedBy(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.Wishlist {
+func UpdatedBy(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.Wishlist {
+func DeletedBy(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.Wishlist {
+func TenantID(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldTenantID, v))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint32) predicate.Wishlist {
+func UserID(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldUserID, v))
 }
 
 // ProductID applies equality check predicate on the "product_id" field. It's identical to ProductIDEQ.
-func ProductID(v uint32) predicate.Wishlist {
+func ProductID(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldProductID, v))
 }
 
@@ -250,42 +250,42 @@ func DeletedAtNotNil() predicate.Wishlist {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.Wishlist {
+func CreatedByEQ(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.Wishlist {
+func CreatedByNEQ(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.Wishlist {
+func CreatedByIn(vs ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.Wishlist {
+func CreatedByNotIn(vs ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.Wishlist {
+func CreatedByGT(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.Wishlist {
+func CreatedByGTE(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.Wishlist {
+func CreatedByLT(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.Wishlist {
+func CreatedByLTE(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -300,42 +300,42 @@ func CreatedByNotNil() predicate.Wishlist {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.Wishlist {
+func UpdatedByEQ(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.Wishlist {
+func UpdatedByNEQ(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.Wishlist {
+func UpdatedByIn(vs ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.Wishlist {
+func UpdatedByNotIn(vs ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.Wishlist {
+func UpdatedByGT(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.Wishlist {
+func UpdatedByGTE(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.Wishlist {
+func UpdatedByLT(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.Wishlist {
+func UpdatedByLTE(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -350,42 +350,42 @@ func UpdatedByNotNil() predicate.Wishlist {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.Wishlist {
+func DeletedByEQ(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.Wishlist {
+func DeletedByNEQ(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.Wishlist {
+func DeletedByIn(vs ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.Wishlist {
+func DeletedByNotIn(vs ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.Wishlist {
+func DeletedByGT(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.Wishlist {
+func DeletedByGTE(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.Wishlist {
+func DeletedByLT(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.Wishlist {
+func DeletedByLTE(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -400,42 +400,42 @@ func DeletedByNotNil() predicate.Wishlist {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.Wishlist {
+func TenantIDEQ(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.Wishlist {
+func TenantIDNEQ(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.Wishlist {
+func TenantIDIn(vs ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.Wishlist {
+func TenantIDNotIn(vs ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.Wishlist {
+func TenantIDGT(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.Wishlist {
+func TenantIDGTE(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.Wishlist {
+func TenantIDLT(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.Wishlist {
+func TenantIDLTE(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -450,42 +450,42 @@ func TenantIDNotNil() predicate.Wishlist {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint32) predicate.Wishlist {
+func UserIDEQ(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint32) predicate.Wishlist {
+func UserIDNEQ(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint32) predicate.Wishlist {
+func UserIDIn(vs ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint32) predicate.Wishlist {
+func UserIDNotIn(vs ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uint32) predicate.Wishlist {
+func UserIDGT(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGT(FieldUserID, v))
 }
 
 // UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uint32) predicate.Wishlist {
+func UserIDGTE(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGTE(FieldUserID, v))
 }
 
 // UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uint32) predicate.Wishlist {
+func UserIDLT(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLT(FieldUserID, v))
 }
 
 // UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uint32) predicate.Wishlist {
+func UserIDLTE(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLTE(FieldUserID, v))
 }
 
@@ -500,42 +500,42 @@ func UserIDNotNil() predicate.Wishlist {
 }
 
 // ProductIDEQ applies the EQ predicate on the "product_id" field.
-func ProductIDEQ(v uint32) predicate.Wishlist {
+func ProductIDEQ(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldEQ(FieldProductID, v))
 }
 
 // ProductIDNEQ applies the NEQ predicate on the "product_id" field.
-func ProductIDNEQ(v uint32) predicate.Wishlist {
+func ProductIDNEQ(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNEQ(FieldProductID, v))
 }
 
 // ProductIDIn applies the In predicate on the "product_id" field.
-func ProductIDIn(vs ...uint32) predicate.Wishlist {
+func ProductIDIn(vs ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldIn(FieldProductID, vs...))
 }
 
 // ProductIDNotIn applies the NotIn predicate on the "product_id" field.
-func ProductIDNotIn(vs ...uint32) predicate.Wishlist {
+func ProductIDNotIn(vs ...int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldNotIn(FieldProductID, vs...))
 }
 
 // ProductIDGT applies the GT predicate on the "product_id" field.
-func ProductIDGT(v uint32) predicate.Wishlist {
+func ProductIDGT(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGT(FieldProductID, v))
 }
 
 // ProductIDGTE applies the GTE predicate on the "product_id" field.
-func ProductIDGTE(v uint32) predicate.Wishlist {
+func ProductIDGTE(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldGTE(FieldProductID, v))
 }
 
 // ProductIDLT applies the LT predicate on the "product_id" field.
-func ProductIDLT(v uint32) predicate.Wishlist {
+func ProductIDLT(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLT(FieldProductID, v))
 }
 
 // ProductIDLTE applies the LTE predicate on the "product_id" field.
-func ProductIDLTE(v uint32) predicate.Wishlist {
+func ProductIDLTE(v int64) predicate.Wishlist {
 	return predicate.Wishlist(sql.FieldLTE(FieldProductID, v))
 }
 

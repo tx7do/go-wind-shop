@@ -1,8 +1,8 @@
 package service
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -39,7 +39,7 @@ func (s *StockOpLogService) Count(ctx context.Context, req *paginationV1.PagingR
 	}
 
 	return &catalogV1.CountStockOpLogResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 

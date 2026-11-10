@@ -5,13 +5,13 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/aiagentrun"
@@ -22,7 +22,7 @@ import (
 
 type AiAgentRunRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper          *mapper.CopierMapper[aiV1.AiAgentRun, ent.AiAgentRun]
 	statusConverter *mapper.EnumTypeConverter[aiV1.AiAgentRun_Status, aiagentrun.Status]
@@ -88,7 +88,7 @@ func (r *AiAgentRunRepo) List(ctx context.Context, req *paginationV1.PagingReque
 	if err != nil {
 		r.log.Errorf("backfill status failed: %s", err.Error())
 	} else {
-		statusByID := make(map[uint32]aiagentrun.Status, len(entities))
+		statusByID := make(map[int64]aiagentrun.Status, len(entities))
 		for _, e := range entities {
 			statusByID[e.ID] = e.Status
 		}
@@ -106,7 +106,7 @@ func (r *AiAgentRunRepo) List(ctx context.Context, req *paginationV1.PagingReque
 }
 
 // Get 按 ID 查询运行记录。
-func (r *AiAgentRunRepo) Get(ctx context.Context, id uint32) (*aiV1.AiAgentRun, error) {
+func (r *AiAgentRunRepo) Get(ctx context.Context, id int64) (*aiV1.AiAgentRun, error) {
 	entity, err := r.entClient.Client().AiAgentRun.Get(ctx, id)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -124,7 +124,7 @@ func (r *AiAgentRunRepo) Get(ctx context.Context, id uint32) (*aiV1.AiAgentRun, 
 }
 
 // CreateRunning 建一条 RUNNING 运行行（Run 流程第一步，执行引擎批接入）。
-func (r *AiAgentRunRepo) CreateRunning(ctx context.Context, appID uint32, inputJSON string, operatorID uint32, tenantID uint32) (uint32, error) {
+func (r *AiAgentRunRepo) CreateRunning(ctx context.Context, appID int64, inputJSON string, operatorID int64, tenantID int64) (int64, error) {
 	created, err := r.entClient.Client().AiAgentRun.Create().
 		SetAppID(appID).
 		SetStatus(aiagentrun.StatusRunning).
@@ -143,29 +143,29 @@ func (r *AiAgentRunRepo) CreateRunning(ctx context.Context, appID uint32, inputJ
 
 // AgentRunTokens 运行用量三件套（repo 落参用，避免一串同形参数）。
 type AgentRunTokens struct {
-	Prompt     uint32
-	Completion uint32
-	Total      uint32
+	Prompt     int64
+	Completion int64
+	Total      int64
 }
 
 // SettleResult 回写运行结论（终态 + 产出/错误/轨迹/用量/耗时）。
 func (r *AiAgentRunRepo) SettleResult(
 	ctx context.Context,
-	id uint32,
+	id int64,
 	status aiagentrun.Status,
 	output string,
 	errMsg string,
 	traceJSON string,
 	usage AgentRunTokens,
-	durationMs uint32,
+	durationMs int64,
 ) error {
 	builder := r.entClient.Client().AiAgentRun.UpdateOneID(id).
 		SetStatus(status).
 		SetTrace(traceJSON).
-		SetPromptTokens(usage.Prompt).
-		SetCompletionTokens(usage.Completion).
-		SetTotalTokens(usage.Total).
-		SetDurationMs(durationMs)
+		SetPromptTokens(uint32(usage.Prompt)).
+		SetCompletionTokens(uint32(usage.Completion)).
+		SetTotalTokens(uint32(usage.Total)).
+		SetDurationMs(uint32(durationMs))
 	if output != "" {
 		builder.SetOutput(output)
 	}
@@ -182,22 +182,22 @@ func (r *AiAgentRunRepo) SettleResult(
 // SetPending 落 WAITING_APPROVAL 挂起态（挂起节点 + 恢复快照 + 已耗 tokens/trace）。
 func (r *AiAgentRunRepo) SetPending(
 	ctx context.Context,
-	id uint32,
+	id int64,
 	pendingNodeID string,
 	resumeStateJSON string,
 	traceJSON string,
 	usage AgentRunTokens,
-	durationMs uint32,
+	durationMs int64,
 ) error {
 	if err := r.entClient.Client().AiAgentRun.UpdateOneID(id).
 		SetStatus(aiagentrun.StatusWaitingApproval).
 		SetPendingNodeID(pendingNodeID).
 		SetResumeState(resumeStateJSON).
 		SetTrace(traceJSON).
-		SetPromptTokens(usage.Prompt).
-		SetCompletionTokens(usage.Completion).
-		SetTotalTokens(usage.Total).
-		SetDurationMs(durationMs).
+		SetPromptTokens(uint32(usage.Prompt)).
+		SetCompletionTokens(uint32(usage.Completion)).
+		SetTotalTokens(uint32(usage.Total)).
+		SetDurationMs(uint32(durationMs)).
 		Exec(ctx); err != nil {
 		r.log.Errorf("set pending ai agent run [%d] failed: %s", id, err.Error())
 		return errors.InternalServer("AI_AGENT", "set pending ai agent run failed")
@@ -206,6 +206,6 @@ func (r *AiAgentRunRepo) SetPending(
 }
 
 // GetPendingNodeID 读挂起节点 ID（非 WAITING_APPROVAL 行为空）。
-func (r *AiAgentRunRepo) GetStatusEntity(ctx context.Context, id uint32) (*ent.AiAgentRun, error) {
+func (r *AiAgentRunRepo) GetStatusEntity(ctx context.Context, id int64) (*ent.AiAgentRun, error) {
 	return r.entClient.Client().AiAgentRun.Get(ctx, id)
 }

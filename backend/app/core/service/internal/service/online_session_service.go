@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	onlineSessionV1 "go-wind-shop/api/gen/go/online_session/service/v1"
@@ -23,7 +23,7 @@ import (
 type OnlineSessionService struct {
 	onlineSessionV1.UnimplementedOnlineSessionServiceServer
 
-	log *logx.Helper
+	log           *logx.Helper
 	authenticator *data.Authenticator
 }
 
@@ -89,7 +89,7 @@ func (s *OnlineSessionService) List(ctx context.Context, req *onlineSessionV1.Li
 	}
 
 	items := entriesToProto(entries, req.GetKeyword(), "")
-	total := uint64(len(items))
+	total := int64(len(items))
 
 	page := int(req.GetPage())
 	if page <= 0 {
@@ -153,7 +153,7 @@ func (s *OnlineSessionService) ListMy(ctx context.Context, req *onlineSessionV1.
 
 	return &onlineSessionV1.ListOnlineSessionResponse{
 		Items: entriesToProto(mine, "", req.GetCurrentJti()),
-		Total: uint64(len(mine)),
+		Total: int64(len(mine)),
 	}, nil
 }
 

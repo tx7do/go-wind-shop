@@ -70,14 +70,14 @@ func (_u *ProductAttributeUpdate) ClearDeletedAt() *ProductAttributeUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ProductAttributeUpdate) SetCreatedBy(v uint32) *ProductAttributeUpdate {
+func (_u *ProductAttributeUpdate) SetCreatedBy(v int64) *ProductAttributeUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ProductAttributeUpdate) SetNillableCreatedBy(v *uint32) *ProductAttributeUpdate {
+func (_u *ProductAttributeUpdate) SetNillableCreatedBy(v *int64) *ProductAttributeUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *ProductAttributeUpdate) SetNillableCreatedBy(v *uint32) *ProductAttrib
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ProductAttributeUpdate) AddCreatedBy(v int32) *ProductAttributeUpdate {
+func (_u *ProductAttributeUpdate) AddCreatedBy(v int64) *ProductAttributeUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *ProductAttributeUpdate) ClearCreatedBy() *ProductAttributeUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ProductAttributeUpdate) SetUpdatedBy(v uint32) *ProductAttributeUpdate {
+func (_u *ProductAttributeUpdate) SetUpdatedBy(v int64) *ProductAttributeUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ProductAttributeUpdate) SetNillableUpdatedBy(v *uint32) *ProductAttributeUpdate {
+func (_u *ProductAttributeUpdate) SetNillableUpdatedBy(v *int64) *ProductAttributeUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *ProductAttributeUpdate) SetNillableUpdatedBy(v *uint32) *ProductAttrib
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ProductAttributeUpdate) AddUpdatedBy(v int32) *ProductAttributeUpdate {
+func (_u *ProductAttributeUpdate) AddUpdatedBy(v int64) *ProductAttributeUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *ProductAttributeUpdate) ClearUpdatedBy() *ProductAttributeUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ProductAttributeUpdate) SetDeletedBy(v uint32) *ProductAttributeUpdate {
+func (_u *ProductAttributeUpdate) SetDeletedBy(v int64) *ProductAttributeUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ProductAttributeUpdate) SetNillableDeletedBy(v *uint32) *ProductAttributeUpdate {
+func (_u *ProductAttributeUpdate) SetNillableDeletedBy(v *int64) *ProductAttributeUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *ProductAttributeUpdate) SetNillableDeletedBy(v *uint32) *ProductAttrib
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ProductAttributeUpdate) AddDeletedBy(v int32) *ProductAttributeUpdate {
+func (_u *ProductAttributeUpdate) AddDeletedBy(v int64) *ProductAttributeUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -216,7 +216,7 @@ func (_u *ProductAttributeUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)
 }
 
 func (_u *ProductAttributeUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(productattribute.Table, productattribute.Columns, sqlgraph.NewFieldSpec(productattribute.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(productattribute.Table, productattribute.Columns, sqlgraph.NewFieldSpec(productattribute.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -240,31 +240,31 @@ func (_u *ProductAttributeUpdate) sqlSave(ctx context.Context) (_node int, err e
 		_spec.ClearField(productattribute.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(productattribute.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(productattribute.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(productattribute.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(productattribute.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(productattribute.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(productattribute.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(productattribute.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(productattribute.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(productattribute.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(productattribute.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(productattribute.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(productattribute.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(productattribute.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(productattribute.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(productattribute.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(productattribute.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(productattribute.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(productattribute.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(productattribute.FieldSortOrder, field.TypeUint32, value)
@@ -338,14 +338,14 @@ func (_u *ProductAttributeUpdateOne) ClearDeletedAt() *ProductAttributeUpdateOne
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ProductAttributeUpdateOne) SetCreatedBy(v uint32) *ProductAttributeUpdateOne {
+func (_u *ProductAttributeUpdateOne) SetCreatedBy(v int64) *ProductAttributeUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ProductAttributeUpdateOne) SetNillableCreatedBy(v *uint32) *ProductAttributeUpdateOne {
+func (_u *ProductAttributeUpdateOne) SetNillableCreatedBy(v *int64) *ProductAttributeUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -353,7 +353,7 @@ func (_u *ProductAttributeUpdateOne) SetNillableCreatedBy(v *uint32) *ProductAtt
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ProductAttributeUpdateOne) AddCreatedBy(v int32) *ProductAttributeUpdateOne {
+func (_u *ProductAttributeUpdateOne) AddCreatedBy(v int64) *ProductAttributeUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -365,14 +365,14 @@ func (_u *ProductAttributeUpdateOne) ClearCreatedBy() *ProductAttributeUpdateOne
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ProductAttributeUpdateOne) SetUpdatedBy(v uint32) *ProductAttributeUpdateOne {
+func (_u *ProductAttributeUpdateOne) SetUpdatedBy(v int64) *ProductAttributeUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ProductAttributeUpdateOne) SetNillableUpdatedBy(v *uint32) *ProductAttributeUpdateOne {
+func (_u *ProductAttributeUpdateOne) SetNillableUpdatedBy(v *int64) *ProductAttributeUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -380,7 +380,7 @@ func (_u *ProductAttributeUpdateOne) SetNillableUpdatedBy(v *uint32) *ProductAtt
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ProductAttributeUpdateOne) AddUpdatedBy(v int32) *ProductAttributeUpdateOne {
+func (_u *ProductAttributeUpdateOne) AddUpdatedBy(v int64) *ProductAttributeUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -392,14 +392,14 @@ func (_u *ProductAttributeUpdateOne) ClearUpdatedBy() *ProductAttributeUpdateOne
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ProductAttributeUpdateOne) SetDeletedBy(v uint32) *ProductAttributeUpdateOne {
+func (_u *ProductAttributeUpdateOne) SetDeletedBy(v int64) *ProductAttributeUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ProductAttributeUpdateOne) SetNillableDeletedBy(v *uint32) *ProductAttributeUpdateOne {
+func (_u *ProductAttributeUpdateOne) SetNillableDeletedBy(v *int64) *ProductAttributeUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -407,7 +407,7 @@ func (_u *ProductAttributeUpdateOne) SetNillableDeletedBy(v *uint32) *ProductAtt
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ProductAttributeUpdateOne) AddDeletedBy(v int32) *ProductAttributeUpdateOne {
+func (_u *ProductAttributeUpdateOne) AddDeletedBy(v int64) *ProductAttributeUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -497,7 +497,7 @@ func (_u *ProductAttributeUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuild
 }
 
 func (_u *ProductAttributeUpdateOne) sqlSave(ctx context.Context) (_node *ProductAttribute, err error) {
-	_spec := sqlgraph.NewUpdateSpec(productattribute.Table, productattribute.Columns, sqlgraph.NewFieldSpec(productattribute.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(productattribute.Table, productattribute.Columns, sqlgraph.NewFieldSpec(productattribute.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ProductAttribute.id" for update`)}
@@ -538,31 +538,31 @@ func (_u *ProductAttributeUpdateOne) sqlSave(ctx context.Context) (_node *Produc
 		_spec.ClearField(productattribute.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(productattribute.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(productattribute.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(productattribute.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(productattribute.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(productattribute.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(productattribute.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(productattribute.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(productattribute.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(productattribute.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(productattribute.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(productattribute.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(productattribute.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(productattribute.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(productattribute.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(productattribute.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(productattribute.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(productattribute.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(productattribute.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(productattribute.FieldSortOrder, field.TypeUint32, value)

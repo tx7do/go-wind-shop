@@ -1,10 +1,9 @@
 package lua
 
 import (
-	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"testing"
-
 )
 
 func TestOnServerStartScript(t *testing.T) {

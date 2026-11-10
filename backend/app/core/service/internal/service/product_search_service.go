@@ -5,8 +5,8 @@ import (
 	"strconv"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data"
 
@@ -36,9 +36,9 @@ import (
 // ============================================================================
 
 type ProductSearchService struct {
-	log *logx.Helper
-	productSearchRepo  *data.ProductSearchRepo
-	productRepo        *data.ProductRepo
+	log               *logx.Helper
+	productSearchRepo *data.ProductSearchRepo
+	productRepo       *data.ProductRepo
 }
 
 func NewProductSearchService(
@@ -127,7 +127,7 @@ func (s *ProductSearchService) ReindexProduct(taskType string, payload *task.Sea
 
 // reindexProductByID 从 DB 取商品最新数据 upsert 到 ES（"index" op 的实体）。
 // docs 为空（商品不存在/非 ACTIVE/无有效翻译）时改为清理 ES 残留文档。
-func (s *ProductSearchService) reindexProductByID(ctx context.Context, productID uint32) error {
+func (s *ProductSearchService) reindexProductByID(ctx context.Context, productID int64) error {
 	docs, err := s.productRepo.GetReindexDocuments(ctx, productID)
 	if err != nil {
 		s.log.Errorf("reindex get documents for product %d failed: %v", productID, err)
@@ -161,7 +161,7 @@ func (s *ProductSearchService) reindexProductByID(ctx context.Context, productID
 	// 逐条 upsert ES 文档（每个语言一个文档）
 	for i := range docs {
 		doc := &data.ProductDocument{
-			ProductID:        strconv.FormatUint(uint64(docs[i].ProductID), 10),
+			ProductID:        strconv.FormatInt(int64(docs[i].ProductID), 10),
 			Language:         docs[i].Language,
 			Status:           docs[i].Status,
 			Name:             docs[i].Name,
@@ -209,7 +209,7 @@ func (s *ProductSearchService) ReindexAll(ctx context.Context) error {
 	}
 
 	// 正向：按商品维度逐个 upsert（去重，商品多语言共享一次 Get 查询）
-	pidSet := make(map[uint32]struct{}, len(pairs))
+	pidSet := make(map[int64]struct{}, len(pairs))
 	for _, p := range pairs {
 		pidSet[p.ProductID] = struct{}{}
 	}
@@ -239,7 +239,7 @@ func (s *ProductSearchService) ReindexAll(ctx context.Context) error {
 func (s *ProductSearchService) cleanupOrphanDocuments(ctx context.Context, expected []data.ProductLanguagePair) error {
 	expectedSet := make(map[string]struct{}, len(expected))
 	for _, p := range expected {
-		docID := strconv.FormatUint(uint64(p.ProductID), 10) + "_" + p.Language
+		docID := strconv.FormatInt(int64(p.ProductID), 10) + "_" + p.Language
 		expectedSet[docID] = struct{}{}
 	}
 
@@ -248,19 +248,19 @@ func (s *ProductSearchService) cleanupOrphanDocuments(ctx context.Context, expec
 		return err
 	}
 
-	orphans := make(map[uint32][]string)
+	orphans := make(map[int64][]string)
 	for _, ref := range refs {
 		docID := ref.ProductID + "_" + ref.Language
 		if _, ok := expectedSet[docID]; ok {
 			continue
 		}
 		// product_id 非数字的脏数据不碰（保守，人工排查）
-		pid, pErr := strconv.ParseUint(ref.ProductID, 10, 32)
+		pid, pErr := strconv.ParseInt(ref.ProductID, 10, 64)
 		if pErr != nil {
 			s.log.Warnf("cleanup orphans: skip malformed doc product_id=%q lang=%q", ref.ProductID, ref.Language)
 			continue
 		}
-		orphans[uint32(pid)] = append(orphans[uint32(pid)], ref.Language)
+		orphans[int64(pid)] = append(orphans[int64(pid)], ref.Language)
 	}
 
 	for pid, langs := range orphans {

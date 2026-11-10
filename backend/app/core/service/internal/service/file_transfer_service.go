@@ -9,11 +9,11 @@ import (
 	"path"
 	"strings"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/google/uuid"
 	"github.com/minio/minio-go/v7"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data"
 
@@ -86,7 +86,7 @@ func parseKey(key string) (folder, filename, ext string) {
 // recordFile 记录文件元数据到数据库
 func (s *FileTransferService) recordFile(
 	ctx context.Context,
-	tenantID, userID uint32,
+	tenantID, userID int64,
 	fileData []byte,
 	sourceFileName string,
 	info minio.UploadInfo,

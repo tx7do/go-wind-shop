@@ -5,8 +5,8 @@ import (
 	"sort"
 	"strconv"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -70,7 +70,7 @@ func NewPermissionService(
 
 func (s *PermissionService) init() {
 	ctx := appViewer.NewSystemViewerContext(context.Background())
-	if resp, _ := s.permissionServiceClient.Count(ctx, nil); resp.Count == 0 || resp.Count == (uint64)(len(constants.DefaultPermissions)) {
+	if resp, _ := s.permissionServiceClient.Count(ctx, nil); resp.Count == 0 || resp.Count == (int64)(len(constants.DefaultPermissions)) {
 		apiCount, _ := s.apiServiceClient.Count(ctx, nil)
 
 		menusCount, _ := s.menuServiceClient.Count(ctx, nil)
@@ -88,7 +88,7 @@ func (s *PermissionService) List(ctx context.Context, req *paginationV1.PagingRe
 		return nil, err
 	}
 
-	var limitPermissionIDs []uint32
+	var limitPermissionIDs []int64
 	if operator.GetTenantId() > 0 {
 		var limitPermissionResp *permissionV1.ListPermissionIdsResponse
 		limitPermissionResp, err = s.roleServiceClient.ListPermissionIds(ctx, &permissionV1.ListPermissionIdsRequest{
@@ -122,8 +122,8 @@ func (s *PermissionService) List(ctx context.Context, req *paginationV1.PagingRe
 		condition := &paginationV1.FilterCondition{
 			Field: "id",
 			Op:    paginationV1.Operator_IN,
-			Values: sliceutil.Map(limitPermissionIDs, func(value uint32, _ int, _ []uint32) string {
-				return strconv.FormatUint(uint64(value), 10)
+			Values: sliceutil.Map(limitPermissionIDs, func(value int64, _ int, _ []int64) string {
+				return strconv.FormatInt(int64(value), 10)
 			}),
 		}
 
@@ -315,7 +315,7 @@ func (s *PermissionService) SyncPermissions(ctx context.Context, req *emptypb.Em
 			Name:      trans.Ptr(title),
 			Code:      trans.Ptr(permissionCode),
 			Status:    trans.Ptr(permissionV1.Permission_ON),
-			MenuIds:   []uint32{menu.GetId()},
+			MenuIds:   []int64{menu.GetId()},
 			CreatedBy: trans.Ptr(operator.UserId),
 			UpdatedBy: trans.Ptr(operator.UserId),
 		}

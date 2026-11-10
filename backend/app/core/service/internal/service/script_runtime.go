@@ -18,9 +18,9 @@ import (
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
 	scriptV1 "go-wind-shop/api/gen/go/script/service/v1"
 
-	appViewer "go-wind-shop/pkg/entgo/viewer"
 	"go-wind-shop/app/core/service/internal/data"
 	"go-wind-shop/app/core/service/internal/data/ent"
+	appViewer "go-wind-shop/pkg/entgo/viewer"
 	"go-wind-shop/pkg/oss"
 	"go-wind-shop/pkg/scripting"
 	"go-wind-shop/pkg/scripting/api"
@@ -71,7 +71,7 @@ type ScriptRuntime struct {
 const ScriptResyncNotifyChannel = "gowind:script:resync"
 
 // logExecution 落一条执行日志（nil logger 时 no-op）。
-func (r *ScriptRuntime) logExecution(trigger, hookPoint string, scriptName, language string, version uint32, started time.Time, err error) {
+func (r *ScriptRuntime) logExecution(trigger, hookPoint string, scriptName, language string, version int64, started time.Time, err error) {
 	if r.scriptLog == nil {
 		return
 	}
@@ -433,7 +433,7 @@ func (r *ScriptRuntime) Close() {
 // ChatForScript 实现 scripting/api.AICompleter：脚本 ai 模块的对话入口。
 // 复用 chat 主链路的 provider 解析 / 密钥解密 / 客户端工厂；每次调用记一条
 // 用量流水（tenant/user/conversation 均为 0 = 系统脚本发起），记账失败不阻断调用。
-func (r *ScriptRuntime) ChatForScript(ctx context.Context, providerId uint32, systemPrompt, content string) (string, error) {
+func (r *ScriptRuntime) ChatForScript(ctx context.Context, providerId int64, systemPrompt, content string) (string, error) {
 	if r.aiProviderRepo == nil {
 		return "", adminV1.ErrorInternalServerError("ai module is not available")
 	}
@@ -473,7 +473,7 @@ func (r *ScriptRuntime) ChatForScript(ctx context.Context, providerId uint32, sy
 		r.log.Errorf(ctx, "script ai chat failed: provider=%d: %v", provider.ID, err)
 		return "", err
 	}
-	durationMs := uint32(time.Since(started).Milliseconds())
+	durationMs := int64(time.Since(started).Milliseconds())
 
 	reply := ""
 	if len(resp.Choices) > 0 {
@@ -485,9 +485,9 @@ func (r *ScriptRuntime) ChatForScript(ctx context.Context, providerId uint32, sy
 	if r.aiUsageRepo != nil {
 		ctx = appViewer.NewSystemViewerContext(ctx)
 		modelName := ptrStrOr(provider.ModelName, "")
-		promptTokens := uint32(resp.Usage.PromptTokens)
-		completionTokens := uint32(resp.Usage.CompletionTokens)
-		totalTokens := uint32(resp.Usage.TotalTokens)
+		promptTokens := int64(resp.Usage.PromptTokens)
+		completionTokens := int64(resp.Usage.CompletionTokens)
+		totalTokens := int64(resp.Usage.TotalTokens)
 		_ = r.aiUsageRepo.Create(ctx, &data.UsageRecord{
 			ProviderID:       provider.ID,
 			UserID:           0,

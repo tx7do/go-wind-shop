@@ -3,11 +3,11 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	ktransport "github.com/go-kratos/kratos/v2/transport"
 	khttp "github.com/go-kratos/kratos/v2/transport/http"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -23,7 +23,7 @@ import (
 type AccessKeyService struct {
 	adminV1.AccessKeyServiceHTTPServer
 
-	log *logx.Helper
+	log          *logx.Helper
 	accessKeyCli accesskeyV1.AccessKeyServiceClient
 }
 

@@ -172,7 +172,7 @@ const { mutateAsync: updateRule } = useUpdateMonitorAlertRule();
 const visible = ref(false);
 const submitLoading = ref(false);
 const isCreate = ref(true);
-const currentId = ref<number>();
+const currentId = ref<string>();
 const formRef = ref();
 
 const formData = reactive({
@@ -295,7 +295,7 @@ async function handleSubmit() {
       ElMessage.success(t("pages.monitor_alert.createSuccess"));
     } else if (currentId.value !== undefined) {
       await updateRule({
-        id: currentId.value,
+        id: String(currentId.value),
         data,
         updateMask: "name,metric,op,threshold,cooldownMinutes,channel,target,isEnabled,remark",
       });

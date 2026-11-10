@@ -18,7 +18,7 @@ import (
 // 全程 best-effort：通知失败仅记日志，不回滚订单状态。
 
 // notifyOrderStatus 按目标状态发送标准文案通知（best-effort）。
-func (s *OrderService) notifyOrderStatus(ctx context.Context, orderId uint32, status orderV1.Order_Status) {
+func (s *OrderService) notifyOrderStatus(ctx context.Context, orderId int64, status orderV1.Order_Status) {
 	title, content := orderStatusNotificationText(status, orderId)
 	if title == "" {
 		return
@@ -27,7 +27,7 @@ func (s *OrderService) notifyOrderStatus(ctx context.Context, orderId uint32, st
 }
 
 // notifyOrderCustom 发送自定义文案的订单通知（best-effort）。
-func (s *OrderService) notifyOrderCustom(ctx context.Context, orderId uint32, title, content string) {
+func (s *OrderService) notifyOrderCustom(ctx context.Context, orderId int64, title, content string) {
 	if s.internalMessageService == nil {
 		return
 	}
@@ -48,14 +48,14 @@ func (s *OrderService) notifyOrderCustom(ctx context.Context, orderId uint32, ti
 		Title:           trans.Ptr(title),
 		Content:         content,
 		RecipientUserId: trans.Ptr(uid),
-		SendUserId:      trans.Ptr(uint32(0)),
+		SendUserId:      trans.Ptr(int64(0)),
 	}); sErr != nil {
 		s.log.Warnf("notify order status: send message for order [%d] to user [%d] failed: %v", orderId, uid, sErr)
 	}
 }
 
 // notifyOrderRefundSuccess 退款成功通知（best-effort）。金额为最小货币单位（分）。
-func (s *OrderService) notifyOrderRefundSuccess(ctx context.Context, orderId uint32, amount int64) {
+func (s *OrderService) notifyOrderRefundSuccess(ctx context.Context, orderId int64, amount int64) {
 	content := fmt.Sprintf("您的订单 #%d 的退款已处理成功，退款金额 %.2f 元，请注意查收。", orderId, float64(amount)/100)
 	s.notifyOrderCustom(ctx, orderId, "退款成功通知", content)
 }
@@ -63,7 +63,7 @@ func (s *OrderService) notifyOrderRefundSuccess(ctx context.Context, orderId uin
 // orderStatusNotificationText 状态变更的标准通知文案。
 // 返回空 title 表示该状态不发通知（CLOSED 由确认收货/自动确认路径发自定义文案，
 // 避免通用"订单已关闭"与专属文案重复打扰）。
-func orderStatusNotificationText(status orderV1.Order_Status, orderId uint32) (string, string) {
+func orderStatusNotificationText(status orderV1.Order_Status, orderId int64) (string, string) {
 	switch status {
 	case orderV1.Order_PAID:
 		return "订单支付成功", fmt.Sprintf("您的订单 #%d 已支付成功，我们将尽快为您安排发货。", orderId)

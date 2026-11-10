@@ -40,7 +40,7 @@ func (_d *PaymentRefundDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *PaymentRefundDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(paymentrefund.Table, sqlgraph.NewFieldSpec(paymentrefund.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewDeleteSpec(paymentrefund.Table, sqlgraph.NewFieldSpec(paymentrefund.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

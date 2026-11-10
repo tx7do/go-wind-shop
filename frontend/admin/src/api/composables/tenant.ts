@@ -80,12 +80,11 @@ export function useCreateTenant(
 // 更新租户
 // ==============================
 export function useUpdateTenant(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.tenantService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.tenantService.Update({ id: String(id),
         data: {
           ...values,
         },

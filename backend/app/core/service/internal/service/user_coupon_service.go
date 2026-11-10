@@ -1,9 +1,9 @@
 package service
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
 	"fmt"
+	"go-wind-shop/pkg/logx"
 	"strconv"
 	"time"
 
@@ -65,7 +65,7 @@ func (s *UserCouponService) Count(ctx context.Context, req *paginationV1.PagingR
 	}
 
 	return &couponV1.CountUserCouponResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 
@@ -136,7 +136,7 @@ func (s *UserCouponService) Claim(ctx context.Context, req *couponV1.ClaimCoupon
 	if uid == 0 {
 		return nil, couponV1.ErrorForbidden("viewer has no user id")
 	}
-	uidU32 := uint32(uid)
+	uidU32 := int64(uid)
 	tmplId := req.GetCouponTemplateId()
 	if tmplId == 0 {
 		return nil, couponV1.ErrorBadRequest("invalid template id")
@@ -465,7 +465,7 @@ func (s *UserCouponService) SweepExpiredCoupons(ctx context.Context) error {
 	}
 
 	// 2. 筛出已过期模板（valid_until < now）。
-	var expiredTmplIds []uint32
+	var expiredTmplIds []int64
 	for _, tmpl := range tmpls {
 		if tmpl.ValidUntil != nil && tmpl.ValidUntil.Before(now) {
 			expiredTmplIds = append(expiredTmplIds, tmpl.ID)

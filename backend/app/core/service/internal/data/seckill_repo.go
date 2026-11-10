@@ -1,13 +1,13 @@
 package data
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
+	"go-wind-shop/pkg/logx"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -138,12 +138,12 @@ func (r *SeckillActivityRepo) ListActive(ctx context.Context) (*catalogV1.ListSe
 		}
 		resp.Items = append(resp.Items, it)
 	}
-	resp.Total = uint64(len(resp.Items))
+	resp.Total = int64(len(resp.Items))
 
 	return resp, nil
 }
 
-func (r *SeckillActivityRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *SeckillActivityRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().SeckillActivity.Query().
 		Where(seckillactivity.IDEQ(id)).
 		Exist(ctx)

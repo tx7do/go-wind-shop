@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/aggregator"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
@@ -37,7 +37,7 @@ func NewPositionService(
 
 func (s *PositionService) extractRelationIDs(
 	positions []*identityV1.Position,
-	orgUnitSet aggregator.ResourceMap[uint32, *identityV1.OrgUnit],
+	orgUnitSet aggregator.ResourceMap[int64, *identityV1.OrgUnit],
 ) {
 	for _, p := range positions {
 		if p.GetOrgUnitId() > 0 {
@@ -48,10 +48,10 @@ func (s *PositionService) extractRelationIDs(
 
 func (s *PositionService) fetchRelationInfo(
 	ctx context.Context,
-	orgUnitSet aggregator.ResourceMap[uint32, *identityV1.OrgUnit],
+	orgUnitSet aggregator.ResourceMap[int64, *identityV1.OrgUnit],
 ) error {
 	if len(orgUnitSet) > 0 {
-		orgUnitIds := make([]uint32, 0, len(orgUnitSet))
+		orgUnitIds := make([]int64, 0, len(orgUnitSet))
 		for id := range orgUnitSet {
 			orgUnitIds = append(orgUnitIds, id)
 		}
@@ -72,12 +72,12 @@ func (s *PositionService) fetchRelationInfo(
 
 func (s *PositionService) bindRelations(
 	positions []*identityV1.Position,
-	orgUnitSet aggregator.ResourceMap[uint32, *identityV1.OrgUnit],
+	orgUnitSet aggregator.ResourceMap[int64, *identityV1.OrgUnit],
 ) {
 	aggregator.Populate(
 		positions,
 		orgUnitSet,
-		func(ou *identityV1.Position) uint32 { return ou.GetOrgUnitId() },
+		func(ou *identityV1.Position) int64 { return ou.GetOrgUnitId() },
 		func(ou *identityV1.Position, org *identityV1.OrgUnit) {
 			ou.OrgUnitName = org.Name
 		},
@@ -85,7 +85,7 @@ func (s *PositionService) bindRelations(
 }
 
 func (s *PositionService) enrichRelations(ctx context.Context, positions []*identityV1.Position) error {
-	var orgUnitSet = make(aggregator.ResourceMap[uint32, *identityV1.OrgUnit])
+	var orgUnitSet = make(aggregator.ResourceMap[int64, *identityV1.OrgUnit])
 	s.extractRelationIDs(positions, orgUnitSet)
 	if err := s.fetchRelationInfo(ctx, orgUnitSet); err != nil {
 		return err
@@ -112,7 +112,7 @@ func (s *PositionService) Count(ctx context.Context, req *paginationV1.PagingReq
 	}
 
 	return &identityV1.CountPositionResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 

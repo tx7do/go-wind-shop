@@ -37,12 +37,12 @@ func (PaymentRefund) Annotations() []schema.Annotation {
 
 func (PaymentRefund) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("transaction_id").
+		field.Int64("transaction_id").
 			Comment("关联的支付流水ID").
 			Optional().
 			Nillable(),
 
-		field.Uint32("user_id").
+		field.Int64("user_id").
 			Comment("用户ID").
 			Optional().
 			Nillable(),
@@ -72,10 +72,10 @@ func (PaymentRefund) Fields() []ent.Field {
 
 func (PaymentRefund) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 		appmixin.Currency{},
 		appmixin.BusinessRefId{},
 		appmixin.IdempotencyKey{},

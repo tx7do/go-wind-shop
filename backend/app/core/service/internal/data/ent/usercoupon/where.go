@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.UserCoupon {
+func ID(id int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.UserCoupon {
+func IDEQ(id int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.UserCoupon {
+func IDNEQ(id int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.UserCoupon {
+func IDIn(ids ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.UserCoupon {
+func IDNotIn(ids ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.UserCoupon {
+func IDGT(id int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.UserCoupon {
+func IDGTE(id int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.UserCoupon {
+func IDLT(id int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.UserCoupon {
+func IDLTE(id int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,32 +70,32 @@ func DeletedAt(v time.Time) predicate.UserCoupon {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.UserCoupon {
+func CreatedBy(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.UserCoupon {
+func UpdatedBy(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.UserCoupon {
+func DeletedBy(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.UserCoupon {
+func TenantID(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldTenantID, v))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint32) predicate.UserCoupon {
+func UserID(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldUserID, v))
 }
 
 // CouponTemplateID applies equality check predicate on the "coupon_template_id" field. It's identical to CouponTemplateIDEQ.
-func CouponTemplateID(v uint32) predicate.UserCoupon {
+func CouponTemplateID(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldCouponTemplateID, v))
 }
 
@@ -105,7 +105,7 @@ func RedeemedAt(v time.Time) predicate.UserCoupon {
 }
 
 // RedeemedOrderID applies equality check predicate on the "redeemed_order_id" field. It's identical to RedeemedOrderIDEQ.
-func RedeemedOrderID(v uint32) predicate.UserCoupon {
+func RedeemedOrderID(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldRedeemedOrderID, v))
 }
 
@@ -265,42 +265,42 @@ func DeletedAtNotNil() predicate.UserCoupon {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.UserCoupon {
+func CreatedByEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.UserCoupon {
+func CreatedByNEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.UserCoupon {
+func CreatedByIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.UserCoupon {
+func CreatedByNotIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.UserCoupon {
+func CreatedByGT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.UserCoupon {
+func CreatedByGTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.UserCoupon {
+func CreatedByLT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.UserCoupon {
+func CreatedByLTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -315,42 +315,42 @@ func CreatedByNotNil() predicate.UserCoupon {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.UserCoupon {
+func UpdatedByEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.UserCoupon {
+func UpdatedByNEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.UserCoupon {
+func UpdatedByIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.UserCoupon {
+func UpdatedByNotIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.UserCoupon {
+func UpdatedByGT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.UserCoupon {
+func UpdatedByGTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.UserCoupon {
+func UpdatedByLT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.UserCoupon {
+func UpdatedByLTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -365,42 +365,42 @@ func UpdatedByNotNil() predicate.UserCoupon {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.UserCoupon {
+func DeletedByEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.UserCoupon {
+func DeletedByNEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.UserCoupon {
+func DeletedByIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.UserCoupon {
+func DeletedByNotIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.UserCoupon {
+func DeletedByGT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.UserCoupon {
+func DeletedByGTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.UserCoupon {
+func DeletedByLT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.UserCoupon {
+func DeletedByLTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -415,42 +415,42 @@ func DeletedByNotNil() predicate.UserCoupon {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.UserCoupon {
+func TenantIDEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.UserCoupon {
+func TenantIDNEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.UserCoupon {
+func TenantIDIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.UserCoupon {
+func TenantIDNotIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.UserCoupon {
+func TenantIDGT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.UserCoupon {
+func TenantIDGTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.UserCoupon {
+func TenantIDLT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.UserCoupon {
+func TenantIDLTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -465,42 +465,42 @@ func TenantIDNotNil() predicate.UserCoupon {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint32) predicate.UserCoupon {
+func UserIDEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint32) predicate.UserCoupon {
+func UserIDNEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint32) predicate.UserCoupon {
+func UserIDIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint32) predicate.UserCoupon {
+func UserIDNotIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uint32) predicate.UserCoupon {
+func UserIDGT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGT(FieldUserID, v))
 }
 
 // UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uint32) predicate.UserCoupon {
+func UserIDGTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGTE(FieldUserID, v))
 }
 
 // UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uint32) predicate.UserCoupon {
+func UserIDLT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLT(FieldUserID, v))
 }
 
 // UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uint32) predicate.UserCoupon {
+func UserIDLTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLTE(FieldUserID, v))
 }
 
@@ -515,42 +515,42 @@ func UserIDNotNil() predicate.UserCoupon {
 }
 
 // CouponTemplateIDEQ applies the EQ predicate on the "coupon_template_id" field.
-func CouponTemplateIDEQ(v uint32) predicate.UserCoupon {
+func CouponTemplateIDEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldCouponTemplateID, v))
 }
 
 // CouponTemplateIDNEQ applies the NEQ predicate on the "coupon_template_id" field.
-func CouponTemplateIDNEQ(v uint32) predicate.UserCoupon {
+func CouponTemplateIDNEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNEQ(FieldCouponTemplateID, v))
 }
 
 // CouponTemplateIDIn applies the In predicate on the "coupon_template_id" field.
-func CouponTemplateIDIn(vs ...uint32) predicate.UserCoupon {
+func CouponTemplateIDIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldIn(FieldCouponTemplateID, vs...))
 }
 
 // CouponTemplateIDNotIn applies the NotIn predicate on the "coupon_template_id" field.
-func CouponTemplateIDNotIn(vs ...uint32) predicate.UserCoupon {
+func CouponTemplateIDNotIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNotIn(FieldCouponTemplateID, vs...))
 }
 
 // CouponTemplateIDGT applies the GT predicate on the "coupon_template_id" field.
-func CouponTemplateIDGT(v uint32) predicate.UserCoupon {
+func CouponTemplateIDGT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGT(FieldCouponTemplateID, v))
 }
 
 // CouponTemplateIDGTE applies the GTE predicate on the "coupon_template_id" field.
-func CouponTemplateIDGTE(v uint32) predicate.UserCoupon {
+func CouponTemplateIDGTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGTE(FieldCouponTemplateID, v))
 }
 
 // CouponTemplateIDLT applies the LT predicate on the "coupon_template_id" field.
-func CouponTemplateIDLT(v uint32) predicate.UserCoupon {
+func CouponTemplateIDLT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLT(FieldCouponTemplateID, v))
 }
 
 // CouponTemplateIDLTE applies the LTE predicate on the "coupon_template_id" field.
-func CouponTemplateIDLTE(v uint32) predicate.UserCoupon {
+func CouponTemplateIDLTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLTE(FieldCouponTemplateID, v))
 }
 
@@ -645,42 +645,42 @@ func RedeemedAtNotNil() predicate.UserCoupon {
 }
 
 // RedeemedOrderIDEQ applies the EQ predicate on the "redeemed_order_id" field.
-func RedeemedOrderIDEQ(v uint32) predicate.UserCoupon {
+func RedeemedOrderIDEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldEQ(FieldRedeemedOrderID, v))
 }
 
 // RedeemedOrderIDNEQ applies the NEQ predicate on the "redeemed_order_id" field.
-func RedeemedOrderIDNEQ(v uint32) predicate.UserCoupon {
+func RedeemedOrderIDNEQ(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNEQ(FieldRedeemedOrderID, v))
 }
 
 // RedeemedOrderIDIn applies the In predicate on the "redeemed_order_id" field.
-func RedeemedOrderIDIn(vs ...uint32) predicate.UserCoupon {
+func RedeemedOrderIDIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldIn(FieldRedeemedOrderID, vs...))
 }
 
 // RedeemedOrderIDNotIn applies the NotIn predicate on the "redeemed_order_id" field.
-func RedeemedOrderIDNotIn(vs ...uint32) predicate.UserCoupon {
+func RedeemedOrderIDNotIn(vs ...int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldNotIn(FieldRedeemedOrderID, vs...))
 }
 
 // RedeemedOrderIDGT applies the GT predicate on the "redeemed_order_id" field.
-func RedeemedOrderIDGT(v uint32) predicate.UserCoupon {
+func RedeemedOrderIDGT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGT(FieldRedeemedOrderID, v))
 }
 
 // RedeemedOrderIDGTE applies the GTE predicate on the "redeemed_order_id" field.
-func RedeemedOrderIDGTE(v uint32) predicate.UserCoupon {
+func RedeemedOrderIDGTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldGTE(FieldRedeemedOrderID, v))
 }
 
 // RedeemedOrderIDLT applies the LT predicate on the "redeemed_order_id" field.
-func RedeemedOrderIDLT(v uint32) predicate.UserCoupon {
+func RedeemedOrderIDLT(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLT(FieldRedeemedOrderID, v))
 }
 
 // RedeemedOrderIDLTE applies the LTE predicate on the "redeemed_order_id" field.
-func RedeemedOrderIDLTE(v uint32) predicate.UserCoupon {
+func RedeemedOrderIDLTE(v int64) predicate.UserCoupon {
 	return predicate.UserCoupon(sql.FieldLTE(FieldRedeemedOrderID, v))
 }
 

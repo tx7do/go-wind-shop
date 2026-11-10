@@ -10,30 +10,30 @@ import (
 
 	"go-wind-shop/app/core/service/internal/service"
 
-	auditV1 "go-wind-shop/api/gen/go/audit/service/v1"
+	accessKeyV1 "go-wind-shop/api/gen/go/access_key/service/v1"
 	addressV1 "go-wind-shop/api/gen/go/address/service/v1"
+	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
+	auditV1 "go-wind-shop/api/gen/go/audit/service/v1"
 	authenticationV1 "go-wind-shop/api/gen/go/authentication/service/v1"
 	cartV1 "go-wind-shop/api/gen/go/cart/service/v1"
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 	commentV1 "go-wind-shop/api/gen/go/comment/service/v1"
+	configV1 "go-wind-shop/api/gen/go/config/service/v1"
 	couponV1 "go-wind-shop/api/gen/go/coupon/service/v1"
 	dictV1 "go-wind-shop/api/gen/go/dict/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	interactionV1 "go-wind-shop/api/gen/go/interaction/service/v1"
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	invoiceV1 "go-wind-shop/api/gen/go/invoice/service/v1"
-	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
-	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
-	scriptV1 "go-wind-shop/api/gen/go/script/service/v1"
-	configV1 "go-wind-shop/api/gen/go/config/service/v1"
 	monitorAlertV1 "go-wind-shop/api/gen/go/monitor_alert/service/v1"
+	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
 	onlineSessionV1 "go-wind-shop/api/gen/go/online_session/service/v1"
-	accessKeyV1 "go-wind-shop/api/gen/go/access_key/service/v1"
-	serverMonitorV1 "go-wind-shop/api/gen/go/server_monitor/service/v1"
-	redisCacheV1 "go-wind-shop/api/gen/go/redis_cache/service/v1"
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
+	redisCacheV1 "go-wind-shop/api/gen/go/redis_cache/service/v1"
+	scriptV1 "go-wind-shop/api/gen/go/script/service/v1"
+	serverMonitorV1 "go-wind-shop/api/gen/go/server_monitor/service/v1"
 	storageV1 "go-wind-shop/api/gen/go/storage/service/v1"
 	taskV1 "go-wind-shop/api/gen/go/task/service/v1"
 	wishlistV1 "go-wind-shop/api/gen/go/wishlist/service/v1"
@@ -126,10 +126,10 @@ func NewGrpcServer(
 	skuAttributeCombinationService *service.SkuAttributeCombinationService,
 	stockAlertService *service.StockAlertService,
 
-		cartService *service.CartService,
-		cartItemService *service.CartItemService,
-		wishlistService *service.WishlistService,
-		orderService *service.OrderService,
+	cartService *service.CartService,
+	cartItemService *service.CartItemService,
+	wishlistService *service.WishlistService,
+	orderService *service.OrderService,
 	orderItemService *service.OrderItemService,
 
 	// register:grpc-param ── 新模块服务形参在此行后追加(make register 工具锚点,勿删)
@@ -137,25 +137,25 @@ func NewGrpcServer(
 	pointsLedgerService *service.PointsLedgerService,
 	seckillActivityService *service.SeckillActivityService,
 	grouponService *service.GrouponService,
-		paymentChannelConfigService *service.PaymentChannelConfigService,
-		paymentTransactionService *service.PaymentTransactionService,
-		paymentRefundService *service.PaymentRefundService,
-		shippingAddressService *service.ShippingAddressService,
-		shipmentService *service.ShipmentService,
+	paymentChannelConfigService *service.PaymentChannelConfigService,
+	paymentTransactionService *service.PaymentTransactionService,
+	paymentRefundService *service.PaymentRefundService,
+	shippingAddressService *service.ShippingAddressService,
+	shipmentService *service.ShipmentService,
 
-		couponTemplateService *service.CouponTemplateService,
-		promotionService *service.PromotionService,
-		stockOpLogService *service.StockOpLogService,
-		userCouponService *service.UserCouponService,
+	couponTemplateService *service.CouponTemplateService,
+	promotionService *service.PromotionService,
+	stockOpLogService *service.StockOpLogService,
+	userCouponService *service.UserCouponService,
 
-		shippingRateService *service.ShippingRateService,
-		taxRateService *service.TaxRateService,
-		commentService *service.CommentService,
+	shippingRateService *service.ShippingRateService,
+	taxRateService *service.TaxRateService,
+	commentService *service.CommentService,
 
-		interactionService *service.InteractionService,
-		interactionAdminService *service.InteractionAdminService,
-		invoiceService *service.InvoiceService,
-	) (*grpc.Server, error) {
+	interactionService *service.InteractionService,
+	interactionAdminService *service.InteractionAdminService,
+	invoiceService *service.InvoiceService,
+) (*grpc.Server, error) {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Grpc == nil {
@@ -210,10 +210,10 @@ func NewGrpcServer(
 	catalogV1.RegisterSkuAttributeCombinationServiceServer(srv, skuAttributeCombinationService)
 	catalogV1.RegisterStockAlertServiceServer(srv, stockAlertService)
 
-		cartV1.RegisterCartServiceServer(srv, cartService)
-		cartV1.RegisterCartItemServiceServer(srv, cartItemService)
-		wishlistV1.RegisterWishlistServiceServer(srv, wishlistService)
-		orderV1.RegisterOrderServiceServer(srv, orderService)
+	cartV1.RegisterCartServiceServer(srv, cartService)
+	cartV1.RegisterCartItemServiceServer(srv, cartItemService)
+	wishlistV1.RegisterWishlistServiceServer(srv, wishlistService)
+	orderV1.RegisterOrderServiceServer(srv, orderService)
 	orderV1.RegisterOrderItemServiceServer(srv, orderItemService)
 	paymentV1.RegisterPaymentTransactionServiceServer(srv, paymentTransactionService)
 	paymentV1.RegisterPaymentChannelConfigServiceServer(srv, paymentChannelConfigService)

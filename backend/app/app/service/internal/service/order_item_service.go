@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	appV1 "go-wind-shop/api/gen/go/app/service/v1"
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
@@ -40,4 +40,3 @@ func (s *OrderItemService) Count(ctx context.Context, req *paginationV1.PagingRe
 func (s *OrderItemService) Get(ctx context.Context, req *orderV1.GetOrderItemRequest) (*orderV1.OrderItem, error) {
 	return s.orderItemServiceClient.Get(ctx, req)
 }
-

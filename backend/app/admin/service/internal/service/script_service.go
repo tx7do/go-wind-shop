@@ -14,7 +14,7 @@ import (
 type ScriptService struct {
 	scriptV1.UnimplementedScriptServiceServer
 
-	log               *logx.Helper
+	log                 *logx.Helper
 	scriptServiceClient scriptV1.ScriptServiceClient
 }
 

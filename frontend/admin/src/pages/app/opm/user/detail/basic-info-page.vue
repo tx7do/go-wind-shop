@@ -148,7 +148,7 @@ async function reload() {
   if (props.userId) {
     pageLoading.value = true;
     try {
-      data.value = await fetchUser({ id: props.userId });
+      data.value = await fetchUser({ id: String(props.userId) });
     } finally {
       pageLoading.value = false;
     }

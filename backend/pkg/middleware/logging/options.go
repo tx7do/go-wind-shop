@@ -12,9 +12,9 @@ type WriteLoginLogFunc func(ctx context.Context, data *auditV1.LoginAuditLog) er
 type WriteOperationLogFunc func(ctx context.Context, data *auditV1.OperationAuditLog) error
 
 type options struct {
-	writeApiLogFunc        WriteApiLogFunc        // 写入API审计日志函数
-	writeLoginLogFunc      WriteLoginLogFunc      // 写入登录审计日志函数
-	writeOperationLogFunc  WriteOperationLogFunc  // 写入操作审计日志函数
+	writeApiLogFunc       WriteApiLogFunc       // 写入API审计日志函数
+	writeLoginLogFunc     WriteLoginLogFunc     // 写入登录审计日志函数
+	writeOperationLogFunc WriteOperationLogFunc // 写入操作审计日志函数
 
 	loginOperation  string // 登录操作名称
 	logoutOperation string // 登出操作名称

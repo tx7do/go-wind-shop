@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
 	interactionV1 "go-wind-shop/api/gen/go/interaction/service/v1"
@@ -16,7 +16,7 @@ type InteractionAdminService struct {
 	adminV1.InteractionAdminServiceHTTPServer
 
 	interactionAdminServiceClient interactionV1.InteractionAdminServiceClient
-	log *logx.Helper
+	log                           *logx.Helper
 }
 
 func NewInteractionAdminService(

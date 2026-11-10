@@ -6,13 +6,13 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"github.com/tx7do/go-utils/copierutil"
-	protojson "google.golang.org/protobuf/encoding/protojson"
 	"github.com/tx7do/go-utils/mapper"
 	"github.com/tx7do/go-utils/trans"
+	protojson "google.golang.org/protobuf/encoding/protojson"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -28,7 +28,7 @@ import (
 
 type MenuRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper          *mapper.CopierMapper[permissionV1.Menu, ent.Menu]
 	statusConverter *mapper.EnumTypeConverter[permissionV1.Menu_Status, menu.Status]
@@ -90,7 +90,7 @@ func (r *MenuRepo) Count(ctx context.Context, whereCond []func(s *sql.Selector))
 	return count, nil
 }
 
-func (r *MenuRepo) buildMenuTree(items []*permissionV1.Menu, parentId uint32) []*permissionV1.Menu {
+func (r *MenuRepo) buildMenuTree(items []*permissionV1.Menu, parentId int64) []*permissionV1.Menu {
 	var tree []*permissionV1.Menu
 	for _, item := range items {
 		if item.GetParentId() == parentId {
@@ -133,8 +133,8 @@ func (r *MenuRepo) List(ctx context.Context, req *paginationV1.PagingRequest, tr
 	if treeTravel {
 		dtos = pagination.BuildTree(
 			dtos,
-			func(node *permissionV1.Menu) *uint32 { return node.Id },
-			func(node *permissionV1.Menu) *uint32 { return node.ParentId },
+			func(node *permissionV1.Menu) *int64 { return node.Id },
+			func(node *permissionV1.Menu) *int64 { return node.ParentId },
 			func(node *permissionV1.Menu) *[]*permissionV1.Menu { return &node.Children },
 		)
 	}
@@ -145,12 +145,12 @@ func (r *MenuRepo) List(ctx context.Context, req *paginationV1.PagingRequest, tr
 	}
 
 	return &permissionV1.ListMenuResponse{
-		Total: uint64(count),
+		Total: int64(count),
 		Items: dtos,
 	}, nil
 }
 
-func (r *MenuRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *MenuRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Menu.Query().
 		Where(menu.IDEQ(id)).
 		Exist(ctx)
@@ -291,7 +291,7 @@ func (r *MenuRepo) Delete(ctx context.Context, req *permissionV1.DeleteMenuReque
 		return permissionV1.ErrorBadRequest("invalid parameter")
 	}
 
-	childrenIds, err := entCrud.QueryAllChildrenIds(ctx, r.entClient, "sys_menus", req.GetId())
+	childrenIds, err := entCrud.QueryAllChildrenIds64(ctx, r.entClient, "sys_menus", req.GetId())
 	if err != nil {
 		r.log.Errorf("query child menus failed: %s", err.Error())
 		return permissionV1.ErrorInternalServerError("query child menus failed")
@@ -317,13 +317,14 @@ func (r *MenuRepo) Delete(ctx context.Context, req *permissionV1.DeleteMenuReque
 
 	return nil
 }
+
 // SyncMenus 事务化菜单同步，两种模式：
 //   - REPLACE（缺省，兼容旧客户端）：清空现有菜单后按传入树重建，菜单 ID 全部变化，角色-菜单授权失效；
 //   - MERGE：按全路径匹配，已存在则原位更新（保留 ID 与角色授权），缺失才新增；数据库多出的菜单保留不动。
 //     更新不触碰 status：管理端手工停用的菜单不会被同步重新启用。
 //
 // 整个同步在单个事务内执行，任一步失败整体回滚，不会把菜单表留在半空状态。
-func (r *MenuRepo) SyncMenus(ctx context.Context, items []*permissionV1.Menu, mode permissionV1.SyncMenusRequest_Mode, operatorId uint32) (count int, err error) {
+func (r *MenuRepo) SyncMenus(ctx context.Context, items []*permissionV1.Menu, mode permissionV1.SyncMenusRequest_Mode, operatorId int64) (count int, err error) {
 	tx, err := r.entClient.Client().Tx(ctx)
 	if err != nil {
 		r.log.Errorf("start transaction failed: %s", err.Error())
@@ -360,7 +361,7 @@ func (r *MenuRepo) SyncMenus(ctx context.Context, items []*permissionV1.Menu, mo
 }
 
 // syncInsertTree 递归插入菜单树：先插父节点拿 ID，再递归子节点（REPLACE 模式）
-func (r *MenuRepo) syncInsertTree(ctx context.Context, client *ent.Client, items []*permissionV1.Menu, parentID *uint32, operatorId uint32) (int, error) {
+func (r *MenuRepo) syncInsertTree(ctx context.Context, client *ent.Client, items []*permissionV1.Menu, parentID *int64, operatorId int64) (int, error) {
 	count := 0
 	for _, m := range items {
 		if m == nil {
@@ -400,10 +401,10 @@ func (r *MenuRepo) syncMergeTree(
 	ctx context.Context,
 	client *ent.Client,
 	items []*permissionV1.Menu,
-	parentID *uint32,
+	parentID *int64,
 	parentFullPath string,
 	existing map[string]*ent.Menu,
-	operatorId uint32,
+	operatorId int64,
 ) (int, error) {
 	count := 0
 	for _, m := range items {
@@ -417,7 +418,7 @@ func (r *MenuRepo) syncMergeTree(
 		}
 
 		exist := existing[fullPath]
-		var rowID uint32
+		var rowID int64
 		if exist != nil {
 			builder := client.Menu.Update().
 				Where(menu.IDEQ(exist.ID)).
@@ -494,7 +495,7 @@ func (r *MenuRepo) buildMenuFullPathMap(ctx context.Context, client *ent.Client)
 		return nil, permissionV1.ErrorInternalServerError("query existing menus failed")
 	}
 
-	childrenOf := make(map[uint32][]*ent.Menu, len(rows))
+	childrenOf := make(map[int64][]*ent.Menu, len(rows))
 	var roots []*ent.Menu
 	for _, row := range rows {
 		if row.ParentID == nil || *row.ParentID == 0 {
@@ -505,7 +506,7 @@ func (r *MenuRepo) buildMenuFullPathMap(ctx context.Context, client *ent.Client)
 	}
 
 	existing := make(map[string]*ent.Menu, len(rows))
-	visited := make(map[uint32]bool, len(rows))
+	visited := make(map[int64]bool, len(rows))
 	var walk func(rows []*ent.Menu, parentFullPath string)
 	walk = func(rows []*ent.Menu, parentFullPath string) {
 		for _, row := range rows {
@@ -522,7 +523,6 @@ func (r *MenuRepo) buildMenuFullPathMap(ctx context.Context, client *ent.Client)
 
 	return existing, nil
 }
-
 
 func (r *MenuRepo) createMenuReturn(ctx context.Context, client *ent.Client, data *permissionV1.Menu) (*permissionV1.Menu, error) {
 	entity, err := r.newMenuCreate(client, data).Save(ctx)
@@ -552,7 +552,6 @@ func (r *MenuRepo) newMenuCreate(client *ent.Client, data *permissionV1.Menu) *e
 		builder.SetParentID(*data.ParentId)
 	}
 
-
 	if data.Meta != nil {
 		builder.SetMeta(data.Meta)
 	}
@@ -563,7 +562,6 @@ func (r *MenuRepo) newMenuCreate(client *ent.Client, data *permissionV1.Menu) *e
 
 	return builder
 }
-
 
 // deepCloneMenu protojson 往返深拷贝（proto.Clone 等价，避免引 proto 依赖）。
 func deepCloneMenu(m *permissionV1.Menu) *permissionV1.Menu {

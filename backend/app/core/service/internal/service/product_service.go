@@ -1,13 +1,13 @@
 package service
 
 import (
+	"context"
 	"strconv"
 	"strings"
-	"context"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
@@ -35,7 +35,7 @@ func NewProductService(
 ) *ProductService {
 	return &ProductService{
 		log:                  logx.New(ctx.NewLoggerHelper("product/service/core-service")),
-		repo:                repo,
+		repo:                 repo,
 		productSearchService: productSearchService,
 		taskService:          taskService,
 	}
@@ -103,12 +103,12 @@ func (s *ProductService) SearchProducts(ctx context.Context, req *catalogV1.Sear
 
 	items := make([]*catalogV1.SearchProductHit, 0, len(result.Hits))
 	for _, h := range result.Hits {
-		pid, pErr := strconv.ParseUint(h.ProductID, 10, 32)
+		pid, pErr := strconv.ParseInt(h.ProductID, 10, 64)
 		if pErr != nil {
 			continue
 		}
 		items = append(items, &catalogV1.SearchProductHit{
-			ProductId: uint32(pid),
+			ProductId: int64(pid),
 			Language:  h.Language,
 			Name:      h.Name,
 			ImageUrl:  h.ImageURL,
@@ -222,7 +222,7 @@ func (s *ProductService) DeleteTranslation(ctx context.Context, req *catalogV1.D
 // 商品/翻译的 Create/Update/Delete 在 DB 事务提交后调用，入队 search.reindex 任务。
 // best-effort：入队失败仅日志，不阻塞主流程。失败由 asynq 自动重试或周期
 // ReindexAll 修复。
-func (s *ProductService) enqueueProductReindex(ctx context.Context, productID uint32, op string) {
+func (s *ProductService) enqueueProductReindex(ctx context.Context, productID int64, op string) {
 	if productID == 0 {
 		return
 	}

@@ -30,7 +30,7 @@ func (s *InternalChannelSender) Send(_ context.Context, req *SendRequest) (*Send
 	}
 	if req.RecipientUserID == 0 {
 		// INTERNAL 渠道必须有收件人；Target 只是它的字符串形式
-		if _, err := strconv.ParseUint(req.Target, 10, 32); err != nil {
+		if _, err := strconv.ParseInt(req.Target, 10, 64); err != nil {
 			return nil, ErrChannelNotConfigured
 		}
 	}

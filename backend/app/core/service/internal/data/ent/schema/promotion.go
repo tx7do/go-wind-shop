@@ -47,7 +47,7 @@ func (Promotion) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("product_id").
+		field.Int64("product_id").
 			Comment("生效商品ID（仅 SPECIAL_PRICE；0 表示店铺级活动）").
 			Default(0).
 			Optional().
@@ -100,10 +100,10 @@ func (Promotion) Fields() []ent.Field {
 
 func (Promotion) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 		appmixin.Currency{},
 	}
 }

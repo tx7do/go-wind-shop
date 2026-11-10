@@ -73,7 +73,7 @@ const quietEnabled = ref(false);
 // 起/止各自独立绑定（el-time-picker 单点）：跨零点窗口（start>end）是合法配置
 const quietStart = ref<Date>(minutesToDate(1320));
 const quietEnd = ref<Date>(minutesToDate(480));
-const mutedCategoryIds = ref<number[]>([]);
+const mutedCategoryIds = ref<string[]>([]);
 const saving = ref(false);
 
 const { data: prefData } = useMyNotificationPreference();
@@ -107,7 +107,7 @@ watch(
     quietEnabled.value = !!pref.quietEnabled;
     quietStart.value = minutesToDate(pref.quietStartMinute ?? 1320);
     quietEnd.value = minutesToDate(pref.quietEndMinute ?? 480);
-    mutedCategoryIds.value = [...(pref.mutedCategoryIds ?? [])];
+    mutedCategoryIds.value = (pref.mutedCategoryIds ?? []).map(String);
   },
   { immediate: true }
 );

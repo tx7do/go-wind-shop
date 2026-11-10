@@ -1,8 +1,8 @@
 package data
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
+	"go-wind-shop/pkg/logx"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -134,11 +134,11 @@ func (r *StockOpLogRepo) Get(ctx context.Context, req *catalogV1.GetStockOpLogRe
 func (r *StockOpLogRepo) CreateInTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	skuId, productId uint32,
+	skuId, productId int64,
 	delta, stockBefore, stockAfter int32,
 	reason catalogV1.StockOpLog_Reason,
-	refId uint32,
-	operator uint32,
+	refId int64,
+	operator int64,
 	remark string,
 ) error {
 	builder := tx.StockOpLog.Create().

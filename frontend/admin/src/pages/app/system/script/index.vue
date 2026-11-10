@@ -128,7 +128,7 @@ const pageConfig = computed<ProPageConfig>(() => ({
       return { items: result.items || [], total: Number(result.total || 0) };
     },
     deleteAction: async (ids: string) => {
-      await deleteScript({ ids: ids.split(",").map((id) => Number(id)) });
+      await deleteScript({ ids: ids.split(',') });
     },
     toolbar: [
       {

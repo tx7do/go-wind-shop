@@ -69,12 +69,11 @@ export function useCreateComment(options?: UseMutationOptions<{}, Error, Record<
 }
 
 export function useUpdateComment(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.commentService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.commentService.Update({ id: String(id),
         data: { ...values } as commentservicev1_Comment,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),

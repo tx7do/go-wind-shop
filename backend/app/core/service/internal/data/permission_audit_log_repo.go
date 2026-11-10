@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
@@ -22,7 +22,7 @@ import (
 
 type PermissionAuditLogRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper              *mapper.CopierMapper[auditV1.PermissionAuditLog, ent.PermissionAuditLog]
 	actionTypeConverter *mapper.EnumTypeConverter[auditV1.PermissionAuditLog_ActionType, permissionauditlog.Action]
@@ -104,7 +104,7 @@ func (r *PermissionAuditLogRepo) List(ctx context.Context, req *paginationV1.Pag
 	}, nil
 }
 
-func (r *PermissionAuditLogRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *PermissionAuditLogRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().PermissionAuditLog.Query().
 		Where(permissionauditlog.IDEQ(id)).
 		Exist(ctx)

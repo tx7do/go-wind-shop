@@ -65,13 +65,13 @@ func (_c *ShippingRateCreate) SetNillableDeletedAt(v *time.Time) *ShippingRateCr
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ShippingRateCreate) SetCreatedBy(v uint32) *ShippingRateCreate {
+func (_c *ShippingRateCreate) SetCreatedBy(v int64) *ShippingRateCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ShippingRateCreate) SetNillableCreatedBy(v *uint32) *ShippingRateCreate {
+func (_c *ShippingRateCreate) SetNillableCreatedBy(v *int64) *ShippingRateCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ShippingRateCreate) SetNillableCreatedBy(v *uint32) *ShippingRateCreat
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ShippingRateCreate) SetUpdatedBy(v uint32) *ShippingRateCreate {
+func (_c *ShippingRateCreate) SetUpdatedBy(v int64) *ShippingRateCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ShippingRateCreate) SetNillableUpdatedBy(v *uint32) *ShippingRateCreate {
+func (_c *ShippingRateCreate) SetNillableUpdatedBy(v *int64) *ShippingRateCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ShippingRateCreate) SetNillableUpdatedBy(v *uint32) *ShippingRateCreat
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ShippingRateCreate) SetDeletedBy(v uint32) *ShippingRateCreate {
+func (_c *ShippingRateCreate) SetDeletedBy(v int64) *ShippingRateCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ShippingRateCreate) SetNillableDeletedBy(v *uint32) *ShippingRateCreate {
+func (_c *ShippingRateCreate) SetNillableDeletedBy(v *int64) *ShippingRateCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *ShippingRateCreate) SetNillableDeletedBy(v *uint32) *ShippingRateCreat
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ShippingRateCreate) SetTenantID(v uint32) *ShippingRateCreate {
+func (_c *ShippingRateCreate) SetTenantID(v int64) *ShippingRateCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ShippingRateCreate) SetNillableTenantID(v *uint32) *ShippingRateCreate {
+func (_c *ShippingRateCreate) SetNillableTenantID(v *int64) *ShippingRateCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -191,7 +191,7 @@ func (_c *ShippingRateCreate) SetNillableStatus(v *shippingrate.Status) *Shippin
 }
 
 // SetID sets the "id" field.
-func (_c *ShippingRateCreate) SetID(v uint32) *ShippingRateCreate {
+func (_c *ShippingRateCreate) SetID(v int64) *ShippingRateCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -280,7 +280,7 @@ func (_c *ShippingRateCreate) sqlSave(ctx context.Context) (*ShippingRate, error
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -290,7 +290,7 @@ func (_c *ShippingRateCreate) sqlSave(ctx context.Context) (*ShippingRate, error
 func (_c *ShippingRateCreate) createSpec() (*ShippingRate, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ShippingRate{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(shippingrate.Table, sqlgraph.NewFieldSpec(shippingrate.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(shippingrate.Table, sqlgraph.NewFieldSpec(shippingrate.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -310,19 +310,19 @@ func (_c *ShippingRateCreate) createSpec() (*ShippingRate, *sqlgraph.CreateSpec)
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(shippingrate.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(shippingrate.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(shippingrate.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(shippingrate.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(shippingrate.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(shippingrate.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(shippingrate.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(shippingrate.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Currency(); ok {
@@ -434,7 +434,7 @@ func (u *ShippingRateUpsert) ClearDeletedAt() *ShippingRateUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ShippingRateUpsert) SetCreatedBy(v uint32) *ShippingRateUpsert {
+func (u *ShippingRateUpsert) SetCreatedBy(v int64) *ShippingRateUpsert {
 	u.Set(shippingrate.FieldCreatedBy, v)
 	return u
 }
@@ -446,7 +446,7 @@ func (u *ShippingRateUpsert) UpdateCreatedBy() *ShippingRateUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ShippingRateUpsert) AddCreatedBy(v uint32) *ShippingRateUpsert {
+func (u *ShippingRateUpsert) AddCreatedBy(v int64) *ShippingRateUpsert {
 	u.Add(shippingrate.FieldCreatedBy, v)
 	return u
 }
@@ -458,7 +458,7 @@ func (u *ShippingRateUpsert) ClearCreatedBy() *ShippingRateUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ShippingRateUpsert) SetUpdatedBy(v uint32) *ShippingRateUpsert {
+func (u *ShippingRateUpsert) SetUpdatedBy(v int64) *ShippingRateUpsert {
 	u.Set(shippingrate.FieldUpdatedBy, v)
 	return u
 }
@@ -470,7 +470,7 @@ func (u *ShippingRateUpsert) UpdateUpdatedBy() *ShippingRateUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ShippingRateUpsert) AddUpdatedBy(v uint32) *ShippingRateUpsert {
+func (u *ShippingRateUpsert) AddUpdatedBy(v int64) *ShippingRateUpsert {
 	u.Add(shippingrate.FieldUpdatedBy, v)
 	return u
 }
@@ -482,7 +482,7 @@ func (u *ShippingRateUpsert) ClearUpdatedBy() *ShippingRateUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ShippingRateUpsert) SetDeletedBy(v uint32) *ShippingRateUpsert {
+func (u *ShippingRateUpsert) SetDeletedBy(v int64) *ShippingRateUpsert {
 	u.Set(shippingrate.FieldDeletedBy, v)
 	return u
 }
@@ -494,7 +494,7 @@ func (u *ShippingRateUpsert) UpdateDeletedBy() *ShippingRateUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ShippingRateUpsert) AddDeletedBy(v uint32) *ShippingRateUpsert {
+func (u *ShippingRateUpsert) AddDeletedBy(v int64) *ShippingRateUpsert {
 	u.Add(shippingrate.FieldDeletedBy, v)
 	return u
 }
@@ -704,14 +704,14 @@ func (u *ShippingRateUpsertOne) ClearDeletedAt() *ShippingRateUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ShippingRateUpsertOne) SetCreatedBy(v uint32) *ShippingRateUpsertOne {
+func (u *ShippingRateUpsertOne) SetCreatedBy(v int64) *ShippingRateUpsertOne {
 	return u.Update(func(s *ShippingRateUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ShippingRateUpsertOne) AddCreatedBy(v uint32) *ShippingRateUpsertOne {
+func (u *ShippingRateUpsertOne) AddCreatedBy(v int64) *ShippingRateUpsertOne {
 	return u.Update(func(s *ShippingRateUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -732,14 +732,14 @@ func (u *ShippingRateUpsertOne) ClearCreatedBy() *ShippingRateUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ShippingRateUpsertOne) SetUpdatedBy(v uint32) *ShippingRateUpsertOne {
+func (u *ShippingRateUpsertOne) SetUpdatedBy(v int64) *ShippingRateUpsertOne {
 	return u.Update(func(s *ShippingRateUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ShippingRateUpsertOne) AddUpdatedBy(v uint32) *ShippingRateUpsertOne {
+func (u *ShippingRateUpsertOne) AddUpdatedBy(v int64) *ShippingRateUpsertOne {
 	return u.Update(func(s *ShippingRateUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -760,14 +760,14 @@ func (u *ShippingRateUpsertOne) ClearUpdatedBy() *ShippingRateUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ShippingRateUpsertOne) SetDeletedBy(v uint32) *ShippingRateUpsertOne {
+func (u *ShippingRateUpsertOne) SetDeletedBy(v int64) *ShippingRateUpsertOne {
 	return u.Update(func(s *ShippingRateUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ShippingRateUpsertOne) AddDeletedBy(v uint32) *ShippingRateUpsertOne {
+func (u *ShippingRateUpsertOne) AddDeletedBy(v int64) *ShippingRateUpsertOne {
 	return u.Update(func(s *ShippingRateUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -922,7 +922,7 @@ func (u *ShippingRateUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ShippingRateUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *ShippingRateUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -931,7 +931,7 @@ func (u *ShippingRateUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ShippingRateUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *ShippingRateUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -988,7 +988,7 @@ func (_c *ShippingRateCreateBulk) Save(ctx context.Context) ([]*ShippingRate, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1169,14 +1169,14 @@ func (u *ShippingRateUpsertBulk) ClearDeletedAt() *ShippingRateUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ShippingRateUpsertBulk) SetCreatedBy(v uint32) *ShippingRateUpsertBulk {
+func (u *ShippingRateUpsertBulk) SetCreatedBy(v int64) *ShippingRateUpsertBulk {
 	return u.Update(func(s *ShippingRateUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ShippingRateUpsertBulk) AddCreatedBy(v uint32) *ShippingRateUpsertBulk {
+func (u *ShippingRateUpsertBulk) AddCreatedBy(v int64) *ShippingRateUpsertBulk {
 	return u.Update(func(s *ShippingRateUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1197,14 +1197,14 @@ func (u *ShippingRateUpsertBulk) ClearCreatedBy() *ShippingRateUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ShippingRateUpsertBulk) SetUpdatedBy(v uint32) *ShippingRateUpsertBulk {
+func (u *ShippingRateUpsertBulk) SetUpdatedBy(v int64) *ShippingRateUpsertBulk {
 	return u.Update(func(s *ShippingRateUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ShippingRateUpsertBulk) AddUpdatedBy(v uint32) *ShippingRateUpsertBulk {
+func (u *ShippingRateUpsertBulk) AddUpdatedBy(v int64) *ShippingRateUpsertBulk {
 	return u.Update(func(s *ShippingRateUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1225,14 +1225,14 @@ func (u *ShippingRateUpsertBulk) ClearUpdatedBy() *ShippingRateUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ShippingRateUpsertBulk) SetDeletedBy(v uint32) *ShippingRateUpsertBulk {
+func (u *ShippingRateUpsertBulk) SetDeletedBy(v int64) *ShippingRateUpsertBulk {
 	return u.Update(func(s *ShippingRateUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ShippingRateUpsertBulk) AddDeletedBy(v uint32) *ShippingRateUpsertBulk {
+func (u *ShippingRateUpsertBulk) AddDeletedBy(v int64) *ShippingRateUpsertBulk {
 	return u.Update(func(s *ShippingRateUpsert) {
 		s.AddDeletedBy(v)
 	})

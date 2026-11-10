@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
@@ -16,7 +16,7 @@ import (
 type NotificationTemplateService struct {
 	adminV1.NotificationTemplateServiceHTTPServer
 
-	log *logx.Helper
+	log         *logx.Helper
 	templateCli notifyV1.NotificationTemplateServiceClient
 }
 

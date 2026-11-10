@@ -1,17 +1,17 @@
 package service
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
+	"go-wind-shop/pkg/logx"
 	"strconv"
 	"time"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-crud/viewer"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
 	"go-wind-shop/app/core/service/internal/data/ent"
@@ -51,7 +51,7 @@ func (s *PromotionService) Count(ctx context.Context, req *paginationV1.PagingRe
 	}
 
 	return &catalogV1.CountPromotionResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 
@@ -137,7 +137,7 @@ func (s *PromotionService) ListActivePromotions(ctx context.Context, req *catalo
 	}
 	// 可选商品过滤（服务端兜底；C端一般自行过滤）。
 	if req != nil && len(req.GetProductIds()) > 0 {
-		want := make(map[uint32]bool, len(req.GetProductIds()))
+		want := make(map[int64]bool, len(req.GetProductIds()))
 		for _, pid := range req.GetProductIds() {
 			want[pid] = true
 		}
@@ -148,7 +148,7 @@ func (s *PromotionService) ListActivePromotions(ctx context.Context, req *catalo
 			}
 		}
 		resp.Items = filtered
-		resp.Total = uint64(len(filtered))
+		resp.Total = int64(len(filtered))
 	}
 	return resp, nil
 }
@@ -162,9 +162,9 @@ func (s *PromotionService) QuoteOrderPromotions(ctx context.Context, req *catalo
 		return nil, catalogV1.ErrorBadRequest("items is required")
 	}
 
-	tenantId := uint32(0)
+	tenantId := int64(0)
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		tenantId = uint32(vc.TenantID())
+		tenantId = int64(vc.TenantID())
 	}
 	currency := req.GetCurrency()
 	if currency == "" {
@@ -204,7 +204,7 @@ func (s *PromotionService) QuoteOrderPromotions(ctx context.Context, req *catalo
 		}
 
 		// 专价覆盖（与下单事务同语义：取 priority 最高者）。
-		var productId uint32
+		var productId int64
 		if skuEnt.ProductID != nil {
 			productId = *skuEnt.ProductID
 		}
@@ -227,7 +227,7 @@ func (s *PromotionService) QuoteOrderPromotions(ctx context.Context, req *catalo
 
 // activeSpecialPrice 查询商品当前生效的专价（priority 最高者）。
 // 与 order_service.Create 的下单事务同语义，抽到这里供试算复用。
-func (s *PromotionService) activeSpecialPrice(ctx context.Context, client *ent.Client, tenantId, productId uint32, currency string, now time.Time) (int64, bool) {
+func (s *PromotionService) activeSpecialPrice(ctx context.Context, client *ent.Client, tenantId, productId int64, currency string, now time.Time) (int64, bool) {
 	q := client.Promotion.Query().
 		Where(
 			promotion.StatusEQ(promotion.StatusPromotionStatusActive),
@@ -275,7 +275,7 @@ func promoPriority(p *ent.Promotion) int32 {
 
 // computeFullReduction 计算满减让利：窗口内命中的店铺级 FULL_REDUCTION 中取让利最大者（不叠加）。
 // 返回让利额与命中的活动（供前端展示）。
-func (s *PromotionService) computeFullReduction(ctx context.Context, client *ent.Client, tenantId uint32, currency string, originalAmount int64, now time.Time) (int64, []*catalogV1.Promotion) {
+func (s *PromotionService) computeFullReduction(ctx context.Context, client *ent.Client, tenantId int64, currency string, originalAmount int64, now time.Time) (int64, []*catalogV1.Promotion) {
 	if originalAmount <= 0 {
 		return 0, nil
 	}

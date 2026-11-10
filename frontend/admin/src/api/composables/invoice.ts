@@ -69,12 +69,11 @@ export function useCreateInvoice(options?: UseMutationOptions<{}, Error, Record<
 }
 
 export function useUpdateInvoice(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.invoiceService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.invoiceService.Update({ id: String(id),
         data: { ...values } as invoiceservicev1_Invoice,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),

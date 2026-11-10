@@ -4,11 +4,11 @@ import (
 	"context"
 
 	"github.com/go-kratos/kratos/v2/log"
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/aggregator"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
@@ -40,7 +40,7 @@ func NewOrgUnitService(
 // extractRelationIDs 提取关联数据ID
 func (s *OrgUnitService) extractRelationIDs(
 	orgUnits []*identityV1.OrgUnit,
-	userSet aggregator.ResourceMap[uint32, *identityV1.User],
+	userSet aggregator.ResourceMap[int64, *identityV1.User],
 ) {
 	for _, ou := range orgUnits {
 		if ou == nil {
@@ -62,13 +62,13 @@ func (s *OrgUnitService) extractRelationIDs(
 // fetchRelationInfo 获取关联数据
 func (s *OrgUnitService) fetchRelationInfo(
 	ctx context.Context,
-	userSet aggregator.ResourceMap[uint32, *identityV1.User],
+	userSet aggregator.ResourceMap[int64, *identityV1.User],
 ) error {
 	if len(userSet) == 0 {
 		return nil
 	}
 
-	userIds := make([]uint32, 0, len(userSet))
+	userIds := make([]int64, 0, len(userSet))
 	for id := range userSet {
 		userIds = append(userIds, id)
 	}
@@ -88,7 +88,7 @@ func (s *OrgUnitService) fetchRelationInfo(
 // bindRelations 绑定关联数据
 func (s *OrgUnitService) bindRelations(
 	orgUnits []*identityV1.OrgUnit,
-	userSet aggregator.ResourceMap[uint32, *identityV1.User],
+	userSet aggregator.ResourceMap[int64, *identityV1.User],
 ) {
 	childrenFunc := func(ou *identityV1.OrgUnit) []*identityV1.OrgUnit { return ou.GetChildren() }
 
@@ -96,7 +96,7 @@ func (s *OrgUnitService) bindRelations(
 	aggregator.PopulateTree(
 		orgUnits,
 		userSet,
-		func(ou *identityV1.OrgUnit) uint32 { return ou.GetLeaderId() },
+		func(ou *identityV1.OrgUnit) int64 { return ou.GetLeaderId() },
 		func(ou *identityV1.OrgUnit, user *identityV1.User) {
 			ou.LeaderName = trans.Ptr(user.GetUsername())
 		},
@@ -107,7 +107,7 @@ func (s *OrgUnitService) bindRelations(
 	aggregator.PopulateTree(
 		orgUnits,
 		userSet,
-		func(ou *identityV1.OrgUnit) uint32 { return ou.GetContactUserId() },
+		func(ou *identityV1.OrgUnit) int64 { return ou.GetContactUserId() },
 		func(ou *identityV1.OrgUnit, user *identityV1.User) {
 			ou.ContactUserName = trans.Ptr(user.GetUsername())
 		},
@@ -117,7 +117,7 @@ func (s *OrgUnitService) bindRelations(
 
 // enrichRelations 填充关联数据
 func (s *OrgUnitService) enrichRelations(ctx context.Context, orgUnits []*identityV1.OrgUnit) error {
-	var userSet = make(aggregator.ResourceMap[uint32, *identityV1.User])
+	var userSet = make(aggregator.ResourceMap[int64, *identityV1.User])
 	s.extractRelationIDs(orgUnits, userSet)
 	if err := s.fetchRelationInfo(ctx, userSet); err != nil {
 		return err
@@ -144,7 +144,7 @@ func (s *OrgUnitService) Count(ctx context.Context, req *paginationV1.PagingRequ
 	}
 
 	return &identityV1.CountOrgUnitResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 

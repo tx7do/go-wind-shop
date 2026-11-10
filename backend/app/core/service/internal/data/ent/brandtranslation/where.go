@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.BrandTranslation {
+func ID(id int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.BrandTranslation {
+func IDEQ(id int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.BrandTranslation {
+func IDNEQ(id int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.BrandTranslation {
+func IDIn(ids ...int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.BrandTranslation {
+func IDNotIn(ids ...int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.BrandTranslation {
+func IDGT(id int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.BrandTranslation {
+func IDGTE(id int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.BrandTranslation {
+func IDLT(id int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.BrandTranslation {
+func IDLTE(id int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.BrandTranslation {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.BrandTranslation {
+func CreatedBy(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.BrandTranslation {
+func UpdatedBy(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.BrandTranslation {
+func DeletedBy(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // BrandID applies equality check predicate on the "brand_id" field. It's identical to BrandIDEQ.
-func BrandID(v uint32) predicate.BrandTranslation {
+func BrandID(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldEQ(FieldBrandID, v))
 }
 
@@ -260,42 +260,42 @@ func DeletedAtNotNil() predicate.BrandTranslation {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.BrandTranslation {
+func CreatedByEQ(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.BrandTranslation {
+func CreatedByNEQ(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.BrandTranslation {
+func CreatedByIn(vs ...int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.BrandTranslation {
+func CreatedByNotIn(vs ...int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.BrandTranslation {
+func CreatedByGT(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.BrandTranslation {
+func CreatedByGTE(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.BrandTranslation {
+func CreatedByLT(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.BrandTranslation {
+func CreatedByLTE(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -310,42 +310,42 @@ func CreatedByNotNil() predicate.BrandTranslation {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.BrandTranslation {
+func UpdatedByEQ(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.BrandTranslation {
+func UpdatedByNEQ(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.BrandTranslation {
+func UpdatedByIn(vs ...int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.BrandTranslation {
+func UpdatedByNotIn(vs ...int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.BrandTranslation {
+func UpdatedByGT(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.BrandTranslation {
+func UpdatedByGTE(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.BrandTranslation {
+func UpdatedByLT(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.BrandTranslation {
+func UpdatedByLTE(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -360,42 +360,42 @@ func UpdatedByNotNil() predicate.BrandTranslation {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.BrandTranslation {
+func DeletedByEQ(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.BrandTranslation {
+func DeletedByNEQ(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.BrandTranslation {
+func DeletedByIn(vs ...int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.BrandTranslation {
+func DeletedByNotIn(vs ...int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.BrandTranslation {
+func DeletedByGT(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.BrandTranslation {
+func DeletedByGTE(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.BrandTranslation {
+func DeletedByLT(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.BrandTranslation {
+func DeletedByLTE(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -410,42 +410,42 @@ func DeletedByNotNil() predicate.BrandTranslation {
 }
 
 // BrandIDEQ applies the EQ predicate on the "brand_id" field.
-func BrandIDEQ(v uint32) predicate.BrandTranslation {
+func BrandIDEQ(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldEQ(FieldBrandID, v))
 }
 
 // BrandIDNEQ applies the NEQ predicate on the "brand_id" field.
-func BrandIDNEQ(v uint32) predicate.BrandTranslation {
+func BrandIDNEQ(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldNEQ(FieldBrandID, v))
 }
 
 // BrandIDIn applies the In predicate on the "brand_id" field.
-func BrandIDIn(vs ...uint32) predicate.BrandTranslation {
+func BrandIDIn(vs ...int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldIn(FieldBrandID, vs...))
 }
 
 // BrandIDNotIn applies the NotIn predicate on the "brand_id" field.
-func BrandIDNotIn(vs ...uint32) predicate.BrandTranslation {
+func BrandIDNotIn(vs ...int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldNotIn(FieldBrandID, vs...))
 }
 
 // BrandIDGT applies the GT predicate on the "brand_id" field.
-func BrandIDGT(v uint32) predicate.BrandTranslation {
+func BrandIDGT(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldGT(FieldBrandID, v))
 }
 
 // BrandIDGTE applies the GTE predicate on the "brand_id" field.
-func BrandIDGTE(v uint32) predicate.BrandTranslation {
+func BrandIDGTE(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldGTE(FieldBrandID, v))
 }
 
 // BrandIDLT applies the LT predicate on the "brand_id" field.
-func BrandIDLT(v uint32) predicate.BrandTranslation {
+func BrandIDLT(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldLT(FieldBrandID, v))
 }
 
 // BrandIDLTE applies the LTE predicate on the "brand_id" field.
-func BrandIDLTE(v uint32) predicate.BrandTranslation {
+func BrandIDLTE(v int64) predicate.BrandTranslation {
 	return predicate.BrandTranslation(sql.FieldLTE(FieldBrandID, v))
 }
 

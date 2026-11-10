@@ -37,7 +37,7 @@ func (Order) Annotations() []schema.Annotation {
 
 func (Order) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("user_id").
+		field.Int64("user_id").
 			Comment("下单用户ID").
 			Optional().
 			Nillable(),
@@ -89,12 +89,12 @@ func (Order) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("groupon_activity_id").
+		field.Int64("groupon_activity_id").
 			Comment("拼团活动ID").
 			Optional().
 			Nillable(),
 
-		field.Uint32("groupon_group_id").
+		field.Int64("groupon_group_id").
 			Comment("拼团ID（成员载体）").
 			Optional().
 			Nillable(),
@@ -118,10 +118,10 @@ func (Order) Fields() []ent.Field {
 
 func (Order) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 		appmixin.Currency{},
 		appmixin.BusinessRefId{},
 		appmixin.IdempotencyKey{},

@@ -1,9 +1,10 @@
 package service
 
-import (	"go-wind-shop/pkg/logx"
+import (
 	"context"
 	"encoding/json"
 	"errors"
+	"go-wind-shop/pkg/logx"
 
 	"github.com/hibiken/asynq"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -383,7 +384,7 @@ func (s *TaskService) EnqueueSearchReindex(payload *task.SearchReindexPayload) e
 }
 
 // EnqueueAiDocReindex 入队知识库切片重索引任务（AI 域）。
-func (s *TaskService) EnqueueAiDocReindex(baseID uint32) error {
+func (s *TaskService) EnqueueAiDocReindex(baseID int64) error {
 	if s.taskScheduler == nil {
 		return nil
 	}

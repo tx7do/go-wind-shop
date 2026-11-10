@@ -6,18 +6,18 @@ import (
 	"strings"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/aggregator"
 	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
 
-	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
+	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	notificationV1 "go-wind-shop/api/gen/go/notification/service/v1"
 )
 
@@ -61,7 +61,7 @@ func NewInternalMessageService(
 
 func (s *InternalMessageService) extractRelationIDs(
 	messages []*internalMessageV1.InternalMessage,
-	categorySet aggregator.ResourceMap[uint32, *internalMessageV1.InternalMessageCategory],
+	categorySet aggregator.ResourceMap[int64, *internalMessageV1.InternalMessageCategory],
 ) {
 	for _, p := range messages {
 		if p.GetCategoryId() > 0 {
@@ -72,10 +72,10 @@ func (s *InternalMessageService) extractRelationIDs(
 
 func (s *InternalMessageService) fetchRelationInfo(
 	ctx context.Context,
-	categorySet aggregator.ResourceMap[uint32, *internalMessageV1.InternalMessageCategory],
+	categorySet aggregator.ResourceMap[int64, *internalMessageV1.InternalMessageCategory],
 ) error {
 	if len(categorySet) > 0 {
-		categoryIds := make([]uint32, 0, len(categorySet))
+		categoryIds := make([]int64, 0, len(categorySet))
 		for id := range categorySet {
 			categoryIds = append(categoryIds, id)
 		}
@@ -96,12 +96,12 @@ func (s *InternalMessageService) fetchRelationInfo(
 
 func (s *InternalMessageService) bindRelations(
 	messages []*internalMessageV1.InternalMessage,
-	categorySet aggregator.ResourceMap[uint32, *internalMessageV1.InternalMessageCategory],
+	categorySet aggregator.ResourceMap[int64, *internalMessageV1.InternalMessageCategory],
 ) {
 	aggregator.Populate(
 		messages,
 		categorySet,
-		func(ou *internalMessageV1.InternalMessage) uint32 { return ou.GetCategoryId() },
+		func(ou *internalMessageV1.InternalMessage) int64 { return ou.GetCategoryId() },
 		func(ou *internalMessageV1.InternalMessage, c *internalMessageV1.InternalMessageCategory) {
 			ou.CategoryName = c.Name
 		},
@@ -109,7 +109,7 @@ func (s *InternalMessageService) bindRelations(
 }
 
 func (s *InternalMessageService) enrichRelations(ctx context.Context, messages []*internalMessageV1.InternalMessage) error {
-	var categorySet = make(aggregator.ResourceMap[uint32, *internalMessageV1.InternalMessageCategory])
+	var categorySet = make(aggregator.ResourceMap[int64, *internalMessageV1.InternalMessageCategory])
 	s.extractRelationIDs(messages, categorySet)
 	if err := s.fetchRelationInfo(ctx, categorySet); err != nil {
 		return err
@@ -236,7 +236,7 @@ func (s *InternalMessageService) SendMessage(ctx context.Context, req *internalM
 }
 
 // sendNotification 向客户端发送通知消息
-func (s *InternalMessageService) sendNotification(ctx context.Context, messageId uint32, recipientUserId uint32, senderUserId uint32, now *time.Time, title, content string) error {
+func (s *InternalMessageService) sendNotification(ctx context.Context, messageId int64, recipientUserId int64, senderUserId int64, now *time.Time, title, content string) error {
 	recipient := &internalMessageV1.InternalMessageRecipient{
 		MessageId:       trans.Ptr(messageId),
 		RecipientUserId: trans.Ptr(recipientUserId),
@@ -285,16 +285,16 @@ func (s *InternalMessageService) deliverViaNotifier(ctx context.Context, req *no
 // INTERNAL_MESSAGE 事件的 EMAIL 路由需要邮箱地址，而本链路持有的是收件人
 // uid——这里解析 sys_users.email；未配置邮箱回落 uid 字符串（既有行为，
 // EMAIL 渠道投递以 FAILED 呈现而非误发）。INTERNAL 渠道不消费 Target。
-func (s *InternalMessageService) notificationTargetFor(ctx context.Context, uid uint32) string {
+func (s *InternalMessageService) notificationTargetFor(ctx context.Context, uid int64) string {
 	u, uErr := s.userRepo.Get(ctx, &identityV1.GetUserRequest{
 		QueryBy: &identityV1.GetUserRequest_Id{Id: uid},
 	})
 	if uErr != nil || u == nil {
 		s.log.Warnf("notification target: read user [%d] failed: %v", uid, uErr)
-		return strconv.FormatUint(uint64(uid), 10)
+		return strconv.FormatInt(int64(uid), 10)
 	}
 	if strings.TrimSpace(u.GetEmail()) != "" {
 		return u.GetEmail()
 	}
-	return strconv.FormatUint(uint64(uid), 10)
+	return strconv.FormatInt(int64(uid), 10)
 }

@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/kratos-transport/transport/sse"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 
@@ -207,7 +207,7 @@ func (s *AiChatService) RewriteSearchQuery(ctx context.Context, req *appV1.Rewri
 		System: trans.Ptr("你是电商搜索查询优化器。把用户的搜索请求改写成 2-4 个中文检索关键词" +
 			"（提取品类、核心属性、价格意图；丢弃语气词）。只输出 JSON 数组，" +
 			"格式：{\"keywords\": [\"关键词1\", \"关键词2\"]}，不要任何解释或代码块标记。"),
-		Prompt:    trans.Ptr(query),
+		Prompt: trans.Ptr(query),
 		// MaxTokens 需覆盖思考型模型的思考段 + 正文（同评论摘要的经验值）
 		MaxTokens: trans.Ptr(uint32(800)),
 	})

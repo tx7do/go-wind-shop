@@ -4,14 +4,14 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/errors"
-	"go-wind-shop/pkg/logx"
 	"entgo.io/ent/dialect/sql"
+	"github.com/go-kratos/kratos/v2/errors"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	appViewer "go-wind-shop/pkg/entgo/viewer"
 
@@ -28,7 +28,7 @@ import (
 // 令牌交换（免鉴权流程）的查询经 SystemViewer 旁路租户 scope（见 *BySystem 方法）。
 type AccessKeyRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 	mapper    *mapper.CopierMapper[accesskeyV1.AccessKey, ent.AccessKey]
 	// 状态枚举转换（ent SwitchStatus ON/OFF <-> proto AccessKey_Status）
 	statusConverter *mapper.EnumTypeConverter[accesskeyV1.AccessKey_Status, accesskey.Status]
@@ -109,7 +109,7 @@ func (r *AccessKeyRepo) Get(ctx context.Context, req *accesskeyV1.GetAccessKeyRe
 // Create 创建凭证。AK 与 secret 摘要由 service 层生成后传入
 // （proto DTO 不携带 secret 摘要，不能走通用 DTO 映射落库）。
 // 返回落库后的实体供回显（id/AK/时间戳）。
-func (r *AccessKeyRepo) Create(ctx context.Context, data *accesskeyV1.AccessKey, accessKey, secretHash string, operatorID uint32) (*ent.AccessKey, error) {
+func (r *AccessKeyRepo) Create(ctx context.Context, data *accesskeyV1.AccessKey, accessKey, secretHash string, operatorID int64) (*ent.AccessKey, error) {
 	builder := r.entClient.Client().AccessKey.Create().
 		SetNillableName(data.Name).
 		SetAccessKey(accessKey).
@@ -143,7 +143,7 @@ func (r *AccessKeyRepo) Create(ctx context.Context, data *accesskeyV1.AccessKey,
 // secret 摘要与租户归属按设计不可变（上游 e852daba 的教训：黑名单放行
 // 会把 DTO 上不存在的 secret_hash 一起写，掩码管线直接炸）。
 // mask 为空时更新全部可编辑字段（上游 nil 掩码同语义）。
-func (r *AccessKeyRepo) Update(ctx context.Context, req *accesskeyV1.UpdateAccessKeyRequest, operatorID uint32) error {
+func (r *AccessKeyRepo) Update(ctx context.Context, req *accesskeyV1.UpdateAccessKeyRequest, operatorID int64) error {
 	if req == nil || req.Data == nil {
 		return errors.BadRequest("ACCESS_KEY", "invalid parameter")
 	}
@@ -223,7 +223,7 @@ func (r *AccessKeyRepo) Delete(ctx context.Context, req *accesskeyV1.DeleteAcces
 }
 
 // UpdateSecretHash 重置密钥摘要（轮换）。旧的已签发机器令牌在自身过期前仍有效。
-func (r *AccessKeyRepo) UpdateSecretHash(ctx context.Context, id uint32, secretHash string) error {
+func (r *AccessKeyRepo) UpdateSecretHash(ctx context.Context, id int64, secretHash string) error {
 	err := r.entClient.Client().AccessKey.UpdateOneID(id).
 		SetSecretHash(secretHash).
 		SetUpdatedAt(time.Now()).
@@ -249,7 +249,7 @@ func (r *AccessKeyRepo) GetByAccessKeyBySystem(ctx context.Context, accessKey st
 }
 
 // TouchLastUsedBySystem 刷新最近使用时间（系统旁路；尽力而为，失败不影响交换）。
-func (r *AccessKeyRepo) TouchLastUsedBySystem(ctx context.Context, id uint32) {
+func (r *AccessKeyRepo) TouchLastUsedBySystem(ctx context.Context, id int64) {
 	svCtx := appViewer.NewSystemViewerContext(ctx)
 	err := r.entClient.Client().AccessKey.UpdateOneID(id).
 		SetLastUsedAt(time.Now()).

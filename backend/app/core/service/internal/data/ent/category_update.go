@@ -70,14 +70,14 @@ func (_u *CategoryUpdate) ClearDeletedAt() *CategoryUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CategoryUpdate) SetCreatedBy(v uint32) *CategoryUpdate {
+func (_u *CategoryUpdate) SetCreatedBy(v int64) *CategoryUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CategoryUpdate) SetNillableCreatedBy(v *uint32) *CategoryUpdate {
+func (_u *CategoryUpdate) SetNillableCreatedBy(v *int64) *CategoryUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *CategoryUpdate) SetNillableCreatedBy(v *uint32) *CategoryUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *CategoryUpdate) AddCreatedBy(v int32) *CategoryUpdate {
+func (_u *CategoryUpdate) AddCreatedBy(v int64) *CategoryUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *CategoryUpdate) ClearCreatedBy() *CategoryUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CategoryUpdate) SetUpdatedBy(v uint32) *CategoryUpdate {
+func (_u *CategoryUpdate) SetUpdatedBy(v int64) *CategoryUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CategoryUpdate) SetNillableUpdatedBy(v *uint32) *CategoryUpdate {
+func (_u *CategoryUpdate) SetNillableUpdatedBy(v *int64) *CategoryUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *CategoryUpdate) SetNillableUpdatedBy(v *uint32) *CategoryUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *CategoryUpdate) AddUpdatedBy(v int32) *CategoryUpdate {
+func (_u *CategoryUpdate) AddUpdatedBy(v int64) *CategoryUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *CategoryUpdate) ClearUpdatedBy() *CategoryUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CategoryUpdate) SetDeletedBy(v uint32) *CategoryUpdate {
+func (_u *CategoryUpdate) SetDeletedBy(v int64) *CategoryUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CategoryUpdate) SetNillableDeletedBy(v *uint32) *CategoryUpdate {
+func (_u *CategoryUpdate) SetNillableDeletedBy(v *int64) *CategoryUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *CategoryUpdate) SetNillableDeletedBy(v *uint32) *CategoryUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *CategoryUpdate) AddDeletedBy(v int32) *CategoryUpdate {
+func (_u *CategoryUpdate) AddDeletedBy(v int64) *CategoryUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -198,13 +198,13 @@ func (_u *CategoryUpdate) ClearPath() *CategoryUpdate {
 }
 
 // SetParentID sets the "parent_id" field.
-func (_u *CategoryUpdate) SetParentID(v uint32) *CategoryUpdate {
+func (_u *CategoryUpdate) SetParentID(v int64) *CategoryUpdate {
 	_u.mutation.SetParentID(v)
 	return _u
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_u *CategoryUpdate) SetNillableParentID(v *uint32) *CategoryUpdate {
+func (_u *CategoryUpdate) SetNillableParentID(v *int64) *CategoryUpdate {
 	if v != nil {
 		_u.SetParentID(*v)
 	}
@@ -270,14 +270,14 @@ func (_u *CategoryUpdate) SetParent(v *Category) *CategoryUpdate {
 }
 
 // AddChildIDs adds the "children" edge to the Category entity by IDs.
-func (_u *CategoryUpdate) AddChildIDs(ids ...uint32) *CategoryUpdate {
+func (_u *CategoryUpdate) AddChildIDs(ids ...int64) *CategoryUpdate {
 	_u.mutation.AddChildIDs(ids...)
 	return _u
 }
 
 // AddChildren adds the "children" edges to the Category entity.
 func (_u *CategoryUpdate) AddChildren(v ...*Category) *CategoryUpdate {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -302,14 +302,14 @@ func (_u *CategoryUpdate) ClearChildren() *CategoryUpdate {
 }
 
 // RemoveChildIDs removes the "children" edge to Category entities by IDs.
-func (_u *CategoryUpdate) RemoveChildIDs(ids ...uint32) *CategoryUpdate {
+func (_u *CategoryUpdate) RemoveChildIDs(ids ...int64) *CategoryUpdate {
 	_u.mutation.RemoveChildIDs(ids...)
 	return _u
 }
 
 // RemoveChildren removes "children" edges to Category entities.
 func (_u *CategoryUpdate) RemoveChildren(v ...*Category) *CategoryUpdate {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -363,7 +363,7 @@ func (_u *CategoryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(category.Table, category.Columns, sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(category.Table, category.Columns, sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -387,31 +387,31 @@ func (_u *CategoryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(category.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(category.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(category.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(category.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(category.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(category.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(category.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(category.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(category.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(category.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(category.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(category.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(category.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(category.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(category.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(category.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(category.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(category.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(category.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(category.FieldSortOrder, field.TypeUint32, value)
@@ -451,7 +451,7 @@ func (_u *CategoryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{category.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -464,7 +464,7 @@ func (_u *CategoryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{category.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -480,7 +480,7 @@ func (_u *CategoryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{category.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -493,7 +493,7 @@ func (_u *CategoryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{category.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -509,7 +509,7 @@ func (_u *CategoryUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{category.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -580,14 +580,14 @@ func (_u *CategoryUpdateOne) ClearDeletedAt() *CategoryUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CategoryUpdateOne) SetCreatedBy(v uint32) *CategoryUpdateOne {
+func (_u *CategoryUpdateOne) SetCreatedBy(v int64) *CategoryUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CategoryUpdateOne) SetNillableCreatedBy(v *uint32) *CategoryUpdateOne {
+func (_u *CategoryUpdateOne) SetNillableCreatedBy(v *int64) *CategoryUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -595,7 +595,7 @@ func (_u *CategoryUpdateOne) SetNillableCreatedBy(v *uint32) *CategoryUpdateOne 
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *CategoryUpdateOne) AddCreatedBy(v int32) *CategoryUpdateOne {
+func (_u *CategoryUpdateOne) AddCreatedBy(v int64) *CategoryUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -607,14 +607,14 @@ func (_u *CategoryUpdateOne) ClearCreatedBy() *CategoryUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CategoryUpdateOne) SetUpdatedBy(v uint32) *CategoryUpdateOne {
+func (_u *CategoryUpdateOne) SetUpdatedBy(v int64) *CategoryUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CategoryUpdateOne) SetNillableUpdatedBy(v *uint32) *CategoryUpdateOne {
+func (_u *CategoryUpdateOne) SetNillableUpdatedBy(v *int64) *CategoryUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -622,7 +622,7 @@ func (_u *CategoryUpdateOne) SetNillableUpdatedBy(v *uint32) *CategoryUpdateOne 
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *CategoryUpdateOne) AddUpdatedBy(v int32) *CategoryUpdateOne {
+func (_u *CategoryUpdateOne) AddUpdatedBy(v int64) *CategoryUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -634,14 +634,14 @@ func (_u *CategoryUpdateOne) ClearUpdatedBy() *CategoryUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CategoryUpdateOne) SetDeletedBy(v uint32) *CategoryUpdateOne {
+func (_u *CategoryUpdateOne) SetDeletedBy(v int64) *CategoryUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CategoryUpdateOne) SetNillableDeletedBy(v *uint32) *CategoryUpdateOne {
+func (_u *CategoryUpdateOne) SetNillableDeletedBy(v *int64) *CategoryUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -649,7 +649,7 @@ func (_u *CategoryUpdateOne) SetNillableDeletedBy(v *uint32) *CategoryUpdateOne 
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *CategoryUpdateOne) AddDeletedBy(v int32) *CategoryUpdateOne {
+func (_u *CategoryUpdateOne) AddDeletedBy(v int64) *CategoryUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -708,13 +708,13 @@ func (_u *CategoryUpdateOne) ClearPath() *CategoryUpdateOne {
 }
 
 // SetParentID sets the "parent_id" field.
-func (_u *CategoryUpdateOne) SetParentID(v uint32) *CategoryUpdateOne {
+func (_u *CategoryUpdateOne) SetParentID(v int64) *CategoryUpdateOne {
 	_u.mutation.SetParentID(v)
 	return _u
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_u *CategoryUpdateOne) SetNillableParentID(v *uint32) *CategoryUpdateOne {
+func (_u *CategoryUpdateOne) SetNillableParentID(v *int64) *CategoryUpdateOne {
 	if v != nil {
 		_u.SetParentID(*v)
 	}
@@ -780,14 +780,14 @@ func (_u *CategoryUpdateOne) SetParent(v *Category) *CategoryUpdateOne {
 }
 
 // AddChildIDs adds the "children" edge to the Category entity by IDs.
-func (_u *CategoryUpdateOne) AddChildIDs(ids ...uint32) *CategoryUpdateOne {
+func (_u *CategoryUpdateOne) AddChildIDs(ids ...int64) *CategoryUpdateOne {
 	_u.mutation.AddChildIDs(ids...)
 	return _u
 }
 
 // AddChildren adds the "children" edges to the Category entity.
 func (_u *CategoryUpdateOne) AddChildren(v ...*Category) *CategoryUpdateOne {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -812,14 +812,14 @@ func (_u *CategoryUpdateOne) ClearChildren() *CategoryUpdateOne {
 }
 
 // RemoveChildIDs removes the "children" edge to Category entities by IDs.
-func (_u *CategoryUpdateOne) RemoveChildIDs(ids ...uint32) *CategoryUpdateOne {
+func (_u *CategoryUpdateOne) RemoveChildIDs(ids ...int64) *CategoryUpdateOne {
 	_u.mutation.RemoveChildIDs(ids...)
 	return _u
 }
 
 // RemoveChildren removes "children" edges to Category entities.
 func (_u *CategoryUpdateOne) RemoveChildren(v ...*Category) *CategoryUpdateOne {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -886,7 +886,7 @@ func (_u *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(category.Table, category.Columns, sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(category.Table, category.Columns, sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Category.id" for update`)}
@@ -927,31 +927,31 @@ func (_u *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err 
 		_spec.ClearField(category.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(category.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(category.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(category.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(category.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(category.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(category.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(category.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(category.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(category.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(category.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(category.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(category.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(category.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(category.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(category.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(category.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(category.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(category.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SortOrder(); ok {
 		_spec.SetField(category.FieldSortOrder, field.TypeUint32, value)
@@ -991,7 +991,7 @@ func (_u *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err 
 			Columns: []string{category.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1004,7 +1004,7 @@ func (_u *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err 
 			Columns: []string{category.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1020,7 +1020,7 @@ func (_u *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err 
 			Columns: []string{category.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1033,7 +1033,7 @@ func (_u *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err 
 			Columns: []string{category.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1049,7 +1049,7 @@ func (_u *CategoryUpdateOne) sqlSave(ctx context.Context) (_node *Category, err 
 			Columns: []string{category.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(category.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

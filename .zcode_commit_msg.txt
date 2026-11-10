@@ -1,0 +1,12 @@
+feat!: ID 类型定版 int64——全链从 uint32 收敛到有符号 int64
+
+跟随上游 go-wind-admin 的 int64 定版：proto 字段/ent schema/手写代码/生成代码全链切换。
+- 上游 pin 同步：go-crud/entgo v0.2.6、viewer v0.0.9、pagination v0.1.0、audit v0.0.4、go-scripts v0.2.0
+- ID 形态字段全 int64；非 ID 保留原语义（quota/size 族 uint64，计数/延迟/状态码类 uint32，聚合 total/count int64）
+- 前端：admin 生成 TS number→string 翻转 + 手写适配（composables ID string 化、树构建 Number 比较、
+  extractLeafIds/interaction map key uint32→int64/ClientTransport.byteStream 补齐/ListAction total 放宽 string）
+- 顺手修复 HEAD 既有坏测试引用（extractAndStripNameKeyword→extractAndStripKeyword，该引用错误使
+  data 包在 HEAD 编译不过、遮蔽了三个既有测试债：ExtractAndStrip 语义失配×3 与 UserFieldMask
+  mask 名不匹配 panic×1——均为上游遗留，与本次类型迁移无关）
+- 门禁：build/vet 全绿；test 失败集与 HEAD 基线等价（lua 路径/oss minio/dtmdriver consul/converter
+  语义×4 均既有失败）；前端 vue-tsc exit 0

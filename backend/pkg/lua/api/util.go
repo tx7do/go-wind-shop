@@ -3,8 +3,8 @@ package api
 import (
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	lua "github.com/yuin/gopher-lua"
+	"go-wind-shop/pkg/logx"
 )
 
 // RegisterUtilAPI registers utility functions for Lua scripts

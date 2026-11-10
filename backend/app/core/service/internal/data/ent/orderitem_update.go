@@ -70,14 +70,14 @@ func (_u *OrderItemUpdate) ClearDeletedAt() *OrderItemUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *OrderItemUpdate) SetCreatedBy(v uint32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) SetCreatedBy(v int64) *OrderItemUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *OrderItemUpdate) SetNillableCreatedBy(v *uint32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) SetNillableCreatedBy(v *int64) *OrderItemUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *OrderItemUpdate) SetNillableCreatedBy(v *uint32) *OrderItemUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *OrderItemUpdate) AddCreatedBy(v int32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) AddCreatedBy(v int64) *OrderItemUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *OrderItemUpdate) ClearCreatedBy() *OrderItemUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *OrderItemUpdate) SetUpdatedBy(v uint32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) SetUpdatedBy(v int64) *OrderItemUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *OrderItemUpdate) SetNillableUpdatedBy(v *uint32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) SetNillableUpdatedBy(v *int64) *OrderItemUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *OrderItemUpdate) SetNillableUpdatedBy(v *uint32) *OrderItemUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *OrderItemUpdate) AddUpdatedBy(v int32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) AddUpdatedBy(v int64) *OrderItemUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *OrderItemUpdate) ClearUpdatedBy() *OrderItemUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *OrderItemUpdate) SetDeletedBy(v uint32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) SetDeletedBy(v int64) *OrderItemUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *OrderItemUpdate) SetNillableDeletedBy(v *uint32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) SetNillableDeletedBy(v *int64) *OrderItemUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *OrderItemUpdate) SetNillableDeletedBy(v *uint32) *OrderItemUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *OrderItemUpdate) AddDeletedBy(v int32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) AddDeletedBy(v int64) *OrderItemUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *OrderItemUpdate) ClearDeletedBy() *OrderItemUpdate {
 }
 
 // SetOrderID sets the "order_id" field.
-func (_u *OrderItemUpdate) SetOrderID(v uint32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) SetOrderID(v int64) *OrderItemUpdate {
 	_u.mutation.ResetOrderID()
 	_u.mutation.SetOrderID(v)
 	return _u
 }
 
 // SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (_u *OrderItemUpdate) SetNillableOrderID(v *uint32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) SetNillableOrderID(v *int64) *OrderItemUpdate {
 	if v != nil {
 		_u.SetOrderID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *OrderItemUpdate) SetNillableOrderID(v *uint32) *OrderItemUpdate {
 }
 
 // AddOrderID adds value to the "order_id" field.
-func (_u *OrderItemUpdate) AddOrderID(v int32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) AddOrderID(v int64) *OrderItemUpdate {
 	_u.mutation.AddOrderID(v)
 	return _u
 }
@@ -178,14 +178,14 @@ func (_u *OrderItemUpdate) ClearOrderID() *OrderItemUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *OrderItemUpdate) SetUserID(v uint32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) SetUserID(v int64) *OrderItemUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *OrderItemUpdate) SetNillableUserID(v *uint32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) SetNillableUserID(v *int64) *OrderItemUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -193,7 +193,7 @@ func (_u *OrderItemUpdate) SetNillableUserID(v *uint32) *OrderItemUpdate {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *OrderItemUpdate) AddUserID(v int32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) AddUserID(v int64) *OrderItemUpdate {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -205,14 +205,14 @@ func (_u *OrderItemUpdate) ClearUserID() *OrderItemUpdate {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (_u *OrderItemUpdate) SetSkuID(v uint32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) SetSkuID(v int64) *OrderItemUpdate {
 	_u.mutation.ResetSkuID()
 	_u.mutation.SetSkuID(v)
 	return _u
 }
 
 // SetNillableSkuID sets the "sku_id" field if the given value is not nil.
-func (_u *OrderItemUpdate) SetNillableSkuID(v *uint32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) SetNillableSkuID(v *int64) *OrderItemUpdate {
 	if v != nil {
 		_u.SetSkuID(*v)
 	}
@@ -220,7 +220,7 @@ func (_u *OrderItemUpdate) SetNillableSkuID(v *uint32) *OrderItemUpdate {
 }
 
 // AddSkuID adds value to the "sku_id" field.
-func (_u *OrderItemUpdate) AddSkuID(v int32) *OrderItemUpdate {
+func (_u *OrderItemUpdate) AddSkuID(v int64) *OrderItemUpdate {
 	_u.mutation.AddSkuID(v)
 	return _u
 }
@@ -371,7 +371,7 @@ func (_u *OrderItemUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Orde
 }
 
 func (_u *OrderItemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(orderitem.Table, orderitem.Columns, sqlgraph.NewFieldSpec(orderitem.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(orderitem.Table, orderitem.Columns, sqlgraph.NewFieldSpec(orderitem.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -395,61 +395,61 @@ func (_u *OrderItemUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(orderitem.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(orderitem.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(orderitem.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(orderitem.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(orderitem.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(orderitem.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(orderitem.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(orderitem.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(orderitem.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(orderitem.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(orderitem.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(orderitem.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(orderitem.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(orderitem.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.OrderID(); ok {
-		_spec.SetField(orderitem.FieldOrderID, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOrderID(); ok {
-		_spec.AddField(orderitem.FieldOrderID, field.TypeUint32, value)
+		_spec.AddField(orderitem.FieldOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.OrderIDCleared() {
-		_spec.ClearField(orderitem.FieldOrderID, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldOrderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(orderitem.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(orderitem.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(orderitem.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(orderitem.FieldUserID, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SkuID(); ok {
-		_spec.SetField(orderitem.FieldSkuID, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldSkuID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedSkuID(); ok {
-		_spec.AddField(orderitem.FieldSkuID, field.TypeUint32, value)
+		_spec.AddField(orderitem.FieldSkuID, field.TypeInt64, value)
 	}
 	if _u.mutation.SkuIDCleared() {
-		_spec.ClearField(orderitem.FieldSkuID, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldSkuID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SkuSnapshot(); ok {
 		_spec.SetField(orderitem.FieldSkuSnapshot, field.TypeString, value)
@@ -547,14 +547,14 @@ func (_u *OrderItemUpdateOne) ClearDeletedAt() *OrderItemUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *OrderItemUpdateOne) SetCreatedBy(v uint32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) SetCreatedBy(v int64) *OrderItemUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *OrderItemUpdateOne) SetNillableCreatedBy(v *uint32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) SetNillableCreatedBy(v *int64) *OrderItemUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -562,7 +562,7 @@ func (_u *OrderItemUpdateOne) SetNillableCreatedBy(v *uint32) *OrderItemUpdateOn
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *OrderItemUpdateOne) AddCreatedBy(v int32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) AddCreatedBy(v int64) *OrderItemUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -574,14 +574,14 @@ func (_u *OrderItemUpdateOne) ClearCreatedBy() *OrderItemUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *OrderItemUpdateOne) SetUpdatedBy(v uint32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) SetUpdatedBy(v int64) *OrderItemUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *OrderItemUpdateOne) SetNillableUpdatedBy(v *uint32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) SetNillableUpdatedBy(v *int64) *OrderItemUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -589,7 +589,7 @@ func (_u *OrderItemUpdateOne) SetNillableUpdatedBy(v *uint32) *OrderItemUpdateOn
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *OrderItemUpdateOne) AddUpdatedBy(v int32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) AddUpdatedBy(v int64) *OrderItemUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -601,14 +601,14 @@ func (_u *OrderItemUpdateOne) ClearUpdatedBy() *OrderItemUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *OrderItemUpdateOne) SetDeletedBy(v uint32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) SetDeletedBy(v int64) *OrderItemUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *OrderItemUpdateOne) SetNillableDeletedBy(v *uint32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) SetNillableDeletedBy(v *int64) *OrderItemUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -616,7 +616,7 @@ func (_u *OrderItemUpdateOne) SetNillableDeletedBy(v *uint32) *OrderItemUpdateOn
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *OrderItemUpdateOne) AddDeletedBy(v int32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) AddDeletedBy(v int64) *OrderItemUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -628,14 +628,14 @@ func (_u *OrderItemUpdateOne) ClearDeletedBy() *OrderItemUpdateOne {
 }
 
 // SetOrderID sets the "order_id" field.
-func (_u *OrderItemUpdateOne) SetOrderID(v uint32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) SetOrderID(v int64) *OrderItemUpdateOne {
 	_u.mutation.ResetOrderID()
 	_u.mutation.SetOrderID(v)
 	return _u
 }
 
 // SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (_u *OrderItemUpdateOne) SetNillableOrderID(v *uint32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) SetNillableOrderID(v *int64) *OrderItemUpdateOne {
 	if v != nil {
 		_u.SetOrderID(*v)
 	}
@@ -643,7 +643,7 @@ func (_u *OrderItemUpdateOne) SetNillableOrderID(v *uint32) *OrderItemUpdateOne 
 }
 
 // AddOrderID adds value to the "order_id" field.
-func (_u *OrderItemUpdateOne) AddOrderID(v int32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) AddOrderID(v int64) *OrderItemUpdateOne {
 	_u.mutation.AddOrderID(v)
 	return _u
 }
@@ -655,14 +655,14 @@ func (_u *OrderItemUpdateOne) ClearOrderID() *OrderItemUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *OrderItemUpdateOne) SetUserID(v uint32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) SetUserID(v int64) *OrderItemUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *OrderItemUpdateOne) SetNillableUserID(v *uint32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) SetNillableUserID(v *int64) *OrderItemUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -670,7 +670,7 @@ func (_u *OrderItemUpdateOne) SetNillableUserID(v *uint32) *OrderItemUpdateOne {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *OrderItemUpdateOne) AddUserID(v int32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) AddUserID(v int64) *OrderItemUpdateOne {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -682,14 +682,14 @@ func (_u *OrderItemUpdateOne) ClearUserID() *OrderItemUpdateOne {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (_u *OrderItemUpdateOne) SetSkuID(v uint32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) SetSkuID(v int64) *OrderItemUpdateOne {
 	_u.mutation.ResetSkuID()
 	_u.mutation.SetSkuID(v)
 	return _u
 }
 
 // SetNillableSkuID sets the "sku_id" field if the given value is not nil.
-func (_u *OrderItemUpdateOne) SetNillableSkuID(v *uint32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) SetNillableSkuID(v *int64) *OrderItemUpdateOne {
 	if v != nil {
 		_u.SetSkuID(*v)
 	}
@@ -697,7 +697,7 @@ func (_u *OrderItemUpdateOne) SetNillableSkuID(v *uint32) *OrderItemUpdateOne {
 }
 
 // AddSkuID adds value to the "sku_id" field.
-func (_u *OrderItemUpdateOne) AddSkuID(v int32) *OrderItemUpdateOne {
+func (_u *OrderItemUpdateOne) AddSkuID(v int64) *OrderItemUpdateOne {
 	_u.mutation.AddSkuID(v)
 	return _u
 }
@@ -861,7 +861,7 @@ func (_u *OrderItemUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *O
 }
 
 func (_u *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, err error) {
-	_spec := sqlgraph.NewUpdateSpec(orderitem.Table, orderitem.Columns, sqlgraph.NewFieldSpec(orderitem.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(orderitem.Table, orderitem.Columns, sqlgraph.NewFieldSpec(orderitem.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "OrderItem.id" for update`)}
@@ -902,61 +902,61 @@ func (_u *OrderItemUpdateOne) sqlSave(ctx context.Context) (_node *OrderItem, er
 		_spec.ClearField(orderitem.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(orderitem.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(orderitem.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(orderitem.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(orderitem.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(orderitem.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(orderitem.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(orderitem.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(orderitem.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(orderitem.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(orderitem.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(orderitem.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(orderitem.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(orderitem.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.OrderID(); ok {
-		_spec.SetField(orderitem.FieldOrderID, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOrderID(); ok {
-		_spec.AddField(orderitem.FieldOrderID, field.TypeUint32, value)
+		_spec.AddField(orderitem.FieldOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.OrderIDCleared() {
-		_spec.ClearField(orderitem.FieldOrderID, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldOrderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(orderitem.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(orderitem.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(orderitem.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(orderitem.FieldUserID, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SkuID(); ok {
-		_spec.SetField(orderitem.FieldSkuID, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldSkuID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedSkuID(); ok {
-		_spec.AddField(orderitem.FieldSkuID, field.TypeUint32, value)
+		_spec.AddField(orderitem.FieldSkuID, field.TypeInt64, value)
 	}
 	if _u.mutation.SkuIDCleared() {
-		_spec.ClearField(orderitem.FieldSkuID, field.TypeUint32)
+		_spec.ClearField(orderitem.FieldSkuID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SkuSnapshot(); ok {
 		_spec.SetField(orderitem.FieldSkuSnapshot, field.TypeString, value)

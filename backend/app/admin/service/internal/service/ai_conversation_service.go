@@ -3,13 +3,13 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
+	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 )
 
 // AiConversationService AI 对话会话管理（BFF 直通转发；
@@ -18,7 +18,7 @@ type AiConversationService struct {
 	adminV1.AiConversationServiceHTTPServer
 
 	aiConversationServiceClient aiV1.AiConversationServiceClient
-	log *logx.Helper
+	log                         *logx.Helper
 }
 
 func NewAiConversationService(ctx *bootstrap.Context, aiConversationServiceClient aiV1.AiConversationServiceClient) *AiConversationService {

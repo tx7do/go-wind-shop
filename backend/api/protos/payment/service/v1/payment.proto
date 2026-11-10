@@ -76,11 +76,11 @@ service PaymentTransactionService {
 // 创建支付意图请求
 message CreatePaymentIntentRequest {
   // 关联订单 ID
-  uint32 order_id = 1 [json_name = "orderId", (gnostic.openapi.v3.property) = {description: "关联订单ID"}];
+  int64 order_id = 1 [json_name = "orderId", (gnostic.openapi.v3.property) = {description: "关联订单ID"}];
   // 支付渠道配置 ID
-  uint32 channel_id = 2 [json_name = "channelId", (gnostic.openapi.v3.property) = {description: "支付渠道配置ID"}];
+  int64 channel_id = 2 [json_name = "channelId", (gnostic.openapi.v3.property) = {description: "支付渠道配置ID"}];
   // 支付人用户 ID（BFF 从登录态注入；用于订单归属校验）
-  uint32 user_id = 3 [json_name = "userId", (gnostic.openapi.v3.property) = {description: "支付人用户ID"}];
+  int64 user_id = 3 [json_name = "userId", (gnostic.openapi.v3.property) = {description: "支付人用户ID"}];
   // 支付幂等键（租户内唯一，防重放重复落流水）
   string idempotency_key = 4 [
     json_name = "idempotencyKey",
@@ -101,7 +101,7 @@ message CreatePaymentIntentResponse {
 // 确认支付请求（BFF 网关回调验签后 / 模拟渠道确认时调用）
 message ConfirmPaymentRequest {
   // 支付流水 ID（即网关 out_trade_no）
-  uint32 transaction_id = 1 [json_name = "transactionId", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
+  int64 transaction_id = 1 [json_name = "transactionId", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
   // 网关侧交易号（对账用，可空）
   string gateway_trade_no = 2 [json_name = "gatewayTradeNo", (gnostic.openapi.v3.property) = {description: "网关侧交易号"}];
   // 实付金额（分）；与流水金额不符时拒绝确认
@@ -111,11 +111,11 @@ message ConfirmPaymentRequest {
 // 确认支付响应
 message ConfirmPaymentResponse {
   // 支付流水 ID
-  uint32 transaction_id = 1 [json_name = "transactionId", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
+  int64 transaction_id = 1 [json_name = "transactionId", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
   // 确认后状态
   PaymentTransaction.Status status = 2 [(gnostic.openapi.v3.property) = {description: "确认后状态"}];
   // 关联订单 ID
-  uint32 order_id = 3 [json_name = "orderId", (gnostic.openapi.v3.property) = {description: "关联订单ID"}];
+  int64 order_id = 3 [json_name = "orderId", (gnostic.openapi.v3.property) = {description: "关联订单ID"}];
   // 是否本次调用首次把流水置为 SUCCEEDED（false = 幂等重放）
   bool first_success = 4 [json_name = "firstSuccess", (gnostic.openapi.v3.property) = {description: "是否首次确认成功"}];
 }
@@ -123,7 +123,7 @@ message ConfirmPaymentResponse {
 // 模拟渠道确认请求（仅 MOCK 渠道流水可用；开发/演示用途）
 message MockConfirmPaymentRequest {
   // 支付流水 ID
-  uint32 transaction_id = 1 [json_name = "transactionId", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
+  int64 transaction_id = 1 [json_name = "transactionId", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
 }
 
 // 模拟渠道确认响应
@@ -146,7 +146,7 @@ enum PayType {
 // 创建支付意图 C 端响应（不含渠道凭据）
 message CreatePaymentIntentAppResponse {
   // 支付流水 ID（轮询状态用）
-  uint32 transaction_id = 1 [json_name = "transactionId", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
+  int64 transaction_id = 1 [json_name = "transactionId", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
   // 支付状态（初始 PENDING）
   PaymentTransaction.Status status = 2 [(gnostic.openapi.v3.property) = {description: "支付状态"}];
   // 拉起方式
@@ -184,11 +184,11 @@ message PaymentTransaction {
     REFUNDED = 4;    // 已退款
   }
 
-  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
+  optional int64 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "支付流水ID"}];
 
-  optional uint32 order_id = 2 [json_name = "orderId", (gnostic.openapi.v3.property) = {description: "关联的订单ID"}];
+  optional int64 order_id = 2 [json_name = "orderId", (gnostic.openapi.v3.property) = {description: "关联的订单ID"}];
 
-  optional uint32 user_id = 3 [json_name = "userId", (gnostic.openapi.v3.property) = {description: "用户ID"}];
+  optional int64 user_id = 3 [json_name = "userId", (gnostic.openapi.v3.property) = {description: "用户ID"}];
 
   optional int64 amount = 4 [
     json_name = "amount",
@@ -235,11 +235,11 @@ message PaymentTransaction {
 
   // ===== 以下是 infra mixin 注入字段（高编号） =====
 
-  optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
+  optional int64 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
-  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
@@ -257,9 +257,9 @@ message PaymentRefund {
     FAILED = 3;      // 退款失败
   }
 
-  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "退款记录ID"}];
+  optional int64 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "退款记录ID"}];
 
-  optional uint32 transaction_id = 2 [
+  optional int64 transaction_id = 2 [
     json_name = "transactionId",
     (gnostic.openapi.v3.property) = {description: "关联的支付流水ID"}
   ];
@@ -291,7 +291,7 @@ message PaymentRefund {
     (gnostic.openapi.v3.property) = {description: "退款幂等键（租户内唯一）"}
   ];
 
-  optional uint32 user_id = 8 [
+  optional int64 user_id = 8 [
     json_name = "userId",
     (gnostic.openapi.v3.property) = {description: "用户ID"}
   ];
@@ -304,23 +304,23 @@ message PaymentRefund {
 
   // ===== 以下是 infra mixin 注入字段（高编号） =====
 
-  optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
+  optional int64 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
-  optional uint32 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional int64 deleted_by = 102 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}];
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
   optional google.protobuf.Timestamp deleted_at = 202 [json_name = "deletedAt", (gnostic.openapi.v3.property) = {description: "删除时间"}];
 }
 
-message ListPaymentTransactionResponse { repeated PaymentTransaction items = 1; uint64 total = 2; }
-message ListPaymentRefundResponse { repeated PaymentRefund items = 1; uint64 total = 2; }
+message ListPaymentTransactionResponse { repeated PaymentTransaction items = 1; int64 total = 2; }
+message ListPaymentRefundResponse { repeated PaymentRefund items = 1; int64 total = 2; }
 
 message GetPaymentTransactionRequest {
   oneof query_by {
-    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+    int64 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
 
     string business_ref_id = 2 [
       json_name = "businessRefId",
@@ -328,7 +328,7 @@ message GetPaymentTransactionRequest {
     ];
   }
 
-  optional uint32 tenant_id = 101 [
+  optional int64 tenant_id = 101 [
     json_name = "tenantId",
     (gnostic.openapi.v3.property) = {description: "租户过滤（按 business_ref_id 查询时必填）"}
   ];
@@ -341,7 +341,7 @@ message GetPaymentTransactionRequest {
 
 message GetPaymentRefundRequest {
   oneof query_by {
-    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+    int64 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
   }
   optional google.protobuf.FieldMask view_mask = 100 [
     json_name = "viewMask",
@@ -351,7 +351,7 @@ message GetPaymentRefundRequest {
 
 message CreatePaymentTransactionRequest { PaymentTransaction data = 1; }
 message UpdatePaymentTransactionRequest {
-  uint32 id = 1;
+  int64 id = 1;
   PaymentTransaction data = 2;
   google.protobuf.FieldMask update_mask = 3 [
     (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
@@ -364,16 +364,16 @@ message UpdatePaymentTransactionRequest {
 }
 message DeletePaymentTransactionRequest {
   oneof query_by {
-    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+    int64 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
   }
 }
 message BatchCreatePaymentTransactionsRequest { repeated PaymentTransaction items = 1; }
-message BatchCreatePaymentTransactionsResponse { repeated int32 created_ids = 1 [json_name = "createdIds", (gnostic.openapi.v3.property) = {description: "创建成功的支付流水ID列表"}]; }
-message CountPaymentTransactionResponse { uint64 count = 1; }
+message BatchCreatePaymentTransactionsResponse { repeated int64 created_ids = 1 [json_name = "createdIds", (gnostic.openapi.v3.property) = {description: "创建成功的支付流水ID列表"}]; }
+message CountPaymentTransactionResponse { int64 count = 1; }
 
 message CreatePaymentRefundRequest { PaymentRefund data = 1; }
 message UpdatePaymentRefundRequest {
-  uint32 id = 1;
+  int64 id = 1;
   PaymentRefund data = 2;
   google.protobuf.FieldMask update_mask = 3 [
     (gnostic.openapi.v3.property) = {description: "要更新的字段列表"},
@@ -386,9 +386,9 @@ message UpdatePaymentRefundRequest {
 }
 message DeletePaymentRefundRequest {
   oneof query_by {
-    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+    int64 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
   }
 }
 message BatchCreatePaymentRefundsRequest { repeated PaymentRefund items = 1; }
-message BatchCreatePaymentRefundsResponse { repeated int32 created_ids = 1 [json_name = "createdIds", (gnostic.openapi.v3.property) = {description: "创建成功的退款记录ID列表"}]; }
-message CountPaymentRefundResponse { uint64 count = 1; }
+message BatchCreatePaymentRefundsResponse { repeated int64 created_ids = 1 [json_name = "createdIds", (gnostic.openapi.v3.property) = {description: "创建成功的退款记录ID列表"}]; }
+message CountPaymentRefundResponse { int64 count = 1; }

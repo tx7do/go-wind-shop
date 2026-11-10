@@ -42,11 +42,11 @@ const latestFormValuesRef = ref<Record<string, unknown>>({});
 const monthTokens = ref(0);
 const monthCalls = ref(0);
 const quotaConfigured = ref(false);
-const quotaLimit = ref(0);
+const quotaLimit = ref<string | number>(0);
 
 const metricItems = computed(() => {
-  const pct = quotaConfigured.value && quotaLimit.value > 0
-    ? Math.min(100, Math.round((monthTokens.value * 100) / quotaLimit.value))
+  const pct = quotaConfigured.value && Number(quotaLimit.value) > 0
+    ? Math.min(100, Math.round((Number(monthTokens.value) * 100) / Number(quotaLimit.value)))
     : undefined;
   // 汇总数字是「文字」不是色块，取值随主题切换（见底部 --metric-* 定义）：
   // 亮色下 #22d3ee/#a78bfa 对白底只有 1.81/2.72:1（24px 大字号的下限是 3.0）

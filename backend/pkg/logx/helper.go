@@ -11,8 +11,8 @@ package logx
 
 import (
 	"context"
-	"os"
 	"fmt"
+	"os"
 
 	"github.com/go-kratos/kratos/v2/log"
 	bLogger "github.com/tx7do/kratos-bootstrap/logger"

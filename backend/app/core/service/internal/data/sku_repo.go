@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -23,7 +23,7 @@ import (
 
 type SkuRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.Sku, ent.Sku]
 
@@ -99,7 +99,7 @@ func (r *SkuRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*c
 	}, nil
 }
 
-func (r *SkuRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *SkuRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Sku.Query().
 		Where(sku.IDEQ(id)).
 		Exist(ctx)
@@ -215,7 +215,7 @@ func (r *SkuRepo) Delete(ctx context.Context, req *catalogV1.DeleteSkuRequest) e
 }
 
 // AddStock 将指定 SKU 的库存加回 delta（用于订单超时取消/退款时释放占用库存）。
-func (r *SkuRepo) AddStock(ctx context.Context, skuId uint32, delta int32) error {
+func (r *SkuRepo) AddStock(ctx context.Context, skuId int64, delta int32) error {
 	if skuId == 0 {
 		return catalogV1.ErrorBadRequest("invalid sku id")
 	}
@@ -230,7 +230,7 @@ func (r *SkuRepo) AddStock(ctx context.Context, skuId uint32, delta int32) error
 
 // LowStockItem 库存预警扫描结果的最小数据集。
 type LowStockItem struct {
-	SkuID    uint32
+	SkuID    int64
 	StockQty int32
 }
 

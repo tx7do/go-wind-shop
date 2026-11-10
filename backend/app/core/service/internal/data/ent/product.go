@@ -17,7 +17,7 @@ type Product struct {
 	config `json:"-"`
 	// ID of the ent.
 	// id
-	ID uint32 `json:"id,omitempty"`
+	ID int64 `json:"id,omitempty"`
 	// 创建时间
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// 更新时间
@@ -25,19 +25,19 @@ type Product struct {
 	// 删除时间
 	DeletedAt *time.Time `json:"deleted_at,omitempty"`
 	// 创建者ID
-	CreatedBy *uint32 `json:"created_by,omitempty"`
+	CreatedBy *int64 `json:"created_by,omitempty"`
 	// 更新者ID
-	UpdatedBy *uint32 `json:"updated_by,omitempty"`
+	UpdatedBy *int64 `json:"updated_by,omitempty"`
 	// 删除者ID
-	DeletedBy *uint32 `json:"deleted_by,omitempty"`
+	DeletedBy *int64 `json:"deleted_by,omitempty"`
 	// 排序值（越小越靠前）
 	SortOrder *uint32 `json:"sort_order,omitempty"`
 	// 商品状态
 	Status *product.Status `json:"status,omitempty"`
 	// 所属类目ID
-	CategoryID *uint32 `json:"category_id,omitempty"`
+	CategoryID *int64 `json:"category_id,omitempty"`
 	// 所属品牌ID
-	BrandID *uint32 `json:"brand_id,omitempty"`
+	BrandID *int64 `json:"brand_id,omitempty"`
 	// 商品主图资源 URL（locale 无关）
 	ImageURL     *string `json:"image_url,omitempty"`
 	selectValues sql.SelectValues
@@ -74,7 +74,7 @@ func (_m *Product) assignValues(columns []string, values []any) error {
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			_m.ID = uint32(value.Int64)
+			_m.ID = int64(value.Int64)
 		case product.FieldCreatedAt:
 			if value, ok := values[i].(*sql.NullTime); !ok {
 				return fmt.Errorf("unexpected type %T for field created_at", values[i])
@@ -100,22 +100,22 @@ func (_m *Product) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field created_by", values[i])
 			} else if value.Valid {
-				_m.CreatedBy = new(uint32)
-				*_m.CreatedBy = uint32(value.Int64)
+				_m.CreatedBy = new(int64)
+				*_m.CreatedBy = value.Int64
 			}
 		case product.FieldUpdatedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field updated_by", values[i])
 			} else if value.Valid {
-				_m.UpdatedBy = new(uint32)
-				*_m.UpdatedBy = uint32(value.Int64)
+				_m.UpdatedBy = new(int64)
+				*_m.UpdatedBy = value.Int64
 			}
 		case product.FieldDeletedBy:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field deleted_by", values[i])
 			} else if value.Valid {
-				_m.DeletedBy = new(uint32)
-				*_m.DeletedBy = uint32(value.Int64)
+				_m.DeletedBy = new(int64)
+				*_m.DeletedBy = value.Int64
 			}
 		case product.FieldSortOrder:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -135,15 +135,15 @@ func (_m *Product) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field category_id", values[i])
 			} else if value.Valid {
-				_m.CategoryID = new(uint32)
-				*_m.CategoryID = uint32(value.Int64)
+				_m.CategoryID = new(int64)
+				*_m.CategoryID = value.Int64
 			}
 		case product.FieldBrandID:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field brand_id", values[i])
 			} else if value.Valid {
-				_m.BrandID = new(uint32)
-				*_m.BrandID = uint32(value.Int64)
+				_m.BrandID = new(int64)
+				*_m.BrandID = value.Int64
 			}
 		case product.FieldImageURL:
 			if value, ok := values[i].(*sql.NullString); !ok {

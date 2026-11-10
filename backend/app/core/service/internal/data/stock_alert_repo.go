@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -24,9 +24,9 @@ import (
 
 type StockAlertRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
-	mapper         *mapper.CopierMapper[catalogV1.StockAlert, ent.StockAlert]
+	mapper          *mapper.CopierMapper[catalogV1.StockAlert, ent.StockAlert]
 	statusConverter *mapper.EnumTypeConverter[catalogV1.StockAlert_Status, stockalert.Status]
 
 	repository *entCrud.Repository[
@@ -169,7 +169,7 @@ func (r *StockAlertRepo) Update(ctx context.Context, req *catalogV1.UpdateStockA
 // 仅当该 SKU 不存在 OPEN 态告警时插入一条 OPEN 记录（去重，单线程 cron 无
 // TOCTOU 风险）。stock_qty_at_trigger/threshold 为检测时的快照值。created_by
 // 强制 0（系统任务），created_at 为当前时间。
-func (r *StockAlertRepo) CreateAlertIfNotOpen(ctx context.Context, skuId uint32, stockQty int32, threshold int32) error {
+func (r *StockAlertRepo) CreateAlertIfNotOpen(ctx context.Context, skuId int64, stockQty int32, threshold int32) error {
 	exists, err := r.entClient.Client().StockAlert.Query().
 		Where(
 			stockalert.SkuIDEQ(skuId),

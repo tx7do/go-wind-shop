@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -25,7 +25,7 @@ import (
 
 type BrandRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.Brand, ent.Brand]
 
@@ -104,9 +104,9 @@ func (r *BrandRepo) filterByTranslationName(ctx context.Context, builder *ent.Br
 	if len(rows) == 0 {
 		return false, nil
 	}
-	ids := make([]uint32, 0, len(rows))
+	ids := make([]int64, 0, len(rows))
 	for _, n := range rows {
-		ids = append(ids, uint32(n))
+		ids = append(ids, int64(n))
 	}
 	builder.Where(brand.IDIn(ids...))
 	return true, nil
@@ -160,7 +160,7 @@ func (r *BrandRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (
 	}, nil
 }
 
-func (r *BrandRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *BrandRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Brand.Query().
 		Where(brand.IDEQ(id)).
 		Exist(ctx)
@@ -418,7 +418,7 @@ func (r *BrandRepo) Delete(ctx context.Context, req *catalogV1.DeleteBrandReques
 	return err
 }
 
-func (r *BrandRepo) TranslationExists(ctx context.Context, brandId uint32, languageCode string) (bool, error) {
+func (r *BrandRepo) TranslationExists(ctx context.Context, brandId int64, languageCode string) (bool, error) {
 	return r.brandTranslationRepo.TranslationExists(ctx, brandId, languageCode)
 }
 
@@ -468,7 +468,7 @@ func (r *BrandRepo) GetTranslation(ctx context.Context, req *catalogV1.GetBrandR
 	return r.brandTranslationRepo.GetTranslation(ctx, req.GetId(), req.GetLocale())
 }
 
-func (r *BrandRepo) ListTranslations(ctx context.Context, brandId uint32) ([]*catalogV1.BrandTranslation, error) {
+func (r *BrandRepo) ListTranslations(ctx context.Context, brandId int64) ([]*catalogV1.BrandTranslation, error) {
 	return r.brandTranslationRepo.ListTranslations(ctx, brandId, "", nil)
 }
 
@@ -476,6 +476,6 @@ func (r *BrandRepo) DeleteTranslation(ctx context.Context, req *catalogV1.Delete
 	return r.brandTranslationRepo.DeleteTranslation(ctx, req)
 }
 
-func (r *BrandRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, brandID uint32) error {
+func (r *BrandRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, brandID int64) error {
 	return r.brandTranslationRepo.CleanTranslations(ctx, tx, brandID)
 }

@@ -5,12 +5,12 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/monitoralertrule"
@@ -22,7 +22,7 @@ import (
 // MonitorAlertRuleRepo 监控告警规则仓储：指标阈值 → 触发通知，平台全局。
 type MonitorAlertRuleRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper           *mapper.CopierMapper[monitorAlertV1.MonitorAlertRule, ent.MonitorAlertRule]
 	metricConverter  *mapper.EnumTypeConverter[monitorAlertV1.MonitorMetric, monitoralertrule.Metric]
@@ -75,7 +75,7 @@ func (r *MonitorAlertRuleRepo) List(ctx context.Context, req *paginationV1.Pagin
 		dtos = append(dtos, r.mapper.ToDTO(entity))
 	}
 	return &monitorAlertV1.ListMonitorAlertRuleResponse{
-		Total: uint64(total),
+		Total: int64(total),
 		Items: dtos,
 	}, nil
 }
@@ -97,7 +97,7 @@ func (r *MonitorAlertRuleRepo) ListEnabled(ctx context.Context) ([]*monitorAlert
 	return dtos, nil
 }
 
-func (r *MonitorAlertRuleRepo) Get(ctx context.Context, id uint32) (*monitorAlertV1.MonitorAlertRule, error) {
+func (r *MonitorAlertRuleRepo) Get(ctx context.Context, id int64) (*monitorAlertV1.MonitorAlertRule, error) {
 	if id == 0 {
 		return nil, errors.BadRequest("MONITOR_ALERT", "id is required")
 	}
@@ -115,7 +115,7 @@ func (r *MonitorAlertRuleRepo) Get(ctx context.Context, id uint32) (*monitorAler
 }
 
 // Create 建一条规则。
-func (r *MonitorAlertRuleRepo) Create(ctx context.Context, req *monitorAlertV1.MonitorAlertRule, operatorID uint32) (uint32, error) {
+func (r *MonitorAlertRuleRepo) Create(ctx context.Context, req *monitorAlertV1.MonitorAlertRule, operatorID int64) (int64, error) {
 	if req == nil {
 		return 0, errors.BadRequest("MONITOR_ALERT", "invalid request")
 	}
@@ -147,7 +147,7 @@ func (r *MonitorAlertRuleRepo) Create(ctx context.Context, req *monitorAlertV1.M
 
 // Update 更新规则；评估器状态列（last_firing/last_value/last_alerted_at）不在
 // 可编辑集合里——它们只走 MarkFiring，掩码更新永不触碰。
-func (r *MonitorAlertRuleRepo) Update(ctx context.Context, id uint32, req *monitorAlertV1.MonitorAlertRule, operatorID uint32) error {
+func (r *MonitorAlertRuleRepo) Update(ctx context.Context, id int64, req *monitorAlertV1.MonitorAlertRule, operatorID int64) error {
 	if req == nil {
 		return errors.BadRequest("MONITOR_ALERT", "invalid request")
 	}
@@ -198,7 +198,7 @@ func (r *MonitorAlertRuleRepo) Update(ctx context.Context, id uint32, req *monit
 // MarkFiring 评估器回写规则状态：firing 状态、本次指标值、告警时间。
 // 独立成一个写路径（不走 Update 的掩码语义）：评估回写是系统行为，
 // 与管理员的编辑互不覆盖——掩码更新永不触碰这三列，本方法只写这三列。
-func (r *MonitorAlertRuleRepo) MarkFiring(ctx context.Context, id uint32, firing bool, value *float64, alertedAt *time.Time) error {
+func (r *MonitorAlertRuleRepo) MarkFiring(ctx context.Context, id int64, firing bool, value *float64, alertedAt *time.Time) error {
 	builder := r.entClient.Client().MonitorAlertRule.UpdateOneID(id).
 		SetLastFiring(firing).
 		SetNillableLastValue(value)
@@ -210,7 +210,7 @@ func (r *MonitorAlertRuleRepo) MarkFiring(ctx context.Context, id uint32, firing
 	return nil
 }
 
-func (r *MonitorAlertRuleRepo) Delete(ctx context.Context, id uint32) error {
+func (r *MonitorAlertRuleRepo) Delete(ctx context.Context, id int64) error {
 	if id == 0 {
 		return errors.BadRequest("MONITOR_ALERT", "id is required")
 	}

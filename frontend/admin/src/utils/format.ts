@@ -157,20 +157,18 @@ export function filterNumbers(arr: unknown[]): number[] {
  * Number(id)（数字）无法被过滤，会被后端当作菜单 ID 处理。
  * 这里用叶子集合对 checkedKeys 求交集，只保留真正的叶子菜单 ID。
  */
-export function extractLeafIds(checkedKeys: unknown[], treeData: any[]): number[] {
+export function extractLeafIds(checkedKeys: unknown[], treeData: any[]): string[] {
   if (!Array.isArray(checkedKeys) || !Array.isArray(treeData)) return [];
-  const leafIds = new Set<number>();
+  const leafIds = new Set<string>();
   const collect = (nodes: any[]) => {
     for (const node of nodes) {
       if (node.children && node.children.length > 0) {
         collect(node.children);
-      } else if (typeof node.key === "number" && !isNaN(node.key)) {
-        leafIds.add(node.key);
+      } else if (node.key != null && node.key !== "") {
+        leafIds.add(String(node.key));
       }
     }
   };
   collect(treeData);
-  return checkedKeys
-    .filter((v): v is number => typeof v === "number" && !isNaN(v) && leafIds.has(v))
-    .map((v) => Number(v));
+  return checkedKeys.filter((v) => leafIds.has(String(v))).map((v) => String(v));
 }

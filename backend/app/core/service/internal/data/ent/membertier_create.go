@@ -65,13 +65,13 @@ func (_c *MemberTierCreate) SetNillableDeletedAt(v *time.Time) *MemberTierCreate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *MemberTierCreate) SetCreatedBy(v uint32) *MemberTierCreate {
+func (_c *MemberTierCreate) SetCreatedBy(v int64) *MemberTierCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *MemberTierCreate) SetNillableCreatedBy(v *uint32) *MemberTierCreate {
+func (_c *MemberTierCreate) SetNillableCreatedBy(v *int64) *MemberTierCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *MemberTierCreate) SetNillableCreatedBy(v *uint32) *MemberTierCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *MemberTierCreate) SetUpdatedBy(v uint32) *MemberTierCreate {
+func (_c *MemberTierCreate) SetUpdatedBy(v int64) *MemberTierCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *MemberTierCreate) SetNillableUpdatedBy(v *uint32) *MemberTierCreate {
+func (_c *MemberTierCreate) SetNillableUpdatedBy(v *int64) *MemberTierCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *MemberTierCreate) SetNillableUpdatedBy(v *uint32) *MemberTierCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *MemberTierCreate) SetDeletedBy(v uint32) *MemberTierCreate {
+func (_c *MemberTierCreate) SetDeletedBy(v int64) *MemberTierCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *MemberTierCreate) SetNillableDeletedBy(v *uint32) *MemberTierCreate {
+func (_c *MemberTierCreate) SetNillableDeletedBy(v *int64) *MemberTierCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *MemberTierCreate) SetNillableDeletedBy(v *uint32) *MemberTierCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *MemberTierCreate) SetTenantID(v uint32) *MemberTierCreate {
+func (_c *MemberTierCreate) SetTenantID(v int64) *MemberTierCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *MemberTierCreate) SetNillableTenantID(v *uint32) *MemberTierCreate {
+func (_c *MemberTierCreate) SetNillableTenantID(v *int64) *MemberTierCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -211,7 +211,7 @@ func (_c *MemberTierCreate) SetNillableStatus(v *membertier.Status) *MemberTierC
 }
 
 // SetID sets the "id" field.
-func (_c *MemberTierCreate) SetID(v uint32) *MemberTierCreate {
+func (_c *MemberTierCreate) SetID(v int64) *MemberTierCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -328,7 +328,7 @@ func (_c *MemberTierCreate) sqlSave(ctx context.Context) (*MemberTier, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -338,7 +338,7 @@ func (_c *MemberTierCreate) sqlSave(ctx context.Context) (*MemberTier, error) {
 func (_c *MemberTierCreate) createSpec() (*MemberTier, *sqlgraph.CreateSpec) {
 	var (
 		_node = &MemberTier{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(membertier.Table, sqlgraph.NewFieldSpec(membertier.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(membertier.Table, sqlgraph.NewFieldSpec(membertier.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -358,19 +358,19 @@ func (_c *MemberTierCreate) createSpec() (*MemberTier, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(membertier.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(membertier.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(membertier.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(membertier.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(membertier.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(membertier.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(membertier.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(membertier.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Name(); ok {
@@ -490,7 +490,7 @@ func (u *MemberTierUpsert) ClearDeletedAt() *MemberTierUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *MemberTierUpsert) SetCreatedBy(v uint32) *MemberTierUpsert {
+func (u *MemberTierUpsert) SetCreatedBy(v int64) *MemberTierUpsert {
 	u.Set(membertier.FieldCreatedBy, v)
 	return u
 }
@@ -502,7 +502,7 @@ func (u *MemberTierUpsert) UpdateCreatedBy() *MemberTierUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *MemberTierUpsert) AddCreatedBy(v uint32) *MemberTierUpsert {
+func (u *MemberTierUpsert) AddCreatedBy(v int64) *MemberTierUpsert {
 	u.Add(membertier.FieldCreatedBy, v)
 	return u
 }
@@ -514,7 +514,7 @@ func (u *MemberTierUpsert) ClearCreatedBy() *MemberTierUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *MemberTierUpsert) SetUpdatedBy(v uint32) *MemberTierUpsert {
+func (u *MemberTierUpsert) SetUpdatedBy(v int64) *MemberTierUpsert {
 	u.Set(membertier.FieldUpdatedBy, v)
 	return u
 }
@@ -526,7 +526,7 @@ func (u *MemberTierUpsert) UpdateUpdatedBy() *MemberTierUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *MemberTierUpsert) AddUpdatedBy(v uint32) *MemberTierUpsert {
+func (u *MemberTierUpsert) AddUpdatedBy(v int64) *MemberTierUpsert {
 	u.Add(membertier.FieldUpdatedBy, v)
 	return u
 }
@@ -538,7 +538,7 @@ func (u *MemberTierUpsert) ClearUpdatedBy() *MemberTierUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *MemberTierUpsert) SetDeletedBy(v uint32) *MemberTierUpsert {
+func (u *MemberTierUpsert) SetDeletedBy(v int64) *MemberTierUpsert {
 	u.Set(membertier.FieldDeletedBy, v)
 	return u
 }
@@ -550,7 +550,7 @@ func (u *MemberTierUpsert) UpdateDeletedBy() *MemberTierUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *MemberTierUpsert) AddDeletedBy(v uint32) *MemberTierUpsert {
+func (u *MemberTierUpsert) AddDeletedBy(v int64) *MemberTierUpsert {
 	u.Add(membertier.FieldDeletedBy, v)
 	return u
 }
@@ -772,14 +772,14 @@ func (u *MemberTierUpsertOne) ClearDeletedAt() *MemberTierUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *MemberTierUpsertOne) SetCreatedBy(v uint32) *MemberTierUpsertOne {
+func (u *MemberTierUpsertOne) SetCreatedBy(v int64) *MemberTierUpsertOne {
 	return u.Update(func(s *MemberTierUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *MemberTierUpsertOne) AddCreatedBy(v uint32) *MemberTierUpsertOne {
+func (u *MemberTierUpsertOne) AddCreatedBy(v int64) *MemberTierUpsertOne {
 	return u.Update(func(s *MemberTierUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -800,14 +800,14 @@ func (u *MemberTierUpsertOne) ClearCreatedBy() *MemberTierUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *MemberTierUpsertOne) SetUpdatedBy(v uint32) *MemberTierUpsertOne {
+func (u *MemberTierUpsertOne) SetUpdatedBy(v int64) *MemberTierUpsertOne {
 	return u.Update(func(s *MemberTierUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *MemberTierUpsertOne) AddUpdatedBy(v uint32) *MemberTierUpsertOne {
+func (u *MemberTierUpsertOne) AddUpdatedBy(v int64) *MemberTierUpsertOne {
 	return u.Update(func(s *MemberTierUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -828,14 +828,14 @@ func (u *MemberTierUpsertOne) ClearUpdatedBy() *MemberTierUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *MemberTierUpsertOne) SetDeletedBy(v uint32) *MemberTierUpsertOne {
+func (u *MemberTierUpsertOne) SetDeletedBy(v int64) *MemberTierUpsertOne {
 	return u.Update(func(s *MemberTierUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *MemberTierUpsertOne) AddDeletedBy(v uint32) *MemberTierUpsertOne {
+func (u *MemberTierUpsertOne) AddDeletedBy(v int64) *MemberTierUpsertOne {
 	return u.Update(func(s *MemberTierUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1004,7 +1004,7 @@ func (u *MemberTierUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *MemberTierUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *MemberTierUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1013,7 +1013,7 @@ func (u *MemberTierUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *MemberTierUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *MemberTierUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1070,7 +1070,7 @@ func (_c *MemberTierCreateBulk) Save(ctx context.Context) ([]*MemberTier, error)
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1251,14 +1251,14 @@ func (u *MemberTierUpsertBulk) ClearDeletedAt() *MemberTierUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *MemberTierUpsertBulk) SetCreatedBy(v uint32) *MemberTierUpsertBulk {
+func (u *MemberTierUpsertBulk) SetCreatedBy(v int64) *MemberTierUpsertBulk {
 	return u.Update(func(s *MemberTierUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *MemberTierUpsertBulk) AddCreatedBy(v uint32) *MemberTierUpsertBulk {
+func (u *MemberTierUpsertBulk) AddCreatedBy(v int64) *MemberTierUpsertBulk {
 	return u.Update(func(s *MemberTierUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1279,14 +1279,14 @@ func (u *MemberTierUpsertBulk) ClearCreatedBy() *MemberTierUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *MemberTierUpsertBulk) SetUpdatedBy(v uint32) *MemberTierUpsertBulk {
+func (u *MemberTierUpsertBulk) SetUpdatedBy(v int64) *MemberTierUpsertBulk {
 	return u.Update(func(s *MemberTierUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *MemberTierUpsertBulk) AddUpdatedBy(v uint32) *MemberTierUpsertBulk {
+func (u *MemberTierUpsertBulk) AddUpdatedBy(v int64) *MemberTierUpsertBulk {
 	return u.Update(func(s *MemberTierUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1307,14 +1307,14 @@ func (u *MemberTierUpsertBulk) ClearUpdatedBy() *MemberTierUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *MemberTierUpsertBulk) SetDeletedBy(v uint32) *MemberTierUpsertBulk {
+func (u *MemberTierUpsertBulk) SetDeletedBy(v int64) *MemberTierUpsertBulk {
 	return u.Update(func(s *MemberTierUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *MemberTierUpsertBulk) AddDeletedBy(v uint32) *MemberTierUpsertBulk {
+func (u *MemberTierUpsertBulk) AddDeletedBy(v int64) *MemberTierUpsertBulk {
 	return u.Update(func(s *MemberTierUpsert) {
 		s.AddDeletedBy(v)
 	})

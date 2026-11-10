@@ -1,8 +1,8 @@
 package data
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
+	"go-wind-shop/pkg/logx"
 
 	"entgo.io/ent/dialect/sql"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -14,8 +14,8 @@ import (
 	"github.com/tx7do/go-utils/mapper"
 
 	"go-wind-shop/app/core/service/internal/data/ent"
-	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 	"go-wind-shop/app/core/service/internal/data/ent/pointsledger"
+	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 )

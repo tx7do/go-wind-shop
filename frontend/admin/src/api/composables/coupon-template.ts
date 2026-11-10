@@ -69,12 +69,11 @@ export function useCreateCouponTemplate(options?: UseMutationOptions<{}, Error, 
 }
 
 export function useUpdateCouponTemplate(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.couponTemplateService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.couponTemplateService.Update({ id: String(id),
         data: { ...values },
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),

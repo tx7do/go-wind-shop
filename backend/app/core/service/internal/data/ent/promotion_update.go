@@ -70,14 +70,14 @@ func (_u *PromotionUpdate) ClearDeletedAt() *PromotionUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PromotionUpdate) SetCreatedBy(v uint32) *PromotionUpdate {
+func (_u *PromotionUpdate) SetCreatedBy(v int64) *PromotionUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PromotionUpdate) SetNillableCreatedBy(v *uint32) *PromotionUpdate {
+func (_u *PromotionUpdate) SetNillableCreatedBy(v *int64) *PromotionUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *PromotionUpdate) SetNillableCreatedBy(v *uint32) *PromotionUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PromotionUpdate) AddCreatedBy(v int32) *PromotionUpdate {
+func (_u *PromotionUpdate) AddCreatedBy(v int64) *PromotionUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *PromotionUpdate) ClearCreatedBy() *PromotionUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PromotionUpdate) SetUpdatedBy(v uint32) *PromotionUpdate {
+func (_u *PromotionUpdate) SetUpdatedBy(v int64) *PromotionUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PromotionUpdate) SetNillableUpdatedBy(v *uint32) *PromotionUpdate {
+func (_u *PromotionUpdate) SetNillableUpdatedBy(v *int64) *PromotionUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *PromotionUpdate) SetNillableUpdatedBy(v *uint32) *PromotionUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PromotionUpdate) AddUpdatedBy(v int32) *PromotionUpdate {
+func (_u *PromotionUpdate) AddUpdatedBy(v int64) *PromotionUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *PromotionUpdate) ClearUpdatedBy() *PromotionUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PromotionUpdate) SetDeletedBy(v uint32) *PromotionUpdate {
+func (_u *PromotionUpdate) SetDeletedBy(v int64) *PromotionUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PromotionUpdate) SetNillableDeletedBy(v *uint32) *PromotionUpdate {
+func (_u *PromotionUpdate) SetNillableDeletedBy(v *int64) *PromotionUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *PromotionUpdate) SetNillableDeletedBy(v *uint32) *PromotionUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PromotionUpdate) AddDeletedBy(v int32) *PromotionUpdate {
+func (_u *PromotionUpdate) AddDeletedBy(v int64) *PromotionUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -211,14 +211,14 @@ func (_u *PromotionUpdate) ClearPromoType() *PromotionUpdate {
 }
 
 // SetProductID sets the "product_id" field.
-func (_u *PromotionUpdate) SetProductID(v uint32) *PromotionUpdate {
+func (_u *PromotionUpdate) SetProductID(v int64) *PromotionUpdate {
 	_u.mutation.ResetProductID()
 	_u.mutation.SetProductID(v)
 	return _u
 }
 
 // SetNillableProductID sets the "product_id" field if the given value is not nil.
-func (_u *PromotionUpdate) SetNillableProductID(v *uint32) *PromotionUpdate {
+func (_u *PromotionUpdate) SetNillableProductID(v *int64) *PromotionUpdate {
 	if v != nil {
 		_u.SetProductID(*v)
 	}
@@ -226,7 +226,7 @@ func (_u *PromotionUpdate) SetNillableProductID(v *uint32) *PromotionUpdate {
 }
 
 // AddProductID adds value to the "product_id" field.
-func (_u *PromotionUpdate) AddProductID(v int32) *PromotionUpdate {
+func (_u *PromotionUpdate) AddProductID(v int64) *PromotionUpdate {
 	_u.mutation.AddProductID(v)
 	return _u
 }
@@ -462,7 +462,7 @@ func (_u *PromotionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(promotion.Table, promotion.Columns, sqlgraph.NewFieldSpec(promotion.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(promotion.Table, promotion.Columns, sqlgraph.NewFieldSpec(promotion.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -486,34 +486,34 @@ func (_u *PromotionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(promotion.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(promotion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(promotion.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(promotion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(promotion.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(promotion.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(promotion.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(promotion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(promotion.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(promotion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(promotion.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(promotion.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(promotion.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(promotion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(promotion.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(promotion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(promotion.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(promotion.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(promotion.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(promotion.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(promotion.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(promotion.FieldCurrency, field.TypeString, value)
@@ -534,13 +534,13 @@ func (_u *PromotionUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(promotion.FieldPromoType, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.ProductID(); ok {
-		_spec.SetField(promotion.FieldProductID, field.TypeUint32, value)
+		_spec.SetField(promotion.FieldProductID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProductID(); ok {
-		_spec.AddField(promotion.FieldProductID, field.TypeUint32, value)
+		_spec.AddField(promotion.FieldProductID, field.TypeInt64, value)
 	}
 	if _u.mutation.ProductIDCleared() {
-		_spec.ClearField(promotion.FieldProductID, field.TypeUint32)
+		_spec.ClearField(promotion.FieldProductID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SpecialPrice(); ok {
 		_spec.SetField(promotion.FieldSpecialPrice, field.TypeInt64, value)
@@ -659,14 +659,14 @@ func (_u *PromotionUpdateOne) ClearDeletedAt() *PromotionUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PromotionUpdateOne) SetCreatedBy(v uint32) *PromotionUpdateOne {
+func (_u *PromotionUpdateOne) SetCreatedBy(v int64) *PromotionUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PromotionUpdateOne) SetNillableCreatedBy(v *uint32) *PromotionUpdateOne {
+func (_u *PromotionUpdateOne) SetNillableCreatedBy(v *int64) *PromotionUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -674,7 +674,7 @@ func (_u *PromotionUpdateOne) SetNillableCreatedBy(v *uint32) *PromotionUpdateOn
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PromotionUpdateOne) AddCreatedBy(v int32) *PromotionUpdateOne {
+func (_u *PromotionUpdateOne) AddCreatedBy(v int64) *PromotionUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -686,14 +686,14 @@ func (_u *PromotionUpdateOne) ClearCreatedBy() *PromotionUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PromotionUpdateOne) SetUpdatedBy(v uint32) *PromotionUpdateOne {
+func (_u *PromotionUpdateOne) SetUpdatedBy(v int64) *PromotionUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PromotionUpdateOne) SetNillableUpdatedBy(v *uint32) *PromotionUpdateOne {
+func (_u *PromotionUpdateOne) SetNillableUpdatedBy(v *int64) *PromotionUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -701,7 +701,7 @@ func (_u *PromotionUpdateOne) SetNillableUpdatedBy(v *uint32) *PromotionUpdateOn
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PromotionUpdateOne) AddUpdatedBy(v int32) *PromotionUpdateOne {
+func (_u *PromotionUpdateOne) AddUpdatedBy(v int64) *PromotionUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -713,14 +713,14 @@ func (_u *PromotionUpdateOne) ClearUpdatedBy() *PromotionUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PromotionUpdateOne) SetDeletedBy(v uint32) *PromotionUpdateOne {
+func (_u *PromotionUpdateOne) SetDeletedBy(v int64) *PromotionUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PromotionUpdateOne) SetNillableDeletedBy(v *uint32) *PromotionUpdateOne {
+func (_u *PromotionUpdateOne) SetNillableDeletedBy(v *int64) *PromotionUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -728,7 +728,7 @@ func (_u *PromotionUpdateOne) SetNillableDeletedBy(v *uint32) *PromotionUpdateOn
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PromotionUpdateOne) AddDeletedBy(v int32) *PromotionUpdateOne {
+func (_u *PromotionUpdateOne) AddDeletedBy(v int64) *PromotionUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -800,14 +800,14 @@ func (_u *PromotionUpdateOne) ClearPromoType() *PromotionUpdateOne {
 }
 
 // SetProductID sets the "product_id" field.
-func (_u *PromotionUpdateOne) SetProductID(v uint32) *PromotionUpdateOne {
+func (_u *PromotionUpdateOne) SetProductID(v int64) *PromotionUpdateOne {
 	_u.mutation.ResetProductID()
 	_u.mutation.SetProductID(v)
 	return _u
 }
 
 // SetNillableProductID sets the "product_id" field if the given value is not nil.
-func (_u *PromotionUpdateOne) SetNillableProductID(v *uint32) *PromotionUpdateOne {
+func (_u *PromotionUpdateOne) SetNillableProductID(v *int64) *PromotionUpdateOne {
 	if v != nil {
 		_u.SetProductID(*v)
 	}
@@ -815,7 +815,7 @@ func (_u *PromotionUpdateOne) SetNillableProductID(v *uint32) *PromotionUpdateOn
 }
 
 // AddProductID adds value to the "product_id" field.
-func (_u *PromotionUpdateOne) AddProductID(v int32) *PromotionUpdateOne {
+func (_u *PromotionUpdateOne) AddProductID(v int64) *PromotionUpdateOne {
 	_u.mutation.AddProductID(v)
 	return _u
 }
@@ -1064,7 +1064,7 @@ func (_u *PromotionUpdateOne) sqlSave(ctx context.Context) (_node *Promotion, er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(promotion.Table, promotion.Columns, sqlgraph.NewFieldSpec(promotion.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(promotion.Table, promotion.Columns, sqlgraph.NewFieldSpec(promotion.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Promotion.id" for update`)}
@@ -1105,34 +1105,34 @@ func (_u *PromotionUpdateOne) sqlSave(ctx context.Context) (_node *Promotion, er
 		_spec.ClearField(promotion.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(promotion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(promotion.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(promotion.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(promotion.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(promotion.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(promotion.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(promotion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(promotion.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(promotion.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(promotion.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(promotion.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(promotion.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(promotion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(promotion.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(promotion.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(promotion.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(promotion.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(promotion.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(promotion.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(promotion.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(promotion.FieldCurrency, field.TypeString, value)
@@ -1153,13 +1153,13 @@ func (_u *PromotionUpdateOne) sqlSave(ctx context.Context) (_node *Promotion, er
 		_spec.ClearField(promotion.FieldPromoType, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.ProductID(); ok {
-		_spec.SetField(promotion.FieldProductID, field.TypeUint32, value)
+		_spec.SetField(promotion.FieldProductID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProductID(); ok {
-		_spec.AddField(promotion.FieldProductID, field.TypeUint32, value)
+		_spec.AddField(promotion.FieldProductID, field.TypeInt64, value)
 	}
 	if _u.mutation.ProductIDCleared() {
-		_spec.ClearField(promotion.FieldProductID, field.TypeUint32)
+		_spec.ClearField(promotion.FieldProductID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SpecialPrice(); ok {
 		_spec.SetField(promotion.FieldSpecialPrice, field.TypeInt64, value)

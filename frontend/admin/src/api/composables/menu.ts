@@ -68,12 +68,11 @@ export function useCreateMenu(options?: UseMutationOptions<{}, Error, Record<str
 }
 
 export function useUpdateMenu(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.menuService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.menuService.Update({ id: String(id),
         data: { ...values } as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),
@@ -218,7 +217,7 @@ export const isLink = (type: string) => type === "LINK";
 
 export function travelMenuChild(nodes: Menu[] | undefined, parent: Menu): boolean {
   if (nodes === undefined) return false;
-  if (parent.parentId === 0 || parent.parentId === undefined) {
+  if (Number(parent.parentId) === 0 || parent.parentId === undefined) {
     nodes.push(parent);
     return true;
   }
@@ -241,9 +240,9 @@ export function buildMenuTree(menus: Menu[], excludeId?: number): Menu[] {
   // 否则 excludeId 的子节点（parentId === excludeId）在下方构建时会
   // 因找不到父（excludeId 没进 tree）而被提升为顶层根节点，用户仍可能
   // 把该菜单的父级设成自己的后代，形成环。
-  const excludedIds = new Set<number>();
+  const excludedIds = new Set<string>();
   if (excludeId !== undefined) {
-    excludedIds.add(excludeId);
+    excludedIds.add(String(excludeId));
     // 迭代收集所有后代：只要某节点的 parentId 已在集合中，它也是后代
     let changed = true;
     while (changed) {
@@ -252,10 +251,10 @@ export function buildMenuTree(menus: Menu[], excludeId?: number): Menu[] {
         if (
           m?.id != null &&
           m.parentId != null &&
-          excludedIds.has(m.parentId) &&
-          !excludedIds.has(m.id)
+          excludedIds.has(String(m.parentId)) &&
+          !excludedIds.has(String(m.id))
         ) {
-          excludedIds.add(m.id);
+          excludedIds.add(String(m.id));
           changed = true;
         }
       }
@@ -265,15 +264,15 @@ export function buildMenuTree(menus: Menu[], excludeId?: number): Menu[] {
   const tree: Menu[] = [];
   for (const menu of cloned) {
     if (!menu) continue;
-    if (menu.id != null && excludedIds.has(menu.id)) continue;
-    if (menu.parentId !== 0 && menu.parentId !== undefined) continue;
+    if (menu.id != null && excludedIds.has(String(menu.id))) continue;
+    if (Number(menu.parentId) !== 0 && menu.parentId !== undefined) continue;
     if (menu?.name) menu.name = t(menu?.name ?? "");
     tree.push(menu);
   }
   for (const menu of cloned) {
     if (!menu) continue;
-    if (menu.id != null && excludedIds.has(menu.id)) continue;
-    if (menu.parentId === 0 || menu.parentId === undefined) continue;
+    if (menu.id != null && excludedIds.has(String(menu.id))) continue;
+    if (Number(menu.parentId) === 0 || menu.parentId === undefined) continue;
     if (travelMenuChild(tree, menu)) continue;
     if (menu?.name) menu.name = t(menu?.name ?? "");
     tree.push(menu);

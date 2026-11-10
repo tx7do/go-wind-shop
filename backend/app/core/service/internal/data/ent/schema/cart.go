@@ -36,7 +36,7 @@ func (Cart) Annotations() []schema.Annotation {
 
 func (Cart) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("user_id").
+		field.Int64("user_id").
 			Comment("用户ID").
 			Optional().
 			Nillable(),
@@ -45,10 +45,10 @@ func (Cart) Fields() []ent.Field {
 
 func (Cart) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 	}
 }
 

@@ -85,8 +85,8 @@ func (_q *CouponTemplateQuery) FirstX(ctx context.Context) *CouponTemplate {
 
 // FirstID returns the first CouponTemplate ID from the query.
 // Returns a *NotFoundError when no CouponTemplate ID was found.
-func (_q *CouponTemplateQuery) FirstID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *CouponTemplateQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -98,7 +98,7 @@ func (_q *CouponTemplateQuery) FirstID(ctx context.Context) (id uint32, err erro
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *CouponTemplateQuery) FirstIDX(ctx context.Context) uint32 {
+func (_q *CouponTemplateQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -136,8 +136,8 @@ func (_q *CouponTemplateQuery) OnlyX(ctx context.Context) *CouponTemplate {
 // OnlyID is like Only, but returns the only CouponTemplate ID in the query.
 // Returns a *NotSingularError when more than one CouponTemplate ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *CouponTemplateQuery) OnlyID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *CouponTemplateQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -153,7 +153,7 @@ func (_q *CouponTemplateQuery) OnlyID(ctx context.Context) (id uint32, err error
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *CouponTemplateQuery) OnlyIDX(ctx context.Context) uint32 {
+func (_q *CouponTemplateQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -181,7 +181,7 @@ func (_q *CouponTemplateQuery) AllX(ctx context.Context) []*CouponTemplate {
 }
 
 // IDs executes the query and returns a list of CouponTemplate IDs.
-func (_q *CouponTemplateQuery) IDs(ctx context.Context) (ids []uint32, err error) {
+func (_q *CouponTemplateQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -193,7 +193,7 @@ func (_q *CouponTemplateQuery) IDs(ctx context.Context) (ids []uint32, err error
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *CouponTemplateQuery) IDsX(ctx context.Context) []uint32 {
+func (_q *CouponTemplateQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -381,7 +381,7 @@ func (_q *CouponTemplateQuery) sqlCount(ctx context.Context) (int, error) {
 }
 
 func (_q *CouponTemplateQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(coupontemplate.Table, coupontemplate.Columns, sqlgraph.NewFieldSpec(coupontemplate.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewQuerySpec(coupontemplate.Table, coupontemplate.Columns, sqlgraph.NewFieldSpec(coupontemplate.FieldID, field.TypeInt64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

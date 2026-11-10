@@ -27,9 +27,9 @@ export const useUserViewStore = defineStore("user-view", {
     currentTenantId: undefined,
     currentOrgUnitId: undefined,
     loading: false,
-    userList: { items: [], total: 0 },
-    tenantList: { items: [], total: 0 },
-    orgUnitList: { items: [], total: 0 },
+    userList: { items: [], total: "0" },
+    tenantList: { items: [], total: "0" },
+    orgUnitList: { items: [], total: "0" },
   }),
 
   actions: {
@@ -114,15 +114,15 @@ export const useUserViewStore = defineStore("user-view", {
     },
 
     resetTenantList() {
-      this.tenantList = { items: [], total: 0 };
+      this.tenantList = { items: [], total: "0" };
     },
 
     resetOrgUnitList() {
-      this.orgUnitList = { items: [], total: 0 };
+      this.orgUnitList = { items: [], total: "0" };
     },
 
     resetUserList() {
-      this.userList = { items: [], total: 0 };
+      this.userList = { items: [], total: "0" };
     },
 
     setCurrentTenantId(tenantId: number | undefined) {

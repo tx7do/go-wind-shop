@@ -133,7 +133,7 @@ const { mutateAsync: updateNotificationRule } = useUpdateNotificationRule();
 const visible = ref(false);
 const submitLoading = ref(false);
 const isCreate = ref(true);
-const currentId = ref<number>();
+const currentId = ref<string>();
 const formRef = ref();
 
 const formData = reactive({
@@ -172,7 +172,7 @@ const guard = useDrawerCloseGuard(() => ({ ...formData }));
 function open(options: { create: boolean; row?: notificationservicev1_NotificationRule }) {
   visible.value = true;
   isCreate.value = options.create;
-  currentId.value = options.row?.id;
+  currentId.value = options.row?.id != null ? String(options.row.id) : undefined;
   resetForm();
 
   if (!options.create && options.row) {

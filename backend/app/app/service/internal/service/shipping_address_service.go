@@ -3,14 +3,14 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	appV1 "go-wind-shop/api/gen/go/app/service/v1"
 	addressV1 "go-wind-shop/api/gen/go/address/service/v1"
+	appV1 "go-wind-shop/api/gen/go/app/service/v1"
 
 	"go-wind-shop/pkg/middleware/auth"
 )

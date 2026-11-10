@@ -37,7 +37,7 @@ func (PointsLedger) Policy() ent.Policy {
 
 func (PointsLedger) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("user_id").
+		field.Int64("user_id").
 			Comment("用户ID").
 			Optional().
 			Nillable(),
@@ -65,8 +65,7 @@ func (PointsLedger) Fields() []ent.Field {
 			Comment("事由").
 			Default(""),
 
-
-		field.Uint32("ref_order_id").
+		field.Int64("ref_order_id").
 			Comment("关联订单ID").
 			Optional().
 			Nillable(),
@@ -75,9 +74,9 @@ func (PointsLedger) Fields() []ent.Field {
 
 func (PointsLedger) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

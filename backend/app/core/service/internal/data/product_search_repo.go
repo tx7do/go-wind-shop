@@ -1,10 +1,10 @@
 package data
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
 	"encoding/json"
 	"errors"
+	"go-wind-shop/pkg/logx"
 	"strconv"
 
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -45,18 +45,18 @@ const (
 // ProductDocument 是写入 ES products 索引的文档结构。
 // 无 tenant_id（商品全局共享）。status 固定为 ACTIVE（非 ACTIVE 不入索引）。
 type ProductDocument struct {
-	ProductID         string `json:"product_id"`         // 必填，keyword
-	Language          string `json:"language"`           // 必填，keyword，搜索强制 term 过滤
-	Status            string `json:"status"`             // 必填，keyword，搜索强制 term 过滤（前台仅 ACTIVE）
-	Name              string `json:"name"`               // text + smartcn，全文检索字段
-	ShortDescription  string `json:"short_description"`  // text + smartcn，全文检索字段
-	LongDescription   string `json:"long_description"`   // text + smartcn，全文检索字段
-	ImageURL          string `json:"image_url"`          // keyword，locale 无关主图 URL（展示用，非检索字段）
+	ProductID        string `json:"product_id"`        // 必填，keyword
+	Language         string `json:"language"`          // 必填，keyword，搜索强制 term 过滤
+	Status           string `json:"status"`            // 必填，keyword，搜索强制 term 过滤（前台仅 ACTIVE）
+	Name             string `json:"name"`              // text + smartcn，全文检索字段
+	ShortDescription string `json:"short_description"` // text + smartcn，全文检索字段
+	LongDescription  string `json:"long_description"`  // text + smartcn，全文检索字段
+	ImageURL         string `json:"image_url"`         // keyword，locale 无关主图 URL（展示用，非检索字段）
 }
 
 // ProductSuggestion 搜索联想候选项（最小字段集）。
 type ProductSuggestion struct {
-	ProductId uint32 `json:"product_id"`
+	ProductId int64  `json:"product_id"`
 	Name      string `json:"name"`
 	ImageUrl  string `json:"image_url"`
 }
@@ -70,10 +70,10 @@ type ProductDocRef struct {
 // ProductSearchHit 是搜索结果中的单条命中，只暴露最小字段集。
 type ProductSearchHit struct {
 	ProductID string
-	Language string
-	Name     string
-	ImageURL string
-	Score    float64
+	Language  string
+	Name      string
+	ImageURL  string
+	Score     float64
 }
 
 // ProductSearchResult 是搜索返回。
@@ -84,7 +84,7 @@ type ProductSearchResult struct {
 
 type ProductSearchRepo struct {
 	esClient *elasticsearchCrud.Client
-	log *logx.Helper
+	log      *logx.Helper
 }
 
 func NewProductSearchRepo(ctx *bootstrap.Context, esClient *elasticsearchCrud.Client) *ProductSearchRepo {
@@ -164,7 +164,7 @@ func (r *ProductSearchRepo) IndexProduct(ctx context.Context, doc *ProductDocume
 // ES wrapper 无 delete-by-query，只有 DeleteDocument(indexName, docID)。
 // 故用传入的 languages 列表枚举，逐个按 docID = {product_id}_{language} 删除。
 // languages 由 ProductRepo.ListAvailedLanguages 提供（DB 中该商品实际存在的翻译语言）。
-func (r *ProductSearchRepo) DeleteProduct(ctx context.Context, productID uint32, languages []string) error {
+func (r *ProductSearchRepo) DeleteProduct(ctx context.Context, productID int64, languages []string) error {
 	if r.esClient == nil {
 		return errors.New("opensearch client is nil")
 	}
@@ -172,7 +172,7 @@ func (r *ProductSearchRepo) DeleteProduct(ctx context.Context, productID uint32,
 		return errors.New("delete product requires non-zero productID")
 	}
 
-	pidStr := strconv.FormatUint(uint64(productID), 10)
+	pidStr := strconv.FormatInt(int64(productID), 10)
 
 	for _, lang := range languages {
 		if lang == "" {
@@ -468,13 +468,13 @@ func (r *ProductSearchRepo) SuggestProductNames(
 			r.log.Warnf("unmarshal suggest hit failed: %v", err)
 			continue
 		}
-		pid, pErr := strconv.ParseUint(src.ProductID, 10, 32)
+		pid, pErr := strconv.ParseInt(src.ProductID, 10, 64)
 		if pErr != nil {
 			r.log.Warnf("parse suggest product_id [%s] failed: %v", src.ProductID, pErr)
 			continue
 		}
 		suggestions = append(suggestions, ProductSuggestion{
-			ProductId: uint32(pid),
+			ProductId: int64(pid),
 			Name:      src.Name,
 			ImageUrl:  src.ImageURL,
 		})

@@ -120,7 +120,7 @@ watch(visible, (val) => {
       const row = data.value.row;
       formData.value = {
         quotaType: row.quotaType || "PLAN_QUOTA_TYPE_UNSPECIFIED",
-        quotaValue: row.quotaValue ?? 0,
+        quotaValue: Number(row.quotaValue ?? 0),
       };
     } else {
       // 创建模式

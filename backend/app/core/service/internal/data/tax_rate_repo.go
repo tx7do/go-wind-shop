@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -23,9 +23,9 @@ import (
 
 type TaxRateRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
-	mapper         *mapper.CopierMapper[taxV1.TaxRate, ent.TaxRate]
+	mapper          *mapper.CopierMapper[taxV1.TaxRate, ent.TaxRate]
 	statusConverter *mapper.EnumTypeConverter[taxV1.TaxRate_Status, taxrate.Status]
 
 	repository *entCrud.Repository[
@@ -105,7 +105,7 @@ func (r *TaxRateRepo) List(ctx context.Context, req *paginationV1.PagingRequest)
 	}, nil
 }
 
-func (r *TaxRateRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *TaxRateRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().TaxRate.Query().
 		Where(taxrate.IDEQ(id)).
 		Exist(ctx)

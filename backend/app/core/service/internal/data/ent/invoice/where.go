@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.Invoice {
+func ID(id int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.Invoice {
+func IDEQ(id int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.Invoice {
+func IDNEQ(id int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.Invoice {
+func IDIn(ids ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.Invoice {
+func IDNotIn(ids ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.Invoice {
+func IDGT(id int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.Invoice {
+func IDGTE(id int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.Invoice {
+func IDLT(id int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.Invoice {
+func IDLTE(id int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.Invoice {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.Invoice {
+func CreatedBy(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.Invoice {
+func UpdatedBy(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.Invoice {
+func DeletedBy(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.Invoice {
+func TenantID(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -95,12 +95,12 @@ func Currency(v string) predicate.Invoice {
 }
 
 // OrderID applies equality check predicate on the "order_id" field. It's identical to OrderIDEQ.
-func OrderID(v uint32) predicate.Invoice {
+func OrderID(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldOrderID, v))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint32) predicate.Invoice {
+func UserID(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldUserID, v))
 }
 
@@ -285,42 +285,42 @@ func DeletedAtNotNil() predicate.Invoice {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.Invoice {
+func CreatedByEQ(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.Invoice {
+func CreatedByNEQ(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.Invoice {
+func CreatedByIn(vs ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.Invoice {
+func CreatedByNotIn(vs ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.Invoice {
+func CreatedByGT(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.Invoice {
+func CreatedByGTE(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.Invoice {
+func CreatedByLT(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.Invoice {
+func CreatedByLTE(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -335,42 +335,42 @@ func CreatedByNotNil() predicate.Invoice {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.Invoice {
+func UpdatedByEQ(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.Invoice {
+func UpdatedByNEQ(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.Invoice {
+func UpdatedByIn(vs ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.Invoice {
+func UpdatedByNotIn(vs ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.Invoice {
+func UpdatedByGT(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.Invoice {
+func UpdatedByGTE(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.Invoice {
+func UpdatedByLT(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.Invoice {
+func UpdatedByLTE(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -385,42 +385,42 @@ func UpdatedByNotNil() predicate.Invoice {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.Invoice {
+func DeletedByEQ(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.Invoice {
+func DeletedByNEQ(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.Invoice {
+func DeletedByIn(vs ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.Invoice {
+func DeletedByNotIn(vs ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.Invoice {
+func DeletedByGT(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.Invoice {
+func DeletedByGTE(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.Invoice {
+func DeletedByLT(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.Invoice {
+func DeletedByLTE(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -435,42 +435,42 @@ func DeletedByNotNil() predicate.Invoice {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.Invoice {
+func TenantIDEQ(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.Invoice {
+func TenantIDNEQ(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.Invoice {
+func TenantIDIn(vs ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.Invoice {
+func TenantIDNotIn(vs ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.Invoice {
+func TenantIDGT(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.Invoice {
+func TenantIDGTE(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.Invoice {
+func TenantIDLT(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.Invoice {
+func TenantIDLTE(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -560,42 +560,42 @@ func CurrencyContainsFold(v string) predicate.Invoice {
 }
 
 // OrderIDEQ applies the EQ predicate on the "order_id" field.
-func OrderIDEQ(v uint32) predicate.Invoice {
+func OrderIDEQ(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldOrderID, v))
 }
 
 // OrderIDNEQ applies the NEQ predicate on the "order_id" field.
-func OrderIDNEQ(v uint32) predicate.Invoice {
+func OrderIDNEQ(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNEQ(FieldOrderID, v))
 }
 
 // OrderIDIn applies the In predicate on the "order_id" field.
-func OrderIDIn(vs ...uint32) predicate.Invoice {
+func OrderIDIn(vs ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldIn(FieldOrderID, vs...))
 }
 
 // OrderIDNotIn applies the NotIn predicate on the "order_id" field.
-func OrderIDNotIn(vs ...uint32) predicate.Invoice {
+func OrderIDNotIn(vs ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNotIn(FieldOrderID, vs...))
 }
 
 // OrderIDGT applies the GT predicate on the "order_id" field.
-func OrderIDGT(v uint32) predicate.Invoice {
+func OrderIDGT(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGT(FieldOrderID, v))
 }
 
 // OrderIDGTE applies the GTE predicate on the "order_id" field.
-func OrderIDGTE(v uint32) predicate.Invoice {
+func OrderIDGTE(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGTE(FieldOrderID, v))
 }
 
 // OrderIDLT applies the LT predicate on the "order_id" field.
-func OrderIDLT(v uint32) predicate.Invoice {
+func OrderIDLT(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLT(FieldOrderID, v))
 }
 
 // OrderIDLTE applies the LTE predicate on the "order_id" field.
-func OrderIDLTE(v uint32) predicate.Invoice {
+func OrderIDLTE(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLTE(FieldOrderID, v))
 }
 
@@ -610,42 +610,42 @@ func OrderIDNotNil() predicate.Invoice {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint32) predicate.Invoice {
+func UserIDEQ(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint32) predicate.Invoice {
+func UserIDNEQ(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint32) predicate.Invoice {
+func UserIDIn(vs ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint32) predicate.Invoice {
+func UserIDNotIn(vs ...int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uint32) predicate.Invoice {
+func UserIDGT(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGT(FieldUserID, v))
 }
 
 // UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uint32) predicate.Invoice {
+func UserIDGTE(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldGTE(FieldUserID, v))
 }
 
 // UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uint32) predicate.Invoice {
+func UserIDLT(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLT(FieldUserID, v))
 }
 
 // UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uint32) predicate.Invoice {
+func UserIDLTE(v int64) predicate.Invoice {
 	return predicate.Invoice(sql.FieldLTE(FieldUserID, v))
 }
 

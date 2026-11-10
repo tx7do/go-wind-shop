@@ -17,7 +17,7 @@ import (
 // 操作人（created_by/updated_by）与密钥加密由 admin BFF 层负责。
 type AiProviderService struct {
 	aiV1.UnimplementedAiProviderServiceServer
-	log *logx.Helper
+	log  *logx.Helper
 	repo *data.AiProviderRepo
 }
 

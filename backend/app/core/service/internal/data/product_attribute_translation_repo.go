@@ -15,15 +15,15 @@ import (
 	"github.com/tx7do/go-utils/mapper"
 
 	"go-wind-shop/app/core/service/internal/data/ent"
-	"go-wind-shop/app/core/service/internal/data/ent/productattributetranslation"
 	"go-wind-shop/app/core/service/internal/data/ent/predicate"
+	"go-wind-shop/app/core/service/internal/data/ent/productattributetranslation"
 
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 )
 
 type ProductAttributeTranslationRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.ProductAttributeTranslation, ent.ProductAttributeTranslation]
 
@@ -66,7 +66,7 @@ func (r *ProductAttributeTranslationRepo) init() {
 func (r *ProductAttributeTranslationRepo) CleanTranslations(
 	ctx context.Context,
 	tx *ent.Tx,
-	attributeID uint32,
+	attributeID int64,
 ) error {
 	if _, err := tx.ProductAttributeTranslation.Delete().
 		Where(
@@ -79,7 +79,7 @@ func (r *ProductAttributeTranslationRepo) CleanTranslations(
 	return nil
 }
 
-func (r *ProductAttributeTranslationRepo) ListTranslations(ctx context.Context, attributeID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*catalogV1.ProductAttributeTranslation, error) {
+func (r *ProductAttributeTranslationRepo) ListTranslations(ctx context.Context, attributeID int64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*catalogV1.ProductAttributeTranslation, error) {
 	builder := r.entClient.Client().ProductAttributeTranslation.Query().
 		Where(
 			productattributetranslation.AttributeIDEQ(attributeID),
@@ -117,7 +117,7 @@ func (r *ProductAttributeTranslationRepo) ListTranslations(ctx context.Context, 
 	return dtos, nil
 }
 
-func (r *ProductAttributeTranslationRepo) GetTranslation(ctx context.Context, attributeID uint32, languageCode string) (*catalogV1.ProductAttributeTranslation, error) {
+func (r *ProductAttributeTranslationRepo) GetTranslation(ctx context.Context, attributeID int64, languageCode string) (*catalogV1.ProductAttributeTranslation, error) {
 	q := r.entClient.Client().ProductAttributeTranslation.Query().
 		Where(
 			productattributetranslation.AttributeIDEQ(attributeID),
@@ -183,7 +183,7 @@ func (r *ProductAttributeTranslationRepo) CreateTranslation(ctx context.Context,
 	return r.mapper.ToDTO(entity), nil
 }
 
-func (r *ProductAttributeTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, data *catalogV1.ProductAttributeTranslation, updateMask *fieldmaskpb.FieldMask) (*catalogV1.ProductAttributeTranslation, error) {
+func (r *ProductAttributeTranslationRepo) UpdateTranslation(ctx context.Context, id int64, data *catalogV1.ProductAttributeTranslation, updateMask *fieldmaskpb.FieldMask) (*catalogV1.ProductAttributeTranslation, error) {
 	if data == nil {
 		return nil, nil
 	}
@@ -212,7 +212,7 @@ func (r *ProductAttributeTranslationRepo) UpdateTranslation(ctx context.Context,
 }
 
 // TranslationExists checks if a translation exists for the given product attribute ID and language code.
-func (r *ProductAttributeTranslationRepo) TranslationExists(ctx context.Context, attributeId uint32, languageCode string) (bool, error) {
+func (r *ProductAttributeTranslationRepo) TranslationExists(ctx context.Context, attributeId int64, languageCode string) (bool, error) {
 	c, err := r.entClient.Client().ProductAttributeTranslation.Query().
 		Where(
 			productattributetranslation.AttributeIDEQ(attributeId),
@@ -228,7 +228,7 @@ func (r *ProductAttributeTranslationRepo) TranslationExists(ctx context.Context,
 }
 
 // ListAvailedLanguages lists the language codes of all translations available for the given product attribute ID.
-func (r *ProductAttributeTranslationRepo) ListAvailedLanguages(ctx context.Context, attributeId uint32) ([]string, error) {
+func (r *ProductAttributeTranslationRepo) ListAvailedLanguages(ctx context.Context, attributeId int64) ([]string, error) {
 	entities, err := r.entClient.Client().ProductAttributeTranslation.Query().
 		Where(
 			productattributetranslation.AttributeIDEQ(attributeId),

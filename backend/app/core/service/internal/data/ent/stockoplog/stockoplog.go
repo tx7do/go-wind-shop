@@ -82,9 +82,9 @@ var (
 	// DefaultStockAfter holds the default value on creation for the "stock_after" field.
 	DefaultStockAfter int32
 	// DefaultRefID holds the default value on creation for the "ref_id" field.
-	DefaultRefID uint32
+	DefaultRefID int64
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(int64) error
 )
 
 // Reason defines the type for the "reason" enum field.

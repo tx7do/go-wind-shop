@@ -5,12 +5,12 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/notificationrule"
@@ -23,10 +23,10 @@ import (
 //
 // 这张表是 SendDirect 每次派发都要读一次的运行时真相，
 // 所以 GetByEventType 刻意不带缓存：路由改了立刻生效，比省一次索引查询重要
-//（单表单行、走 event_type 唯一索引）。
+// （单表单行、走 event_type 唯一索引）。
 type NotificationRuleRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper             *mapper.CopierMapper[notifyV1.NotificationRule, ent.NotificationRule]
 	channelConverter   *mapper.EnumTypeConverter[notifyV1.Channel, notificationrule.Channel]
@@ -94,7 +94,7 @@ func (r *NotificationRuleRepo) List(ctx context.Context, req *paginationV1.Pagin
 	}, nil
 }
 
-func (r *NotificationRuleRepo) Get(ctx context.Context, id uint32) (*notifyV1.NotificationRule, error) {
+func (r *NotificationRuleRepo) Get(ctx context.Context, id int64) (*notifyV1.NotificationRule, error) {
 	if id == 0 {
 		return nil, errors.BadRequest("NOTIFICATION_RULE", "id is required")
 	}
@@ -154,7 +154,7 @@ func (r *NotificationRuleRepo) Count(ctx context.Context) (int, error) {
 //
 // created_at 显式写入：mixin 的列没有 DB 默认值，留给 NULL 会让
 // "按创建时间排序"的列表页出现一排空行。
-func (r *NotificationRuleRepo) Create(ctx context.Context, req *notifyV1.NotificationRule, operatorID uint32) (uint32, error) {
+func (r *NotificationRuleRepo) Create(ctx context.Context, req *notifyV1.NotificationRule, operatorID int64) (int64, error) {
 	if req == nil {
 		return 0, errors.BadRequest("NOTIFICATION_RULE", "invalid request")
 	}
@@ -197,7 +197,7 @@ func (r *NotificationRuleRepo) Create(ctx context.Context, req *notifyV1.Notific
 	return created.ID, nil
 }
 
-func (r *NotificationRuleRepo) Update(ctx context.Context, req *notifyV1.UpdateNotificationRuleRequest, operatorID uint32) (*notifyV1.NotificationRule, error) {
+func (r *NotificationRuleRepo) Update(ctx context.Context, req *notifyV1.UpdateNotificationRuleRequest, operatorID int64) (*notifyV1.NotificationRule, error) {
 	if req == nil || req.Data == nil {
 		return nil, errors.BadRequest("NOTIFICATION_RULE", "invalid request")
 	}
@@ -243,7 +243,7 @@ func (r *NotificationRuleRepo) Update(ctx context.Context, req *notifyV1.UpdateN
 	return r.Get(ctx, req.GetId())
 }
 
-func (r *NotificationRuleRepo) Delete(ctx context.Context, id uint32) error {
+func (r *NotificationRuleRepo) Delete(ctx context.Context, id int64) error {
 	if id == 0 {
 		return errors.BadRequest("NOTIFICATION_RULE", "id is required")
 	}

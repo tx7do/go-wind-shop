@@ -1,8 +1,8 @@
 package auth
 
 import (
-	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 
 	"go-wind-shop/pkg/logx"
 

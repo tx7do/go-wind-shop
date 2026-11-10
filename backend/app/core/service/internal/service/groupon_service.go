@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data"
 	"go-wind-shop/app/core/service/internal/data/ent"
@@ -69,7 +69,7 @@ func (s *GrouponService) Count(ctx context.Context, req *paginationV1.PagingRequ
 	if err != nil {
 		return nil, err
 	}
-	return &catalogV1.CountGrouponActivityResponse{Count: uint64(count)}, nil
+	return &catalogV1.CountGrouponActivityResponse{Count: int64(count)}, nil
 }
 
 func (s *GrouponService) Get(ctx context.Context, req *catalogV1.GetGrouponActivityRequest) (*catalogV1.GrouponActivity, error) {
@@ -146,7 +146,7 @@ func (s *GrouponService) ListActiveGroupons(ctx context.Context, req *catalogV1.
 	for _, it := range list {
 		items = append(items, s.toActivityDTO(it))
 	}
-	return &catalogV1.ListGrouponActivityResponse{Items: items, Total: uint64(len(items))}, nil
+	return &catalogV1.ListGrouponActivityResponse{Items: items, Total: int64(len(items))}, nil
 }
 
 // ListGroups 活动下的团列表（status 可选过滤）。
@@ -171,7 +171,7 @@ func (s *GrouponService) ListGroups(ctx context.Context, req *catalogV1.ListGrou
 	for _, g := range list {
 		items = append(items, s.toGroupDTO(g))
 	}
-	return &catalogV1.ListGrouponGroupResponse{Items: items, Total: uint64(len(items))}, nil
+	return &catalogV1.ListGrouponGroupResponse{Items: items, Total: int64(len(items))}, nil
 }
 
 // GetGroup 团详情。
@@ -191,7 +191,7 @@ func (s *GrouponService) GetGroup(ctx context.Context, req *catalogV1.GetGroupon
 //   - 开团：返回 isNewGroup=true，由调用方在订单落库后调 CreateGroupForLeaderTx。
 //
 // 返回 (团ID[参团时], 成团价, 是否开新团, 错误)。拼团价为结算最高优先级。
-func (s *GrouponService) ApplyGrouponInTx(ctx context.Context, tx *ent.Tx, activityId, joinGroupId, userId, skuId uint32) (groupId uint32, groupPrice int64, isNewGroup bool, err error) {
+func (s *GrouponService) ApplyGrouponInTx(ctx context.Context, tx *ent.Tx, activityId, joinGroupId, userId, skuId int64) (groupId int64, groupPrice int64, isNewGroup bool, err error) {
 	act, aErr := tx.GrouponActivity.Query().
 		Where(grouponactivity.IDEQ(activityId)).
 		ForUpdate().
@@ -248,7 +248,7 @@ func (s *GrouponService) ApplyGrouponInTx(ctx context.Context, tx *ent.Tx, activ
 }
 
 // CreateGroupForLeaderTx 订单落库后为团长创建团（同事务；订单 ID 此时已知）。
-func (s *GrouponService) CreateGroupForLeaderTx(ctx context.Context, tx *ent.Tx, activityId, leaderOrderId uint32) (groupId uint32, err error) {
+func (s *GrouponService) CreateGroupForLeaderTx(ctx context.Context, tx *ent.Tx, activityId, leaderOrderId int64) (groupId int64, err error) {
 	act, aErr := tx.GrouponActivity.Query().Where(grouponactivity.IDEQ(activityId)).Only(ctx)
 	if aErr != nil || act == nil {
 		return 0, orderV1.ErrorBadRequest("groupon activity not found")
@@ -385,7 +385,7 @@ func (s *GrouponService) HandleGrouponSweep(taskType string, taskData *task.Grou
 }
 
 // autoRefundPaidMembers 对拼团失败团的已支付成员订单执行自动退款 + 关闭订单。
-func (s *GrouponService) autoRefundPaidMembers(ctx context.Context, groupId uint32) {
+func (s *GrouponService) autoRefundPaidMembers(ctx context.Context, groupId int64) {
 	members, err := s.entClient.Client().Order.Query().
 		Where(
 			order.GrouponGroupIDEQ(groupId),
@@ -449,7 +449,7 @@ func (s *GrouponService) autoRefundPaidMembers(ctx context.Context, groupId uint
 	}
 }
 
-func (s *GrouponService) latestRefundId(ctx context.Context, txId uint32) (uint32, error) {
+func (s *GrouponService) latestRefundId(ctx context.Context, txId int64) (int64, error) {
 	rf, err := s.entClient.Client().PaymentRefund.Query().
 		Where(paymentrefund.TransactionIDEQ(txId)).
 		Order(ent.Desc(paymentrefund.FieldID)).

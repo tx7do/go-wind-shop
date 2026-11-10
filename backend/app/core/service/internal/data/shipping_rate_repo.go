@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -23,9 +23,9 @@ import (
 
 type ShippingRateRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
-	mapper         *mapper.CopierMapper[shippingV1.ShippingRate, ent.ShippingRate]
+	mapper          *mapper.CopierMapper[shippingV1.ShippingRate, ent.ShippingRate]
 	statusConverter *mapper.EnumTypeConverter[shippingV1.ShippingRate_Status, shippingrate.Status]
 
 	repository *entCrud.Repository[
@@ -105,7 +105,7 @@ func (r *ShippingRateRepo) List(ctx context.Context, req *paginationV1.PagingReq
 	}, nil
 }
 
-func (r *ShippingRateRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *ShippingRateRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().ShippingRate.Query().
 		Where(shippingrate.IDEQ(id)).
 		Exist(ctx)

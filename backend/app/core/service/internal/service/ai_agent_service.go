@@ -10,13 +10,13 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 	"github.com/sashabaranov/go-openai"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/emptypb"
 
@@ -36,7 +36,7 @@ import (
 type AiAgentService struct {
 	aiV1.UnimplementedAiAgentServiceServer
 
-	log *logx.Helper
+	log           *logx.Helper
 	appRepo       *data.AiAgentAppRepo
 	runRepo       *data.AiAgentRunRepo
 	providerRepo  *data.AiProviderRepo
@@ -90,10 +90,10 @@ func (s *AiAgentService) Create(ctx context.Context, req *aiV1.CreateAiAgentAppR
 		return nil, err
 	}
 
-	var operatorID, tenantID uint32
+	var operatorID, tenantID int64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		operatorID = uint32(vc.UserID())
-		tenantID = uint32(vc.TenantID())
+		operatorID = int64(vc.UserID())
+		tenantID = int64(vc.TenantID())
 	}
 	req.Data.TenantId = trans.Ptr(tenantID)
 
@@ -174,10 +174,10 @@ func (s *AiAgentService) Run(ctx context.Context, req *aiV1.RunAiAgentAppRequest
 		return nil, errors.BadRequest("AI_AGENT", "id is required")
 	}
 
-	var operatorID, tenantID uint32
+	var operatorID, tenantID int64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		operatorID = uint32(vc.UserID())
-		tenantID = uint32(vc.TenantID())
+		operatorID = int64(vc.UserID())
+		tenantID = int64(vc.TenantID())
 	}
 
 	app, err := s.appRepo.GetEntityByID(ctx, req.GetId())
@@ -226,7 +226,7 @@ func (s *AiAgentService) Run(ctx context.Context, req *aiV1.RunAiAgentAppRequest
 		onStep:          publishFrame,
 		doHTTP:          s.doHTTPForAgent(),
 	})
-	durationMs := uint32(time.Since(start).Milliseconds())
+	durationMs := int64(time.Since(start).Milliseconds())
 
 	// approval 节点：运行挂起为 WAITING_APPROVAL（凭 ApproveRun 恢复继续）
 	var pendingSig *agentApprovalSignal
@@ -292,10 +292,10 @@ func (s *AiAgentService) ApproveRun(ctx context.Context, req *aiV1.ApproveAgentR
 		return nil, errors.BadRequest("AI_AGENT", err.Error())
 	}
 
-	var operatorID, tenantID uint32
+	var operatorID, tenantID int64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		operatorID = uint32(vc.UserID())
-		tenantID = uint32(vc.TenantID())
+		operatorID = int64(vc.UserID())
+		tenantID = int64(vc.TenantID())
 	}
 
 	// 驳回：置 FAILED（审批意见进 error），保留 trace
@@ -362,7 +362,7 @@ func (s *AiAgentService) ApproveRun(ctx context.Context, req *aiV1.ApproveAgentR
 			onStep:          publishFrame,
 			doHTTP:          s.doHTTPForAgent(),
 		})
-	durationMs := uint32(time.Since(start).Milliseconds())
+	durationMs := int64(time.Since(start).Milliseconds())
 
 	// 恢复路径上再遇 approval（多审批节点）：再次挂起
 	var pendingSig *agentApprovalSignal
@@ -375,7 +375,7 @@ func (s *AiAgentService) ApproveRun(ctx context.Context, req *aiV1.ApproveAgentR
 		if perr := s.runRepo.SetPending(ctx, req.GetRunId(), pendingSig.NodeID,
 			string(pendingSig.varsJSON), string(traceJSON),
 			data.AgentRunTokens{Prompt: pendingSig.usage.Prompt, Completion: pendingSig.usage.Completion, Total: pendingSig.usage.Total},
-			entity.DurationMs+durationMs); perr != nil {
+			int64(entity.DurationMs)+durationMs); perr != nil {
 			return nil, perr
 		}
 		publishFrame("approval_required", pendingSig.NodeID, "等待人工审批", "")
@@ -401,25 +401,25 @@ func (s *AiAgentService) ApproveRun(ctx context.Context, req *aiV1.ApproveAgentR
 
 	if err := s.runRepo.SettleResult(ctx, req.GetRunId(), status, output, errMsg, string(mergedJSON),
 		data.AgentRunTokens{
-			Prompt:     usage.Prompt + entity.PromptTokens,
-			Completion: usage.Completion + entity.CompletionTokens,
-			Total:      usage.Total + entity.TotalTokens,
+			Prompt:     usage.Prompt + int64(entity.PromptTokens),
+			Completion: usage.Completion + int64(entity.CompletionTokens),
+			Total:      usage.Total + int64(entity.TotalTokens),
 		},
-		entity.DurationMs+durationMs); err != nil {
+		int64(entity.DurationMs)+durationMs); err != nil {
 		return nil, err
 	}
 	s.log.Infof("ai agent run [%d] approved and %s (+%dms)", req.GetRunId(), status.String(), durationMs)
 	return s.runRepo.Get(ctx, req.GetRunId())
 }
 
-func derefAgentUint(p *uint32) uint32 {
+func derefAgentUint(p *int64) int64 {
 	if p == nil {
 		return 0
 	}
 	return *p
 }
 
-func derefAgentUint32(p *uint32) uint32 {
+func derefAgentUint32(p *int64) int64 {
 	if p == nil {
 		return 0
 	}
@@ -428,7 +428,7 @@ func derefAgentUint32(p *uint32) uint32 {
 
 // publishAgentFrame 把一帧轨迹事件发往 Redis（admin 订阅后按发起用户转 SSE）。
 // 尽力而为：Redis 不可用/发布失败只留日志，不影响执行与同步响应。
-func (s *AiAgentService) publishAgentFrame(ctx context.Context, userID uint32, frame *aiV1.AgentRunEvent) {
+func (s *AiAgentService) publishAgentFrame(ctx context.Context, userID int64, frame *aiV1.AgentRunEvent) {
 	if s.rdb == nil {
 		return
 	}
@@ -445,7 +445,7 @@ func (s *AiAgentService) publishAgentFrame(ctx context.Context, userID uint32, f
 
 // searchKnowledgeForAgent 知识检索节点的真实现：复用 chat 同一条 RAG 链路
 // （embed + 余弦检索 + embed 用量记账），命中片段按序拼接为上下文。
-func (s *AiAgentService) searchKnowledgeForAgent(userID, tenantID uint32) func(ctx context.Context, node *agentGraphNode, query string) (string, int, error) {
+func (s *AiAgentService) searchKnowledgeForAgent(userID, tenantID int64) func(ctx context.Context, node *agentGraphNode, query string) (string, int, error) {
 	return func(ctx context.Context, node *agentGraphNode, query string) (string, int, error) {
 		baseID := agentDataUint32(node.Data, "baseId")
 		if baseID == 0 {
@@ -470,7 +470,7 @@ func (s *AiAgentService) searchKnowledgeForAgent(userID, tenantID uint32) func(c
 // runLLMForAgent LLM 节点的真实现：provider 解析（节点点名，留空取默认启用）→
 // 客户端构造（密文解密就地）→ aiToolLoop 多轮工具调用 → 逐节点落用量流水
 // （conversation_id=0 的非对话调用，与 chat 共用 AI_TOKENS 配额口径）。
-func (s *AiAgentService) runLLMForAgent(userID, tenantID uint32) func(ctx context.Context, node *agentGraphNode, system, user string) (string, agentUsage, error) {
+func (s *AiAgentService) runLLMForAgent(userID, tenantID int64) func(ctx context.Context, node *agentGraphNode, system, user string) (string, agentUsage, error) {
 	return func(ctx context.Context, node *agentGraphNode, system, user string) (string, agentUsage, error) {
 		var provider *ent.AiProvider
 		var err error
@@ -522,7 +522,7 @@ func (s *AiAgentService) runLLMForAgent(userID, tenantID uint32) func(ctx contex
 
 		start := time.Now()
 		answer, usage, err := loop.run(ctx, messages)
-		durationMs := uint32(time.Since(start).Milliseconds())
+		durationMs := int64(time.Since(start).Milliseconds())
 
 		// 逐 LLM 节点记一条用量流水：agent 运行在用量台账里是"非对话调用"，
 		// model_name 记节点实际用的模型，水位扫描与 AI_TOKENS 配额同源。
@@ -532,9 +532,9 @@ func (s *AiAgentService) runLLMForAgent(userID, tenantID uint32) func(ctx contex
 				UserID:           userID,
 				TenantID:         tenantID,
 				ModelName:        model,
-				PromptTokens:     uint32(usage.PromptTokens),
-				CompletionTokens: uint32(usage.CompletionTokens),
-				TotalTokens:      uint32(usage.TotalTokens),
+				PromptTokens:     int64(usage.PromptTokens),
+				CompletionTokens: int64(usage.CompletionTokens),
+				TotalTokens:      int64(usage.TotalTokens),
 				DurationMs:       durationMs,
 			}); uerr != nil {
 				// 记账失败不回滚答案：运行本身已成功，台账缺一行可补，答案丢了不可补。
@@ -546,9 +546,9 @@ func (s *AiAgentService) runLLMForAgent(userID, tenantID uint32) func(ctx contex
 			return "", agentUsage{}, err
 		}
 		return answer, agentUsage{
-			Prompt:     uint32(usage.PromptTokens),
-			Completion: uint32(usage.CompletionTokens),
-			Total:      uint32(usage.TotalTokens),
+			Prompt:     int64(usage.PromptTokens),
+			Completion: int64(usage.CompletionTokens),
+			Total:      int64(usage.TotalTokens),
 		}, nil
 	}
 }

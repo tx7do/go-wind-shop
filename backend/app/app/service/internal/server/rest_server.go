@@ -1,8 +1,8 @@
 package server
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
+	"go-wind-shop/pkg/logx"
 
 	"github.com/go-kratos/kratos/v2/middleware"
 	"github.com/go-kratos/kratos/v2/middleware/logging"
@@ -134,14 +134,14 @@ func NewRestServer(
 	grouponService *service.GrouponService,
 	pointsService *service.PointsService,
 	seckillService *service.SeckillService,
-		userCouponService *service.UserCouponService,
-		couponTemplateService *service.CouponTemplateService,
-		promotionService *service.PromotionService,
-		commentService *service.CommentService,
-		interactionService *service.InteractionService,
-		invoiceService *service.InvoiceService,
-		aiChatService *service.AiChatService,
-	) *http.Server {
+	userCouponService *service.UserCouponService,
+	couponTemplateService *service.CouponTemplateService,
+	promotionService *service.PromotionService,
+	commentService *service.CommentService,
+	interactionService *service.InteractionService,
+	invoiceService *service.InvoiceService,
+	aiChatService *service.AiChatService,
+) *http.Server {
 	cfg := ctx.GetConfig()
 
 	if cfg == nil || cfg.Server == nil || cfg.Server.Rest == nil {

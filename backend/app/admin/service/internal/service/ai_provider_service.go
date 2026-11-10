@@ -3,14 +3,14 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
+	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 
 	"go-wind-shop/pkg/crypto"
 	"go-wind-shop/pkg/middleware/auth"
@@ -22,7 +22,7 @@ type AiProviderService struct {
 	adminV1.AiProviderServiceHTTPServer
 
 	aiProviderServiceClient aiV1.AiProviderServiceClient
-	log *logx.Helper
+	log                     *logx.Helper
 }
 
 func NewAiProviderService(ctx *bootstrap.Context, aiProviderServiceClient aiV1.AiProviderServiceClient) *AiProviderService {

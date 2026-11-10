@@ -9,10 +9,10 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -42,7 +42,7 @@ type MonitorAlertService struct {
 	repo      *data.MonitorAlertRuleRepo
 	entClient *entCrud.EntClient[*ent.Client]
 	rdb       *redis.Client
-	log *logx.Helper
+	log       *logx.Helper
 
 	// 构造期留 nil，装配期由 wiring 在服务就绪后 RegisterNotifier 注入
 	notifier Notifier
@@ -163,7 +163,7 @@ func (s *MonitorAlertService) EvaluateMonitorAlerts(ctx context.Context, _ *moni
 // ==== 评估内核 ====
 
 type alertOutcome struct {
-	ruleID       uint32
+	ruleID       int64
 	name         string
 	firing       bool
 	currentValue *float64
@@ -359,7 +359,7 @@ func (s *MonitorAlertService) sendAlert(ctx context.Context, rule *monitorAlertV
 		Title:          title,
 		Content:        content,
 		RelatedId:      rule.Id,
-		OperatorUserId: trans.Ptr(uint32(0)),
+		OperatorUserId: trans.Ptr(int64(0)),
 	})
 	if err != nil {
 		s.log.Errorf("monitor alert [%s] notify (%s → %s) failed: %s",

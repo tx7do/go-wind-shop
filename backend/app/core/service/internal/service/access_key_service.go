@@ -10,11 +10,11 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
@@ -37,7 +37,7 @@ const (
 type AccessKeyService struct {
 	accesskeyV1.UnimplementedAccessKeyServiceServer
 
-	log *logx.Helper
+	log           *logx.Helper
 	repo          *data.AccessKeyRepo
 	authenticator *data.Authenticator
 	rateLimiter   *data.AccessKeyRateLimiter
@@ -72,10 +72,10 @@ func (s *AccessKeyService) Create(ctx context.Context, req *accesskeyV1.CreateAc
 	}
 
 	// 凭证归属创建者的租户：机器令牌将继承该租户的隔离
-	var operatorID, tenantID uint32
+	var operatorID, tenantID int64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		operatorID = uint32(vc.UserID())
-		tenantID = uint32(vc.TenantID())
+		operatorID = int64(vc.UserID())
+		tenantID = int64(vc.TenantID())
 	}
 	req.Data.TenantId = trans.Ptr(tenantID)
 
@@ -98,7 +98,7 @@ func (s *AccessKeyService) Create(ctx context.Context, req *accesskeyV1.CreateAc
 
 	return &accesskeyV1.CreateAccessKeyResponse{
 		Data: &accesskeyV1.AccessKey{
-			Id:        trans.Ptr(uint32(entity.ID)),
+			Id:        trans.Ptr(int64(entity.ID)),
 			Name:      entity.Name,
 			AccessKey: entity.AccessKey,
 			Status:    statusProto(entity.Status),

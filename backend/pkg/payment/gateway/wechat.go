@@ -119,8 +119,8 @@ func (g *WechatGateway) createPaymentH5(ctx context.Context, req PayRequest) (*P
 		SceneInfo: &h5.SceneInfo{
 			PayerClientIp: core.String(clientIp),
 			H5Info: &h5.H5Info{
-				Type:    core.String("Wap"),
-				AppUrl:  core.String(req.NotifyURL),
+				Type:   core.String("Wap"),
+				AppUrl: core.String(req.NotifyURL),
 			},
 		},
 	})

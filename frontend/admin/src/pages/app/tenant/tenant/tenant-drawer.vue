@@ -84,7 +84,7 @@
             v-for="item in planOptions"
             :key="item.id"
             :label="item.name"
-            :value="item.id as number"
+            :value="String(item.id)"
           />
         </ElSelect>
       </ElFormItem>
@@ -322,7 +322,7 @@ const formData = ref({
   auditStatus: "APPROVED",
   status: "ON",
   remark: "",
-  subscriptionPlan: undefined as number | undefined,
+  subscriptionPlan: undefined as string | undefined,
   expiredAt: "" as string,
   user: {
     username: "",
@@ -390,7 +390,7 @@ watch(visible, async (val) => {
         auditStatus: row.auditStatus || "APPROVED",
         status: row.status || "ON",
         remark: row.remark || "",
-        subscriptionPlan: row.planId,
+        subscriptionPlan: row.planId != null ? String(row.planId) : undefined,
         expiredAt: "",
         user: {
           username: "",

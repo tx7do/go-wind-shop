@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 )
 
 // 访问凭证（AK/SK）令牌交换失败计数与锁定常量。

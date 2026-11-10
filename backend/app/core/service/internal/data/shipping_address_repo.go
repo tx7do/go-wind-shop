@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -23,7 +23,7 @@ import (
 
 type ShippingAddressRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[addressV1.ShippingAddress, ent.ShippingAddress]
 
@@ -105,7 +105,7 @@ func (r *ShippingAddressRepo) List(ctx context.Context, req *paginationV1.Paging
 	}, nil
 }
 
-func (r *ShippingAddressRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *ShippingAddressRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().ShippingAddress.Query().
 		Where(shippingaddress.IDEQ(id)).
 		Exist(ctx)
@@ -141,7 +141,7 @@ func (r *ShippingAddressRepo) Get(ctx context.Context, req *addressV1.GetShippin
 // clearOtherDefaults 把指定用户（tenantId+userId）下的其它地址的 is_default 置 false，
 // 用于"默认地址唯一"互斥：当新增/更新某地址为默认时，先清掉旧默认。
 // client 参数允许在事务上下文中执行（传 tx.Client()），保证 clear 与主操作原子性。
-func (r *ShippingAddressRepo) clearOtherDefaults(ctx context.Context, client *ent.ShippingAddressClient, tenantId, userId, exceptId uint32) error {
+func (r *ShippingAddressRepo) clearOtherDefaults(ctx context.Context, client *ent.ShippingAddressClient, tenantId, userId, exceptId int64) error {
 	if userId == 0 {
 		return nil
 	}
@@ -291,7 +291,7 @@ func (r *ShippingAddressRepo) Update(ctx context.Context, req *addressV1.UpdateS
 			}
 		}()
 
-		var tenantId, userId uint32
+		var tenantId, userId int64
 		if req.Data.TenantId != nil {
 			tenantId = req.Data.GetTenantId()
 		}

@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/jinzhu/copier"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/durationpb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -27,7 +27,7 @@ import (
 
 type ApiAuditLogRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[auditV1.ApiAuditLog, ent.ApiAuditLog]
 
@@ -115,7 +115,7 @@ func (r *ApiAuditLogRepo) List(ctx context.Context, req *paginationV1.PagingRequ
 	}, nil
 }
 
-func (r *ApiAuditLogRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *ApiAuditLogRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().ApiAuditLog.Query().
 		Where(apiauditlog.IDEQ(id)).
 		Exist(ctx)

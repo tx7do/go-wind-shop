@@ -1,12 +1,11 @@
 package lua
 
 import (
-	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"os"
 	"path/filepath"
 	"testing"
-
 )
 
 func TestEngine_AutoLoadScripts(t *testing.T) {

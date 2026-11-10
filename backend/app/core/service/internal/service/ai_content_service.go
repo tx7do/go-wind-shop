@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/sashabaranov/go-openai"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -46,14 +46,14 @@ var aiContentScenePrompts = map[aiV1.ContentScene]string{
 // AiContentService AI 内容生成（表单助手）。
 type AiContentService struct {
 	aiV1.UnimplementedAiContentServiceServer
-	log *logx.Helper
-	providerRepo *data.AiProviderRepo
-	usageRepo    *data.AiUsageLogRepo
+	log           *logx.Helper
+	providerRepo  *data.AiProviderRepo
+	usageRepo     *data.AiUsageLogRepo
 	knowledgeRepo *data.AiKnowledgeRepo
-	entClient    *entCrud.EntClient[*ent.Client]
-	menuRepo     *data.MenuRepo
-	roleRepo     interface {
-		GetRolesPermissionMenuIDs(ctx context.Context, roleIDs []uint32) ([]uint32, error)
+	entClient     *entCrud.EntClient[*ent.Client]
+	menuRepo      *data.MenuRepo
+	roleRepo      interface {
+		GetRolesPermissionMenuIDs(ctx context.Context, roleIDs []int64) ([]int64, error)
 	}
 	userRepo interface {
 		Get(ctx context.Context, req *identityV1.GetUserRequest) (*identityV1.User, error)
@@ -136,14 +136,14 @@ func (s *AiContentService) GenerateContent(ctx context.Context, req *aiV1.Genera
 	}
 
 	content := strings.TrimSpace(resp.Choices[0].Message.Content)
-	tokens := uint32(resp.Usage.TotalTokens)
-	durationMs := uint32(time.Since(callStart).Milliseconds())
+	tokens := int64(resp.Usage.TotalTokens)
+	durationMs := int64(time.Since(callStart).Milliseconds())
 
 	// 记用量（尽力而为，不阻断返回）
 	if s.usageRepo != nil {
-		var userId, tenantId uint32
+		var userId, tenantId int64
 		if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-			tenantId = uint32(vc.TenantID())
+			tenantId = int64(vc.TenantID())
 		}
 		if uid, hasUser := viewerUserIDFromContext(ctx); hasUser {
 			userId = uid
@@ -153,9 +153,9 @@ func (s *AiContentService) GenerateContent(ctx context.Context, req *aiV1.Genera
 			UserID:           userId,
 			TenantID:         tenantId,
 			ModelName:        ptrStrOr(provider.ModelName, ""),
-			PromptTokens:     uint32(resp.Usage.PromptTokens),
-			CompletionTokens: uint32(resp.Usage.CompletionTokens),
-			TotalTokens:      uint32(resp.Usage.TotalTokens),
+			PromptTokens:     int64(resp.Usage.PromptTokens),
+			CompletionTokens: int64(resp.Usage.CompletionTokens),
+			TotalTokens:      int64(resp.Usage.TotalTokens),
 			DurationMs:       durationMs,
 		}); uerr != nil {
 			s.log.Errorf("ai content usage log failed: %v", uerr)
@@ -164,7 +164,7 @@ func (s *AiContentService) GenerateContent(ctx context.Context, req *aiV1.Genera
 
 	return &aiV1.GenerateContentResponse{
 		Content:     content,
-		TotalTokens: tokens,
+		TotalTokens: uint32(tokens),
 	}, nil
 }
 
@@ -259,7 +259,7 @@ var buildSearchIndexSQL = fmt.Sprintf(
 
 // menuIndexDoc 待索引菜单：真实菜单 id + 标题 + 路由。
 type menuIndexDoc struct {
-	menuId uint32
+	menuId int64
 	title  string
 	route  string
 }
@@ -307,7 +307,7 @@ func paginationV1PagingNoLimit() *paginationV1.PagingRequest {
 // BuildMenuSearchIndex 向量化全部菜单标题并原子替换索引表里的菜单行。
 // 顺序：先离线算完全部 embedding（不持事务调外部 API），再单事务 DELETE+分批
 // 多行 INSERT——任一环节失败即回滚，旧索引原样保留。
-func (s *AiContentService) BuildMenuSearchIndex(ctx context.Context) (uint32, error) {
+func (s *AiContentService) BuildMenuSearchIndex(ctx context.Context) (int64, error) {
 	db := s.entClient.DB()
 	if _, err := db.ExecContext(ctx, buildSearchIndexSQL); err != nil {
 		return 0, fmt.Errorf("create search index table: %w", err)
@@ -362,9 +362,9 @@ func (s *AiContentService) BuildMenuSearchIndex(ctx context.Context) (uint32, er
 				UserID:       operatorId,
 				TenantID:     tenantId,
 				ModelName:    aiMenuEmbedModel,
-				PromptTokens: uint32(resp.Usage.PromptTokens),
-				TotalTokens:  uint32(resp.Usage.TotalTokens),
-				DurationMs:   uint32(time.Since(callStart).Milliseconds()),
+				PromptTokens: int64(resp.Usage.PromptTokens),
+				TotalTokens:  int64(resp.Usage.TotalTokens),
+				DurationMs:   int64(time.Since(callStart).Milliseconds()),
 			}); uerr != nil {
 				s.log.Errorf("record embedding usage failed: %v", uerr)
 			}
@@ -417,7 +417,7 @@ func (s *AiContentService) BuildMenuSearchIndex(ctx context.Context) (uint32, er
 		return 0, fmt.Errorf("commit search index: %w", cErr)
 	}
 	committed = true
-	return uint32(len(docs)), nil
+	return int64(len(docs)), nil
 }
 
 // SemanticSearch 语义搜索：向量化 query 并按余弦相似度检索菜单索引。
@@ -487,8 +487,8 @@ func (s *AiContentService) SemanticSearch(ctx context.Context, req *aiV1.Semanti
 			UserID:       operatorId,
 			TenantID:     tenantId,
 			ModelName:    aiMenuEmbedModel,
-			PromptTokens: uint32(embResp.Usage.PromptTokens),
-			TotalTokens:  uint32(embResp.Usage.TotalTokens),
+			PromptTokens: int64(embResp.Usage.PromptTokens),
+			TotalTokens:  int64(embResp.Usage.TotalTokens),
 		}); uerr != nil {
 			s.log.Errorf("record embedding usage failed: %v", uerr)
 		}
@@ -552,13 +552,13 @@ func (s *AiContentService) RebuildSearchIndex(ctx context.Context, _ *emptypb.Em
 	if pErr != nil {
 		s.log.Errorf("rebuild post index failed: %v", pErr)
 	}
-	return &aiV1.RebuildSearchIndexResponse{IndexedCount: count + uint32(postCount)}, nil
+	return &aiV1.RebuildSearchIndexResponse{IndexedCount: uint32(count + int64(postCount))}, nil
 }
 
 // visibleMenuIDs 解析调用者可见的菜单 ID 集。
 // 平台用户返回 nil（不过滤）；普通用户经 用户→角色→权限→菜单 链路解析，
 // 解析失败返回错误（fail-closed）。
-func (s *AiContentService) visibleMenuIDs(ctx context.Context, operatorId, tenantId uint32) ([]uint32, error) {
+func (s *AiContentService) visibleMenuIDs(ctx context.Context, operatorId, tenantId int64) ([]int64, error) {
 	if tenantId == 0 {
 		return nil, nil
 	}
@@ -569,16 +569,16 @@ func (s *AiContentService) visibleMenuIDs(ctx context.Context, operatorId, tenan
 		return nil, err
 	}
 	if user == nil || len(user.GetRoleIds()) == 0 {
-		return []uint32{}, nil
+		return []int64{}, nil
 	}
 	return s.roleRepo.GetRolesPermissionMenuIDs(ctx, user.GetRoleIds())
 }
 
 // operatorIds 从 viewer 上下文取操作者（unary 中间件注入）。
-func (s *AiContentService) operatorIds(ctx context.Context) (uint32, uint32) {
-	var userId, tenantId uint32
+func (s *AiContentService) operatorIds(ctx context.Context) (int64, int64) {
+	var userId, tenantId int64
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		tenantId = uint32(vc.TenantID())
+		tenantId = int64(vc.TenantID())
 	}
 	if uid, ok := viewerUserIDFromContext(ctx); ok {
 		userId = uid

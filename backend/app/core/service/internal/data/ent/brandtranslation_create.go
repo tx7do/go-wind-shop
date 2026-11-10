@@ -65,13 +65,13 @@ func (_c *BrandTranslationCreate) SetNillableDeletedAt(v *time.Time) *BrandTrans
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *BrandTranslationCreate) SetCreatedBy(v uint32) *BrandTranslationCreate {
+func (_c *BrandTranslationCreate) SetCreatedBy(v int64) *BrandTranslationCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *BrandTranslationCreate) SetNillableCreatedBy(v *uint32) *BrandTranslationCreate {
+func (_c *BrandTranslationCreate) SetNillableCreatedBy(v *int64) *BrandTranslationCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *BrandTranslationCreate) SetNillableCreatedBy(v *uint32) *BrandTranslat
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *BrandTranslationCreate) SetUpdatedBy(v uint32) *BrandTranslationCreate {
+func (_c *BrandTranslationCreate) SetUpdatedBy(v int64) *BrandTranslationCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *BrandTranslationCreate) SetNillableUpdatedBy(v *uint32) *BrandTranslationCreate {
+func (_c *BrandTranslationCreate) SetNillableUpdatedBy(v *int64) *BrandTranslationCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *BrandTranslationCreate) SetNillableUpdatedBy(v *uint32) *BrandTranslat
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *BrandTranslationCreate) SetDeletedBy(v uint32) *BrandTranslationCreate {
+func (_c *BrandTranslationCreate) SetDeletedBy(v int64) *BrandTranslationCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *BrandTranslationCreate) SetNillableDeletedBy(v *uint32) *BrandTranslationCreate {
+func (_c *BrandTranslationCreate) SetNillableDeletedBy(v *int64) *BrandTranslationCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *BrandTranslationCreate) SetNillableDeletedBy(v *uint32) *BrandTranslat
 }
 
 // SetBrandID sets the "brand_id" field.
-func (_c *BrandTranslationCreate) SetBrandID(v uint32) *BrandTranslationCreate {
+func (_c *BrandTranslationCreate) SetBrandID(v int64) *BrandTranslationCreate {
 	_c.mutation.SetBrandID(v)
 	return _c
 }
 
 // SetNillableBrandID sets the "brand_id" field if the given value is not nil.
-func (_c *BrandTranslationCreate) SetNillableBrandID(v *uint32) *BrandTranslationCreate {
+func (_c *BrandTranslationCreate) SetNillableBrandID(v *int64) *BrandTranslationCreate {
 	if v != nil {
 		_c.SetBrandID(*v)
 	}
@@ -177,7 +177,7 @@ func (_c *BrandTranslationCreate) SetNillableDescription(v *string) *BrandTransl
 }
 
 // SetID sets the "id" field.
-func (_c *BrandTranslationCreate) SetID(v uint32) *BrandTranslationCreate {
+func (_c *BrandTranslationCreate) SetID(v int64) *BrandTranslationCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -237,7 +237,7 @@ func (_c *BrandTranslationCreate) sqlSave(ctx context.Context) (*BrandTranslatio
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -247,7 +247,7 @@ func (_c *BrandTranslationCreate) sqlSave(ctx context.Context) (*BrandTranslatio
 func (_c *BrandTranslationCreate) createSpec() (*BrandTranslation, *sqlgraph.CreateSpec) {
 	var (
 		_node = &BrandTranslation{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(brandtranslation.Table, sqlgraph.NewFieldSpec(brandtranslation.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(brandtranslation.Table, sqlgraph.NewFieldSpec(brandtranslation.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -267,19 +267,19 @@ func (_c *BrandTranslationCreate) createSpec() (*BrandTranslation, *sqlgraph.Cre
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(brandtranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(brandtranslation.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(brandtranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(brandtranslation.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(brandtranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(brandtranslation.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.BrandID(); ok {
-		_spec.SetField(brandtranslation.FieldBrandID, field.TypeUint32, value)
+		_spec.SetField(brandtranslation.FieldBrandID, field.TypeInt64, value)
 		_node.BrandID = &value
 	}
 	if value, ok := _c.mutation.LanguageCode(); ok {
@@ -387,7 +387,7 @@ func (u *BrandTranslationUpsert) ClearDeletedAt() *BrandTranslationUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BrandTranslationUpsert) SetCreatedBy(v uint32) *BrandTranslationUpsert {
+func (u *BrandTranslationUpsert) SetCreatedBy(v int64) *BrandTranslationUpsert {
 	u.Set(brandtranslation.FieldCreatedBy, v)
 	return u
 }
@@ -399,7 +399,7 @@ func (u *BrandTranslationUpsert) UpdateCreatedBy() *BrandTranslationUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BrandTranslationUpsert) AddCreatedBy(v uint32) *BrandTranslationUpsert {
+func (u *BrandTranslationUpsert) AddCreatedBy(v int64) *BrandTranslationUpsert {
 	u.Add(brandtranslation.FieldCreatedBy, v)
 	return u
 }
@@ -411,7 +411,7 @@ func (u *BrandTranslationUpsert) ClearCreatedBy() *BrandTranslationUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BrandTranslationUpsert) SetUpdatedBy(v uint32) *BrandTranslationUpsert {
+func (u *BrandTranslationUpsert) SetUpdatedBy(v int64) *BrandTranslationUpsert {
 	u.Set(brandtranslation.FieldUpdatedBy, v)
 	return u
 }
@@ -423,7 +423,7 @@ func (u *BrandTranslationUpsert) UpdateUpdatedBy() *BrandTranslationUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BrandTranslationUpsert) AddUpdatedBy(v uint32) *BrandTranslationUpsert {
+func (u *BrandTranslationUpsert) AddUpdatedBy(v int64) *BrandTranslationUpsert {
 	u.Add(brandtranslation.FieldUpdatedBy, v)
 	return u
 }
@@ -435,7 +435,7 @@ func (u *BrandTranslationUpsert) ClearUpdatedBy() *BrandTranslationUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BrandTranslationUpsert) SetDeletedBy(v uint32) *BrandTranslationUpsert {
+func (u *BrandTranslationUpsert) SetDeletedBy(v int64) *BrandTranslationUpsert {
 	u.Set(brandtranslation.FieldDeletedBy, v)
 	return u
 }
@@ -447,7 +447,7 @@ func (u *BrandTranslationUpsert) UpdateDeletedBy() *BrandTranslationUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BrandTranslationUpsert) AddDeletedBy(v uint32) *BrandTranslationUpsert {
+func (u *BrandTranslationUpsert) AddDeletedBy(v int64) *BrandTranslationUpsert {
 	u.Add(brandtranslation.FieldDeletedBy, v)
 	return u
 }
@@ -459,7 +459,7 @@ func (u *BrandTranslationUpsert) ClearDeletedBy() *BrandTranslationUpsert {
 }
 
 // SetBrandID sets the "brand_id" field.
-func (u *BrandTranslationUpsert) SetBrandID(v uint32) *BrandTranslationUpsert {
+func (u *BrandTranslationUpsert) SetBrandID(v int64) *BrandTranslationUpsert {
 	u.Set(brandtranslation.FieldBrandID, v)
 	return u
 }
@@ -471,7 +471,7 @@ func (u *BrandTranslationUpsert) UpdateBrandID() *BrandTranslationUpsert {
 }
 
 // AddBrandID adds v to the "brand_id" field.
-func (u *BrandTranslationUpsert) AddBrandID(v uint32) *BrandTranslationUpsert {
+func (u *BrandTranslationUpsert) AddBrandID(v int64) *BrandTranslationUpsert {
 	u.Add(brandtranslation.FieldBrandID, v)
 	return u
 }
@@ -648,14 +648,14 @@ func (u *BrandTranslationUpsertOne) ClearDeletedAt() *BrandTranslationUpsertOne 
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BrandTranslationUpsertOne) SetCreatedBy(v uint32) *BrandTranslationUpsertOne {
+func (u *BrandTranslationUpsertOne) SetCreatedBy(v int64) *BrandTranslationUpsertOne {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BrandTranslationUpsertOne) AddCreatedBy(v uint32) *BrandTranslationUpsertOne {
+func (u *BrandTranslationUpsertOne) AddCreatedBy(v int64) *BrandTranslationUpsertOne {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -676,14 +676,14 @@ func (u *BrandTranslationUpsertOne) ClearCreatedBy() *BrandTranslationUpsertOne 
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BrandTranslationUpsertOne) SetUpdatedBy(v uint32) *BrandTranslationUpsertOne {
+func (u *BrandTranslationUpsertOne) SetUpdatedBy(v int64) *BrandTranslationUpsertOne {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BrandTranslationUpsertOne) AddUpdatedBy(v uint32) *BrandTranslationUpsertOne {
+func (u *BrandTranslationUpsertOne) AddUpdatedBy(v int64) *BrandTranslationUpsertOne {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -704,14 +704,14 @@ func (u *BrandTranslationUpsertOne) ClearUpdatedBy() *BrandTranslationUpsertOne 
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BrandTranslationUpsertOne) SetDeletedBy(v uint32) *BrandTranslationUpsertOne {
+func (u *BrandTranslationUpsertOne) SetDeletedBy(v int64) *BrandTranslationUpsertOne {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BrandTranslationUpsertOne) AddDeletedBy(v uint32) *BrandTranslationUpsertOne {
+func (u *BrandTranslationUpsertOne) AddDeletedBy(v int64) *BrandTranslationUpsertOne {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -732,14 +732,14 @@ func (u *BrandTranslationUpsertOne) ClearDeletedBy() *BrandTranslationUpsertOne 
 }
 
 // SetBrandID sets the "brand_id" field.
-func (u *BrandTranslationUpsertOne) SetBrandID(v uint32) *BrandTranslationUpsertOne {
+func (u *BrandTranslationUpsertOne) SetBrandID(v int64) *BrandTranslationUpsertOne {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.SetBrandID(v)
 	})
 }
 
 // AddBrandID adds v to the "brand_id" field.
-func (u *BrandTranslationUpsertOne) AddBrandID(v uint32) *BrandTranslationUpsertOne {
+func (u *BrandTranslationUpsertOne) AddBrandID(v int64) *BrandTranslationUpsertOne {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.AddBrandID(v)
 	})
@@ -859,7 +859,7 @@ func (u *BrandTranslationUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *BrandTranslationUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *BrandTranslationUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -868,7 +868,7 @@ func (u *BrandTranslationUpsertOne) ID(ctx context.Context) (id uint32, err erro
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *BrandTranslationUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *BrandTranslationUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -924,7 +924,7 @@ func (_c *BrandTranslationCreateBulk) Save(ctx context.Context) ([]*BrandTransla
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1102,14 +1102,14 @@ func (u *BrandTranslationUpsertBulk) ClearDeletedAt() *BrandTranslationUpsertBul
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *BrandTranslationUpsertBulk) SetCreatedBy(v uint32) *BrandTranslationUpsertBulk {
+func (u *BrandTranslationUpsertBulk) SetCreatedBy(v int64) *BrandTranslationUpsertBulk {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *BrandTranslationUpsertBulk) AddCreatedBy(v uint32) *BrandTranslationUpsertBulk {
+func (u *BrandTranslationUpsertBulk) AddCreatedBy(v int64) *BrandTranslationUpsertBulk {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1130,14 +1130,14 @@ func (u *BrandTranslationUpsertBulk) ClearCreatedBy() *BrandTranslationUpsertBul
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *BrandTranslationUpsertBulk) SetUpdatedBy(v uint32) *BrandTranslationUpsertBulk {
+func (u *BrandTranslationUpsertBulk) SetUpdatedBy(v int64) *BrandTranslationUpsertBulk {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *BrandTranslationUpsertBulk) AddUpdatedBy(v uint32) *BrandTranslationUpsertBulk {
+func (u *BrandTranslationUpsertBulk) AddUpdatedBy(v int64) *BrandTranslationUpsertBulk {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1158,14 +1158,14 @@ func (u *BrandTranslationUpsertBulk) ClearUpdatedBy() *BrandTranslationUpsertBul
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *BrandTranslationUpsertBulk) SetDeletedBy(v uint32) *BrandTranslationUpsertBulk {
+func (u *BrandTranslationUpsertBulk) SetDeletedBy(v int64) *BrandTranslationUpsertBulk {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *BrandTranslationUpsertBulk) AddDeletedBy(v uint32) *BrandTranslationUpsertBulk {
+func (u *BrandTranslationUpsertBulk) AddDeletedBy(v int64) *BrandTranslationUpsertBulk {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1186,14 +1186,14 @@ func (u *BrandTranslationUpsertBulk) ClearDeletedBy() *BrandTranslationUpsertBul
 }
 
 // SetBrandID sets the "brand_id" field.
-func (u *BrandTranslationUpsertBulk) SetBrandID(v uint32) *BrandTranslationUpsertBulk {
+func (u *BrandTranslationUpsertBulk) SetBrandID(v int64) *BrandTranslationUpsertBulk {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.SetBrandID(v)
 	})
 }
 
 // AddBrandID adds v to the "brand_id" field.
-func (u *BrandTranslationUpsertBulk) AddBrandID(v uint32) *BrandTranslationUpsertBulk {
+func (u *BrandTranslationUpsertBulk) AddBrandID(v int64) *BrandTranslationUpsertBulk {
 	return u.Update(func(s *BrandTranslationUpsert) {
 		s.AddBrandID(v)
 	})

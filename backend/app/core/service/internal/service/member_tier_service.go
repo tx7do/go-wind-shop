@@ -3,11 +3,11 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data"
 	"go-wind-shop/app/core/service/internal/data/ent"
@@ -46,7 +46,7 @@ func (s *MemberTierService) Count(ctx context.Context, req *paginationV1.PagingR
 	if err != nil {
 		return nil, err
 	}
-	return &catalogV1.CountMemberTierResponse{Count: uint64(count)}, nil
+	return &catalogV1.CountMemberTierResponse{Count: int64(count)}, nil
 }
 
 func (s *MemberTierService) Get(ctx context.Context, req *catalogV1.GetMemberTierRequest) (*catalogV1.MemberTier, error) {
@@ -66,7 +66,7 @@ func (s *MemberTierService) ListTiers(ctx context.Context, req *catalogV1.ListAc
 	for _, it := range list {
 		items = append(items, s.toDTO(it))
 	}
-	return &catalogV1.ListMemberTierResponse{Items: items, Total: uint64(len(items))}, nil
+	return &catalogV1.ListMemberTierResponse{Items: items, Total: int64(len(items))}, nil
 }
 
 func (s *MemberTierService) Create(ctx context.Context, req *catalogV1.CreateMemberTierRequest) (*emptypb.Empty, error) {
@@ -112,7 +112,7 @@ func (s *MemberTierService) Delete(ctx context.Context, req *catalogV1.DeleteMem
 }
 
 // cumulativeSpend 查用户累计已支付金额（PAID/FULFILLED/CLOSED）。
-func (s *MemberTierService) cumulativeSpend(ctx context.Context, userId uint32) (int64, error) {
+func (s *MemberTierService) cumulativeSpend(ctx context.Context, userId int64) (int64, error) {
 	var rows []struct{ Sum int64 }
 	err := s.entClient.Client().Order.Query().
 		Where(
@@ -180,7 +180,7 @@ func (s *MemberTierService) GetUserTierInfo(ctx context.Context, req *catalogV1.
 
 // GetPointsMultiplierForUser 查用户当前等级的积分倍率（积分入账用）。
 // 无等级配置或无匹配时返回 1。仅供 AwardForOrder 调用。
-func (s *MemberTierService) GetPointsMultiplierForUser(ctx context.Context, userId uint32) int32 {
+func (s *MemberTierService) GetPointsMultiplierForUser(ctx context.Context, userId int64) int32 {
 	spend, err := s.cumulativeSpend(ctx, userId)
 	if err != nil {
 		return 1
@@ -221,5 +221,3 @@ func (s *MemberTierService) toDTO(it *ent.MemberTier) *catalogV1.MemberTier {
 	}
 	return dto
 }
-
-

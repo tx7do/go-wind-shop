@@ -3,11 +3,11 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
-	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
+	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 )
 
 // AiQueryService 智能问数（BFF 直通转发；
@@ -16,7 +16,7 @@ type AiQueryService struct {
 	adminV1.AiQueryServiceHTTPServer
 
 	aiQueryServiceClient aiV1.AiQueryServiceClient
-	log *logx.Helper
+	log                  *logx.Helper
 }
 
 func NewAiQueryService(ctx *bootstrap.Context, aiQueryServiceClient aiV1.AiQueryServiceClient) *AiQueryService {

@@ -40,7 +40,7 @@ func (_d *SeckillActivityDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *SeckillActivityDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(seckillactivity.Table, sqlgraph.NewFieldSpec(seckillactivity.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewDeleteSpec(seckillactivity.Table, sqlgraph.NewFieldSpec(seckillactivity.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

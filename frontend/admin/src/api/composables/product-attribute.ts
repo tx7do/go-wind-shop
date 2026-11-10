@@ -78,12 +78,11 @@ export function useCreateProductAttribute(
 }
 
 export function useUpdateProductAttribute(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.productAttributeService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.productAttributeService.Update({ id: String(id),
         data: { ...values } as unknown as catalogservicev1_ProductAttribute,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),

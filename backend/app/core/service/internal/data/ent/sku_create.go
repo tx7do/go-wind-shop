@@ -65,13 +65,13 @@ func (_c *SkuCreate) SetNillableDeletedAt(v *time.Time) *SkuCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *SkuCreate) SetCreatedBy(v uint32) *SkuCreate {
+func (_c *SkuCreate) SetCreatedBy(v int64) *SkuCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *SkuCreate) SetNillableCreatedBy(v *uint32) *SkuCreate {
+func (_c *SkuCreate) SetNillableCreatedBy(v *int64) *SkuCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *SkuCreate) SetNillableCreatedBy(v *uint32) *SkuCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *SkuCreate) SetUpdatedBy(v uint32) *SkuCreate {
+func (_c *SkuCreate) SetUpdatedBy(v int64) *SkuCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *SkuCreate) SetNillableUpdatedBy(v *uint32) *SkuCreate {
+func (_c *SkuCreate) SetNillableUpdatedBy(v *int64) *SkuCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *SkuCreate) SetNillableUpdatedBy(v *uint32) *SkuCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *SkuCreate) SetDeletedBy(v uint32) *SkuCreate {
+func (_c *SkuCreate) SetDeletedBy(v int64) *SkuCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *SkuCreate) SetNillableDeletedBy(v *uint32) *SkuCreate {
+func (_c *SkuCreate) SetNillableDeletedBy(v *int64) *SkuCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *SkuCreate) SetNillableDeletedBy(v *uint32) *SkuCreate {
 }
 
 // SetProductID sets the "product_id" field.
-func (_c *SkuCreate) SetProductID(v uint32) *SkuCreate {
+func (_c *SkuCreate) SetProductID(v int64) *SkuCreate {
 	_c.mutation.SetProductID(v)
 	return _c
 }
 
 // SetNillableProductID sets the "product_id" field if the given value is not nil.
-func (_c *SkuCreate) SetNillableProductID(v *uint32) *SkuCreate {
+func (_c *SkuCreate) SetNillableProductID(v *int64) *SkuCreate {
 	if v != nil {
 		_c.SetProductID(*v)
 	}
@@ -149,7 +149,7 @@ func (_c *SkuCreate) SetNillableStockQty(v *int32) *SkuCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *SkuCreate) SetID(v uint32) *SkuCreate {
+func (_c *SkuCreate) SetID(v int64) *SkuCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -218,7 +218,7 @@ func (_c *SkuCreate) sqlSave(ctx context.Context) (*Sku, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -228,7 +228,7 @@ func (_c *SkuCreate) sqlSave(ctx context.Context) (*Sku, error) {
 func (_c *SkuCreate) createSpec() (*Sku, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Sku{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(sku.Table, sqlgraph.NewFieldSpec(sku.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(sku.Table, sqlgraph.NewFieldSpec(sku.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -248,19 +248,19 @@ func (_c *SkuCreate) createSpec() (*Sku, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(sku.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(sku.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(sku.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(sku.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(sku.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(sku.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.ProductID(); ok {
-		_spec.SetField(sku.FieldProductID, field.TypeUint32, value)
+		_spec.SetField(sku.FieldProductID, field.TypeInt64, value)
 		_node.ProductID = &value
 	}
 	if value, ok := _c.mutation.SkuCode(); ok {
@@ -360,7 +360,7 @@ func (u *SkuUpsert) ClearDeletedAt() *SkuUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SkuUpsert) SetCreatedBy(v uint32) *SkuUpsert {
+func (u *SkuUpsert) SetCreatedBy(v int64) *SkuUpsert {
 	u.Set(sku.FieldCreatedBy, v)
 	return u
 }
@@ -372,7 +372,7 @@ func (u *SkuUpsert) UpdateCreatedBy() *SkuUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SkuUpsert) AddCreatedBy(v uint32) *SkuUpsert {
+func (u *SkuUpsert) AddCreatedBy(v int64) *SkuUpsert {
 	u.Add(sku.FieldCreatedBy, v)
 	return u
 }
@@ -384,7 +384,7 @@ func (u *SkuUpsert) ClearCreatedBy() *SkuUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SkuUpsert) SetUpdatedBy(v uint32) *SkuUpsert {
+func (u *SkuUpsert) SetUpdatedBy(v int64) *SkuUpsert {
 	u.Set(sku.FieldUpdatedBy, v)
 	return u
 }
@@ -396,7 +396,7 @@ func (u *SkuUpsert) UpdateUpdatedBy() *SkuUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SkuUpsert) AddUpdatedBy(v uint32) *SkuUpsert {
+func (u *SkuUpsert) AddUpdatedBy(v int64) *SkuUpsert {
 	u.Add(sku.FieldUpdatedBy, v)
 	return u
 }
@@ -408,7 +408,7 @@ func (u *SkuUpsert) ClearUpdatedBy() *SkuUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SkuUpsert) SetDeletedBy(v uint32) *SkuUpsert {
+func (u *SkuUpsert) SetDeletedBy(v int64) *SkuUpsert {
 	u.Set(sku.FieldDeletedBy, v)
 	return u
 }
@@ -420,7 +420,7 @@ func (u *SkuUpsert) UpdateDeletedBy() *SkuUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SkuUpsert) AddDeletedBy(v uint32) *SkuUpsert {
+func (u *SkuUpsert) AddDeletedBy(v int64) *SkuUpsert {
 	u.Add(sku.FieldDeletedBy, v)
 	return u
 }
@@ -432,7 +432,7 @@ func (u *SkuUpsert) ClearDeletedBy() *SkuUpsert {
 }
 
 // SetProductID sets the "product_id" field.
-func (u *SkuUpsert) SetProductID(v uint32) *SkuUpsert {
+func (u *SkuUpsert) SetProductID(v int64) *SkuUpsert {
 	u.Set(sku.FieldProductID, v)
 	return u
 }
@@ -444,7 +444,7 @@ func (u *SkuUpsert) UpdateProductID() *SkuUpsert {
 }
 
 // AddProductID adds v to the "product_id" field.
-func (u *SkuUpsert) AddProductID(v uint32) *SkuUpsert {
+func (u *SkuUpsert) AddProductID(v int64) *SkuUpsert {
 	u.Add(sku.FieldProductID, v)
 	return u
 }
@@ -591,14 +591,14 @@ func (u *SkuUpsertOne) ClearDeletedAt() *SkuUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SkuUpsertOne) SetCreatedBy(v uint32) *SkuUpsertOne {
+func (u *SkuUpsertOne) SetCreatedBy(v int64) *SkuUpsertOne {
 	return u.Update(func(s *SkuUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SkuUpsertOne) AddCreatedBy(v uint32) *SkuUpsertOne {
+func (u *SkuUpsertOne) AddCreatedBy(v int64) *SkuUpsertOne {
 	return u.Update(func(s *SkuUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -619,14 +619,14 @@ func (u *SkuUpsertOne) ClearCreatedBy() *SkuUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SkuUpsertOne) SetUpdatedBy(v uint32) *SkuUpsertOne {
+func (u *SkuUpsertOne) SetUpdatedBy(v int64) *SkuUpsertOne {
 	return u.Update(func(s *SkuUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SkuUpsertOne) AddUpdatedBy(v uint32) *SkuUpsertOne {
+func (u *SkuUpsertOne) AddUpdatedBy(v int64) *SkuUpsertOne {
 	return u.Update(func(s *SkuUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -647,14 +647,14 @@ func (u *SkuUpsertOne) ClearUpdatedBy() *SkuUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SkuUpsertOne) SetDeletedBy(v uint32) *SkuUpsertOne {
+func (u *SkuUpsertOne) SetDeletedBy(v int64) *SkuUpsertOne {
 	return u.Update(func(s *SkuUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SkuUpsertOne) AddDeletedBy(v uint32) *SkuUpsertOne {
+func (u *SkuUpsertOne) AddDeletedBy(v int64) *SkuUpsertOne {
 	return u.Update(func(s *SkuUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -675,14 +675,14 @@ func (u *SkuUpsertOne) ClearDeletedBy() *SkuUpsertOne {
 }
 
 // SetProductID sets the "product_id" field.
-func (u *SkuUpsertOne) SetProductID(v uint32) *SkuUpsertOne {
+func (u *SkuUpsertOne) SetProductID(v int64) *SkuUpsertOne {
 	return u.Update(func(s *SkuUpsert) {
 		s.SetProductID(v)
 	})
 }
 
 // AddProductID adds v to the "product_id" field.
-func (u *SkuUpsertOne) AddProductID(v uint32) *SkuUpsertOne {
+func (u *SkuUpsertOne) AddProductID(v int64) *SkuUpsertOne {
 	return u.Update(func(s *SkuUpsert) {
 		s.AddProductID(v)
 	})
@@ -767,7 +767,7 @@ func (u *SkuUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SkuUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *SkuUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -776,7 +776,7 @@ func (u *SkuUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SkuUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *SkuUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -833,7 +833,7 @@ func (_c *SkuCreateBulk) Save(ctx context.Context) ([]*Sku, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1011,14 +1011,14 @@ func (u *SkuUpsertBulk) ClearDeletedAt() *SkuUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SkuUpsertBulk) SetCreatedBy(v uint32) *SkuUpsertBulk {
+func (u *SkuUpsertBulk) SetCreatedBy(v int64) *SkuUpsertBulk {
 	return u.Update(func(s *SkuUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SkuUpsertBulk) AddCreatedBy(v uint32) *SkuUpsertBulk {
+func (u *SkuUpsertBulk) AddCreatedBy(v int64) *SkuUpsertBulk {
 	return u.Update(func(s *SkuUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1039,14 +1039,14 @@ func (u *SkuUpsertBulk) ClearCreatedBy() *SkuUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SkuUpsertBulk) SetUpdatedBy(v uint32) *SkuUpsertBulk {
+func (u *SkuUpsertBulk) SetUpdatedBy(v int64) *SkuUpsertBulk {
 	return u.Update(func(s *SkuUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SkuUpsertBulk) AddUpdatedBy(v uint32) *SkuUpsertBulk {
+func (u *SkuUpsertBulk) AddUpdatedBy(v int64) *SkuUpsertBulk {
 	return u.Update(func(s *SkuUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1067,14 +1067,14 @@ func (u *SkuUpsertBulk) ClearUpdatedBy() *SkuUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SkuUpsertBulk) SetDeletedBy(v uint32) *SkuUpsertBulk {
+func (u *SkuUpsertBulk) SetDeletedBy(v int64) *SkuUpsertBulk {
 	return u.Update(func(s *SkuUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SkuUpsertBulk) AddDeletedBy(v uint32) *SkuUpsertBulk {
+func (u *SkuUpsertBulk) AddDeletedBy(v int64) *SkuUpsertBulk {
 	return u.Update(func(s *SkuUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1095,14 +1095,14 @@ func (u *SkuUpsertBulk) ClearDeletedBy() *SkuUpsertBulk {
 }
 
 // SetProductID sets the "product_id" field.
-func (u *SkuUpsertBulk) SetProductID(v uint32) *SkuUpsertBulk {
+func (u *SkuUpsertBulk) SetProductID(v int64) *SkuUpsertBulk {
 	return u.Update(func(s *SkuUpsert) {
 		s.SetProductID(v)
 	})
 }
 
 // AddProductID adds v to the "product_id" field.
-func (u *SkuUpsertBulk) AddProductID(v uint32) *SkuUpsertBulk {
+func (u *SkuUpsertBulk) AddProductID(v int64) *SkuUpsertBulk {
 	return u.Update(func(s *SkuUpsert) {
 		s.AddProductID(v)
 	})

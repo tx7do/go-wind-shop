@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.CartItem {
+func ID(id int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.CartItem {
+func IDEQ(id int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.CartItem {
+func IDNEQ(id int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.CartItem {
+func IDIn(ids ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.CartItem {
+func IDNotIn(ids ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.CartItem {
+func IDGT(id int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.CartItem {
+func IDGTE(id int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.CartItem {
+func IDLT(id int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.CartItem {
+func IDLTE(id int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,37 +70,37 @@ func DeletedAt(v time.Time) predicate.CartItem {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.CartItem {
+func CreatedBy(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.CartItem {
+func UpdatedBy(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.CartItem {
+func DeletedBy(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.CartItem {
+func TenantID(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldTenantID, v))
 }
 
 // CartID applies equality check predicate on the "cart_id" field. It's identical to CartIDEQ.
-func CartID(v uint32) predicate.CartItem {
+func CartID(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldCartID, v))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint32) predicate.CartItem {
+func UserID(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldUserID, v))
 }
 
 // SkuID applies equality check predicate on the "sku_id" field. It's identical to SkuIDEQ.
-func SkuID(v uint32) predicate.CartItem {
+func SkuID(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldSkuID, v))
 }
 
@@ -260,42 +260,42 @@ func DeletedAtNotNil() predicate.CartItem {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.CartItem {
+func CreatedByEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.CartItem {
+func CreatedByNEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.CartItem {
+func CreatedByIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.CartItem {
+func CreatedByNotIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.CartItem {
+func CreatedByGT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.CartItem {
+func CreatedByGTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.CartItem {
+func CreatedByLT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.CartItem {
+func CreatedByLTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -310,42 +310,42 @@ func CreatedByNotNil() predicate.CartItem {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.CartItem {
+func UpdatedByEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.CartItem {
+func UpdatedByNEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.CartItem {
+func UpdatedByIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.CartItem {
+func UpdatedByNotIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.CartItem {
+func UpdatedByGT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.CartItem {
+func UpdatedByGTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.CartItem {
+func UpdatedByLT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.CartItem {
+func UpdatedByLTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -360,42 +360,42 @@ func UpdatedByNotNil() predicate.CartItem {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.CartItem {
+func DeletedByEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.CartItem {
+func DeletedByNEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.CartItem {
+func DeletedByIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.CartItem {
+func DeletedByNotIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.CartItem {
+func DeletedByGT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.CartItem {
+func DeletedByGTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.CartItem {
+func DeletedByLT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.CartItem {
+func DeletedByLTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -410,42 +410,42 @@ func DeletedByNotNil() predicate.CartItem {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.CartItem {
+func TenantIDEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.CartItem {
+func TenantIDNEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.CartItem {
+func TenantIDIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.CartItem {
+func TenantIDNotIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.CartItem {
+func TenantIDGT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.CartItem {
+func TenantIDGTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.CartItem {
+func TenantIDLT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.CartItem {
+func TenantIDLTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -460,42 +460,42 @@ func TenantIDNotNil() predicate.CartItem {
 }
 
 // CartIDEQ applies the EQ predicate on the "cart_id" field.
-func CartIDEQ(v uint32) predicate.CartItem {
+func CartIDEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldCartID, v))
 }
 
 // CartIDNEQ applies the NEQ predicate on the "cart_id" field.
-func CartIDNEQ(v uint32) predicate.CartItem {
+func CartIDNEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNEQ(FieldCartID, v))
 }
 
 // CartIDIn applies the In predicate on the "cart_id" field.
-func CartIDIn(vs ...uint32) predicate.CartItem {
+func CartIDIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldIn(FieldCartID, vs...))
 }
 
 // CartIDNotIn applies the NotIn predicate on the "cart_id" field.
-func CartIDNotIn(vs ...uint32) predicate.CartItem {
+func CartIDNotIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNotIn(FieldCartID, vs...))
 }
 
 // CartIDGT applies the GT predicate on the "cart_id" field.
-func CartIDGT(v uint32) predicate.CartItem {
+func CartIDGT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGT(FieldCartID, v))
 }
 
 // CartIDGTE applies the GTE predicate on the "cart_id" field.
-func CartIDGTE(v uint32) predicate.CartItem {
+func CartIDGTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGTE(FieldCartID, v))
 }
 
 // CartIDLT applies the LT predicate on the "cart_id" field.
-func CartIDLT(v uint32) predicate.CartItem {
+func CartIDLT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLT(FieldCartID, v))
 }
 
 // CartIDLTE applies the LTE predicate on the "cart_id" field.
-func CartIDLTE(v uint32) predicate.CartItem {
+func CartIDLTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLTE(FieldCartID, v))
 }
 
@@ -510,42 +510,42 @@ func CartIDNotNil() predicate.CartItem {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint32) predicate.CartItem {
+func UserIDEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint32) predicate.CartItem {
+func UserIDNEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint32) predicate.CartItem {
+func UserIDIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint32) predicate.CartItem {
+func UserIDNotIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uint32) predicate.CartItem {
+func UserIDGT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGT(FieldUserID, v))
 }
 
 // UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uint32) predicate.CartItem {
+func UserIDGTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGTE(FieldUserID, v))
 }
 
 // UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uint32) predicate.CartItem {
+func UserIDLT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLT(FieldUserID, v))
 }
 
 // UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uint32) predicate.CartItem {
+func UserIDLTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLTE(FieldUserID, v))
 }
 
@@ -560,42 +560,42 @@ func UserIDNotNil() predicate.CartItem {
 }
 
 // SkuIDEQ applies the EQ predicate on the "sku_id" field.
-func SkuIDEQ(v uint32) predicate.CartItem {
+func SkuIDEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldEQ(FieldSkuID, v))
 }
 
 // SkuIDNEQ applies the NEQ predicate on the "sku_id" field.
-func SkuIDNEQ(v uint32) predicate.CartItem {
+func SkuIDNEQ(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNEQ(FieldSkuID, v))
 }
 
 // SkuIDIn applies the In predicate on the "sku_id" field.
-func SkuIDIn(vs ...uint32) predicate.CartItem {
+func SkuIDIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldIn(FieldSkuID, vs...))
 }
 
 // SkuIDNotIn applies the NotIn predicate on the "sku_id" field.
-func SkuIDNotIn(vs ...uint32) predicate.CartItem {
+func SkuIDNotIn(vs ...int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldNotIn(FieldSkuID, vs...))
 }
 
 // SkuIDGT applies the GT predicate on the "sku_id" field.
-func SkuIDGT(v uint32) predicate.CartItem {
+func SkuIDGT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGT(FieldSkuID, v))
 }
 
 // SkuIDGTE applies the GTE predicate on the "sku_id" field.
-func SkuIDGTE(v uint32) predicate.CartItem {
+func SkuIDGTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldGTE(FieldSkuID, v))
 }
 
 // SkuIDLT applies the LT predicate on the "sku_id" field.
-func SkuIDLT(v uint32) predicate.CartItem {
+func SkuIDLT(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLT(FieldSkuID, v))
 }
 
 // SkuIDLTE applies the LTE predicate on the "sku_id" field.
-func SkuIDLTE(v uint32) predicate.CartItem {
+func SkuIDLTE(v int64) predicate.CartItem {
 	return predicate.CartItem(sql.FieldLTE(FieldSkuID, v))
 }
 

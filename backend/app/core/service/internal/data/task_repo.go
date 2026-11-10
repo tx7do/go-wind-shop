@@ -1,8 +1,8 @@
 package data
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
+	"go-wind-shop/pkg/logx"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -23,7 +23,7 @@ import (
 
 type TaskRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper        *mapper.CopierMapper[taskV1.Task, ent.Task]
 	typeConverter *mapper.EnumTypeConverter[taskV1.Task_Type, task.Type]
@@ -103,7 +103,7 @@ func (r *TaskRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 	}, nil
 }
 
-func (r *TaskRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *TaskRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Task.Query().
 		Where(task.IDEQ(id)).
 		Exist(ctx)

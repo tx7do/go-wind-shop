@@ -335,13 +335,13 @@ async function handleView(row: any) {
     detailReadAt.value = row.readAt ? String(row.readAt) : "";
     detailReceivedAt.value = row.receivedAt || row.createdAt || "";
     detailStatus.value = row.status || "";
-    detail.value = await fetchGetInternalMessage({ id: messageId });
+    detail.value = await fetchGetInternalMessage({ id: String(messageId) });
     detailDialogVisible.value = true;
 
     const userId = userStore.userInfo?.id;
     if (userId && row.status !== "READ") {
       try {
-        await markNotificationAsRead({ userId, recipientIds: [Number(row.id)] });
+        await markNotificationAsRead({ userId: String(userId), recipientIds: [String(row.id)] });
         pageRef.value?.refresh();
       } catch {
         ElMessage.error($t("common.message.operationFailed"));
@@ -357,7 +357,7 @@ async function handleMarkRead(row: any) {
   const userId = userStore.userInfo?.id;
   if (!userId) return;
   try {
-    await markNotificationAsRead({ userId, recipientIds: [Number(row.id)] });
+    await markNotificationAsRead({ userId: String(userId), recipientIds: [String(row.id)] });
     ElMessage.success($t("common.notice.markedRead"));
     pageRef.value?.refresh();
   } catch {
@@ -390,7 +390,7 @@ async function handleDelete(row: any) {  try {
   const userId = userStore.userInfo?.id;
   if (!userId) return;
   try {
-    await deleteNotificationFromInbox({ userId, recipientIds: [Number(row.id)] });
+    await deleteNotificationFromInbox({ userId: String(userId), recipientIds: [String(row.id)] });
     ElMessage.success($t("common.notification.deleteSuccess"));
     pageRef.value?.refresh();
   } catch {
@@ -405,7 +405,7 @@ async function handleMarkAllRead() {
   if (!userId) return;
   markAllReadLoading.value = true;
   try {
-    await markNotificationAsRead({ userId, recipientIds: [] });
+    await markNotificationAsRead({ userId: String(userId), recipientIds: [] });
     ElMessage.success($t("common.notice.markedRead"));
     pageRef.value?.refresh();
   } catch {

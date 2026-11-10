@@ -7,9 +7,9 @@ import (
 	"runtime"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -28,7 +28,7 @@ type ServerMonitorService struct {
 	serverMonitorV1.UnimplementedServerMonitorServiceServer
 
 	entClient *entCrud.EntClient[*entgo.Client]
-	log *logx.Helper
+	log       *logx.Helper
 }
 
 func NewServerMonitorService(
@@ -67,10 +67,10 @@ func (s *ServerMonitorService) goRuntimeInfo() *serverMonitorV1.GoRuntimeInfo {
 	return &serverMonitorV1.GoRuntimeInfo{
 		Version:       trans.Ptr(runtime.Version()),
 		NumGoroutine:  trans.Ptr(uint32(runtime.NumGoroutine())),
-		MemAllocBytes: trans.Ptr(ms.Alloc),
-		MemSysBytes:   trans.Ptr(ms.Sys),
-		GcCycles:      trans.Ptr(uint32(ms.NumGC)),
-		UptimeSeconds: trans.Ptr(uint64(time.Since(startedAt).Seconds())),
+		MemAllocBytes: trans.Ptr(int64(ms.Alloc)),
+		MemSysBytes:   trans.Ptr(int64(ms.Sys)),
+		GcCycles:      trans.Ptr(ms.NumGC),
+		UptimeSeconds: trans.Ptr(int64(time.Since(startedAt).Seconds())),
 		StartedAt:     timestamppb.New(startedAt),
 	}
 }

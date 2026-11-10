@@ -8,13 +8,12 @@ import (
 
 	authenticationV1 "go-wind-shop/api/gen/go/authentication/service/v1"
 	"go-wind-shop/pkg/logx"
-
 )
 
 type MfaService struct {
 	authenticationV1.UnimplementedMFAServiceServer
 
-	log             *logx.Helper
+	log              *logx.Helper
 	mfaServiceClient authenticationV1.MFAServiceClient
 }
 

@@ -70,14 +70,14 @@ func (_u *ShippingRateUpdate) ClearDeletedAt() *ShippingRateUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ShippingRateUpdate) SetCreatedBy(v uint32) *ShippingRateUpdate {
+func (_u *ShippingRateUpdate) SetCreatedBy(v int64) *ShippingRateUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ShippingRateUpdate) SetNillableCreatedBy(v *uint32) *ShippingRateUpdate {
+func (_u *ShippingRateUpdate) SetNillableCreatedBy(v *int64) *ShippingRateUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *ShippingRateUpdate) SetNillableCreatedBy(v *uint32) *ShippingRateUpdat
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ShippingRateUpdate) AddCreatedBy(v int32) *ShippingRateUpdate {
+func (_u *ShippingRateUpdate) AddCreatedBy(v int64) *ShippingRateUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *ShippingRateUpdate) ClearCreatedBy() *ShippingRateUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ShippingRateUpdate) SetUpdatedBy(v uint32) *ShippingRateUpdate {
+func (_u *ShippingRateUpdate) SetUpdatedBy(v int64) *ShippingRateUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ShippingRateUpdate) SetNillableUpdatedBy(v *uint32) *ShippingRateUpdate {
+func (_u *ShippingRateUpdate) SetNillableUpdatedBy(v *int64) *ShippingRateUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *ShippingRateUpdate) SetNillableUpdatedBy(v *uint32) *ShippingRateUpdat
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ShippingRateUpdate) AddUpdatedBy(v int32) *ShippingRateUpdate {
+func (_u *ShippingRateUpdate) AddUpdatedBy(v int64) *ShippingRateUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *ShippingRateUpdate) ClearUpdatedBy() *ShippingRateUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ShippingRateUpdate) SetDeletedBy(v uint32) *ShippingRateUpdate {
+func (_u *ShippingRateUpdate) SetDeletedBy(v int64) *ShippingRateUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ShippingRateUpdate) SetNillableDeletedBy(v *uint32) *ShippingRateUpdate {
+func (_u *ShippingRateUpdate) SetNillableDeletedBy(v *int64) *ShippingRateUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *ShippingRateUpdate) SetNillableDeletedBy(v *uint32) *ShippingRateUpdat
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ShippingRateUpdate) AddDeletedBy(v int32) *ShippingRateUpdate {
+func (_u *ShippingRateUpdate) AddDeletedBy(v int64) *ShippingRateUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -316,7 +316,7 @@ func (_u *ShippingRateUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(shippingrate.Table, shippingrate.Columns, sqlgraph.NewFieldSpec(shippingrate.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(shippingrate.Table, shippingrate.Columns, sqlgraph.NewFieldSpec(shippingrate.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -340,34 +340,34 @@ func (_u *ShippingRateUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(shippingrate.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(shippingrate.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(shippingrate.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(shippingrate.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(shippingrate.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(shippingrate.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(shippingrate.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(shippingrate.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(shippingrate.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(shippingrate.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(shippingrate.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(shippingrate.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(shippingrate.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(shippingrate.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(shippingrate.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(shippingrate.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(shippingrate.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(shippingrate.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(shippingrate.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(shippingrate.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(shippingrate.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(shippingrate.FieldCurrency, field.TypeString, value)
@@ -468,14 +468,14 @@ func (_u *ShippingRateUpdateOne) ClearDeletedAt() *ShippingRateUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ShippingRateUpdateOne) SetCreatedBy(v uint32) *ShippingRateUpdateOne {
+func (_u *ShippingRateUpdateOne) SetCreatedBy(v int64) *ShippingRateUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ShippingRateUpdateOne) SetNillableCreatedBy(v *uint32) *ShippingRateUpdateOne {
+func (_u *ShippingRateUpdateOne) SetNillableCreatedBy(v *int64) *ShippingRateUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -483,7 +483,7 @@ func (_u *ShippingRateUpdateOne) SetNillableCreatedBy(v *uint32) *ShippingRateUp
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ShippingRateUpdateOne) AddCreatedBy(v int32) *ShippingRateUpdateOne {
+func (_u *ShippingRateUpdateOne) AddCreatedBy(v int64) *ShippingRateUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -495,14 +495,14 @@ func (_u *ShippingRateUpdateOne) ClearCreatedBy() *ShippingRateUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ShippingRateUpdateOne) SetUpdatedBy(v uint32) *ShippingRateUpdateOne {
+func (_u *ShippingRateUpdateOne) SetUpdatedBy(v int64) *ShippingRateUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ShippingRateUpdateOne) SetNillableUpdatedBy(v *uint32) *ShippingRateUpdateOne {
+func (_u *ShippingRateUpdateOne) SetNillableUpdatedBy(v *int64) *ShippingRateUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -510,7 +510,7 @@ func (_u *ShippingRateUpdateOne) SetNillableUpdatedBy(v *uint32) *ShippingRateUp
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ShippingRateUpdateOne) AddUpdatedBy(v int32) *ShippingRateUpdateOne {
+func (_u *ShippingRateUpdateOne) AddUpdatedBy(v int64) *ShippingRateUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -522,14 +522,14 @@ func (_u *ShippingRateUpdateOne) ClearUpdatedBy() *ShippingRateUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ShippingRateUpdateOne) SetDeletedBy(v uint32) *ShippingRateUpdateOne {
+func (_u *ShippingRateUpdateOne) SetDeletedBy(v int64) *ShippingRateUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ShippingRateUpdateOne) SetNillableDeletedBy(v *uint32) *ShippingRateUpdateOne {
+func (_u *ShippingRateUpdateOne) SetNillableDeletedBy(v *int64) *ShippingRateUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -537,7 +537,7 @@ func (_u *ShippingRateUpdateOne) SetNillableDeletedBy(v *uint32) *ShippingRateUp
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ShippingRateUpdateOne) AddDeletedBy(v int32) *ShippingRateUpdateOne {
+func (_u *ShippingRateUpdateOne) AddDeletedBy(v int64) *ShippingRateUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -727,7 +727,7 @@ func (_u *ShippingRateUpdateOne) sqlSave(ctx context.Context) (_node *ShippingRa
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(shippingrate.Table, shippingrate.Columns, sqlgraph.NewFieldSpec(shippingrate.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(shippingrate.Table, shippingrate.Columns, sqlgraph.NewFieldSpec(shippingrate.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ShippingRate.id" for update`)}
@@ -768,34 +768,34 @@ func (_u *ShippingRateUpdateOne) sqlSave(ctx context.Context) (_node *ShippingRa
 		_spec.ClearField(shippingrate.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(shippingrate.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(shippingrate.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(shippingrate.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(shippingrate.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(shippingrate.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(shippingrate.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(shippingrate.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(shippingrate.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(shippingrate.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(shippingrate.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(shippingrate.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(shippingrate.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(shippingrate.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(shippingrate.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(shippingrate.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(shippingrate.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(shippingrate.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(shippingrate.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(shippingrate.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(shippingrate.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Currency(); ok {
 		_spec.SetField(shippingrate.FieldCurrency, field.TypeString, value)

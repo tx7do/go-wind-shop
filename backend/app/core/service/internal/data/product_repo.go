@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -27,7 +27,7 @@ import (
 
 type ProductRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.Product, ent.Product]
 
@@ -51,9 +51,9 @@ func NewProductRepo(
 	productTranslationRepo *ProductTranslationRepo,
 ) *ProductRepo {
 	repo := &ProductRepo{
-		entClient:   entClient,
-		log:         logx.New(ctx.NewLoggerHelper("product/repo/core-service")),
-		mapper:      mapper.NewCopierMapper[catalogV1.Product, ent.Product](),
+		entClient: entClient,
+		log:       logx.New(ctx.NewLoggerHelper("product/repo/core-service")),
+		mapper:    mapper.NewCopierMapper[catalogV1.Product, ent.Product](),
 		statusConverter: mapper.NewEnumTypeConverter[catalogV1.Product_ProductStatus, product.Status](
 			catalogV1.Product_ProductStatus_name, catalogV1.Product_ProductStatus_value,
 		),
@@ -213,15 +213,15 @@ func (r *ProductRepo) filterByTranslationName(ctx context.Context, builder *ent.
 	if len(rows) == 0 {
 		return false, nil
 	}
-	ids := make([]uint32, 0, len(rows))
+	ids := make([]int64, 0, len(rows))
 	for _, n := range rows {
-		ids = append(ids, uint32(n))
+		ids = append(ids, int64(n))
 	}
 	builder.Where(product.IDIn(ids...))
 	return true, nil
 }
 
-func (r *ProductRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *ProductRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Product.Query().
 		Where(product.IDEQ(id)).
 		Exist(ctx)
@@ -482,7 +482,7 @@ func (r *ProductRepo) Delete(ctx context.Context, req *catalogV1.DeleteProductRe
 	return err
 }
 
-func (r *ProductRepo) TranslationExists(ctx context.Context, productId uint32, languageCode string) (bool, error) {
+func (r *ProductRepo) TranslationExists(ctx context.Context, productId int64, languageCode string) (bool, error) {
 	return r.productTranslationRepo.TranslationExists(ctx, productId, languageCode)
 }
 
@@ -532,7 +532,7 @@ func (r *ProductRepo) GetTranslation(ctx context.Context, req *catalogV1.GetProd
 	return r.productTranslationRepo.GetTranslation(ctx, req.GetId(), req.GetLocale())
 }
 
-func (r *ProductRepo) ListTranslations(ctx context.Context, productId uint32) ([]*catalogV1.ProductTranslation, error) {
+func (r *ProductRepo) ListTranslations(ctx context.Context, productId int64) ([]*catalogV1.ProductTranslation, error) {
 	return r.productTranslationRepo.ListTranslations(ctx, productId, "", nil)
 }
 
@@ -540,7 +540,7 @@ func (r *ProductRepo) DeleteTranslation(ctx context.Context, req *catalogV1.Dele
 	return r.productTranslationRepo.DeleteTranslation(ctx, req)
 }
 
-func (r *ProductRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, productID uint32) error {
+func (r *ProductRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, productID int64) error {
 	return r.productTranslationRepo.CleanTranslations(ctx, tx, productID)
 }
 
@@ -557,7 +557,7 @@ func (r *ProductRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, product
 // ProductReindexDocument 是 ProductRepo 返回给 ProductSearchService 的单条
 // ES 文档数据。无 tenant_id（商品全局共享）。
 type ProductReindexDocument struct {
-	ProductID        uint32
+	ProductID        int64
 	Language         string
 	Status           string
 	Name             string
@@ -572,7 +572,7 @@ type ProductReindexDocument struct {
 //   - 跳过非 ACTIVE 状态的商品（不入索引）
 //   - 跳过 name 和 descriptions 均空的翻译（避免索引无意义文档）
 //   - 调用方须以 SystemViewer ctx 调用，方能跨状态读取
-func (r *ProductRepo) GetReindexDocuments(ctx context.Context, productID uint32) ([]ProductReindexDocument, error) {
+func (r *ProductRepo) GetReindexDocuments(ctx context.Context, productID int64) ([]ProductReindexDocument, error) {
 	if productID == 0 {
 		return nil, catalogV1.ErrorBadRequest("invalid product id")
 	}
@@ -627,7 +627,7 @@ func (r *ProductRepo) GetReindexDocuments(ctx context.Context, productID uint32)
 
 // ListActiveProductIDs 列出所有 ACTIVE 状态商品的 ID。
 // 供 ProductSearchService.ReindexAll 周期全量重索引使用。
-func (r *ProductRepo) ListActiveProductIDs(ctx context.Context) ([]uint32, error) {
+func (r *ProductRepo) ListActiveProductIDs(ctx context.Context) ([]int64, error) {
 	entities, err := r.entClient.Client().Product.Query().
 		Select(product.FieldID).
 		All(ctx)
@@ -636,7 +636,7 @@ func (r *ProductRepo) ListActiveProductIDs(ctx context.Context) ([]uint32, error
 		return nil, catalogV1.ErrorInternalServerError("list product ids for reindex failed")
 	}
 
-	ids := make([]uint32, 0, len(entities))
+	ids := make([]int64, 0, len(entities))
 	for _, e := range entities {
 		if e == nil {
 			continue
@@ -652,7 +652,7 @@ func (r *ProductRepo) ListActiveProductIDs(ctx context.Context) ([]uint32, error
 // ProductLanguagePair 是应入索引的 (商品, 语言) 对，与 ES 文档 docID
 // {product_id}_{language} 一一对应。
 type ProductLanguagePair struct {
-	ProductID uint32
+	ProductID int64
 	Language  string
 }
 
@@ -672,7 +672,7 @@ func (r *ProductRepo) ListActiveProductLanguagePairs(ctx context.Context) ([]Pro
 		return nil, catalogV1.ErrorInternalServerError("list products for reindex pairs failed")
 	}
 
-	activeIDs := make([]uint32, 0, len(productEntities))
+	activeIDs := make([]int64, 0, len(productEntities))
 	for _, e := range productEntities {
 		if e == nil {
 			continue
@@ -734,6 +734,6 @@ func stringValue(v *string) string {
 
 // GetAvailableLanguages 返回指定商品在 DB 中实际存在的翻译语言列表。
 // 供 ProductSearchService.ReindexProduct 的 delete 操作枚举删除使用。
-func (r *ProductRepo) GetAvailableLanguages(ctx context.Context, productID uint32) ([]string, error) {
+func (r *ProductRepo) GetAvailableLanguages(ctx context.Context, productID int64) ([]string, error) {
 	return r.productTranslationRepo.ListAvailedLanguages(ctx, productID)
 }

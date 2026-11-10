@@ -34,7 +34,7 @@ const (
 // Entity 取值："product"（v1 仅此一种）。
 type SearchReindexPayload struct {
 	Entity string `json:"entity"`
-	ID     uint32 `json:"id"`
+	ID     int64  `json:"id"`
 	Op     string `json:"op"`
 }
 

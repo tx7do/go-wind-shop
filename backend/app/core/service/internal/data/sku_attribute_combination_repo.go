@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -23,7 +23,7 @@ import (
 
 type SkuAttributeCombinationRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.SkuAttributeCombination, ent.SkuAttributeCombination]
 
@@ -99,7 +99,7 @@ func (r *SkuAttributeCombinationRepo) List(ctx context.Context, req *paginationV
 	}, nil
 }
 
-func (r *SkuAttributeCombinationRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *SkuAttributeCombinationRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().SkuAttributeCombination.Query().
 		Where(skuattributecombination.IDEQ(id)).
 		Exist(ctx)

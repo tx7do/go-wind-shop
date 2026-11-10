@@ -23,7 +23,7 @@ import (
 
 type CategoryTranslationRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.CategoryTranslation, ent.CategoryTranslation]
 
@@ -66,7 +66,7 @@ func (r *CategoryTranslationRepo) init() {
 func (r *CategoryTranslationRepo) CleanTranslations(
 	ctx context.Context,
 	tx *ent.Tx,
-	categoryID uint32,
+	categoryID int64,
 ) error {
 	if _, err := tx.CategoryTranslation.Delete().
 		Where(
@@ -79,7 +79,7 @@ func (r *CategoryTranslationRepo) CleanTranslations(
 	return nil
 }
 
-func (r *CategoryTranslationRepo) ListTranslations(ctx context.Context, categoryID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*catalogV1.CategoryTranslation, error) {
+func (r *CategoryTranslationRepo) ListTranslations(ctx context.Context, categoryID int64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*catalogV1.CategoryTranslation, error) {
 	builder := r.entClient.Client().CategoryTranslation.Query().
 		Where(
 			categorytranslation.CategoryIDEQ(categoryID),
@@ -117,7 +117,7 @@ func (r *CategoryTranslationRepo) ListTranslations(ctx context.Context, category
 	return dtos, nil
 }
 
-func (r *CategoryTranslationRepo) GetTranslation(ctx context.Context, categoryID uint32, languageCode string) (*catalogV1.CategoryTranslation, error) {
+func (r *CategoryTranslationRepo) GetTranslation(ctx context.Context, categoryID int64, languageCode string) (*catalogV1.CategoryTranslation, error) {
 	q := r.entClient.Client().CategoryTranslation.Query().
 		Where(
 			categorytranslation.CategoryIDEQ(categoryID),
@@ -186,7 +186,7 @@ func (r *CategoryTranslationRepo) CreateTranslation(ctx context.Context, data *c
 	return r.mapper.ToDTO(entity), nil
 }
 
-func (r *CategoryTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, data *catalogV1.CategoryTranslation, updateMask *fieldmaskpb.FieldMask) (*catalogV1.CategoryTranslation, error) {
+func (r *CategoryTranslationRepo) UpdateTranslation(ctx context.Context, id int64, data *catalogV1.CategoryTranslation, updateMask *fieldmaskpb.FieldMask) (*catalogV1.CategoryTranslation, error) {
 	if data == nil {
 		return nil, nil
 	}
@@ -218,7 +218,7 @@ func (r *CategoryTranslationRepo) UpdateTranslation(ctx context.Context, id uint
 }
 
 // TranslationExists checks if a translation exists for the given category ID and language code.
-func (r *CategoryTranslationRepo) TranslationExists(ctx context.Context, categoryId uint32, languageCode string) (bool, error) {
+func (r *CategoryTranslationRepo) TranslationExists(ctx context.Context, categoryId int64, languageCode string) (bool, error) {
 	c, err := r.entClient.Client().CategoryTranslation.Query().
 		Where(
 			categorytranslation.CategoryIDEQ(categoryId),
@@ -234,7 +234,7 @@ func (r *CategoryTranslationRepo) TranslationExists(ctx context.Context, categor
 }
 
 // ListAvailedLanguages lists the language codes of all translations available for the given category ID.
-func (r *CategoryTranslationRepo) ListAvailedLanguages(ctx context.Context, categoryId uint32) ([]string, error) {
+func (r *CategoryTranslationRepo) ListAvailedLanguages(ctx context.Context, categoryId int64) ([]string, error) {
 	entities, err := r.entClient.Client().CategoryTranslation.Query().
 		Where(
 			categorytranslation.CategoryIDEQ(categoryId),

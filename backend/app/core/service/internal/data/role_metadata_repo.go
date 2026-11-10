@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
 	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/predicate"
@@ -20,7 +20,7 @@ import (
 
 type RoleMetadataRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper              *mapper.CopierMapper[permissionV1.RoleMetadata, ent.RoleMetadata]
 	syncPolicyConverter *mapper.EnumTypeConverter[permissionV1.RoleMetadata_SyncPolicy, rolemetadata.SyncPolicy]
@@ -133,7 +133,7 @@ func (r *RoleMetadataRepo) Upsert(ctx context.Context, data *permissionV1.RoleMe
 }
 
 // Get 获取角色元数据
-func (r *RoleMetadataRepo) Get(ctx context.Context, roleID uint32) (*permissionV1.RoleMetadata, error) {
+func (r *RoleMetadataRepo) Get(ctx context.Context, roleID int64) (*permissionV1.RoleMetadata, error) {
 	rm, err := r.entClient.Client().RoleMetadata.Query().
 		Where(
 			rolemetadata.RoleIDEQ(roleID),
@@ -148,7 +148,7 @@ func (r *RoleMetadataRepo) Get(ctx context.Context, roleID uint32) (*permissionV
 }
 
 // IsExistByRoleID 判断角色元数据是否存在
-func (r *RoleMetadataRepo) IsExistByRoleID(ctx context.Context, roleID uint32) (bool, error) {
+func (r *RoleMetadataRepo) IsExistByRoleID(ctx context.Context, roleID int64) (bool, error) {
 	count, err := r.entClient.Client().RoleMetadata.Query().
 		Where(
 			rolemetadata.RoleIDEQ(roleID),
@@ -161,7 +161,7 @@ func (r *RoleMetadataRepo) IsExistByRoleID(ctx context.Context, roleID uint32) (
 }
 
 // IsTemplateRole 判断角色是否是模版角色
-func (r *RoleMetadataRepo) IsTemplateRole(ctx context.Context, roleID uint32) (bool, error) {
+func (r *RoleMetadataRepo) IsTemplateRole(ctx context.Context, roleID int64) (bool, error) {
 	rm, err := r.entClient.Client().RoleMetadata.Query().
 		Where(
 			rolemetadata.RoleIDEQ(roleID),
@@ -178,7 +178,7 @@ func (r *RoleMetadataRepo) IsTemplateRole(ctx context.Context, roleID uint32) (b
 }
 
 // UpgradeTemplateVersion 升级模版版本号
-func (r *RoleMetadataRepo) UpgradeTemplateVersion(ctx context.Context, tx *ent.Tx, roleID uint32) error {
+func (r *RoleMetadataRepo) UpgradeTemplateVersion(ctx context.Context, tx *ent.Tx, roleID int64) error {
 	err := tx.RoleMetadata.Update().
 		Where(
 			rolemetadata.RoleIDEQ(roleID),

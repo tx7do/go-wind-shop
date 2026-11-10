@@ -40,26 +40,26 @@ enum PointsLedgerType {
 
 // 积分台账
 message PointsLedger {
-  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "台账ID"}];
-  optional uint32 user_id = 2 [json_name = "userId", (gnostic.openapi.v3.property) = {description: "用户ID"}];
+  optional int64 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "台账ID"}];
+  optional int64 user_id = 2 [json_name = "userId", (gnostic.openapi.v3.property) = {description: "用户ID"}];
   optional int64 delta = 3 [json_name = "delta", (gnostic.openapi.v3.property) = {description: "积分变动（±）"}];
   optional int64 balance_after = 4 [json_name = "balanceAfter", (gnostic.openapi.v3.property) = {description: "变动后余额"}];
   optional PointsLedgerType type = 5 [json_name = "type", (gnostic.openapi.v3.property) = {description: "类型"}];
   optional string reason = 6 [json_name = "reason", (gnostic.openapi.v3.property) = {description: "事由"}];
-  optional uint32 ref_order_id = 7 [json_name = "refOrderId", (gnostic.openapi.v3.property) = {description: "关联订单ID"}];
+  optional int64 ref_order_id = 7 [json_name = "refOrderId", (gnostic.openapi.v3.property) = {description: "关联订单ID"}];
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
 }
 
-message ListPointsLedgerResponse { repeated PointsLedger items = 1; uint64 total = 2; }
-message CountPointsLedgerResponse { uint64 count = 1; }
+message ListPointsLedgerResponse { repeated PointsLedger items = 1; int64 total = 2; }
+message CountPointsLedgerResponse { int64 count = 1; }
 
 message GetPointsLedgerRequest {
-  uint32 id = 1 [json_name = "id"];
+  int64 id = 1 [json_name = "id"];
   optional google.protobuf.FieldMask view_mask = 100 [json_name = "viewMask"];
 }
 
 message GetUserPointsBalanceRequest {
-  uint32 user_id = 1 [json_name = "userId"];
+  int64 user_id = 1 [json_name = "userId"];
 }
 
 message GetUserPointsBalanceResponse {
@@ -68,7 +68,7 @@ message GetUserPointsBalanceResponse {
 
 
 message CheckInRequest {
-  uint32 user_id = 1 [json_name = "userId"];
+  int64 user_id = 1 [json_name = "userId"];
 }
 
 message CheckInResponse {
@@ -78,7 +78,7 @@ message CheckInResponse {
 }
 
 message GetCheckInStatusRequest {
-  uint32 user_id = 1 [json_name = "userId"];
+  int64 user_id = 1 [json_name = "userId"];
 }
 
 message GetCheckInStatusResponse {
@@ -88,12 +88,12 @@ message GetCheckInStatusResponse {
 
 
 message ExchangePointsForCouponRequest {
-  uint32 user_id = 1 [json_name = "userId"];
-  uint32 coupon_template_id = 2 [json_name = "couponTemplateId"];
+  int64 user_id = 1 [json_name = "userId"];
+  int64 coupon_template_id = 2 [json_name = "couponTemplateId"];
 }
 
 message ExchangePointsForCouponResponse {
-  uint32 coupon_id = 1 [json_name = "couponId"];
+  int64 coupon_id = 1 [json_name = "couponId"];
   int64 points_deducted = 2 [json_name = "pointsDeducted"];
   int64 balance = 3 [json_name = "balance"];
 }

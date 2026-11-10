@@ -1,8 +1,8 @@
 package eventbus
 
 import (
-	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"sync"
 
 	"go-wind-shop/pkg/logx"

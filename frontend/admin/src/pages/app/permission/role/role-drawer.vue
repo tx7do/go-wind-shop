@@ -313,7 +313,7 @@ async function rebuildPermissionTree(parentId: number | null): Promise<number[] 
   let cap: number[] | null = null;
   if (parentId) {
     try {
-      const parent = await fetchGetRole({ id: parentId });
+      const parent = await fetchGetRole({ id: String(parentId) });
       cap = ((parent as any)?.permissions ?? [])
         .map((v: any) => Number(v))
         .filter((v: any) => Number.isFinite(v));

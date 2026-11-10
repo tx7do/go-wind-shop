@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
@@ -18,7 +18,7 @@ import (
 type ShippingAddressService struct {
 	addressV1.UnimplementedShippingAddressServiceServer
 
-	log *logx.Helper
+	log  *logx.Helper
 	repo *data.ShippingAddressRepo
 }
 
@@ -41,7 +41,7 @@ func (s *ShippingAddressService) Count(ctx context.Context, req *paginationV1.Pa
 	if err != nil {
 		return nil, err
 	}
-	return &addressV1.CountShippingAddressResponse{Count: uint64(count)}, nil
+	return &addressV1.CountShippingAddressResponse{Count: int64(count)}, nil
 }
 
 func (s *ShippingAddressService) Get(ctx context.Context, req *addressV1.GetShippingAddressRequest) (*addressV1.ShippingAddress, error) {

@@ -5,12 +5,12 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	"github.com/tx7do/go-crud/pagination"
 	entCrud "github.com/tx7do/go-crud/entgo"
+	"github.com/tx7do/go-crud/pagination"
 
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
@@ -26,7 +26,7 @@ import (
 
 type CategoryRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.Category, ent.Category]
 
@@ -105,9 +105,9 @@ func (r *CategoryRepo) filterByTranslationName(ctx context.Context, builder *ent
 	if len(rows) == 0 {
 		return false, nil
 	}
-	ids := make([]uint32, 0, len(rows))
+	ids := make([]int64, 0, len(rows))
 	for _, n := range rows {
-		ids = append(ids, uint32(n))
+		ids = append(ids, int64(n))
 	}
 	builder.Where(category.IDIn(ids...))
 	return true, nil
@@ -160,8 +160,8 @@ func (r *CategoryRepo) List(ctx context.Context, req *paginationV1.PagingRequest
 	// 与 menu / org_unit / permission_group 一致地由服务端组装，避免前端递归建树。
 	ret.Items = pagination.BuildTree(
 		ret.Items,
-		func(node *catalogV1.Category) *uint32 { return node.Id },
-		func(node *catalogV1.Category) *uint32 { return node.ParentId },
+		func(node *catalogV1.Category) *int64 { return node.Id },
+		func(node *catalogV1.Category) *int64 { return node.ParentId },
 		func(node *catalogV1.Category) *[]*catalogV1.Category { return &node.Children },
 	)
 
@@ -171,7 +171,7 @@ func (r *CategoryRepo) List(ctx context.Context, req *paginationV1.PagingRequest
 	}, nil
 }
 
-func (r *CategoryRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *CategoryRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Category.Query().
 		Where(category.IDEQ(id)).
 		Exist(ctx)
@@ -435,7 +435,7 @@ func (r *CategoryRepo) Delete(ctx context.Context, req *catalogV1.DeleteCategory
 	return err
 }
 
-func (r *CategoryRepo) TranslationExists(ctx context.Context, categoryId uint32, languageCode string) (bool, error) {
+func (r *CategoryRepo) TranslationExists(ctx context.Context, categoryId int64, languageCode string) (bool, error) {
 	return r.categoryTranslationRepo.TranslationExists(ctx, categoryId, languageCode)
 }
 
@@ -485,7 +485,7 @@ func (r *CategoryRepo) GetTranslation(ctx context.Context, req *catalogV1.GetCat
 	return r.categoryTranslationRepo.GetTranslation(ctx, req.GetId(), req.GetLocale())
 }
 
-func (r *CategoryRepo) ListTranslations(ctx context.Context, categoryId uint32) ([]*catalogV1.CategoryTranslation, error) {
+func (r *CategoryRepo) ListTranslations(ctx context.Context, categoryId int64) ([]*catalogV1.CategoryTranslation, error) {
 	return r.categoryTranslationRepo.ListTranslations(ctx, categoryId, "", nil)
 }
 
@@ -493,6 +493,6 @@ func (r *CategoryRepo) DeleteTranslation(ctx context.Context, req *catalogV1.Del
 	return r.categoryTranslationRepo.DeleteTranslation(ctx, req)
 }
 
-func (r *CategoryRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, categoryID uint32) error {
+func (r *CategoryRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, categoryID int64) error {
 	return r.categoryTranslationRepo.CleanTranslations(ctx, tx, categoryID)
 }

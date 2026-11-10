@@ -40,7 +40,7 @@ func (_d *GrouponGroupDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *GrouponGroupDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(groupongroup.Table, sqlgraph.NewFieldSpec(groupongroup.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewDeleteSpec(groupongroup.Table, sqlgraph.NewFieldSpec(groupongroup.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

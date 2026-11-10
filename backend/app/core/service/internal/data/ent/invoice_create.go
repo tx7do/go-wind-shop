@@ -65,13 +65,13 @@ func (_c *InvoiceCreate) SetNillableDeletedAt(v *time.Time) *InvoiceCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *InvoiceCreate) SetCreatedBy(v uint32) *InvoiceCreate {
+func (_c *InvoiceCreate) SetCreatedBy(v int64) *InvoiceCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *InvoiceCreate) SetNillableCreatedBy(v *uint32) *InvoiceCreate {
+func (_c *InvoiceCreate) SetNillableCreatedBy(v *int64) *InvoiceCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *InvoiceCreate) SetNillableCreatedBy(v *uint32) *InvoiceCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *InvoiceCreate) SetUpdatedBy(v uint32) *InvoiceCreate {
+func (_c *InvoiceCreate) SetUpdatedBy(v int64) *InvoiceCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *InvoiceCreate) SetNillableUpdatedBy(v *uint32) *InvoiceCreate {
+func (_c *InvoiceCreate) SetNillableUpdatedBy(v *int64) *InvoiceCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *InvoiceCreate) SetNillableUpdatedBy(v *uint32) *InvoiceCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *InvoiceCreate) SetDeletedBy(v uint32) *InvoiceCreate {
+func (_c *InvoiceCreate) SetDeletedBy(v int64) *InvoiceCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *InvoiceCreate) SetNillableDeletedBy(v *uint32) *InvoiceCreate {
+func (_c *InvoiceCreate) SetNillableDeletedBy(v *int64) *InvoiceCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *InvoiceCreate) SetNillableDeletedBy(v *uint32) *InvoiceCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *InvoiceCreate) SetTenantID(v uint32) *InvoiceCreate {
+func (_c *InvoiceCreate) SetTenantID(v int64) *InvoiceCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *InvoiceCreate) SetNillableTenantID(v *uint32) *InvoiceCreate {
+func (_c *InvoiceCreate) SetNillableTenantID(v *int64) *InvoiceCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -135,13 +135,13 @@ func (_c *InvoiceCreate) SetNillableCurrency(v *string) *InvoiceCreate {
 }
 
 // SetOrderID sets the "order_id" field.
-func (_c *InvoiceCreate) SetOrderID(v uint32) *InvoiceCreate {
+func (_c *InvoiceCreate) SetOrderID(v int64) *InvoiceCreate {
 	_c.mutation.SetOrderID(v)
 	return _c
 }
 
 // SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (_c *InvoiceCreate) SetNillableOrderID(v *uint32) *InvoiceCreate {
+func (_c *InvoiceCreate) SetNillableOrderID(v *int64) *InvoiceCreate {
 	if v != nil {
 		_c.SetOrderID(*v)
 	}
@@ -149,13 +149,13 @@ func (_c *InvoiceCreate) SetNillableOrderID(v *uint32) *InvoiceCreate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_c *InvoiceCreate) SetUserID(v uint32) *InvoiceCreate {
+func (_c *InvoiceCreate) SetUserID(v int64) *InvoiceCreate {
 	_c.mutation.SetUserID(v)
 	return _c
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_c *InvoiceCreate) SetNillableUserID(v *uint32) *InvoiceCreate {
+func (_c *InvoiceCreate) SetNillableUserID(v *int64) *InvoiceCreate {
 	if v != nil {
 		_c.SetUserID(*v)
 	}
@@ -275,7 +275,7 @@ func (_c *InvoiceCreate) SetNillableAmount(v *int64) *InvoiceCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *InvoiceCreate) SetID(v uint32) *InvoiceCreate {
+func (_c *InvoiceCreate) SetID(v int64) *InvoiceCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -365,7 +365,7 @@ func (_c *InvoiceCreate) sqlSave(ctx context.Context) (*Invoice, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -375,7 +375,7 @@ func (_c *InvoiceCreate) sqlSave(ctx context.Context) (*Invoice, error) {
 func (_c *InvoiceCreate) createSpec() (*Invoice, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Invoice{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(invoice.Table, sqlgraph.NewFieldSpec(invoice.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(invoice.Table, sqlgraph.NewFieldSpec(invoice.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -395,19 +395,19 @@ func (_c *InvoiceCreate) createSpec() (*Invoice, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(invoice.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(invoice.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(invoice.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(invoice.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Currency(); ok {
@@ -415,11 +415,11 @@ func (_c *InvoiceCreate) createSpec() (*Invoice, *sqlgraph.CreateSpec) {
 		_node.Currency = &value
 	}
 	if value, ok := _c.mutation.OrderID(); ok {
-		_spec.SetField(invoice.FieldOrderID, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldOrderID, field.TypeInt64, value)
 		_node.OrderID = &value
 	}
 	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(invoice.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(invoice.FieldUserID, field.TypeInt64, value)
 		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.InvoiceNumber(); ok {
@@ -543,7 +543,7 @@ func (u *InvoiceUpsert) ClearDeletedAt() *InvoiceUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *InvoiceUpsert) SetCreatedBy(v uint32) *InvoiceUpsert {
+func (u *InvoiceUpsert) SetCreatedBy(v int64) *InvoiceUpsert {
 	u.Set(invoice.FieldCreatedBy, v)
 	return u
 }
@@ -555,7 +555,7 @@ func (u *InvoiceUpsert) UpdateCreatedBy() *InvoiceUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *InvoiceUpsert) AddCreatedBy(v uint32) *InvoiceUpsert {
+func (u *InvoiceUpsert) AddCreatedBy(v int64) *InvoiceUpsert {
 	u.Add(invoice.FieldCreatedBy, v)
 	return u
 }
@@ -567,7 +567,7 @@ func (u *InvoiceUpsert) ClearCreatedBy() *InvoiceUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *InvoiceUpsert) SetUpdatedBy(v uint32) *InvoiceUpsert {
+func (u *InvoiceUpsert) SetUpdatedBy(v int64) *InvoiceUpsert {
 	u.Set(invoice.FieldUpdatedBy, v)
 	return u
 }
@@ -579,7 +579,7 @@ func (u *InvoiceUpsert) UpdateUpdatedBy() *InvoiceUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *InvoiceUpsert) AddUpdatedBy(v uint32) *InvoiceUpsert {
+func (u *InvoiceUpsert) AddUpdatedBy(v int64) *InvoiceUpsert {
 	u.Add(invoice.FieldUpdatedBy, v)
 	return u
 }
@@ -591,7 +591,7 @@ func (u *InvoiceUpsert) ClearUpdatedBy() *InvoiceUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *InvoiceUpsert) SetDeletedBy(v uint32) *InvoiceUpsert {
+func (u *InvoiceUpsert) SetDeletedBy(v int64) *InvoiceUpsert {
 	u.Set(invoice.FieldDeletedBy, v)
 	return u
 }
@@ -603,7 +603,7 @@ func (u *InvoiceUpsert) UpdateDeletedBy() *InvoiceUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *InvoiceUpsert) AddDeletedBy(v uint32) *InvoiceUpsert {
+func (u *InvoiceUpsert) AddDeletedBy(v int64) *InvoiceUpsert {
 	u.Add(invoice.FieldDeletedBy, v)
 	return u
 }
@@ -633,7 +633,7 @@ func (u *InvoiceUpsert) ClearCurrency() *InvoiceUpsert {
 }
 
 // SetOrderID sets the "order_id" field.
-func (u *InvoiceUpsert) SetOrderID(v uint32) *InvoiceUpsert {
+func (u *InvoiceUpsert) SetOrderID(v int64) *InvoiceUpsert {
 	u.Set(invoice.FieldOrderID, v)
 	return u
 }
@@ -645,7 +645,7 @@ func (u *InvoiceUpsert) UpdateOrderID() *InvoiceUpsert {
 }
 
 // AddOrderID adds v to the "order_id" field.
-func (u *InvoiceUpsert) AddOrderID(v uint32) *InvoiceUpsert {
+func (u *InvoiceUpsert) AddOrderID(v int64) *InvoiceUpsert {
 	u.Add(invoice.FieldOrderID, v)
 	return u
 }
@@ -657,7 +657,7 @@ func (u *InvoiceUpsert) ClearOrderID() *InvoiceUpsert {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *InvoiceUpsert) SetUserID(v uint32) *InvoiceUpsert {
+func (u *InvoiceUpsert) SetUserID(v int64) *InvoiceUpsert {
 	u.Set(invoice.FieldUserID, v)
 	return u
 }
@@ -669,7 +669,7 @@ func (u *InvoiceUpsert) UpdateUserID() *InvoiceUpsert {
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *InvoiceUpsert) AddUserID(v uint32) *InvoiceUpsert {
+func (u *InvoiceUpsert) AddUserID(v int64) *InvoiceUpsert {
 	u.Add(invoice.FieldUserID, v)
 	return u
 }
@@ -927,14 +927,14 @@ func (u *InvoiceUpsertOne) ClearDeletedAt() *InvoiceUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *InvoiceUpsertOne) SetCreatedBy(v uint32) *InvoiceUpsertOne {
+func (u *InvoiceUpsertOne) SetCreatedBy(v int64) *InvoiceUpsertOne {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *InvoiceUpsertOne) AddCreatedBy(v uint32) *InvoiceUpsertOne {
+func (u *InvoiceUpsertOne) AddCreatedBy(v int64) *InvoiceUpsertOne {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -955,14 +955,14 @@ func (u *InvoiceUpsertOne) ClearCreatedBy() *InvoiceUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *InvoiceUpsertOne) SetUpdatedBy(v uint32) *InvoiceUpsertOne {
+func (u *InvoiceUpsertOne) SetUpdatedBy(v int64) *InvoiceUpsertOne {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *InvoiceUpsertOne) AddUpdatedBy(v uint32) *InvoiceUpsertOne {
+func (u *InvoiceUpsertOne) AddUpdatedBy(v int64) *InvoiceUpsertOne {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -983,14 +983,14 @@ func (u *InvoiceUpsertOne) ClearUpdatedBy() *InvoiceUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *InvoiceUpsertOne) SetDeletedBy(v uint32) *InvoiceUpsertOne {
+func (u *InvoiceUpsertOne) SetDeletedBy(v int64) *InvoiceUpsertOne {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *InvoiceUpsertOne) AddDeletedBy(v uint32) *InvoiceUpsertOne {
+func (u *InvoiceUpsertOne) AddDeletedBy(v int64) *InvoiceUpsertOne {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1032,14 +1032,14 @@ func (u *InvoiceUpsertOne) ClearCurrency() *InvoiceUpsertOne {
 }
 
 // SetOrderID sets the "order_id" field.
-func (u *InvoiceUpsertOne) SetOrderID(v uint32) *InvoiceUpsertOne {
+func (u *InvoiceUpsertOne) SetOrderID(v int64) *InvoiceUpsertOne {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.SetOrderID(v)
 	})
 }
 
 // AddOrderID adds v to the "order_id" field.
-func (u *InvoiceUpsertOne) AddOrderID(v uint32) *InvoiceUpsertOne {
+func (u *InvoiceUpsertOne) AddOrderID(v int64) *InvoiceUpsertOne {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.AddOrderID(v)
 	})
@@ -1060,14 +1060,14 @@ func (u *InvoiceUpsertOne) ClearOrderID() *InvoiceUpsertOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *InvoiceUpsertOne) SetUserID(v uint32) *InvoiceUpsertOne {
+func (u *InvoiceUpsertOne) SetUserID(v int64) *InvoiceUpsertOne {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *InvoiceUpsertOne) AddUserID(v uint32) *InvoiceUpsertOne {
+func (u *InvoiceUpsertOne) AddUserID(v int64) *InvoiceUpsertOne {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.AddUserID(v)
 	})
@@ -1278,7 +1278,7 @@ func (u *InvoiceUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *InvoiceUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *InvoiceUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1287,7 +1287,7 @@ func (u *InvoiceUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *InvoiceUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *InvoiceUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1344,7 +1344,7 @@ func (_c *InvoiceCreateBulk) Save(ctx context.Context) ([]*Invoice, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1525,14 +1525,14 @@ func (u *InvoiceUpsertBulk) ClearDeletedAt() *InvoiceUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *InvoiceUpsertBulk) SetCreatedBy(v uint32) *InvoiceUpsertBulk {
+func (u *InvoiceUpsertBulk) SetCreatedBy(v int64) *InvoiceUpsertBulk {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *InvoiceUpsertBulk) AddCreatedBy(v uint32) *InvoiceUpsertBulk {
+func (u *InvoiceUpsertBulk) AddCreatedBy(v int64) *InvoiceUpsertBulk {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1553,14 +1553,14 @@ func (u *InvoiceUpsertBulk) ClearCreatedBy() *InvoiceUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *InvoiceUpsertBulk) SetUpdatedBy(v uint32) *InvoiceUpsertBulk {
+func (u *InvoiceUpsertBulk) SetUpdatedBy(v int64) *InvoiceUpsertBulk {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *InvoiceUpsertBulk) AddUpdatedBy(v uint32) *InvoiceUpsertBulk {
+func (u *InvoiceUpsertBulk) AddUpdatedBy(v int64) *InvoiceUpsertBulk {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1581,14 +1581,14 @@ func (u *InvoiceUpsertBulk) ClearUpdatedBy() *InvoiceUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *InvoiceUpsertBulk) SetDeletedBy(v uint32) *InvoiceUpsertBulk {
+func (u *InvoiceUpsertBulk) SetDeletedBy(v int64) *InvoiceUpsertBulk {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *InvoiceUpsertBulk) AddDeletedBy(v uint32) *InvoiceUpsertBulk {
+func (u *InvoiceUpsertBulk) AddDeletedBy(v int64) *InvoiceUpsertBulk {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1630,14 +1630,14 @@ func (u *InvoiceUpsertBulk) ClearCurrency() *InvoiceUpsertBulk {
 }
 
 // SetOrderID sets the "order_id" field.
-func (u *InvoiceUpsertBulk) SetOrderID(v uint32) *InvoiceUpsertBulk {
+func (u *InvoiceUpsertBulk) SetOrderID(v int64) *InvoiceUpsertBulk {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.SetOrderID(v)
 	})
 }
 
 // AddOrderID adds v to the "order_id" field.
-func (u *InvoiceUpsertBulk) AddOrderID(v uint32) *InvoiceUpsertBulk {
+func (u *InvoiceUpsertBulk) AddOrderID(v int64) *InvoiceUpsertBulk {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.AddOrderID(v)
 	})
@@ -1658,14 +1658,14 @@ func (u *InvoiceUpsertBulk) ClearOrderID() *InvoiceUpsertBulk {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *InvoiceUpsertBulk) SetUserID(v uint32) *InvoiceUpsertBulk {
+func (u *InvoiceUpsertBulk) SetUserID(v int64) *InvoiceUpsertBulk {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *InvoiceUpsertBulk) AddUserID(v uint32) *InvoiceUpsertBulk {
+func (u *InvoiceUpsertBulk) AddUserID(v int64) *InvoiceUpsertBulk {
 	return u.Update(func(s *InvoiceUpsert) {
 		s.AddUserID(v)
 	})

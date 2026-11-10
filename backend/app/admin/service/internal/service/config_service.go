@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -20,7 +20,7 @@ import (
 type ConfigService struct {
 	adminV1.ConfigServiceHTTPServer
 
-	log *logx.Helper
+	log                 *logx.Helper
 	configServiceClient configV1.ConfigServiceClient
 }
 

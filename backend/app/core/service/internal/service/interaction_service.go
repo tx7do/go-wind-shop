@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data"
 
@@ -21,7 +21,7 @@ type InteractionService struct {
 	interactionV1.UnimplementedInteractionServiceServer
 
 	interactionRepo *data.InteractionRepo
-	log *logx.Helper
+	log             *logx.Helper
 }
 
 func NewInteractionService(

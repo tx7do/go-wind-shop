@@ -137,7 +137,7 @@ func (s *SkuService) AdjustStock(ctx context.Context, req *catalogV1.AdjustSkuSt
 		return nil, catalogV1.ErrorInternalServerError("adjust stock failed")
 	}
 
-	var productId uint32
+	var productId int64
 	if skuEnt.ProductID != nil {
 		productId = *skuEnt.ProductID
 	}

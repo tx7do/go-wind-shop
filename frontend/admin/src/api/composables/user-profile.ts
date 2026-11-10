@@ -43,12 +43,11 @@ export async function fetchUserProfile() {
 }
 
 export function useUpdateUserProfile(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.userProfileService.UpdateUser({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.userProfileService.UpdateUser({ id: String(id),
         data: { ...values } as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),

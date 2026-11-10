@@ -83,7 +83,7 @@ async function loadAttributeName() {
   attributeName.value = "";
   if (!attributeId.value) return;
   try {
-    const resp: any = await fetchGetProductAttribute({ id: attributeId.value });
+    const resp: any = await fetchGetProductAttribute({ id: String(attributeId.value) });
     attributeName.value = getTranslationField(resp, "name");
   } catch {
     attributeName.value = "";

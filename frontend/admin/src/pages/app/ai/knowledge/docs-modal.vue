@@ -86,7 +86,7 @@ const docContent = ref("");
 function loadDocs() {
   if (!props.base?.id) return;
   loading.value = true;
-  fetchListAiDocs(props.base.id)
+  fetchListAiDocs(Number(props.base.id))
     .then((res) => {
       docs.value = (res.items || []) as AiDoc[];
     })
@@ -115,7 +115,7 @@ async function handleUpload() {
   if (!props.base?.id || !docName.value.trim() || !docContent.value.trim()) return;
   uploading.value = true;
   try {
-    const res = await uploadAiDoc(props.base.id, docName.value.trim(), docContent.value);
+    const res = await uploadAiDoc(Number(props.base.id), docName.value.trim(), docContent.value);
     ElMessage.success(t("pages.ai_knowledge.uploadSuccess", { chunks: res.chunkCount ?? 0 }));
     resetForm();
     loadDocs();
@@ -130,7 +130,7 @@ async function handleUpload() {
 async function handleDelete(row: AiDoc) {
   if (!props.base?.id) return;
   try {
-    await deleteAiDoc(props.base.id, row.id!);
+    await deleteAiDoc(Number(props.base.id), row.id!);
     ElMessage.success(t("pages.ai_knowledge.deleteSuccess"));
     loadDocs();
   } catch (error: any) {

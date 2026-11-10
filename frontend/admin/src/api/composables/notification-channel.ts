@@ -35,14 +35,13 @@ export async function createNotificationChannel(
  * updateMask 显式列举业务字段（与 react 基准一致），避免密码等敏感字段混入。
  */
 export async function updateNotificationChannel(
-  id: number,
+  id: number | string,
   values: Record<string, any>,
   password?: string,
   webhookSecret?: string,
   smsAccessSecret?: string,
 ) {
-  return apiClient.notificationChannelService.UpdateNotificationChannel({
-    id,
+  return apiClient.notificationChannelService.UpdateNotificationChannel({ id: String(id),
     data: values as any,
     password: password || undefined,
     webhookSecret: webhookSecret || undefined,
@@ -53,16 +52,16 @@ export async function updateNotificationChannel(
 }
 
 /** 删除通知渠道 */
-export async function deleteNotificationChannel(id: number) {
-  return apiClient.notificationChannelService.DeleteNotificationChannel({ id });
+export async function deleteNotificationChannel(id: number | string) {
+  return apiClient.notificationChannelService.DeleteNotificationChannel({ id: String(id) });
 }
 
 /** 向指定渠道发送测试邮件 */
-export async function sendTestEmail(id: number, recipient: string) {
-  return apiClient.notificationChannelService.SendTestEmail({ id, recipient });
+export async function sendTestEmail(id: number | string, recipient: string) {
+  return apiClient.notificationChannelService.SendTestEmail({ id: String(id), recipient });
 }
 
 /** 按渠道类型发送测试消息（EMAIL 走测试邮件，SMS 发测试验证码） */
-export async function sendTest(id: number, recipient: string) {
-  return apiClient.notificationChannelService.SendTest({ id, recipient });
+export async function sendTest(id: number | string, recipient: string) {
+  return apiClient.notificationChannelService.SendTest({ id: String(id), recipient });
 }

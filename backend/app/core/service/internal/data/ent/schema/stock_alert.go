@@ -34,7 +34,7 @@ func (StockAlert) Annotations() []schema.Annotation {
 
 func (StockAlert) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("sku_id").
+		field.Int64("sku_id").
 			Comment("触发告警的SKU ID").
 			Optional().
 			Nillable(),
@@ -64,9 +64,9 @@ func (StockAlert) Fields() []ent.Field {
 
 func (StockAlert) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 	}
 }
 

@@ -74,12 +74,11 @@ export function useCreatePaymentChannelConfig(
 }
 
 export function useUpdatePaymentChannelConfig(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.paymentChannelConfigService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.paymentChannelConfigService.Update({ id: String(id),
         data: { ...values },
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       } as paymentservicev1_UpdatePaymentChannelConfigRequest),

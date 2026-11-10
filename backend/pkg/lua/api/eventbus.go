@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sync"
 
-	"go-wind-shop/pkg/logx"
 	lua "github.com/yuin/gopher-lua"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/pkg/eventbus"
 	"go-wind-shop/pkg/lua/internal/convert"
@@ -16,7 +16,7 @@ import (
 type LuaEventHandler struct {
 	L        *lua.LState
 	function *lua.LFunction
-	logger *logx.Helper
+	logger   *logx.Helper
 	mu       sync.Mutex
 }
 

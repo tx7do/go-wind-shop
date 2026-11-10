@@ -3,12 +3,12 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
-	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
+	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 )
 
 // AiContentService AI 内容生成（表单助手）BFF 直通转发。
@@ -16,7 +16,7 @@ type AiContentService struct {
 	adminV1.AiContentServiceHTTPServer
 
 	aiContentServiceClient aiV1.AiContentServiceClient
-	log *logx.Helper
+	log                    *logx.Helper
 }
 
 func NewAiContentService(ctx *bootstrap.Context, aiContentServiceClient aiV1.AiContentServiceClient) *AiContentService {

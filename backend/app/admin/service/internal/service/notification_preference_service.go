@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
@@ -15,7 +15,7 @@ import (
 type NotificationPreferenceService struct {
 	adminV1.NotificationPreferenceServiceHTTPServer
 
-	log *logx.Helper
+	log           *logx.Helper
 	preferenceCli notifyV1.NotificationPreferenceServiceClient
 }
 

@@ -49,7 +49,7 @@ func (Comment) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("object_id").
+		field.Int64("object_id").
 			Comment("对象ID（商品ID）").
 			Optional().
 			Nillable(),
@@ -79,11 +79,11 @@ func (Comment) Fields() []ent.Field {
 
 func (Comment) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
-		mixin.Tree[Comment]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
+		mixin.Tree64[Comment]{},
 	}
 }
 

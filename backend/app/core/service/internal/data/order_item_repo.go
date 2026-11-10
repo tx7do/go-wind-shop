@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -23,7 +23,7 @@ import (
 
 type OrderItemRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[orderV1.OrderItem, ent.OrderItem]
 
@@ -101,7 +101,7 @@ func (r *OrderItemRepo) List(ctx context.Context, req *paginationV1.PagingReques
 	}, nil
 }
 
-func (r *OrderItemRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *OrderItemRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().OrderItem.Query().
 		Where(orderitem.IDEQ(id)).
 		Exist(ctx)
@@ -114,7 +114,7 @@ func (r *OrderItemRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
 
 // ListByOrderId 列出指定订单下的所有订单项（用于超时过期时的库存释放）。
 // 直接走 ent 客户端（非分页），返回 ent 实体切片。
-func (r *OrderItemRepo) ListByOrderId(ctx context.Context, orderId uint32) ([]*ent.OrderItem, error) {
+func (r *OrderItemRepo) ListByOrderId(ctx context.Context, orderId int64) ([]*ent.OrderItem, error) {
 	items, err := r.entClient.Client().OrderItem.Query().
 		Where(orderitem.OrderIDEQ(orderId)).
 		All(ctx)

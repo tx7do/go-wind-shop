@@ -45,8 +45,8 @@ type reviewSummaryEntry struct {
 
 var reviewSummaryCache = struct {
 	sync.Mutex
-	m map[uint32]reviewSummaryEntry
-}{m: make(map[uint32]reviewSummaryEntry)}
+	m map[int64]reviewSummaryEntry
+}{m: make(map[int64]reviewSummaryEntry)}
 
 // GetProductReviewSummary 商品评论 AI 摘要（匿名可读，走 BFF 白名单）。
 func (s *CommentService) GetProductReviewSummary(ctx context.Context, req *commentV1.GetProductReviewSummaryRequest) (*commentV1.ProductReviewSummary, error) {
@@ -76,7 +76,7 @@ func (s *CommentService) GetProductReviewSummary(ctx context.Context, req *comme
 }
 
 // buildReviewSummary 拉评论 → 拼 prompt → 调 LLM；任何一步不满足即返回不可用。
-func (s *CommentService) buildReviewSummary(ctx context.Context, productId uint32) *commentV1.ProductReviewSummary {
+func (s *CommentService) buildReviewSummary(ctx context.Context, productId int64) *commentV1.ProductReviewSummary {
 	unavailable := &commentV1.ProductReviewSummary{Available: false}
 
 	if s.aiDeps == nil || s.aiDeps.ProviderRepo == nil || s.repo == nil {
@@ -143,9 +143,9 @@ func (s *CommentService) buildReviewSummary(ctx context.Context, productId uint3
 		_ = s.aiDeps.UsageLogRepo.Create(ctx, &data.UsageRecord{
 			ProviderID:       provider.ID,
 			ModelName:        model,
-			PromptTokens:     uint32(resp.Usage.PromptTokens),
-			CompletionTokens: uint32(resp.Usage.CompletionTokens),
-			TotalTokens:      uint32(resp.Usage.TotalTokens),
+			PromptTokens:     int64(resp.Usage.PromptTokens),
+			CompletionTokens: int64(resp.Usage.CompletionTokens),
+			TotalTokens:      int64(resp.Usage.TotalTokens),
 		})
 	}
 

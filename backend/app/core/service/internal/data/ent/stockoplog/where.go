@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.StockOpLog {
+func ID(id int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.StockOpLog {
+func IDEQ(id int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.StockOpLog {
+func IDNEQ(id int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.StockOpLog {
+func IDIn(ids ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.StockOpLog {
+func IDNotIn(ids ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.StockOpLog {
+func IDGT(id int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.StockOpLog {
+func IDGTE(id int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.StockOpLog {
+func IDLT(id int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.StockOpLog {
+func IDLTE(id int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,27 +70,27 @@ func DeletedAt(v time.Time) predicate.StockOpLog {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.StockOpLog {
+func CreatedBy(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.StockOpLog {
+func UpdatedBy(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.StockOpLog {
+func DeletedBy(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // SkuID applies equality check predicate on the "sku_id" field. It's identical to SkuIDEQ.
-func SkuID(v uint32) predicate.StockOpLog {
+func SkuID(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldSkuID, v))
 }
 
 // ProductID applies equality check predicate on the "product_id" field. It's identical to ProductIDEQ.
-func ProductID(v uint32) predicate.StockOpLog {
+func ProductID(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldProductID, v))
 }
 
@@ -110,7 +110,7 @@ func StockAfter(v int32) predicate.StockOpLog {
 }
 
 // RefID applies equality check predicate on the "ref_id" field. It's identical to RefIDEQ.
-func RefID(v uint32) predicate.StockOpLog {
+func RefID(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldRefID, v))
 }
 
@@ -270,42 +270,42 @@ func DeletedAtNotNil() predicate.StockOpLog {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.StockOpLog {
+func CreatedByEQ(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.StockOpLog {
+func CreatedByNEQ(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.StockOpLog {
+func CreatedByIn(vs ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.StockOpLog {
+func CreatedByNotIn(vs ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.StockOpLog {
+func CreatedByGT(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.StockOpLog {
+func CreatedByGTE(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.StockOpLog {
+func CreatedByLT(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.StockOpLog {
+func CreatedByLTE(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -320,42 +320,42 @@ func CreatedByNotNil() predicate.StockOpLog {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.StockOpLog {
+func UpdatedByEQ(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.StockOpLog {
+func UpdatedByNEQ(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.StockOpLog {
+func UpdatedByIn(vs ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.StockOpLog {
+func UpdatedByNotIn(vs ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.StockOpLog {
+func UpdatedByGT(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.StockOpLog {
+func UpdatedByGTE(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.StockOpLog {
+func UpdatedByLT(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.StockOpLog {
+func UpdatedByLTE(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -370,42 +370,42 @@ func UpdatedByNotNil() predicate.StockOpLog {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.StockOpLog {
+func DeletedByEQ(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.StockOpLog {
+func DeletedByNEQ(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.StockOpLog {
+func DeletedByIn(vs ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.StockOpLog {
+func DeletedByNotIn(vs ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.StockOpLog {
+func DeletedByGT(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.StockOpLog {
+func DeletedByGTE(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.StockOpLog {
+func DeletedByLT(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.StockOpLog {
+func DeletedByLTE(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -420,42 +420,42 @@ func DeletedByNotNil() predicate.StockOpLog {
 }
 
 // SkuIDEQ applies the EQ predicate on the "sku_id" field.
-func SkuIDEQ(v uint32) predicate.StockOpLog {
+func SkuIDEQ(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldSkuID, v))
 }
 
 // SkuIDNEQ applies the NEQ predicate on the "sku_id" field.
-func SkuIDNEQ(v uint32) predicate.StockOpLog {
+func SkuIDNEQ(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNEQ(FieldSkuID, v))
 }
 
 // SkuIDIn applies the In predicate on the "sku_id" field.
-func SkuIDIn(vs ...uint32) predicate.StockOpLog {
+func SkuIDIn(vs ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldIn(FieldSkuID, vs...))
 }
 
 // SkuIDNotIn applies the NotIn predicate on the "sku_id" field.
-func SkuIDNotIn(vs ...uint32) predicate.StockOpLog {
+func SkuIDNotIn(vs ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNotIn(FieldSkuID, vs...))
 }
 
 // SkuIDGT applies the GT predicate on the "sku_id" field.
-func SkuIDGT(v uint32) predicate.StockOpLog {
+func SkuIDGT(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGT(FieldSkuID, v))
 }
 
 // SkuIDGTE applies the GTE predicate on the "sku_id" field.
-func SkuIDGTE(v uint32) predicate.StockOpLog {
+func SkuIDGTE(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGTE(FieldSkuID, v))
 }
 
 // SkuIDLT applies the LT predicate on the "sku_id" field.
-func SkuIDLT(v uint32) predicate.StockOpLog {
+func SkuIDLT(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLT(FieldSkuID, v))
 }
 
 // SkuIDLTE applies the LTE predicate on the "sku_id" field.
-func SkuIDLTE(v uint32) predicate.StockOpLog {
+func SkuIDLTE(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLTE(FieldSkuID, v))
 }
 
@@ -470,42 +470,42 @@ func SkuIDNotNil() predicate.StockOpLog {
 }
 
 // ProductIDEQ applies the EQ predicate on the "product_id" field.
-func ProductIDEQ(v uint32) predicate.StockOpLog {
+func ProductIDEQ(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldProductID, v))
 }
 
 // ProductIDNEQ applies the NEQ predicate on the "product_id" field.
-func ProductIDNEQ(v uint32) predicate.StockOpLog {
+func ProductIDNEQ(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNEQ(FieldProductID, v))
 }
 
 // ProductIDIn applies the In predicate on the "product_id" field.
-func ProductIDIn(vs ...uint32) predicate.StockOpLog {
+func ProductIDIn(vs ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldIn(FieldProductID, vs...))
 }
 
 // ProductIDNotIn applies the NotIn predicate on the "product_id" field.
-func ProductIDNotIn(vs ...uint32) predicate.StockOpLog {
+func ProductIDNotIn(vs ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNotIn(FieldProductID, vs...))
 }
 
 // ProductIDGT applies the GT predicate on the "product_id" field.
-func ProductIDGT(v uint32) predicate.StockOpLog {
+func ProductIDGT(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGT(FieldProductID, v))
 }
 
 // ProductIDGTE applies the GTE predicate on the "product_id" field.
-func ProductIDGTE(v uint32) predicate.StockOpLog {
+func ProductIDGTE(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGTE(FieldProductID, v))
 }
 
 // ProductIDLT applies the LT predicate on the "product_id" field.
-func ProductIDLT(v uint32) predicate.StockOpLog {
+func ProductIDLT(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLT(FieldProductID, v))
 }
 
 // ProductIDLTE applies the LTE predicate on the "product_id" field.
-func ProductIDLTE(v uint32) predicate.StockOpLog {
+func ProductIDLTE(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLTE(FieldProductID, v))
 }
 
@@ -700,42 +700,42 @@ func ReasonNotNil() predicate.StockOpLog {
 }
 
 // RefIDEQ applies the EQ predicate on the "ref_id" field.
-func RefIDEQ(v uint32) predicate.StockOpLog {
+func RefIDEQ(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldEQ(FieldRefID, v))
 }
 
 // RefIDNEQ applies the NEQ predicate on the "ref_id" field.
-func RefIDNEQ(v uint32) predicate.StockOpLog {
+func RefIDNEQ(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNEQ(FieldRefID, v))
 }
 
 // RefIDIn applies the In predicate on the "ref_id" field.
-func RefIDIn(vs ...uint32) predicate.StockOpLog {
+func RefIDIn(vs ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldIn(FieldRefID, vs...))
 }
 
 // RefIDNotIn applies the NotIn predicate on the "ref_id" field.
-func RefIDNotIn(vs ...uint32) predicate.StockOpLog {
+func RefIDNotIn(vs ...int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldNotIn(FieldRefID, vs...))
 }
 
 // RefIDGT applies the GT predicate on the "ref_id" field.
-func RefIDGT(v uint32) predicate.StockOpLog {
+func RefIDGT(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGT(FieldRefID, v))
 }
 
 // RefIDGTE applies the GTE predicate on the "ref_id" field.
-func RefIDGTE(v uint32) predicate.StockOpLog {
+func RefIDGTE(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldGTE(FieldRefID, v))
 }
 
 // RefIDLT applies the LT predicate on the "ref_id" field.
-func RefIDLT(v uint32) predicate.StockOpLog {
+func RefIDLT(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLT(FieldRefID, v))
 }
 
 // RefIDLTE applies the LTE predicate on the "ref_id" field.
-func RefIDLTE(v uint32) predicate.StockOpLog {
+func RefIDLTE(v int64) predicate.StockOpLog {
 	return predicate.StockOpLog(sql.FieldLTE(FieldRefID, v))
 }
 

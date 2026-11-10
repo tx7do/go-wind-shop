@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.Promotion {
+func ID(id int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.Promotion {
+func IDEQ(id int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.Promotion {
+func IDNEQ(id int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.Promotion {
+func IDIn(ids ...int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.Promotion {
+func IDNotIn(ids ...int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.Promotion {
+func IDGT(id int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.Promotion {
+func IDGTE(id int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.Promotion {
+func IDLT(id int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.Promotion {
+func IDLTE(id int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.Promotion {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.Promotion {
+func CreatedBy(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.Promotion {
+func UpdatedBy(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.Promotion {
+func DeletedBy(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.Promotion {
+func TenantID(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -100,7 +100,7 @@ func Name(v string) predicate.Promotion {
 }
 
 // ProductID applies equality check predicate on the "product_id" field. It's identical to ProductIDEQ.
-func ProductID(v uint32) predicate.Promotion {
+func ProductID(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldEQ(FieldProductID, v))
 }
 
@@ -285,42 +285,42 @@ func DeletedAtNotNil() predicate.Promotion {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.Promotion {
+func CreatedByEQ(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.Promotion {
+func CreatedByNEQ(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.Promotion {
+func CreatedByIn(vs ...int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.Promotion {
+func CreatedByNotIn(vs ...int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.Promotion {
+func CreatedByGT(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.Promotion {
+func CreatedByGTE(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.Promotion {
+func CreatedByLT(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.Promotion {
+func CreatedByLTE(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -335,42 +335,42 @@ func CreatedByNotNil() predicate.Promotion {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.Promotion {
+func UpdatedByEQ(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.Promotion {
+func UpdatedByNEQ(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.Promotion {
+func UpdatedByIn(vs ...int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.Promotion {
+func UpdatedByNotIn(vs ...int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.Promotion {
+func UpdatedByGT(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.Promotion {
+func UpdatedByGTE(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.Promotion {
+func UpdatedByLT(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.Promotion {
+func UpdatedByLTE(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -385,42 +385,42 @@ func UpdatedByNotNil() predicate.Promotion {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.Promotion {
+func DeletedByEQ(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.Promotion {
+func DeletedByNEQ(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.Promotion {
+func DeletedByIn(vs ...int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.Promotion {
+func DeletedByNotIn(vs ...int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.Promotion {
+func DeletedByGT(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.Promotion {
+func DeletedByGTE(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.Promotion {
+func DeletedByLT(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.Promotion {
+func DeletedByLTE(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -435,42 +435,42 @@ func DeletedByNotNil() predicate.Promotion {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.Promotion {
+func TenantIDEQ(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.Promotion {
+func TenantIDNEQ(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.Promotion {
+func TenantIDIn(vs ...int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.Promotion {
+func TenantIDNotIn(vs ...int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.Promotion {
+func TenantIDGT(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.Promotion {
+func TenantIDGTE(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.Promotion {
+func TenantIDLT(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.Promotion {
+func TenantIDLTE(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -665,42 +665,42 @@ func PromoTypeNotNil() predicate.Promotion {
 }
 
 // ProductIDEQ applies the EQ predicate on the "product_id" field.
-func ProductIDEQ(v uint32) predicate.Promotion {
+func ProductIDEQ(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldEQ(FieldProductID, v))
 }
 
 // ProductIDNEQ applies the NEQ predicate on the "product_id" field.
-func ProductIDNEQ(v uint32) predicate.Promotion {
+func ProductIDNEQ(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldNEQ(FieldProductID, v))
 }
 
 // ProductIDIn applies the In predicate on the "product_id" field.
-func ProductIDIn(vs ...uint32) predicate.Promotion {
+func ProductIDIn(vs ...int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldIn(FieldProductID, vs...))
 }
 
 // ProductIDNotIn applies the NotIn predicate on the "product_id" field.
-func ProductIDNotIn(vs ...uint32) predicate.Promotion {
+func ProductIDNotIn(vs ...int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldNotIn(FieldProductID, vs...))
 }
 
 // ProductIDGT applies the GT predicate on the "product_id" field.
-func ProductIDGT(v uint32) predicate.Promotion {
+func ProductIDGT(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldGT(FieldProductID, v))
 }
 
 // ProductIDGTE applies the GTE predicate on the "product_id" field.
-func ProductIDGTE(v uint32) predicate.Promotion {
+func ProductIDGTE(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldGTE(FieldProductID, v))
 }
 
 // ProductIDLT applies the LT predicate on the "product_id" field.
-func ProductIDLT(v uint32) predicate.Promotion {
+func ProductIDLT(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldLT(FieldProductID, v))
 }
 
 // ProductIDLTE applies the LTE predicate on the "product_id" field.
-func ProductIDLTE(v uint32) predicate.Promotion {
+func ProductIDLTE(v int64) predicate.Promotion {
 	return predicate.Promotion(sql.FieldLTE(FieldProductID, v))
 }
 

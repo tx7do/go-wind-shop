@@ -165,15 +165,15 @@ const orderStatusLabelMap: Record<string, string> = {
   CLOSED: $t("pages.mall.order.statusLabel.CLOSED"),
 };
 
-async function open(id: number) {
+async function open(id: number | string) {
   title.value = $t("pages.mall.order.detailTitle");
   visible.value = true;
-  data.value = await fetchGetOrder({ id });
+  data.value = await fetchGetOrder({ id: String(id) });
   try {
     const result = await fetchListOrderItems(
       new PaginationQuery({
         paging: { page: 1, pageSize: 100 },
-        formValues: { orderId: id },
+        formValues: { orderId: String(id) },
       })
     );
     orderItems.value = result.items || [];

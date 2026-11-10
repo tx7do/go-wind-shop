@@ -70,14 +70,14 @@ func (_u *CommentUpdate) ClearDeletedAt() *CommentUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CommentUpdate) SetCreatedBy(v uint32) *CommentUpdate {
+func (_u *CommentUpdate) SetCreatedBy(v int64) *CommentUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CommentUpdate) SetNillableCreatedBy(v *uint32) *CommentUpdate {
+func (_u *CommentUpdate) SetNillableCreatedBy(v *int64) *CommentUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *CommentUpdate) SetNillableCreatedBy(v *uint32) *CommentUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *CommentUpdate) AddCreatedBy(v int32) *CommentUpdate {
+func (_u *CommentUpdate) AddCreatedBy(v int64) *CommentUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *CommentUpdate) ClearCreatedBy() *CommentUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CommentUpdate) SetUpdatedBy(v uint32) *CommentUpdate {
+func (_u *CommentUpdate) SetUpdatedBy(v int64) *CommentUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CommentUpdate) SetNillableUpdatedBy(v *uint32) *CommentUpdate {
+func (_u *CommentUpdate) SetNillableUpdatedBy(v *int64) *CommentUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *CommentUpdate) SetNillableUpdatedBy(v *uint32) *CommentUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *CommentUpdate) AddUpdatedBy(v int32) *CommentUpdate {
+func (_u *CommentUpdate) AddUpdatedBy(v int64) *CommentUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *CommentUpdate) ClearUpdatedBy() *CommentUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CommentUpdate) SetDeletedBy(v uint32) *CommentUpdate {
+func (_u *CommentUpdate) SetDeletedBy(v int64) *CommentUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CommentUpdate) SetNillableDeletedBy(v *uint32) *CommentUpdate {
+func (_u *CommentUpdate) SetNillableDeletedBy(v *int64) *CommentUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *CommentUpdate) SetNillableDeletedBy(v *uint32) *CommentUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *CommentUpdate) AddDeletedBy(v int32) *CommentUpdate {
+func (_u *CommentUpdate) AddDeletedBy(v int64) *CommentUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,13 +151,13 @@ func (_u *CommentUpdate) ClearDeletedBy() *CommentUpdate {
 }
 
 // SetParentID sets the "parent_id" field.
-func (_u *CommentUpdate) SetParentID(v uint32) *CommentUpdate {
+func (_u *CommentUpdate) SetParentID(v int64) *CommentUpdate {
 	_u.mutation.SetParentID(v)
 	return _u
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_u *CommentUpdate) SetNillableParentID(v *uint32) *CommentUpdate {
+func (_u *CommentUpdate) SetNillableParentID(v *int64) *CommentUpdate {
 	if v != nil {
 		_u.SetParentID(*v)
 	}
@@ -191,14 +191,14 @@ func (_u *CommentUpdate) ClearContentType() *CommentUpdate {
 }
 
 // SetObjectID sets the "object_id" field.
-func (_u *CommentUpdate) SetObjectID(v uint32) *CommentUpdate {
+func (_u *CommentUpdate) SetObjectID(v int64) *CommentUpdate {
 	_u.mutation.ResetObjectID()
 	_u.mutation.SetObjectID(v)
 	return _u
 }
 
 // SetNillableObjectID sets the "object_id" field if the given value is not nil.
-func (_u *CommentUpdate) SetNillableObjectID(v *uint32) *CommentUpdate {
+func (_u *CommentUpdate) SetNillableObjectID(v *int64) *CommentUpdate {
 	if v != nil {
 		_u.SetObjectID(*v)
 	}
@@ -206,7 +206,7 @@ func (_u *CommentUpdate) SetNillableObjectID(v *uint32) *CommentUpdate {
 }
 
 // AddObjectID adds value to the "object_id" field.
-func (_u *CommentUpdate) AddObjectID(v int32) *CommentUpdate {
+func (_u *CommentUpdate) AddObjectID(v int64) *CommentUpdate {
 	_u.mutation.AddObjectID(v)
 	return _u
 }
@@ -290,14 +290,14 @@ func (_u *CommentUpdate) SetParent(v *Comment) *CommentUpdate {
 }
 
 // AddChildIDs adds the "children" edge to the Comment entity by IDs.
-func (_u *CommentUpdate) AddChildIDs(ids ...uint32) *CommentUpdate {
+func (_u *CommentUpdate) AddChildIDs(ids ...int64) *CommentUpdate {
 	_u.mutation.AddChildIDs(ids...)
 	return _u
 }
 
 // AddChildren adds the "children" edges to the Comment entity.
 func (_u *CommentUpdate) AddChildren(v ...*Comment) *CommentUpdate {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -322,14 +322,14 @@ func (_u *CommentUpdate) ClearChildren() *CommentUpdate {
 }
 
 // RemoveChildIDs removes the "children" edge to Comment entities by IDs.
-func (_u *CommentUpdate) RemoveChildIDs(ids ...uint32) *CommentUpdate {
+func (_u *CommentUpdate) RemoveChildIDs(ids ...int64) *CommentUpdate {
 	_u.mutation.RemoveChildIDs(ids...)
 	return _u
 }
 
 // RemoveChildren removes "children" edges to Comment entities.
 func (_u *CommentUpdate) RemoveChildren(v ...*Comment) *CommentUpdate {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -388,7 +388,7 @@ func (_u *CommentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(comment.Table, comment.Columns, sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(comment.Table, comment.Columns, sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -412,34 +412,34 @@ func (_u *CommentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(comment.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(comment.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(comment.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(comment.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(comment.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(comment.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(comment.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(comment.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(comment.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(comment.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(comment.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(comment.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(comment.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(comment.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(comment.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(comment.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(comment.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(comment.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(comment.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(comment.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(comment.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ContentType(); ok {
 		_spec.SetField(comment.FieldContentType, field.TypeEnum, value)
@@ -448,13 +448,13 @@ func (_u *CommentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(comment.FieldContentType, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.ObjectID(); ok {
-		_spec.SetField(comment.FieldObjectID, field.TypeUint32, value)
+		_spec.SetField(comment.FieldObjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedObjectID(); ok {
-		_spec.AddField(comment.FieldObjectID, field.TypeUint32, value)
+		_spec.AddField(comment.FieldObjectID, field.TypeInt64, value)
 	}
 	if _u.mutation.ObjectIDCleared() {
-		_spec.ClearField(comment.FieldObjectID, field.TypeUint32)
+		_spec.ClearField(comment.FieldObjectID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(comment.FieldContent, field.TypeString, value)
@@ -485,7 +485,7 @@ func (_u *CommentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{comment.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -498,7 +498,7 @@ func (_u *CommentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{comment.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -514,7 +514,7 @@ func (_u *CommentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{comment.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -527,7 +527,7 @@ func (_u *CommentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{comment.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -543,7 +543,7 @@ func (_u *CommentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 			Columns: []string{comment.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -614,14 +614,14 @@ func (_u *CommentUpdateOne) ClearDeletedAt() *CommentUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CommentUpdateOne) SetCreatedBy(v uint32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) SetCreatedBy(v int64) *CommentUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CommentUpdateOne) SetNillableCreatedBy(v *uint32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) SetNillableCreatedBy(v *int64) *CommentUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -629,7 +629,7 @@ func (_u *CommentUpdateOne) SetNillableCreatedBy(v *uint32) *CommentUpdateOne {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *CommentUpdateOne) AddCreatedBy(v int32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) AddCreatedBy(v int64) *CommentUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -641,14 +641,14 @@ func (_u *CommentUpdateOne) ClearCreatedBy() *CommentUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CommentUpdateOne) SetUpdatedBy(v uint32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) SetUpdatedBy(v int64) *CommentUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CommentUpdateOne) SetNillableUpdatedBy(v *uint32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) SetNillableUpdatedBy(v *int64) *CommentUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -656,7 +656,7 @@ func (_u *CommentUpdateOne) SetNillableUpdatedBy(v *uint32) *CommentUpdateOne {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *CommentUpdateOne) AddUpdatedBy(v int32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) AddUpdatedBy(v int64) *CommentUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -668,14 +668,14 @@ func (_u *CommentUpdateOne) ClearUpdatedBy() *CommentUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CommentUpdateOne) SetDeletedBy(v uint32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) SetDeletedBy(v int64) *CommentUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CommentUpdateOne) SetNillableDeletedBy(v *uint32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) SetNillableDeletedBy(v *int64) *CommentUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -683,7 +683,7 @@ func (_u *CommentUpdateOne) SetNillableDeletedBy(v *uint32) *CommentUpdateOne {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *CommentUpdateOne) AddDeletedBy(v int32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) AddDeletedBy(v int64) *CommentUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -695,13 +695,13 @@ func (_u *CommentUpdateOne) ClearDeletedBy() *CommentUpdateOne {
 }
 
 // SetParentID sets the "parent_id" field.
-func (_u *CommentUpdateOne) SetParentID(v uint32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) SetParentID(v int64) *CommentUpdateOne {
 	_u.mutation.SetParentID(v)
 	return _u
 }
 
 // SetNillableParentID sets the "parent_id" field if the given value is not nil.
-func (_u *CommentUpdateOne) SetNillableParentID(v *uint32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) SetNillableParentID(v *int64) *CommentUpdateOne {
 	if v != nil {
 		_u.SetParentID(*v)
 	}
@@ -735,14 +735,14 @@ func (_u *CommentUpdateOne) ClearContentType() *CommentUpdateOne {
 }
 
 // SetObjectID sets the "object_id" field.
-func (_u *CommentUpdateOne) SetObjectID(v uint32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) SetObjectID(v int64) *CommentUpdateOne {
 	_u.mutation.ResetObjectID()
 	_u.mutation.SetObjectID(v)
 	return _u
 }
 
 // SetNillableObjectID sets the "object_id" field if the given value is not nil.
-func (_u *CommentUpdateOne) SetNillableObjectID(v *uint32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) SetNillableObjectID(v *int64) *CommentUpdateOne {
 	if v != nil {
 		_u.SetObjectID(*v)
 	}
@@ -750,7 +750,7 @@ func (_u *CommentUpdateOne) SetNillableObjectID(v *uint32) *CommentUpdateOne {
 }
 
 // AddObjectID adds value to the "object_id" field.
-func (_u *CommentUpdateOne) AddObjectID(v int32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) AddObjectID(v int64) *CommentUpdateOne {
 	_u.mutation.AddObjectID(v)
 	return _u
 }
@@ -834,14 +834,14 @@ func (_u *CommentUpdateOne) SetParent(v *Comment) *CommentUpdateOne {
 }
 
 // AddChildIDs adds the "children" edge to the Comment entity by IDs.
-func (_u *CommentUpdateOne) AddChildIDs(ids ...uint32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) AddChildIDs(ids ...int64) *CommentUpdateOne {
 	_u.mutation.AddChildIDs(ids...)
 	return _u
 }
 
 // AddChildren adds the "children" edges to the Comment entity.
 func (_u *CommentUpdateOne) AddChildren(v ...*Comment) *CommentUpdateOne {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -866,14 +866,14 @@ func (_u *CommentUpdateOne) ClearChildren() *CommentUpdateOne {
 }
 
 // RemoveChildIDs removes the "children" edge to Comment entities by IDs.
-func (_u *CommentUpdateOne) RemoveChildIDs(ids ...uint32) *CommentUpdateOne {
+func (_u *CommentUpdateOne) RemoveChildIDs(ids ...int64) *CommentUpdateOne {
 	_u.mutation.RemoveChildIDs(ids...)
 	return _u
 }
 
 // RemoveChildren removes "children" edges to Comment entities.
 func (_u *CommentUpdateOne) RemoveChildren(v ...*Comment) *CommentUpdateOne {
-	ids := make([]uint32, len(v))
+	ids := make([]int64, len(v))
 	for i := range v {
 		ids[i] = v[i].ID
 	}
@@ -945,7 +945,7 @@ func (_u *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(comment.Table, comment.Columns, sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(comment.Table, comment.Columns, sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Comment.id" for update`)}
@@ -986,34 +986,34 @@ func (_u *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err er
 		_spec.ClearField(comment.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(comment.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(comment.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(comment.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(comment.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(comment.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(comment.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(comment.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(comment.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(comment.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(comment.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(comment.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(comment.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(comment.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(comment.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(comment.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(comment.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(comment.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(comment.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(comment.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(comment.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ContentType(); ok {
 		_spec.SetField(comment.FieldContentType, field.TypeEnum, value)
@@ -1022,13 +1022,13 @@ func (_u *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err er
 		_spec.ClearField(comment.FieldContentType, field.TypeEnum)
 	}
 	if value, ok := _u.mutation.ObjectID(); ok {
-		_spec.SetField(comment.FieldObjectID, field.TypeUint32, value)
+		_spec.SetField(comment.FieldObjectID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedObjectID(); ok {
-		_spec.AddField(comment.FieldObjectID, field.TypeUint32, value)
+		_spec.AddField(comment.FieldObjectID, field.TypeInt64, value)
 	}
 	if _u.mutation.ObjectIDCleared() {
-		_spec.ClearField(comment.FieldObjectID, field.TypeUint32)
+		_spec.ClearField(comment.FieldObjectID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Content(); ok {
 		_spec.SetField(comment.FieldContent, field.TypeString, value)
@@ -1059,7 +1059,7 @@ func (_u *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err er
 			Columns: []string{comment.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1072,7 +1072,7 @@ func (_u *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err er
 			Columns: []string{comment.ParentColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1088,7 +1088,7 @@ func (_u *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err er
 			Columns: []string{comment.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64),
 			},
 		}
 		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
@@ -1101,7 +1101,7 @@ func (_u *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err er
 			Columns: []string{comment.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {
@@ -1117,7 +1117,7 @@ func (_u *CommentUpdateOne) sqlSave(ctx context.Context) (_node *Comment, err er
 			Columns: []string{comment.ChildrenColumn},
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeUint32),
+				IDSpec: sqlgraph.NewFieldSpec(comment.FieldID, field.TypeInt64),
 			},
 		}
 		for _, k := range nodes {

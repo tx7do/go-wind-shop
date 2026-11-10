@@ -40,7 +40,7 @@ func (_d *ProductAttributeValueDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *ProductAttributeValueDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(productattributevalue.Table, sqlgraph.NewFieldSpec(productattributevalue.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewDeleteSpec(productattributevalue.Table, sqlgraph.NewFieldSpec(productattributevalue.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

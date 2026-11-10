@@ -53,7 +53,7 @@ enum PaymentChannelType {
 
 // 支付渠道配置
 message PaymentChannelConfig {
-  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "渠道配置ID"}];
+  optional int64 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "渠道配置ID"}];
 
   optional string name = 2 [
     json_name = "name",
@@ -111,10 +111,10 @@ message PaymentChannelConfig {
 
   // ===== infra mixin 注入字段（高编号） =====
 
-  optional uint32 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
+  optional int64 tenant_id = 90 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
-  optional uint32 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}];
+  optional int64 updated_by = 101 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}];
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];
   optional google.protobuf.Timestamp updated_at = 201 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];
@@ -122,17 +122,17 @@ message PaymentChannelConfig {
 
 // C 端可见渠道（公开视图：仅展示字段，无任何配置/凭据细节）
 message PaymentChannel {
-  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "渠道配置ID"}];
+  optional int64 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "渠道配置ID"}];
   optional string name = 2 [json_name = "name", (gnostic.openapi.v3.property) = {description: "渠道显示名"}];
   optional PaymentChannelType channel = 3 [json_name = "channel", (gnostic.openapi.v3.property) = {description: "渠道类型"}];
   optional bool sandbox = 4 [json_name = "sandbox", (gnostic.openapi.v3.property) = {description: "沙箱模式"}];
 }
 
-message ListPaymentChannelConfigResponse { repeated PaymentChannelConfig items = 1; uint64 total = 2; }
-message CountPaymentChannelConfigResponse { uint64 count = 1; }
+message ListPaymentChannelConfigResponse { repeated PaymentChannelConfig items = 1; int64 total = 2; }
+message CountPaymentChannelConfigResponse { int64 count = 1; }
 
 message GetPaymentChannelConfigRequest {
-  uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  int64 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
   optional google.protobuf.FieldMask view_mask = 100 [
     json_name = "viewMask",
     (gnostic.openapi.v3.property) = {description: "查看字段掩码"}
@@ -142,7 +142,7 @@ message GetPaymentChannelConfigRequest {
 message CreatePaymentChannelConfigRequest { PaymentChannelConfig data = 1; }
 
 message UpdatePaymentChannelConfigRequest {
-  uint32 id = 1;
+  int64 id = 1;
   PaymentChannelConfig data = 2;
   optional google.protobuf.FieldMask update_mask = 3;
   optional bool allow_missing = 4 [
@@ -152,7 +152,7 @@ message UpdatePaymentChannelConfigRequest {
 }
 
 message DeletePaymentChannelConfigRequest {
-  uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+  int64 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
 }
 
 message ListEnabledChannelsRequest {}

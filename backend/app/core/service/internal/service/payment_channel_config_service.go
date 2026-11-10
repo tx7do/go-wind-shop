@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -65,7 +65,7 @@ func (s *PaymentChannelConfigService) Count(ctx context.Context, req *pagination
 	}
 
 	return &paymentV1.CountPaymentChannelConfigResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 
@@ -192,7 +192,7 @@ func (s *PaymentChannelConfigService) Delete(ctx context.Context, req *paymentV1
 
 // GetDecryptedCredentials 供服务间调用：读取渠道配置并解密凭据 JSON。
 // 仅 CreatePaymentIntent（core→BFF gRPC 内网下发）使用，不经过任何 REST 出口。
-func (s *PaymentChannelConfigService) GetDecryptedCredentials(ctx context.Context, channelId uint32) (*paymentV1.PaymentChannelConfig, string, error) {
+func (s *PaymentChannelConfigService) GetDecryptedCredentials(ctx context.Context, channelId int64) (*paymentV1.PaymentChannelConfig, string, error) {
 	cfg, err := s.repo.Get(ctx, &paymentV1.GetPaymentChannelConfigRequest{
 		Id: channelId,
 	})

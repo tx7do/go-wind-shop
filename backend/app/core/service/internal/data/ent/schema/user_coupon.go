@@ -37,12 +37,12 @@ func (UserCoupon) Annotations() []schema.Annotation {
 
 func (UserCoupon) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("user_id").
+		field.Int64("user_id").
 			Comment("归属用户ID（由隐私层强制）").
 			Optional().
 			Nillable(),
 
-		field.Uint32("coupon_template_id").
+		field.Int64("coupon_template_id").
 			Comment("关联的优惠券模板ID").
 			Optional().
 			Nillable(),
@@ -62,7 +62,7 @@ func (UserCoupon) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("redeemed_order_id").
+		field.Int64("redeemed_order_id").
 			Comment("核销时关联的订单ID（返还钩子据此反查；UNUSED 时为空）").
 			Optional().
 			Nillable(),
@@ -77,10 +77,10 @@ func (UserCoupon) Fields() []ent.Field {
 
 func (UserCoupon) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 	}
 }
 

@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
 	onlineSessionV1 "go-wind-shop/api/gen/go/online_session/service/v1"
@@ -17,7 +17,7 @@ import (
 type OnlineSessionService struct {
 	adminV1.OnlineSessionServiceHTTPServer
 
-	log *logx.Helper
+	log              *logx.Helper
 	onlineSessionCli onlineSessionV1.OnlineSessionServiceClient
 }
 

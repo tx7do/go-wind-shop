@@ -65,13 +65,13 @@ func (_c *PointsLedgerCreate) SetNillableDeletedAt(v *time.Time) *PointsLedgerCr
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *PointsLedgerCreate) SetTenantID(v uint32) *PointsLedgerCreate {
+func (_c *PointsLedgerCreate) SetTenantID(v int64) *PointsLedgerCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *PointsLedgerCreate) SetNillableTenantID(v *uint32) *PointsLedgerCreate {
+func (_c *PointsLedgerCreate) SetNillableTenantID(v *int64) *PointsLedgerCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *PointsLedgerCreate) SetNillableTenantID(v *uint32) *PointsLedgerCreate
 }
 
 // SetUserID sets the "user_id" field.
-func (_c *PointsLedgerCreate) SetUserID(v uint32) *PointsLedgerCreate {
+func (_c *PointsLedgerCreate) SetUserID(v int64) *PointsLedgerCreate {
 	_c.mutation.SetUserID(v)
 	return _c
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_c *PointsLedgerCreate) SetNillableUserID(v *uint32) *PointsLedgerCreate {
+func (_c *PointsLedgerCreate) SetNillableUserID(v *int64) *PointsLedgerCreate {
 	if v != nil {
 		_c.SetUserID(*v)
 	}
@@ -149,13 +149,13 @@ func (_c *PointsLedgerCreate) SetNillableReason(v *string) *PointsLedgerCreate {
 }
 
 // SetRefOrderID sets the "ref_order_id" field.
-func (_c *PointsLedgerCreate) SetRefOrderID(v uint32) *PointsLedgerCreate {
+func (_c *PointsLedgerCreate) SetRefOrderID(v int64) *PointsLedgerCreate {
 	_c.mutation.SetRefOrderID(v)
 	return _c
 }
 
 // SetNillableRefOrderID sets the "ref_order_id" field if the given value is not nil.
-func (_c *PointsLedgerCreate) SetNillableRefOrderID(v *uint32) *PointsLedgerCreate {
+func (_c *PointsLedgerCreate) SetNillableRefOrderID(v *int64) *PointsLedgerCreate {
 	if v != nil {
 		_c.SetRefOrderID(*v)
 	}
@@ -163,7 +163,7 @@ func (_c *PointsLedgerCreate) SetNillableRefOrderID(v *uint32) *PointsLedgerCrea
 }
 
 // SetID sets the "id" field.
-func (_c *PointsLedgerCreate) SetID(v uint32) *PointsLedgerCreate {
+func (_c *PointsLedgerCreate) SetID(v int64) *PointsLedgerCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -265,7 +265,7 @@ func (_c *PointsLedgerCreate) sqlSave(ctx context.Context) (*PointsLedger, error
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -275,7 +275,7 @@ func (_c *PointsLedgerCreate) sqlSave(ctx context.Context) (*PointsLedger, error
 func (_c *PointsLedgerCreate) createSpec() (*PointsLedger, *sqlgraph.CreateSpec) {
 	var (
 		_node = &PointsLedger{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(pointsledger.Table, sqlgraph.NewFieldSpec(pointsledger.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(pointsledger.Table, sqlgraph.NewFieldSpec(pointsledger.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -295,11 +295,11 @@ func (_c *PointsLedgerCreate) createSpec() (*PointsLedger, *sqlgraph.CreateSpec)
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(pointsledger.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(pointsledger.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(pointsledger.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(pointsledger.FieldUserID, field.TypeInt64, value)
 		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.Delta(); ok {
@@ -319,7 +319,7 @@ func (_c *PointsLedgerCreate) createSpec() (*PointsLedger, *sqlgraph.CreateSpec)
 		_node.Reason = value
 	}
 	if value, ok := _c.mutation.RefOrderID(); ok {
-		_spec.SetField(pointsledger.FieldRefOrderID, field.TypeUint32, value)
+		_spec.SetField(pointsledger.FieldRefOrderID, field.TypeInt64, value)
 		_node.RefOrderID = &value
 	}
 	return _node, _spec
@@ -411,7 +411,7 @@ func (u *PointsLedgerUpsert) ClearDeletedAt() *PointsLedgerUpsert {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *PointsLedgerUpsert) SetUserID(v uint32) *PointsLedgerUpsert {
+func (u *PointsLedgerUpsert) SetUserID(v int64) *PointsLedgerUpsert {
 	u.Set(pointsledger.FieldUserID, v)
 	return u
 }
@@ -423,7 +423,7 @@ func (u *PointsLedgerUpsert) UpdateUserID() *PointsLedgerUpsert {
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *PointsLedgerUpsert) AddUserID(v uint32) *PointsLedgerUpsert {
+func (u *PointsLedgerUpsert) AddUserID(v int64) *PointsLedgerUpsert {
 	u.Add(pointsledger.FieldUserID, v)
 	return u
 }
@@ -501,7 +501,7 @@ func (u *PointsLedgerUpsert) UpdateReason() *PointsLedgerUpsert {
 }
 
 // SetRefOrderID sets the "ref_order_id" field.
-func (u *PointsLedgerUpsert) SetRefOrderID(v uint32) *PointsLedgerUpsert {
+func (u *PointsLedgerUpsert) SetRefOrderID(v int64) *PointsLedgerUpsert {
 	u.Set(pointsledger.FieldRefOrderID, v)
 	return u
 }
@@ -513,7 +513,7 @@ func (u *PointsLedgerUpsert) UpdateRefOrderID() *PointsLedgerUpsert {
 }
 
 // AddRefOrderID adds v to the "ref_order_id" field.
-func (u *PointsLedgerUpsert) AddRefOrderID(v uint32) *PointsLedgerUpsert {
+func (u *PointsLedgerUpsert) AddRefOrderID(v int64) *PointsLedgerUpsert {
 	u.Add(pointsledger.FieldRefOrderID, v)
 	return u
 }
@@ -621,14 +621,14 @@ func (u *PointsLedgerUpsertOne) ClearDeletedAt() *PointsLedgerUpsertOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *PointsLedgerUpsertOne) SetUserID(v uint32) *PointsLedgerUpsertOne {
+func (u *PointsLedgerUpsertOne) SetUserID(v int64) *PointsLedgerUpsertOne {
 	return u.Update(func(s *PointsLedgerUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *PointsLedgerUpsertOne) AddUserID(v uint32) *PointsLedgerUpsertOne {
+func (u *PointsLedgerUpsertOne) AddUserID(v int64) *PointsLedgerUpsertOne {
 	return u.Update(func(s *PointsLedgerUpsert) {
 		s.AddUserID(v)
 	})
@@ -726,14 +726,14 @@ func (u *PointsLedgerUpsertOne) UpdateReason() *PointsLedgerUpsertOne {
 }
 
 // SetRefOrderID sets the "ref_order_id" field.
-func (u *PointsLedgerUpsertOne) SetRefOrderID(v uint32) *PointsLedgerUpsertOne {
+func (u *PointsLedgerUpsertOne) SetRefOrderID(v int64) *PointsLedgerUpsertOne {
 	return u.Update(func(s *PointsLedgerUpsert) {
 		s.SetRefOrderID(v)
 	})
 }
 
 // AddRefOrderID adds v to the "ref_order_id" field.
-func (u *PointsLedgerUpsertOne) AddRefOrderID(v uint32) *PointsLedgerUpsertOne {
+func (u *PointsLedgerUpsertOne) AddRefOrderID(v int64) *PointsLedgerUpsertOne {
 	return u.Update(func(s *PointsLedgerUpsert) {
 		s.AddRefOrderID(v)
 	})
@@ -769,7 +769,7 @@ func (u *PointsLedgerUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *PointsLedgerUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *PointsLedgerUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -778,7 +778,7 @@ func (u *PointsLedgerUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *PointsLedgerUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *PointsLedgerUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -835,7 +835,7 @@ func (_c *PointsLedgerCreateBulk) Save(ctx context.Context) ([]*PointsLedger, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1016,14 +1016,14 @@ func (u *PointsLedgerUpsertBulk) ClearDeletedAt() *PointsLedgerUpsertBulk {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *PointsLedgerUpsertBulk) SetUserID(v uint32) *PointsLedgerUpsertBulk {
+func (u *PointsLedgerUpsertBulk) SetUserID(v int64) *PointsLedgerUpsertBulk {
 	return u.Update(func(s *PointsLedgerUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *PointsLedgerUpsertBulk) AddUserID(v uint32) *PointsLedgerUpsertBulk {
+func (u *PointsLedgerUpsertBulk) AddUserID(v int64) *PointsLedgerUpsertBulk {
 	return u.Update(func(s *PointsLedgerUpsert) {
 		s.AddUserID(v)
 	})
@@ -1121,14 +1121,14 @@ func (u *PointsLedgerUpsertBulk) UpdateReason() *PointsLedgerUpsertBulk {
 }
 
 // SetRefOrderID sets the "ref_order_id" field.
-func (u *PointsLedgerUpsertBulk) SetRefOrderID(v uint32) *PointsLedgerUpsertBulk {
+func (u *PointsLedgerUpsertBulk) SetRefOrderID(v int64) *PointsLedgerUpsertBulk {
 	return u.Update(func(s *PointsLedgerUpsert) {
 		s.SetRefOrderID(v)
 	})
 }
 
 // AddRefOrderID adds v to the "ref_order_id" field.
-func (u *PointsLedgerUpsertBulk) AddRefOrderID(v uint32) *PointsLedgerUpsertBulk {
+func (u *PointsLedgerUpsertBulk) AddRefOrderID(v int64) *PointsLedgerUpsertBulk {
 	return u.Update(func(s *PointsLedgerUpsert) {
 		s.AddRefOrderID(v)
 	})

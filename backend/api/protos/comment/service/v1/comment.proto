@@ -58,7 +58,7 @@ message Comment {
     CONTENT_TYPE_PRODUCT = 1; // 产品
   }
 
-  optional uint32 id = 1 [
+  optional int64 id = 1 [
     json_name = "id",
     (gnostic.openapi.v3.property) = {description: "评论ID"}
   ];  // 评论ID
@@ -68,7 +68,7 @@ message Comment {
     (gnostic.openapi.v3.property) = {description: "内容类型"}
   ]; // 内容类型（仅产品）
 
-  optional uint32 object_id = 3 [
+  optional int64 object_id = 3 [
     json_name = "objectId",
     (gnostic.openapi.v3.property) = {description: "对象ID"}
   ]; // 对象ID（商品ID，配合 content_type 使用）
@@ -88,14 +88,14 @@ message Comment {
     (gnostic.openapi.v3.property) = {description: "评分1-5"}
   ]; // 评分（1-5，仅顶级评论可携带，回复无意义）
 
-  optional uint32 parent_id = 500 [json_name = "parentId", (gnostic.openapi.v3.property) = {description: "父节点ID"}];  // 父节点ID
+  optional int64 parent_id = 500 [json_name = "parentId", (gnostic.openapi.v3.property) = {description: "父节点ID"}];  // 父节点ID
   repeated Comment children = 501 [json_name = "children", (gnostic.openapi.v3.property) = {description: "子节点树"}];  // 子节点树
 
-  optional uint32 tenant_id = 12 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];  // 租户ID
+  optional int64 tenant_id = 12 [json_name = "tenantId", (gnostic.openapi.v3.property) = {description: "租户ID"}];  // 租户ID
 
-  optional uint32 created_by = 510 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
-  optional uint32 updated_by = 511 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
-  optional uint32 deleted_by = 512 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
+  optional int64 created_by = 510 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "创建者用户ID"}]; // 创建者用户ID
+  optional int64 updated_by = 511 [json_name = "updatedBy", (gnostic.openapi.v3.property) = {description: "更新者用户ID"}]; // 更新者用户ID
+  optional int64 deleted_by = 512 [json_name = "deletedBy", (gnostic.openapi.v3.property) = {description: "删除者用户ID"}]; // 删除者用户ID
 
   optional google.protobuf.Timestamp created_at = 520 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "创建时间"}];// 创建时间
   optional google.protobuf.Timestamp updated_at = 521 [json_name = "updatedAt", (gnostic.openapi.v3.property) = {description: "更新时间"}];// 更新时间
@@ -105,13 +105,13 @@ message Comment {
 // 回应 - 评论列表
 message ListCommentResponse {
   repeated Comment items = 1;
-  uint64 total = 2;
+  int64 total = 2;
 }
 
 // 请求 - 评论数据
 message GetCommentRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -132,7 +132,7 @@ message CreateCommentRequest {
 
 // 请求 - 更新评论
 message UpdateCommentRequest {
-  uint32 id = 1;
+  int64 id = 1;
 
   Comment data = 2;
 
@@ -152,7 +152,7 @@ message UpdateCommentRequest {
 // 请求 - 删除评论
 message DeleteCommentRequest {
   oneof query_by {
-    uint32 id = 1 [
+    int64 id = 1 [
       (gnostic.openapi.v3.property) = {description: "ID", read_only: true},
       json_name = "id"
     ]; // ID
@@ -160,23 +160,23 @@ message DeleteCommentRequest {
 }
 
 message CountCommentResponse {
-  uint64 count = 1;
+  int64 count = 1;
 }
 
 // 请求 - 商品评分聚合
 message GetProductRatingRequest {
-  uint32 product_id = 1 [json_name = "productId", (gnostic.openapi.v3.property) = {description: "商品ID"}];
+  int64 product_id = 1 [json_name = "productId", (gnostic.openapi.v3.property) = {description: "商品ID"}];
 }
 
 // 响应 - 商品评分聚合（仅统计已批准评论）
 message ProductRatingSummary {
   double average = 1 [json_name = "average", (gnostic.openapi.v3.property) = {description: "平均评分（0-5，无评分时为0）"}];
-  uint64 count = 2 [json_name = "count", (gnostic.openapi.v3.property) = {description: "已批准评分数（含无评分的评论）"}];
+  int64 count = 2 [json_name = "count", (gnostic.openapi.v3.property) = {description: "已批准评分数（含无评分的评论）"}];
 }
 
 // 请求 - 评论 AI 摘要
 message GetProductReviewSummaryRequest {
-  uint32 product_id = 1 [json_name = "productId", (gnostic.openapi.v3.property) = {description: "商品ID"}];
+  int64 product_id = 1 [json_name = "productId", (gnostic.openapi.v3.property) = {description: "商品ID"}];
 }
 
 // 响应 - 评论 AI 摘要（LLM 生成，服务端缓存）

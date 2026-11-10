@@ -65,13 +65,13 @@ func (_c *WishlistCreate) SetNillableDeletedAt(v *time.Time) *WishlistCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *WishlistCreate) SetCreatedBy(v uint32) *WishlistCreate {
+func (_c *WishlistCreate) SetCreatedBy(v int64) *WishlistCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *WishlistCreate) SetNillableCreatedBy(v *uint32) *WishlistCreate {
+func (_c *WishlistCreate) SetNillableCreatedBy(v *int64) *WishlistCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *WishlistCreate) SetNillableCreatedBy(v *uint32) *WishlistCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *WishlistCreate) SetUpdatedBy(v uint32) *WishlistCreate {
+func (_c *WishlistCreate) SetUpdatedBy(v int64) *WishlistCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *WishlistCreate) SetNillableUpdatedBy(v *uint32) *WishlistCreate {
+func (_c *WishlistCreate) SetNillableUpdatedBy(v *int64) *WishlistCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *WishlistCreate) SetNillableUpdatedBy(v *uint32) *WishlistCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *WishlistCreate) SetDeletedBy(v uint32) *WishlistCreate {
+func (_c *WishlistCreate) SetDeletedBy(v int64) *WishlistCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *WishlistCreate) SetNillableDeletedBy(v *uint32) *WishlistCreate {
+func (_c *WishlistCreate) SetNillableDeletedBy(v *int64) *WishlistCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *WishlistCreate) SetNillableDeletedBy(v *uint32) *WishlistCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *WishlistCreate) SetTenantID(v uint32) *WishlistCreate {
+func (_c *WishlistCreate) SetTenantID(v int64) *WishlistCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *WishlistCreate) SetNillableTenantID(v *uint32) *WishlistCreate {
+func (_c *WishlistCreate) SetNillableTenantID(v *int64) *WishlistCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *WishlistCreate) SetNillableTenantID(v *uint32) *WishlistCreate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_c *WishlistCreate) SetUserID(v uint32) *WishlistCreate {
+func (_c *WishlistCreate) SetUserID(v int64) *WishlistCreate {
 	_c.mutation.SetUserID(v)
 	return _c
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_c *WishlistCreate) SetNillableUserID(v *uint32) *WishlistCreate {
+func (_c *WishlistCreate) SetNillableUserID(v *int64) *WishlistCreate {
 	if v != nil {
 		_c.SetUserID(*v)
 	}
@@ -135,13 +135,13 @@ func (_c *WishlistCreate) SetNillableUserID(v *uint32) *WishlistCreate {
 }
 
 // SetProductID sets the "product_id" field.
-func (_c *WishlistCreate) SetProductID(v uint32) *WishlistCreate {
+func (_c *WishlistCreate) SetProductID(v int64) *WishlistCreate {
 	_c.mutation.SetProductID(v)
 	return _c
 }
 
 // SetNillableProductID sets the "product_id" field if the given value is not nil.
-func (_c *WishlistCreate) SetNillableProductID(v *uint32) *WishlistCreate {
+func (_c *WishlistCreate) SetNillableProductID(v *int64) *WishlistCreate {
 	if v != nil {
 		_c.SetProductID(*v)
 	}
@@ -149,7 +149,7 @@ func (_c *WishlistCreate) SetNillableProductID(v *uint32) *WishlistCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *WishlistCreate) SetID(v uint32) *WishlistCreate {
+func (_c *WishlistCreate) SetID(v int64) *WishlistCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -221,7 +221,7 @@ func (_c *WishlistCreate) sqlSave(ctx context.Context) (*Wishlist, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -231,7 +231,7 @@ func (_c *WishlistCreate) sqlSave(ctx context.Context) (*Wishlist, error) {
 func (_c *WishlistCreate) createSpec() (*Wishlist, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Wishlist{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(wishlist.Table, sqlgraph.NewFieldSpec(wishlist.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(wishlist.Table, sqlgraph.NewFieldSpec(wishlist.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -251,27 +251,27 @@ func (_c *WishlistCreate) createSpec() (*Wishlist, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(wishlist.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(wishlist.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(wishlist.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(wishlist.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(wishlist.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldUserID, field.TypeInt64, value)
 		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.ProductID(); ok {
-		_spec.SetField(wishlist.FieldProductID, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldProductID, field.TypeInt64, value)
 		_node.ProductID = &value
 	}
 	return _node, _spec
@@ -363,7 +363,7 @@ func (u *WishlistUpsert) ClearDeletedAt() *WishlistUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *WishlistUpsert) SetCreatedBy(v uint32) *WishlistUpsert {
+func (u *WishlistUpsert) SetCreatedBy(v int64) *WishlistUpsert {
 	u.Set(wishlist.FieldCreatedBy, v)
 	return u
 }
@@ -375,7 +375,7 @@ func (u *WishlistUpsert) UpdateCreatedBy() *WishlistUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *WishlistUpsert) AddCreatedBy(v uint32) *WishlistUpsert {
+func (u *WishlistUpsert) AddCreatedBy(v int64) *WishlistUpsert {
 	u.Add(wishlist.FieldCreatedBy, v)
 	return u
 }
@@ -387,7 +387,7 @@ func (u *WishlistUpsert) ClearCreatedBy() *WishlistUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *WishlistUpsert) SetUpdatedBy(v uint32) *WishlistUpsert {
+func (u *WishlistUpsert) SetUpdatedBy(v int64) *WishlistUpsert {
 	u.Set(wishlist.FieldUpdatedBy, v)
 	return u
 }
@@ -399,7 +399,7 @@ func (u *WishlistUpsert) UpdateUpdatedBy() *WishlistUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *WishlistUpsert) AddUpdatedBy(v uint32) *WishlistUpsert {
+func (u *WishlistUpsert) AddUpdatedBy(v int64) *WishlistUpsert {
 	u.Add(wishlist.FieldUpdatedBy, v)
 	return u
 }
@@ -411,7 +411,7 @@ func (u *WishlistUpsert) ClearUpdatedBy() *WishlistUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *WishlistUpsert) SetDeletedBy(v uint32) *WishlistUpsert {
+func (u *WishlistUpsert) SetDeletedBy(v int64) *WishlistUpsert {
 	u.Set(wishlist.FieldDeletedBy, v)
 	return u
 }
@@ -423,7 +423,7 @@ func (u *WishlistUpsert) UpdateDeletedBy() *WishlistUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *WishlistUpsert) AddDeletedBy(v uint32) *WishlistUpsert {
+func (u *WishlistUpsert) AddDeletedBy(v int64) *WishlistUpsert {
 	u.Add(wishlist.FieldDeletedBy, v)
 	return u
 }
@@ -435,7 +435,7 @@ func (u *WishlistUpsert) ClearDeletedBy() *WishlistUpsert {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *WishlistUpsert) SetUserID(v uint32) *WishlistUpsert {
+func (u *WishlistUpsert) SetUserID(v int64) *WishlistUpsert {
 	u.Set(wishlist.FieldUserID, v)
 	return u
 }
@@ -447,7 +447,7 @@ func (u *WishlistUpsert) UpdateUserID() *WishlistUpsert {
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *WishlistUpsert) AddUserID(v uint32) *WishlistUpsert {
+func (u *WishlistUpsert) AddUserID(v int64) *WishlistUpsert {
 	u.Add(wishlist.FieldUserID, v)
 	return u
 }
@@ -459,7 +459,7 @@ func (u *WishlistUpsert) ClearUserID() *WishlistUpsert {
 }
 
 // SetProductID sets the "product_id" field.
-func (u *WishlistUpsert) SetProductID(v uint32) *WishlistUpsert {
+func (u *WishlistUpsert) SetProductID(v int64) *WishlistUpsert {
 	u.Set(wishlist.FieldProductID, v)
 	return u
 }
@@ -471,7 +471,7 @@ func (u *WishlistUpsert) UpdateProductID() *WishlistUpsert {
 }
 
 // AddProductID adds v to the "product_id" field.
-func (u *WishlistUpsert) AddProductID(v uint32) *WishlistUpsert {
+func (u *WishlistUpsert) AddProductID(v int64) *WishlistUpsert {
 	u.Add(wishlist.FieldProductID, v)
 	return u
 }
@@ -579,14 +579,14 @@ func (u *WishlistUpsertOne) ClearDeletedAt() *WishlistUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *WishlistUpsertOne) SetCreatedBy(v uint32) *WishlistUpsertOne {
+func (u *WishlistUpsertOne) SetCreatedBy(v int64) *WishlistUpsertOne {
 	return u.Update(func(s *WishlistUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *WishlistUpsertOne) AddCreatedBy(v uint32) *WishlistUpsertOne {
+func (u *WishlistUpsertOne) AddCreatedBy(v int64) *WishlistUpsertOne {
 	return u.Update(func(s *WishlistUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -607,14 +607,14 @@ func (u *WishlistUpsertOne) ClearCreatedBy() *WishlistUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *WishlistUpsertOne) SetUpdatedBy(v uint32) *WishlistUpsertOne {
+func (u *WishlistUpsertOne) SetUpdatedBy(v int64) *WishlistUpsertOne {
 	return u.Update(func(s *WishlistUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *WishlistUpsertOne) AddUpdatedBy(v uint32) *WishlistUpsertOne {
+func (u *WishlistUpsertOne) AddUpdatedBy(v int64) *WishlistUpsertOne {
 	return u.Update(func(s *WishlistUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -635,14 +635,14 @@ func (u *WishlistUpsertOne) ClearUpdatedBy() *WishlistUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *WishlistUpsertOne) SetDeletedBy(v uint32) *WishlistUpsertOne {
+func (u *WishlistUpsertOne) SetDeletedBy(v int64) *WishlistUpsertOne {
 	return u.Update(func(s *WishlistUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *WishlistUpsertOne) AddDeletedBy(v uint32) *WishlistUpsertOne {
+func (u *WishlistUpsertOne) AddDeletedBy(v int64) *WishlistUpsertOne {
 	return u.Update(func(s *WishlistUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -663,14 +663,14 @@ func (u *WishlistUpsertOne) ClearDeletedBy() *WishlistUpsertOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *WishlistUpsertOne) SetUserID(v uint32) *WishlistUpsertOne {
+func (u *WishlistUpsertOne) SetUserID(v int64) *WishlistUpsertOne {
 	return u.Update(func(s *WishlistUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *WishlistUpsertOne) AddUserID(v uint32) *WishlistUpsertOne {
+func (u *WishlistUpsertOne) AddUserID(v int64) *WishlistUpsertOne {
 	return u.Update(func(s *WishlistUpsert) {
 		s.AddUserID(v)
 	})
@@ -691,14 +691,14 @@ func (u *WishlistUpsertOne) ClearUserID() *WishlistUpsertOne {
 }
 
 // SetProductID sets the "product_id" field.
-func (u *WishlistUpsertOne) SetProductID(v uint32) *WishlistUpsertOne {
+func (u *WishlistUpsertOne) SetProductID(v int64) *WishlistUpsertOne {
 	return u.Update(func(s *WishlistUpsert) {
 		s.SetProductID(v)
 	})
 }
 
 // AddProductID adds v to the "product_id" field.
-func (u *WishlistUpsertOne) AddProductID(v uint32) *WishlistUpsertOne {
+func (u *WishlistUpsertOne) AddProductID(v int64) *WishlistUpsertOne {
 	return u.Update(func(s *WishlistUpsert) {
 		s.AddProductID(v)
 	})
@@ -734,7 +734,7 @@ func (u *WishlistUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *WishlistUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *WishlistUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -743,7 +743,7 @@ func (u *WishlistUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *WishlistUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *WishlistUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -800,7 +800,7 @@ func (_c *WishlistCreateBulk) Save(ctx context.Context) ([]*Wishlist, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -981,14 +981,14 @@ func (u *WishlistUpsertBulk) ClearDeletedAt() *WishlistUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *WishlistUpsertBulk) SetCreatedBy(v uint32) *WishlistUpsertBulk {
+func (u *WishlistUpsertBulk) SetCreatedBy(v int64) *WishlistUpsertBulk {
 	return u.Update(func(s *WishlistUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *WishlistUpsertBulk) AddCreatedBy(v uint32) *WishlistUpsertBulk {
+func (u *WishlistUpsertBulk) AddCreatedBy(v int64) *WishlistUpsertBulk {
 	return u.Update(func(s *WishlistUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1009,14 +1009,14 @@ func (u *WishlistUpsertBulk) ClearCreatedBy() *WishlistUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *WishlistUpsertBulk) SetUpdatedBy(v uint32) *WishlistUpsertBulk {
+func (u *WishlistUpsertBulk) SetUpdatedBy(v int64) *WishlistUpsertBulk {
 	return u.Update(func(s *WishlistUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *WishlistUpsertBulk) AddUpdatedBy(v uint32) *WishlistUpsertBulk {
+func (u *WishlistUpsertBulk) AddUpdatedBy(v int64) *WishlistUpsertBulk {
 	return u.Update(func(s *WishlistUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1037,14 +1037,14 @@ func (u *WishlistUpsertBulk) ClearUpdatedBy() *WishlistUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *WishlistUpsertBulk) SetDeletedBy(v uint32) *WishlistUpsertBulk {
+func (u *WishlistUpsertBulk) SetDeletedBy(v int64) *WishlistUpsertBulk {
 	return u.Update(func(s *WishlistUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *WishlistUpsertBulk) AddDeletedBy(v uint32) *WishlistUpsertBulk {
+func (u *WishlistUpsertBulk) AddDeletedBy(v int64) *WishlistUpsertBulk {
 	return u.Update(func(s *WishlistUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1065,14 +1065,14 @@ func (u *WishlistUpsertBulk) ClearDeletedBy() *WishlistUpsertBulk {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *WishlistUpsertBulk) SetUserID(v uint32) *WishlistUpsertBulk {
+func (u *WishlistUpsertBulk) SetUserID(v int64) *WishlistUpsertBulk {
 	return u.Update(func(s *WishlistUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *WishlistUpsertBulk) AddUserID(v uint32) *WishlistUpsertBulk {
+func (u *WishlistUpsertBulk) AddUserID(v int64) *WishlistUpsertBulk {
 	return u.Update(func(s *WishlistUpsert) {
 		s.AddUserID(v)
 	})
@@ -1093,14 +1093,14 @@ func (u *WishlistUpsertBulk) ClearUserID() *WishlistUpsertBulk {
 }
 
 // SetProductID sets the "product_id" field.
-func (u *WishlistUpsertBulk) SetProductID(v uint32) *WishlistUpsertBulk {
+func (u *WishlistUpsertBulk) SetProductID(v int64) *WishlistUpsertBulk {
 	return u.Update(func(s *WishlistUpsert) {
 		s.SetProductID(v)
 	})
 }
 
 // AddProductID adds v to the "product_id" field.
-func (u *WishlistUpsertBulk) AddProductID(v uint32) *WishlistUpsertBulk {
+func (u *WishlistUpsertBulk) AddProductID(v int64) *WishlistUpsertBulk {
 	return u.Update(func(s *WishlistUpsert) {
 		s.AddProductID(v)
 	})

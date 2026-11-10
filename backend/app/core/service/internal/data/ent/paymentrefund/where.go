@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.PaymentRefund {
+func ID(id int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.PaymentRefund {
+func IDEQ(id int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.PaymentRefund {
+func IDNEQ(id int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.PaymentRefund {
+func IDIn(ids ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.PaymentRefund {
+func IDNotIn(ids ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.PaymentRefund {
+func IDGT(id int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.PaymentRefund {
+func IDGTE(id int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.PaymentRefund {
+func IDLT(id int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.PaymentRefund {
+func IDLTE(id int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.PaymentRefund {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.PaymentRefund {
+func CreatedBy(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.PaymentRefund {
+func UpdatedBy(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.PaymentRefund {
+func DeletedBy(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.PaymentRefund {
+func TenantID(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -105,12 +105,12 @@ func IdempotencyKey(v string) predicate.PaymentRefund {
 }
 
 // TransactionID applies equality check predicate on the "transaction_id" field. It's identical to TransactionIDEQ.
-func TransactionID(v uint32) predicate.PaymentRefund {
+func TransactionID(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldTransactionID, v))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint32) predicate.PaymentRefund {
+func UserID(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldUserID, v))
 }
 
@@ -275,42 +275,42 @@ func DeletedAtNotNil() predicate.PaymentRefund {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.PaymentRefund {
+func CreatedByEQ(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.PaymentRefund {
+func CreatedByNEQ(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.PaymentRefund {
+func CreatedByIn(vs ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.PaymentRefund {
+func CreatedByNotIn(vs ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.PaymentRefund {
+func CreatedByGT(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.PaymentRefund {
+func CreatedByGTE(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.PaymentRefund {
+func CreatedByLT(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.PaymentRefund {
+func CreatedByLTE(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -325,42 +325,42 @@ func CreatedByNotNil() predicate.PaymentRefund {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.PaymentRefund {
+func UpdatedByEQ(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.PaymentRefund {
+func UpdatedByNEQ(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.PaymentRefund {
+func UpdatedByIn(vs ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.PaymentRefund {
+func UpdatedByNotIn(vs ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.PaymentRefund {
+func UpdatedByGT(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.PaymentRefund {
+func UpdatedByGTE(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.PaymentRefund {
+func UpdatedByLT(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.PaymentRefund {
+func UpdatedByLTE(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -375,42 +375,42 @@ func UpdatedByNotNil() predicate.PaymentRefund {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.PaymentRefund {
+func DeletedByEQ(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.PaymentRefund {
+func DeletedByNEQ(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.PaymentRefund {
+func DeletedByIn(vs ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.PaymentRefund {
+func DeletedByNotIn(vs ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.PaymentRefund {
+func DeletedByGT(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.PaymentRefund {
+func DeletedByGTE(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.PaymentRefund {
+func DeletedByLT(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.PaymentRefund {
+func DeletedByLTE(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -425,42 +425,42 @@ func DeletedByNotNil() predicate.PaymentRefund {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.PaymentRefund {
+func TenantIDEQ(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.PaymentRefund {
+func TenantIDNEQ(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.PaymentRefund {
+func TenantIDIn(vs ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.PaymentRefund {
+func TenantIDNotIn(vs ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.PaymentRefund {
+func TenantIDGT(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.PaymentRefund {
+func TenantIDGTE(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.PaymentRefund {
+func TenantIDLT(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.PaymentRefund {
+func TenantIDLTE(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -700,42 +700,42 @@ func IdempotencyKeyContainsFold(v string) predicate.PaymentRefund {
 }
 
 // TransactionIDEQ applies the EQ predicate on the "transaction_id" field.
-func TransactionIDEQ(v uint32) predicate.PaymentRefund {
+func TransactionIDEQ(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldTransactionID, v))
 }
 
 // TransactionIDNEQ applies the NEQ predicate on the "transaction_id" field.
-func TransactionIDNEQ(v uint32) predicate.PaymentRefund {
+func TransactionIDNEQ(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNEQ(FieldTransactionID, v))
 }
 
 // TransactionIDIn applies the In predicate on the "transaction_id" field.
-func TransactionIDIn(vs ...uint32) predicate.PaymentRefund {
+func TransactionIDIn(vs ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldIn(FieldTransactionID, vs...))
 }
 
 // TransactionIDNotIn applies the NotIn predicate on the "transaction_id" field.
-func TransactionIDNotIn(vs ...uint32) predicate.PaymentRefund {
+func TransactionIDNotIn(vs ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNotIn(FieldTransactionID, vs...))
 }
 
 // TransactionIDGT applies the GT predicate on the "transaction_id" field.
-func TransactionIDGT(v uint32) predicate.PaymentRefund {
+func TransactionIDGT(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGT(FieldTransactionID, v))
 }
 
 // TransactionIDGTE applies the GTE predicate on the "transaction_id" field.
-func TransactionIDGTE(v uint32) predicate.PaymentRefund {
+func TransactionIDGTE(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGTE(FieldTransactionID, v))
 }
 
 // TransactionIDLT applies the LT predicate on the "transaction_id" field.
-func TransactionIDLT(v uint32) predicate.PaymentRefund {
+func TransactionIDLT(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLT(FieldTransactionID, v))
 }
 
 // TransactionIDLTE applies the LTE predicate on the "transaction_id" field.
-func TransactionIDLTE(v uint32) predicate.PaymentRefund {
+func TransactionIDLTE(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLTE(FieldTransactionID, v))
 }
 
@@ -750,42 +750,42 @@ func TransactionIDNotNil() predicate.PaymentRefund {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint32) predicate.PaymentRefund {
+func UserIDEQ(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint32) predicate.PaymentRefund {
+func UserIDNEQ(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint32) predicate.PaymentRefund {
+func UserIDIn(vs ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint32) predicate.PaymentRefund {
+func UserIDNotIn(vs ...int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uint32) predicate.PaymentRefund {
+func UserIDGT(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGT(FieldUserID, v))
 }
 
 // UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uint32) predicate.PaymentRefund {
+func UserIDGTE(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldGTE(FieldUserID, v))
 }
 
 // UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uint32) predicate.PaymentRefund {
+func UserIDLT(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLT(FieldUserID, v))
 }
 
 // UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uint32) predicate.PaymentRefund {
+func UserIDLTE(v int64) predicate.PaymentRefund {
 	return predicate.PaymentRefund(sql.FieldLTE(FieldUserID, v))
 }
 

@@ -15,14 +15,14 @@ import (
 
 type MemberTierService struct {
 	appV1.MemberTierServiceHTTPServer
-	log *logx.Helper
+	log                     *logx.Helper
 	memberTierServiceClient catalogV1.MemberTierServiceClient
 }
 
 func NewMemberTierService(ctx *bootstrap.Context, memberTierServiceClient catalogV1.MemberTierServiceClient) *MemberTierService {
 	return &MemberTierService{
-		log:                      logx.New(ctx.NewLoggerHelper("member-tier/app-service")),
-		memberTierServiceClient:  memberTierServiceClient,
+		log:                     logx.New(ctx.NewLoggerHelper("member-tier/app-service")),
+		memberTierServiceClient: memberTierServiceClient,
 	}
 }
 

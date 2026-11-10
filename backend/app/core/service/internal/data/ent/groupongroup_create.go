@@ -65,13 +65,13 @@ func (_c *GrouponGroupCreate) SetNillableDeletedAt(v *time.Time) *GrouponGroupCr
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *GrouponGroupCreate) SetTenantID(v uint32) *GrouponGroupCreate {
+func (_c *GrouponGroupCreate) SetTenantID(v int64) *GrouponGroupCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *GrouponGroupCreate) SetNillableTenantID(v *uint32) *GrouponGroupCreate {
+func (_c *GrouponGroupCreate) SetNillableTenantID(v *int64) *GrouponGroupCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *GrouponGroupCreate) SetNillableTenantID(v *uint32) *GrouponGroupCreate
 }
 
 // SetActivityID sets the "activity_id" field.
-func (_c *GrouponGroupCreate) SetActivityID(v uint32) *GrouponGroupCreate {
+func (_c *GrouponGroupCreate) SetActivityID(v int64) *GrouponGroupCreate {
 	_c.mutation.SetActivityID(v)
 	return _c
 }
 
 // SetNillableActivityID sets the "activity_id" field if the given value is not nil.
-func (_c *GrouponGroupCreate) SetNillableActivityID(v *uint32) *GrouponGroupCreate {
+func (_c *GrouponGroupCreate) SetNillableActivityID(v *int64) *GrouponGroupCreate {
 	if v != nil {
 		_c.SetActivityID(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *GrouponGroupCreate) SetNillableActivityID(v *uint32) *GrouponGroupCrea
 }
 
 // SetLeaderOrderID sets the "leader_order_id" field.
-func (_c *GrouponGroupCreate) SetLeaderOrderID(v uint32) *GrouponGroupCreate {
+func (_c *GrouponGroupCreate) SetLeaderOrderID(v int64) *GrouponGroupCreate {
 	_c.mutation.SetLeaderOrderID(v)
 	return _c
 }
 
 // SetNillableLeaderOrderID sets the "leader_order_id" field if the given value is not nil.
-func (_c *GrouponGroupCreate) SetNillableLeaderOrderID(v *uint32) *GrouponGroupCreate {
+func (_c *GrouponGroupCreate) SetNillableLeaderOrderID(v *int64) *GrouponGroupCreate {
 	if v != nil {
 		_c.SetLeaderOrderID(*v)
 	}
@@ -177,7 +177,7 @@ func (_c *GrouponGroupCreate) SetNillableStatus(v *groupongroup.Status) *Groupon
 }
 
 // SetID sets the "id" field.
-func (_c *GrouponGroupCreate) SetID(v uint32) *GrouponGroupCreate {
+func (_c *GrouponGroupCreate) SetID(v int64) *GrouponGroupCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -279,7 +279,7 @@ func (_c *GrouponGroupCreate) sqlSave(ctx context.Context) (*GrouponGroup, error
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -289,7 +289,7 @@ func (_c *GrouponGroupCreate) sqlSave(ctx context.Context) (*GrouponGroup, error
 func (_c *GrouponGroupCreate) createSpec() (*GrouponGroup, *sqlgraph.CreateSpec) {
 	var (
 		_node = &GrouponGroup{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(groupongroup.Table, sqlgraph.NewFieldSpec(groupongroup.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(groupongroup.Table, sqlgraph.NewFieldSpec(groupongroup.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -309,15 +309,15 @@ func (_c *GrouponGroupCreate) createSpec() (*GrouponGroup, *sqlgraph.CreateSpec)
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(groupongroup.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(groupongroup.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.ActivityID(); ok {
-		_spec.SetField(groupongroup.FieldActivityID, field.TypeUint32, value)
+		_spec.SetField(groupongroup.FieldActivityID, field.TypeInt64, value)
 		_node.ActivityID = &value
 	}
 	if value, ok := _c.mutation.LeaderOrderID(); ok {
-		_spec.SetField(groupongroup.FieldLeaderOrderID, field.TypeUint32, value)
+		_spec.SetField(groupongroup.FieldLeaderOrderID, field.TypeInt64, value)
 		_node.LeaderOrderID = &value
 	}
 	if value, ok := _c.mutation.MemberCount(); ok {
@@ -429,7 +429,7 @@ func (u *GrouponGroupUpsert) ClearDeletedAt() *GrouponGroupUpsert {
 }
 
 // SetActivityID sets the "activity_id" field.
-func (u *GrouponGroupUpsert) SetActivityID(v uint32) *GrouponGroupUpsert {
+func (u *GrouponGroupUpsert) SetActivityID(v int64) *GrouponGroupUpsert {
 	u.Set(groupongroup.FieldActivityID, v)
 	return u
 }
@@ -441,7 +441,7 @@ func (u *GrouponGroupUpsert) UpdateActivityID() *GrouponGroupUpsert {
 }
 
 // AddActivityID adds v to the "activity_id" field.
-func (u *GrouponGroupUpsert) AddActivityID(v uint32) *GrouponGroupUpsert {
+func (u *GrouponGroupUpsert) AddActivityID(v int64) *GrouponGroupUpsert {
 	u.Add(groupongroup.FieldActivityID, v)
 	return u
 }
@@ -453,7 +453,7 @@ func (u *GrouponGroupUpsert) ClearActivityID() *GrouponGroupUpsert {
 }
 
 // SetLeaderOrderID sets the "leader_order_id" field.
-func (u *GrouponGroupUpsert) SetLeaderOrderID(v uint32) *GrouponGroupUpsert {
+func (u *GrouponGroupUpsert) SetLeaderOrderID(v int64) *GrouponGroupUpsert {
 	u.Set(groupongroup.FieldLeaderOrderID, v)
 	return u
 }
@@ -465,7 +465,7 @@ func (u *GrouponGroupUpsert) UpdateLeaderOrderID() *GrouponGroupUpsert {
 }
 
 // AddLeaderOrderID adds v to the "leader_order_id" field.
-func (u *GrouponGroupUpsert) AddLeaderOrderID(v uint32) *GrouponGroupUpsert {
+func (u *GrouponGroupUpsert) AddLeaderOrderID(v int64) *GrouponGroupUpsert {
 	u.Add(groupongroup.FieldLeaderOrderID, v)
 	return u
 }
@@ -663,14 +663,14 @@ func (u *GrouponGroupUpsertOne) ClearDeletedAt() *GrouponGroupUpsertOne {
 }
 
 // SetActivityID sets the "activity_id" field.
-func (u *GrouponGroupUpsertOne) SetActivityID(v uint32) *GrouponGroupUpsertOne {
+func (u *GrouponGroupUpsertOne) SetActivityID(v int64) *GrouponGroupUpsertOne {
 	return u.Update(func(s *GrouponGroupUpsert) {
 		s.SetActivityID(v)
 	})
 }
 
 // AddActivityID adds v to the "activity_id" field.
-func (u *GrouponGroupUpsertOne) AddActivityID(v uint32) *GrouponGroupUpsertOne {
+func (u *GrouponGroupUpsertOne) AddActivityID(v int64) *GrouponGroupUpsertOne {
 	return u.Update(func(s *GrouponGroupUpsert) {
 		s.AddActivityID(v)
 	})
@@ -691,14 +691,14 @@ func (u *GrouponGroupUpsertOne) ClearActivityID() *GrouponGroupUpsertOne {
 }
 
 // SetLeaderOrderID sets the "leader_order_id" field.
-func (u *GrouponGroupUpsertOne) SetLeaderOrderID(v uint32) *GrouponGroupUpsertOne {
+func (u *GrouponGroupUpsertOne) SetLeaderOrderID(v int64) *GrouponGroupUpsertOne {
 	return u.Update(func(s *GrouponGroupUpsert) {
 		s.SetLeaderOrderID(v)
 	})
 }
 
 // AddLeaderOrderID adds v to the "leader_order_id" field.
-func (u *GrouponGroupUpsertOne) AddLeaderOrderID(v uint32) *GrouponGroupUpsertOne {
+func (u *GrouponGroupUpsertOne) AddLeaderOrderID(v int64) *GrouponGroupUpsertOne {
 	return u.Update(func(s *GrouponGroupUpsert) {
 		s.AddLeaderOrderID(v)
 	})
@@ -839,7 +839,7 @@ func (u *GrouponGroupUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *GrouponGroupUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *GrouponGroupUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -848,7 +848,7 @@ func (u *GrouponGroupUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *GrouponGroupUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *GrouponGroupUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -905,7 +905,7 @@ func (_c *GrouponGroupCreateBulk) Save(ctx context.Context) ([]*GrouponGroup, er
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1086,14 +1086,14 @@ func (u *GrouponGroupUpsertBulk) ClearDeletedAt() *GrouponGroupUpsertBulk {
 }
 
 // SetActivityID sets the "activity_id" field.
-func (u *GrouponGroupUpsertBulk) SetActivityID(v uint32) *GrouponGroupUpsertBulk {
+func (u *GrouponGroupUpsertBulk) SetActivityID(v int64) *GrouponGroupUpsertBulk {
 	return u.Update(func(s *GrouponGroupUpsert) {
 		s.SetActivityID(v)
 	})
 }
 
 // AddActivityID adds v to the "activity_id" field.
-func (u *GrouponGroupUpsertBulk) AddActivityID(v uint32) *GrouponGroupUpsertBulk {
+func (u *GrouponGroupUpsertBulk) AddActivityID(v int64) *GrouponGroupUpsertBulk {
 	return u.Update(func(s *GrouponGroupUpsert) {
 		s.AddActivityID(v)
 	})
@@ -1114,14 +1114,14 @@ func (u *GrouponGroupUpsertBulk) ClearActivityID() *GrouponGroupUpsertBulk {
 }
 
 // SetLeaderOrderID sets the "leader_order_id" field.
-func (u *GrouponGroupUpsertBulk) SetLeaderOrderID(v uint32) *GrouponGroupUpsertBulk {
+func (u *GrouponGroupUpsertBulk) SetLeaderOrderID(v int64) *GrouponGroupUpsertBulk {
 	return u.Update(func(s *GrouponGroupUpsert) {
 		s.SetLeaderOrderID(v)
 	})
 }
 
 // AddLeaderOrderID adds v to the "leader_order_id" field.
-func (u *GrouponGroupUpsertBulk) AddLeaderOrderID(v uint32) *GrouponGroupUpsertBulk {
+func (u *GrouponGroupUpsertBulk) AddLeaderOrderID(v int64) *GrouponGroupUpsertBulk {
 	return u.Update(func(s *GrouponGroupUpsert) {
 		s.AddLeaderOrderID(v)
 	})

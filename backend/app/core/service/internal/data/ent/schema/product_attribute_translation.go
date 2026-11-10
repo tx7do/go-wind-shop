@@ -28,7 +28,7 @@ func (ProductAttributeTranslation) Annotations() []schema.Annotation {
 
 func (ProductAttributeTranslation) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("attribute_id").
+		field.Int64("attribute_id").
 			Comment("关联的属性ID").
 			Optional().
 			Nillable(),
@@ -47,9 +47,9 @@ func (ProductAttributeTranslation) Fields() []ent.Field {
 
 func (ProductAttributeTranslation) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 	}
 }
 

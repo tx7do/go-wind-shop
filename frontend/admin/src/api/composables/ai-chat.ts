@@ -11,17 +11,16 @@ export async function fetchListAiConversations(query: PaginationQuery) {
 }
 
 /** 更新会话（改标题） */
-export async function updateAiConversation(id: number, values: Record<string, any>) {
-  return apiClient.aiConversationService.Update({
-    id,
+export async function updateAiConversation(id: number | string, values: Record<string, any>) {
+  return apiClient.aiConversationService.Update({ id: String(id),
     data: values as any,
     updateMask: makeUpdateMask(Object.keys(values ?? {})),
   });
 }
 
 /** 删除会话（后端级联删除会话内全部消息） */
-export async function deleteAiConversation(id: number) {
-  return apiClient.aiConversationService.Delete({ id });
+export async function deleteAiConversation(id: number | string) {
+  return apiClient.aiConversationService.Delete({ id: String(id) });
 }
 
 /** 分页查询消息（filter 传 conversationId；后端强制 user_id 归属） */
@@ -37,16 +36,16 @@ export async function fetchListAiMessages(query: PaginationQuery) {
  * （订阅见聊天页），chunk 尽力而为，以本响应为最终事实。
  */
 export async function sendAiChat(req: {
-  conversationId?: number;
+  conversationId?: string;
   providerId?: number;
   content: string;
-  knowledgeBaseId?: number;
+  knowledgeBaseId?: string;
 }) {
   return apiClient.aiChatService.Chat({
-    conversationId: req.conversationId || 0,
+    conversationId: req.conversationId || "0",
     providerId: req.providerId || 0,
     content: req.content,
-    knowledgeBaseId: req.knowledgeBaseId || 0,
+    knowledgeBaseId: req.knowledgeBaseId || "0",
   } as any);
 }
 

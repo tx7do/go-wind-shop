@@ -1,9 +1,9 @@
 package eventbus
 
 import (
-	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"context"
 	"fmt"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"sync"
 	"time"
 
@@ -39,7 +39,7 @@ type DefaultEventBus struct {
 	mu           sync.RWMutex
 	handlers     map[string][]Handler
 	onceHandlers map[string][]Handler
-	logger *logx.Helper
+	logger       *logx.Helper
 	closed       bool
 }
 

@@ -30,7 +30,7 @@ func (SkuPrice) Annotations() []schema.Annotation {
 
 func (SkuPrice) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("sku_id").
+		field.Int64("sku_id").
 			Comment("关联的 SKU ID").
 			Optional().
 			Nillable(),
@@ -44,9 +44,9 @@ func (SkuPrice) Fields() []ent.Field {
 
 func (SkuPrice) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		appmixin.Currency{},
 	}
 }

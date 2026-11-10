@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.PaymentChannelConfig {
+func ID(id int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.PaymentChannelConfig {
+func IDEQ(id int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.PaymentChannelConfig {
+func IDNEQ(id int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.PaymentChannelConfig {
+func IDIn(ids ...int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.PaymentChannelConfig {
+func IDNotIn(ids ...int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.PaymentChannelConfig {
+func IDGT(id int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.PaymentChannelConfig {
+func IDGTE(id int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.PaymentChannelConfig {
+func IDLT(id int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.PaymentChannelConfig {
+func IDLTE(id int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,22 +70,22 @@ func DeletedAt(v time.Time) predicate.PaymentChannelConfig {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.PaymentChannelConfig {
+func CreatedBy(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.PaymentChannelConfig {
+func UpdatedBy(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.PaymentChannelConfig {
+func DeletedBy(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.PaymentChannelConfig {
+func TenantID(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldEQ(FieldTenantID, v))
 }
 
@@ -275,42 +275,42 @@ func DeletedAtNotNil() predicate.PaymentChannelConfig {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.PaymentChannelConfig {
+func CreatedByEQ(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.PaymentChannelConfig {
+func CreatedByNEQ(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.PaymentChannelConfig {
+func CreatedByIn(vs ...int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.PaymentChannelConfig {
+func CreatedByNotIn(vs ...int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.PaymentChannelConfig {
+func CreatedByGT(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.PaymentChannelConfig {
+func CreatedByGTE(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.PaymentChannelConfig {
+func CreatedByLT(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.PaymentChannelConfig {
+func CreatedByLTE(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -325,42 +325,42 @@ func CreatedByNotNil() predicate.PaymentChannelConfig {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.PaymentChannelConfig {
+func UpdatedByEQ(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.PaymentChannelConfig {
+func UpdatedByNEQ(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.PaymentChannelConfig {
+func UpdatedByIn(vs ...int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.PaymentChannelConfig {
+func UpdatedByNotIn(vs ...int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.PaymentChannelConfig {
+func UpdatedByGT(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.PaymentChannelConfig {
+func UpdatedByGTE(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.PaymentChannelConfig {
+func UpdatedByLT(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.PaymentChannelConfig {
+func UpdatedByLTE(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -375,42 +375,42 @@ func UpdatedByNotNil() predicate.PaymentChannelConfig {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.PaymentChannelConfig {
+func DeletedByEQ(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.PaymentChannelConfig {
+func DeletedByNEQ(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.PaymentChannelConfig {
+func DeletedByIn(vs ...int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.PaymentChannelConfig {
+func DeletedByNotIn(vs ...int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.PaymentChannelConfig {
+func DeletedByGT(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.PaymentChannelConfig {
+func DeletedByGTE(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.PaymentChannelConfig {
+func DeletedByLT(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.PaymentChannelConfig {
+func DeletedByLTE(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -425,42 +425,42 @@ func DeletedByNotNil() predicate.PaymentChannelConfig {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.PaymentChannelConfig {
+func TenantIDEQ(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.PaymentChannelConfig {
+func TenantIDNEQ(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.PaymentChannelConfig {
+func TenantIDIn(vs ...int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.PaymentChannelConfig {
+func TenantIDNotIn(vs ...int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.PaymentChannelConfig {
+func TenantIDGT(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.PaymentChannelConfig {
+func TenantIDGTE(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.PaymentChannelConfig {
+func TenantIDLT(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.PaymentChannelConfig {
+func TenantIDLTE(v int64) predicate.PaymentChannelConfig {
 	return predicate.PaymentChannelConfig(sql.FieldLTE(FieldTenantID, v))
 }
 

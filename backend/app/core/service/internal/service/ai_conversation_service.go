@@ -3,8 +3,8 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -19,7 +19,7 @@ import (
 // （不泄露他人会话的存在性）。
 type AiConversationService struct {
 	aiV1.UnimplementedAiConversationServiceServer
-	log *logx.Helper
+	log  *logx.Helper
 	repo *data.AiConversationRepo
 }
 

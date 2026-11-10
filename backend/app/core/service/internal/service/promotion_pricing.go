@@ -22,7 +22,7 @@ import (
 func activeSpecialPriceInTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	tenantId, productId uint32,
+	tenantId, productId int64,
 	currency string,
 	now time.Time,
 ) (int64, bool) {
@@ -70,7 +70,7 @@ func activeSpecialPriceInTx(
 func computeFullReductionInTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	tenantId uint32,
+	tenantId int64,
 	currency string,
 	originalAmount int64,
 ) int64 {

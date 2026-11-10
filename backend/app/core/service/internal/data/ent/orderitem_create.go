@@ -65,13 +65,13 @@ func (_c *OrderItemCreate) SetNillableDeletedAt(v *time.Time) *OrderItemCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *OrderItemCreate) SetCreatedBy(v uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetCreatedBy(v int64) *OrderItemCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *OrderItemCreate) SetNillableCreatedBy(v *uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetNillableCreatedBy(v *int64) *OrderItemCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *OrderItemCreate) SetNillableCreatedBy(v *uint32) *OrderItemCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *OrderItemCreate) SetUpdatedBy(v uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetUpdatedBy(v int64) *OrderItemCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *OrderItemCreate) SetNillableUpdatedBy(v *uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetNillableUpdatedBy(v *int64) *OrderItemCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *OrderItemCreate) SetNillableUpdatedBy(v *uint32) *OrderItemCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *OrderItemCreate) SetDeletedBy(v uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetDeletedBy(v int64) *OrderItemCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *OrderItemCreate) SetNillableDeletedBy(v *uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetNillableDeletedBy(v *int64) *OrderItemCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *OrderItemCreate) SetNillableDeletedBy(v *uint32) *OrderItemCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *OrderItemCreate) SetTenantID(v uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetTenantID(v int64) *OrderItemCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *OrderItemCreate) SetNillableTenantID(v *uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetNillableTenantID(v *int64) *OrderItemCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *OrderItemCreate) SetNillableTenantID(v *uint32) *OrderItemCreate {
 }
 
 // SetOrderID sets the "order_id" field.
-func (_c *OrderItemCreate) SetOrderID(v uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetOrderID(v int64) *OrderItemCreate {
 	_c.mutation.SetOrderID(v)
 	return _c
 }
 
 // SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (_c *OrderItemCreate) SetNillableOrderID(v *uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetNillableOrderID(v *int64) *OrderItemCreate {
 	if v != nil {
 		_c.SetOrderID(*v)
 	}
@@ -135,13 +135,13 @@ func (_c *OrderItemCreate) SetNillableOrderID(v *uint32) *OrderItemCreate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_c *OrderItemCreate) SetUserID(v uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetUserID(v int64) *OrderItemCreate {
 	_c.mutation.SetUserID(v)
 	return _c
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_c *OrderItemCreate) SetNillableUserID(v *uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetNillableUserID(v *int64) *OrderItemCreate {
 	if v != nil {
 		_c.SetUserID(*v)
 	}
@@ -149,13 +149,13 @@ func (_c *OrderItemCreate) SetNillableUserID(v *uint32) *OrderItemCreate {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (_c *OrderItemCreate) SetSkuID(v uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetSkuID(v int64) *OrderItemCreate {
 	_c.mutation.SetSkuID(v)
 	return _c
 }
 
 // SetNillableSkuID sets the "sku_id" field if the given value is not nil.
-func (_c *OrderItemCreate) SetNillableSkuID(v *uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetNillableSkuID(v *int64) *OrderItemCreate {
 	if v != nil {
 		_c.SetSkuID(*v)
 	}
@@ -219,7 +219,7 @@ func (_c *OrderItemCreate) SetNillableSubtotal(v *int64) *OrderItemCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *OrderItemCreate) SetID(v uint32) *OrderItemCreate {
+func (_c *OrderItemCreate) SetID(v int64) *OrderItemCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -303,7 +303,7 @@ func (_c *OrderItemCreate) sqlSave(ctx context.Context) (*OrderItem, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -313,7 +313,7 @@ func (_c *OrderItemCreate) sqlSave(ctx context.Context) (*OrderItem, error) {
 func (_c *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 	var (
 		_node = &OrderItem{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(orderitem.Table, sqlgraph.NewFieldSpec(orderitem.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(orderitem.Table, sqlgraph.NewFieldSpec(orderitem.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -333,31 +333,31 @@ func (_c *OrderItemCreate) createSpec() (*OrderItem, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(orderitem.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(orderitem.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(orderitem.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(orderitem.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.OrderID(); ok {
-		_spec.SetField(orderitem.FieldOrderID, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldOrderID, field.TypeInt64, value)
 		_node.OrderID = &value
 	}
 	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(orderitem.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldUserID, field.TypeInt64, value)
 		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.SkuID(); ok {
-		_spec.SetField(orderitem.FieldSkuID, field.TypeUint32, value)
+		_spec.SetField(orderitem.FieldSkuID, field.TypeInt64, value)
 		_node.SkuID = &value
 	}
 	if value, ok := _c.mutation.SkuSnapshot(); ok {
@@ -465,7 +465,7 @@ func (u *OrderItemUpsert) ClearDeletedAt() *OrderItemUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *OrderItemUpsert) SetCreatedBy(v uint32) *OrderItemUpsert {
+func (u *OrderItemUpsert) SetCreatedBy(v int64) *OrderItemUpsert {
 	u.Set(orderitem.FieldCreatedBy, v)
 	return u
 }
@@ -477,7 +477,7 @@ func (u *OrderItemUpsert) UpdateCreatedBy() *OrderItemUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *OrderItemUpsert) AddCreatedBy(v uint32) *OrderItemUpsert {
+func (u *OrderItemUpsert) AddCreatedBy(v int64) *OrderItemUpsert {
 	u.Add(orderitem.FieldCreatedBy, v)
 	return u
 }
@@ -489,7 +489,7 @@ func (u *OrderItemUpsert) ClearCreatedBy() *OrderItemUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *OrderItemUpsert) SetUpdatedBy(v uint32) *OrderItemUpsert {
+func (u *OrderItemUpsert) SetUpdatedBy(v int64) *OrderItemUpsert {
 	u.Set(orderitem.FieldUpdatedBy, v)
 	return u
 }
@@ -501,7 +501,7 @@ func (u *OrderItemUpsert) UpdateUpdatedBy() *OrderItemUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *OrderItemUpsert) AddUpdatedBy(v uint32) *OrderItemUpsert {
+func (u *OrderItemUpsert) AddUpdatedBy(v int64) *OrderItemUpsert {
 	u.Add(orderitem.FieldUpdatedBy, v)
 	return u
 }
@@ -513,7 +513,7 @@ func (u *OrderItemUpsert) ClearUpdatedBy() *OrderItemUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *OrderItemUpsert) SetDeletedBy(v uint32) *OrderItemUpsert {
+func (u *OrderItemUpsert) SetDeletedBy(v int64) *OrderItemUpsert {
 	u.Set(orderitem.FieldDeletedBy, v)
 	return u
 }
@@ -525,7 +525,7 @@ func (u *OrderItemUpsert) UpdateDeletedBy() *OrderItemUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *OrderItemUpsert) AddDeletedBy(v uint32) *OrderItemUpsert {
+func (u *OrderItemUpsert) AddDeletedBy(v int64) *OrderItemUpsert {
 	u.Add(orderitem.FieldDeletedBy, v)
 	return u
 }
@@ -537,7 +537,7 @@ func (u *OrderItemUpsert) ClearDeletedBy() *OrderItemUpsert {
 }
 
 // SetOrderID sets the "order_id" field.
-func (u *OrderItemUpsert) SetOrderID(v uint32) *OrderItemUpsert {
+func (u *OrderItemUpsert) SetOrderID(v int64) *OrderItemUpsert {
 	u.Set(orderitem.FieldOrderID, v)
 	return u
 }
@@ -549,7 +549,7 @@ func (u *OrderItemUpsert) UpdateOrderID() *OrderItemUpsert {
 }
 
 // AddOrderID adds v to the "order_id" field.
-func (u *OrderItemUpsert) AddOrderID(v uint32) *OrderItemUpsert {
+func (u *OrderItemUpsert) AddOrderID(v int64) *OrderItemUpsert {
 	u.Add(orderitem.FieldOrderID, v)
 	return u
 }
@@ -561,7 +561,7 @@ func (u *OrderItemUpsert) ClearOrderID() *OrderItemUpsert {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *OrderItemUpsert) SetUserID(v uint32) *OrderItemUpsert {
+func (u *OrderItemUpsert) SetUserID(v int64) *OrderItemUpsert {
 	u.Set(orderitem.FieldUserID, v)
 	return u
 }
@@ -573,7 +573,7 @@ func (u *OrderItemUpsert) UpdateUserID() *OrderItemUpsert {
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *OrderItemUpsert) AddUserID(v uint32) *OrderItemUpsert {
+func (u *OrderItemUpsert) AddUserID(v int64) *OrderItemUpsert {
 	u.Add(orderitem.FieldUserID, v)
 	return u
 }
@@ -585,7 +585,7 @@ func (u *OrderItemUpsert) ClearUserID() *OrderItemUpsert {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *OrderItemUpsert) SetSkuID(v uint32) *OrderItemUpsert {
+func (u *OrderItemUpsert) SetSkuID(v int64) *OrderItemUpsert {
 	u.Set(orderitem.FieldSkuID, v)
 	return u
 }
@@ -597,7 +597,7 @@ func (u *OrderItemUpsert) UpdateSkuID() *OrderItemUpsert {
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *OrderItemUpsert) AddSkuID(v uint32) *OrderItemUpsert {
+func (u *OrderItemUpsert) AddSkuID(v int64) *OrderItemUpsert {
 	u.Add(orderitem.FieldSkuID, v)
 	return u
 }
@@ -795,14 +795,14 @@ func (u *OrderItemUpsertOne) ClearDeletedAt() *OrderItemUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *OrderItemUpsertOne) SetCreatedBy(v uint32) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) SetCreatedBy(v int64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *OrderItemUpsertOne) AddCreatedBy(v uint32) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) AddCreatedBy(v int64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -823,14 +823,14 @@ func (u *OrderItemUpsertOne) ClearCreatedBy() *OrderItemUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *OrderItemUpsertOne) SetUpdatedBy(v uint32) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) SetUpdatedBy(v int64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *OrderItemUpsertOne) AddUpdatedBy(v uint32) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) AddUpdatedBy(v int64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -851,14 +851,14 @@ func (u *OrderItemUpsertOne) ClearUpdatedBy() *OrderItemUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *OrderItemUpsertOne) SetDeletedBy(v uint32) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) SetDeletedBy(v int64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *OrderItemUpsertOne) AddDeletedBy(v uint32) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) AddDeletedBy(v int64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -879,14 +879,14 @@ func (u *OrderItemUpsertOne) ClearDeletedBy() *OrderItemUpsertOne {
 }
 
 // SetOrderID sets the "order_id" field.
-func (u *OrderItemUpsertOne) SetOrderID(v uint32) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) SetOrderID(v int64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetOrderID(v)
 	})
 }
 
 // AddOrderID adds v to the "order_id" field.
-func (u *OrderItemUpsertOne) AddOrderID(v uint32) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) AddOrderID(v int64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddOrderID(v)
 	})
@@ -907,14 +907,14 @@ func (u *OrderItemUpsertOne) ClearOrderID() *OrderItemUpsertOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *OrderItemUpsertOne) SetUserID(v uint32) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) SetUserID(v int64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *OrderItemUpsertOne) AddUserID(v uint32) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) AddUserID(v int64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddUserID(v)
 	})
@@ -935,14 +935,14 @@ func (u *OrderItemUpsertOne) ClearUserID() *OrderItemUpsertOne {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *OrderItemUpsertOne) SetSkuID(v uint32) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) SetSkuID(v int64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetSkuID(v)
 	})
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *OrderItemUpsertOne) AddSkuID(v uint32) *OrderItemUpsertOne {
+func (u *OrderItemUpsertOne) AddSkuID(v int64) *OrderItemUpsertOne {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddSkuID(v)
 	})
@@ -1083,7 +1083,7 @@ func (u *OrderItemUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *OrderItemUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *OrderItemUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1092,7 +1092,7 @@ func (u *OrderItemUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *OrderItemUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *OrderItemUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1149,7 +1149,7 @@ func (_c *OrderItemCreateBulk) Save(ctx context.Context) ([]*OrderItem, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1330,14 +1330,14 @@ func (u *OrderItemUpsertBulk) ClearDeletedAt() *OrderItemUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *OrderItemUpsertBulk) SetCreatedBy(v uint32) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) SetCreatedBy(v int64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *OrderItemUpsertBulk) AddCreatedBy(v uint32) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) AddCreatedBy(v int64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1358,14 +1358,14 @@ func (u *OrderItemUpsertBulk) ClearCreatedBy() *OrderItemUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *OrderItemUpsertBulk) SetUpdatedBy(v uint32) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) SetUpdatedBy(v int64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *OrderItemUpsertBulk) AddUpdatedBy(v uint32) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) AddUpdatedBy(v int64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1386,14 +1386,14 @@ func (u *OrderItemUpsertBulk) ClearUpdatedBy() *OrderItemUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *OrderItemUpsertBulk) SetDeletedBy(v uint32) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) SetDeletedBy(v int64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *OrderItemUpsertBulk) AddDeletedBy(v uint32) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) AddDeletedBy(v int64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1414,14 +1414,14 @@ func (u *OrderItemUpsertBulk) ClearDeletedBy() *OrderItemUpsertBulk {
 }
 
 // SetOrderID sets the "order_id" field.
-func (u *OrderItemUpsertBulk) SetOrderID(v uint32) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) SetOrderID(v int64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetOrderID(v)
 	})
 }
 
 // AddOrderID adds v to the "order_id" field.
-func (u *OrderItemUpsertBulk) AddOrderID(v uint32) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) AddOrderID(v int64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddOrderID(v)
 	})
@@ -1442,14 +1442,14 @@ func (u *OrderItemUpsertBulk) ClearOrderID() *OrderItemUpsertBulk {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *OrderItemUpsertBulk) SetUserID(v uint32) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) SetUserID(v int64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *OrderItemUpsertBulk) AddUserID(v uint32) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) AddUserID(v int64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddUserID(v)
 	})
@@ -1470,14 +1470,14 @@ func (u *OrderItemUpsertBulk) ClearUserID() *OrderItemUpsertBulk {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *OrderItemUpsertBulk) SetSkuID(v uint32) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) SetSkuID(v int64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.SetSkuID(v)
 	})
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *OrderItemUpsertBulk) AddSkuID(v uint32) *OrderItemUpsertBulk {
+func (u *OrderItemUpsertBulk) AddSkuID(v int64) *OrderItemUpsertBulk {
 	return u.Update(func(s *OrderItemUpsert) {
 		s.AddSkuID(v)
 	})

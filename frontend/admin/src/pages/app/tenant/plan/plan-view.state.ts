@@ -27,8 +27,8 @@ export const usePlanViewStore = defineStore("plan-view", {
     currentPlanId: null,
     loading: false,
     needReloadQuotaList: false,
-    planList: { items: [], total: 0 },
-    planQuotaList: { items: [], total: 0 },
+    planList: { items: [], total: "0" },
+    planQuotaList: { items: [], total: "0" },
   }),
 
   actions: {
@@ -114,11 +114,11 @@ export const usePlanViewStore = defineStore("plan-view", {
     },
 
     resetPlanList() {
-      this.planList = { items: [], total: 0 };
+      this.planList = { items: [], total: "0" };
     },
 
     resetPlanQuotaList() {
-      this.planQuotaList = { items: [], total: 0 };
+      this.planQuotaList = { items: [], total: "0" };
     },
   },
 });

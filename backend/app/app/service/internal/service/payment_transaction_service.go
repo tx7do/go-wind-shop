@@ -10,8 +10,8 @@ import (
 
 	"go-wind-shop/pkg/logx"
 
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -106,7 +106,7 @@ func (s *PaymentTransactionService) CreatePaymentIntent(ctx context.Context, req
 	}
 
 	pr, err := gw.CreatePayment(ctx, gateway.PayRequest{
-		OutTradeNo:  strconv.FormatUint(uint64(resp.GetTransaction().GetId()), 10),
+		OutTradeNo:  strconv.FormatInt(int64(resp.GetTransaction().GetId()), 10),
 		AmountCents: resp.GetTransaction().GetAmount(),
 		Subject:     resp.GetSubject(),
 		NotifyURL:   s.notifyURL(channel.GetChannel()),
@@ -213,14 +213,14 @@ func (s *PaymentTransactionService) HandleNotify(ctx context.Context, channelSlu
 		return s.ackNotify(channelType)
 	}
 
-	txId, err := strconv.ParseUint(nr.OutTradeNo, 10, 32)
+	txId, err := strconv.ParseInt(nr.OutTradeNo, 10, 64)
 	if err != nil {
 		s.log.Errorf("notify out_trade_no [%s] is not a transaction id", nr.OutTradeNo)
 		return s.ackNotify(channelType)
 	}
 
 	if _, err = s.paymentTransactionServiceClient.ConfirmPayment(ctx, &paymentV1.ConfirmPaymentRequest{
-		TransactionId:  uint32(txId),
+		TransactionId:  int64(txId),
 		GatewayTradeNo: nr.GatewayTradeNo,
 		PaidAmount:     nr.PaidCents,
 	}); err != nil {

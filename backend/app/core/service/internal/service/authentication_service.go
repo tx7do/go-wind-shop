@@ -1,7 +1,8 @@
 package service
 
-import (	"go-wind-shop/pkg/logx"
+import (
 	"context"
+	"go-wind-shop/pkg/logx"
 	"strings"
 	"time"
 
@@ -111,7 +112,7 @@ func containsPermission(perms []string, target string) bool {
 }
 
 // authorizeAndEnrichUserTokenPayloadUserTenantRelationOneToOne 一对一用户-租户关系的授权与丰富
-func (s *AuthenticationService) authorizeAndEnrichUserTokenPayloadUserTenantRelationOneToOne(ctx context.Context, userID, tenantID uint32, tokenPayload *authenticationV1.UserTokenPayload) error {
+func (s *AuthenticationService) authorizeAndEnrichUserTokenPayloadUserTenantRelationOneToOne(ctx context.Context, userID, tenantID int64, tokenPayload *authenticationV1.UserTokenPayload) error {
 	hasBackendAccess := false
 
 	if tenantID > 0 {
@@ -172,7 +173,7 @@ func (s *AuthenticationService) authorizeAndEnrichUserTokenPayloadUserTenantRela
 // 当前用户-租户关系固定为一对一（constants.DefaultUserTenantType），
 // 直接委托一对一实现。一对多实现保留在 repo 层作为预留，待启用时
 // 在此处分流。
-func (s *AuthenticationService) authorizeAndEnrichUserTokenPayload(ctx context.Context, userID, tenantID uint32, tokenPayload *authenticationV1.UserTokenPayload) error {
+func (s *AuthenticationService) authorizeAndEnrichUserTokenPayload(ctx context.Context, userID, tenantID int64, tokenPayload *authenticationV1.UserTokenPayload) error {
 	return s.authorizeAndEnrichUserTokenPayloadUserTenantRelationOneToOne(ctx, userID, tenantID, tokenPayload)
 }
 
@@ -208,7 +209,7 @@ func (s *AuthenticationService) resolveUserAuthority(ctx context.Context, user *
 func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *authenticationV1.LoginRequest) (*authenticationV1.LoginResponse, error) {
 	// ===== 租户解析：tenant_code 留空视为平台（tenant 0），非空则按编号定位租户 =====
 	// 解析后的 tenantID 限定后续凭证查询范围，消除同名 identifier 跨租户歧义。
-	var tenantID uint32 = 0
+	var tenantID int64 = 0
 	if code := req.GetTenantCode(); strings.TrimSpace(code) != "" {
 		tenant, _ := s.tenantRepo.Get(ctx, &identityV1.GetTenantRequest{
 			QueryBy: &identityV1.GetTenantRequest_Code{Code: code},
@@ -221,7 +222,7 @@ func (s *AuthenticationService) doGrantTypePassword(ctx context.Context, req *au
 	}
 
 	// ===== 凭证校验：在解析出的 tenant 范围内查单条凭证并校验密码 =====
-	var matchedUserID uint32
+	var matchedUserID int64
 	var err error
 	matchedUserID, err = s.userCredentialRepo.FindUserCredential(ctx, tenantID, authenticationV1.UserCredential_USERNAME, req.GetUsername(), req.GetPassword(), true)
 	if err != nil {
@@ -390,7 +391,7 @@ func (s *AuthenticationService) Logout(ctx context.Context, req *authenticationV
 func (s *AuthenticationService) RegisterUser(ctx context.Context, req *authenticationV1.RegisterUserRequest) (*authenticationV1.RegisterUserResponse, error) {
 	var err error
 
-	var tenantId *uint32
+	var tenantId *int64
 	if constants.IsTenantModeEnabled {
 		var tenant *identityV1.Tenant
 		tenant, err = s.tenantRepo.Get(ctx, &identityV1.GetTenantRequest{

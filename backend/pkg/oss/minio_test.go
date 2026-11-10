@@ -1,8 +1,8 @@
 package oss
 
 import (
-	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"fmt"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

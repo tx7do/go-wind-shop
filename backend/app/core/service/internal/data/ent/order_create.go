@@ -65,13 +65,13 @@ func (_c *OrderCreate) SetNillableDeletedAt(v *time.Time) *OrderCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *OrderCreate) SetCreatedBy(v uint32) *OrderCreate {
+func (_c *OrderCreate) SetCreatedBy(v int64) *OrderCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *OrderCreate) SetNillableCreatedBy(v *uint32) *OrderCreate {
+func (_c *OrderCreate) SetNillableCreatedBy(v *int64) *OrderCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *OrderCreate) SetNillableCreatedBy(v *uint32) *OrderCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *OrderCreate) SetUpdatedBy(v uint32) *OrderCreate {
+func (_c *OrderCreate) SetUpdatedBy(v int64) *OrderCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *OrderCreate) SetNillableUpdatedBy(v *uint32) *OrderCreate {
+func (_c *OrderCreate) SetNillableUpdatedBy(v *int64) *OrderCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *OrderCreate) SetNillableUpdatedBy(v *uint32) *OrderCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *OrderCreate) SetDeletedBy(v uint32) *OrderCreate {
+func (_c *OrderCreate) SetDeletedBy(v int64) *OrderCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *OrderCreate) SetNillableDeletedBy(v *uint32) *OrderCreate {
+func (_c *OrderCreate) SetNillableDeletedBy(v *int64) *OrderCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *OrderCreate) SetNillableDeletedBy(v *uint32) *OrderCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *OrderCreate) SetTenantID(v uint32) *OrderCreate {
+func (_c *OrderCreate) SetTenantID(v int64) *OrderCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *OrderCreate) SetNillableTenantID(v *uint32) *OrderCreate {
+func (_c *OrderCreate) SetNillableTenantID(v *int64) *OrderCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -163,13 +163,13 @@ func (_c *OrderCreate) SetNillableIdempotencyKey(v *string) *OrderCreate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_c *OrderCreate) SetUserID(v uint32) *OrderCreate {
+func (_c *OrderCreate) SetUserID(v int64) *OrderCreate {
 	_c.mutation.SetUserID(v)
 	return _c
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_c *OrderCreate) SetNillableUserID(v *uint32) *OrderCreate {
+func (_c *OrderCreate) SetNillableUserID(v *int64) *OrderCreate {
 	if v != nil {
 		_c.SetUserID(*v)
 	}
@@ -275,13 +275,13 @@ func (_c *OrderCreate) SetNillableStatus(v *order.Status) *OrderCreate {
 }
 
 // SetGrouponActivityID sets the "groupon_activity_id" field.
-func (_c *OrderCreate) SetGrouponActivityID(v uint32) *OrderCreate {
+func (_c *OrderCreate) SetGrouponActivityID(v int64) *OrderCreate {
 	_c.mutation.SetGrouponActivityID(v)
 	return _c
 }
 
 // SetNillableGrouponActivityID sets the "groupon_activity_id" field if the given value is not nil.
-func (_c *OrderCreate) SetNillableGrouponActivityID(v *uint32) *OrderCreate {
+func (_c *OrderCreate) SetNillableGrouponActivityID(v *int64) *OrderCreate {
 	if v != nil {
 		_c.SetGrouponActivityID(*v)
 	}
@@ -289,13 +289,13 @@ func (_c *OrderCreate) SetNillableGrouponActivityID(v *uint32) *OrderCreate {
 }
 
 // SetGrouponGroupID sets the "groupon_group_id" field.
-func (_c *OrderCreate) SetGrouponGroupID(v uint32) *OrderCreate {
+func (_c *OrderCreate) SetGrouponGroupID(v int64) *OrderCreate {
 	_c.mutation.SetGrouponGroupID(v)
 	return _c
 }
 
 // SetNillableGrouponGroupID sets the "groupon_group_id" field if the given value is not nil.
-func (_c *OrderCreate) SetNillableGrouponGroupID(v *uint32) *OrderCreate {
+func (_c *OrderCreate) SetNillableGrouponGroupID(v *int64) *OrderCreate {
 	if v != nil {
 		_c.SetGrouponGroupID(*v)
 	}
@@ -345,7 +345,7 @@ func (_c *OrderCreate) SetNillableShippingAddress(v *string) *OrderCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *OrderCreate) SetID(v uint32) *OrderCreate {
+func (_c *OrderCreate) SetID(v int64) *OrderCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -446,7 +446,7 @@ func (_c *OrderCreate) sqlSave(ctx context.Context) (*Order, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -456,7 +456,7 @@ func (_c *OrderCreate) sqlSave(ctx context.Context) (*Order, error) {
 func (_c *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 	var (
 		_node = &Order{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(order.Table, sqlgraph.NewFieldSpec(order.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(order.Table, sqlgraph.NewFieldSpec(order.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -476,19 +476,19 @@ func (_c *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(order.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(order.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(order.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(order.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(order.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(order.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(order.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(order.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Currency(); ok {
@@ -504,7 +504,7 @@ func (_c *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_node.IdempotencyKey = &value
 	}
 	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(order.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(order.FieldUserID, field.TypeInt64, value)
 		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.TotalAmount(); ok {
@@ -536,11 +536,11 @@ func (_c *OrderCreate) createSpec() (*Order, *sqlgraph.CreateSpec) {
 		_node.Status = &value
 	}
 	if value, ok := _c.mutation.GrouponActivityID(); ok {
-		_spec.SetField(order.FieldGrouponActivityID, field.TypeUint32, value)
+		_spec.SetField(order.FieldGrouponActivityID, field.TypeInt64, value)
 		_node.GrouponActivityID = &value
 	}
 	if value, ok := _c.mutation.GrouponGroupID(); ok {
-		_spec.SetField(order.FieldGrouponGroupID, field.TypeUint32, value)
+		_spec.SetField(order.FieldGrouponGroupID, field.TypeInt64, value)
 		_node.GrouponGroupID = &value
 	}
 	if value, ok := _c.mutation.RecipientName(); ok {
@@ -644,7 +644,7 @@ func (u *OrderUpsert) ClearDeletedAt() *OrderUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *OrderUpsert) SetCreatedBy(v uint32) *OrderUpsert {
+func (u *OrderUpsert) SetCreatedBy(v int64) *OrderUpsert {
 	u.Set(order.FieldCreatedBy, v)
 	return u
 }
@@ -656,7 +656,7 @@ func (u *OrderUpsert) UpdateCreatedBy() *OrderUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *OrderUpsert) AddCreatedBy(v uint32) *OrderUpsert {
+func (u *OrderUpsert) AddCreatedBy(v int64) *OrderUpsert {
 	u.Add(order.FieldCreatedBy, v)
 	return u
 }
@@ -668,7 +668,7 @@ func (u *OrderUpsert) ClearCreatedBy() *OrderUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *OrderUpsert) SetUpdatedBy(v uint32) *OrderUpsert {
+func (u *OrderUpsert) SetUpdatedBy(v int64) *OrderUpsert {
 	u.Set(order.FieldUpdatedBy, v)
 	return u
 }
@@ -680,7 +680,7 @@ func (u *OrderUpsert) UpdateUpdatedBy() *OrderUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *OrderUpsert) AddUpdatedBy(v uint32) *OrderUpsert {
+func (u *OrderUpsert) AddUpdatedBy(v int64) *OrderUpsert {
 	u.Add(order.FieldUpdatedBy, v)
 	return u
 }
@@ -692,7 +692,7 @@ func (u *OrderUpsert) ClearUpdatedBy() *OrderUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *OrderUpsert) SetDeletedBy(v uint32) *OrderUpsert {
+func (u *OrderUpsert) SetDeletedBy(v int64) *OrderUpsert {
 	u.Set(order.FieldDeletedBy, v)
 	return u
 }
@@ -704,7 +704,7 @@ func (u *OrderUpsert) UpdateDeletedBy() *OrderUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *OrderUpsert) AddDeletedBy(v uint32) *OrderUpsert {
+func (u *OrderUpsert) AddDeletedBy(v int64) *OrderUpsert {
 	u.Add(order.FieldDeletedBy, v)
 	return u
 }
@@ -770,7 +770,7 @@ func (u *OrderUpsert) ClearIdempotencyKey() *OrderUpsert {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *OrderUpsert) SetUserID(v uint32) *OrderUpsert {
+func (u *OrderUpsert) SetUserID(v int64) *OrderUpsert {
 	u.Set(order.FieldUserID, v)
 	return u
 }
@@ -782,7 +782,7 @@ func (u *OrderUpsert) UpdateUserID() *OrderUpsert {
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *OrderUpsert) AddUserID(v uint32) *OrderUpsert {
+func (u *OrderUpsert) AddUserID(v int64) *OrderUpsert {
 	u.Add(order.FieldUserID, v)
 	return u
 }
@@ -950,7 +950,7 @@ func (u *OrderUpsert) ClearStatus() *OrderUpsert {
 }
 
 // SetGrouponActivityID sets the "groupon_activity_id" field.
-func (u *OrderUpsert) SetGrouponActivityID(v uint32) *OrderUpsert {
+func (u *OrderUpsert) SetGrouponActivityID(v int64) *OrderUpsert {
 	u.Set(order.FieldGrouponActivityID, v)
 	return u
 }
@@ -962,7 +962,7 @@ func (u *OrderUpsert) UpdateGrouponActivityID() *OrderUpsert {
 }
 
 // AddGrouponActivityID adds v to the "groupon_activity_id" field.
-func (u *OrderUpsert) AddGrouponActivityID(v uint32) *OrderUpsert {
+func (u *OrderUpsert) AddGrouponActivityID(v int64) *OrderUpsert {
 	u.Add(order.FieldGrouponActivityID, v)
 	return u
 }
@@ -974,7 +974,7 @@ func (u *OrderUpsert) ClearGrouponActivityID() *OrderUpsert {
 }
 
 // SetGrouponGroupID sets the "groupon_group_id" field.
-func (u *OrderUpsert) SetGrouponGroupID(v uint32) *OrderUpsert {
+func (u *OrderUpsert) SetGrouponGroupID(v int64) *OrderUpsert {
 	u.Set(order.FieldGrouponGroupID, v)
 	return u
 }
@@ -986,7 +986,7 @@ func (u *OrderUpsert) UpdateGrouponGroupID() *OrderUpsert {
 }
 
 // AddGrouponGroupID adds v to the "groupon_group_id" field.
-func (u *OrderUpsert) AddGrouponGroupID(v uint32) *OrderUpsert {
+func (u *OrderUpsert) AddGrouponGroupID(v int64) *OrderUpsert {
 	u.Add(order.FieldGrouponGroupID, v)
 	return u
 }
@@ -1148,14 +1148,14 @@ func (u *OrderUpsertOne) ClearDeletedAt() *OrderUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *OrderUpsertOne) SetCreatedBy(v uint32) *OrderUpsertOne {
+func (u *OrderUpsertOne) SetCreatedBy(v int64) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *OrderUpsertOne) AddCreatedBy(v uint32) *OrderUpsertOne {
+func (u *OrderUpsertOne) AddCreatedBy(v int64) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1176,14 +1176,14 @@ func (u *OrderUpsertOne) ClearCreatedBy() *OrderUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *OrderUpsertOne) SetUpdatedBy(v uint32) *OrderUpsertOne {
+func (u *OrderUpsertOne) SetUpdatedBy(v int64) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *OrderUpsertOne) AddUpdatedBy(v uint32) *OrderUpsertOne {
+func (u *OrderUpsertOne) AddUpdatedBy(v int64) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1204,14 +1204,14 @@ func (u *OrderUpsertOne) ClearUpdatedBy() *OrderUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *OrderUpsertOne) SetDeletedBy(v uint32) *OrderUpsertOne {
+func (u *OrderUpsertOne) SetDeletedBy(v int64) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *OrderUpsertOne) AddDeletedBy(v uint32) *OrderUpsertOne {
+func (u *OrderUpsertOne) AddDeletedBy(v int64) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1295,14 +1295,14 @@ func (u *OrderUpsertOne) ClearIdempotencyKey() *OrderUpsertOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *OrderUpsertOne) SetUserID(v uint32) *OrderUpsertOne {
+func (u *OrderUpsertOne) SetUserID(v int64) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *OrderUpsertOne) AddUserID(v uint32) *OrderUpsertOne {
+func (u *OrderUpsertOne) AddUserID(v int64) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.AddUserID(v)
 	})
@@ -1505,14 +1505,14 @@ func (u *OrderUpsertOne) ClearStatus() *OrderUpsertOne {
 }
 
 // SetGrouponActivityID sets the "groupon_activity_id" field.
-func (u *OrderUpsertOne) SetGrouponActivityID(v uint32) *OrderUpsertOne {
+func (u *OrderUpsertOne) SetGrouponActivityID(v int64) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.SetGrouponActivityID(v)
 	})
 }
 
 // AddGrouponActivityID adds v to the "groupon_activity_id" field.
-func (u *OrderUpsertOne) AddGrouponActivityID(v uint32) *OrderUpsertOne {
+func (u *OrderUpsertOne) AddGrouponActivityID(v int64) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.AddGrouponActivityID(v)
 	})
@@ -1533,14 +1533,14 @@ func (u *OrderUpsertOne) ClearGrouponActivityID() *OrderUpsertOne {
 }
 
 // SetGrouponGroupID sets the "groupon_group_id" field.
-func (u *OrderUpsertOne) SetGrouponGroupID(v uint32) *OrderUpsertOne {
+func (u *OrderUpsertOne) SetGrouponGroupID(v int64) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.SetGrouponGroupID(v)
 	})
 }
 
 // AddGrouponGroupID adds v to the "groupon_group_id" field.
-func (u *OrderUpsertOne) AddGrouponGroupID(v uint32) *OrderUpsertOne {
+func (u *OrderUpsertOne) AddGrouponGroupID(v int64) *OrderUpsertOne {
 	return u.Update(func(s *OrderUpsert) {
 		s.AddGrouponGroupID(v)
 	})
@@ -1639,7 +1639,7 @@ func (u *OrderUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *OrderUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *OrderUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1648,7 +1648,7 @@ func (u *OrderUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *OrderUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *OrderUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1705,7 +1705,7 @@ func (_c *OrderCreateBulk) Save(ctx context.Context) ([]*Order, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1886,14 +1886,14 @@ func (u *OrderUpsertBulk) ClearDeletedAt() *OrderUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *OrderUpsertBulk) SetCreatedBy(v uint32) *OrderUpsertBulk {
+func (u *OrderUpsertBulk) SetCreatedBy(v int64) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *OrderUpsertBulk) AddCreatedBy(v uint32) *OrderUpsertBulk {
+func (u *OrderUpsertBulk) AddCreatedBy(v int64) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1914,14 +1914,14 @@ func (u *OrderUpsertBulk) ClearCreatedBy() *OrderUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *OrderUpsertBulk) SetUpdatedBy(v uint32) *OrderUpsertBulk {
+func (u *OrderUpsertBulk) SetUpdatedBy(v int64) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *OrderUpsertBulk) AddUpdatedBy(v uint32) *OrderUpsertBulk {
+func (u *OrderUpsertBulk) AddUpdatedBy(v int64) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1942,14 +1942,14 @@ func (u *OrderUpsertBulk) ClearUpdatedBy() *OrderUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *OrderUpsertBulk) SetDeletedBy(v uint32) *OrderUpsertBulk {
+func (u *OrderUpsertBulk) SetDeletedBy(v int64) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *OrderUpsertBulk) AddDeletedBy(v uint32) *OrderUpsertBulk {
+func (u *OrderUpsertBulk) AddDeletedBy(v int64) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -2033,14 +2033,14 @@ func (u *OrderUpsertBulk) ClearIdempotencyKey() *OrderUpsertBulk {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *OrderUpsertBulk) SetUserID(v uint32) *OrderUpsertBulk {
+func (u *OrderUpsertBulk) SetUserID(v int64) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *OrderUpsertBulk) AddUserID(v uint32) *OrderUpsertBulk {
+func (u *OrderUpsertBulk) AddUserID(v int64) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.AddUserID(v)
 	})
@@ -2243,14 +2243,14 @@ func (u *OrderUpsertBulk) ClearStatus() *OrderUpsertBulk {
 }
 
 // SetGrouponActivityID sets the "groupon_activity_id" field.
-func (u *OrderUpsertBulk) SetGrouponActivityID(v uint32) *OrderUpsertBulk {
+func (u *OrderUpsertBulk) SetGrouponActivityID(v int64) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.SetGrouponActivityID(v)
 	})
 }
 
 // AddGrouponActivityID adds v to the "groupon_activity_id" field.
-func (u *OrderUpsertBulk) AddGrouponActivityID(v uint32) *OrderUpsertBulk {
+func (u *OrderUpsertBulk) AddGrouponActivityID(v int64) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.AddGrouponActivityID(v)
 	})
@@ -2271,14 +2271,14 @@ func (u *OrderUpsertBulk) ClearGrouponActivityID() *OrderUpsertBulk {
 }
 
 // SetGrouponGroupID sets the "groupon_group_id" field.
-func (u *OrderUpsertBulk) SetGrouponGroupID(v uint32) *OrderUpsertBulk {
+func (u *OrderUpsertBulk) SetGrouponGroupID(v int64) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.SetGrouponGroupID(v)
 	})
 }
 
 // AddGrouponGroupID adds v to the "groupon_group_id" field.
-func (u *OrderUpsertBulk) AddGrouponGroupID(v uint32) *OrderUpsertBulk {
+func (u *OrderUpsertBulk) AddGrouponGroupID(v int64) *OrderUpsertBulk {
 	return u.Update(func(s *OrderUpsert) {
 		s.AddGrouponGroupID(v)
 	})

@@ -1,8 +1,8 @@
 package data
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
+	"go-wind-shop/pkg/logx"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -16,8 +16,8 @@ import (
 	"github.com/tx7do/go-utils/timeutil"
 
 	"go-wind-shop/app/core/service/internal/data/ent"
-	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 	"go-wind-shop/app/core/service/internal/data/ent/grouponactivity"
+	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 )
@@ -107,7 +107,7 @@ func (r *GrouponActivityRepo) List(ctx context.Context, req *paginationV1.Paging
 	}, nil
 }
 
-func (r *GrouponActivityRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *GrouponActivityRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().GrouponActivity.Query().
 		Where(grouponactivity.IDEQ(id)).
 		Exist(ctx)

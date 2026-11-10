@@ -75,5 +75,5 @@ service CommentService {
 
 // 评论 AI 摘要 - 请求
 message GetProductReviewSummaryRequest {
-  uint32 product_id = 1 [json_name = "productId"]; // 商品ID
+  int64 product_id = 1 [json_name = "productId"]; // 商品ID
 }

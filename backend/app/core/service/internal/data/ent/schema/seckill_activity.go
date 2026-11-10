@@ -34,7 +34,7 @@ func (SeckillActivity) Fields() []ent.Field {
 			Comment("活动名称").
 			NotEmpty(),
 
-		field.Uint32("sku_id").
+		field.Int64("sku_id").
 			Comment("秒杀 SKU ID").
 			Optional().
 			Nillable(),
@@ -88,10 +88,10 @@ func (SeckillActivity) Fields() []ent.Field {
 
 func (SeckillActivity) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 	}
 }
 

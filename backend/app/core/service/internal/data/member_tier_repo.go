@@ -1,8 +1,8 @@
 package data
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
+	"go-wind-shop/pkg/logx"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -15,8 +15,8 @@ import (
 	"github.com/tx7do/go-utils/mapper"
 
 	"go-wind-shop/app/core/service/internal/data/ent"
-	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 	"go-wind-shop/app/core/service/internal/data/ent/membertier"
+	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 )
@@ -106,7 +106,7 @@ func (r *MemberTierRepo) List(ctx context.Context, req *paginationV1.PagingReque
 	}, nil
 }
 
-func (r *MemberTierRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *MemberTierRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().MemberTier.Query().
 		Where(membertier.IDEQ(id)).
 		Exist(ctx)

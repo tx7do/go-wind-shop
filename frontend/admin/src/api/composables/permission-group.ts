@@ -65,12 +65,11 @@ export function useCreatePermissionGroup(
 }
 
 export function useUpdatePermissionGroup(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.permissionGroupService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.permissionGroupService.Update({ id: String(id),
         data: { ...values } as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),
@@ -96,14 +95,14 @@ export function travelPermissionGroupChild(
   parent: PermissionGroup
 ): boolean {
   if (nodes === undefined) return false;
-  if (parent.parentId === 0 || parent.parentId === undefined) {
+  if (Number(parent.parentId) === 0 || parent.parentId === undefined) {
     if (parent?.name) parent.name = t(parent?.name ?? "");
     nodes.push(parent);
     return true;
   }
   for (const node of nodes) {
     if (node === undefined) continue;
-    if (node.id === parent.parentId) {
+    if (String(node.id) === String(parent.parentId)) {
       if (parent?.name) parent.name = t(parent?.name ?? "");
       if (node.children !== undefined) node.children.push(parent);
       return true;
@@ -115,7 +114,7 @@ export function travelPermissionGroupChild(
 
 export function buildPermissionGroupTree(
   groups: PermissionGroup[],
-  excludeId?: number
+  excludeId?: number | string
 ): PermissionGroup[] {
   // 深拷贝后再构建树，避免就地修改 group.name = t(...) 污染传入的
   // vue-query 缓存（否则翻译值会被永久写回缓存，后续读取拿到已翻译的 name）。
@@ -127,15 +126,15 @@ export function buildPermissionGroupTree(
   for (const group of cloned) {
     if (!group) continue;
     // 排除指定节点（防自环：编辑某分组时不让它出现在自己的父级候选里）
-    if (excludeId !== undefined && group.id === excludeId) continue;
-    if (group.parentId !== 0 && group.parentId !== undefined) continue;
+    if (excludeId !== undefined && String(group.id) === String(excludeId)) continue;
+    if (Number(group.parentId) !== 0 && group.parentId !== undefined) continue;
     if (group?.name) group.name = t(group?.name ?? "");
     tree.push(group);
   }
   for (const group of cloned) {
     if (!group) continue;
-    if (excludeId !== undefined && group.id === excludeId) continue;
-    if (group.parentId === 0 || group.parentId === undefined) continue;
+    if (excludeId !== undefined && String(group.id) === String(excludeId)) continue;
+    if (Number(group.parentId) === 0 || group.parentId === undefined) continue;
     if (travelPermissionGroupChild(tree, group)) continue;
     if (group?.name) group.name = t(group?.name ?? "");
     tree.push(group);

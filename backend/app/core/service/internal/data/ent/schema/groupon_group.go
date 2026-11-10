@@ -30,8 +30,8 @@ func (GrouponGroup) Annotations() []schema.Annotation {
 
 func (GrouponGroup) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("activity_id").Comment("活动ID").Optional().Nillable(),
-		field.Uint32("leader_order_id").Comment("团长订单ID").Optional().Nillable(),
+		field.Int64("activity_id").Comment("活动ID").Optional().Nillable(),
+		field.Int64("leader_order_id").Comment("团长订单ID").Optional().Nillable(),
 		field.Int32("member_count").Comment("已参团人数（含未支付）").Default(1),
 		field.Int32("paid_count").Comment("已支付人数").Default(0),
 		field.Int32("target_size").Comment("成团所需人数").Default(2),
@@ -51,9 +51,9 @@ func (GrouponGroup) Fields() []ent.Field {
 
 func (GrouponGroup) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.TenantID[uint32]{},
+		mixin.TenantID[int64]{},
 	}
 }
 

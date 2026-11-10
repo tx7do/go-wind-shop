@@ -12,7 +12,7 @@
         </template>
         <el-descriptions :column="1" border>
           <el-descriptions-item :label="$t('pages.redis_cache_monitor.dbSize')">
-            <el-tag :type="dbSize > 0 ? 'warning' : 'info'">{{ String(dbSize) }}</el-tag>
+            <el-tag :type="Number(dbSize) > 0 ? 'warning' : 'info'">{{ String(dbSize) }}</el-tag>
           </el-descriptions-item>
         </el-descriptions>
       </el-card>

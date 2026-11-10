@@ -65,7 +65,7 @@ export function useUpdateOrder(
     {},
     Error,
     {
-      id: number;
+      id: number | string;
       values: Record<string, any>;
       expectedStatus: orderservicev1_Order_Status[];
     }
@@ -73,8 +73,7 @@ export function useUpdateOrder(
 ) {
   return useMutation({
     mutationFn: ({ id, values, expectedStatus }) =>
-      apiClient.orderService.Update({
-        id,
+      apiClient.orderService.Update({ id: String(id),
         data: { ...values },
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
         expectedStatus,

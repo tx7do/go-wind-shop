@@ -30,7 +30,7 @@ func (GrouponActivity) Annotations() []schema.Annotation {
 func (GrouponActivity) Fields() []ent.Field {
 	return []ent.Field{
 		field.String("name").Comment("活动名称").NotEmpty(),
-		field.Uint32("sku_id").Comment("拼团 SKU ID").Optional().Nillable(),
+		field.Int64("sku_id").Comment("拼团 SKU ID").Optional().Nillable(),
 		field.Int64("group_price").Comment("成团价（分）").Default(0).Optional().Nillable(),
 		field.Int32("group_size").Comment("成团人数").Default(2),
 		field.Int32("group_valid_hours").Comment("单团成团时限（小时）").Default(24),
@@ -52,10 +52,10 @@ func (GrouponActivity) Fields() []ent.Field {
 
 func (GrouponActivity) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 	}
 }
 

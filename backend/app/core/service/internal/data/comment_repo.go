@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -25,7 +25,7 @@ import (
 
 type CommentRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[commentV1.Comment, ent.Comment]
 
@@ -44,11 +44,11 @@ type CommentRepo struct {
 
 func NewCommentRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *CommentRepo {
 	repo := &CommentRepo{
-		log:                   logx.New(ctx.NewLoggerHelper("comment/repo/core-service")),
-		entClient:             entClient,
-		mapper:                mapper.NewCopierMapper[commentV1.Comment, ent.Comment](),
-		statusConverter:       mapper.NewEnumTypeConverter[commentV1.Comment_Status, comment.Status](commentV1.Comment_Status_name, commentV1.Comment_Status_value),
-		contentTypeConverter:  mapper.NewEnumTypeConverter[commentV1.Comment_ContentType, comment.ContentType](commentV1.Comment_ContentType_name, commentV1.Comment_ContentType_value),
+		log:                  logx.New(ctx.NewLoggerHelper("comment/repo/core-service")),
+		entClient:            entClient,
+		mapper:               mapper.NewCopierMapper[commentV1.Comment, ent.Comment](),
+		statusConverter:      mapper.NewEnumTypeConverter[commentV1.Comment_Status, comment.Status](commentV1.Comment_Status_name, commentV1.Comment_Status_value),
+		contentTypeConverter: mapper.NewEnumTypeConverter[commentV1.Comment_ContentType, comment.ContentType](commentV1.Comment_ContentType_name, commentV1.Comment_ContentType_value),
 	}
 
 	repo.init()
@@ -120,8 +120,8 @@ func (r *CommentRepo) List(ctx context.Context, req *paginationV1.PagingRequest,
 	if treeTravel {
 		ret.Items = pagination.BuildTree(
 			ret.Items,
-			func(node *commentV1.Comment) *uint32 { return node.Id },
-			func(node *commentV1.Comment) *uint32 { return node.ParentId },
+			func(node *commentV1.Comment) *int64 { return node.Id },
+			func(node *commentV1.Comment) *int64 { return node.ParentId },
 			func(node *commentV1.Comment) *[]*commentV1.Comment { return &node.Children },
 		)
 	}
@@ -132,7 +132,7 @@ func (r *CommentRepo) List(ctx context.Context, req *paginationV1.PagingRequest,
 	}, nil
 }
 
-func (r *CommentRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *CommentRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().Comment.Query().
 		Where(comment.IDEQ(id)).
 		Exist(ctx)
@@ -260,7 +260,7 @@ func (r *CommentRepo) Delete(ctx context.Context, req *commentV1.DeleteCommentRe
 // - Mean(rating)：SQL AVG，自动忽略 NULL（无评分的评论不计入平均，但仍计入 count）。
 // - Count()：SQL COUNT(*)，统计所有匹配行（含无评分）。
 // 返回 ProductRatingSummary{Average, Count}；无数据时 Average=0, Count=0。
-func (r *CommentRepo) GetProductRating(ctx context.Context, productID uint32) (*commentV1.ProductRatingSummary, error) {
+func (r *CommentRepo) GetProductRating(ctx context.Context, productID int64) (*commentV1.ProductRatingSummary, error) {
 	var rows []struct {
 		Avg   *float64
 		Count *int64
@@ -290,7 +290,7 @@ func (r *CommentRepo) GetProductRating(ctx context.Context, productID uint32) (*
 			summary.Average = *rows[0].Avg
 		}
 		if rows[0].Count != nil {
-			summary.Count = uint64(*rows[0].Count)
+			summary.Count = int64(*rows[0].Count)
 		}
 	}
 	// 评分数为 0 时强制平均分 0（避免 Mean 返回 NULL 被解为 0 的歧义）。
@@ -308,7 +308,7 @@ type ApprovedReviewForProduct struct {
 
 // ListApprovedCommentsForProduct 拉取商品最近 limit 条已批准评论（内容+星级），
 // 供评论 AI 摘要组装 prompt。
-func (r *CommentRepo) ListApprovedCommentsForProduct(ctx context.Context, productId uint32, limit int) ([]ApprovedReviewForProduct, error) {
+func (r *CommentRepo) ListApprovedCommentsForProduct(ctx context.Context, productId int64, limit int) ([]ApprovedReviewForProduct, error) {
 	if limit <= 0 || limit > 100 {
 		limit = 50
 	}
@@ -339,7 +339,7 @@ func (r *CommentRepo) ListApprovedCommentsForProduct(ctx context.Context, produc
 	return out, nil
 }
 
-// ratingPtrToUint8 将 *uint32（proto optional uint32）转为 *uint8（ent rating 列类型）。
+// ratingPtrToUint8 将 *int64（proto optional int64）转为 *uint8（ent rating 列类型）。
 // nil 透传。值范围校验由 BFF 层负责（1-5），此处仅做类型转换。
 func ratingPtrToUint8(p *uint32) *uint8 {
 	if p == nil {

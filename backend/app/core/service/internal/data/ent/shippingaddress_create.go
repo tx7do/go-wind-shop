@@ -65,13 +65,13 @@ func (_c *ShippingAddressCreate) SetNillableDeletedAt(v *time.Time) *ShippingAdd
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *ShippingAddressCreate) SetCreatedBy(v uint32) *ShippingAddressCreate {
+func (_c *ShippingAddressCreate) SetCreatedBy(v int64) *ShippingAddressCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *ShippingAddressCreate) SetNillableCreatedBy(v *uint32) *ShippingAddressCreate {
+func (_c *ShippingAddressCreate) SetNillableCreatedBy(v *int64) *ShippingAddressCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *ShippingAddressCreate) SetNillableCreatedBy(v *uint32) *ShippingAddres
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *ShippingAddressCreate) SetUpdatedBy(v uint32) *ShippingAddressCreate {
+func (_c *ShippingAddressCreate) SetUpdatedBy(v int64) *ShippingAddressCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *ShippingAddressCreate) SetNillableUpdatedBy(v *uint32) *ShippingAddressCreate {
+func (_c *ShippingAddressCreate) SetNillableUpdatedBy(v *int64) *ShippingAddressCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *ShippingAddressCreate) SetNillableUpdatedBy(v *uint32) *ShippingAddres
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *ShippingAddressCreate) SetDeletedBy(v uint32) *ShippingAddressCreate {
+func (_c *ShippingAddressCreate) SetDeletedBy(v int64) *ShippingAddressCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *ShippingAddressCreate) SetNillableDeletedBy(v *uint32) *ShippingAddressCreate {
+func (_c *ShippingAddressCreate) SetNillableDeletedBy(v *int64) *ShippingAddressCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *ShippingAddressCreate) SetNillableDeletedBy(v *uint32) *ShippingAddres
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *ShippingAddressCreate) SetTenantID(v uint32) *ShippingAddressCreate {
+func (_c *ShippingAddressCreate) SetTenantID(v int64) *ShippingAddressCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *ShippingAddressCreate) SetNillableTenantID(v *uint32) *ShippingAddressCreate {
+func (_c *ShippingAddressCreate) SetNillableTenantID(v *int64) *ShippingAddressCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *ShippingAddressCreate) SetNillableTenantID(v *uint32) *ShippingAddress
 }
 
 // SetUserID sets the "user_id" field.
-func (_c *ShippingAddressCreate) SetUserID(v uint32) *ShippingAddressCreate {
+func (_c *ShippingAddressCreate) SetUserID(v int64) *ShippingAddressCreate {
 	_c.mutation.SetUserID(v)
 	return _c
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_c *ShippingAddressCreate) SetNillableUserID(v *uint32) *ShippingAddressCreate {
+func (_c *ShippingAddressCreate) SetNillableUserID(v *int64) *ShippingAddressCreate {
 	if v != nil {
 		_c.SetUserID(*v)
 	}
@@ -233,7 +233,7 @@ func (_c *ShippingAddressCreate) SetNillableIsDefault(v *bool) *ShippingAddressC
 }
 
 // SetID sets the "id" field.
-func (_c *ShippingAddressCreate) SetID(v uint32) *ShippingAddressCreate {
+func (_c *ShippingAddressCreate) SetID(v int64) *ShippingAddressCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -309,7 +309,7 @@ func (_c *ShippingAddressCreate) sqlSave(ctx context.Context) (*ShippingAddress,
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -319,7 +319,7 @@ func (_c *ShippingAddressCreate) sqlSave(ctx context.Context) (*ShippingAddress,
 func (_c *ShippingAddressCreate) createSpec() (*ShippingAddress, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ShippingAddress{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(shippingaddress.Table, sqlgraph.NewFieldSpec(shippingaddress.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(shippingaddress.Table, sqlgraph.NewFieldSpec(shippingaddress.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -339,23 +339,23 @@ func (_c *ShippingAddressCreate) createSpec() (*ShippingAddress, *sqlgraph.Creat
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(shippingaddress.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(shippingaddress.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(shippingaddress.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(shippingaddress.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(shippingaddress.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(shippingaddress.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(shippingaddress.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(shippingaddress.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.UserID(); ok {
-		_spec.SetField(shippingaddress.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(shippingaddress.FieldUserID, field.TypeInt64, value)
 		_node.UserID = &value
 	}
 	if value, ok := _c.mutation.RecipientName(); ok {
@@ -475,7 +475,7 @@ func (u *ShippingAddressUpsert) ClearDeletedAt() *ShippingAddressUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ShippingAddressUpsert) SetCreatedBy(v uint32) *ShippingAddressUpsert {
+func (u *ShippingAddressUpsert) SetCreatedBy(v int64) *ShippingAddressUpsert {
 	u.Set(shippingaddress.FieldCreatedBy, v)
 	return u
 }
@@ -487,7 +487,7 @@ func (u *ShippingAddressUpsert) UpdateCreatedBy() *ShippingAddressUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ShippingAddressUpsert) AddCreatedBy(v uint32) *ShippingAddressUpsert {
+func (u *ShippingAddressUpsert) AddCreatedBy(v int64) *ShippingAddressUpsert {
 	u.Add(shippingaddress.FieldCreatedBy, v)
 	return u
 }
@@ -499,7 +499,7 @@ func (u *ShippingAddressUpsert) ClearCreatedBy() *ShippingAddressUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ShippingAddressUpsert) SetUpdatedBy(v uint32) *ShippingAddressUpsert {
+func (u *ShippingAddressUpsert) SetUpdatedBy(v int64) *ShippingAddressUpsert {
 	u.Set(shippingaddress.FieldUpdatedBy, v)
 	return u
 }
@@ -511,7 +511,7 @@ func (u *ShippingAddressUpsert) UpdateUpdatedBy() *ShippingAddressUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ShippingAddressUpsert) AddUpdatedBy(v uint32) *ShippingAddressUpsert {
+func (u *ShippingAddressUpsert) AddUpdatedBy(v int64) *ShippingAddressUpsert {
 	u.Add(shippingaddress.FieldUpdatedBy, v)
 	return u
 }
@@ -523,7 +523,7 @@ func (u *ShippingAddressUpsert) ClearUpdatedBy() *ShippingAddressUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ShippingAddressUpsert) SetDeletedBy(v uint32) *ShippingAddressUpsert {
+func (u *ShippingAddressUpsert) SetDeletedBy(v int64) *ShippingAddressUpsert {
 	u.Set(shippingaddress.FieldDeletedBy, v)
 	return u
 }
@@ -535,7 +535,7 @@ func (u *ShippingAddressUpsert) UpdateDeletedBy() *ShippingAddressUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ShippingAddressUpsert) AddDeletedBy(v uint32) *ShippingAddressUpsert {
+func (u *ShippingAddressUpsert) AddDeletedBy(v int64) *ShippingAddressUpsert {
 	u.Add(shippingaddress.FieldDeletedBy, v)
 	return u
 }
@@ -547,7 +547,7 @@ func (u *ShippingAddressUpsert) ClearDeletedBy() *ShippingAddressUpsert {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *ShippingAddressUpsert) SetUserID(v uint32) *ShippingAddressUpsert {
+func (u *ShippingAddressUpsert) SetUserID(v int64) *ShippingAddressUpsert {
 	u.Set(shippingaddress.FieldUserID, v)
 	return u
 }
@@ -559,7 +559,7 @@ func (u *ShippingAddressUpsert) UpdateUserID() *ShippingAddressUpsert {
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *ShippingAddressUpsert) AddUserID(v uint32) *ShippingAddressUpsert {
+func (u *ShippingAddressUpsert) AddUserID(v int64) *ShippingAddressUpsert {
 	u.Add(shippingaddress.FieldUserID, v)
 	return u
 }
@@ -793,14 +793,14 @@ func (u *ShippingAddressUpsertOne) ClearDeletedAt() *ShippingAddressUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ShippingAddressUpsertOne) SetCreatedBy(v uint32) *ShippingAddressUpsertOne {
+func (u *ShippingAddressUpsertOne) SetCreatedBy(v int64) *ShippingAddressUpsertOne {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ShippingAddressUpsertOne) AddCreatedBy(v uint32) *ShippingAddressUpsertOne {
+func (u *ShippingAddressUpsertOne) AddCreatedBy(v int64) *ShippingAddressUpsertOne {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -821,14 +821,14 @@ func (u *ShippingAddressUpsertOne) ClearCreatedBy() *ShippingAddressUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ShippingAddressUpsertOne) SetUpdatedBy(v uint32) *ShippingAddressUpsertOne {
+func (u *ShippingAddressUpsertOne) SetUpdatedBy(v int64) *ShippingAddressUpsertOne {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ShippingAddressUpsertOne) AddUpdatedBy(v uint32) *ShippingAddressUpsertOne {
+func (u *ShippingAddressUpsertOne) AddUpdatedBy(v int64) *ShippingAddressUpsertOne {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -849,14 +849,14 @@ func (u *ShippingAddressUpsertOne) ClearUpdatedBy() *ShippingAddressUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ShippingAddressUpsertOne) SetDeletedBy(v uint32) *ShippingAddressUpsertOne {
+func (u *ShippingAddressUpsertOne) SetDeletedBy(v int64) *ShippingAddressUpsertOne {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ShippingAddressUpsertOne) AddDeletedBy(v uint32) *ShippingAddressUpsertOne {
+func (u *ShippingAddressUpsertOne) AddDeletedBy(v int64) *ShippingAddressUpsertOne {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -877,14 +877,14 @@ func (u *ShippingAddressUpsertOne) ClearDeletedBy() *ShippingAddressUpsertOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (u *ShippingAddressUpsertOne) SetUserID(v uint32) *ShippingAddressUpsertOne {
+func (u *ShippingAddressUpsertOne) SetUserID(v int64) *ShippingAddressUpsertOne {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *ShippingAddressUpsertOne) AddUserID(v uint32) *ShippingAddressUpsertOne {
+func (u *ShippingAddressUpsertOne) AddUserID(v int64) *ShippingAddressUpsertOne {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.AddUserID(v)
 	})
@@ -1067,7 +1067,7 @@ func (u *ShippingAddressUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *ShippingAddressUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *ShippingAddressUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -1076,7 +1076,7 @@ func (u *ShippingAddressUpsertOne) ID(ctx context.Context) (id uint32, err error
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *ShippingAddressUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *ShippingAddressUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -1133,7 +1133,7 @@ func (_c *ShippingAddressCreateBulk) Save(ctx context.Context) ([]*ShippingAddre
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1314,14 +1314,14 @@ func (u *ShippingAddressUpsertBulk) ClearDeletedAt() *ShippingAddressUpsertBulk 
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *ShippingAddressUpsertBulk) SetCreatedBy(v uint32) *ShippingAddressUpsertBulk {
+func (u *ShippingAddressUpsertBulk) SetCreatedBy(v int64) *ShippingAddressUpsertBulk {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *ShippingAddressUpsertBulk) AddCreatedBy(v uint32) *ShippingAddressUpsertBulk {
+func (u *ShippingAddressUpsertBulk) AddCreatedBy(v int64) *ShippingAddressUpsertBulk {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1342,14 +1342,14 @@ func (u *ShippingAddressUpsertBulk) ClearCreatedBy() *ShippingAddressUpsertBulk 
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *ShippingAddressUpsertBulk) SetUpdatedBy(v uint32) *ShippingAddressUpsertBulk {
+func (u *ShippingAddressUpsertBulk) SetUpdatedBy(v int64) *ShippingAddressUpsertBulk {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *ShippingAddressUpsertBulk) AddUpdatedBy(v uint32) *ShippingAddressUpsertBulk {
+func (u *ShippingAddressUpsertBulk) AddUpdatedBy(v int64) *ShippingAddressUpsertBulk {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1370,14 +1370,14 @@ func (u *ShippingAddressUpsertBulk) ClearUpdatedBy() *ShippingAddressUpsertBulk 
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *ShippingAddressUpsertBulk) SetDeletedBy(v uint32) *ShippingAddressUpsertBulk {
+func (u *ShippingAddressUpsertBulk) SetDeletedBy(v int64) *ShippingAddressUpsertBulk {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *ShippingAddressUpsertBulk) AddDeletedBy(v uint32) *ShippingAddressUpsertBulk {
+func (u *ShippingAddressUpsertBulk) AddDeletedBy(v int64) *ShippingAddressUpsertBulk {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1398,14 +1398,14 @@ func (u *ShippingAddressUpsertBulk) ClearDeletedBy() *ShippingAddressUpsertBulk 
 }
 
 // SetUserID sets the "user_id" field.
-func (u *ShippingAddressUpsertBulk) SetUserID(v uint32) *ShippingAddressUpsertBulk {
+func (u *ShippingAddressUpsertBulk) SetUserID(v int64) *ShippingAddressUpsertBulk {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.SetUserID(v)
 	})
 }
 
 // AddUserID adds v to the "user_id" field.
-func (u *ShippingAddressUpsertBulk) AddUserID(v uint32) *ShippingAddressUpsertBulk {
+func (u *ShippingAddressUpsertBulk) AddUserID(v int64) *ShippingAddressUpsertBulk {
 	return u.Update(func(s *ShippingAddressUpsert) {
 		s.AddUserID(v)
 	})

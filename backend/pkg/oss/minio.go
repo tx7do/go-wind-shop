@@ -7,11 +7,11 @@ import (
 	"strings"
 	"time"
 
-	bLogger "github.com/tx7do/kratos-bootstrap/logger"
-	"go-wind-shop/pkg/logx"
 	"github.com/minio/minio-go/v7"
 	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/trans"
+	bLogger "github.com/tx7do/kratos-bootstrap/logger"
+	"go-wind-shop/pkg/logx"
 
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
 	ossMinio "github.com/tx7do/kratos-bootstrap/oss/minio"
@@ -29,7 +29,7 @@ const (
 type MinIOClient struct {
 	mc         *minio.Client
 	conf       *conf.OSS
-	log *logx.Helper
+	log        *logx.Helper
 	hmacSecret []byte
 }
 

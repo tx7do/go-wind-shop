@@ -36,12 +36,12 @@ func (Shipment) Annotations() []schema.Annotation {
 
 func (Shipment) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("order_id").
+		field.Int64("order_id").
 			Comment("关联的订单ID").
 			Optional().
 			Nillable(),
 
-		field.Uint32("user_id").
+		field.Int64("user_id").
 			Comment("归属用户ID（与订单 user_id 一致，用于行级隔离）").
 			Optional().
 			Nillable(),
@@ -75,10 +75,10 @@ func (Shipment) Fields() []ent.Field {
 
 func (Shipment) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 	}
 }
 

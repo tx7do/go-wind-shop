@@ -39,17 +39,17 @@ func (OrderItem) Annotations() []schema.Annotation {
 
 func (OrderItem) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("order_id").
+		field.Int64("order_id").
 			Comment("关联的订单ID").
 			Optional().
 			Nillable(),
 
-		field.Uint32("user_id").
+		field.Int64("user_id").
 			Comment("用户ID（随所属订单归属，由隐私层强制）").
 			Optional().
 			Nillable(),
 
-		field.Uint32("sku_id").
+		field.Int64("sku_id").
 			Comment("关联的 SKU ID").
 			Optional().
 			Nillable(),
@@ -81,10 +81,10 @@ func (OrderItem) Fields() []ent.Field {
 
 func (OrderItem) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 	}
 }
 

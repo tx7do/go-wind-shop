@@ -82,7 +82,7 @@ export function useNotice() {
     try {
       // 后端约定：recipientIds 为空 = 标记该用户全部未读
       // （下拉只加载了当前页，无法枚举全部未读ID）。
-      await markNotificationAsRead({ userId, recipientIds: [] });
+      await markNotificationAsRead({ userId: String(userId), recipientIds: [] });
       ElMessage.success(t("core.notice.markAllReadSuccess"));
       reloadAll();
     } catch (error) {

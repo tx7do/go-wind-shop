@@ -4,15 +4,15 @@ import (
 	"context"
 	"io"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/kratos-transport/transport/sse"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 
-	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"
+	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 	authenticationV1 "go-wind-shop/api/gen/go/authentication/service/v1"
 
 	"go-wind-shop/pkg/middleware/auth"
@@ -43,7 +43,7 @@ type AiChatService struct {
 
 	aiChatServiceClient         aiV1.AiChatServiceClient
 	authenticationServiceClient authenticationV1.AuthenticationServiceClient
-	log *logx.Helper
+	log                         *logx.Helper
 
 	aiChatPublisher AiChatPublisher
 }

@@ -32,9 +32,9 @@ export const useDictViewStore = defineStore("dict-view", {
     currentTypeId: null,
     loading: false,
     needReloadEntryList: false,
-    typeList: { items: [], total: 0 },
-    entryList: { items: [], total: 0 },
-    languageList: { items: [], total: 0 },
+    typeList: { items: [], total: "0" },
+    entryList: { items: [], total: "0" },
+    languageList: { items: [], total: "0" },
   }),
 
   actions: {
@@ -148,11 +148,11 @@ export const useDictViewStore = defineStore("dict-view", {
     },
 
     resetTypeList() {
-      this.typeList = { items: [], total: 0 };
+      this.typeList = { items: [], total: "0" };
     },
 
     resetEntryList() {
-      this.entryList = { items: [], total: 0 };
+      this.entryList = { items: [], total: "0" };
     },
   },
 });

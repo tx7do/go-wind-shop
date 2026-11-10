@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -23,7 +23,7 @@ import (
 
 type InternalMessageCategoryRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[internalMessageV1.InternalMessageCategory, ent.InternalMessageCategory]
 
@@ -99,7 +99,7 @@ func (r *InternalMessageCategoryRepo) List(ctx context.Context, req *paginationV
 	}, nil
 }
 
-func (r *InternalMessageCategoryRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *InternalMessageCategoryRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().InternalMessageCategory.Query().
 		Where(internalmessagecategory.IDEQ(id)).
 		Exist(ctx)
@@ -133,7 +133,7 @@ func (r *InternalMessageCategoryRepo) Get(ctx context.Context, req *internalMess
 }
 
 // ListCategoriesByIds 根据ID列表获取分类列表
-func (r *InternalMessageCategoryRepo) ListCategoriesByIds(ctx context.Context, ids []uint32) ([]*internalMessageV1.InternalMessageCategory, error) {
+func (r *InternalMessageCategoryRepo) ListCategoriesByIds(ctx context.Context, ids []int64) ([]*internalMessageV1.InternalMessageCategory, error) {
 	if len(ids) == 0 {
 		return []*internalMessageV1.InternalMessageCategory{}, nil
 	}
@@ -226,7 +226,7 @@ func (r *InternalMessageCategoryRepo) Delete(ctx context.Context, req *internalM
 		return internalMessageV1.ErrorBadRequest("invalid parameter")
 	}
 
-	childrenIds, err := entCrud.QueryAllChildrenIds(ctx, r.entClient, "internal_message_categories", req.GetId())
+	childrenIds, err := entCrud.QueryAllChildrenIds64(ctx, r.entClient, "internal_message_categories", req.GetId())
 	if err != nil {
 		r.log.Errorf("query child internal message categories failed: %s", err.Error())
 		return internalMessageV1.ErrorInternalServerError("query child internal message categories failed")

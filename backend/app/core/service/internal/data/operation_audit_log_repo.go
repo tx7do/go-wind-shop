@@ -1,7 +1,8 @@
 package data
 
-import (	"go-wind-shop/pkg/logx"
+import (
 	"context"
+	"go-wind-shop/pkg/logx"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -22,7 +23,7 @@ import (	"go-wind-shop/pkg/logx"
 
 type OperationAuditLogRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[auditV1.OperationAuditLog, ent.OperationAuditLog]
 
@@ -108,7 +109,7 @@ func (r *OperationAuditLogRepo) List(ctx context.Context, req *paginationV1.Pagi
 	}, nil
 }
 
-func (r *OperationAuditLogRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *OperationAuditLogRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().OperationAuditLog.Query().
 		Where(operationauditlog.IDEQ(id)).
 		Exist(ctx)

@@ -4,10 +4,10 @@ import (
 	"context"
 	"strings"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/captcha"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	adminV1 "go-wind-shop/api/gen/go/admin/service/v1"

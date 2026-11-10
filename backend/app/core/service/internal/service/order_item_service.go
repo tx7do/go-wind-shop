@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
@@ -16,7 +16,7 @@ import (
 type OrderItemService struct {
 	orderV1.UnimplementedOrderItemServiceServer
 
-	log *logx.Helper
+	log  *logx.Helper
 	repo *data.OrderItemRepo
 }
 
@@ -38,7 +38,7 @@ func (s *OrderItemService) Count(ctx context.Context, req *paginationV1.PagingRe
 	}
 
 	return &orderV1.CountOrderItemResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 

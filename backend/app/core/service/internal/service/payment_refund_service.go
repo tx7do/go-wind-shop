@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
@@ -20,7 +20,7 @@ import (
 type PaymentRefundService struct {
 	paymentV1.UnimplementedPaymentRefundServiceServer
 
-	log *logx.Helper
+	log                *logx.Helper
 	repo               *data.PaymentRefundRepo
 	transactionRepo    *data.PaymentTransactionRepo
 	transactionService *PaymentTransactionService
@@ -54,7 +54,7 @@ func (s *PaymentRefundService) Count(ctx context.Context, req *paginationV1.Pagi
 	}
 
 	return &paymentV1.CountPaymentRefundResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 
@@ -145,7 +145,7 @@ func (s *PaymentRefundService) Create(ctx context.Context, req *paymentV1.Create
 
 // buildRefundFilterQuery 构造按 transaction_id 过滤的 query JSON。
 // go-crud 的 query-string filter 把 JSON 里的字段映射到实体列（transaction_id 列存在）。
-func (s *PaymentRefundService) buildRefundFilterQuery(txId uint32) string {
+func (s *PaymentRefundService) buildRefundFilterQuery(txId int64) string {
 	return fmt.Sprintf(`{"transaction_id":%d}`, txId)
 }
 
@@ -286,7 +286,7 @@ func (s *PaymentRefundService) Update(ctx context.Context, req *paymentV1.Update
 
 // CreateAuto 系统自动退款入口（拼团失败等场景）：创建 PENDING 退款记录。
 // 复用既有 Create 校验（流水 SUCCEEDED/金额/防重）。
-func (s *PaymentRefundService) CreateAuto(ctx context.Context, transactionId uint32, amount int64, reason string) error {
+func (s *PaymentRefundService) CreateAuto(ctx context.Context, transactionId int64, amount int64, reason string) error {
 	_, err := s.Create(ctx, &paymentV1.CreatePaymentRefundRequest{
 		Data: &paymentV1.PaymentRefund{
 			TransactionId: trans.Ptr(transactionId),
@@ -300,7 +300,7 @@ func (s *PaymentRefundService) CreateAuto(ctx context.Context, transactionId uin
 
 // ApproveAuto 系统自动退款确认入口：推进 SUCCEEDED 并触发既有联动
 // （渠道退款/流水 REFUNDED/库存回补/站内信/积分回冲）。
-func (s *PaymentRefundService) ApproveAuto(ctx context.Context, refundId uint32) error {
+func (s *PaymentRefundService) ApproveAuto(ctx context.Context, refundId int64) error {
 	_, err := s.Update(ctx, &paymentV1.UpdatePaymentRefundRequest{
 		Id:   refundId,
 		Data: &paymentV1.PaymentRefund{Status: paymentV1.PaymentRefund_SUCCEEDED.Enum()},
@@ -316,11 +316,11 @@ func (s *PaymentRefundService) Delete(ctx context.Context, req *paymentV1.Delete
 }
 
 // gatewayRefund 对网关渠道流水发起渠道退款（推进 SUCCEEDED 的前置门槛）。
-// - 渠道拒绝 → 返回错误，退款记录停留 PENDING（可修数后重试，out_request_no
-//   幂等保证渠道侧不重复退）；
-// - 记账型渠道（BALANCE/OFFLINE 等）无网关语义 → 直接放行；
-// - MOCK 渠道受理即成功（不出真实资金，本地闭环可演示）。
-func (s *PaymentRefundService) gatewayRefund(ctx context.Context, refundId uint32) error {
+//   - 渠道拒绝 → 返回错误，退款记录停留 PENDING（可修数后重试，out_request_no
+//     幂等保证渠道侧不重复退）；
+//   - 记账型渠道（BALANCE/OFFLINE 等）无网关语义 → 直接放行；
+//   - MOCK 渠道受理即成功（不出真实资金，本地闭环可演示）。
+func (s *PaymentRefundService) gatewayRefund(ctx context.Context, refundId int64) error {
 	refund, gErr := s.repo.Get(ctx, &paymentV1.GetPaymentRefundRequest{
 		QueryBy: &paymentV1.GetPaymentRefundRequest_Id{Id: refundId},
 	})
@@ -347,8 +347,8 @@ func (s *PaymentRefundService) gatewayRefund(ctx context.Context, refundId uint3
 	}
 
 	if rErr := gw.Refund(ctx, gateway.RefundRequest{
-		OutTradeNo:   strconv.FormatUint(uint64(txId), 10),
-		OutRequestNo: strconv.FormatUint(uint64(refundId), 10),
+		OutTradeNo:   strconv.FormatInt(int64(txId), 10),
+		OutRequestNo: strconv.FormatInt(int64(refundId), 10),
 		RefundCents:  refund.GetAmount(),
 		TotalCents:   tx.GetAmount(),
 		Reason:       "订单退款",

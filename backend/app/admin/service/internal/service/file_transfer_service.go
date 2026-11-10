@@ -9,8 +9,8 @@ import (
 	"path"
 	"strings"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/minio/minio-go/v7"
+	"go-wind-shop/pkg/logx"
 
 	"github.com/tx7do/go-utils/id"
 	"github.com/tx7do/go-utils/trans"
@@ -39,9 +39,9 @@ func NewFileTransferService(
 	fileServiceClient storageV1.FileServiceClient,
 ) *FileTransferService {
 	return &FileTransferService{
-		log:                     logx.New(ctx.NewLoggerHelper("file-transfer/service/admin-service")),
-		mc:                      mc,
-		fileServiceClient:       fileServiceClient,
+		log:               logx.New(ctx.NewLoggerHelper("file-transfer/service/admin-service")),
+		mc:                mc,
+		fileServiceClient: fileServiceClient,
 	}
 }
 
@@ -94,7 +94,7 @@ func (s *FileTransferService) hashFileContent(fileData []byte) string {
 // recordFile 记录文件元数据到数据库
 func (s *FileTransferService) recordFile(
 	ctx context.Context,
-	tenantID, userID uint32,
+	tenantID, userID int64,
 	fileData []byte,
 	sourceFileName string,
 	info minio.UploadInfo,

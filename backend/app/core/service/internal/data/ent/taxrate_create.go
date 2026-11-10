@@ -65,13 +65,13 @@ func (_c *TaxRateCreate) SetNillableDeletedAt(v *time.Time) *TaxRateCreate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *TaxRateCreate) SetCreatedBy(v uint32) *TaxRateCreate {
+func (_c *TaxRateCreate) SetCreatedBy(v int64) *TaxRateCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *TaxRateCreate) SetNillableCreatedBy(v *uint32) *TaxRateCreate {
+func (_c *TaxRateCreate) SetNillableCreatedBy(v *int64) *TaxRateCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *TaxRateCreate) SetNillableCreatedBy(v *uint32) *TaxRateCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *TaxRateCreate) SetUpdatedBy(v uint32) *TaxRateCreate {
+func (_c *TaxRateCreate) SetUpdatedBy(v int64) *TaxRateCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *TaxRateCreate) SetNillableUpdatedBy(v *uint32) *TaxRateCreate {
+func (_c *TaxRateCreate) SetNillableUpdatedBy(v *int64) *TaxRateCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *TaxRateCreate) SetNillableUpdatedBy(v *uint32) *TaxRateCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *TaxRateCreate) SetDeletedBy(v uint32) *TaxRateCreate {
+func (_c *TaxRateCreate) SetDeletedBy(v int64) *TaxRateCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *TaxRateCreate) SetNillableDeletedBy(v *uint32) *TaxRateCreate {
+func (_c *TaxRateCreate) SetNillableDeletedBy(v *int64) *TaxRateCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *TaxRateCreate) SetNillableDeletedBy(v *uint32) *TaxRateCreate {
 }
 
 // SetTenantID sets the "tenant_id" field.
-func (_c *TaxRateCreate) SetTenantID(v uint32) *TaxRateCreate {
+func (_c *TaxRateCreate) SetTenantID(v int64) *TaxRateCreate {
 	_c.mutation.SetTenantID(v)
 	return _c
 }
 
 // SetNillableTenantID sets the "tenant_id" field if the given value is not nil.
-func (_c *TaxRateCreate) SetNillableTenantID(v *uint32) *TaxRateCreate {
+func (_c *TaxRateCreate) SetNillableTenantID(v *int64) *TaxRateCreate {
 	if v != nil {
 		_c.SetTenantID(*v)
 	}
@@ -177,7 +177,7 @@ func (_c *TaxRateCreate) SetNillableStatus(v *taxrate.Status) *TaxRateCreate {
 }
 
 // SetID sets the "id" field.
-func (_c *TaxRateCreate) SetID(v uint32) *TaxRateCreate {
+func (_c *TaxRateCreate) SetID(v int64) *TaxRateCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -262,7 +262,7 @@ func (_c *TaxRateCreate) sqlSave(ctx context.Context) (*TaxRate, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -272,7 +272,7 @@ func (_c *TaxRateCreate) sqlSave(ctx context.Context) (*TaxRate, error) {
 func (_c *TaxRateCreate) createSpec() (*TaxRate, *sqlgraph.CreateSpec) {
 	var (
 		_node = &TaxRate{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(taxrate.Table, sqlgraph.NewFieldSpec(taxrate.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(taxrate.Table, sqlgraph.NewFieldSpec(taxrate.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -292,19 +292,19 @@ func (_c *TaxRateCreate) createSpec() (*TaxRate, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(taxrate.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(taxrate.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(taxrate.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(taxrate.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(taxrate.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(taxrate.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.TenantID(); ok {
-		_spec.SetField(taxrate.FieldTenantID, field.TypeUint32, value)
+		_spec.SetField(taxrate.FieldTenantID, field.TypeInt64, value)
 		_node.TenantID = &value
 	}
 	if value, ok := _c.mutation.Currency(); ok {
@@ -412,7 +412,7 @@ func (u *TaxRateUpsert) ClearDeletedAt() *TaxRateUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *TaxRateUpsert) SetCreatedBy(v uint32) *TaxRateUpsert {
+func (u *TaxRateUpsert) SetCreatedBy(v int64) *TaxRateUpsert {
 	u.Set(taxrate.FieldCreatedBy, v)
 	return u
 }
@@ -424,7 +424,7 @@ func (u *TaxRateUpsert) UpdateCreatedBy() *TaxRateUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *TaxRateUpsert) AddCreatedBy(v uint32) *TaxRateUpsert {
+func (u *TaxRateUpsert) AddCreatedBy(v int64) *TaxRateUpsert {
 	u.Add(taxrate.FieldCreatedBy, v)
 	return u
 }
@@ -436,7 +436,7 @@ func (u *TaxRateUpsert) ClearCreatedBy() *TaxRateUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *TaxRateUpsert) SetUpdatedBy(v uint32) *TaxRateUpsert {
+func (u *TaxRateUpsert) SetUpdatedBy(v int64) *TaxRateUpsert {
 	u.Set(taxrate.FieldUpdatedBy, v)
 	return u
 }
@@ -448,7 +448,7 @@ func (u *TaxRateUpsert) UpdateUpdatedBy() *TaxRateUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *TaxRateUpsert) AddUpdatedBy(v uint32) *TaxRateUpsert {
+func (u *TaxRateUpsert) AddUpdatedBy(v int64) *TaxRateUpsert {
 	u.Add(taxrate.FieldUpdatedBy, v)
 	return u
 }
@@ -460,7 +460,7 @@ func (u *TaxRateUpsert) ClearUpdatedBy() *TaxRateUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *TaxRateUpsert) SetDeletedBy(v uint32) *TaxRateUpsert {
+func (u *TaxRateUpsert) SetDeletedBy(v int64) *TaxRateUpsert {
 	u.Set(taxrate.FieldDeletedBy, v)
 	return u
 }
@@ -472,7 +472,7 @@ func (u *TaxRateUpsert) UpdateDeletedBy() *TaxRateUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *TaxRateUpsert) AddDeletedBy(v uint32) *TaxRateUpsert {
+func (u *TaxRateUpsert) AddDeletedBy(v int64) *TaxRateUpsert {
 	u.Add(taxrate.FieldDeletedBy, v)
 	return u
 }
@@ -658,14 +658,14 @@ func (u *TaxRateUpsertOne) ClearDeletedAt() *TaxRateUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *TaxRateUpsertOne) SetCreatedBy(v uint32) *TaxRateUpsertOne {
+func (u *TaxRateUpsertOne) SetCreatedBy(v int64) *TaxRateUpsertOne {
 	return u.Update(func(s *TaxRateUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *TaxRateUpsertOne) AddCreatedBy(v uint32) *TaxRateUpsertOne {
+func (u *TaxRateUpsertOne) AddCreatedBy(v int64) *TaxRateUpsertOne {
 	return u.Update(func(s *TaxRateUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -686,14 +686,14 @@ func (u *TaxRateUpsertOne) ClearCreatedBy() *TaxRateUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *TaxRateUpsertOne) SetUpdatedBy(v uint32) *TaxRateUpsertOne {
+func (u *TaxRateUpsertOne) SetUpdatedBy(v int64) *TaxRateUpsertOne {
 	return u.Update(func(s *TaxRateUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *TaxRateUpsertOne) AddUpdatedBy(v uint32) *TaxRateUpsertOne {
+func (u *TaxRateUpsertOne) AddUpdatedBy(v int64) *TaxRateUpsertOne {
 	return u.Update(func(s *TaxRateUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -714,14 +714,14 @@ func (u *TaxRateUpsertOne) ClearUpdatedBy() *TaxRateUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *TaxRateUpsertOne) SetDeletedBy(v uint32) *TaxRateUpsertOne {
+func (u *TaxRateUpsertOne) SetDeletedBy(v int64) *TaxRateUpsertOne {
 	return u.Update(func(s *TaxRateUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *TaxRateUpsertOne) AddDeletedBy(v uint32) *TaxRateUpsertOne {
+func (u *TaxRateUpsertOne) AddDeletedBy(v int64) *TaxRateUpsertOne {
 	return u.Update(func(s *TaxRateUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -848,7 +848,7 @@ func (u *TaxRateUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *TaxRateUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *TaxRateUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -857,7 +857,7 @@ func (u *TaxRateUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *TaxRateUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *TaxRateUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -914,7 +914,7 @@ func (_c *TaxRateCreateBulk) Save(ctx context.Context) ([]*TaxRate, error) {
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1095,14 +1095,14 @@ func (u *TaxRateUpsertBulk) ClearDeletedAt() *TaxRateUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *TaxRateUpsertBulk) SetCreatedBy(v uint32) *TaxRateUpsertBulk {
+func (u *TaxRateUpsertBulk) SetCreatedBy(v int64) *TaxRateUpsertBulk {
 	return u.Update(func(s *TaxRateUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *TaxRateUpsertBulk) AddCreatedBy(v uint32) *TaxRateUpsertBulk {
+func (u *TaxRateUpsertBulk) AddCreatedBy(v int64) *TaxRateUpsertBulk {
 	return u.Update(func(s *TaxRateUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1123,14 +1123,14 @@ func (u *TaxRateUpsertBulk) ClearCreatedBy() *TaxRateUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *TaxRateUpsertBulk) SetUpdatedBy(v uint32) *TaxRateUpsertBulk {
+func (u *TaxRateUpsertBulk) SetUpdatedBy(v int64) *TaxRateUpsertBulk {
 	return u.Update(func(s *TaxRateUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *TaxRateUpsertBulk) AddUpdatedBy(v uint32) *TaxRateUpsertBulk {
+func (u *TaxRateUpsertBulk) AddUpdatedBy(v int64) *TaxRateUpsertBulk {
 	return u.Update(func(s *TaxRateUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1151,14 +1151,14 @@ func (u *TaxRateUpsertBulk) ClearUpdatedBy() *TaxRateUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *TaxRateUpsertBulk) SetDeletedBy(v uint32) *TaxRateUpsertBulk {
+func (u *TaxRateUpsertBulk) SetDeletedBy(v int64) *TaxRateUpsertBulk {
 	return u.Update(func(s *TaxRateUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *TaxRateUpsertBulk) AddDeletedBy(v uint32) *TaxRateUpsertBulk {
+func (u *TaxRateUpsertBulk) AddDeletedBy(v int64) *TaxRateUpsertBulk {
 	return u.Update(func(s *TaxRateUpsert) {
 		s.AddDeletedBy(v)
 	})

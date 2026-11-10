@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
@@ -32,7 +32,7 @@ import (
 type PaymentTransactionService struct {
 	paymentV1.UnimplementedPaymentTransactionServiceServer
 
-	log *logx.Helper
+	log                  *logx.Helper
 	repo                 *data.PaymentTransactionRepo
 	orderService         *OrderService
 	channelConfigService *PaymentChannelConfigService
@@ -72,7 +72,7 @@ func (s *PaymentTransactionService) Count(ctx context.Context, req *paginationV1
 	}
 
 	return &paymentV1.CountPaymentTransactionResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 
@@ -86,13 +86,13 @@ func (s *PaymentTransactionService) Get(ctx context.Context, req *paymentV1.GetP
 // 由本方法转发到 OrderService，避免 PaymentRefundService 直接依赖 OrderService
 // （OrderService 已被 PaymentTransactionService 依赖，本转发维持原依赖方向，
 // 不引入循环）。
-func (s *PaymentTransactionService) RestoreOrderStockForRefund(ctx context.Context, orderId uint32) error {
+func (s *PaymentTransactionService) RestoreOrderStockForRefund(ctx context.Context, orderId int64) error {
 	return s.orderService.RestoreStockForRefund(ctx, orderId)
 }
 
 // ForwardRefundPointsDeduct 转发到 PointsLedgerService 退款回冲（best-effort，
 // 幂等；失败不影响退款状态）。
-func (s *PaymentTransactionService) ForwardRefundPointsDeduct(ctx context.Context, orderId uint32) {
+func (s *PaymentTransactionService) ForwardRefundPointsDeduct(ctx context.Context, orderId int64) {
 	if s.pointsLedgerService == nil {
 		return
 	}
@@ -103,7 +103,7 @@ func (s *PaymentTransactionService) ForwardRefundPointsDeduct(ctx context.Contex
 
 // NotifyOrderRefundSuccess 转发到 OrderService 发送退款成功站内通知（best-effort，
 // 通知失败不影响退款状态）。amount 为最小货币单位（分）。
-func (s *PaymentTransactionService) NotifyOrderRefundSuccess(ctx context.Context, orderId uint32, amount int64) {
+func (s *PaymentTransactionService) NotifyOrderRefundSuccess(ctx context.Context, orderId int64, amount int64) {
 	s.orderService.notifyOrderRefundSuccess(ctx, orderId, amount)
 }
 
@@ -185,10 +185,14 @@ func (s *PaymentTransactionService) Update(ctx context.Context, req *paymentV1.U
 
 // isAllowedTxTransition 校验支付流水状态转换是否在允许列表内。
 // 普通调用方仅允许：
-//   PENDING → SUCCEEDED / FAILED   （支付回调）
-//   SUCCEEDED → REFUNDED            （退款联动）
+//
+//	PENDING → SUCCEEDED / FAILED   （支付回调）
+//	SUCCEEDED → REFUNDED            （退款联动）
+//
 // 系统上下文（ExpireOrderByTimeout 注入的 SystemViewer）额外允许：
-//   SUCCEEDED → FAILED  （孤儿支付清理）
+//
+//	SUCCEEDED → FAILED  （孤儿支付清理）
+//
 // 终态 REFUNDED/FAILED 对所有调用方均为吸收态无出边。
 func isAllowedTxTransition(ctx context.Context, from, to paymentV1.PaymentTransaction_Status) bool {
 	allowed := map[paymentV1.PaymentTransaction_Status]map[paymentV1.PaymentTransaction_Status]bool{
@@ -491,7 +495,7 @@ func (s *PaymentTransactionService) HandlePaymentReconcile(taskType string, task
 			continue
 		}
 
-		qr, qErr := gw.QueryOrder(ctx, strconv.FormatUint(uint64(txId), 10))
+		qr, qErr := gw.QueryOrder(ctx, strconv.FormatInt(int64(txId), 10))
 		if qErr != nil {
 			s.log.Errorf("payment reconcile query order for tx [%d] failed: %v", txId, qErr)
 			skipped++
@@ -587,7 +591,7 @@ func (s *PaymentTransactionService) reconcileRefundDrift(ctx context.Context) {
 			continue
 		}
 
-		qr, qErr := gw.QueryRefund(ctx, strconv.FormatUint(uint64(refundId), 10))
+		qr, qErr := gw.QueryRefund(ctx, strconv.FormatInt(int64(refundId), 10))
 		if qErr != nil {
 			s.log.Errorf("refund drift query refund [%d] failed: %v", refundId, qErr)
 			continue

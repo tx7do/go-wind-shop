@@ -71,12 +71,11 @@ export function useCreatePlan(options?: UseMutationOptions<{}, Error, Record<str
 }
 
 export function useUpdatePlan(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.planService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.planService.Update({ id: String(id),
         data: {
           ...values,
         },
@@ -127,12 +126,11 @@ export function useCreatePlanQuota(options?: UseMutationOptions<{}, Error, Recor
 }
 
 export function useUpdatePlanQuota(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.planQuotaService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.planQuotaService.Update({ id: String(id),
         data: {
           ...values,
         },

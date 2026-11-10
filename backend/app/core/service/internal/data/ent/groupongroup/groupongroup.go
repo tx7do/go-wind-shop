@@ -75,7 +75,7 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID int64
 	// DefaultMemberCount holds the default value on creation for the "member_count" field.
 	DefaultMemberCount int32
 	// DefaultPaidCount holds the default value on creation for the "paid_count" field.
@@ -83,7 +83,7 @@ var (
 	// DefaultTargetSize holds the default value on creation for the "target_size" field.
 	DefaultTargetSize int32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(int64) error
 )
 
 // Status defines the type for the "status" enum field.

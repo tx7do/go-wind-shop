@@ -37,10 +37,10 @@ export function useCreateMemberTier(
 }
 
 export function useUpdateMemberTier(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
       apiClient.memberTierService.Update({
         id, data: { ...values },
         updateMask: makeUpdateMask(Object.keys(values ?? {})),

@@ -4,12 +4,12 @@ import (
 	"context"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
 	"go-wind-shop/app/core/service/internal/data/ent"
@@ -49,7 +49,7 @@ func (s *SeckillActivityService) Count(ctx context.Context, req *paginationV1.Pa
 	}
 
 	return &catalogV1.CountSeckillActivityResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 
@@ -127,7 +127,7 @@ func (s *SeckillActivityService) validateSeckill(data *catalogV1.SeckillActivity
 // 扣减由调用方（deductSeckillInTx）在同一事务内完成。
 //
 // 返回 (活动, 是否命中)。租户隔离由隐私层按 viewer 注入。
-func activeSeckillInTx(ctx context.Context, tx *ent.Tx, skuId uint32, now time.Time) (*ent.SeckillActivity, bool) {
+func activeSeckillInTx(ctx context.Context, tx *ent.Tx, skuId int64, now time.Time) (*ent.SeckillActivity, bool) {
 	now = time.Now()
 	list, err := tx.SeckillActivity.Query().
 		Where(
@@ -155,7 +155,7 @@ func activeSeckillInTx(ctx context.Context, tx *ent.Tx, skuId uint32, now time.T
 
 // deductSeckillInTx 行锁扣减秒杀已售数（与订单创建同事务，防超卖）。
 // 成功返回 nil；售罄/并发竞争失败返回错误（整事务回滚）。
-func deductSeckillInTx(ctx context.Context, tx *ent.Tx, activityId uint32) error {
+func deductSeckillInTx(ctx context.Context, tx *ent.Tx, activityId int64) error {
 	row, err := tx.SeckillActivity.Query().
 		Where(seckillactivity.IDEQ(activityId)).
 		ForUpdate().
@@ -176,7 +176,7 @@ func deductSeckillInTx(ctx context.Context, tx *ent.Tx, activityId uint32) error
 
 // checkSeckillUserLimitInTx 校验用户在活动窗口内对该 SKU 的累计购买量
 // （含本次数量）不超 per_user_limit。
-func checkSeckillUserLimitInTx(ctx context.Context, tx *ent.Tx, activity *ent.SeckillActivity, userId uint32, quantity int32) error {
+func checkSeckillUserLimitInTx(ctx context.Context, tx *ent.Tx, activity *ent.SeckillActivity, userId int64, quantity int32) error {
 	limit := int32(1)
 	if activity.PerUserLimit > 0 {
 		limit = activity.PerUserLimit

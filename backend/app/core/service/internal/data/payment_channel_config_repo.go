@@ -1,13 +1,13 @@
 package data
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
+	"go-wind-shop/pkg/logx"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"github.com/tx7do/go-utils/trans"
+	"github.com/tx7do/kratos-bootstrap/bootstrap"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -16,8 +16,8 @@ import (
 	"github.com/tx7do/go-utils/mapper"
 
 	"go-wind-shop/app/core/service/internal/data/ent"
-	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 	"go-wind-shop/app/core/service/internal/data/ent/paymentchannelconfig"
+	"go-wind-shop/app/core/service/internal/data/ent/predicate"
 
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
 )
@@ -137,7 +137,7 @@ func (r *PaymentChannelConfigRepo) ListEnabled(ctx context.Context) (*paymentV1.
 	return resp, nil
 }
 
-func (r *PaymentChannelConfigRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *PaymentChannelConfigRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().PaymentChannelConfig.Query().
 		Where(paymentchannelconfig.IDEQ(id)).
 		Exist(ctx)
@@ -187,7 +187,6 @@ func (r *PaymentChannelConfigRepo) Create(ctx context.Context, req *paymentV1.Cr
 	if req.Data.Id != nil {
 		builder.SetID(req.GetData().GetId())
 	}
-
 
 	if err := builder.Exec(ctx); err != nil {
 		r.log.Errorf("insert payment channel config failed: %s", err.Error())

@@ -21,7 +21,7 @@ func newQueryReq(t *testing.T, m map[string]any) *paginationV1.PagingRequest {
 
 func TestExtractAndStripNameKeyword_FromName(t *testing.T) {
 	req := newQueryReq(t, map[string]any{"name": "手机"})
-	got := extractAndStripNameKeyword(req)
+	got := extractAndStripKeyword(req)
 	if got != "手机" {
 		t.Fatalf("expected keyword 手机, got %q", got)
 	}
@@ -34,7 +34,7 @@ func TestExtractAndStripNameKeyword_FromName(t *testing.T) {
 func TestExtractAndStripNameKeyword_FromKeywordAndQ(t *testing.T) {
 	for _, key := range []string{"keyword", "q"} {
 		req := newQueryReq(t, map[string]any{key: " phone "})
-		got := extractAndStripNameKeyword(req)
+		got := extractAndStripKeyword(req)
 		if got != "phone" {
 			t.Fatalf("key=%s: expected trimmed 'phone', got %q", key, got)
 		}
@@ -43,7 +43,7 @@ func TestExtractAndStripNameKeyword_FromKeywordAndQ(t *testing.T) {
 
 func TestExtractAndStripNameKeyword_KeepsOtherFields(t *testing.T) {
 	req := newQueryReq(t, map[string]any{"name": "phone", "categoryId": float64(7), "brandId": float64(3)})
-	got := extractAndStripNameKeyword(req)
+	got := extractAndStripKeyword(req)
 	if got != "phone" {
 		t.Fatalf("expected phone, got %q", got)
 	}
@@ -66,14 +66,14 @@ func TestExtractAndStripNameKeyword_KeepsOtherFields(t *testing.T) {
 
 func TestExtractAndStripNameKeyword_NoQuery(t *testing.T) {
 	req := &paginationV1.PagingRequest{}
-	if got := extractAndStripNameKeyword(req); got != "" {
+	if got := extractAndStripKeyword(req); got != "" {
 		t.Fatalf("expected empty for no query, got %q", got)
 	}
 }
 
 func TestExtractAndStripNameKeyword_EmptyValueIgnored(t *testing.T) {
 	req := newQueryReq(t, map[string]any{"name": "  ", "categoryId": float64(7)})
-	got := extractAndStripNameKeyword(req)
+	got := extractAndStripKeyword(req)
 	if got != "" {
 		t.Fatalf("expected empty keyword for blank value, got %q", got)
 	}
@@ -86,7 +86,7 @@ func TestExtractAndStripNameKeyword_EmptyValueIgnored(t *testing.T) {
 // 非字符串 name 值不应被剥离，保留原样交 DSL 处理，避免污染剩余 query。
 func TestExtractAndStripNameKeyword_NonStringValuePreserved(t *testing.T) {
 	req := newQueryReq(t, map[string]any{"name": float64(123), "categoryId": float64(7)})
-	got := extractAndStripNameKeyword(req)
+	got := extractAndStripKeyword(req)
 	if got != "" {
 		t.Fatalf("expected empty keyword for non-string value, got %q", got)
 	}
@@ -107,7 +107,7 @@ func TestExtractAndStripNameKeyword_NonStringValuePreserved(t *testing.T) {
 // 三个 key 都应被剥离。
 func TestExtractAndStripNameKeyword_MultipleKeysLastWins(t *testing.T) {
 	req := newQueryReq(t, map[string]any{"name": "a", "keyword": "b", "q": "c"})
-	got := extractAndStripNameKeyword(req)
+	got := extractAndStripKeyword(req)
 	if got != "c" {
 		t.Fatalf("expected q value 'c' to win, got %q", got)
 	}

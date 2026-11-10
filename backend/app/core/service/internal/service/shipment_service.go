@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
@@ -23,9 +23,9 @@ import (
 type ShipmentService struct {
 	shippingV1.UnimplementedShipmentServiceServer
 
-	log *logx.Helper
+	log          *logx.Helper
 	shipmentRepo *data.ShipmentRepo
-	entClient   *entCrud.EntClient[*ent.Client]
+	entClient    *entCrud.EntClient[*ent.Client]
 }
 
 func NewShipmentService(
@@ -49,7 +49,7 @@ func (s *ShipmentService) Count(ctx context.Context, req *paginationV1.PagingReq
 	if err != nil {
 		return nil, err
 	}
-	return &shippingV1.CountShipmentResponse{Count: uint64(count)}, nil
+	return &shippingV1.CountShipmentResponse{Count: int64(count)}, nil
 }
 
 func (s *ShipmentService) Get(ctx context.Context, req *shippingV1.GetShipmentRequest) (*shippingV1.Shipment, error) {

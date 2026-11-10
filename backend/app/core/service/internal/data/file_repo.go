@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -27,7 +27,7 @@ import (
 
 type FileRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper            *mapper.CopierMapper[storageV1.File, ent.File]
 	providerConverter *mapper.EnumTypeConverter[storageV1.OSSProvider, file.Provider]
@@ -129,7 +129,7 @@ func (r *FileRepo) List(ctx context.Context, req *paginationV1.PagingRequest) (*
 	}, nil
 }
 
-func (r *FileRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *FileRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().File.Query().
 		Where(file.IDEQ(id)).
 		Exist(ctx)

@@ -33,14 +33,14 @@ message StockOpLog {
     MANUAL_ADJUST = 4;    // 手动调整（admin）
   }
 
-  optional uint32 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "流水ID"}];
+  optional int64 id = 1 [json_name = "id", (gnostic.openapi.v3.property) = {description: "流水ID"}];
 
-  optional uint32 sku_id = 2 [
+  optional int64 sku_id = 2 [
     json_name = "skuId",
     (gnostic.openapi.v3.property) = {description: "SKU ID"}
   ];
 
-  optional uint32 product_id = 3 [
+  optional int64 product_id = 3 [
     json_name = "productId",
     (gnostic.openapi.v3.property) = {description: "所属商品ID（冗余）"}
   ];
@@ -65,7 +65,7 @@ message StockOpLog {
     (gnostic.openapi.v3.property) = {description: "变动原因"}
   ];
 
-  optional uint32 ref_id = 8 [
+  optional int64 ref_id = 8 [
     json_name = "refId",
     (gnostic.openapi.v3.property) = {description: "关联业务ID（订单ID等；手动调整为 0）"}
   ];
@@ -77,17 +77,17 @@ message StockOpLog {
 
   // ===== 以下是 infra mixin 注入字段（高编号） =====
 
-  optional uint32 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "操作者用户ID（0=系统）"}];
+  optional int64 created_by = 100 [json_name = "createdBy", (gnostic.openapi.v3.property) = {description: "操作者用户ID（0=系统）"}];
 
   optional google.protobuf.Timestamp created_at = 200 [json_name = "createdAt", (gnostic.openapi.v3.property) = {description: "操作时间"}];
 }
 
-message ListStockOpLogResponse { repeated StockOpLog items = 1; uint64 total = 2; }
-message CountStockOpLogResponse { uint64 count = 1; }
+message ListStockOpLogResponse { repeated StockOpLog items = 1; int64 total = 2; }
+message CountStockOpLogResponse { int64 count = 1; }
 
 message GetStockOpLogRequest {
   oneof query_by {
-    uint32 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
+    int64 id = 1 [(gnostic.openapi.v3.property) = {description: "ID", read_only: true}, json_name = "id"];
   }
   optional google.protobuf.FieldMask view_mask = 100 [
     json_name = "viewMask",

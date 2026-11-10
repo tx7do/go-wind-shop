@@ -4,9 +4,9 @@ import (
 	"context"
 	"strconv"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data"
 	appViewer "go-wind-shop/pkg/entgo/viewer"
@@ -22,7 +22,7 @@ const StockAlertThreshold int32 = 10
 // 扫描 stock_qty <= 阈值的 SKU，向全体运营人员发送站内消息通知补货，
 // 并向 stock_alert 表落库 OPEN 态告警记录（去重：同 SKU 仅保留一条 OPEN）。
 type StockAlertScannerService struct {
-	log *logx.Helper
+	log            *logx.Helper
 	skuRepo        *data.SkuRepo
 	messageSvc     *InternalMessageService
 	stockAlertRepo *data.StockAlertRepo
@@ -73,7 +73,7 @@ func (s *StockAlertScannerService) ScanLowStockAndNotify(ctx context.Context) er
 	content := "检测到 " + strconv.Itoa(len(items)) + " 个 SKU 库存低于阈值(" +
 		strconv.FormatInt(int64(StockAlertThreshold), 10) + ")，请及时补货。明细：\n"
 	for _, item := range items {
-		content += "SKU ID=" + strconv.FormatUint(uint64(item.SkuID), 10) +
+		content += "SKU ID=" + strconv.FormatInt(int64(item.SkuID), 10) +
 			" 当前库存=" + strconv.FormatInt(int64(item.StockQty), 10) + "\n"
 	}
 
@@ -88,7 +88,7 @@ func (s *StockAlertScannerService) ScanLowStockAndNotify(ctx context.Context) er
 		Title:      trans.Ptr("库存预警通知"),
 		Content:    content,
 		TargetAll:  trans.Ptr(true),
-		SendUserId: trans.Ptr(uint32(0)),
+		SendUserId: trans.Ptr(int64(0)),
 	})
 	if sendErr != nil {
 		s.log.Errorf("send stock alert internal message failed: %v", sendErr)

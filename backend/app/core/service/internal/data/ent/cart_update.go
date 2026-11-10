@@ -70,14 +70,14 @@ func (_u *CartUpdate) ClearDeletedAt() *CartUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CartUpdate) SetCreatedBy(v uint32) *CartUpdate {
+func (_u *CartUpdate) SetCreatedBy(v int64) *CartUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CartUpdate) SetNillableCreatedBy(v *uint32) *CartUpdate {
+func (_u *CartUpdate) SetNillableCreatedBy(v *int64) *CartUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *CartUpdate) SetNillableCreatedBy(v *uint32) *CartUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *CartUpdate) AddCreatedBy(v int32) *CartUpdate {
+func (_u *CartUpdate) AddCreatedBy(v int64) *CartUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *CartUpdate) ClearCreatedBy() *CartUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CartUpdate) SetUpdatedBy(v uint32) *CartUpdate {
+func (_u *CartUpdate) SetUpdatedBy(v int64) *CartUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CartUpdate) SetNillableUpdatedBy(v *uint32) *CartUpdate {
+func (_u *CartUpdate) SetNillableUpdatedBy(v *int64) *CartUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *CartUpdate) SetNillableUpdatedBy(v *uint32) *CartUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *CartUpdate) AddUpdatedBy(v int32) *CartUpdate {
+func (_u *CartUpdate) AddUpdatedBy(v int64) *CartUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *CartUpdate) ClearUpdatedBy() *CartUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CartUpdate) SetDeletedBy(v uint32) *CartUpdate {
+func (_u *CartUpdate) SetDeletedBy(v int64) *CartUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CartUpdate) SetNillableDeletedBy(v *uint32) *CartUpdate {
+func (_u *CartUpdate) SetNillableDeletedBy(v *int64) *CartUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *CartUpdate) SetNillableDeletedBy(v *uint32) *CartUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *CartUpdate) AddDeletedBy(v int32) *CartUpdate {
+func (_u *CartUpdate) AddDeletedBy(v int64) *CartUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *CartUpdate) ClearDeletedBy() *CartUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *CartUpdate) SetUserID(v uint32) *CartUpdate {
+func (_u *CartUpdate) SetUserID(v int64) *CartUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *CartUpdate) SetNillableUserID(v *uint32) *CartUpdate {
+func (_u *CartUpdate) SetNillableUserID(v *int64) *CartUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *CartUpdate) SetNillableUserID(v *uint32) *CartUpdate {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *CartUpdate) AddUserID(v int32) *CartUpdate {
+func (_u *CartUpdate) AddUserID(v int64) *CartUpdate {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -216,7 +216,7 @@ func (_u *CartUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CartUpdat
 }
 
 func (_u *CartUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(cart.Table, cart.Columns, sqlgraph.NewFieldSpec(cart.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(cart.Table, cart.Columns, sqlgraph.NewFieldSpec(cart.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -240,43 +240,43 @@ func (_u *CartUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(cart.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(cart.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(cart.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(cart.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(cart.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(cart.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(cart.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(cart.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(cart.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(cart.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(cart.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(cart.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(cart.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(cart.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(cart.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(cart.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(cart.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(cart.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(cart.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(cart.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(cart.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(cart.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(cart.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(cart.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(cart.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(cart.FieldUserID, field.TypeUint32)
+		_spec.ClearField(cart.FieldUserID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -341,14 +341,14 @@ func (_u *CartUpdateOne) ClearDeletedAt() *CartUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *CartUpdateOne) SetCreatedBy(v uint32) *CartUpdateOne {
+func (_u *CartUpdateOne) SetCreatedBy(v int64) *CartUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *CartUpdateOne) SetNillableCreatedBy(v *uint32) *CartUpdateOne {
+func (_u *CartUpdateOne) SetNillableCreatedBy(v *int64) *CartUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -356,7 +356,7 @@ func (_u *CartUpdateOne) SetNillableCreatedBy(v *uint32) *CartUpdateOne {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *CartUpdateOne) AddCreatedBy(v int32) *CartUpdateOne {
+func (_u *CartUpdateOne) AddCreatedBy(v int64) *CartUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -368,14 +368,14 @@ func (_u *CartUpdateOne) ClearCreatedBy() *CartUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *CartUpdateOne) SetUpdatedBy(v uint32) *CartUpdateOne {
+func (_u *CartUpdateOne) SetUpdatedBy(v int64) *CartUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *CartUpdateOne) SetNillableUpdatedBy(v *uint32) *CartUpdateOne {
+func (_u *CartUpdateOne) SetNillableUpdatedBy(v *int64) *CartUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -383,7 +383,7 @@ func (_u *CartUpdateOne) SetNillableUpdatedBy(v *uint32) *CartUpdateOne {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *CartUpdateOne) AddUpdatedBy(v int32) *CartUpdateOne {
+func (_u *CartUpdateOne) AddUpdatedBy(v int64) *CartUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -395,14 +395,14 @@ func (_u *CartUpdateOne) ClearUpdatedBy() *CartUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *CartUpdateOne) SetDeletedBy(v uint32) *CartUpdateOne {
+func (_u *CartUpdateOne) SetDeletedBy(v int64) *CartUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *CartUpdateOne) SetNillableDeletedBy(v *uint32) *CartUpdateOne {
+func (_u *CartUpdateOne) SetNillableDeletedBy(v *int64) *CartUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -410,7 +410,7 @@ func (_u *CartUpdateOne) SetNillableDeletedBy(v *uint32) *CartUpdateOne {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *CartUpdateOne) AddDeletedBy(v int32) *CartUpdateOne {
+func (_u *CartUpdateOne) AddDeletedBy(v int64) *CartUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -422,14 +422,14 @@ func (_u *CartUpdateOne) ClearDeletedBy() *CartUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *CartUpdateOne) SetUserID(v uint32) *CartUpdateOne {
+func (_u *CartUpdateOne) SetUserID(v int64) *CartUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *CartUpdateOne) SetNillableUserID(v *uint32) *CartUpdateOne {
+func (_u *CartUpdateOne) SetNillableUserID(v *int64) *CartUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -437,7 +437,7 @@ func (_u *CartUpdateOne) SetNillableUserID(v *uint32) *CartUpdateOne {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *CartUpdateOne) AddUserID(v int32) *CartUpdateOne {
+func (_u *CartUpdateOne) AddUserID(v int64) *CartUpdateOne {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -500,7 +500,7 @@ func (_u *CartUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *CartUp
 }
 
 func (_u *CartUpdateOne) sqlSave(ctx context.Context) (_node *Cart, err error) {
-	_spec := sqlgraph.NewUpdateSpec(cart.Table, cart.Columns, sqlgraph.NewFieldSpec(cart.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(cart.Table, cart.Columns, sqlgraph.NewFieldSpec(cart.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Cart.id" for update`)}
@@ -541,43 +541,43 @@ func (_u *CartUpdateOne) sqlSave(ctx context.Context) (_node *Cart, err error) {
 		_spec.ClearField(cart.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(cart.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(cart.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(cart.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(cart.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(cart.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(cart.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(cart.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(cart.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(cart.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(cart.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(cart.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(cart.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(cart.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(cart.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(cart.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(cart.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(cart.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(cart.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(cart.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(cart.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(cart.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(cart.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(cart.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(cart.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(cart.FieldUserID, field.TypeUint32)
+		_spec.ClearField(cart.FieldUserID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &Cart{config: _u.config}

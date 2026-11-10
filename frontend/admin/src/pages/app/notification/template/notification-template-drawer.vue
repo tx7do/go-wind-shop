@@ -112,7 +112,7 @@ const { mutateAsync: updateTemplate } = useUpdateNotificationTemplate();
 const visible = ref(false);
 const submitLoading = ref(false);
 const isCreate = ref(true);
-const currentId = ref<number>();
+const currentId = ref<string>();
 const formRef = ref();
 
 const formData = reactive({
@@ -162,7 +162,7 @@ const guard = useDrawerCloseGuard(() => ({ ...formData }));
 function open(options: { create: boolean; row?: notificationservicev1_NotificationTemplate }) {
   visible.value = true;
   isCreate.value = options.create;
-  currentId.value = options.row?.id;
+  currentId.value = options.row?.id != null ? String(options.row.id) : undefined;
   resetForm();
 
   if (!options.create && options.row) {
@@ -208,7 +208,7 @@ async function handleSubmit() {
       ElMessage.success(t("pages.notification_template.createSuccess"));
     } else if (currentId.value !== undefined) {
       // code 不进掩码：引用锚不可改，服务端同样按掩码裁剪
-      await updateTemplate({ id: currentId.value, data, updateMask: NOTIFICATION_TEMPLATE_UPDATE_MASK });
+      await updateTemplate({ id: String(currentId.value), data, updateMask: NOTIFICATION_TEMPLATE_UPDATE_MASK });
       ElMessage.success(t("pages.notification_template.updateSuccess"));
     }
     emit("success");

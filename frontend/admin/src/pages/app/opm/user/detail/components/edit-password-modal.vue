@@ -118,7 +118,7 @@ async function handleSubmit() {
 
     submitLoading.value = true;
 
-    await editUserPassword({ userId: userId.value!, newPassword: formData.newPassword });
+    await editUserPassword({ userId: String(userId.value!), newPassword: formData.newPassword });
 
     ElMessage.success($t("common.notification.updateSuccess"));
     handleClose();

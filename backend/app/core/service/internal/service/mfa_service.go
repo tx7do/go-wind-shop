@@ -22,7 +22,6 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/privacy"
 	"go-wind-shop/app/core/service/internal/data/ent/usermfafactor"
 
-
 	"github.com/pquerna/otp"
 	otpTotp "github.com/pquerna/otp/totp"
 
@@ -444,13 +443,13 @@ func isASCII(s string) bool {
 	return s != ""
 }
 
-// parseFactorId 将 proto 返回的字符串形式 credential_id 解析为 uint32 主键。
-func parseFactorId(s string) (uint32, error) {
-	v, err := strconv.ParseUint(s, 10, 32)
+// parseFactorId 将 proto 返回的字符串形式 credential_id 解析为 int64 主键。
+func parseFactorId(s string) (int64, error) {
+	v, err := strconv.ParseInt(s, 10, 64)
 	if err != nil {
 		return 0, err
 	}
-	return uint32(v), nil
+	return int64(v), nil
 }
 
 // totpQrDataUri 将 otp.Key 的二维码图渲染为 PNG data URI，供前端 <img> 展示。
@@ -496,14 +495,15 @@ func viewerOperator(ctx context.Context) viewerOperatorInfo {
 			break
 		}
 	}
-	return viewerOperatorInfo{uid: uint32(vc.UserID()), tid: uint32(vc.TenantID()), isPlatformAdmin: isPlatformAdmin}
+	return viewerOperatorInfo{uid: int64(vc.UserID()), tid: int64(vc.TenantID()), isPlatformAdmin: isPlatformAdmin}
 }
 
-type viewerOperatorInfo struct{
-	uid             uint32
-	tid             uint32
+type viewerOperatorInfo struct {
+	uid             int64
+	tid             int64
 	isPlatformAdmin bool
 }
-func (o viewerOperatorInfo) GetUserId() uint32 { return o.uid }
-func (o viewerOperatorInfo) GetTenantId() uint32 { return o.tid }
+
+func (o viewerOperatorInfo) GetUserId() int64         { return o.uid }
+func (o viewerOperatorInfo) GetTenantId() int64       { return o.tid }
 func (o viewerOperatorInfo) GetIsPlatformAdmin() bool { return o.isPlatformAdmin }

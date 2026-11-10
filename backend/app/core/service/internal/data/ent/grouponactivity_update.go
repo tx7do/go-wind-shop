@@ -70,14 +70,14 @@ func (_u *GrouponActivityUpdate) ClearDeletedAt() *GrouponActivityUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *GrouponActivityUpdate) SetCreatedBy(v uint32) *GrouponActivityUpdate {
+func (_u *GrouponActivityUpdate) SetCreatedBy(v int64) *GrouponActivityUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *GrouponActivityUpdate) SetNillableCreatedBy(v *uint32) *GrouponActivityUpdate {
+func (_u *GrouponActivityUpdate) SetNillableCreatedBy(v *int64) *GrouponActivityUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *GrouponActivityUpdate) SetNillableCreatedBy(v *uint32) *GrouponActivit
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *GrouponActivityUpdate) AddCreatedBy(v int32) *GrouponActivityUpdate {
+func (_u *GrouponActivityUpdate) AddCreatedBy(v int64) *GrouponActivityUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *GrouponActivityUpdate) ClearCreatedBy() *GrouponActivityUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *GrouponActivityUpdate) SetUpdatedBy(v uint32) *GrouponActivityUpdate {
+func (_u *GrouponActivityUpdate) SetUpdatedBy(v int64) *GrouponActivityUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *GrouponActivityUpdate) SetNillableUpdatedBy(v *uint32) *GrouponActivityUpdate {
+func (_u *GrouponActivityUpdate) SetNillableUpdatedBy(v *int64) *GrouponActivityUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *GrouponActivityUpdate) SetNillableUpdatedBy(v *uint32) *GrouponActivit
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *GrouponActivityUpdate) AddUpdatedBy(v int32) *GrouponActivityUpdate {
+func (_u *GrouponActivityUpdate) AddUpdatedBy(v int64) *GrouponActivityUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *GrouponActivityUpdate) ClearUpdatedBy() *GrouponActivityUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *GrouponActivityUpdate) SetDeletedBy(v uint32) *GrouponActivityUpdate {
+func (_u *GrouponActivityUpdate) SetDeletedBy(v int64) *GrouponActivityUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *GrouponActivityUpdate) SetNillableDeletedBy(v *uint32) *GrouponActivityUpdate {
+func (_u *GrouponActivityUpdate) SetNillableDeletedBy(v *int64) *GrouponActivityUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *GrouponActivityUpdate) SetNillableDeletedBy(v *uint32) *GrouponActivit
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *GrouponActivityUpdate) AddDeletedBy(v int32) *GrouponActivityUpdate {
+func (_u *GrouponActivityUpdate) AddDeletedBy(v int64) *GrouponActivityUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -165,14 +165,14 @@ func (_u *GrouponActivityUpdate) SetNillableName(v *string) *GrouponActivityUpda
 }
 
 // SetSkuID sets the "sku_id" field.
-func (_u *GrouponActivityUpdate) SetSkuID(v uint32) *GrouponActivityUpdate {
+func (_u *GrouponActivityUpdate) SetSkuID(v int64) *GrouponActivityUpdate {
 	_u.mutation.ResetSkuID()
 	_u.mutation.SetSkuID(v)
 	return _u
 }
 
 // SetNillableSkuID sets the "sku_id" field if the given value is not nil.
-func (_u *GrouponActivityUpdate) SetNillableSkuID(v *uint32) *GrouponActivityUpdate {
+func (_u *GrouponActivityUpdate) SetNillableSkuID(v *int64) *GrouponActivityUpdate {
 	if v != nil {
 		_u.SetSkuID(*v)
 	}
@@ -180,7 +180,7 @@ func (_u *GrouponActivityUpdate) SetNillableSkuID(v *uint32) *GrouponActivityUpd
 }
 
 // AddSkuID adds value to the "sku_id" field.
-func (_u *GrouponActivityUpdate) AddSkuID(v int32) *GrouponActivityUpdate {
+func (_u *GrouponActivityUpdate) AddSkuID(v int64) *GrouponActivityUpdate {
 	_u.mutation.AddSkuID(v)
 	return _u
 }
@@ -412,7 +412,7 @@ func (_u *GrouponActivityUpdate) sqlSave(ctx context.Context) (_node int, err er
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(grouponactivity.Table, grouponactivity.Columns, sqlgraph.NewFieldSpec(grouponactivity.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(grouponactivity.Table, grouponactivity.Columns, sqlgraph.NewFieldSpec(grouponactivity.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -436,46 +436,46 @@ func (_u *GrouponActivityUpdate) sqlSave(ctx context.Context) (_node int, err er
 		_spec.ClearField(grouponactivity.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(grouponactivity.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(grouponactivity.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(grouponactivity.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(grouponactivity.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(grouponactivity.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(grouponactivity.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(grouponactivity.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(grouponactivity.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(grouponactivity.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(grouponactivity.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(grouponactivity.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(grouponactivity.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(grouponactivity.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(grouponactivity.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(grouponactivity.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(grouponactivity.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(grouponactivity.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(grouponactivity.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(grouponactivity.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(grouponactivity.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(grouponactivity.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.SkuID(); ok {
-		_spec.SetField(grouponactivity.FieldSkuID, field.TypeUint32, value)
+		_spec.SetField(grouponactivity.FieldSkuID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedSkuID(); ok {
-		_spec.AddField(grouponactivity.FieldSkuID, field.TypeUint32, value)
+		_spec.AddField(grouponactivity.FieldSkuID, field.TypeInt64, value)
 	}
 	if _u.mutation.SkuIDCleared() {
-		_spec.ClearField(grouponactivity.FieldSkuID, field.TypeUint32)
+		_spec.ClearField(grouponactivity.FieldSkuID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.GroupPrice(); ok {
 		_spec.SetField(grouponactivity.FieldGroupPrice, field.TypeInt64, value)
@@ -588,14 +588,14 @@ func (_u *GrouponActivityUpdateOne) ClearDeletedAt() *GrouponActivityUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *GrouponActivityUpdateOne) SetCreatedBy(v uint32) *GrouponActivityUpdateOne {
+func (_u *GrouponActivityUpdateOne) SetCreatedBy(v int64) *GrouponActivityUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *GrouponActivityUpdateOne) SetNillableCreatedBy(v *uint32) *GrouponActivityUpdateOne {
+func (_u *GrouponActivityUpdateOne) SetNillableCreatedBy(v *int64) *GrouponActivityUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -603,7 +603,7 @@ func (_u *GrouponActivityUpdateOne) SetNillableCreatedBy(v *uint32) *GrouponActi
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *GrouponActivityUpdateOne) AddCreatedBy(v int32) *GrouponActivityUpdateOne {
+func (_u *GrouponActivityUpdateOne) AddCreatedBy(v int64) *GrouponActivityUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -615,14 +615,14 @@ func (_u *GrouponActivityUpdateOne) ClearCreatedBy() *GrouponActivityUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *GrouponActivityUpdateOne) SetUpdatedBy(v uint32) *GrouponActivityUpdateOne {
+func (_u *GrouponActivityUpdateOne) SetUpdatedBy(v int64) *GrouponActivityUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *GrouponActivityUpdateOne) SetNillableUpdatedBy(v *uint32) *GrouponActivityUpdateOne {
+func (_u *GrouponActivityUpdateOne) SetNillableUpdatedBy(v *int64) *GrouponActivityUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -630,7 +630,7 @@ func (_u *GrouponActivityUpdateOne) SetNillableUpdatedBy(v *uint32) *GrouponActi
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *GrouponActivityUpdateOne) AddUpdatedBy(v int32) *GrouponActivityUpdateOne {
+func (_u *GrouponActivityUpdateOne) AddUpdatedBy(v int64) *GrouponActivityUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -642,14 +642,14 @@ func (_u *GrouponActivityUpdateOne) ClearUpdatedBy() *GrouponActivityUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *GrouponActivityUpdateOne) SetDeletedBy(v uint32) *GrouponActivityUpdateOne {
+func (_u *GrouponActivityUpdateOne) SetDeletedBy(v int64) *GrouponActivityUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *GrouponActivityUpdateOne) SetNillableDeletedBy(v *uint32) *GrouponActivityUpdateOne {
+func (_u *GrouponActivityUpdateOne) SetNillableDeletedBy(v *int64) *GrouponActivityUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -657,7 +657,7 @@ func (_u *GrouponActivityUpdateOne) SetNillableDeletedBy(v *uint32) *GrouponActi
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *GrouponActivityUpdateOne) AddDeletedBy(v int32) *GrouponActivityUpdateOne {
+func (_u *GrouponActivityUpdateOne) AddDeletedBy(v int64) *GrouponActivityUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -683,14 +683,14 @@ func (_u *GrouponActivityUpdateOne) SetNillableName(v *string) *GrouponActivityU
 }
 
 // SetSkuID sets the "sku_id" field.
-func (_u *GrouponActivityUpdateOne) SetSkuID(v uint32) *GrouponActivityUpdateOne {
+func (_u *GrouponActivityUpdateOne) SetSkuID(v int64) *GrouponActivityUpdateOne {
 	_u.mutation.ResetSkuID()
 	_u.mutation.SetSkuID(v)
 	return _u
 }
 
 // SetNillableSkuID sets the "sku_id" field if the given value is not nil.
-func (_u *GrouponActivityUpdateOne) SetNillableSkuID(v *uint32) *GrouponActivityUpdateOne {
+func (_u *GrouponActivityUpdateOne) SetNillableSkuID(v *int64) *GrouponActivityUpdateOne {
 	if v != nil {
 		_u.SetSkuID(*v)
 	}
@@ -698,7 +698,7 @@ func (_u *GrouponActivityUpdateOne) SetNillableSkuID(v *uint32) *GrouponActivity
 }
 
 // AddSkuID adds value to the "sku_id" field.
-func (_u *GrouponActivityUpdateOne) AddSkuID(v int32) *GrouponActivityUpdateOne {
+func (_u *GrouponActivityUpdateOne) AddSkuID(v int64) *GrouponActivityUpdateOne {
 	_u.mutation.AddSkuID(v)
 	return _u
 }
@@ -943,7 +943,7 @@ func (_u *GrouponActivityUpdateOne) sqlSave(ctx context.Context) (_node *Groupon
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(grouponactivity.Table, grouponactivity.Columns, sqlgraph.NewFieldSpec(grouponactivity.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(grouponactivity.Table, grouponactivity.Columns, sqlgraph.NewFieldSpec(grouponactivity.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "GrouponActivity.id" for update`)}
@@ -984,46 +984,46 @@ func (_u *GrouponActivityUpdateOne) sqlSave(ctx context.Context) (_node *Groupon
 		_spec.ClearField(grouponactivity.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(grouponactivity.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(grouponactivity.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(grouponactivity.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(grouponactivity.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(grouponactivity.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(grouponactivity.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(grouponactivity.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(grouponactivity.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(grouponactivity.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(grouponactivity.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(grouponactivity.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(grouponactivity.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(grouponactivity.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(grouponactivity.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(grouponactivity.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(grouponactivity.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(grouponactivity.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(grouponactivity.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(grouponactivity.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(grouponactivity.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(grouponactivity.FieldName, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.SkuID(); ok {
-		_spec.SetField(grouponactivity.FieldSkuID, field.TypeUint32, value)
+		_spec.SetField(grouponactivity.FieldSkuID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedSkuID(); ok {
-		_spec.AddField(grouponactivity.FieldSkuID, field.TypeUint32, value)
+		_spec.AddField(grouponactivity.FieldSkuID, field.TypeInt64, value)
 	}
 	if _u.mutation.SkuIDCleared() {
-		_spec.ClearField(grouponactivity.FieldSkuID, field.TypeUint32)
+		_spec.ClearField(grouponactivity.FieldSkuID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.GroupPrice(); ok {
 		_spec.SetField(grouponactivity.FieldGroupPrice, field.TypeInt64, value)

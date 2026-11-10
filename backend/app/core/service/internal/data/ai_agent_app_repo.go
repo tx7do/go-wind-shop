@@ -5,13 +5,13 @@ import (
 	"time"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/aiagentapp"
@@ -22,7 +22,7 @@ import (
 
 type AiAgentAppRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[aiV1.AiAgentApp, ent.AiAgentApp]
 
@@ -84,7 +84,7 @@ func (r *AiAgentAppRepo) List(ctx context.Context, req *paginationV1.PagingReque
 	if err != nil {
 		r.log.Errorf("backfill enabled failed: %s", err.Error())
 	} else {
-		enabledByID := make(map[uint32]bool, len(entities))
+		enabledByID := make(map[int64]bool, len(entities))
 		for _, e := range entities {
 			enabledByID[e.ID] = e.Enabled
 		}
@@ -97,7 +97,7 @@ func (r *AiAgentAppRepo) List(ctx context.Context, req *paginationV1.PagingReque
 }
 
 // Get 按 ID 查询应用。
-func (r *AiAgentAppRepo) Get(ctx context.Context, id uint32) (*aiV1.AiAgentApp, error) {
+func (r *AiAgentAppRepo) Get(ctx context.Context, id int64) (*aiV1.AiAgentApp, error) {
 	entity, err := r.entClient.Client().AiAgentApp.Get(ctx, id)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -110,7 +110,7 @@ func (r *AiAgentAppRepo) Get(ctx context.Context, id uint32) (*aiV1.AiAgentApp, 
 }
 
 // GetEntityByID 取应用实体（Run 流程要 graph 原文与 enabled，DTO 不够用）。
-func (r *AiAgentAppRepo) GetEntityByID(ctx context.Context, id uint32) (*ent.AiAgentApp, error) {
+func (r *AiAgentAppRepo) GetEntityByID(ctx context.Context, id int64) (*ent.AiAgentApp, error) {
 	entity, err := r.entClient.Client().AiAgentApp.Get(ctx, id)
 	if err != nil {
 		if ent.IsNotFound(err) {
@@ -129,7 +129,7 @@ func (r *AiAgentAppRepo) toDTO(entity *ent.AiAgentApp) *aiV1.AiAgentApp {
 }
 
 // Create 创建应用；租户内 name 唯一约束冲突转成可读的 400。
-func (r *AiAgentAppRepo) Create(ctx context.Context, data *aiV1.AiAgentApp, operatorID uint32) (uint32, error) {
+func (r *AiAgentAppRepo) Create(ctx context.Context, data *aiV1.AiAgentApp, operatorID int64) (int64, error) {
 	if data == nil {
 		return 0, errors.BadRequest("AI_AGENT", "invalid parameter")
 	}
@@ -158,7 +158,7 @@ func (r *AiAgentAppRepo) Create(ctx context.Context, data *aiV1.AiAgentApp, oper
 }
 
 // Update 更新应用；updateMask 点名要改的字段，留空 = 全量按入参。
-func (r *AiAgentAppRepo) Update(ctx context.Context, id uint32, data *aiV1.AiAgentApp, updateMask []string, operatorID uint32) error {
+func (r *AiAgentAppRepo) Update(ctx context.Context, id int64, data *aiV1.AiAgentApp, updateMask []string, operatorID int64) error {
 	if data == nil || id == 0 {
 		return errors.BadRequest("AI_AGENT", "invalid parameter")
 	}
@@ -215,7 +215,7 @@ func (r *AiAgentAppRepo) Update(ctx context.Context, id uint32, data *aiV1.AiAge
 	return nil
 }
 
-func (r *AiAgentAppRepo) Delete(ctx context.Context, id uint32) error {
+func (r *AiAgentAppRepo) Delete(ctx context.Context, id int64) error {
 	if id == 0 {
 		return errors.BadRequest("AI_AGENT", "id is required")
 	}

@@ -9,14 +9,13 @@ import (
 
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	"go-wind-shop/pkg/logx"
-
 )
 
 type PlanService struct {
 	identityV1.UnimplementedPlanServiceServer
 
-	log         *logx.Helper
-	planClient  identityV1.PlanServiceClient
+	log        *logx.Helper
+	planClient identityV1.PlanServiceClient
 }
 
 func NewPlanService(ctx *bootstrap.Context, planClient identityV1.PlanServiceClient) *PlanService {

@@ -36,7 +36,7 @@ func (ShippingAddress) Annotations() []schema.Annotation {
 
 func (ShippingAddress) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("user_id").
+		field.Int64("user_id").
 			Comment("所属用户ID").
 			Optional().
 			Nillable(),
@@ -81,10 +81,10 @@ func (ShippingAddress) Fields() []ent.Field {
 
 func (ShippingAddress) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 	}
 }
 

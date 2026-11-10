@@ -83,7 +83,7 @@ export function useUpdateShipment(
     {},
     Error,
     {
-      id: number;
+      id: number | string;
       values: Record<string, any>;
       expectedStatus: shippingservicev1_Shipment_Status[];
     }
@@ -91,8 +91,7 @@ export function useUpdateShipment(
 ) {
   return useMutation({
     mutationFn: ({ id, values, expectedStatus }) =>
-      apiClient.shipmentService.Update({
-        id,
+      apiClient.shipmentService.Update({ id: String(id),
         data: { ...values },
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
         expectedStatus,

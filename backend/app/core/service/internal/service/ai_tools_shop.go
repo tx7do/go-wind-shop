@@ -70,7 +70,7 @@ func shopToolDefs() []openai.Tool {
 }
 
 // execShopTool 执行一个商城工具调用。返回 ok=false 表示非商城工具（回退内置执行器）。
-func (s *AiChatService) execShopTool(ctx context.Context, userId, tenantId uint32, name, args string) (string, bool, error) {
+func (s *AiChatService) execShopTool(ctx context.Context, userId, tenantId int64, name, args string) (string, bool, error) {
 	var p map[string]any
 	if args != "" {
 		_ = json.Unmarshal([]byte(args), &p)

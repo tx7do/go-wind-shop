@@ -74,12 +74,11 @@ export function useCreateBrand(options?: UseMutationOptions<{}, Error, Record<st
 }
 
 export function useUpdateBrand(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.brandService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.brandService.Update({ id: String(id),
         data: { ...values } as unknown as catalogservicev1_Brand,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),

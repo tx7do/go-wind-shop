@@ -1,8 +1,8 @@
 package data
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
+	"go-wind-shop/pkg/logx"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -24,7 +24,7 @@ import (
 
 type CouponTemplateRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[couponV1.CouponTemplate, ent.CouponTemplate]
 
@@ -138,7 +138,7 @@ func (r *CouponTemplateRepo) ListClaimable(ctx context.Context, req *paginationV
 	}, nil
 }
 
-func (r *CouponTemplateRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *CouponTemplateRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().CouponTemplate.Query().
 		Where(coupontemplate.IDEQ(id)).
 		Exist(ctx)

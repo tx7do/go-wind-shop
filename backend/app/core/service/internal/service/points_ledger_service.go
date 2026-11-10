@@ -4,18 +4,16 @@ import (
 	"context"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data"
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/coupontemplate"
 	"go-wind-shop/app/core/service/internal/data/ent/pointsledger"
 	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
-
 
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 )
@@ -28,10 +26,10 @@ type PointsLedgerService struct {
 
 	log *logx.Helper
 
-	repo                *data.PointsLedgerRepo
-	entClient           *entCrud.EntClient[*ent.Client]
-	couponTemplateRepo  *data.CouponTemplateRepo
-	memberTierService   *MemberTierService
+	repo               *data.PointsLedgerRepo
+	entClient          *entCrud.EntClient[*ent.Client]
+	couponTemplateRepo *data.CouponTemplateRepo
+	memberTierService  *MemberTierService
 }
 
 func NewPointsLedgerService(ctx *bootstrap.Context, repo *data.PointsLedgerRepo, entClient *entCrud.EntClient[*ent.Client], couponTemplateRepo *data.CouponTemplateRepo, memberTierService *MemberTierService) *PointsLedgerService {
@@ -58,7 +56,7 @@ func (s *PointsLedgerService) Count(ctx context.Context, req *paginationV1.Pagin
 	if err != nil {
 		return nil, err
 	}
-	return &catalogV1.CountPointsLedgerResponse{Count: uint64(count)}, nil
+	return &catalogV1.CountPointsLedgerResponse{Count: int64(count)}, nil
 }
 
 func (s *PointsLedgerService) Get(ctx context.Context, req *catalogV1.GetPointsLedgerRequest) (*catalogV1.PointsLedger, error) {
@@ -186,7 +184,7 @@ func (s *PointsLedgerService) GetCheckInStatus(ctx context.Context, req *catalog
 	}, nil
 }
 
-func (s *PointsLedgerService) userBalance(ctx context.Context, userId uint32) (int64, error) {
+func (s *PointsLedgerService) userBalance(ctx context.Context, userId int64) (int64, error) {
 	var rows []struct{ Sum int64 }
 	err := s.entClient.Client().PointsLedger.Query().
 		Where(pointsledger.UserIDEQ(userId)).
@@ -203,7 +201,7 @@ func (s *PointsLedgerService) userBalance(ctx context.Context, userId uint32) (i
 
 // AwardForOrder 订单支付成功入账（幂等：同订单已有 EARN 台账则跳过）。
 // best-effort 由调用方保证（积分失败不影响支付主流程，仅记日志）。
-func (s *PointsLedgerService) AwardForOrder(ctx context.Context, userId uint32, orderId uint32, totalAmount int64) error {
+func (s *PointsLedgerService) AwardForOrder(ctx context.Context, userId int64, orderId int64, totalAmount int64) error {
 	// 幂等：同订单已入账跳过
 	exist, err := s.entClient.Client().PointsLedger.Query().
 		Where(
@@ -248,7 +246,7 @@ func (s *PointsLedgerService) AwardForOrder(ctx context.Context, userId uint32, 
 
 // DeductForOrder 退款成功回冲（对订单已入账积分对冲，余额拖底为 0 不产生负积分）。
 // 幂等：同订单已有 DEDUCT 台账则跳过。
-func (s *PointsLedgerService) DeductForOrder(ctx context.Context, orderId uint32) error {
+func (s *PointsLedgerService) DeductForOrder(ctx context.Context, orderId int64) error {
 	// 幂等
 	exist, err := s.entClient.Client().PointsLedger.Query().
 		Where(

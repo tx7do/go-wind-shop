@@ -8,7 +8,7 @@ import (
 
 // viewerUserIDFromContext 从请求上下文的查看者身份中取用户 ID。
 // （随 Notification 域从 go-wind-cms 移植，cms 同名实现见 user_credential_repo.go）
-func viewerUserIDFromContext(ctx context.Context) (uint32, bool) {
+func viewerUserIDFromContext(ctx context.Context) (int64, bool) {
 	vc, exist := viewer.FromContext(ctx)
 	if !exist || vc == nil {
 		return 0, false
@@ -17,7 +17,7 @@ func viewerUserIDFromContext(ctx context.Context) (uint32, bool) {
 	if uid == 0 {
 		return 0, false
 	}
-	return uint32(uid), true
+	return int64(uid), true
 }
 
 // derefString 解引用字符串指针，nil 返回空串。

@@ -15,15 +15,15 @@ import (
 	"github.com/tx7do/go-utils/mapper"
 
 	"go-wind-shop/app/core/service/internal/data/ent"
-	"go-wind-shop/app/core/service/internal/data/ent/productattributevaluetranslation"
 	"go-wind-shop/app/core/service/internal/data/ent/predicate"
+	"go-wind-shop/app/core/service/internal/data/ent/productattributevaluetranslation"
 
 	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 )
 
 type ProductAttributeValueTranslationRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.ProductAttributeValueTranslation, ent.ProductAttributeValueTranslation]
 
@@ -66,7 +66,7 @@ func (r *ProductAttributeValueTranslationRepo) init() {
 func (r *ProductAttributeValueTranslationRepo) CleanTranslations(
 	ctx context.Context,
 	tx *ent.Tx,
-	valueID uint32,
+	valueID int64,
 ) error {
 	if _, err := tx.ProductAttributeValueTranslation.Delete().
 		Where(
@@ -79,7 +79,7 @@ func (r *ProductAttributeValueTranslationRepo) CleanTranslations(
 	return nil
 }
 
-func (r *ProductAttributeValueTranslationRepo) ListTranslations(ctx context.Context, valueID uint32, locale string, viewMask *fieldmaskpb.FieldMask) ([]*catalogV1.ProductAttributeValueTranslation, error) {
+func (r *ProductAttributeValueTranslationRepo) ListTranslations(ctx context.Context, valueID int64, locale string, viewMask *fieldmaskpb.FieldMask) ([]*catalogV1.ProductAttributeValueTranslation, error) {
 	builder := r.entClient.Client().ProductAttributeValueTranslation.Query().
 		Where(
 			productattributevaluetranslation.ValueIDEQ(valueID),
@@ -117,7 +117,7 @@ func (r *ProductAttributeValueTranslationRepo) ListTranslations(ctx context.Cont
 	return dtos, nil
 }
 
-func (r *ProductAttributeValueTranslationRepo) GetTranslation(ctx context.Context, valueID uint32, languageCode string) (*catalogV1.ProductAttributeValueTranslation, error) {
+func (r *ProductAttributeValueTranslationRepo) GetTranslation(ctx context.Context, valueID int64, languageCode string) (*catalogV1.ProductAttributeValueTranslation, error) {
 	q := r.entClient.Client().ProductAttributeValueTranslation.Query().
 		Where(
 			productattributevaluetranslation.ValueIDEQ(valueID),
@@ -183,7 +183,7 @@ func (r *ProductAttributeValueTranslationRepo) CreateTranslation(ctx context.Con
 	return r.mapper.ToDTO(entity), nil
 }
 
-func (r *ProductAttributeValueTranslationRepo) UpdateTranslation(ctx context.Context, id uint32, data *catalogV1.ProductAttributeValueTranslation, updateMask *fieldmaskpb.FieldMask) (*catalogV1.ProductAttributeValueTranslation, error) {
+func (r *ProductAttributeValueTranslationRepo) UpdateTranslation(ctx context.Context, id int64, data *catalogV1.ProductAttributeValueTranslation, updateMask *fieldmaskpb.FieldMask) (*catalogV1.ProductAttributeValueTranslation, error) {
 	if data == nil {
 		return nil, nil
 	}
@@ -212,7 +212,7 @@ func (r *ProductAttributeValueTranslationRepo) UpdateTranslation(ctx context.Con
 }
 
 // TranslationExists checks if a translation exists for the given product attribute value ID and language code.
-func (r *ProductAttributeValueTranslationRepo) TranslationExists(ctx context.Context, valueId uint32, languageCode string) (bool, error) {
+func (r *ProductAttributeValueTranslationRepo) TranslationExists(ctx context.Context, valueId int64, languageCode string) (bool, error) {
 	c, err := r.entClient.Client().ProductAttributeValueTranslation.Query().
 		Where(
 			productattributevaluetranslation.ValueIDEQ(valueId),
@@ -228,7 +228,7 @@ func (r *ProductAttributeValueTranslationRepo) TranslationExists(ctx context.Con
 }
 
 // ListAvailedLanguages lists the language codes of all translations available for the given product attribute value ID.
-func (r *ProductAttributeValueTranslationRepo) ListAvailedLanguages(ctx context.Context, valueId uint32) ([]string, error) {
+func (r *ProductAttributeValueTranslationRepo) ListAvailedLanguages(ctx context.Context, valueId int64) ([]string, error) {
 	entities, err := r.entClient.Client().ProductAttributeValueTranslation.Query().
 		Where(
 			productattributevaluetranslation.ValueIDEQ(valueId),

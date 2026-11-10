@@ -4,9 +4,9 @@ import (
 	"context"
 	"strings"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	redisCacheV1 "go-wind-shop/api/gen/go/redis_cache/service/v1"
@@ -57,7 +57,7 @@ func (s *RedisCacheMonitorService) Get(ctx context.Context, _ *redisCacheV1.GetR
 	if n, err := s.rdb.DBSize(ctx).Result(); err != nil {
 		s.log.Errorf("redis DBSIZE failed: %s", err.Error())
 	} else if n >= 0 {
-		info.DbSize = uint64(n)
+		info.DbSize = int64(n)
 	}
 
 	if entries, err := s.rdb.SlowLogGet(ctx, slowLogFetchLimit).Result(); err != nil {

@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.OrderItem {
+func ID(id int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.OrderItem {
+func IDEQ(id int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.OrderItem {
+func IDNEQ(id int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.OrderItem {
+func IDIn(ids ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.OrderItem {
+func IDNotIn(ids ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.OrderItem {
+func IDGT(id int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.OrderItem {
+func IDGTE(id int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.OrderItem {
+func IDLT(id int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.OrderItem {
+func IDLTE(id int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,37 +70,37 @@ func DeletedAt(v time.Time) predicate.OrderItem {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.OrderItem {
+func CreatedBy(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.OrderItem {
+func UpdatedBy(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.OrderItem {
+func DeletedBy(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // TenantID applies equality check predicate on the "tenant_id" field. It's identical to TenantIDEQ.
-func TenantID(v uint32) predicate.OrderItem {
+func TenantID(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldTenantID, v))
 }
 
 // OrderID applies equality check predicate on the "order_id" field. It's identical to OrderIDEQ.
-func OrderID(v uint32) predicate.OrderItem {
+func OrderID(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldOrderID, v))
 }
 
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
-func UserID(v uint32) predicate.OrderItem {
+func UserID(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldUserID, v))
 }
 
 // SkuID applies equality check predicate on the "sku_id" field. It's identical to SkuIDEQ.
-func SkuID(v uint32) predicate.OrderItem {
+func SkuID(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldSkuID, v))
 }
 
@@ -275,42 +275,42 @@ func DeletedAtNotNil() predicate.OrderItem {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.OrderItem {
+func CreatedByEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.OrderItem {
+func CreatedByNEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.OrderItem {
+func CreatedByIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.OrderItem {
+func CreatedByNotIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.OrderItem {
+func CreatedByGT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.OrderItem {
+func CreatedByGTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.OrderItem {
+func CreatedByLT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.OrderItem {
+func CreatedByLTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -325,42 +325,42 @@ func CreatedByNotNil() predicate.OrderItem {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.OrderItem {
+func UpdatedByEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.OrderItem {
+func UpdatedByNEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.OrderItem {
+func UpdatedByIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.OrderItem {
+func UpdatedByNotIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.OrderItem {
+func UpdatedByGT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.OrderItem {
+func UpdatedByGTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.OrderItem {
+func UpdatedByLT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.OrderItem {
+func UpdatedByLTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -375,42 +375,42 @@ func UpdatedByNotNil() predicate.OrderItem {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.OrderItem {
+func DeletedByEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.OrderItem {
+func DeletedByNEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.OrderItem {
+func DeletedByIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.OrderItem {
+func DeletedByNotIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.OrderItem {
+func DeletedByGT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.OrderItem {
+func DeletedByGTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.OrderItem {
+func DeletedByLT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.OrderItem {
+func DeletedByLTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -425,42 +425,42 @@ func DeletedByNotNil() predicate.OrderItem {
 }
 
 // TenantIDEQ applies the EQ predicate on the "tenant_id" field.
-func TenantIDEQ(v uint32) predicate.OrderItem {
+func TenantIDEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldTenantID, v))
 }
 
 // TenantIDNEQ applies the NEQ predicate on the "tenant_id" field.
-func TenantIDNEQ(v uint32) predicate.OrderItem {
+func TenantIDNEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNEQ(FieldTenantID, v))
 }
 
 // TenantIDIn applies the In predicate on the "tenant_id" field.
-func TenantIDIn(vs ...uint32) predicate.OrderItem {
+func TenantIDIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldIn(FieldTenantID, vs...))
 }
 
 // TenantIDNotIn applies the NotIn predicate on the "tenant_id" field.
-func TenantIDNotIn(vs ...uint32) predicate.OrderItem {
+func TenantIDNotIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNotIn(FieldTenantID, vs...))
 }
 
 // TenantIDGT applies the GT predicate on the "tenant_id" field.
-func TenantIDGT(v uint32) predicate.OrderItem {
+func TenantIDGT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGT(FieldTenantID, v))
 }
 
 // TenantIDGTE applies the GTE predicate on the "tenant_id" field.
-func TenantIDGTE(v uint32) predicate.OrderItem {
+func TenantIDGTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGTE(FieldTenantID, v))
 }
 
 // TenantIDLT applies the LT predicate on the "tenant_id" field.
-func TenantIDLT(v uint32) predicate.OrderItem {
+func TenantIDLT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLT(FieldTenantID, v))
 }
 
 // TenantIDLTE applies the LTE predicate on the "tenant_id" field.
-func TenantIDLTE(v uint32) predicate.OrderItem {
+func TenantIDLTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLTE(FieldTenantID, v))
 }
 
@@ -475,42 +475,42 @@ func TenantIDNotNil() predicate.OrderItem {
 }
 
 // OrderIDEQ applies the EQ predicate on the "order_id" field.
-func OrderIDEQ(v uint32) predicate.OrderItem {
+func OrderIDEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldOrderID, v))
 }
 
 // OrderIDNEQ applies the NEQ predicate on the "order_id" field.
-func OrderIDNEQ(v uint32) predicate.OrderItem {
+func OrderIDNEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNEQ(FieldOrderID, v))
 }
 
 // OrderIDIn applies the In predicate on the "order_id" field.
-func OrderIDIn(vs ...uint32) predicate.OrderItem {
+func OrderIDIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldIn(FieldOrderID, vs...))
 }
 
 // OrderIDNotIn applies the NotIn predicate on the "order_id" field.
-func OrderIDNotIn(vs ...uint32) predicate.OrderItem {
+func OrderIDNotIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNotIn(FieldOrderID, vs...))
 }
 
 // OrderIDGT applies the GT predicate on the "order_id" field.
-func OrderIDGT(v uint32) predicate.OrderItem {
+func OrderIDGT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGT(FieldOrderID, v))
 }
 
 // OrderIDGTE applies the GTE predicate on the "order_id" field.
-func OrderIDGTE(v uint32) predicate.OrderItem {
+func OrderIDGTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGTE(FieldOrderID, v))
 }
 
 // OrderIDLT applies the LT predicate on the "order_id" field.
-func OrderIDLT(v uint32) predicate.OrderItem {
+func OrderIDLT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLT(FieldOrderID, v))
 }
 
 // OrderIDLTE applies the LTE predicate on the "order_id" field.
-func OrderIDLTE(v uint32) predicate.OrderItem {
+func OrderIDLTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLTE(FieldOrderID, v))
 }
 
@@ -525,42 +525,42 @@ func OrderIDNotNil() predicate.OrderItem {
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
-func UserIDEQ(v uint32) predicate.OrderItem {
+func UserIDEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldUserID, v))
 }
 
 // UserIDNEQ applies the NEQ predicate on the "user_id" field.
-func UserIDNEQ(v uint32) predicate.OrderItem {
+func UserIDNEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNEQ(FieldUserID, v))
 }
 
 // UserIDIn applies the In predicate on the "user_id" field.
-func UserIDIn(vs ...uint32) predicate.OrderItem {
+func UserIDIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldIn(FieldUserID, vs...))
 }
 
 // UserIDNotIn applies the NotIn predicate on the "user_id" field.
-func UserIDNotIn(vs ...uint32) predicate.OrderItem {
+func UserIDNotIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNotIn(FieldUserID, vs...))
 }
 
 // UserIDGT applies the GT predicate on the "user_id" field.
-func UserIDGT(v uint32) predicate.OrderItem {
+func UserIDGT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGT(FieldUserID, v))
 }
 
 // UserIDGTE applies the GTE predicate on the "user_id" field.
-func UserIDGTE(v uint32) predicate.OrderItem {
+func UserIDGTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGTE(FieldUserID, v))
 }
 
 // UserIDLT applies the LT predicate on the "user_id" field.
-func UserIDLT(v uint32) predicate.OrderItem {
+func UserIDLT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLT(FieldUserID, v))
 }
 
 // UserIDLTE applies the LTE predicate on the "user_id" field.
-func UserIDLTE(v uint32) predicate.OrderItem {
+func UserIDLTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLTE(FieldUserID, v))
 }
 
@@ -575,42 +575,42 @@ func UserIDNotNil() predicate.OrderItem {
 }
 
 // SkuIDEQ applies the EQ predicate on the "sku_id" field.
-func SkuIDEQ(v uint32) predicate.OrderItem {
+func SkuIDEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldEQ(FieldSkuID, v))
 }
 
 // SkuIDNEQ applies the NEQ predicate on the "sku_id" field.
-func SkuIDNEQ(v uint32) predicate.OrderItem {
+func SkuIDNEQ(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNEQ(FieldSkuID, v))
 }
 
 // SkuIDIn applies the In predicate on the "sku_id" field.
-func SkuIDIn(vs ...uint32) predicate.OrderItem {
+func SkuIDIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldIn(FieldSkuID, vs...))
 }
 
 // SkuIDNotIn applies the NotIn predicate on the "sku_id" field.
-func SkuIDNotIn(vs ...uint32) predicate.OrderItem {
+func SkuIDNotIn(vs ...int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldNotIn(FieldSkuID, vs...))
 }
 
 // SkuIDGT applies the GT predicate on the "sku_id" field.
-func SkuIDGT(v uint32) predicate.OrderItem {
+func SkuIDGT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGT(FieldSkuID, v))
 }
 
 // SkuIDGTE applies the GTE predicate on the "sku_id" field.
-func SkuIDGTE(v uint32) predicate.OrderItem {
+func SkuIDGTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldGTE(FieldSkuID, v))
 }
 
 // SkuIDLT applies the LT predicate on the "sku_id" field.
-func SkuIDLT(v uint32) predicate.OrderItem {
+func SkuIDLT(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLT(FieldSkuID, v))
 }
 
 // SkuIDLTE applies the LTE predicate on the "sku_id" field.
-func SkuIDLTE(v uint32) predicate.OrderItem {
+func SkuIDLTE(v int64) predicate.OrderItem {
 	return predicate.OrderItem(sql.FieldLTE(FieldSkuID, v))
 }
 

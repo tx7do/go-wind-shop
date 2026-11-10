@@ -70,14 +70,14 @@ func (_u *PointsLedgerUpdate) ClearDeletedAt() *PointsLedgerUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *PointsLedgerUpdate) SetUserID(v uint32) *PointsLedgerUpdate {
+func (_u *PointsLedgerUpdate) SetUserID(v int64) *PointsLedgerUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *PointsLedgerUpdate) SetNillableUserID(v *uint32) *PointsLedgerUpdate {
+func (_u *PointsLedgerUpdate) SetNillableUserID(v *int64) *PointsLedgerUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *PointsLedgerUpdate) SetNillableUserID(v *uint32) *PointsLedgerUpdate {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *PointsLedgerUpdate) AddUserID(v int32) *PointsLedgerUpdate {
+func (_u *PointsLedgerUpdate) AddUserID(v int64) *PointsLedgerUpdate {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -173,14 +173,14 @@ func (_u *PointsLedgerUpdate) SetNillableReason(v *string) *PointsLedgerUpdate {
 }
 
 // SetRefOrderID sets the "ref_order_id" field.
-func (_u *PointsLedgerUpdate) SetRefOrderID(v uint32) *PointsLedgerUpdate {
+func (_u *PointsLedgerUpdate) SetRefOrderID(v int64) *PointsLedgerUpdate {
 	_u.mutation.ResetRefOrderID()
 	_u.mutation.SetRefOrderID(v)
 	return _u
 }
 
 // SetNillableRefOrderID sets the "ref_order_id" field if the given value is not nil.
-func (_u *PointsLedgerUpdate) SetNillableRefOrderID(v *uint32) *PointsLedgerUpdate {
+func (_u *PointsLedgerUpdate) SetNillableRefOrderID(v *int64) *PointsLedgerUpdate {
 	if v != nil {
 		_u.SetRefOrderID(*v)
 	}
@@ -188,7 +188,7 @@ func (_u *PointsLedgerUpdate) SetNillableRefOrderID(v *uint32) *PointsLedgerUpda
 }
 
 // AddRefOrderID adds value to the "ref_order_id" field.
-func (_u *PointsLedgerUpdate) AddRefOrderID(v int32) *PointsLedgerUpdate {
+func (_u *PointsLedgerUpdate) AddRefOrderID(v int64) *PointsLedgerUpdate {
 	_u.mutation.AddRefOrderID(v)
 	return _u
 }
@@ -251,7 +251,7 @@ func (_u *PointsLedgerUpdate) sqlSave(ctx context.Context) (_node int, err error
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(pointsledger.Table, pointsledger.Columns, sqlgraph.NewFieldSpec(pointsledger.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(pointsledger.Table, pointsledger.Columns, sqlgraph.NewFieldSpec(pointsledger.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -275,16 +275,16 @@ func (_u *PointsLedgerUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.ClearField(pointsledger.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(pointsledger.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(pointsledger.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(pointsledger.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(pointsledger.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(pointsledger.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(pointsledger.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(pointsledger.FieldUserID, field.TypeUint32)
+		_spec.ClearField(pointsledger.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Delta(); ok {
 		_spec.SetField(pointsledger.FieldDelta, field.TypeInt64, value)
@@ -308,13 +308,13 @@ func (_u *PointsLedgerUpdate) sqlSave(ctx context.Context) (_node int, err error
 		_spec.SetField(pointsledger.FieldReason, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.RefOrderID(); ok {
-		_spec.SetField(pointsledger.FieldRefOrderID, field.TypeUint32, value)
+		_spec.SetField(pointsledger.FieldRefOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedRefOrderID(); ok {
-		_spec.AddField(pointsledger.FieldRefOrderID, field.TypeUint32, value)
+		_spec.AddField(pointsledger.FieldRefOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.RefOrderIDCleared() {
-		_spec.ClearField(pointsledger.FieldRefOrderID, field.TypeUint32)
+		_spec.ClearField(pointsledger.FieldRefOrderID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -379,14 +379,14 @@ func (_u *PointsLedgerUpdateOne) ClearDeletedAt() *PointsLedgerUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *PointsLedgerUpdateOne) SetUserID(v uint32) *PointsLedgerUpdateOne {
+func (_u *PointsLedgerUpdateOne) SetUserID(v int64) *PointsLedgerUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *PointsLedgerUpdateOne) SetNillableUserID(v *uint32) *PointsLedgerUpdateOne {
+func (_u *PointsLedgerUpdateOne) SetNillableUserID(v *int64) *PointsLedgerUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -394,7 +394,7 @@ func (_u *PointsLedgerUpdateOne) SetNillableUserID(v *uint32) *PointsLedgerUpdat
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *PointsLedgerUpdateOne) AddUserID(v int32) *PointsLedgerUpdateOne {
+func (_u *PointsLedgerUpdateOne) AddUserID(v int64) *PointsLedgerUpdateOne {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -482,14 +482,14 @@ func (_u *PointsLedgerUpdateOne) SetNillableReason(v *string) *PointsLedgerUpdat
 }
 
 // SetRefOrderID sets the "ref_order_id" field.
-func (_u *PointsLedgerUpdateOne) SetRefOrderID(v uint32) *PointsLedgerUpdateOne {
+func (_u *PointsLedgerUpdateOne) SetRefOrderID(v int64) *PointsLedgerUpdateOne {
 	_u.mutation.ResetRefOrderID()
 	_u.mutation.SetRefOrderID(v)
 	return _u
 }
 
 // SetNillableRefOrderID sets the "ref_order_id" field if the given value is not nil.
-func (_u *PointsLedgerUpdateOne) SetNillableRefOrderID(v *uint32) *PointsLedgerUpdateOne {
+func (_u *PointsLedgerUpdateOne) SetNillableRefOrderID(v *int64) *PointsLedgerUpdateOne {
 	if v != nil {
 		_u.SetRefOrderID(*v)
 	}
@@ -497,7 +497,7 @@ func (_u *PointsLedgerUpdateOne) SetNillableRefOrderID(v *uint32) *PointsLedgerU
 }
 
 // AddRefOrderID adds value to the "ref_order_id" field.
-func (_u *PointsLedgerUpdateOne) AddRefOrderID(v int32) *PointsLedgerUpdateOne {
+func (_u *PointsLedgerUpdateOne) AddRefOrderID(v int64) *PointsLedgerUpdateOne {
 	_u.mutation.AddRefOrderID(v)
 	return _u
 }
@@ -573,7 +573,7 @@ func (_u *PointsLedgerUpdateOne) sqlSave(ctx context.Context) (_node *PointsLedg
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(pointsledger.Table, pointsledger.Columns, sqlgraph.NewFieldSpec(pointsledger.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(pointsledger.Table, pointsledger.Columns, sqlgraph.NewFieldSpec(pointsledger.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PointsLedger.id" for update`)}
@@ -614,16 +614,16 @@ func (_u *PointsLedgerUpdateOne) sqlSave(ctx context.Context) (_node *PointsLedg
 		_spec.ClearField(pointsledger.FieldDeletedAt, field.TypeTime)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(pointsledger.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(pointsledger.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(pointsledger.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(pointsledger.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(pointsledger.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(pointsledger.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(pointsledger.FieldUserID, field.TypeUint32)
+		_spec.ClearField(pointsledger.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Delta(); ok {
 		_spec.SetField(pointsledger.FieldDelta, field.TypeInt64, value)
@@ -647,13 +647,13 @@ func (_u *PointsLedgerUpdateOne) sqlSave(ctx context.Context) (_node *PointsLedg
 		_spec.SetField(pointsledger.FieldReason, field.TypeString, value)
 	}
 	if value, ok := _u.mutation.RefOrderID(); ok {
-		_spec.SetField(pointsledger.FieldRefOrderID, field.TypeUint32, value)
+		_spec.SetField(pointsledger.FieldRefOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedRefOrderID(); ok {
-		_spec.AddField(pointsledger.FieldRefOrderID, field.TypeUint32, value)
+		_spec.AddField(pointsledger.FieldRefOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.RefOrderIDCleared() {
-		_spec.ClearField(pointsledger.FieldRefOrderID, field.TypeUint32)
+		_spec.ClearField(pointsledger.FieldRefOrderID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &PointsLedger{config: _u.config}

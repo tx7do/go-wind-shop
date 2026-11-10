@@ -70,14 +70,14 @@ func (_u *BrandTranslationUpdate) ClearDeletedAt() *BrandTranslationUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *BrandTranslationUpdate) SetCreatedBy(v uint32) *BrandTranslationUpdate {
+func (_u *BrandTranslationUpdate) SetCreatedBy(v int64) *BrandTranslationUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *BrandTranslationUpdate) SetNillableCreatedBy(v *uint32) *BrandTranslationUpdate {
+func (_u *BrandTranslationUpdate) SetNillableCreatedBy(v *int64) *BrandTranslationUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *BrandTranslationUpdate) SetNillableCreatedBy(v *uint32) *BrandTranslat
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *BrandTranslationUpdate) AddCreatedBy(v int32) *BrandTranslationUpdate {
+func (_u *BrandTranslationUpdate) AddCreatedBy(v int64) *BrandTranslationUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *BrandTranslationUpdate) ClearCreatedBy() *BrandTranslationUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *BrandTranslationUpdate) SetUpdatedBy(v uint32) *BrandTranslationUpdate {
+func (_u *BrandTranslationUpdate) SetUpdatedBy(v int64) *BrandTranslationUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *BrandTranslationUpdate) SetNillableUpdatedBy(v *uint32) *BrandTranslationUpdate {
+func (_u *BrandTranslationUpdate) SetNillableUpdatedBy(v *int64) *BrandTranslationUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *BrandTranslationUpdate) SetNillableUpdatedBy(v *uint32) *BrandTranslat
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *BrandTranslationUpdate) AddUpdatedBy(v int32) *BrandTranslationUpdate {
+func (_u *BrandTranslationUpdate) AddUpdatedBy(v int64) *BrandTranslationUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *BrandTranslationUpdate) ClearUpdatedBy() *BrandTranslationUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *BrandTranslationUpdate) SetDeletedBy(v uint32) *BrandTranslationUpdate {
+func (_u *BrandTranslationUpdate) SetDeletedBy(v int64) *BrandTranslationUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *BrandTranslationUpdate) SetNillableDeletedBy(v *uint32) *BrandTranslationUpdate {
+func (_u *BrandTranslationUpdate) SetNillableDeletedBy(v *int64) *BrandTranslationUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *BrandTranslationUpdate) SetNillableDeletedBy(v *uint32) *BrandTranslat
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *BrandTranslationUpdate) AddDeletedBy(v int32) *BrandTranslationUpdate {
+func (_u *BrandTranslationUpdate) AddDeletedBy(v int64) *BrandTranslationUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *BrandTranslationUpdate) ClearDeletedBy() *BrandTranslationUpdate {
 }
 
 // SetBrandID sets the "brand_id" field.
-func (_u *BrandTranslationUpdate) SetBrandID(v uint32) *BrandTranslationUpdate {
+func (_u *BrandTranslationUpdate) SetBrandID(v int64) *BrandTranslationUpdate {
 	_u.mutation.ResetBrandID()
 	_u.mutation.SetBrandID(v)
 	return _u
 }
 
 // SetNillableBrandID sets the "brand_id" field if the given value is not nil.
-func (_u *BrandTranslationUpdate) SetNillableBrandID(v *uint32) *BrandTranslationUpdate {
+func (_u *BrandTranslationUpdate) SetNillableBrandID(v *int64) *BrandTranslationUpdate {
 	if v != nil {
 		_u.SetBrandID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *BrandTranslationUpdate) SetNillableBrandID(v *uint32) *BrandTranslatio
 }
 
 // AddBrandID adds value to the "brand_id" field.
-func (_u *BrandTranslationUpdate) AddBrandID(v int32) *BrandTranslationUpdate {
+func (_u *BrandTranslationUpdate) AddBrandID(v int64) *BrandTranslationUpdate {
 	_u.mutation.AddBrandID(v)
 	return _u
 }
@@ -296,7 +296,7 @@ func (_u *BrandTranslationUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)
 }
 
 func (_u *BrandTranslationUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(brandtranslation.Table, brandtranslation.Columns, sqlgraph.NewFieldSpec(brandtranslation.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(brandtranslation.Table, brandtranslation.Columns, sqlgraph.NewFieldSpec(brandtranslation.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -320,40 +320,40 @@ func (_u *BrandTranslationUpdate) sqlSave(ctx context.Context) (_node int, err e
 		_spec.ClearField(brandtranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(brandtranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(brandtranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(brandtranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(brandtranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(brandtranslation.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(brandtranslation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(brandtranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(brandtranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(brandtranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(brandtranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(brandtranslation.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(brandtranslation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(brandtranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(brandtranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(brandtranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(brandtranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(brandtranslation.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(brandtranslation.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.BrandID(); ok {
-		_spec.SetField(brandtranslation.FieldBrandID, field.TypeUint32, value)
+		_spec.SetField(brandtranslation.FieldBrandID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedBrandID(); ok {
-		_spec.AddField(brandtranslation.FieldBrandID, field.TypeUint32, value)
+		_spec.AddField(brandtranslation.FieldBrandID, field.TypeInt64, value)
 	}
 	if _u.mutation.BrandIDCleared() {
-		_spec.ClearField(brandtranslation.FieldBrandID, field.TypeUint32)
+		_spec.ClearField(brandtranslation.FieldBrandID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(brandtranslation.FieldLanguageCode, field.TypeString, value)
@@ -442,14 +442,14 @@ func (_u *BrandTranslationUpdateOne) ClearDeletedAt() *BrandTranslationUpdateOne
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *BrandTranslationUpdateOne) SetCreatedBy(v uint32) *BrandTranslationUpdateOne {
+func (_u *BrandTranslationUpdateOne) SetCreatedBy(v int64) *BrandTranslationUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *BrandTranslationUpdateOne) SetNillableCreatedBy(v *uint32) *BrandTranslationUpdateOne {
+func (_u *BrandTranslationUpdateOne) SetNillableCreatedBy(v *int64) *BrandTranslationUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -457,7 +457,7 @@ func (_u *BrandTranslationUpdateOne) SetNillableCreatedBy(v *uint32) *BrandTrans
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *BrandTranslationUpdateOne) AddCreatedBy(v int32) *BrandTranslationUpdateOne {
+func (_u *BrandTranslationUpdateOne) AddCreatedBy(v int64) *BrandTranslationUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -469,14 +469,14 @@ func (_u *BrandTranslationUpdateOne) ClearCreatedBy() *BrandTranslationUpdateOne
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *BrandTranslationUpdateOne) SetUpdatedBy(v uint32) *BrandTranslationUpdateOne {
+func (_u *BrandTranslationUpdateOne) SetUpdatedBy(v int64) *BrandTranslationUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *BrandTranslationUpdateOne) SetNillableUpdatedBy(v *uint32) *BrandTranslationUpdateOne {
+func (_u *BrandTranslationUpdateOne) SetNillableUpdatedBy(v *int64) *BrandTranslationUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -484,7 +484,7 @@ func (_u *BrandTranslationUpdateOne) SetNillableUpdatedBy(v *uint32) *BrandTrans
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *BrandTranslationUpdateOne) AddUpdatedBy(v int32) *BrandTranslationUpdateOne {
+func (_u *BrandTranslationUpdateOne) AddUpdatedBy(v int64) *BrandTranslationUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -496,14 +496,14 @@ func (_u *BrandTranslationUpdateOne) ClearUpdatedBy() *BrandTranslationUpdateOne
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *BrandTranslationUpdateOne) SetDeletedBy(v uint32) *BrandTranslationUpdateOne {
+func (_u *BrandTranslationUpdateOne) SetDeletedBy(v int64) *BrandTranslationUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *BrandTranslationUpdateOne) SetNillableDeletedBy(v *uint32) *BrandTranslationUpdateOne {
+func (_u *BrandTranslationUpdateOne) SetNillableDeletedBy(v *int64) *BrandTranslationUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -511,7 +511,7 @@ func (_u *BrandTranslationUpdateOne) SetNillableDeletedBy(v *uint32) *BrandTrans
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *BrandTranslationUpdateOne) AddDeletedBy(v int32) *BrandTranslationUpdateOne {
+func (_u *BrandTranslationUpdateOne) AddDeletedBy(v int64) *BrandTranslationUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -523,14 +523,14 @@ func (_u *BrandTranslationUpdateOne) ClearDeletedBy() *BrandTranslationUpdateOne
 }
 
 // SetBrandID sets the "brand_id" field.
-func (_u *BrandTranslationUpdateOne) SetBrandID(v uint32) *BrandTranslationUpdateOne {
+func (_u *BrandTranslationUpdateOne) SetBrandID(v int64) *BrandTranslationUpdateOne {
 	_u.mutation.ResetBrandID()
 	_u.mutation.SetBrandID(v)
 	return _u
 }
 
 // SetNillableBrandID sets the "brand_id" field if the given value is not nil.
-func (_u *BrandTranslationUpdateOne) SetNillableBrandID(v *uint32) *BrandTranslationUpdateOne {
+func (_u *BrandTranslationUpdateOne) SetNillableBrandID(v *int64) *BrandTranslationUpdateOne {
 	if v != nil {
 		_u.SetBrandID(*v)
 	}
@@ -538,7 +538,7 @@ func (_u *BrandTranslationUpdateOne) SetNillableBrandID(v *uint32) *BrandTransla
 }
 
 // AddBrandID adds value to the "brand_id" field.
-func (_u *BrandTranslationUpdateOne) AddBrandID(v int32) *BrandTranslationUpdateOne {
+func (_u *BrandTranslationUpdateOne) AddBrandID(v int64) *BrandTranslationUpdateOne {
 	_u.mutation.AddBrandID(v)
 	return _u
 }
@@ -681,7 +681,7 @@ func (_u *BrandTranslationUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuild
 }
 
 func (_u *BrandTranslationUpdateOne) sqlSave(ctx context.Context) (_node *BrandTranslation, err error) {
-	_spec := sqlgraph.NewUpdateSpec(brandtranslation.Table, brandtranslation.Columns, sqlgraph.NewFieldSpec(brandtranslation.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(brandtranslation.Table, brandtranslation.Columns, sqlgraph.NewFieldSpec(brandtranslation.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "BrandTranslation.id" for update`)}
@@ -722,40 +722,40 @@ func (_u *BrandTranslationUpdateOne) sqlSave(ctx context.Context) (_node *BrandT
 		_spec.ClearField(brandtranslation.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(brandtranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(brandtranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(brandtranslation.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(brandtranslation.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(brandtranslation.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(brandtranslation.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(brandtranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(brandtranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(brandtranslation.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(brandtranslation.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(brandtranslation.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(brandtranslation.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(brandtranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(brandtranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(brandtranslation.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(brandtranslation.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(brandtranslation.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(brandtranslation.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.BrandID(); ok {
-		_spec.SetField(brandtranslation.FieldBrandID, field.TypeUint32, value)
+		_spec.SetField(brandtranslation.FieldBrandID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedBrandID(); ok {
-		_spec.AddField(brandtranslation.FieldBrandID, field.TypeUint32, value)
+		_spec.AddField(brandtranslation.FieldBrandID, field.TypeInt64, value)
 	}
 	if _u.mutation.BrandIDCleared() {
-		_spec.ClearField(brandtranslation.FieldBrandID, field.TypeUint32)
+		_spec.ClearField(brandtranslation.FieldBrandID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.LanguageCode(); ok {
 		_spec.SetField(brandtranslation.FieldLanguageCode, field.TypeString, value)

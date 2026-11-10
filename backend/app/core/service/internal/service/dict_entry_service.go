@@ -1,7 +1,8 @@
 package service
 
-import (	"go-wind-shop/pkg/logx"
+import (
 	"context"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
@@ -41,7 +42,7 @@ func (s *DictEntryService) Count(ctx context.Context, req *paginationV1.PagingRe
 	}
 
 	return &dictV1.CountDictEntryResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 

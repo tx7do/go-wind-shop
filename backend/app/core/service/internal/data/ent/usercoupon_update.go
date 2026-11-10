@@ -70,14 +70,14 @@ func (_u *UserCouponUpdate) ClearDeletedAt() *UserCouponUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *UserCouponUpdate) SetCreatedBy(v uint32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) SetCreatedBy(v int64) *UserCouponUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *UserCouponUpdate) SetNillableCreatedBy(v *uint32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) SetNillableCreatedBy(v *int64) *UserCouponUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *UserCouponUpdate) SetNillableCreatedBy(v *uint32) *UserCouponUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *UserCouponUpdate) AddCreatedBy(v int32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) AddCreatedBy(v int64) *UserCouponUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *UserCouponUpdate) ClearCreatedBy() *UserCouponUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *UserCouponUpdate) SetUpdatedBy(v uint32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) SetUpdatedBy(v int64) *UserCouponUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *UserCouponUpdate) SetNillableUpdatedBy(v *uint32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) SetNillableUpdatedBy(v *int64) *UserCouponUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *UserCouponUpdate) SetNillableUpdatedBy(v *uint32) *UserCouponUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *UserCouponUpdate) AddUpdatedBy(v int32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) AddUpdatedBy(v int64) *UserCouponUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *UserCouponUpdate) ClearUpdatedBy() *UserCouponUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *UserCouponUpdate) SetDeletedBy(v uint32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) SetDeletedBy(v int64) *UserCouponUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *UserCouponUpdate) SetNillableDeletedBy(v *uint32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) SetNillableDeletedBy(v *int64) *UserCouponUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *UserCouponUpdate) SetNillableDeletedBy(v *uint32) *UserCouponUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *UserCouponUpdate) AddDeletedBy(v int32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) AddDeletedBy(v int64) *UserCouponUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *UserCouponUpdate) ClearDeletedBy() *UserCouponUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *UserCouponUpdate) SetUserID(v uint32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) SetUserID(v int64) *UserCouponUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *UserCouponUpdate) SetNillableUserID(v *uint32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) SetNillableUserID(v *int64) *UserCouponUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *UserCouponUpdate) SetNillableUserID(v *uint32) *UserCouponUpdate {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *UserCouponUpdate) AddUserID(v int32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) AddUserID(v int64) *UserCouponUpdate {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -178,14 +178,14 @@ func (_u *UserCouponUpdate) ClearUserID() *UserCouponUpdate {
 }
 
 // SetCouponTemplateID sets the "coupon_template_id" field.
-func (_u *UserCouponUpdate) SetCouponTemplateID(v uint32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) SetCouponTemplateID(v int64) *UserCouponUpdate {
 	_u.mutation.ResetCouponTemplateID()
 	_u.mutation.SetCouponTemplateID(v)
 	return _u
 }
 
 // SetNillableCouponTemplateID sets the "coupon_template_id" field if the given value is not nil.
-func (_u *UserCouponUpdate) SetNillableCouponTemplateID(v *uint32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) SetNillableCouponTemplateID(v *int64) *UserCouponUpdate {
 	if v != nil {
 		_u.SetCouponTemplateID(*v)
 	}
@@ -193,7 +193,7 @@ func (_u *UserCouponUpdate) SetNillableCouponTemplateID(v *uint32) *UserCouponUp
 }
 
 // AddCouponTemplateID adds value to the "coupon_template_id" field.
-func (_u *UserCouponUpdate) AddCouponTemplateID(v int32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) AddCouponTemplateID(v int64) *UserCouponUpdate {
 	_u.mutation.AddCouponTemplateID(v)
 	return _u
 }
@@ -245,14 +245,14 @@ func (_u *UserCouponUpdate) ClearRedeemedAt() *UserCouponUpdate {
 }
 
 // SetRedeemedOrderID sets the "redeemed_order_id" field.
-func (_u *UserCouponUpdate) SetRedeemedOrderID(v uint32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) SetRedeemedOrderID(v int64) *UserCouponUpdate {
 	_u.mutation.ResetRedeemedOrderID()
 	_u.mutation.SetRedeemedOrderID(v)
 	return _u
 }
 
 // SetNillableRedeemedOrderID sets the "redeemed_order_id" field if the given value is not nil.
-func (_u *UserCouponUpdate) SetNillableRedeemedOrderID(v *uint32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) SetNillableRedeemedOrderID(v *int64) *UserCouponUpdate {
 	if v != nil {
 		_u.SetRedeemedOrderID(*v)
 	}
@@ -260,7 +260,7 @@ func (_u *UserCouponUpdate) SetNillableRedeemedOrderID(v *uint32) *UserCouponUpd
 }
 
 // AddRedeemedOrderID adds value to the "redeemed_order_id" field.
-func (_u *UserCouponUpdate) AddRedeemedOrderID(v int32) *UserCouponUpdate {
+func (_u *UserCouponUpdate) AddRedeemedOrderID(v int64) *UserCouponUpdate {
 	_u.mutation.AddRedeemedOrderID(v)
 	return _u
 }
@@ -350,7 +350,7 @@ func (_u *UserCouponUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(usercoupon.Table, usercoupon.Columns, sqlgraph.NewFieldSpec(usercoupon.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(usercoupon.Table, usercoupon.Columns, sqlgraph.NewFieldSpec(usercoupon.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -374,52 +374,52 @@ func (_u *UserCouponUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(usercoupon.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(usercoupon.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(usercoupon.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(usercoupon.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(usercoupon.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(usercoupon.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(usercoupon.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(usercoupon.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(usercoupon.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(usercoupon.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(usercoupon.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(usercoupon.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(usercoupon.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(usercoupon.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(usercoupon.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(usercoupon.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(usercoupon.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(usercoupon.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(usercoupon.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(usercoupon.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(usercoupon.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(usercoupon.FieldUserID, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.CouponTemplateID(); ok {
-		_spec.SetField(usercoupon.FieldCouponTemplateID, field.TypeUint32, value)
+		_spec.SetField(usercoupon.FieldCouponTemplateID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCouponTemplateID(); ok {
-		_spec.AddField(usercoupon.FieldCouponTemplateID, field.TypeUint32, value)
+		_spec.AddField(usercoupon.FieldCouponTemplateID, field.TypeInt64, value)
 	}
 	if _u.mutation.CouponTemplateIDCleared() {
-		_spec.ClearField(usercoupon.FieldCouponTemplateID, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldCouponTemplateID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(usercoupon.FieldStatus, field.TypeEnum, value)
@@ -434,13 +434,13 @@ func (_u *UserCouponUpdate) sqlSave(ctx context.Context) (_node int, err error) 
 		_spec.ClearField(usercoupon.FieldRedeemedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.RedeemedOrderID(); ok {
-		_spec.SetField(usercoupon.FieldRedeemedOrderID, field.TypeUint32, value)
+		_spec.SetField(usercoupon.FieldRedeemedOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedRedeemedOrderID(); ok {
-		_spec.AddField(usercoupon.FieldRedeemedOrderID, field.TypeUint32, value)
+		_spec.AddField(usercoupon.FieldRedeemedOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.RedeemedOrderIDCleared() {
-		_spec.ClearField(usercoupon.FieldRedeemedOrderID, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldRedeemedOrderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.AppliedDiscountAmount(); ok {
 		_spec.SetField(usercoupon.FieldAppliedDiscountAmount, field.TypeInt64, value)
@@ -514,14 +514,14 @@ func (_u *UserCouponUpdateOne) ClearDeletedAt() *UserCouponUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *UserCouponUpdateOne) SetCreatedBy(v uint32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) SetCreatedBy(v int64) *UserCouponUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *UserCouponUpdateOne) SetNillableCreatedBy(v *uint32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) SetNillableCreatedBy(v *int64) *UserCouponUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -529,7 +529,7 @@ func (_u *UserCouponUpdateOne) SetNillableCreatedBy(v *uint32) *UserCouponUpdate
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *UserCouponUpdateOne) AddCreatedBy(v int32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) AddCreatedBy(v int64) *UserCouponUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -541,14 +541,14 @@ func (_u *UserCouponUpdateOne) ClearCreatedBy() *UserCouponUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *UserCouponUpdateOne) SetUpdatedBy(v uint32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) SetUpdatedBy(v int64) *UserCouponUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *UserCouponUpdateOne) SetNillableUpdatedBy(v *uint32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) SetNillableUpdatedBy(v *int64) *UserCouponUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -556,7 +556,7 @@ func (_u *UserCouponUpdateOne) SetNillableUpdatedBy(v *uint32) *UserCouponUpdate
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *UserCouponUpdateOne) AddUpdatedBy(v int32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) AddUpdatedBy(v int64) *UserCouponUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -568,14 +568,14 @@ func (_u *UserCouponUpdateOne) ClearUpdatedBy() *UserCouponUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *UserCouponUpdateOne) SetDeletedBy(v uint32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) SetDeletedBy(v int64) *UserCouponUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *UserCouponUpdateOne) SetNillableDeletedBy(v *uint32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) SetNillableDeletedBy(v *int64) *UserCouponUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -583,7 +583,7 @@ func (_u *UserCouponUpdateOne) SetNillableDeletedBy(v *uint32) *UserCouponUpdate
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *UserCouponUpdateOne) AddDeletedBy(v int32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) AddDeletedBy(v int64) *UserCouponUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -595,14 +595,14 @@ func (_u *UserCouponUpdateOne) ClearDeletedBy() *UserCouponUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *UserCouponUpdateOne) SetUserID(v uint32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) SetUserID(v int64) *UserCouponUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *UserCouponUpdateOne) SetNillableUserID(v *uint32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) SetNillableUserID(v *int64) *UserCouponUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -610,7 +610,7 @@ func (_u *UserCouponUpdateOne) SetNillableUserID(v *uint32) *UserCouponUpdateOne
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *UserCouponUpdateOne) AddUserID(v int32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) AddUserID(v int64) *UserCouponUpdateOne {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -622,14 +622,14 @@ func (_u *UserCouponUpdateOne) ClearUserID() *UserCouponUpdateOne {
 }
 
 // SetCouponTemplateID sets the "coupon_template_id" field.
-func (_u *UserCouponUpdateOne) SetCouponTemplateID(v uint32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) SetCouponTemplateID(v int64) *UserCouponUpdateOne {
 	_u.mutation.ResetCouponTemplateID()
 	_u.mutation.SetCouponTemplateID(v)
 	return _u
 }
 
 // SetNillableCouponTemplateID sets the "coupon_template_id" field if the given value is not nil.
-func (_u *UserCouponUpdateOne) SetNillableCouponTemplateID(v *uint32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) SetNillableCouponTemplateID(v *int64) *UserCouponUpdateOne {
 	if v != nil {
 		_u.SetCouponTemplateID(*v)
 	}
@@ -637,7 +637,7 @@ func (_u *UserCouponUpdateOne) SetNillableCouponTemplateID(v *uint32) *UserCoupo
 }
 
 // AddCouponTemplateID adds value to the "coupon_template_id" field.
-func (_u *UserCouponUpdateOne) AddCouponTemplateID(v int32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) AddCouponTemplateID(v int64) *UserCouponUpdateOne {
 	_u.mutation.AddCouponTemplateID(v)
 	return _u
 }
@@ -689,14 +689,14 @@ func (_u *UserCouponUpdateOne) ClearRedeemedAt() *UserCouponUpdateOne {
 }
 
 // SetRedeemedOrderID sets the "redeemed_order_id" field.
-func (_u *UserCouponUpdateOne) SetRedeemedOrderID(v uint32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) SetRedeemedOrderID(v int64) *UserCouponUpdateOne {
 	_u.mutation.ResetRedeemedOrderID()
 	_u.mutation.SetRedeemedOrderID(v)
 	return _u
 }
 
 // SetNillableRedeemedOrderID sets the "redeemed_order_id" field if the given value is not nil.
-func (_u *UserCouponUpdateOne) SetNillableRedeemedOrderID(v *uint32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) SetNillableRedeemedOrderID(v *int64) *UserCouponUpdateOne {
 	if v != nil {
 		_u.SetRedeemedOrderID(*v)
 	}
@@ -704,7 +704,7 @@ func (_u *UserCouponUpdateOne) SetNillableRedeemedOrderID(v *uint32) *UserCoupon
 }
 
 // AddRedeemedOrderID adds value to the "redeemed_order_id" field.
-func (_u *UserCouponUpdateOne) AddRedeemedOrderID(v int32) *UserCouponUpdateOne {
+func (_u *UserCouponUpdateOne) AddRedeemedOrderID(v int64) *UserCouponUpdateOne {
 	_u.mutation.AddRedeemedOrderID(v)
 	return _u
 }
@@ -807,7 +807,7 @@ func (_u *UserCouponUpdateOne) sqlSave(ctx context.Context) (_node *UserCoupon, 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(usercoupon.Table, usercoupon.Columns, sqlgraph.NewFieldSpec(usercoupon.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(usercoupon.Table, usercoupon.Columns, sqlgraph.NewFieldSpec(usercoupon.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "UserCoupon.id" for update`)}
@@ -848,52 +848,52 @@ func (_u *UserCouponUpdateOne) sqlSave(ctx context.Context) (_node *UserCoupon, 
 		_spec.ClearField(usercoupon.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(usercoupon.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(usercoupon.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(usercoupon.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(usercoupon.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(usercoupon.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(usercoupon.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(usercoupon.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(usercoupon.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(usercoupon.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(usercoupon.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(usercoupon.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(usercoupon.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(usercoupon.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(usercoupon.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(usercoupon.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(usercoupon.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(usercoupon.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(usercoupon.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(usercoupon.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(usercoupon.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(usercoupon.FieldUserID, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.CouponTemplateID(); ok {
-		_spec.SetField(usercoupon.FieldCouponTemplateID, field.TypeUint32, value)
+		_spec.SetField(usercoupon.FieldCouponTemplateID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCouponTemplateID(); ok {
-		_spec.AddField(usercoupon.FieldCouponTemplateID, field.TypeUint32, value)
+		_spec.AddField(usercoupon.FieldCouponTemplateID, field.TypeInt64, value)
 	}
 	if _u.mutation.CouponTemplateIDCleared() {
-		_spec.ClearField(usercoupon.FieldCouponTemplateID, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldCouponTemplateID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Status(); ok {
 		_spec.SetField(usercoupon.FieldStatus, field.TypeEnum, value)
@@ -908,13 +908,13 @@ func (_u *UserCouponUpdateOne) sqlSave(ctx context.Context) (_node *UserCoupon, 
 		_spec.ClearField(usercoupon.FieldRedeemedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.RedeemedOrderID(); ok {
-		_spec.SetField(usercoupon.FieldRedeemedOrderID, field.TypeUint32, value)
+		_spec.SetField(usercoupon.FieldRedeemedOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedRedeemedOrderID(); ok {
-		_spec.AddField(usercoupon.FieldRedeemedOrderID, field.TypeUint32, value)
+		_spec.AddField(usercoupon.FieldRedeemedOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.RedeemedOrderIDCleared() {
-		_spec.ClearField(usercoupon.FieldRedeemedOrderID, field.TypeUint32)
+		_spec.ClearField(usercoupon.FieldRedeemedOrderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.AppliedDiscountAmount(); ok {
 		_spec.SetField(usercoupon.FieldAppliedDiscountAmount, field.TypeInt64, value)

@@ -65,13 +65,13 @@ func (_c *StockAlertCreate) SetNillableDeletedAt(v *time.Time) *StockAlertCreate
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *StockAlertCreate) SetCreatedBy(v uint32) *StockAlertCreate {
+func (_c *StockAlertCreate) SetCreatedBy(v int64) *StockAlertCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *StockAlertCreate) SetNillableCreatedBy(v *uint32) *StockAlertCreate {
+func (_c *StockAlertCreate) SetNillableCreatedBy(v *int64) *StockAlertCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *StockAlertCreate) SetNillableCreatedBy(v *uint32) *StockAlertCreate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *StockAlertCreate) SetUpdatedBy(v uint32) *StockAlertCreate {
+func (_c *StockAlertCreate) SetUpdatedBy(v int64) *StockAlertCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *StockAlertCreate) SetNillableUpdatedBy(v *uint32) *StockAlertCreate {
+func (_c *StockAlertCreate) SetNillableUpdatedBy(v *int64) *StockAlertCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *StockAlertCreate) SetNillableUpdatedBy(v *uint32) *StockAlertCreate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *StockAlertCreate) SetDeletedBy(v uint32) *StockAlertCreate {
+func (_c *StockAlertCreate) SetDeletedBy(v int64) *StockAlertCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *StockAlertCreate) SetNillableDeletedBy(v *uint32) *StockAlertCreate {
+func (_c *StockAlertCreate) SetNillableDeletedBy(v *int64) *StockAlertCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *StockAlertCreate) SetNillableDeletedBy(v *uint32) *StockAlertCreate {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (_c *StockAlertCreate) SetSkuID(v uint32) *StockAlertCreate {
+func (_c *StockAlertCreate) SetSkuID(v int64) *StockAlertCreate {
 	_c.mutation.SetSkuID(v)
 	return _c
 }
 
 // SetNillableSkuID sets the "sku_id" field if the given value is not nil.
-func (_c *StockAlertCreate) SetNillableSkuID(v *uint32) *StockAlertCreate {
+func (_c *StockAlertCreate) SetNillableSkuID(v *int64) *StockAlertCreate {
 	if v != nil {
 		_c.SetSkuID(*v)
 	}
@@ -163,7 +163,7 @@ func (_c *StockAlertCreate) SetNillableStatus(v *stockalert.Status) *StockAlertC
 }
 
 // SetID sets the "id" field.
-func (_c *StockAlertCreate) SetID(v uint32) *StockAlertCreate {
+func (_c *StockAlertCreate) SetID(v int64) *StockAlertCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -241,7 +241,7 @@ func (_c *StockAlertCreate) sqlSave(ctx context.Context) (*StockAlert, error) {
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -251,7 +251,7 @@ func (_c *StockAlertCreate) sqlSave(ctx context.Context) (*StockAlert, error) {
 func (_c *StockAlertCreate) createSpec() (*StockAlert, *sqlgraph.CreateSpec) {
 	var (
 		_node = &StockAlert{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(stockalert.Table, sqlgraph.NewFieldSpec(stockalert.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(stockalert.Table, sqlgraph.NewFieldSpec(stockalert.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -271,19 +271,19 @@ func (_c *StockAlertCreate) createSpec() (*StockAlert, *sqlgraph.CreateSpec) {
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(stockalert.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(stockalert.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(stockalert.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(stockalert.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(stockalert.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(stockalert.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.SkuID(); ok {
-		_spec.SetField(stockalert.FieldSkuID, field.TypeUint32, value)
+		_spec.SetField(stockalert.FieldSkuID, field.TypeInt64, value)
 		_node.SkuID = &value
 	}
 	if value, ok := _c.mutation.StockQtyAtTrigger(); ok {
@@ -387,7 +387,7 @@ func (u *StockAlertUpsert) ClearDeletedAt() *StockAlertUpsert {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockAlertUpsert) SetCreatedBy(v uint32) *StockAlertUpsert {
+func (u *StockAlertUpsert) SetCreatedBy(v int64) *StockAlertUpsert {
 	u.Set(stockalert.FieldCreatedBy, v)
 	return u
 }
@@ -399,7 +399,7 @@ func (u *StockAlertUpsert) UpdateCreatedBy() *StockAlertUpsert {
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockAlertUpsert) AddCreatedBy(v uint32) *StockAlertUpsert {
+func (u *StockAlertUpsert) AddCreatedBy(v int64) *StockAlertUpsert {
 	u.Add(stockalert.FieldCreatedBy, v)
 	return u
 }
@@ -411,7 +411,7 @@ func (u *StockAlertUpsert) ClearCreatedBy() *StockAlertUpsert {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockAlertUpsert) SetUpdatedBy(v uint32) *StockAlertUpsert {
+func (u *StockAlertUpsert) SetUpdatedBy(v int64) *StockAlertUpsert {
 	u.Set(stockalert.FieldUpdatedBy, v)
 	return u
 }
@@ -423,7 +423,7 @@ func (u *StockAlertUpsert) UpdateUpdatedBy() *StockAlertUpsert {
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockAlertUpsert) AddUpdatedBy(v uint32) *StockAlertUpsert {
+func (u *StockAlertUpsert) AddUpdatedBy(v int64) *StockAlertUpsert {
 	u.Add(stockalert.FieldUpdatedBy, v)
 	return u
 }
@@ -435,7 +435,7 @@ func (u *StockAlertUpsert) ClearUpdatedBy() *StockAlertUpsert {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockAlertUpsert) SetDeletedBy(v uint32) *StockAlertUpsert {
+func (u *StockAlertUpsert) SetDeletedBy(v int64) *StockAlertUpsert {
 	u.Set(stockalert.FieldDeletedBy, v)
 	return u
 }
@@ -447,7 +447,7 @@ func (u *StockAlertUpsert) UpdateDeletedBy() *StockAlertUpsert {
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockAlertUpsert) AddDeletedBy(v uint32) *StockAlertUpsert {
+func (u *StockAlertUpsert) AddDeletedBy(v int64) *StockAlertUpsert {
 	u.Add(stockalert.FieldDeletedBy, v)
 	return u
 }
@@ -459,7 +459,7 @@ func (u *StockAlertUpsert) ClearDeletedBy() *StockAlertUpsert {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *StockAlertUpsert) SetSkuID(v uint32) *StockAlertUpsert {
+func (u *StockAlertUpsert) SetSkuID(v int64) *StockAlertUpsert {
 	u.Set(stockalert.FieldSkuID, v)
 	return u
 }
@@ -471,7 +471,7 @@ func (u *StockAlertUpsert) UpdateSkuID() *StockAlertUpsert {
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *StockAlertUpsert) AddSkuID(v uint32) *StockAlertUpsert {
+func (u *StockAlertUpsert) AddSkuID(v int64) *StockAlertUpsert {
 	u.Add(stockalert.FieldSkuID, v)
 	return u
 }
@@ -642,14 +642,14 @@ func (u *StockAlertUpsertOne) ClearDeletedAt() *StockAlertUpsertOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockAlertUpsertOne) SetCreatedBy(v uint32) *StockAlertUpsertOne {
+func (u *StockAlertUpsertOne) SetCreatedBy(v int64) *StockAlertUpsertOne {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockAlertUpsertOne) AddCreatedBy(v uint32) *StockAlertUpsertOne {
+func (u *StockAlertUpsertOne) AddCreatedBy(v int64) *StockAlertUpsertOne {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -670,14 +670,14 @@ func (u *StockAlertUpsertOne) ClearCreatedBy() *StockAlertUpsertOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockAlertUpsertOne) SetUpdatedBy(v uint32) *StockAlertUpsertOne {
+func (u *StockAlertUpsertOne) SetUpdatedBy(v int64) *StockAlertUpsertOne {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockAlertUpsertOne) AddUpdatedBy(v uint32) *StockAlertUpsertOne {
+func (u *StockAlertUpsertOne) AddUpdatedBy(v int64) *StockAlertUpsertOne {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -698,14 +698,14 @@ func (u *StockAlertUpsertOne) ClearUpdatedBy() *StockAlertUpsertOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockAlertUpsertOne) SetDeletedBy(v uint32) *StockAlertUpsertOne {
+func (u *StockAlertUpsertOne) SetDeletedBy(v int64) *StockAlertUpsertOne {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockAlertUpsertOne) AddDeletedBy(v uint32) *StockAlertUpsertOne {
+func (u *StockAlertUpsertOne) AddDeletedBy(v int64) *StockAlertUpsertOne {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -726,14 +726,14 @@ func (u *StockAlertUpsertOne) ClearDeletedBy() *StockAlertUpsertOne {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *StockAlertUpsertOne) SetSkuID(v uint32) *StockAlertUpsertOne {
+func (u *StockAlertUpsertOne) SetSkuID(v int64) *StockAlertUpsertOne {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.SetSkuID(v)
 	})
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *StockAlertUpsertOne) AddSkuID(v uint32) *StockAlertUpsertOne {
+func (u *StockAlertUpsertOne) AddSkuID(v int64) *StockAlertUpsertOne {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.AddSkuID(v)
 	})
@@ -846,7 +846,7 @@ func (u *StockAlertUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *StockAlertUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *StockAlertUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -855,7 +855,7 @@ func (u *StockAlertUpsertOne) ID(ctx context.Context) (id uint32, err error) {
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *StockAlertUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *StockAlertUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -912,7 +912,7 @@ func (_c *StockAlertCreateBulk) Save(ctx context.Context) ([]*StockAlert, error)
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1090,14 +1090,14 @@ func (u *StockAlertUpsertBulk) ClearDeletedAt() *StockAlertUpsertBulk {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *StockAlertUpsertBulk) SetCreatedBy(v uint32) *StockAlertUpsertBulk {
+func (u *StockAlertUpsertBulk) SetCreatedBy(v int64) *StockAlertUpsertBulk {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *StockAlertUpsertBulk) AddCreatedBy(v uint32) *StockAlertUpsertBulk {
+func (u *StockAlertUpsertBulk) AddCreatedBy(v int64) *StockAlertUpsertBulk {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1118,14 +1118,14 @@ func (u *StockAlertUpsertBulk) ClearCreatedBy() *StockAlertUpsertBulk {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *StockAlertUpsertBulk) SetUpdatedBy(v uint32) *StockAlertUpsertBulk {
+func (u *StockAlertUpsertBulk) SetUpdatedBy(v int64) *StockAlertUpsertBulk {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *StockAlertUpsertBulk) AddUpdatedBy(v uint32) *StockAlertUpsertBulk {
+func (u *StockAlertUpsertBulk) AddUpdatedBy(v int64) *StockAlertUpsertBulk {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1146,14 +1146,14 @@ func (u *StockAlertUpsertBulk) ClearUpdatedBy() *StockAlertUpsertBulk {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *StockAlertUpsertBulk) SetDeletedBy(v uint32) *StockAlertUpsertBulk {
+func (u *StockAlertUpsertBulk) SetDeletedBy(v int64) *StockAlertUpsertBulk {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *StockAlertUpsertBulk) AddDeletedBy(v uint32) *StockAlertUpsertBulk {
+func (u *StockAlertUpsertBulk) AddDeletedBy(v int64) *StockAlertUpsertBulk {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1174,14 +1174,14 @@ func (u *StockAlertUpsertBulk) ClearDeletedBy() *StockAlertUpsertBulk {
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *StockAlertUpsertBulk) SetSkuID(v uint32) *StockAlertUpsertBulk {
+func (u *StockAlertUpsertBulk) SetSkuID(v int64) *StockAlertUpsertBulk {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.SetSkuID(v)
 	})
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *StockAlertUpsertBulk) AddSkuID(v uint32) *StockAlertUpsertBulk {
+func (u *StockAlertUpsertBulk) AddSkuID(v int64) *StockAlertUpsertBulk {
 	return u.Update(func(s *StockAlertUpsert) {
 		s.AddSkuID(v)
 	})

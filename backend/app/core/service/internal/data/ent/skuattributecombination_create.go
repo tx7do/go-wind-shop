@@ -65,13 +65,13 @@ func (_c *SkuAttributeCombinationCreate) SetNillableDeletedAt(v *time.Time) *Sku
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_c *SkuAttributeCombinationCreate) SetCreatedBy(v uint32) *SkuAttributeCombinationCreate {
+func (_c *SkuAttributeCombinationCreate) SetCreatedBy(v int64) *SkuAttributeCombinationCreate {
 	_c.mutation.SetCreatedBy(v)
 	return _c
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_c *SkuAttributeCombinationCreate) SetNillableCreatedBy(v *uint32) *SkuAttributeCombinationCreate {
+func (_c *SkuAttributeCombinationCreate) SetNillableCreatedBy(v *int64) *SkuAttributeCombinationCreate {
 	if v != nil {
 		_c.SetCreatedBy(*v)
 	}
@@ -79,13 +79,13 @@ func (_c *SkuAttributeCombinationCreate) SetNillableCreatedBy(v *uint32) *SkuAtt
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_c *SkuAttributeCombinationCreate) SetUpdatedBy(v uint32) *SkuAttributeCombinationCreate {
+func (_c *SkuAttributeCombinationCreate) SetUpdatedBy(v int64) *SkuAttributeCombinationCreate {
 	_c.mutation.SetUpdatedBy(v)
 	return _c
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_c *SkuAttributeCombinationCreate) SetNillableUpdatedBy(v *uint32) *SkuAttributeCombinationCreate {
+func (_c *SkuAttributeCombinationCreate) SetNillableUpdatedBy(v *int64) *SkuAttributeCombinationCreate {
 	if v != nil {
 		_c.SetUpdatedBy(*v)
 	}
@@ -93,13 +93,13 @@ func (_c *SkuAttributeCombinationCreate) SetNillableUpdatedBy(v *uint32) *SkuAtt
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_c *SkuAttributeCombinationCreate) SetDeletedBy(v uint32) *SkuAttributeCombinationCreate {
+func (_c *SkuAttributeCombinationCreate) SetDeletedBy(v int64) *SkuAttributeCombinationCreate {
 	_c.mutation.SetDeletedBy(v)
 	return _c
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_c *SkuAttributeCombinationCreate) SetNillableDeletedBy(v *uint32) *SkuAttributeCombinationCreate {
+func (_c *SkuAttributeCombinationCreate) SetNillableDeletedBy(v *int64) *SkuAttributeCombinationCreate {
 	if v != nil {
 		_c.SetDeletedBy(*v)
 	}
@@ -107,13 +107,13 @@ func (_c *SkuAttributeCombinationCreate) SetNillableDeletedBy(v *uint32) *SkuAtt
 }
 
 // SetSkuID sets the "sku_id" field.
-func (_c *SkuAttributeCombinationCreate) SetSkuID(v uint32) *SkuAttributeCombinationCreate {
+func (_c *SkuAttributeCombinationCreate) SetSkuID(v int64) *SkuAttributeCombinationCreate {
 	_c.mutation.SetSkuID(v)
 	return _c
 }
 
 // SetNillableSkuID sets the "sku_id" field if the given value is not nil.
-func (_c *SkuAttributeCombinationCreate) SetNillableSkuID(v *uint32) *SkuAttributeCombinationCreate {
+func (_c *SkuAttributeCombinationCreate) SetNillableSkuID(v *int64) *SkuAttributeCombinationCreate {
 	if v != nil {
 		_c.SetSkuID(*v)
 	}
@@ -121,13 +121,13 @@ func (_c *SkuAttributeCombinationCreate) SetNillableSkuID(v *uint32) *SkuAttribu
 }
 
 // SetAttributeID sets the "attribute_id" field.
-func (_c *SkuAttributeCombinationCreate) SetAttributeID(v uint32) *SkuAttributeCombinationCreate {
+func (_c *SkuAttributeCombinationCreate) SetAttributeID(v int64) *SkuAttributeCombinationCreate {
 	_c.mutation.SetAttributeID(v)
 	return _c
 }
 
 // SetNillableAttributeID sets the "attribute_id" field if the given value is not nil.
-func (_c *SkuAttributeCombinationCreate) SetNillableAttributeID(v *uint32) *SkuAttributeCombinationCreate {
+func (_c *SkuAttributeCombinationCreate) SetNillableAttributeID(v *int64) *SkuAttributeCombinationCreate {
 	if v != nil {
 		_c.SetAttributeID(*v)
 	}
@@ -135,13 +135,13 @@ func (_c *SkuAttributeCombinationCreate) SetNillableAttributeID(v *uint32) *SkuA
 }
 
 // SetAttributeValueID sets the "attribute_value_id" field.
-func (_c *SkuAttributeCombinationCreate) SetAttributeValueID(v uint32) *SkuAttributeCombinationCreate {
+func (_c *SkuAttributeCombinationCreate) SetAttributeValueID(v int64) *SkuAttributeCombinationCreate {
 	_c.mutation.SetAttributeValueID(v)
 	return _c
 }
 
 // SetNillableAttributeValueID sets the "attribute_value_id" field if the given value is not nil.
-func (_c *SkuAttributeCombinationCreate) SetNillableAttributeValueID(v *uint32) *SkuAttributeCombinationCreate {
+func (_c *SkuAttributeCombinationCreate) SetNillableAttributeValueID(v *int64) *SkuAttributeCombinationCreate {
 	if v != nil {
 		_c.SetAttributeValueID(*v)
 	}
@@ -149,7 +149,7 @@ func (_c *SkuAttributeCombinationCreate) SetNillableAttributeValueID(v *uint32) 
 }
 
 // SetID sets the "id" field.
-func (_c *SkuAttributeCombinationCreate) SetID(v uint32) *SkuAttributeCombinationCreate {
+func (_c *SkuAttributeCombinationCreate) SetID(v int64) *SkuAttributeCombinationCreate {
 	_c.mutation.SetID(v)
 	return _c
 }
@@ -209,7 +209,7 @@ func (_c *SkuAttributeCombinationCreate) sqlSave(ctx context.Context) (*SkuAttri
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = uint32(id)
+		_node.ID = int64(id)
 	}
 	_c.mutation.id = &_node.ID
 	_c.mutation.done = true
@@ -219,7 +219,7 @@ func (_c *SkuAttributeCombinationCreate) sqlSave(ctx context.Context) (*SkuAttri
 func (_c *SkuAttributeCombinationCreate) createSpec() (*SkuAttributeCombination, *sqlgraph.CreateSpec) {
 	var (
 		_node = &SkuAttributeCombination{config: _c.config}
-		_spec = sqlgraph.NewCreateSpec(skuattributecombination.Table, sqlgraph.NewFieldSpec(skuattributecombination.FieldID, field.TypeUint32))
+		_spec = sqlgraph.NewCreateSpec(skuattributecombination.Table, sqlgraph.NewFieldSpec(skuattributecombination.FieldID, field.TypeInt64))
 	)
 	_spec.OnConflict = _c.conflict
 	if id, ok := _c.mutation.ID(); ok {
@@ -239,27 +239,27 @@ func (_c *SkuAttributeCombinationCreate) createSpec() (*SkuAttributeCombination,
 		_node.DeletedAt = &value
 	}
 	if value, ok := _c.mutation.CreatedBy(); ok {
-		_spec.SetField(skuattributecombination.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(skuattributecombination.FieldCreatedBy, field.TypeInt64, value)
 		_node.CreatedBy = &value
 	}
 	if value, ok := _c.mutation.UpdatedBy(); ok {
-		_spec.SetField(skuattributecombination.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(skuattributecombination.FieldUpdatedBy, field.TypeInt64, value)
 		_node.UpdatedBy = &value
 	}
 	if value, ok := _c.mutation.DeletedBy(); ok {
-		_spec.SetField(skuattributecombination.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(skuattributecombination.FieldDeletedBy, field.TypeInt64, value)
 		_node.DeletedBy = &value
 	}
 	if value, ok := _c.mutation.SkuID(); ok {
-		_spec.SetField(skuattributecombination.FieldSkuID, field.TypeUint32, value)
+		_spec.SetField(skuattributecombination.FieldSkuID, field.TypeInt64, value)
 		_node.SkuID = &value
 	}
 	if value, ok := _c.mutation.AttributeID(); ok {
-		_spec.SetField(skuattributecombination.FieldAttributeID, field.TypeUint32, value)
+		_spec.SetField(skuattributecombination.FieldAttributeID, field.TypeInt64, value)
 		_node.AttributeID = &value
 	}
 	if value, ok := _c.mutation.AttributeValueID(); ok {
-		_spec.SetField(skuattributecombination.FieldAttributeValueID, field.TypeUint32, value)
+		_spec.SetField(skuattributecombination.FieldAttributeValueID, field.TypeInt64, value)
 		_node.AttributeValueID = &value
 	}
 	return _node, _spec
@@ -351,7 +351,7 @@ func (u *SkuAttributeCombinationUpsert) ClearDeletedAt() *SkuAttributeCombinatio
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SkuAttributeCombinationUpsert) SetCreatedBy(v uint32) *SkuAttributeCombinationUpsert {
+func (u *SkuAttributeCombinationUpsert) SetCreatedBy(v int64) *SkuAttributeCombinationUpsert {
 	u.Set(skuattributecombination.FieldCreatedBy, v)
 	return u
 }
@@ -363,7 +363,7 @@ func (u *SkuAttributeCombinationUpsert) UpdateCreatedBy() *SkuAttributeCombinati
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SkuAttributeCombinationUpsert) AddCreatedBy(v uint32) *SkuAttributeCombinationUpsert {
+func (u *SkuAttributeCombinationUpsert) AddCreatedBy(v int64) *SkuAttributeCombinationUpsert {
 	u.Add(skuattributecombination.FieldCreatedBy, v)
 	return u
 }
@@ -375,7 +375,7 @@ func (u *SkuAttributeCombinationUpsert) ClearCreatedBy() *SkuAttributeCombinatio
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SkuAttributeCombinationUpsert) SetUpdatedBy(v uint32) *SkuAttributeCombinationUpsert {
+func (u *SkuAttributeCombinationUpsert) SetUpdatedBy(v int64) *SkuAttributeCombinationUpsert {
 	u.Set(skuattributecombination.FieldUpdatedBy, v)
 	return u
 }
@@ -387,7 +387,7 @@ func (u *SkuAttributeCombinationUpsert) UpdateUpdatedBy() *SkuAttributeCombinati
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SkuAttributeCombinationUpsert) AddUpdatedBy(v uint32) *SkuAttributeCombinationUpsert {
+func (u *SkuAttributeCombinationUpsert) AddUpdatedBy(v int64) *SkuAttributeCombinationUpsert {
 	u.Add(skuattributecombination.FieldUpdatedBy, v)
 	return u
 }
@@ -399,7 +399,7 @@ func (u *SkuAttributeCombinationUpsert) ClearUpdatedBy() *SkuAttributeCombinatio
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SkuAttributeCombinationUpsert) SetDeletedBy(v uint32) *SkuAttributeCombinationUpsert {
+func (u *SkuAttributeCombinationUpsert) SetDeletedBy(v int64) *SkuAttributeCombinationUpsert {
 	u.Set(skuattributecombination.FieldDeletedBy, v)
 	return u
 }
@@ -411,7 +411,7 @@ func (u *SkuAttributeCombinationUpsert) UpdateDeletedBy() *SkuAttributeCombinati
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SkuAttributeCombinationUpsert) AddDeletedBy(v uint32) *SkuAttributeCombinationUpsert {
+func (u *SkuAttributeCombinationUpsert) AddDeletedBy(v int64) *SkuAttributeCombinationUpsert {
 	u.Add(skuattributecombination.FieldDeletedBy, v)
 	return u
 }
@@ -423,7 +423,7 @@ func (u *SkuAttributeCombinationUpsert) ClearDeletedBy() *SkuAttributeCombinatio
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *SkuAttributeCombinationUpsert) SetSkuID(v uint32) *SkuAttributeCombinationUpsert {
+func (u *SkuAttributeCombinationUpsert) SetSkuID(v int64) *SkuAttributeCombinationUpsert {
 	u.Set(skuattributecombination.FieldSkuID, v)
 	return u
 }
@@ -435,7 +435,7 @@ func (u *SkuAttributeCombinationUpsert) UpdateSkuID() *SkuAttributeCombinationUp
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *SkuAttributeCombinationUpsert) AddSkuID(v uint32) *SkuAttributeCombinationUpsert {
+func (u *SkuAttributeCombinationUpsert) AddSkuID(v int64) *SkuAttributeCombinationUpsert {
 	u.Add(skuattributecombination.FieldSkuID, v)
 	return u
 }
@@ -447,7 +447,7 @@ func (u *SkuAttributeCombinationUpsert) ClearSkuID() *SkuAttributeCombinationUps
 }
 
 // SetAttributeID sets the "attribute_id" field.
-func (u *SkuAttributeCombinationUpsert) SetAttributeID(v uint32) *SkuAttributeCombinationUpsert {
+func (u *SkuAttributeCombinationUpsert) SetAttributeID(v int64) *SkuAttributeCombinationUpsert {
 	u.Set(skuattributecombination.FieldAttributeID, v)
 	return u
 }
@@ -459,7 +459,7 @@ func (u *SkuAttributeCombinationUpsert) UpdateAttributeID() *SkuAttributeCombina
 }
 
 // AddAttributeID adds v to the "attribute_id" field.
-func (u *SkuAttributeCombinationUpsert) AddAttributeID(v uint32) *SkuAttributeCombinationUpsert {
+func (u *SkuAttributeCombinationUpsert) AddAttributeID(v int64) *SkuAttributeCombinationUpsert {
 	u.Add(skuattributecombination.FieldAttributeID, v)
 	return u
 }
@@ -471,7 +471,7 @@ func (u *SkuAttributeCombinationUpsert) ClearAttributeID() *SkuAttributeCombinat
 }
 
 // SetAttributeValueID sets the "attribute_value_id" field.
-func (u *SkuAttributeCombinationUpsert) SetAttributeValueID(v uint32) *SkuAttributeCombinationUpsert {
+func (u *SkuAttributeCombinationUpsert) SetAttributeValueID(v int64) *SkuAttributeCombinationUpsert {
 	u.Set(skuattributecombination.FieldAttributeValueID, v)
 	return u
 }
@@ -483,7 +483,7 @@ func (u *SkuAttributeCombinationUpsert) UpdateAttributeValueID() *SkuAttributeCo
 }
 
 // AddAttributeValueID adds v to the "attribute_value_id" field.
-func (u *SkuAttributeCombinationUpsert) AddAttributeValueID(v uint32) *SkuAttributeCombinationUpsert {
+func (u *SkuAttributeCombinationUpsert) AddAttributeValueID(v int64) *SkuAttributeCombinationUpsert {
 	u.Add(skuattributecombination.FieldAttributeValueID, v)
 	return u
 }
@@ -588,14 +588,14 @@ func (u *SkuAttributeCombinationUpsertOne) ClearDeletedAt() *SkuAttributeCombina
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SkuAttributeCombinationUpsertOne) SetCreatedBy(v uint32) *SkuAttributeCombinationUpsertOne {
+func (u *SkuAttributeCombinationUpsertOne) SetCreatedBy(v int64) *SkuAttributeCombinationUpsertOne {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SkuAttributeCombinationUpsertOne) AddCreatedBy(v uint32) *SkuAttributeCombinationUpsertOne {
+func (u *SkuAttributeCombinationUpsertOne) AddCreatedBy(v int64) *SkuAttributeCombinationUpsertOne {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -616,14 +616,14 @@ func (u *SkuAttributeCombinationUpsertOne) ClearCreatedBy() *SkuAttributeCombina
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SkuAttributeCombinationUpsertOne) SetUpdatedBy(v uint32) *SkuAttributeCombinationUpsertOne {
+func (u *SkuAttributeCombinationUpsertOne) SetUpdatedBy(v int64) *SkuAttributeCombinationUpsertOne {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SkuAttributeCombinationUpsertOne) AddUpdatedBy(v uint32) *SkuAttributeCombinationUpsertOne {
+func (u *SkuAttributeCombinationUpsertOne) AddUpdatedBy(v int64) *SkuAttributeCombinationUpsertOne {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -644,14 +644,14 @@ func (u *SkuAttributeCombinationUpsertOne) ClearUpdatedBy() *SkuAttributeCombina
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SkuAttributeCombinationUpsertOne) SetDeletedBy(v uint32) *SkuAttributeCombinationUpsertOne {
+func (u *SkuAttributeCombinationUpsertOne) SetDeletedBy(v int64) *SkuAttributeCombinationUpsertOne {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SkuAttributeCombinationUpsertOne) AddDeletedBy(v uint32) *SkuAttributeCombinationUpsertOne {
+func (u *SkuAttributeCombinationUpsertOne) AddDeletedBy(v int64) *SkuAttributeCombinationUpsertOne {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -672,14 +672,14 @@ func (u *SkuAttributeCombinationUpsertOne) ClearDeletedBy() *SkuAttributeCombina
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *SkuAttributeCombinationUpsertOne) SetSkuID(v uint32) *SkuAttributeCombinationUpsertOne {
+func (u *SkuAttributeCombinationUpsertOne) SetSkuID(v int64) *SkuAttributeCombinationUpsertOne {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.SetSkuID(v)
 	})
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *SkuAttributeCombinationUpsertOne) AddSkuID(v uint32) *SkuAttributeCombinationUpsertOne {
+func (u *SkuAttributeCombinationUpsertOne) AddSkuID(v int64) *SkuAttributeCombinationUpsertOne {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.AddSkuID(v)
 	})
@@ -700,14 +700,14 @@ func (u *SkuAttributeCombinationUpsertOne) ClearSkuID() *SkuAttributeCombination
 }
 
 // SetAttributeID sets the "attribute_id" field.
-func (u *SkuAttributeCombinationUpsertOne) SetAttributeID(v uint32) *SkuAttributeCombinationUpsertOne {
+func (u *SkuAttributeCombinationUpsertOne) SetAttributeID(v int64) *SkuAttributeCombinationUpsertOne {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.SetAttributeID(v)
 	})
 }
 
 // AddAttributeID adds v to the "attribute_id" field.
-func (u *SkuAttributeCombinationUpsertOne) AddAttributeID(v uint32) *SkuAttributeCombinationUpsertOne {
+func (u *SkuAttributeCombinationUpsertOne) AddAttributeID(v int64) *SkuAttributeCombinationUpsertOne {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.AddAttributeID(v)
 	})
@@ -728,14 +728,14 @@ func (u *SkuAttributeCombinationUpsertOne) ClearAttributeID() *SkuAttributeCombi
 }
 
 // SetAttributeValueID sets the "attribute_value_id" field.
-func (u *SkuAttributeCombinationUpsertOne) SetAttributeValueID(v uint32) *SkuAttributeCombinationUpsertOne {
+func (u *SkuAttributeCombinationUpsertOne) SetAttributeValueID(v int64) *SkuAttributeCombinationUpsertOne {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.SetAttributeValueID(v)
 	})
 }
 
 // AddAttributeValueID adds v to the "attribute_value_id" field.
-func (u *SkuAttributeCombinationUpsertOne) AddAttributeValueID(v uint32) *SkuAttributeCombinationUpsertOne {
+func (u *SkuAttributeCombinationUpsertOne) AddAttributeValueID(v int64) *SkuAttributeCombinationUpsertOne {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.AddAttributeValueID(v)
 	})
@@ -771,7 +771,7 @@ func (u *SkuAttributeCombinationUpsertOne) ExecX(ctx context.Context) {
 }
 
 // Exec executes the UPSERT query and returns the inserted/updated ID.
-func (u *SkuAttributeCombinationUpsertOne) ID(ctx context.Context) (id uint32, err error) {
+func (u *SkuAttributeCombinationUpsertOne) ID(ctx context.Context) (id int64, err error) {
 	node, err := u.create.Save(ctx)
 	if err != nil {
 		return id, err
@@ -780,7 +780,7 @@ func (u *SkuAttributeCombinationUpsertOne) ID(ctx context.Context) (id uint32, e
 }
 
 // IDX is like ID, but panics if an error occurs.
-func (u *SkuAttributeCombinationUpsertOne) IDX(ctx context.Context) uint32 {
+func (u *SkuAttributeCombinationUpsertOne) IDX(ctx context.Context) int64 {
 	id, err := u.ID(ctx)
 	if err != nil {
 		panic(err)
@@ -836,7 +836,7 @@ func (_c *SkuAttributeCombinationCreateBulk) Save(ctx context.Context) ([]*SkuAt
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = uint32(id)
+					nodes[i].ID = int64(id)
 				}
 				mutation.done = true
 				return nodes[i], nil
@@ -1014,14 +1014,14 @@ func (u *SkuAttributeCombinationUpsertBulk) ClearDeletedAt() *SkuAttributeCombin
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (u *SkuAttributeCombinationUpsertBulk) SetCreatedBy(v uint32) *SkuAttributeCombinationUpsertBulk {
+func (u *SkuAttributeCombinationUpsertBulk) SetCreatedBy(v int64) *SkuAttributeCombinationUpsertBulk {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.SetCreatedBy(v)
 	})
 }
 
 // AddCreatedBy adds v to the "created_by" field.
-func (u *SkuAttributeCombinationUpsertBulk) AddCreatedBy(v uint32) *SkuAttributeCombinationUpsertBulk {
+func (u *SkuAttributeCombinationUpsertBulk) AddCreatedBy(v int64) *SkuAttributeCombinationUpsertBulk {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.AddCreatedBy(v)
 	})
@@ -1042,14 +1042,14 @@ func (u *SkuAttributeCombinationUpsertBulk) ClearCreatedBy() *SkuAttributeCombin
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (u *SkuAttributeCombinationUpsertBulk) SetUpdatedBy(v uint32) *SkuAttributeCombinationUpsertBulk {
+func (u *SkuAttributeCombinationUpsertBulk) SetUpdatedBy(v int64) *SkuAttributeCombinationUpsertBulk {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.SetUpdatedBy(v)
 	})
 }
 
 // AddUpdatedBy adds v to the "updated_by" field.
-func (u *SkuAttributeCombinationUpsertBulk) AddUpdatedBy(v uint32) *SkuAttributeCombinationUpsertBulk {
+func (u *SkuAttributeCombinationUpsertBulk) AddUpdatedBy(v int64) *SkuAttributeCombinationUpsertBulk {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.AddUpdatedBy(v)
 	})
@@ -1070,14 +1070,14 @@ func (u *SkuAttributeCombinationUpsertBulk) ClearUpdatedBy() *SkuAttributeCombin
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (u *SkuAttributeCombinationUpsertBulk) SetDeletedBy(v uint32) *SkuAttributeCombinationUpsertBulk {
+func (u *SkuAttributeCombinationUpsertBulk) SetDeletedBy(v int64) *SkuAttributeCombinationUpsertBulk {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.SetDeletedBy(v)
 	})
 }
 
 // AddDeletedBy adds v to the "deleted_by" field.
-func (u *SkuAttributeCombinationUpsertBulk) AddDeletedBy(v uint32) *SkuAttributeCombinationUpsertBulk {
+func (u *SkuAttributeCombinationUpsertBulk) AddDeletedBy(v int64) *SkuAttributeCombinationUpsertBulk {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.AddDeletedBy(v)
 	})
@@ -1098,14 +1098,14 @@ func (u *SkuAttributeCombinationUpsertBulk) ClearDeletedBy() *SkuAttributeCombin
 }
 
 // SetSkuID sets the "sku_id" field.
-func (u *SkuAttributeCombinationUpsertBulk) SetSkuID(v uint32) *SkuAttributeCombinationUpsertBulk {
+func (u *SkuAttributeCombinationUpsertBulk) SetSkuID(v int64) *SkuAttributeCombinationUpsertBulk {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.SetSkuID(v)
 	})
 }
 
 // AddSkuID adds v to the "sku_id" field.
-func (u *SkuAttributeCombinationUpsertBulk) AddSkuID(v uint32) *SkuAttributeCombinationUpsertBulk {
+func (u *SkuAttributeCombinationUpsertBulk) AddSkuID(v int64) *SkuAttributeCombinationUpsertBulk {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.AddSkuID(v)
 	})
@@ -1126,14 +1126,14 @@ func (u *SkuAttributeCombinationUpsertBulk) ClearSkuID() *SkuAttributeCombinatio
 }
 
 // SetAttributeID sets the "attribute_id" field.
-func (u *SkuAttributeCombinationUpsertBulk) SetAttributeID(v uint32) *SkuAttributeCombinationUpsertBulk {
+func (u *SkuAttributeCombinationUpsertBulk) SetAttributeID(v int64) *SkuAttributeCombinationUpsertBulk {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.SetAttributeID(v)
 	})
 }
 
 // AddAttributeID adds v to the "attribute_id" field.
-func (u *SkuAttributeCombinationUpsertBulk) AddAttributeID(v uint32) *SkuAttributeCombinationUpsertBulk {
+func (u *SkuAttributeCombinationUpsertBulk) AddAttributeID(v int64) *SkuAttributeCombinationUpsertBulk {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.AddAttributeID(v)
 	})
@@ -1154,14 +1154,14 @@ func (u *SkuAttributeCombinationUpsertBulk) ClearAttributeID() *SkuAttributeComb
 }
 
 // SetAttributeValueID sets the "attribute_value_id" field.
-func (u *SkuAttributeCombinationUpsertBulk) SetAttributeValueID(v uint32) *SkuAttributeCombinationUpsertBulk {
+func (u *SkuAttributeCombinationUpsertBulk) SetAttributeValueID(v int64) *SkuAttributeCombinationUpsertBulk {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.SetAttributeValueID(v)
 	})
 }
 
 // AddAttributeValueID adds v to the "attribute_value_id" field.
-func (u *SkuAttributeCombinationUpsertBulk) AddAttributeValueID(v uint32) *SkuAttributeCombinationUpsertBulk {
+func (u *SkuAttributeCombinationUpsertBulk) AddAttributeValueID(v int64) *SkuAttributeCombinationUpsertBulk {
 	return u.Update(func(s *SkuAttributeCombinationUpsert) {
 		s.AddAttributeValueID(v)
 	})

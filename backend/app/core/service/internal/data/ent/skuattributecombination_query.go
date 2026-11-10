@@ -84,8 +84,8 @@ func (_q *SkuAttributeCombinationQuery) FirstX(ctx context.Context) *SkuAttribut
 
 // FirstID returns the first SkuAttributeCombination ID from the query.
 // Returns a *NotFoundError when no SkuAttributeCombination ID was found.
-func (_q *SkuAttributeCombinationQuery) FirstID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *SkuAttributeCombinationQuery) FirstID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(1).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -97,7 +97,7 @@ func (_q *SkuAttributeCombinationQuery) FirstID(ctx context.Context) (id uint32,
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (_q *SkuAttributeCombinationQuery) FirstIDX(ctx context.Context) uint32 {
+func (_q *SkuAttributeCombinationQuery) FirstIDX(ctx context.Context) int64 {
 	id, err := _q.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -135,8 +135,8 @@ func (_q *SkuAttributeCombinationQuery) OnlyX(ctx context.Context) *SkuAttribute
 // OnlyID is like Only, but returns the only SkuAttributeCombination ID in the query.
 // Returns a *NotSingularError when more than one SkuAttributeCombination ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (_q *SkuAttributeCombinationQuery) OnlyID(ctx context.Context) (id uint32, err error) {
-	var ids []uint32
+func (_q *SkuAttributeCombinationQuery) OnlyID(ctx context.Context) (id int64, err error) {
+	var ids []int64
 	if ids, err = _q.Limit(2).IDs(setContextOp(ctx, _q.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -152,7 +152,7 @@ func (_q *SkuAttributeCombinationQuery) OnlyID(ctx context.Context) (id uint32, 
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (_q *SkuAttributeCombinationQuery) OnlyIDX(ctx context.Context) uint32 {
+func (_q *SkuAttributeCombinationQuery) OnlyIDX(ctx context.Context) int64 {
 	id, err := _q.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -180,7 +180,7 @@ func (_q *SkuAttributeCombinationQuery) AllX(ctx context.Context) []*SkuAttribut
 }
 
 // IDs executes the query and returns a list of SkuAttributeCombination IDs.
-func (_q *SkuAttributeCombinationQuery) IDs(ctx context.Context) (ids []uint32, err error) {
+func (_q *SkuAttributeCombinationQuery) IDs(ctx context.Context) (ids []int64, err error) {
 	if _q.ctx.Unique == nil && _q.path != nil {
 		_q.Unique(true)
 	}
@@ -192,7 +192,7 @@ func (_q *SkuAttributeCombinationQuery) IDs(ctx context.Context) (ids []uint32, 
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (_q *SkuAttributeCombinationQuery) IDsX(ctx context.Context) []uint32 {
+func (_q *SkuAttributeCombinationQuery) IDsX(ctx context.Context) []int64 {
 	ids, err := _q.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -374,7 +374,7 @@ func (_q *SkuAttributeCombinationQuery) sqlCount(ctx context.Context) (int, erro
 }
 
 func (_q *SkuAttributeCombinationQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(skuattributecombination.Table, skuattributecombination.Columns, sqlgraph.NewFieldSpec(skuattributecombination.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewQuerySpec(skuattributecombination.Table, skuattributecombination.Columns, sqlgraph.NewFieldSpec(skuattributecombination.FieldID, field.TypeInt64))
 	_spec.From = _q.sql
 	if unique := _q.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

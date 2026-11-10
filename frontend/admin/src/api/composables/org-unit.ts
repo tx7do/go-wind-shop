@@ -64,12 +64,11 @@ export function useCreateOrgUnit(options?: UseMutationOptions<{}, Error, Record<
 }
 
 export function useUpdateOrgUnit(
-  options?: UseMutationOptions<{}, Error, { id: number; values: Record<string, any> }>
+  options?: UseMutationOptions<{}, Error, { id: number | string; values: Record<string, any> }>
 ) {
   return useMutation({
-    mutationFn: ({ id, values }: { id: number; values: Record<string, any> }) =>
-      apiClient.orgUnitService.Update({
-        id,
+    mutationFn: ({ id, values } : { id: number | string; values: Record<string, any> }) =>
+      apiClient.orgUnitService.Update({ id: String(id),
         data: { ...values } as any,
         updateMask: makeUpdateMask(Object.keys(values ?? {})),
       }),
@@ -165,7 +164,7 @@ export function orgUnitTypeToType(orgUnitType: OrgUnit_Type): TagType {
   return ORG_UNIT_TAG_TYPE_MAP[orgUnitType as string] || ORG_UNIT_TAG_TYPE_MAP.DEFAULT;
 }
 
-export const findOrgUnit = (list: OrgUnit[], id: number): null | OrgUnit | undefined => {
+export const findOrgUnit = (list: OrgUnit[], id: number | string): null | OrgUnit | undefined => {
   for (const item of list) {
     if (item.id == id) return item;
     if (item.children && item.children.length > 0) {

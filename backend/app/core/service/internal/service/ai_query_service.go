@@ -8,11 +8,11 @@ import (
 	"strings"
 	"time"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/sashabaranov/go-openai"
 	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
@@ -44,68 +44,68 @@ const (
 // 金额口径：除 mall_sku_prices.amount（varchar 数字串）外，金额列一律为
 // 最小货币单位（分），给业务结论时须换算成元。
 var aiQueryTableWhitelist = map[string]string{
-	"mall_products":             "商品主表：id, status(PRODUCT_STATUS_DRAFT草稿/PRODUCT_STATUS_ACTIVE在售/PRODUCT_STATUS_INACTIVE下架), category_id(分类ID), brand_id(品牌ID), sort_order, created_at；注意：名称/简介在 mall_product_translations 表（经 product_id 关联），mall_products 表没有 name 列",
-	"mall_product_translations": "商品翻译表：product_id(商品ID), language_code(语言代码,如 zh-CN), name(商品名), slug, short_description(简介), long_description(详情), created_at；查商品名/简介必须 JOIN 此表",
-	"mall_categories":           "商品分类表：id, parent_id(父分类), path, depth, sort_order, image_url, created_at；分类名在 mall_category_translations（经 category_id 关联），本表没有 name 列",
+	"mall_products":              "商品主表：id, status(PRODUCT_STATUS_DRAFT草稿/PRODUCT_STATUS_ACTIVE在售/PRODUCT_STATUS_INACTIVE下架), category_id(分类ID), brand_id(品牌ID), sort_order, created_at；注意：名称/简介在 mall_product_translations 表（经 product_id 关联），mall_products 表没有 name 列",
+	"mall_product_translations":  "商品翻译表：product_id(商品ID), language_code(语言代码,如 zh-CN), name(商品名), slug, short_description(简介), long_description(详情), created_at；查商品名/简介必须 JOIN 此表",
+	"mall_categories":            "商品分类表：id, parent_id(父分类), path, depth, sort_order, image_url, created_at；分类名在 mall_category_translations（经 category_id 关联），本表没有 name 列",
 	"mall_category_translations": "分类翻译表：category_id(分类ID), language_code, name(分类名), created_at",
-	"mall_brands":               "品牌表：id, sort_order, logo_url, created_at；品牌名在 mall_brand_translations（经 brand_id 关联），本表没有 name 列",
-	"mall_brand_translations":   "品牌翻译表：brand_id(品牌ID), language_code, name(品牌名), created_at",
-	"mall_skus":                 "SKU 表：id, product_id(商品ID), sku_code(唯一编码), stock_qty(库存整数), created_at",
-	"mall_sku_prices":           "SKU 价格表：sku_id(SKU ID), currency(币种,如 CNY), amount(价格，varchar 数字串，单位分，SQL 里需 ::numeric 换算)，取价须过滤 currency='CNY'",
-	"mall_orders":               "订单主表：id, user_id(买家用户ID), status(PENDING_PAYMENT待支付/PAID已支付/CANCELLED已取消/FULFILLED已发货/CLOSED已关闭), total_amount(实付总额,分), original_amount(原价总额,分), discount_amount(优惠金额,分), shipping_fee(运费,分), tax_amount(税费,分), currency, recipient_name, recipient_phone, shipping_region, created_at（销售额统计用 total_amount，取消单 status=CANCELLED 不计）",
-	"mall_order_items":          "订单明细表：id, order_id(订单ID), user_id, sku_id, sku_snapshot(下单时SKU快照JSON), quantity(数量), unit_price(成交单价,分), subtotal(小计,分), created_at；算商品销量/热卖榜用本表聚合",
-	"mall_payment_transactions": "支付流水表：id, order_id, user_id, amount(金额,分), currency, payment_method(支付方式), status(含 SUCCEEDED=成功), business_type, created_at；营收对账以 status='SUCCEEDED' 为准",
-	"mall_payment_refunds":      "退款表：id, transaction_id(支付流水ID), user_id, amount(退款额,分), currency, status(PENDING/SUCCEEDED/FAILED), created_at",
-	"mall_coupon_templates":     "优惠券模板表：id, discount_type(优惠类型: FIXED固定额/PERCENTAGE百分比), discount_value(固定优惠额,分), discount_percentage(百分比,整数), currency, valid_from, valid_until, max_redemptions(发放上限), max_redemptions_per_user, redeemed_count(已领取数), claimable(是否可自助领取), status(ACTIVE=进行中), created_at",
-	"mall_user_coupons":         "用户券实例表：id, user_id, coupon_template_id, status(UNUSED未用/USED已用/EXPIRED过期), redeemed_at, redeemed_order_id, applied_discount_amount(实际抵扣,分), created_at；核销率=USED数/总数",
-	"mall_promotions":           "促销活动表：id, name(活动名), promo_type(SPECIAL_PRICE专价/FULL_REDUCTION满减), product_id(专价生效商品,0=店铺级), special_price(专价,分), threshold_amount(满减门槛,分), reduction_amount(满减额,分), currency, priority, valid_from, valid_until, status(ACTIVE=进行中), created_at",
-	"mall_comments":             "商品评论表：id, content_type(='CONTENT_TYPE_PRODUCT'), object_id(=商品ID), content(评论文本), status(STATUS_APPROVED已通过/STATUS_PENDING待审/STATUS_REJECTED已拒绝), rating(1-5星), parent_id(商家回复的父评论ID), created_at",
-	"mall_comment_likes":        "评论点赞表：id, user_id, comment_id, created_at",
-	"mall_cart_items":           "购物车明细表：id, cart_id, user_id, sku_id, quantity, created_at",
-	"mall_carts":                "购物车主表：id, user_id, created_at",
-	"mall_wishlist":             "收藏表：id, user_id, product_id, created_at（注意表名单数 wishlist）",
-	"mall_invoices":             "发票表：id, order_id, user_id, invoice_type, status(PENDING/ISSUED已开票/CANCELLED), amount(金额,分), buyer_name, buyer_tax_id, created_at",
-	"mall_shipments":            "物流单表：id, order_id, user_id, carrier(承运商), tracking_number, status(PENDING/SHIPPED已发货/DELIVERED已送达), tracking_events(JSON), created_at",
-	"mall_shipping_rates":       "运费模板表：id, region(区域), base_fee(基础运费,分), per_unit_fee(续重费,分), currency, status, created_at",
-	"mall_stock_op_logs":        "库存操作流水表（append-only）：id, sku_id, product_id, delta(变动量正负), stock_before, stock_after, reason(原因,如 order_deduct/cancel_restore/manual_adjust), ref_id(关联单据ID), remark, created_at",
-	"mall_stock_alerts":         "库存预警表：id, sku_id, threshold(阈值), stock_qty_at_trigger, status, created_at",
-	"sys_users":      "用户表：id, username(登录名), nickname(昵称), email, status, last_login_at, created_at；用户与角色是多对多，经 sys_user_roles 关联，sys_users 表没有 role_id 列",
-	"sys_roles":      "角色表：id, name(角色名), code(角色编码), status, created_at",
-	"sys_user_roles": "用户-角色关联表：user_id, role_id",
-	"sys_operation_audit_logs": "操作审计日志：id, user_id, username, action(CREATE/UPDATE/DELETE/READ/EXPORT/…), resource_type, success(bool), failure_reason, created_at",
-	"sys_login_audit_logs":     "登录审计日志：id, user_id, username, status(SUCCESS/FAILED), ip_address, created_at",
-	"sys_ai_usage_logs":        "AI 用量流水：id, user_id, tenant_id, model_name, prompt_tokens, completion_tokens, total_tokens, duration_ms, created_at",
+	"mall_brands":                "品牌表：id, sort_order, logo_url, created_at；品牌名在 mall_brand_translations（经 brand_id 关联），本表没有 name 列",
+	"mall_brand_translations":    "品牌翻译表：brand_id(品牌ID), language_code, name(品牌名), created_at",
+	"mall_skus":                  "SKU 表：id, product_id(商品ID), sku_code(唯一编码), stock_qty(库存整数), created_at",
+	"mall_sku_prices":            "SKU 价格表：sku_id(SKU ID), currency(币种,如 CNY), amount(价格，varchar 数字串，单位分，SQL 里需 ::numeric 换算)，取价须过滤 currency='CNY'",
+	"mall_orders":                "订单主表：id, user_id(买家用户ID), status(PENDING_PAYMENT待支付/PAID已支付/CANCELLED已取消/FULFILLED已发货/CLOSED已关闭), total_amount(实付总额,分), original_amount(原价总额,分), discount_amount(优惠金额,分), shipping_fee(运费,分), tax_amount(税费,分), currency, recipient_name, recipient_phone, shipping_region, created_at（销售额统计用 total_amount，取消单 status=CANCELLED 不计）",
+	"mall_order_items":           "订单明细表：id, order_id(订单ID), user_id, sku_id, sku_snapshot(下单时SKU快照JSON), quantity(数量), unit_price(成交单价,分), subtotal(小计,分), created_at；算商品销量/热卖榜用本表聚合",
+	"mall_payment_transactions":  "支付流水表：id, order_id, user_id, amount(金额,分), currency, payment_method(支付方式), status(含 SUCCEEDED=成功), business_type, created_at；营收对账以 status='SUCCEEDED' 为准",
+	"mall_payment_refunds":       "退款表：id, transaction_id(支付流水ID), user_id, amount(退款额,分), currency, status(PENDING/SUCCEEDED/FAILED), created_at",
+	"mall_coupon_templates":      "优惠券模板表：id, discount_type(优惠类型: FIXED固定额/PERCENTAGE百分比), discount_value(固定优惠额,分), discount_percentage(百分比,整数), currency, valid_from, valid_until, max_redemptions(发放上限), max_redemptions_per_user, redeemed_count(已领取数), claimable(是否可自助领取), status(ACTIVE=进行中), created_at",
+	"mall_user_coupons":          "用户券实例表：id, user_id, coupon_template_id, status(UNUSED未用/USED已用/EXPIRED过期), redeemed_at, redeemed_order_id, applied_discount_amount(实际抵扣,分), created_at；核销率=USED数/总数",
+	"mall_promotions":            "促销活动表：id, name(活动名), promo_type(SPECIAL_PRICE专价/FULL_REDUCTION满减), product_id(专价生效商品,0=店铺级), special_price(专价,分), threshold_amount(满减门槛,分), reduction_amount(满减额,分), currency, priority, valid_from, valid_until, status(ACTIVE=进行中), created_at",
+	"mall_comments":              "商品评论表：id, content_type(='CONTENT_TYPE_PRODUCT'), object_id(=商品ID), content(评论文本), status(STATUS_APPROVED已通过/STATUS_PENDING待审/STATUS_REJECTED已拒绝), rating(1-5星), parent_id(商家回复的父评论ID), created_at",
+	"mall_comment_likes":         "评论点赞表：id, user_id, comment_id, created_at",
+	"mall_cart_items":            "购物车明细表：id, cart_id, user_id, sku_id, quantity, created_at",
+	"mall_carts":                 "购物车主表：id, user_id, created_at",
+	"mall_wishlist":              "收藏表：id, user_id, product_id, created_at（注意表名单数 wishlist）",
+	"mall_invoices":              "发票表：id, order_id, user_id, invoice_type, status(PENDING/ISSUED已开票/CANCELLED), amount(金额,分), buyer_name, buyer_tax_id, created_at",
+	"mall_shipments":             "物流单表：id, order_id, user_id, carrier(承运商), tracking_number, status(PENDING/SHIPPED已发货/DELIVERED已送达), tracking_events(JSON), created_at",
+	"mall_shipping_rates":        "运费模板表：id, region(区域), base_fee(基础运费,分), per_unit_fee(续重费,分), currency, status, created_at",
+	"mall_stock_op_logs":         "库存操作流水表（append-only）：id, sku_id, product_id, delta(变动量正负), stock_before, stock_after, reason(原因,如 order_deduct/cancel_restore/manual_adjust), ref_id(关联单据ID), remark, created_at",
+	"mall_stock_alerts":          "库存预警表：id, sku_id, threshold(阈值), stock_qty_at_trigger, status, created_at",
+	"sys_users":                  "用户表：id, username(登录名), nickname(昵称), email, status, last_login_at, created_at；用户与角色是多对多，经 sys_user_roles 关联，sys_users 表没有 role_id 列",
+	"sys_roles":                  "角色表：id, name(角色名), code(角色编码), status, created_at",
+	"sys_user_roles":             "用户-角色关联表：user_id, role_id",
+	"sys_operation_audit_logs":   "操作审计日志：id, user_id, username, action(CREATE/UPDATE/DELETE/READ/EXPORT/…), resource_type, success(bool), failure_reason, created_at",
+	"sys_login_audit_logs":       "登录审计日志：id, user_id, username, status(SUCCESS/FAILED), ip_address, created_at",
+	"sys_ai_usage_logs":          "AI 用量流水：id, user_id, tenant_id, model_name, prompt_tokens, completion_tokens, total_tokens, duration_ms, created_at",
 }
 
 // aiQueryTenantTableWhitelist 租户表白名单：只含带 tenant_id 列、可安全暴露给
 // 租户自助分析的本租户数据表（平台级表不在其中）。
 var aiQueryTenantTableWhitelist = map[string]string{
-	"mall_products":             "商品表（本租户）：id, status(PRODUCT_STATUS_*), category_id, brand_id, created_at；名称在 mall_product_translations（经 product_id 关联）",
-	"mall_product_translations": "商品翻译表（本租户）：product_id, language_code, name, short_description, created_at",
-	"mall_categories":           "分类表（本租户）：id, parent_id, sort_order, created_at；分类名在 mall_category_translations",
+	"mall_products":              "商品表（本租户）：id, status(PRODUCT_STATUS_*), category_id, brand_id, created_at；名称在 mall_product_translations（经 product_id 关联）",
+	"mall_product_translations":  "商品翻译表（本租户）：product_id, language_code, name, short_description, created_at",
+	"mall_categories":            "分类表（本租户）：id, parent_id, sort_order, created_at；分类名在 mall_category_translations",
 	"mall_category_translations": "分类翻译表（本租户）：category_id, language_code, name, created_at",
-	"mall_brands":               "品牌表（本租户）：id, sort_order, created_at；品牌名在 mall_brand_translations",
-	"mall_brand_translations":   "品牌翻译表（本租户）：brand_id, language_code, name, created_at",
-	"mall_skus":                 "SKU 表（本租户）：id, product_id, sku_code, stock_qty, created_at",
-	"mall_sku_prices":           "SKU 价格表（本租户）：sku_id, currency, amount(varchar 数字串,单位分)",
-	"mall_orders":               "订单表（本租户）：id, user_id, status(PENDING_PAYMENT/PAID/CANCELLED/FULFILLED/CLOSED), total_amount(分), discount_amount(分), shipping_fee(分), created_at",
-	"mall_order_items":          "订单明细表（本租户）：id, order_id, sku_id, sku_snapshot, quantity, unit_price(分), subtotal(分), created_at",
-	"mall_coupon_templates":     "优惠券模板表（本租户）：id, discount_type, discount_value(分), discount_percentage, valid_from, valid_until, max_redemptions, redeemed_count, claimable, status, created_at",
-	"mall_user_coupons":         "用户券实例表（本租户）：id, user_id, coupon_template_id, status(UNUSED/USED/EXPIRED), applied_discount_amount(分), created_at",
-	"mall_promotions":           "促销活动表（本租户）：id, name, promo_type(SPECIAL_PRICE/FULL_REDUCTION), product_id, special_price(分), threshold_amount(分), reduction_amount(分), valid_from, valid_until, status, created_at",
-	"mall_comments":             "商品评论表（本租户）：id, content_type, object_id(=商品ID), content, status(STATUS_APPROVED/STATUS_PENDING/STATUS_REJECTED), rating(1-5), parent_id, created_at",
-	"mall_cart_items":           "购物车明细表（本租户）：id, user_id, sku_id, quantity, created_at",
-	"mall_wishlist":             "收藏表（本租户）：id, user_id, product_id, created_at",
-	"mall_invoices":             "发票表（本租户）：id, order_id, status(PENDING/ISSUED/CANCELLED), amount(分), created_at",
-	"mall_shipments":            "物流单表（本租户）：id, order_id, carrier, tracking_number, status(PENDING/SHIPPED/DELIVERED), created_at",
-	"mall_stock_op_logs":        "库存操作流水表（本租户）：id, sku_id, product_id, delta, stock_before, stock_after, reason, ref_id, created_at",
-	"sys_operation_audit_logs": "操作审计日志（本租户）：id, user_id, username, action, success, failure_reason, created_at",
-	"sys_login_audit_logs":     "登录审计日志（本租户）：id, user_id, username, status(SUCCESS/FAILED), ip_address, created_at",
-	"sys_ai_usage_logs":        "AI 用量流水（本租户）：id, user_id, model_name, prompt_tokens, completion_tokens, total_tokens, created_at",
+	"mall_brands":                "品牌表（本租户）：id, sort_order, created_at；品牌名在 mall_brand_translations",
+	"mall_brand_translations":    "品牌翻译表（本租户）：brand_id, language_code, name, created_at",
+	"mall_skus":                  "SKU 表（本租户）：id, product_id, sku_code, stock_qty, created_at",
+	"mall_sku_prices":            "SKU 价格表（本租户）：sku_id, currency, amount(varchar 数字串,单位分)",
+	"mall_orders":                "订单表（本租户）：id, user_id, status(PENDING_PAYMENT/PAID/CANCELLED/FULFILLED/CLOSED), total_amount(分), discount_amount(分), shipping_fee(分), created_at",
+	"mall_order_items":           "订单明细表（本租户）：id, order_id, sku_id, sku_snapshot, quantity, unit_price(分), subtotal(分), created_at",
+	"mall_coupon_templates":      "优惠券模板表（本租户）：id, discount_type, discount_value(分), discount_percentage, valid_from, valid_until, max_redemptions, redeemed_count, claimable, status, created_at",
+	"mall_user_coupons":          "用户券实例表（本租户）：id, user_id, coupon_template_id, status(UNUSED/USED/EXPIRED), applied_discount_amount(分), created_at",
+	"mall_promotions":            "促销活动表（本租户）：id, name, promo_type(SPECIAL_PRICE/FULL_REDUCTION), product_id, special_price(分), threshold_amount(分), reduction_amount(分), valid_from, valid_until, status, created_at",
+	"mall_comments":              "商品评论表（本租户）：id, content_type, object_id(=商品ID), content, status(STATUS_APPROVED/STATUS_PENDING/STATUS_REJECTED), rating(1-5), parent_id, created_at",
+	"mall_cart_items":            "购物车明细表（本租户）：id, user_id, sku_id, quantity, created_at",
+	"mall_wishlist":              "收藏表（本租户）：id, user_id, product_id, created_at",
+	"mall_invoices":              "发票表（本租户）：id, order_id, status(PENDING/ISSUED/CANCELLED), amount(分), created_at",
+	"mall_shipments":             "物流单表（本租户）：id, order_id, carrier, tracking_number, status(PENDING/SHIPPED/DELIVERED), created_at",
+	"mall_stock_op_logs":         "库存操作流水表（本租户）：id, sku_id, product_id, delta, stock_before, stock_after, reason, ref_id, created_at",
+	"sys_operation_audit_logs":   "操作审计日志（本租户）：id, user_id, username, action, success, failure_reason, created_at",
+	"sys_login_audit_logs":       "登录审计日志（本租户）：id, user_id, username, status(SUCCESS/FAILED), ip_address, created_at",
+	"sys_ai_usage_logs":          "AI 用量流水（本租户）：id, user_id, model_name, prompt_tokens, completion_tokens, total_tokens, created_at",
 }
 
 // tenantIDPatternFor 构造"tenant_id = {id}"存在性校验的正则（容忍别名与空白）。
-func tenantIDPatternFor(tenantID uint32) *regexp.Regexp {
+func tenantIDPatternFor(tenantID int64) *regexp.Regexp {
 	return regexp.MustCompile(`(?i)\btenant_id\s*=\s*` + fmt.Sprintf("%d", tenantID) + `\b`)
 }
 
@@ -126,7 +126,7 @@ var aiQuerySelectPattern = regexp.MustCompile(`(?is)^\s*\(?\s*(SELECT|WITH)\b`)
 // 安全边界见 ai_query.proto：只读校验/表白名单/LIMIT 钳制/只读事务四重防线。
 type AiQueryService struct {
 	aiV1.UnimplementedAiQueryServiceServer
-	log *logx.Helper
+	log              *logx.Helper
 	providerRepo     *data.AiProviderRepo
 	usageRepo        *data.AiUsageLogRepo
 	entClient        *entCrud.EntClient[*ent.Client]
@@ -229,7 +229,7 @@ func (s *AiQueryService) Ask(ctx context.Context, req *aiV1.AskAiQueryRequest) (
 		resp.Answer = trans.Ptr(answer)
 	}
 
-	resp.TotalTokens = genTokens + answerTokens
+	resp.TotalTokens = uint32(genTokens + answerTokens)
 
 	// 记账（两次调用合并总量；失败不阻断）
 	if s.usageRepo != nil {
@@ -238,7 +238,7 @@ func (s *AiQueryService) Ask(ctx context.Context, req *aiV1.AskAiQueryRequest) (
 			UserID:      s.operatorID(ctx),
 			TenantID:    tenantID,
 			ModelName:   modelName,
-			TotalTokens: resp.GetTotalTokens(),
+			TotalTokens: int64(resp.GetTotalTokens()),
 		})
 	}
 
@@ -246,14 +246,14 @@ func (s *AiQueryService) Ask(ctx context.Context, req *aiV1.AskAiQueryRequest) (
 }
 
 // operatorTenant / operatorID：viewer 上下文取操作者（unary 中间件注入）。
-func (s *AiQueryService) operatorTenant(ctx context.Context) (uint32, bool) {
+func (s *AiQueryService) operatorTenant(ctx context.Context) (int64, bool) {
 	if vc, exist := viewer.FromContext(ctx); exist && vc != nil {
-		return uint32(vc.TenantID()), true
+		return int64(vc.TenantID()), true
 	}
 	return 0, false
 }
 
-func (s *AiQueryService) operatorID(ctx context.Context) uint32 {
+func (s *AiQueryService) operatorID(ctx context.Context) int64 {
 	if uid, ok := viewerUserIDFromContext(ctx); ok {
 		return uid
 	}
@@ -261,7 +261,7 @@ func (s *AiQueryService) operatorID(ctx context.Context) uint32 {
 }
 
 // generateSQL 数据字典 + 对话历史 + 问题 → 只读 SQL。
-func (s *AiQueryService) generateSQL(ctx context.Context, client *openai.Client, provider *ent.AiProvider, question, lang string, history []aiV1.AiQueryHistoryItem, whitelist map[string]string, tenantID uint32) (string, uint32, error) {
+func (s *AiQueryService) generateSQL(ctx context.Context, client *openai.Client, provider *ent.AiProvider, question, lang string, history []aiV1.AiQueryHistoryItem, whitelist map[string]string, tenantID int64) (string, int64, error) {
 	var sb strings.Builder
 	sb.WriteString("你是本系统的只读数据分析引擎。用户的提问永远是对上面列出的数据库表发起查询——哪怕措辞听起来像个人账号问题，一律直接生成 SQL，绝不拒绝。\n")
 	sb.WriteString("根据表结构与用户问题，生成一条 Postgres 只读 SELECT 语句。\n")
@@ -337,7 +337,7 @@ func (s *AiQueryService) generateSQL(ctx context.Context, client *openai.Client,
 	if err != nil {
 		return "", 0, aiV1.ErrorInternalServerError("ai query generate failed: %v", err)
 	}
-	tokens := uint32(resp.Usage.TotalTokens)
+	tokens := int64(resp.Usage.TotalTokens)
 	if len(resp.Choices) == 0 {
 		return "", tokens, aiV1.ErrorInternalServerError("ai query generate empty")
 	}
@@ -446,7 +446,7 @@ func (s *AiQueryService) executeReadOnly(ctx context.Context, sqlText string) ([
 }
 
 // generateAnswer 结果集 → 自然语言结论（第二次调用）。
-func (s *AiQueryService) generateAnswer(ctx context.Context, client *openai.Client, provider *ent.AiProvider, question, sqlText string, columns []string, rows []*aiV1.AiQueryRow, lang string) (string, uint32, error) {
+func (s *AiQueryService) generateAnswer(ctx context.Context, client *openai.Client, provider *ent.AiProvider, question, sqlText string, columns []string, rows []*aiV1.AiQueryRow, lang string) (string, int64, error) {
 	var sb strings.Builder
 	sb.WriteString(fmt.Sprintf("用户问题：%s\n\n执行的 SQL：%s\n\n查询结果（列：%s）：\n", question, sqlText, strings.Join(columns, ", ")))
 	maxRows := len(rows)
@@ -480,7 +480,7 @@ func (s *AiQueryService) generateAnswer(ctx context.Context, client *openai.Clie
 	if err != nil {
 		return "", 0, err
 	}
-	tokens := uint32(resp.Usage.TotalTokens)
+	tokens := int64(resp.Usage.TotalTokens)
 	if len(resp.Choices) == 0 {
 		return "", tokens, fmt.Errorf("empty answer")
 	}
@@ -630,7 +630,7 @@ func (s *AiQueryService) pushInternalMessage(ctx context.Context, title, content
 			Content:   &content,
 			Status:    trans.Ptr(internalMessageV1.InternalMessage_PUBLISHED),
 			Type:      trans.Ptr(internalMessageV1.InternalMessage_NOTIFICATION),
-			CreatedBy: trans.Ptr(uint32(0)),
+			CreatedBy: trans.Ptr(int64(0)),
 			CreatedAt: timestamppb.New(now),
 		},
 	})

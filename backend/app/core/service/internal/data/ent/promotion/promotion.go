@@ -96,11 +96,11 @@ var (
 	Hooks  [1]ent.Hook
 	Policy ent.Policy
 	// DefaultTenantID holds the default value on creation for the "tenant_id" field.
-	DefaultTenantID uint32
+	DefaultTenantID int64
 	// DefaultCurrency holds the default value on creation for the "currency" field.
 	DefaultCurrency string
 	// DefaultProductID holds the default value on creation for the "product_id" field.
-	DefaultProductID uint32
+	DefaultProductID int64
 	// DefaultSpecialPrice holds the default value on creation for the "special_price" field.
 	DefaultSpecialPrice int64
 	// DefaultThresholdAmount holds the default value on creation for the "threshold_amount" field.
@@ -110,7 +110,7 @@ var (
 	// DefaultPriority holds the default value on creation for the "priority" field.
 	DefaultPriority int32
 	// IDValidator is a validator for the "id" field. It is called by the builders before save.
-	IDValidator func(uint32) error
+	IDValidator func(int64) error
 )
 
 // PromoType defines the type for the "promo_type" enum field.

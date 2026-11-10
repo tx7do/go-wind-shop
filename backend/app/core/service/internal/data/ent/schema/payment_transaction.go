@@ -37,12 +37,12 @@ func (PaymentTransaction) Annotations() []schema.Annotation {
 
 func (PaymentTransaction) Fields() []ent.Field {
 	return []ent.Field{
-		field.Uint32("order_id").
+		field.Int64("order_id").
 			Comment("关联的订单ID").
 			Optional().
 			Nillable(),
 
-		field.Uint32("user_id").
+		field.Int64("user_id").
 			Comment("用户ID").
 			Optional().
 			Nillable(),
@@ -73,10 +73,10 @@ func (PaymentTransaction) Fields() []ent.Field {
 
 func (PaymentTransaction) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
-		mixin.TenantID[uint32]{},
+		mixin.OperatorID64{},
+		mixin.TenantID[int64]{},
 		appmixin.Currency{},
 		appmixin.BusinessRefId{},
 		appmixin.IdempotencyKey{},

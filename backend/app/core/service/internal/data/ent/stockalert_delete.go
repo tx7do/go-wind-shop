@@ -40,7 +40,7 @@ func (_d *StockAlertDelete) ExecX(ctx context.Context) int {
 }
 
 func (_d *StockAlertDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(stockalert.Table, sqlgraph.NewFieldSpec(stockalert.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewDeleteSpec(stockalert.Table, sqlgraph.NewFieldSpec(stockalert.FieldID, field.TypeInt64))
 	if ps := _d.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {

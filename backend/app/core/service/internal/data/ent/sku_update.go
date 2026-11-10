@@ -70,14 +70,14 @@ func (_u *SkuUpdate) ClearDeletedAt() *SkuUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SkuUpdate) SetCreatedBy(v uint32) *SkuUpdate {
+func (_u *SkuUpdate) SetCreatedBy(v int64) *SkuUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SkuUpdate) SetNillableCreatedBy(v *uint32) *SkuUpdate {
+func (_u *SkuUpdate) SetNillableCreatedBy(v *int64) *SkuUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *SkuUpdate) SetNillableCreatedBy(v *uint32) *SkuUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *SkuUpdate) AddCreatedBy(v int32) *SkuUpdate {
+func (_u *SkuUpdate) AddCreatedBy(v int64) *SkuUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *SkuUpdate) ClearCreatedBy() *SkuUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SkuUpdate) SetUpdatedBy(v uint32) *SkuUpdate {
+func (_u *SkuUpdate) SetUpdatedBy(v int64) *SkuUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SkuUpdate) SetNillableUpdatedBy(v *uint32) *SkuUpdate {
+func (_u *SkuUpdate) SetNillableUpdatedBy(v *int64) *SkuUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *SkuUpdate) SetNillableUpdatedBy(v *uint32) *SkuUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *SkuUpdate) AddUpdatedBy(v int32) *SkuUpdate {
+func (_u *SkuUpdate) AddUpdatedBy(v int64) *SkuUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *SkuUpdate) ClearUpdatedBy() *SkuUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SkuUpdate) SetDeletedBy(v uint32) *SkuUpdate {
+func (_u *SkuUpdate) SetDeletedBy(v int64) *SkuUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SkuUpdate) SetNillableDeletedBy(v *uint32) *SkuUpdate {
+func (_u *SkuUpdate) SetNillableDeletedBy(v *int64) *SkuUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *SkuUpdate) SetNillableDeletedBy(v *uint32) *SkuUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *SkuUpdate) AddDeletedBy(v int32) *SkuUpdate {
+func (_u *SkuUpdate) AddDeletedBy(v int64) *SkuUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *SkuUpdate) ClearDeletedBy() *SkuUpdate {
 }
 
 // SetProductID sets the "product_id" field.
-func (_u *SkuUpdate) SetProductID(v uint32) *SkuUpdate {
+func (_u *SkuUpdate) SetProductID(v int64) *SkuUpdate {
 	_u.mutation.ResetProductID()
 	_u.mutation.SetProductID(v)
 	return _u
 }
 
 // SetNillableProductID sets the "product_id" field if the given value is not nil.
-func (_u *SkuUpdate) SetNillableProductID(v *uint32) *SkuUpdate {
+func (_u *SkuUpdate) SetNillableProductID(v *int64) *SkuUpdate {
 	if v != nil {
 		_u.SetProductID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *SkuUpdate) SetNillableProductID(v *uint32) *SkuUpdate {
 }
 
 // AddProductID adds value to the "product_id" field.
-func (_u *SkuUpdate) AddProductID(v int32) *SkuUpdate {
+func (_u *SkuUpdate) AddProductID(v int64) *SkuUpdate {
 	_u.mutation.AddProductID(v)
 	return _u
 }
@@ -263,7 +263,7 @@ func (_u *SkuUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *SkuUpdate 
 }
 
 func (_u *SkuUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(sku.Table, sku.Columns, sqlgraph.NewFieldSpec(sku.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(sku.Table, sku.Columns, sqlgraph.NewFieldSpec(sku.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -287,40 +287,40 @@ func (_u *SkuUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(sku.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(sku.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(sku.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(sku.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(sku.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(sku.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(sku.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(sku.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(sku.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(sku.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(sku.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(sku.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(sku.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(sku.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(sku.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(sku.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(sku.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(sku.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(sku.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ProductID(); ok {
-		_spec.SetField(sku.FieldProductID, field.TypeUint32, value)
+		_spec.SetField(sku.FieldProductID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProductID(); ok {
-		_spec.AddField(sku.FieldProductID, field.TypeUint32, value)
+		_spec.AddField(sku.FieldProductID, field.TypeInt64, value)
 	}
 	if _u.mutation.ProductIDCleared() {
-		_spec.ClearField(sku.FieldProductID, field.TypeUint32)
+		_spec.ClearField(sku.FieldProductID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SkuCode(); ok {
 		_spec.SetField(sku.FieldSkuCode, field.TypeString, value)
@@ -400,14 +400,14 @@ func (_u *SkuUpdateOne) ClearDeletedAt() *SkuUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *SkuUpdateOne) SetCreatedBy(v uint32) *SkuUpdateOne {
+func (_u *SkuUpdateOne) SetCreatedBy(v int64) *SkuUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *SkuUpdateOne) SetNillableCreatedBy(v *uint32) *SkuUpdateOne {
+func (_u *SkuUpdateOne) SetNillableCreatedBy(v *int64) *SkuUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -415,7 +415,7 @@ func (_u *SkuUpdateOne) SetNillableCreatedBy(v *uint32) *SkuUpdateOne {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *SkuUpdateOne) AddCreatedBy(v int32) *SkuUpdateOne {
+func (_u *SkuUpdateOne) AddCreatedBy(v int64) *SkuUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -427,14 +427,14 @@ func (_u *SkuUpdateOne) ClearCreatedBy() *SkuUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *SkuUpdateOne) SetUpdatedBy(v uint32) *SkuUpdateOne {
+func (_u *SkuUpdateOne) SetUpdatedBy(v int64) *SkuUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *SkuUpdateOne) SetNillableUpdatedBy(v *uint32) *SkuUpdateOne {
+func (_u *SkuUpdateOne) SetNillableUpdatedBy(v *int64) *SkuUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -442,7 +442,7 @@ func (_u *SkuUpdateOne) SetNillableUpdatedBy(v *uint32) *SkuUpdateOne {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *SkuUpdateOne) AddUpdatedBy(v int32) *SkuUpdateOne {
+func (_u *SkuUpdateOne) AddUpdatedBy(v int64) *SkuUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -454,14 +454,14 @@ func (_u *SkuUpdateOne) ClearUpdatedBy() *SkuUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *SkuUpdateOne) SetDeletedBy(v uint32) *SkuUpdateOne {
+func (_u *SkuUpdateOne) SetDeletedBy(v int64) *SkuUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *SkuUpdateOne) SetNillableDeletedBy(v *uint32) *SkuUpdateOne {
+func (_u *SkuUpdateOne) SetNillableDeletedBy(v *int64) *SkuUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -469,7 +469,7 @@ func (_u *SkuUpdateOne) SetNillableDeletedBy(v *uint32) *SkuUpdateOne {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *SkuUpdateOne) AddDeletedBy(v int32) *SkuUpdateOne {
+func (_u *SkuUpdateOne) AddDeletedBy(v int64) *SkuUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -481,14 +481,14 @@ func (_u *SkuUpdateOne) ClearDeletedBy() *SkuUpdateOne {
 }
 
 // SetProductID sets the "product_id" field.
-func (_u *SkuUpdateOne) SetProductID(v uint32) *SkuUpdateOne {
+func (_u *SkuUpdateOne) SetProductID(v int64) *SkuUpdateOne {
 	_u.mutation.ResetProductID()
 	_u.mutation.SetProductID(v)
 	return _u
 }
 
 // SetNillableProductID sets the "product_id" field if the given value is not nil.
-func (_u *SkuUpdateOne) SetNillableProductID(v *uint32) *SkuUpdateOne {
+func (_u *SkuUpdateOne) SetNillableProductID(v *int64) *SkuUpdateOne {
 	if v != nil {
 		_u.SetProductID(*v)
 	}
@@ -496,7 +496,7 @@ func (_u *SkuUpdateOne) SetNillableProductID(v *uint32) *SkuUpdateOne {
 }
 
 // AddProductID adds value to the "product_id" field.
-func (_u *SkuUpdateOne) AddProductID(v int32) *SkuUpdateOne {
+func (_u *SkuUpdateOne) AddProductID(v int64) *SkuUpdateOne {
 	_u.mutation.AddProductID(v)
 	return _u
 }
@@ -606,7 +606,7 @@ func (_u *SkuUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *SkuUpda
 }
 
 func (_u *SkuUpdateOne) sqlSave(ctx context.Context) (_node *Sku, err error) {
-	_spec := sqlgraph.NewUpdateSpec(sku.Table, sku.Columns, sqlgraph.NewFieldSpec(sku.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(sku.Table, sku.Columns, sqlgraph.NewFieldSpec(sku.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Sku.id" for update`)}
@@ -647,40 +647,40 @@ func (_u *SkuUpdateOne) sqlSave(ctx context.Context) (_node *Sku, err error) {
 		_spec.ClearField(sku.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(sku.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(sku.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(sku.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(sku.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(sku.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(sku.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(sku.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(sku.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(sku.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(sku.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(sku.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(sku.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(sku.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(sku.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(sku.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(sku.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(sku.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(sku.FieldDeletedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ProductID(); ok {
-		_spec.SetField(sku.FieldProductID, field.TypeUint32, value)
+		_spec.SetField(sku.FieldProductID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProductID(); ok {
-		_spec.AddField(sku.FieldProductID, field.TypeUint32, value)
+		_spec.AddField(sku.FieldProductID, field.TypeInt64, value)
 	}
 	if _u.mutation.ProductIDCleared() {
-		_spec.ClearField(sku.FieldProductID, field.TypeUint32)
+		_spec.ClearField(sku.FieldProductID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.SkuCode(); ok {
 		_spec.SetField(sku.FieldSkuCode, field.TypeString, value)

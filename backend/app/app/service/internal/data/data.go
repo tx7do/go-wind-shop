@@ -1,8 +1,8 @@
 package data
 
 import (
-	"go-wind-shop/pkg/logx"
 	"github.com/redis/go-redis/v9"
+	"go-wind-shop/pkg/logx"
 
 	authnEngine "github.com/tx7do/kratos-authn/engine"
 	"github.com/tx7do/kratos-authn/engine/jwt"
@@ -14,26 +14,26 @@ import (
 
 	conf "github.com/tx7do/kratos-bootstrap/api/gen/go/conf/v1"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	redisx "go-wind-shop/pkg/redisx"
 	bRegistry "github.com/tx7do/kratos-bootstrap/registry"
 	"github.com/tx7do/kratos-bootstrap/rpc"
+	redisx "go-wind-shop/pkg/redisx"
 
-	authenticationV1 "go-wind-shop/api/gen/go/authentication/service/v1"
 	addressV1 "go-wind-shop/api/gen/go/address/service/v1"
-	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
-	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
+	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
+	authenticationV1 "go-wind-shop/api/gen/go/authentication/service/v1"
 	cartV1 "go-wind-shop/api/gen/go/cart/service/v1"
+	catalogV1 "go-wind-shop/api/gen/go/catalog/service/v1"
 	commentV1 "go-wind-shop/api/gen/go/comment/service/v1"
 	couponV1 "go-wind-shop/api/gen/go/coupon/service/v1"
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	interactionV1 "go-wind-shop/api/gen/go/interaction/service/v1"
+	internalMessageV1 "go-wind-shop/api/gen/go/internal_message/service/v1"
 	invoiceV1 "go-wind-shop/api/gen/go/invoice/service/v1"
-	aiV1 "go-wind-shop/api/gen/go/ai/service/v1"
 	orderV1 "go-wind-shop/api/gen/go/order/service/v1"
 	paymentV1 "go-wind-shop/api/gen/go/payment/service/v1"
 	permissionV1 "go-wind-shop/api/gen/go/permission/service/v1"
-	storageV1 "go-wind-shop/api/gen/go/storage/service/v1"
 	shippingV1 "go-wind-shop/api/gen/go/shipping/service/v1"
+	storageV1 "go-wind-shop/api/gen/go/storage/service/v1"
 	wishlistV1 "go-wind-shop/api/gen/go/wishlist/service/v1"
 
 	"go-wind-shop/pkg/oss"

@@ -134,14 +134,14 @@ func NewRestServer(
 	stockOpLogService *service.StockOpLogService,
 	userCouponService *service.UserCouponService,
 
-		shippingRateService *service.ShippingRateService,
-		stockAlertService *service.StockAlertService,
-		taxRateService *service.TaxRateService,
-		commentService *service.CommentService,
-		interactionAdminService *service.InteractionAdminService,
-		invoiceService *service.InvoiceService,
+	shippingRateService *service.ShippingRateService,
+	stockAlertService *service.StockAlertService,
+	taxRateService *service.TaxRateService,
+	commentService *service.CommentService,
+	interactionAdminService *service.InteractionAdminService,
+	invoiceService *service.InvoiceService,
 
-		fileSvc *service.FileService,
+	fileSvc *service.FileService,
 	fileTransferService *service.FileTransferService,
 
 	internalMessageService *service.InternalMessageService,

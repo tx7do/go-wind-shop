@@ -238,7 +238,7 @@ const unreadQuery = useListUserInbox(
   }),
   { enabled: hasUserId }
 );
-const unreadCount = computed(() => unreadQuery.data.value?.total ?? 0);
+const unreadCount = computed(() => Number(unreadQuery.data.value?.total ?? 0));
 
 // ============================================================
 // 两卡分页：站内信走服务端分页（PaginationQuery 按页换实例，vue-query

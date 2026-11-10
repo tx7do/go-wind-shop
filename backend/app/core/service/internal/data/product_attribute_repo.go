@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
@@ -25,7 +25,7 @@ import (
 
 type ProductAttributeRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper *mapper.CopierMapper[catalogV1.ProductAttribute, ent.ProductAttribute]
 
@@ -104,9 +104,9 @@ func (r *ProductAttributeRepo) filterByTranslationName(ctx context.Context, buil
 	if len(rows) == 0 {
 		return false, nil
 	}
-	ids := make([]uint32, 0, len(rows))
+	ids := make([]int64, 0, len(rows))
 	for _, n := range rows {
-		ids = append(ids, uint32(n))
+		ids = append(ids, int64(n))
 	}
 	builder.Where(productattribute.IDIn(ids...))
 	return true, nil
@@ -160,7 +160,7 @@ func (r *ProductAttributeRepo) List(ctx context.Context, req *paginationV1.Pagin
 	}, nil
 }
 
-func (r *ProductAttributeRepo) IsExist(ctx context.Context, id uint32) (bool, error) {
+func (r *ProductAttributeRepo) IsExist(ctx context.Context, id int64) (bool, error) {
 	exist, err := r.entClient.Client().ProductAttribute.Query().
 		Where(productattribute.IDEQ(id)).
 		Exist(ctx)
@@ -415,7 +415,7 @@ func (r *ProductAttributeRepo) Delete(ctx context.Context, req *catalogV1.Delete
 	return err
 }
 
-func (r *ProductAttributeRepo) TranslationExists(ctx context.Context, attributeId uint32, languageCode string) (bool, error) {
+func (r *ProductAttributeRepo) TranslationExists(ctx context.Context, attributeId int64, languageCode string) (bool, error) {
 	return r.productAttributeTranslationRepo.TranslationExists(ctx, attributeId, languageCode)
 }
 
@@ -465,7 +465,7 @@ func (r *ProductAttributeRepo) GetTranslation(ctx context.Context, req *catalogV
 	return r.productAttributeTranslationRepo.GetTranslation(ctx, req.GetId(), req.GetLocale())
 }
 
-func (r *ProductAttributeRepo) ListTranslations(ctx context.Context, attributeId uint32) ([]*catalogV1.ProductAttributeTranslation, error) {
+func (r *ProductAttributeRepo) ListTranslations(ctx context.Context, attributeId int64) ([]*catalogV1.ProductAttributeTranslation, error) {
 	return r.productAttributeTranslationRepo.ListTranslations(ctx, attributeId, "", nil)
 }
 
@@ -473,6 +473,6 @@ func (r *ProductAttributeRepo) DeleteTranslation(ctx context.Context, req *catal
 	return r.productAttributeTranslationRepo.DeleteTranslation(ctx, req)
 }
 
-func (r *ProductAttributeRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, attributeID uint32) error {
+func (r *ProductAttributeRepo) CleanTranslations(ctx context.Context, tx *ent.Tx, attributeID int64) error {
 	return r.productAttributeTranslationRepo.CleanTranslations(ctx, tx, attributeID)
 }

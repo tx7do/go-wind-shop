@@ -9,13 +9,12 @@ import (
 
 	identityV1 "go-wind-shop/api/gen/go/identity/service/v1"
 	"go-wind-shop/pkg/logx"
-
 )
 
 type PlanModuleService struct {
 	identityV1.UnimplementedPlanModuleServiceServer
 
-	log            *logx.Helper
+	log              *logx.Helper
 	planModuleClient identityV1.PlanModuleServiceClient
 }
 

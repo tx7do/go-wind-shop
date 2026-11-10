@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/go-kratos/kratos/v2/errors"
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/go-utils/timeutil"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	entCrud "github.com/tx7do/go-crud/entgo"
 
@@ -22,7 +22,7 @@ import (
 // 这里返回 (nil, nil) 时由调用方按"未配置"处理（不静音不退订）。
 type NotificationPreferenceRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
-	log *logx.Helper
+	log       *logx.Helper
 }
 
 func NewNotificationPreferenceRepo(ctx *bootstrap.Context, entClient *entCrud.EntClient[*ent.Client]) *NotificationPreferenceRepo {
@@ -47,7 +47,7 @@ func toNotificationPreferenceDTO(entity *ent.NotificationPreference) *notifyV1.N
 }
 
 // GetByUserID 读某用户的偏好；从未配置过时返回 (nil, nil)，由调用方决定默认值。
-func (r *NotificationPreferenceRepo) GetByUserID(ctx context.Context, userID uint32) (*notifyV1.NotificationPreference, error) {
+func (r *NotificationPreferenceRepo) GetByUserID(ctx context.Context, userID int64) (*notifyV1.NotificationPreference, error) {
 	entity, err := r.entClient.Client().NotificationPreference.Query().
 		Where(notificationpreference.UserIDEQ(userID)).
 		Only(ctx)
@@ -63,9 +63,9 @@ func (r *NotificationPreferenceRepo) GetByUserID(ctx context.Context, userID uin
 }
 
 // ListByUserIDs 批量读一组用户的偏好（投递链逐收件人判定静音时用），缺偏好的用户不在返回值里。
-func (r *NotificationPreferenceRepo) ListByUserIDs(ctx context.Context, userIDs []uint32) (map[uint32]*notifyV1.NotificationPreference, error) {
+func (r *NotificationPreferenceRepo) ListByUserIDs(ctx context.Context, userIDs []int64) (map[int64]*notifyV1.NotificationPreference, error) {
 	if len(userIDs) == 0 {
-		return map[uint32]*notifyV1.NotificationPreference{}, nil
+		return map[int64]*notifyV1.NotificationPreference{}, nil
 	}
 
 	entities, err := r.entClient.Client().NotificationPreference.Query().
@@ -76,7 +76,7 @@ func (r *NotificationPreferenceRepo) ListByUserIDs(ctx context.Context, userIDs 
 		return nil, errors.InternalServer("NOTIFICATION_PREFERENCE", "query notification preferences failed")
 	}
 
-	result := make(map[uint32]*notifyV1.NotificationPreference, len(entities))
+	result := make(map[int64]*notifyV1.NotificationPreference, len(entities))
 	for _, entity := range entities {
 		result[entity.UserID] = toNotificationPreferenceDTO(entity)
 	}
@@ -84,7 +84,7 @@ func (r *NotificationPreferenceRepo) ListByUserIDs(ctx context.Context, userIDs 
 }
 
 // Upsert 按用户保存偏好（存在则更新，不存在则创建）；userID 由调用方从操作人钉定。
-func (r *NotificationPreferenceRepo) Upsert(ctx context.Context, userID uint32, pref *notifyV1.UpdateNotificationPreferenceRequest, operatorUserID uint32) (*notifyV1.NotificationPreference, error) {
+func (r *NotificationPreferenceRepo) Upsert(ctx context.Context, userID int64, pref *notifyV1.UpdateNotificationPreferenceRequest, operatorUserID int64) (*notifyV1.NotificationPreference, error) {
 	if pref == nil {
 		return nil, errors.BadRequest("NOTIFICATION_PREFERENCE", "invalid parameter")
 	}
@@ -97,7 +97,7 @@ func (r *NotificationPreferenceRepo) Upsert(ctx context.Context, userID uint32, 
 		return nil, errors.InternalServer("NOTIFICATION_PREFERENCE", "save notification preference failed")
 	}
 
-	muted := make([]uint32, 0, len(pref.GetMutedCategoryIds()))
+	muted := make([]int64, 0, len(pref.GetMutedCategoryIds()))
 	muted = append(muted, pref.GetMutedCategoryIds()...)
 
 	if existing == nil {
@@ -131,7 +131,7 @@ func (r *NotificationPreferenceRepo) Upsert(ctx context.Context, userID uint32, 
 	return toNotificationPreferenceDTO(entity), nil
 }
 
-func operatorUserIDOrNil(userID uint32) *uint32 {
+func operatorUserIDOrNil(userID int64) *int64 {
 	if userID == 0 {
 		return nil
 	}

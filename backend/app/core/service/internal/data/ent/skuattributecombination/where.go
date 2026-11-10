@@ -10,47 +10,47 @@ import (
 )
 
 // ID filters vertices based on their ID field.
-func ID(id uint32) predicate.SkuAttributeCombination {
+func ID(id int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id uint32) predicate.SkuAttributeCombination {
+func IDEQ(id int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id uint32) predicate.SkuAttributeCombination {
+func IDNEQ(id int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...uint32) predicate.SkuAttributeCombination {
+func IDIn(ids ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...uint32) predicate.SkuAttributeCombination {
+func IDNotIn(ids ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id uint32) predicate.SkuAttributeCombination {
+func IDGT(id int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id uint32) predicate.SkuAttributeCombination {
+func IDGTE(id int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id uint32) predicate.SkuAttributeCombination {
+func IDLT(id int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id uint32) predicate.SkuAttributeCombination {
+func IDLTE(id int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLTE(FieldID, id))
 }
 
@@ -70,32 +70,32 @@ func DeletedAt(v time.Time) predicate.SkuAttributeCombination {
 }
 
 // CreatedBy applies equality check predicate on the "created_by" field. It's identical to CreatedByEQ.
-func CreatedBy(v uint32) predicate.SkuAttributeCombination {
+func CreatedBy(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // UpdatedBy applies equality check predicate on the "updated_by" field. It's identical to UpdatedByEQ.
-func UpdatedBy(v uint32) predicate.SkuAttributeCombination {
+func UpdatedBy(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // DeletedBy applies equality check predicate on the "deleted_by" field. It's identical to DeletedByEQ.
-func DeletedBy(v uint32) predicate.SkuAttributeCombination {
+func DeletedBy(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // SkuID applies equality check predicate on the "sku_id" field. It's identical to SkuIDEQ.
-func SkuID(v uint32) predicate.SkuAttributeCombination {
+func SkuID(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldSkuID, v))
 }
 
 // AttributeID applies equality check predicate on the "attribute_id" field. It's identical to AttributeIDEQ.
-func AttributeID(v uint32) predicate.SkuAttributeCombination {
+func AttributeID(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldAttributeID, v))
 }
 
 // AttributeValueID applies equality check predicate on the "attribute_value_id" field. It's identical to AttributeValueIDEQ.
-func AttributeValueID(v uint32) predicate.SkuAttributeCombination {
+func AttributeValueID(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldAttributeValueID, v))
 }
 
@@ -250,42 +250,42 @@ func DeletedAtNotNil() predicate.SkuAttributeCombination {
 }
 
 // CreatedByEQ applies the EQ predicate on the "created_by" field.
-func CreatedByEQ(v uint32) predicate.SkuAttributeCombination {
+func CreatedByEQ(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldCreatedBy, v))
 }
 
 // CreatedByNEQ applies the NEQ predicate on the "created_by" field.
-func CreatedByNEQ(v uint32) predicate.SkuAttributeCombination {
+func CreatedByNEQ(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNEQ(FieldCreatedBy, v))
 }
 
 // CreatedByIn applies the In predicate on the "created_by" field.
-func CreatedByIn(vs ...uint32) predicate.SkuAttributeCombination {
+func CreatedByIn(vs ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByNotIn applies the NotIn predicate on the "created_by" field.
-func CreatedByNotIn(vs ...uint32) predicate.SkuAttributeCombination {
+func CreatedByNotIn(vs ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNotIn(FieldCreatedBy, vs...))
 }
 
 // CreatedByGT applies the GT predicate on the "created_by" field.
-func CreatedByGT(v uint32) predicate.SkuAttributeCombination {
+func CreatedByGT(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGT(FieldCreatedBy, v))
 }
 
 // CreatedByGTE applies the GTE predicate on the "created_by" field.
-func CreatedByGTE(v uint32) predicate.SkuAttributeCombination {
+func CreatedByGTE(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGTE(FieldCreatedBy, v))
 }
 
 // CreatedByLT applies the LT predicate on the "created_by" field.
-func CreatedByLT(v uint32) predicate.SkuAttributeCombination {
+func CreatedByLT(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLT(FieldCreatedBy, v))
 }
 
 // CreatedByLTE applies the LTE predicate on the "created_by" field.
-func CreatedByLTE(v uint32) predicate.SkuAttributeCombination {
+func CreatedByLTE(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLTE(FieldCreatedBy, v))
 }
 
@@ -300,42 +300,42 @@ func CreatedByNotNil() predicate.SkuAttributeCombination {
 }
 
 // UpdatedByEQ applies the EQ predicate on the "updated_by" field.
-func UpdatedByEQ(v uint32) predicate.SkuAttributeCombination {
+func UpdatedByEQ(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByNEQ applies the NEQ predicate on the "updated_by" field.
-func UpdatedByNEQ(v uint32) predicate.SkuAttributeCombination {
+func UpdatedByNEQ(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNEQ(FieldUpdatedBy, v))
 }
 
 // UpdatedByIn applies the In predicate on the "updated_by" field.
-func UpdatedByIn(vs ...uint32) predicate.SkuAttributeCombination {
+func UpdatedByIn(vs ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByNotIn applies the NotIn predicate on the "updated_by" field.
-func UpdatedByNotIn(vs ...uint32) predicate.SkuAttributeCombination {
+func UpdatedByNotIn(vs ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNotIn(FieldUpdatedBy, vs...))
 }
 
 // UpdatedByGT applies the GT predicate on the "updated_by" field.
-func UpdatedByGT(v uint32) predicate.SkuAttributeCombination {
+func UpdatedByGT(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGT(FieldUpdatedBy, v))
 }
 
 // UpdatedByGTE applies the GTE predicate on the "updated_by" field.
-func UpdatedByGTE(v uint32) predicate.SkuAttributeCombination {
+func UpdatedByGTE(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGTE(FieldUpdatedBy, v))
 }
 
 // UpdatedByLT applies the LT predicate on the "updated_by" field.
-func UpdatedByLT(v uint32) predicate.SkuAttributeCombination {
+func UpdatedByLT(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLT(FieldUpdatedBy, v))
 }
 
 // UpdatedByLTE applies the LTE predicate on the "updated_by" field.
-func UpdatedByLTE(v uint32) predicate.SkuAttributeCombination {
+func UpdatedByLTE(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLTE(FieldUpdatedBy, v))
 }
 
@@ -350,42 +350,42 @@ func UpdatedByNotNil() predicate.SkuAttributeCombination {
 }
 
 // DeletedByEQ applies the EQ predicate on the "deleted_by" field.
-func DeletedByEQ(v uint32) predicate.SkuAttributeCombination {
+func DeletedByEQ(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldDeletedBy, v))
 }
 
 // DeletedByNEQ applies the NEQ predicate on the "deleted_by" field.
-func DeletedByNEQ(v uint32) predicate.SkuAttributeCombination {
+func DeletedByNEQ(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNEQ(FieldDeletedBy, v))
 }
 
 // DeletedByIn applies the In predicate on the "deleted_by" field.
-func DeletedByIn(vs ...uint32) predicate.SkuAttributeCombination {
+func DeletedByIn(vs ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByNotIn applies the NotIn predicate on the "deleted_by" field.
-func DeletedByNotIn(vs ...uint32) predicate.SkuAttributeCombination {
+func DeletedByNotIn(vs ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNotIn(FieldDeletedBy, vs...))
 }
 
 // DeletedByGT applies the GT predicate on the "deleted_by" field.
-func DeletedByGT(v uint32) predicate.SkuAttributeCombination {
+func DeletedByGT(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGT(FieldDeletedBy, v))
 }
 
 // DeletedByGTE applies the GTE predicate on the "deleted_by" field.
-func DeletedByGTE(v uint32) predicate.SkuAttributeCombination {
+func DeletedByGTE(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGTE(FieldDeletedBy, v))
 }
 
 // DeletedByLT applies the LT predicate on the "deleted_by" field.
-func DeletedByLT(v uint32) predicate.SkuAttributeCombination {
+func DeletedByLT(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLT(FieldDeletedBy, v))
 }
 
 // DeletedByLTE applies the LTE predicate on the "deleted_by" field.
-func DeletedByLTE(v uint32) predicate.SkuAttributeCombination {
+func DeletedByLTE(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLTE(FieldDeletedBy, v))
 }
 
@@ -400,42 +400,42 @@ func DeletedByNotNil() predicate.SkuAttributeCombination {
 }
 
 // SkuIDEQ applies the EQ predicate on the "sku_id" field.
-func SkuIDEQ(v uint32) predicate.SkuAttributeCombination {
+func SkuIDEQ(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldSkuID, v))
 }
 
 // SkuIDNEQ applies the NEQ predicate on the "sku_id" field.
-func SkuIDNEQ(v uint32) predicate.SkuAttributeCombination {
+func SkuIDNEQ(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNEQ(FieldSkuID, v))
 }
 
 // SkuIDIn applies the In predicate on the "sku_id" field.
-func SkuIDIn(vs ...uint32) predicate.SkuAttributeCombination {
+func SkuIDIn(vs ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldIn(FieldSkuID, vs...))
 }
 
 // SkuIDNotIn applies the NotIn predicate on the "sku_id" field.
-func SkuIDNotIn(vs ...uint32) predicate.SkuAttributeCombination {
+func SkuIDNotIn(vs ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNotIn(FieldSkuID, vs...))
 }
 
 // SkuIDGT applies the GT predicate on the "sku_id" field.
-func SkuIDGT(v uint32) predicate.SkuAttributeCombination {
+func SkuIDGT(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGT(FieldSkuID, v))
 }
 
 // SkuIDGTE applies the GTE predicate on the "sku_id" field.
-func SkuIDGTE(v uint32) predicate.SkuAttributeCombination {
+func SkuIDGTE(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGTE(FieldSkuID, v))
 }
 
 // SkuIDLT applies the LT predicate on the "sku_id" field.
-func SkuIDLT(v uint32) predicate.SkuAttributeCombination {
+func SkuIDLT(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLT(FieldSkuID, v))
 }
 
 // SkuIDLTE applies the LTE predicate on the "sku_id" field.
-func SkuIDLTE(v uint32) predicate.SkuAttributeCombination {
+func SkuIDLTE(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLTE(FieldSkuID, v))
 }
 
@@ -450,42 +450,42 @@ func SkuIDNotNil() predicate.SkuAttributeCombination {
 }
 
 // AttributeIDEQ applies the EQ predicate on the "attribute_id" field.
-func AttributeIDEQ(v uint32) predicate.SkuAttributeCombination {
+func AttributeIDEQ(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldAttributeID, v))
 }
 
 // AttributeIDNEQ applies the NEQ predicate on the "attribute_id" field.
-func AttributeIDNEQ(v uint32) predicate.SkuAttributeCombination {
+func AttributeIDNEQ(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNEQ(FieldAttributeID, v))
 }
 
 // AttributeIDIn applies the In predicate on the "attribute_id" field.
-func AttributeIDIn(vs ...uint32) predicate.SkuAttributeCombination {
+func AttributeIDIn(vs ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldIn(FieldAttributeID, vs...))
 }
 
 // AttributeIDNotIn applies the NotIn predicate on the "attribute_id" field.
-func AttributeIDNotIn(vs ...uint32) predicate.SkuAttributeCombination {
+func AttributeIDNotIn(vs ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNotIn(FieldAttributeID, vs...))
 }
 
 // AttributeIDGT applies the GT predicate on the "attribute_id" field.
-func AttributeIDGT(v uint32) predicate.SkuAttributeCombination {
+func AttributeIDGT(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGT(FieldAttributeID, v))
 }
 
 // AttributeIDGTE applies the GTE predicate on the "attribute_id" field.
-func AttributeIDGTE(v uint32) predicate.SkuAttributeCombination {
+func AttributeIDGTE(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGTE(FieldAttributeID, v))
 }
 
 // AttributeIDLT applies the LT predicate on the "attribute_id" field.
-func AttributeIDLT(v uint32) predicate.SkuAttributeCombination {
+func AttributeIDLT(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLT(FieldAttributeID, v))
 }
 
 // AttributeIDLTE applies the LTE predicate on the "attribute_id" field.
-func AttributeIDLTE(v uint32) predicate.SkuAttributeCombination {
+func AttributeIDLTE(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLTE(FieldAttributeID, v))
 }
 
@@ -500,42 +500,42 @@ func AttributeIDNotNil() predicate.SkuAttributeCombination {
 }
 
 // AttributeValueIDEQ applies the EQ predicate on the "attribute_value_id" field.
-func AttributeValueIDEQ(v uint32) predicate.SkuAttributeCombination {
+func AttributeValueIDEQ(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldEQ(FieldAttributeValueID, v))
 }
 
 // AttributeValueIDNEQ applies the NEQ predicate on the "attribute_value_id" field.
-func AttributeValueIDNEQ(v uint32) predicate.SkuAttributeCombination {
+func AttributeValueIDNEQ(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNEQ(FieldAttributeValueID, v))
 }
 
 // AttributeValueIDIn applies the In predicate on the "attribute_value_id" field.
-func AttributeValueIDIn(vs ...uint32) predicate.SkuAttributeCombination {
+func AttributeValueIDIn(vs ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldIn(FieldAttributeValueID, vs...))
 }
 
 // AttributeValueIDNotIn applies the NotIn predicate on the "attribute_value_id" field.
-func AttributeValueIDNotIn(vs ...uint32) predicate.SkuAttributeCombination {
+func AttributeValueIDNotIn(vs ...int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldNotIn(FieldAttributeValueID, vs...))
 }
 
 // AttributeValueIDGT applies the GT predicate on the "attribute_value_id" field.
-func AttributeValueIDGT(v uint32) predicate.SkuAttributeCombination {
+func AttributeValueIDGT(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGT(FieldAttributeValueID, v))
 }
 
 // AttributeValueIDGTE applies the GTE predicate on the "attribute_value_id" field.
-func AttributeValueIDGTE(v uint32) predicate.SkuAttributeCombination {
+func AttributeValueIDGTE(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldGTE(FieldAttributeValueID, v))
 }
 
 // AttributeValueIDLT applies the LT predicate on the "attribute_value_id" field.
-func AttributeValueIDLT(v uint32) predicate.SkuAttributeCombination {
+func AttributeValueIDLT(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLT(FieldAttributeValueID, v))
 }
 
 // AttributeValueIDLTE applies the LTE predicate on the "attribute_value_id" field.
-func AttributeValueIDLTE(v uint32) predicate.SkuAttributeCombination {
+func AttributeValueIDLTE(v int64) predicate.SkuAttributeCombination {
 	return predicate.SkuAttributeCombination(sql.FieldLTE(FieldAttributeValueID, v))
 }
 

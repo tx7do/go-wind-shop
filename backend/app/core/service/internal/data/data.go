@@ -1,16 +1,17 @@
 package data
 
-import (	"go-wind-shop/pkg/logx"
+import (
 	"errors"
+	"go-wind-shop/pkg/logx"
 
 	"github.com/go-kratos/kratos/v2/registry"
 
 	"github.com/tx7do/go-utils/password"
 
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	redisx "go-wind-shop/pkg/redisx"
 	"github.com/tx7do/kratos-bootstrap/database/opensearch"
 	bRegistry "github.com/tx7do/kratos-bootstrap/registry"
+	redisx "go-wind-shop/pkg/redisx"
 
 	elasticsearchCrud "github.com/tx7do/go-crud/opensearch"
 

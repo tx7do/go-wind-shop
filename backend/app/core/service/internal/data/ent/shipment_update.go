@@ -70,14 +70,14 @@ func (_u *ShipmentUpdate) ClearDeletedAt() *ShipmentUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ShipmentUpdate) SetCreatedBy(v uint32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) SetCreatedBy(v int64) *ShipmentUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ShipmentUpdate) SetNillableCreatedBy(v *uint32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) SetNillableCreatedBy(v *int64) *ShipmentUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *ShipmentUpdate) SetNillableCreatedBy(v *uint32) *ShipmentUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ShipmentUpdate) AddCreatedBy(v int32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) AddCreatedBy(v int64) *ShipmentUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *ShipmentUpdate) ClearCreatedBy() *ShipmentUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ShipmentUpdate) SetUpdatedBy(v uint32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) SetUpdatedBy(v int64) *ShipmentUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ShipmentUpdate) SetNillableUpdatedBy(v *uint32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) SetNillableUpdatedBy(v *int64) *ShipmentUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *ShipmentUpdate) SetNillableUpdatedBy(v *uint32) *ShipmentUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ShipmentUpdate) AddUpdatedBy(v int32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) AddUpdatedBy(v int64) *ShipmentUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *ShipmentUpdate) ClearUpdatedBy() *ShipmentUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ShipmentUpdate) SetDeletedBy(v uint32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) SetDeletedBy(v int64) *ShipmentUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ShipmentUpdate) SetNillableDeletedBy(v *uint32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) SetNillableDeletedBy(v *int64) *ShipmentUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *ShipmentUpdate) SetNillableDeletedBy(v *uint32) *ShipmentUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ShipmentUpdate) AddDeletedBy(v int32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) AddDeletedBy(v int64) *ShipmentUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *ShipmentUpdate) ClearDeletedBy() *ShipmentUpdate {
 }
 
 // SetOrderID sets the "order_id" field.
-func (_u *ShipmentUpdate) SetOrderID(v uint32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) SetOrderID(v int64) *ShipmentUpdate {
 	_u.mutation.ResetOrderID()
 	_u.mutation.SetOrderID(v)
 	return _u
 }
 
 // SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (_u *ShipmentUpdate) SetNillableOrderID(v *uint32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) SetNillableOrderID(v *int64) *ShipmentUpdate {
 	if v != nil {
 		_u.SetOrderID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *ShipmentUpdate) SetNillableOrderID(v *uint32) *ShipmentUpdate {
 }
 
 // AddOrderID adds value to the "order_id" field.
-func (_u *ShipmentUpdate) AddOrderID(v int32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) AddOrderID(v int64) *ShipmentUpdate {
 	_u.mutation.AddOrderID(v)
 	return _u
 }
@@ -178,14 +178,14 @@ func (_u *ShipmentUpdate) ClearOrderID() *ShipmentUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *ShipmentUpdate) SetUserID(v uint32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) SetUserID(v int64) *ShipmentUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *ShipmentUpdate) SetNillableUserID(v *uint32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) SetNillableUserID(v *int64) *ShipmentUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -193,7 +193,7 @@ func (_u *ShipmentUpdate) SetNillableUserID(v *uint32) *ShipmentUpdate {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *ShipmentUpdate) AddUserID(v int32) *ShipmentUpdate {
+func (_u *ShipmentUpdate) AddUserID(v int64) *ShipmentUpdate {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -336,7 +336,7 @@ func (_u *ShipmentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(shipment.Table, shipment.Columns, sqlgraph.NewFieldSpec(shipment.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(shipment.Table, shipment.Columns, sqlgraph.NewFieldSpec(shipment.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -360,52 +360,52 @@ func (_u *ShipmentUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(shipment.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(shipment.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(shipment.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(shipment.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(shipment.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(shipment.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(shipment.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(shipment.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(shipment.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(shipment.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(shipment.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(shipment.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(shipment.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(shipment.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(shipment.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(shipment.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(shipment.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(shipment.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(shipment.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(shipment.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(shipment.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.OrderID(); ok {
-		_spec.SetField(shipment.FieldOrderID, field.TypeUint32, value)
+		_spec.SetField(shipment.FieldOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOrderID(); ok {
-		_spec.AddField(shipment.FieldOrderID, field.TypeUint32, value)
+		_spec.AddField(shipment.FieldOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.OrderIDCleared() {
-		_spec.ClearField(shipment.FieldOrderID, field.TypeUint32)
+		_spec.ClearField(shipment.FieldOrderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(shipment.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(shipment.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(shipment.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(shipment.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(shipment.FieldUserID, field.TypeUint32)
+		_spec.ClearField(shipment.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Carrier(); ok {
 		_spec.SetField(shipment.FieldCarrier, field.TypeString, value)
@@ -494,14 +494,14 @@ func (_u *ShipmentUpdateOne) ClearDeletedAt() *ShipmentUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *ShipmentUpdateOne) SetCreatedBy(v uint32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) SetCreatedBy(v int64) *ShipmentUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *ShipmentUpdateOne) SetNillableCreatedBy(v *uint32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) SetNillableCreatedBy(v *int64) *ShipmentUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -509,7 +509,7 @@ func (_u *ShipmentUpdateOne) SetNillableCreatedBy(v *uint32) *ShipmentUpdateOne 
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *ShipmentUpdateOne) AddCreatedBy(v int32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) AddCreatedBy(v int64) *ShipmentUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -521,14 +521,14 @@ func (_u *ShipmentUpdateOne) ClearCreatedBy() *ShipmentUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *ShipmentUpdateOne) SetUpdatedBy(v uint32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) SetUpdatedBy(v int64) *ShipmentUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *ShipmentUpdateOne) SetNillableUpdatedBy(v *uint32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) SetNillableUpdatedBy(v *int64) *ShipmentUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -536,7 +536,7 @@ func (_u *ShipmentUpdateOne) SetNillableUpdatedBy(v *uint32) *ShipmentUpdateOne 
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *ShipmentUpdateOne) AddUpdatedBy(v int32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) AddUpdatedBy(v int64) *ShipmentUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -548,14 +548,14 @@ func (_u *ShipmentUpdateOne) ClearUpdatedBy() *ShipmentUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *ShipmentUpdateOne) SetDeletedBy(v uint32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) SetDeletedBy(v int64) *ShipmentUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *ShipmentUpdateOne) SetNillableDeletedBy(v *uint32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) SetNillableDeletedBy(v *int64) *ShipmentUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -563,7 +563,7 @@ func (_u *ShipmentUpdateOne) SetNillableDeletedBy(v *uint32) *ShipmentUpdateOne 
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *ShipmentUpdateOne) AddDeletedBy(v int32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) AddDeletedBy(v int64) *ShipmentUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -575,14 +575,14 @@ func (_u *ShipmentUpdateOne) ClearDeletedBy() *ShipmentUpdateOne {
 }
 
 // SetOrderID sets the "order_id" field.
-func (_u *ShipmentUpdateOne) SetOrderID(v uint32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) SetOrderID(v int64) *ShipmentUpdateOne {
 	_u.mutation.ResetOrderID()
 	_u.mutation.SetOrderID(v)
 	return _u
 }
 
 // SetNillableOrderID sets the "order_id" field if the given value is not nil.
-func (_u *ShipmentUpdateOne) SetNillableOrderID(v *uint32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) SetNillableOrderID(v *int64) *ShipmentUpdateOne {
 	if v != nil {
 		_u.SetOrderID(*v)
 	}
@@ -590,7 +590,7 @@ func (_u *ShipmentUpdateOne) SetNillableOrderID(v *uint32) *ShipmentUpdateOne {
 }
 
 // AddOrderID adds value to the "order_id" field.
-func (_u *ShipmentUpdateOne) AddOrderID(v int32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) AddOrderID(v int64) *ShipmentUpdateOne {
 	_u.mutation.AddOrderID(v)
 	return _u
 }
@@ -602,14 +602,14 @@ func (_u *ShipmentUpdateOne) ClearOrderID() *ShipmentUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *ShipmentUpdateOne) SetUserID(v uint32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) SetUserID(v int64) *ShipmentUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *ShipmentUpdateOne) SetNillableUserID(v *uint32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) SetNillableUserID(v *int64) *ShipmentUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -617,7 +617,7 @@ func (_u *ShipmentUpdateOne) SetNillableUserID(v *uint32) *ShipmentUpdateOne {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *ShipmentUpdateOne) AddUserID(v int32) *ShipmentUpdateOne {
+func (_u *ShipmentUpdateOne) AddUserID(v int64) *ShipmentUpdateOne {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -773,7 +773,7 @@ func (_u *ShipmentUpdateOne) sqlSave(ctx context.Context) (_node *Shipment, err 
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(shipment.Table, shipment.Columns, sqlgraph.NewFieldSpec(shipment.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(shipment.Table, shipment.Columns, sqlgraph.NewFieldSpec(shipment.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Shipment.id" for update`)}
@@ -814,52 +814,52 @@ func (_u *ShipmentUpdateOne) sqlSave(ctx context.Context) (_node *Shipment, err 
 		_spec.ClearField(shipment.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(shipment.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(shipment.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(shipment.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(shipment.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(shipment.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(shipment.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(shipment.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(shipment.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(shipment.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(shipment.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(shipment.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(shipment.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(shipment.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(shipment.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(shipment.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(shipment.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(shipment.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(shipment.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(shipment.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(shipment.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.OrderID(); ok {
-		_spec.SetField(shipment.FieldOrderID, field.TypeUint32, value)
+		_spec.SetField(shipment.FieldOrderID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedOrderID(); ok {
-		_spec.AddField(shipment.FieldOrderID, field.TypeUint32, value)
+		_spec.AddField(shipment.FieldOrderID, field.TypeInt64, value)
 	}
 	if _u.mutation.OrderIDCleared() {
-		_spec.ClearField(shipment.FieldOrderID, field.TypeUint32)
+		_spec.ClearField(shipment.FieldOrderID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(shipment.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(shipment.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(shipment.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(shipment.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(shipment.FieldUserID, field.TypeUint32)
+		_spec.ClearField(shipment.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Carrier(); ok {
 		_spec.SetField(shipment.FieldCarrier, field.TypeString, value)

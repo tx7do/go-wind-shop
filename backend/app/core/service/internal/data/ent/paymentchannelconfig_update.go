@@ -70,14 +70,14 @@ func (_u *PaymentChannelConfigUpdate) ClearDeletedAt() *PaymentChannelConfigUpda
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PaymentChannelConfigUpdate) SetCreatedBy(v uint32) *PaymentChannelConfigUpdate {
+func (_u *PaymentChannelConfigUpdate) SetCreatedBy(v int64) *PaymentChannelConfigUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PaymentChannelConfigUpdate) SetNillableCreatedBy(v *uint32) *PaymentChannelConfigUpdate {
+func (_u *PaymentChannelConfigUpdate) SetNillableCreatedBy(v *int64) *PaymentChannelConfigUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *PaymentChannelConfigUpdate) SetNillableCreatedBy(v *uint32) *PaymentCh
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PaymentChannelConfigUpdate) AddCreatedBy(v int32) *PaymentChannelConfigUpdate {
+func (_u *PaymentChannelConfigUpdate) AddCreatedBy(v int64) *PaymentChannelConfigUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *PaymentChannelConfigUpdate) ClearCreatedBy() *PaymentChannelConfigUpda
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PaymentChannelConfigUpdate) SetUpdatedBy(v uint32) *PaymentChannelConfigUpdate {
+func (_u *PaymentChannelConfigUpdate) SetUpdatedBy(v int64) *PaymentChannelConfigUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PaymentChannelConfigUpdate) SetNillableUpdatedBy(v *uint32) *PaymentChannelConfigUpdate {
+func (_u *PaymentChannelConfigUpdate) SetNillableUpdatedBy(v *int64) *PaymentChannelConfigUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *PaymentChannelConfigUpdate) SetNillableUpdatedBy(v *uint32) *PaymentCh
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PaymentChannelConfigUpdate) AddUpdatedBy(v int32) *PaymentChannelConfigUpdate {
+func (_u *PaymentChannelConfigUpdate) AddUpdatedBy(v int64) *PaymentChannelConfigUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *PaymentChannelConfigUpdate) ClearUpdatedBy() *PaymentChannelConfigUpda
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PaymentChannelConfigUpdate) SetDeletedBy(v uint32) *PaymentChannelConfigUpdate {
+func (_u *PaymentChannelConfigUpdate) SetDeletedBy(v int64) *PaymentChannelConfigUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PaymentChannelConfigUpdate) SetNillableDeletedBy(v *uint32) *PaymentChannelConfigUpdate {
+func (_u *PaymentChannelConfigUpdate) SetNillableDeletedBy(v *int64) *PaymentChannelConfigUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *PaymentChannelConfigUpdate) SetNillableDeletedBy(v *uint32) *PaymentCh
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PaymentChannelConfigUpdate) AddDeletedBy(v int32) *PaymentChannelConfigUpdate {
+func (_u *PaymentChannelConfigUpdate) AddDeletedBy(v int64) *PaymentChannelConfigUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -349,7 +349,7 @@ func (_u *PaymentChannelConfigUpdate) sqlSave(ctx context.Context) (_node int, e
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(paymentchannelconfig.Table, paymentchannelconfig.Columns, sqlgraph.NewFieldSpec(paymentchannelconfig.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(paymentchannelconfig.Table, paymentchannelconfig.Columns, sqlgraph.NewFieldSpec(paymentchannelconfig.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -373,34 +373,34 @@ func (_u *PaymentChannelConfigUpdate) sqlSave(ctx context.Context) (_node int, e
 		_spec.ClearField(paymentchannelconfig.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(paymentchannelconfig.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(paymentchannelconfig.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(paymentchannelconfig.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(paymentchannelconfig.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(paymentchannelconfig.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(paymentchannelconfig.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(paymentchannelconfig.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(paymentchannelconfig.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(paymentchannelconfig.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(paymentchannelconfig.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(paymentchannelconfig.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(paymentchannelconfig.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(paymentchannelconfig.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(paymentchannelconfig.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(paymentchannelconfig.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(paymentchannelconfig.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(paymentchannelconfig.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(paymentchannelconfig.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(paymentchannelconfig.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(paymentchannelconfig.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(paymentchannelconfig.FieldName, field.TypeString, value)
@@ -504,14 +504,14 @@ func (_u *PaymentChannelConfigUpdateOne) ClearDeletedAt() *PaymentChannelConfigU
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *PaymentChannelConfigUpdateOne) SetCreatedBy(v uint32) *PaymentChannelConfigUpdateOne {
+func (_u *PaymentChannelConfigUpdateOne) SetCreatedBy(v int64) *PaymentChannelConfigUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *PaymentChannelConfigUpdateOne) SetNillableCreatedBy(v *uint32) *PaymentChannelConfigUpdateOne {
+func (_u *PaymentChannelConfigUpdateOne) SetNillableCreatedBy(v *int64) *PaymentChannelConfigUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -519,7 +519,7 @@ func (_u *PaymentChannelConfigUpdateOne) SetNillableCreatedBy(v *uint32) *Paymen
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *PaymentChannelConfigUpdateOne) AddCreatedBy(v int32) *PaymentChannelConfigUpdateOne {
+func (_u *PaymentChannelConfigUpdateOne) AddCreatedBy(v int64) *PaymentChannelConfigUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -531,14 +531,14 @@ func (_u *PaymentChannelConfigUpdateOne) ClearCreatedBy() *PaymentChannelConfigU
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *PaymentChannelConfigUpdateOne) SetUpdatedBy(v uint32) *PaymentChannelConfigUpdateOne {
+func (_u *PaymentChannelConfigUpdateOne) SetUpdatedBy(v int64) *PaymentChannelConfigUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *PaymentChannelConfigUpdateOne) SetNillableUpdatedBy(v *uint32) *PaymentChannelConfigUpdateOne {
+func (_u *PaymentChannelConfigUpdateOne) SetNillableUpdatedBy(v *int64) *PaymentChannelConfigUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -546,7 +546,7 @@ func (_u *PaymentChannelConfigUpdateOne) SetNillableUpdatedBy(v *uint32) *Paymen
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *PaymentChannelConfigUpdateOne) AddUpdatedBy(v int32) *PaymentChannelConfigUpdateOne {
+func (_u *PaymentChannelConfigUpdateOne) AddUpdatedBy(v int64) *PaymentChannelConfigUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -558,14 +558,14 @@ func (_u *PaymentChannelConfigUpdateOne) ClearUpdatedBy() *PaymentChannelConfigU
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *PaymentChannelConfigUpdateOne) SetDeletedBy(v uint32) *PaymentChannelConfigUpdateOne {
+func (_u *PaymentChannelConfigUpdateOne) SetDeletedBy(v int64) *PaymentChannelConfigUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *PaymentChannelConfigUpdateOne) SetNillableDeletedBy(v *uint32) *PaymentChannelConfigUpdateOne {
+func (_u *PaymentChannelConfigUpdateOne) SetNillableDeletedBy(v *int64) *PaymentChannelConfigUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -573,7 +573,7 @@ func (_u *PaymentChannelConfigUpdateOne) SetNillableDeletedBy(v *uint32) *Paymen
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *PaymentChannelConfigUpdateOne) AddDeletedBy(v int32) *PaymentChannelConfigUpdateOne {
+func (_u *PaymentChannelConfigUpdateOne) AddDeletedBy(v int64) *PaymentChannelConfigUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -796,7 +796,7 @@ func (_u *PaymentChannelConfigUpdateOne) sqlSave(ctx context.Context) (_node *Pa
 	if err := _u.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(paymentchannelconfig.Table, paymentchannelconfig.Columns, sqlgraph.NewFieldSpec(paymentchannelconfig.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(paymentchannelconfig.Table, paymentchannelconfig.Columns, sqlgraph.NewFieldSpec(paymentchannelconfig.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "PaymentChannelConfig.id" for update`)}
@@ -837,34 +837,34 @@ func (_u *PaymentChannelConfigUpdateOne) sqlSave(ctx context.Context) (_node *Pa
 		_spec.ClearField(paymentchannelconfig.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(paymentchannelconfig.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(paymentchannelconfig.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(paymentchannelconfig.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(paymentchannelconfig.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(paymentchannelconfig.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(paymentchannelconfig.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(paymentchannelconfig.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(paymentchannelconfig.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(paymentchannelconfig.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(paymentchannelconfig.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(paymentchannelconfig.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(paymentchannelconfig.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(paymentchannelconfig.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(paymentchannelconfig.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(paymentchannelconfig.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(paymentchannelconfig.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(paymentchannelconfig.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(paymentchannelconfig.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(paymentchannelconfig.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(paymentchannelconfig.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.Name(); ok {
 		_spec.SetField(paymentchannelconfig.FieldName, field.TypeString, value)

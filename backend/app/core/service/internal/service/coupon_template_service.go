@@ -1,13 +1,14 @@
 package service
 
-import (	"go-wind-shop/pkg/logx"
+import (
 	"context"
+	"go-wind-shop/pkg/logx"
 	"time"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
+	"github.com/tx7do/go-crud/viewer"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"github.com/tx7do/go-crud/viewer"
 
 	"go-wind-shop/app/core/service/internal/data"
 
@@ -57,7 +58,7 @@ func (s *CouponTemplateService) List(ctx context.Context, req *paginationV1.Pagi
 		}
 	}
 	resp.Items = filtered
-	resp.Total = uint64(len(filtered))
+	resp.Total = int64(len(filtered))
 	return resp, nil
 }
 
@@ -68,7 +69,7 @@ func (s *CouponTemplateService) Count(ctx context.Context, req *paginationV1.Pag
 	}
 
 	return &couponV1.CountCouponTemplateResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 

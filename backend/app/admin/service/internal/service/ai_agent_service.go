@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"go-wind-shop/pkg/logx"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
 	sse "github.com/tx7do/kratos-transport/transport/sse"
+	"go-wind-shop/pkg/logx"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
@@ -25,7 +25,7 @@ type AiAgentService struct {
 	adminV1.AiAgentServiceHTTPServer
 
 	aiAgentServiceClient aiV1.AiAgentServiceClient
-	log *logx.Helper
+	log                  *logx.Helper
 
 	agentRunPublisher AiAgentRunPublisher
 }

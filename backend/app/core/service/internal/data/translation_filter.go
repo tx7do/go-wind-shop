@@ -79,12 +79,12 @@ func ExtractTranslationFilters(req *paginationV1.PagingRequest, fields ...string
 	return contains, equals, nil
 }
 
-// stringIDsToUint32 把 ent Select().Strings(ctx) 查到的外键列转为 uint32。
-func stringIDsToUint32(rows []string) []uint32 {
-	ids := make([]uint32, 0, len(rows))
+// stringIDsToUint32 把 ent Select().Strings(ctx) 查到的外键列转为 int64。
+func stringIDsToUint32(rows []string) []int64 {
+	ids := make([]int64, 0, len(rows))
 	for _, s := range rows {
-		if n, err := strconv.ParseUint(s, 10, 32); err == nil {
-			ids = append(ids, uint32(n))
+		if n, err := strconv.ParseInt(s, 10, 64); err == nil {
+			ids = append(ids, int64(n))
 		}
 	}
 	return ids

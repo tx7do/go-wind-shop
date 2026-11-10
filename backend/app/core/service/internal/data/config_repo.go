@@ -7,15 +7,15 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-kratos/kratos/v2/errors"
-	"go-wind-shop/pkg/logx"
-	"github.com/redis/go-redis/v9"
 	"entgo.io/ent/dialect/sql"
+	"github.com/go-kratos/kratos/v2/errors"
+	"github.com/redis/go-redis/v9"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	entCrud "github.com/tx7do/go-crud/entgo"
 	"github.com/tx7do/go-utils/copierutil"
 	"github.com/tx7do/go-utils/mapper"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
+	"go-wind-shop/pkg/logx"
 
 	"go-wind-shop/app/core/service/internal/data/ent"
 	"go-wind-shop/app/core/service/internal/data/ent/predicate"
@@ -45,7 +45,7 @@ type sysConfigCacheEntry struct {
 type ConfigRepo struct {
 	entClient *entCrud.EntClient[*ent.Client]
 	rdb       *redis.Client
-	log *logx.Helper
+	log       *logx.Helper
 
 	mapper             *mapper.CopierMapper[configV1.Config, ent.SysConfig]
 	valueTypeConverter *mapper.EnumTypeConverter[configV1.Config_ConfigValueType, sysconfig.ValueType]

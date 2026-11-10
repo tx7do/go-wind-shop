@@ -70,14 +70,14 @@ func (_u *WishlistUpdate) ClearDeletedAt() *WishlistUpdate {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *WishlistUpdate) SetCreatedBy(v uint32) *WishlistUpdate {
+func (_u *WishlistUpdate) SetCreatedBy(v int64) *WishlistUpdate {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *WishlistUpdate) SetNillableCreatedBy(v *uint32) *WishlistUpdate {
+func (_u *WishlistUpdate) SetNillableCreatedBy(v *int64) *WishlistUpdate {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -85,7 +85,7 @@ func (_u *WishlistUpdate) SetNillableCreatedBy(v *uint32) *WishlistUpdate {
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *WishlistUpdate) AddCreatedBy(v int32) *WishlistUpdate {
+func (_u *WishlistUpdate) AddCreatedBy(v int64) *WishlistUpdate {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -97,14 +97,14 @@ func (_u *WishlistUpdate) ClearCreatedBy() *WishlistUpdate {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *WishlistUpdate) SetUpdatedBy(v uint32) *WishlistUpdate {
+func (_u *WishlistUpdate) SetUpdatedBy(v int64) *WishlistUpdate {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *WishlistUpdate) SetNillableUpdatedBy(v *uint32) *WishlistUpdate {
+func (_u *WishlistUpdate) SetNillableUpdatedBy(v *int64) *WishlistUpdate {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -112,7 +112,7 @@ func (_u *WishlistUpdate) SetNillableUpdatedBy(v *uint32) *WishlistUpdate {
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *WishlistUpdate) AddUpdatedBy(v int32) *WishlistUpdate {
+func (_u *WishlistUpdate) AddUpdatedBy(v int64) *WishlistUpdate {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -124,14 +124,14 @@ func (_u *WishlistUpdate) ClearUpdatedBy() *WishlistUpdate {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *WishlistUpdate) SetDeletedBy(v uint32) *WishlistUpdate {
+func (_u *WishlistUpdate) SetDeletedBy(v int64) *WishlistUpdate {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *WishlistUpdate) SetNillableDeletedBy(v *uint32) *WishlistUpdate {
+func (_u *WishlistUpdate) SetNillableDeletedBy(v *int64) *WishlistUpdate {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -139,7 +139,7 @@ func (_u *WishlistUpdate) SetNillableDeletedBy(v *uint32) *WishlistUpdate {
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *WishlistUpdate) AddDeletedBy(v int32) *WishlistUpdate {
+func (_u *WishlistUpdate) AddDeletedBy(v int64) *WishlistUpdate {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -151,14 +151,14 @@ func (_u *WishlistUpdate) ClearDeletedBy() *WishlistUpdate {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *WishlistUpdate) SetUserID(v uint32) *WishlistUpdate {
+func (_u *WishlistUpdate) SetUserID(v int64) *WishlistUpdate {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *WishlistUpdate) SetNillableUserID(v *uint32) *WishlistUpdate {
+func (_u *WishlistUpdate) SetNillableUserID(v *int64) *WishlistUpdate {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -166,7 +166,7 @@ func (_u *WishlistUpdate) SetNillableUserID(v *uint32) *WishlistUpdate {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *WishlistUpdate) AddUserID(v int32) *WishlistUpdate {
+func (_u *WishlistUpdate) AddUserID(v int64) *WishlistUpdate {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -178,14 +178,14 @@ func (_u *WishlistUpdate) ClearUserID() *WishlistUpdate {
 }
 
 // SetProductID sets the "product_id" field.
-func (_u *WishlistUpdate) SetProductID(v uint32) *WishlistUpdate {
+func (_u *WishlistUpdate) SetProductID(v int64) *WishlistUpdate {
 	_u.mutation.ResetProductID()
 	_u.mutation.SetProductID(v)
 	return _u
 }
 
 // SetNillableProductID sets the "product_id" field if the given value is not nil.
-func (_u *WishlistUpdate) SetNillableProductID(v *uint32) *WishlistUpdate {
+func (_u *WishlistUpdate) SetNillableProductID(v *int64) *WishlistUpdate {
 	if v != nil {
 		_u.SetProductID(*v)
 	}
@@ -193,7 +193,7 @@ func (_u *WishlistUpdate) SetNillableProductID(v *uint32) *WishlistUpdate {
 }
 
 // AddProductID adds value to the "product_id" field.
-func (_u *WishlistUpdate) AddProductID(v int32) *WishlistUpdate {
+func (_u *WishlistUpdate) AddProductID(v int64) *WishlistUpdate {
 	_u.mutation.AddProductID(v)
 	return _u
 }
@@ -243,7 +243,7 @@ func (_u *WishlistUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Wishl
 }
 
 func (_u *WishlistUpdate) sqlSave(ctx context.Context) (_node int, err error) {
-	_spec := sqlgraph.NewUpdateSpec(wishlist.Table, wishlist.Columns, sqlgraph.NewFieldSpec(wishlist.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(wishlist.Table, wishlist.Columns, sqlgraph.NewFieldSpec(wishlist.FieldID, field.TypeInt64))
 	if ps := _u.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -267,52 +267,52 @@ func (_u *WishlistUpdate) sqlSave(ctx context.Context) (_node int, err error) {
 		_spec.ClearField(wishlist.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(wishlist.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(wishlist.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(wishlist.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(wishlist.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(wishlist.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(wishlist.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(wishlist.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(wishlist.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(wishlist.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(wishlist.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(wishlist.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(wishlist.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(wishlist.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(wishlist.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(wishlist.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(wishlist.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(wishlist.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(wishlist.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(wishlist.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(wishlist.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(wishlist.FieldUserID, field.TypeUint32)
+		_spec.ClearField(wishlist.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ProductID(); ok {
-		_spec.SetField(wishlist.FieldProductID, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldProductID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProductID(); ok {
-		_spec.AddField(wishlist.FieldProductID, field.TypeUint32, value)
+		_spec.AddField(wishlist.FieldProductID, field.TypeInt64, value)
 	}
 	if _u.mutation.ProductIDCleared() {
-		_spec.ClearField(wishlist.FieldProductID, field.TypeUint32)
+		_spec.ClearField(wishlist.FieldProductID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	if _node, err = sqlgraph.UpdateNodes(ctx, _u.driver, _spec); err != nil {
@@ -377,14 +377,14 @@ func (_u *WishlistUpdateOne) ClearDeletedAt() *WishlistUpdateOne {
 }
 
 // SetCreatedBy sets the "created_by" field.
-func (_u *WishlistUpdateOne) SetCreatedBy(v uint32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) SetCreatedBy(v int64) *WishlistUpdateOne {
 	_u.mutation.ResetCreatedBy()
 	_u.mutation.SetCreatedBy(v)
 	return _u
 }
 
 // SetNillableCreatedBy sets the "created_by" field if the given value is not nil.
-func (_u *WishlistUpdateOne) SetNillableCreatedBy(v *uint32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) SetNillableCreatedBy(v *int64) *WishlistUpdateOne {
 	if v != nil {
 		_u.SetCreatedBy(*v)
 	}
@@ -392,7 +392,7 @@ func (_u *WishlistUpdateOne) SetNillableCreatedBy(v *uint32) *WishlistUpdateOne 
 }
 
 // AddCreatedBy adds value to the "created_by" field.
-func (_u *WishlistUpdateOne) AddCreatedBy(v int32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) AddCreatedBy(v int64) *WishlistUpdateOne {
 	_u.mutation.AddCreatedBy(v)
 	return _u
 }
@@ -404,14 +404,14 @@ func (_u *WishlistUpdateOne) ClearCreatedBy() *WishlistUpdateOne {
 }
 
 // SetUpdatedBy sets the "updated_by" field.
-func (_u *WishlistUpdateOne) SetUpdatedBy(v uint32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) SetUpdatedBy(v int64) *WishlistUpdateOne {
 	_u.mutation.ResetUpdatedBy()
 	_u.mutation.SetUpdatedBy(v)
 	return _u
 }
 
 // SetNillableUpdatedBy sets the "updated_by" field if the given value is not nil.
-func (_u *WishlistUpdateOne) SetNillableUpdatedBy(v *uint32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) SetNillableUpdatedBy(v *int64) *WishlistUpdateOne {
 	if v != nil {
 		_u.SetUpdatedBy(*v)
 	}
@@ -419,7 +419,7 @@ func (_u *WishlistUpdateOne) SetNillableUpdatedBy(v *uint32) *WishlistUpdateOne 
 }
 
 // AddUpdatedBy adds value to the "updated_by" field.
-func (_u *WishlistUpdateOne) AddUpdatedBy(v int32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) AddUpdatedBy(v int64) *WishlistUpdateOne {
 	_u.mutation.AddUpdatedBy(v)
 	return _u
 }
@@ -431,14 +431,14 @@ func (_u *WishlistUpdateOne) ClearUpdatedBy() *WishlistUpdateOne {
 }
 
 // SetDeletedBy sets the "deleted_by" field.
-func (_u *WishlistUpdateOne) SetDeletedBy(v uint32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) SetDeletedBy(v int64) *WishlistUpdateOne {
 	_u.mutation.ResetDeletedBy()
 	_u.mutation.SetDeletedBy(v)
 	return _u
 }
 
 // SetNillableDeletedBy sets the "deleted_by" field if the given value is not nil.
-func (_u *WishlistUpdateOne) SetNillableDeletedBy(v *uint32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) SetNillableDeletedBy(v *int64) *WishlistUpdateOne {
 	if v != nil {
 		_u.SetDeletedBy(*v)
 	}
@@ -446,7 +446,7 @@ func (_u *WishlistUpdateOne) SetNillableDeletedBy(v *uint32) *WishlistUpdateOne 
 }
 
 // AddDeletedBy adds value to the "deleted_by" field.
-func (_u *WishlistUpdateOne) AddDeletedBy(v int32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) AddDeletedBy(v int64) *WishlistUpdateOne {
 	_u.mutation.AddDeletedBy(v)
 	return _u
 }
@@ -458,14 +458,14 @@ func (_u *WishlistUpdateOne) ClearDeletedBy() *WishlistUpdateOne {
 }
 
 // SetUserID sets the "user_id" field.
-func (_u *WishlistUpdateOne) SetUserID(v uint32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) SetUserID(v int64) *WishlistUpdateOne {
 	_u.mutation.ResetUserID()
 	_u.mutation.SetUserID(v)
 	return _u
 }
 
 // SetNillableUserID sets the "user_id" field if the given value is not nil.
-func (_u *WishlistUpdateOne) SetNillableUserID(v *uint32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) SetNillableUserID(v *int64) *WishlistUpdateOne {
 	if v != nil {
 		_u.SetUserID(*v)
 	}
@@ -473,7 +473,7 @@ func (_u *WishlistUpdateOne) SetNillableUserID(v *uint32) *WishlistUpdateOne {
 }
 
 // AddUserID adds value to the "user_id" field.
-func (_u *WishlistUpdateOne) AddUserID(v int32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) AddUserID(v int64) *WishlistUpdateOne {
 	_u.mutation.AddUserID(v)
 	return _u
 }
@@ -485,14 +485,14 @@ func (_u *WishlistUpdateOne) ClearUserID() *WishlistUpdateOne {
 }
 
 // SetProductID sets the "product_id" field.
-func (_u *WishlistUpdateOne) SetProductID(v uint32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) SetProductID(v int64) *WishlistUpdateOne {
 	_u.mutation.ResetProductID()
 	_u.mutation.SetProductID(v)
 	return _u
 }
 
 // SetNillableProductID sets the "product_id" field if the given value is not nil.
-func (_u *WishlistUpdateOne) SetNillableProductID(v *uint32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) SetNillableProductID(v *int64) *WishlistUpdateOne {
 	if v != nil {
 		_u.SetProductID(*v)
 	}
@@ -500,7 +500,7 @@ func (_u *WishlistUpdateOne) SetNillableProductID(v *uint32) *WishlistUpdateOne 
 }
 
 // AddProductID adds value to the "product_id" field.
-func (_u *WishlistUpdateOne) AddProductID(v int32) *WishlistUpdateOne {
+func (_u *WishlistUpdateOne) AddProductID(v int64) *WishlistUpdateOne {
 	_u.mutation.AddProductID(v)
 	return _u
 }
@@ -563,7 +563,7 @@ func (_u *WishlistUpdateOne) Modify(modifiers ...func(u *sql.UpdateBuilder)) *Wi
 }
 
 func (_u *WishlistUpdateOne) sqlSave(ctx context.Context) (_node *Wishlist, err error) {
-	_spec := sqlgraph.NewUpdateSpec(wishlist.Table, wishlist.Columns, sqlgraph.NewFieldSpec(wishlist.FieldID, field.TypeUint32))
+	_spec := sqlgraph.NewUpdateSpec(wishlist.Table, wishlist.Columns, sqlgraph.NewFieldSpec(wishlist.FieldID, field.TypeInt64))
 	id, ok := _u.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "Wishlist.id" for update`)}
@@ -604,52 +604,52 @@ func (_u *WishlistUpdateOne) sqlSave(ctx context.Context) (_node *Wishlist, err 
 		_spec.ClearField(wishlist.FieldDeletedAt, field.TypeTime)
 	}
 	if value, ok := _u.mutation.CreatedBy(); ok {
-		_spec.SetField(wishlist.FieldCreatedBy, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedCreatedBy(); ok {
-		_spec.AddField(wishlist.FieldCreatedBy, field.TypeUint32, value)
+		_spec.AddField(wishlist.FieldCreatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.CreatedByCleared() {
-		_spec.ClearField(wishlist.FieldCreatedBy, field.TypeUint32)
+		_spec.ClearField(wishlist.FieldCreatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UpdatedBy(); ok {
-		_spec.SetField(wishlist.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUpdatedBy(); ok {
-		_spec.AddField(wishlist.FieldUpdatedBy, field.TypeUint32, value)
+		_spec.AddField(wishlist.FieldUpdatedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.UpdatedByCleared() {
-		_spec.ClearField(wishlist.FieldUpdatedBy, field.TypeUint32)
+		_spec.ClearField(wishlist.FieldUpdatedBy, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.DeletedBy(); ok {
-		_spec.SetField(wishlist.FieldDeletedBy, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedDeletedBy(); ok {
-		_spec.AddField(wishlist.FieldDeletedBy, field.TypeUint32, value)
+		_spec.AddField(wishlist.FieldDeletedBy, field.TypeInt64, value)
 	}
 	if _u.mutation.DeletedByCleared() {
-		_spec.ClearField(wishlist.FieldDeletedBy, field.TypeUint32)
+		_spec.ClearField(wishlist.FieldDeletedBy, field.TypeInt64)
 	}
 	if _u.mutation.TenantIDCleared() {
-		_spec.ClearField(wishlist.FieldTenantID, field.TypeUint32)
+		_spec.ClearField(wishlist.FieldTenantID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.UserID(); ok {
-		_spec.SetField(wishlist.FieldUserID, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldUserID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedUserID(); ok {
-		_spec.AddField(wishlist.FieldUserID, field.TypeUint32, value)
+		_spec.AddField(wishlist.FieldUserID, field.TypeInt64, value)
 	}
 	if _u.mutation.UserIDCleared() {
-		_spec.ClearField(wishlist.FieldUserID, field.TypeUint32)
+		_spec.ClearField(wishlist.FieldUserID, field.TypeInt64)
 	}
 	if value, ok := _u.mutation.ProductID(); ok {
-		_spec.SetField(wishlist.FieldProductID, field.TypeUint32, value)
+		_spec.SetField(wishlist.FieldProductID, field.TypeInt64, value)
 	}
 	if value, ok := _u.mutation.AddedProductID(); ok {
-		_spec.AddField(wishlist.FieldProductID, field.TypeUint32, value)
+		_spec.AddField(wishlist.FieldProductID, field.TypeInt64, value)
 	}
 	if _u.mutation.ProductIDCleared() {
-		_spec.ClearField(wishlist.FieldProductID, field.TypeUint32)
+		_spec.ClearField(wishlist.FieldProductID, field.TypeInt64)
 	}
 	_spec.AddModifiers(_u.modifiers...)
 	_node = &Wishlist{config: _u.config}

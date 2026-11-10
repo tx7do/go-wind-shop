@@ -38,12 +38,12 @@ func (Product) Fields() []ent.Field {
 			Optional().
 			Nillable(),
 
-		field.Uint32("category_id").
+		field.Int64("category_id").
 			Comment("所属类目ID").
 			Optional().
 			Nillable(),
 
-		field.Uint32("brand_id").
+		field.Int64("brand_id").
 			Comment("所属品牌ID").
 			Optional().
 			Nillable(),
@@ -57,9 +57,9 @@ func (Product) Fields() []ent.Field {
 
 func (Product) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		mixin.AutoIncrementId{},
+		mixin.AutoIncrementId64{},
 		mixin.TimeAt{},
-		mixin.OperatorID{},
+		mixin.OperatorID64{},
 		mixin.SortOrder{},
 	}
 }

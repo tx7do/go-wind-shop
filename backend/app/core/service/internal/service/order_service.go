@@ -1,17 +1,17 @@
 package service
 
 import (
-	"go-wind-shop/pkg/logx"
 	"context"
 	"encoding/json"
 	"fmt"
+	"go-wind-shop/pkg/logx"
 	"strconv"
 	"time"
 
+	"github.com/hibiken/asynq"
 	paginationV1 "github.com/tx7do/go-crud/api/gen/go/pagination/v1"
 	"github.com/tx7do/go-utils/trans"
 	"github.com/tx7do/kratos-bootstrap/bootstrap"
-	"github.com/hibiken/asynq"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"go-wind-shop/app/core/service/internal/data"
@@ -22,10 +22,10 @@ import (
 	"go-wind-shop/app/core/service/internal/data/ent/order"
 	"go-wind-shop/app/core/service/internal/data/ent/orderitem"
 	"go-wind-shop/app/core/service/internal/data/ent/paymenttransaction"
-	"go-wind-shop/app/core/service/internal/data/ent/sku"
-	"go-wind-shop/app/core/service/internal/data/ent/stockoplog"
-	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
 	"go-wind-shop/app/core/service/internal/data/ent/shippingrate"
+	"go-wind-shop/app/core/service/internal/data/ent/sku"
+	"go-wind-shop/app/core/service/internal/data/ent/skuprice"
+	"go-wind-shop/app/core/service/internal/data/ent/stockoplog"
 	"go-wind-shop/app/core/service/internal/data/ent/taxrate"
 	"go-wind-shop/app/core/service/internal/data/ent/usercoupon"
 
@@ -100,7 +100,7 @@ func (s *OrderService) Count(ctx context.Context, req *paginationV1.PagingReques
 	}
 
 	return &orderV1.CountOrderResponse{
-		Count: uint64(count),
+		Count: int64(count),
 	}, nil
 }
 
@@ -305,7 +305,7 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 	orderId := createdOrder.ID
 
 	// 拼团成员载体（参团单在下单时已带；开团单在此回填）
-	var grouponGroupId uint32
+	var grouponGroupId int64
 
 	// 拼团开团：订单落库后创建团并回填 groupon_group_id（参团单在下单时已带）
 	if req.GetGrouponActivityId() != 0 && req.GetGrouponGroupId() == 0 {
@@ -437,9 +437,9 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 
 		// 2b. 构造 SKU 快照 JSON（下单时名称/价格/属性固化，便于售后与展示）。
 		snapshot := map[string]any{
-			"sku_id":   *skuId,
-			"quantity": qty,
-			"currency": currency,
+			"sku_id":     *skuId,
+			"quantity":   qty,
+			"currency":   currency,
 			"unit_price": unitPrice,
 		}
 		snapshotJSON, mErr := json.Marshal(snapshot)
@@ -474,7 +474,7 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 			err = orderV1.ErrorInternalServerError("create order failed")
 			return nil, err
 		}
-		var skuProductId uint32
+		var skuProductId int64
 		if skuEnt.ProductID != nil {
 			skuProductId = *skuEnt.ProductID
 		}
@@ -639,7 +639,7 @@ func (s *OrderService) Create(ctx context.Context, req *orderV1.CreateOrderReque
 // scheduleOrderTimeout 投递订单超时延时任务。
 // 由本地 asynq worker 在 TTL 后触发 HandleOrderTimeout → ExpireOrderByTimeout。
 // task_id 用于全局幂等去重（同订单 ID 重复投递会被 asynq.Unique 去重）。
-func (s *OrderService) scheduleOrderTimeout(orderId uint32) {
+func (s *OrderService) scheduleOrderTimeout(orderId int64) {
 	if s.taskScheduler == nil {
 		s.log.Warnf("task scheduler not available, skip scheduling order timeout for [%d]", orderId)
 		return
@@ -760,11 +760,11 @@ func (s *OrderService) ExpireOrderByTimeout(ctx context.Context, req *orderV1.Ex
 			_ = tx.Rollback()
 			return nil, fmt.Errorf("release stock for sku [%d] failed: %w", *skuId, rErr)
 		}
-		var skuProductId uint32
+		var skuProductId int64
 		if skuEnt.ProductID != nil {
 			skuProductId = *skuEnt.ProductID
 		}
-		sysOp := uint32(0)
+		sysOp := int64(0)
 		if lErr := tx.StockOpLog.Create().
 			SetNillableSkuID(skuId).
 			SetNillableProductID(&skuProductId).
@@ -1015,7 +1015,7 @@ func (s *OrderService) HandleOrderSweep(taskType string, taskData *task.OrderSwe
 // 入参 orderId 取自关联支付流水 payment_transaction.order_id。
 //
 // 注意：本方法专为退款回补设计，区别于超时取消（后者还推进 PENDING_PAYMENT→CANCELLED）。
-func (s *OrderService) RestoreStockForRefund(ctx context.Context, orderId uint32) error {
+func (s *OrderService) RestoreStockForRefund(ctx context.Context, orderId int64) error {
 	if orderId == 0 {
 		return fmt.Errorf("invalid order id for stock restore")
 	}
@@ -1070,11 +1070,11 @@ func (s *OrderService) RestoreStockForRefund(ctx context.Context, orderId uint32
 			err = rErr
 			return fmt.Errorf("restore stock for sku [%d] failed: %w", *skuId, rErr)
 		}
-		var skuProductId uint32
+		var skuProductId int64
 		if skuEnt.ProductID != nil {
 			skuProductId = *skuEnt.ProductID
 		}
-		sysOp := uint32(0)
+		sysOp := int64(0)
 		if lErr := tx.StockOpLog.Create().
 			SetNillableSkuID(skuId).
 			SetNillableProductID(&skuProductId).
@@ -1158,8 +1158,8 @@ func boolPtr(v bool) *bool { return &v }
 func (s *OrderService) redeemCouponInTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	couponId uint32,
-	orderId uint32,
+	couponId int64,
+	orderId int64,
 	originalAmount int64,
 	currency string,
 ) (int64, error) {
@@ -1285,7 +1285,7 @@ func (s *OrderService) redeemCouponInTx(
 func (s *OrderService) restoreCouponInTx(
 	ctx context.Context,
 	tx *ent.Tx,
-	orderId uint32,
+	orderId int64,
 ) {
 	// 反查关联券。返还钩子在 system/platform viewer 下运行，privacy 放行。
 	ucs, qErr := tx.UserCoupon.Query().
@@ -1327,7 +1327,7 @@ func (s *OrderService) restoreCouponInTx(
 // 遍历该订单仍为 PENDING 的支付流水，按支付方式解析启用渠道并关闭渠道侧
 // 预支付单。任何失败只记日志——关单失败的实际后果是渠道侧旧链接仍可支付，
 // 回调会被订单 expected_status 拦截，最终走退款流程兜底。
-func (s *OrderService) closeGatewayPendingsBestEffort(ctx context.Context, orderId uint32) {
+func (s *OrderService) closeGatewayPendingsBestEffort(ctx context.Context, orderId int64) {
 	pendings, qErr := s.entClient.Client().PaymentTransaction.Query().
 		Where(
 			paymenttransaction.OrderIDEQ(orderId),
@@ -1360,7 +1360,7 @@ func (s *OrderService) closeGatewayPendingsBestEffort(ctx context.Context, order
 			// 记账型渠道（BALANCE/OFFLINE 等）无网关单可关
 			continue
 		}
-		if cErr := gw.CloseOrder(ctx, strconv.FormatUint(uint64(txId), 10)); cErr != nil {
+		if cErr := gw.CloseOrder(ctx, strconv.FormatInt(int64(txId), 10)); cErr != nil {
 			s.log.Errorf("gateway close order failed: order=[%d] tx=[%d] err=%v", orderId, txId, cErr)
 		} else {
 			s.log.Infow("msg", "gateway prepay closed", "order_id", orderId, "tx_id", txId)

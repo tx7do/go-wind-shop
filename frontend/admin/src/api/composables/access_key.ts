@@ -13,9 +13,8 @@ export async function createAccessKey(data: Partial<AccessKey>) {
 }
 
 /** 更新凭证（名称/状态/过期时间）；服务端黑名单保护 access_key/secret_hash/tenant_id */
-export async function updateAccessKey(id: number, values: Record<string, any>) {
-  return apiClient.accessKeyService.Update({
-    id,
+export async function updateAccessKey(id: number | string, values: Record<string, any>) {
+  return apiClient.accessKeyService.Update({ id: String(id),
     data: { ...values } as any,
     updateMask: makeUpdateMask(Object.keys(values ?? {})),
   });
