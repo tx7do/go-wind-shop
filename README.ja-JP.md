@@ -248,8 +248,8 @@ go-wind-shop/
 │   └── Makefile / app.mk           # ビルドオーケストレーション
 ├── frontend/                       # フロントエンドプロジェクト
 │   ├── admin/                      # Vue 3 + Element Plus 管理画面
-│   └── app/                        # Nuxt + Vue 3 店舗フロント
-├── deploy/                         # 本番デプロイ（同一オリジン nginx リバースプロキシ設定）
+│   ├── app/                        # Nuxt + Vue 3 店舗フロント
+│   └── deploy/nginx/               # 本番デプロイ（同一オリジン nginx リバースプロキシ設定）
 ├── docs/                           # ドキュメントと UI スクリーンショット
 └── README.md
 ```

@@ -248,8 +248,8 @@ go-wind-shop/
 │   └── Makefile / app.mk           # Build orchestration
 ├── frontend/                       # Frontend project
 │   ├── admin/                      # Vue 3 + Element Plus admin
-│   └── app/                        # Nuxt + Vue 3 storefront
-├── deploy/                         # Production deployment (same-origin nginx reverse proxy configs)
+│   ├── app/                        # Nuxt + Vue 3 storefront
+│   └── deploy/nginx/               # Production deployment (same-origin nginx reverse proxy configs)
 ├── docs/                           # Docs and UI screenshots
 └── README.md
 ```

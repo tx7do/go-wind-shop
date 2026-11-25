@@ -248,8 +248,8 @@ go-wind-shop/
 │   └── Makefile / app.mk           # 构建编排
 ├── frontend/                       # 前端项目
 │   ├── admin/                      # Vue 3 + Element Plus 后台
-│   └── app/                        # Nuxt + Vue 3 店铺前台
-├── deploy/                         # 生产部署（nginx 同源反代配置）
+│   ├── app/                        # Nuxt + Vue 3 店铺前台
+│   └── deploy/nginx/               # 生产部署（nginx 同源反代配置）
 ├── docs/                           # 文档与界面截图
 └── README.md
 ```

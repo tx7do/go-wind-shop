@@ -37,8 +37,8 @@ rsync -a frontend/admin/dist/          <server>:/var/www/go-wind-shop/admin/
 
 # 覆盖服务器上的同名旧 conf。若旧 conf 不在 conf.d 而在 sites-enabled 等处，
 # 就地替换那一份，避免同一 server_name 被加载两份。
-scp deploy/nginx/shop.gowind.cloud.conf       <server>:/etc/nginx/conf.d/
-scp deploy/nginx/admin.shop.gowind.cloud.conf <server>:/etc/nginx/conf.d/
+scp frontend/deploy/nginx/shop.gowind.cloud.conf       <server>:/etc/nginx/conf.d/
+scp frontend/deploy/nginx/admin.shop.gowind.cloud.conf <server>:/etc/nginx/conf.d/
 ssh <server> 'nginx -t && nginx -s reload'
 ```
 
