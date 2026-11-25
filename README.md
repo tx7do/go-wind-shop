@@ -89,9 +89,9 @@ core-service (gRPC，业务实现与数据访问)
 
 ### 环境脚本选型
 
-- Linux / macOS 开发环境：`scripts/env/install_unix_dev.sh`
-- Linux / macOS 生产环境：`scripts/env/install_unix_prod.sh`
-- Windows 开发环境：`scripts/env/install_windows_dev.ps1`
+- Linux / macOS 开发环境：`backend/scripts/env/install_unix_dev.sh`
+- Linux / macOS 生产环境：`backend/scripts/env/install_unix_prod.sh`
+- Windows 开发环境：`backend/scripts/env/install_windows_dev.ps1`
 
 ### Docker 两种部署模式
 
@@ -104,20 +104,20 @@ core-service (gRPC，业务实现与数据访问)
 
 ```shell
 # 赋予脚本执行权限
-chmod +x scripts/**/*.sh
+chmod +x backend/scripts/**/*.sh
 
 # 开发环境（推荐）
-./scripts/env/install_unix_dev.sh
-./scripts/docker/libs_only.sh
+./backend/scripts/env/install_unix_dev.sh
+./backend/scripts/docker/libs_only.sh
 cd backend/app/<admin|app|core>/service
 make run
 
 # 生产环境
-./scripts/env/install_unix_prod.sh
-./scripts/docker/full_deploy.sh
+./backend/scripts/env/install_unix_prod.sh
+./backend/scripts/docker/full_deploy.sh
 
 # PM2 进程托管（生产进阶）
-./scripts/deploy/pm2_service.sh
+./backend/scripts/deploy/pm2_service.sh
 ```
 
 **Windows（PowerShell 管理员）：**
@@ -127,15 +127,15 @@ make run
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 # 初始化环境
-.\scripts\env\install_windows_dev.ps1
+.\backend\scripts\env\install_windows_dev.ps1
 
 # 本地开发
-.\scripts\docker\libs_only.ps1
+.\backend\scripts\docker\libs_only.ps1
 cd backend/app/<admin|app|core>/service
 make run
 
 # 一键完整部署
-.\scripts\docker\full_deploy.ps1
+.\backend\scripts\docker\full_deploy.ps1
 ```
 
 ### 前端启动
@@ -168,13 +168,13 @@ cd frontend/app && pnpm dev
 
 | 管理后台 | 店铺前台 |
 |:---:|:---:|
-| ![促销活动管理](gui-test-screenshots/admin-promotions.png) | ![店铺首页](gui-test-screenshots/app-home.png) |
+| ![促销活动管理](docs/screenshots/admin-promotions.png) | ![店铺首页](docs/screenshots/app-home.png) |
 | **促销活动管理**（商品专价 / 店铺满减） | **店铺首页**（消息未读徽标 · AI 导购助手） |
-| ![库存操作流水](gui-test-screenshots/admin-stock-op-logs.png) | ![我的消息](gui-test-screenshots/app-messages.png) |
+| ![库存操作流水](docs/screenshots/admin-stock-op-logs.png) | ![我的消息](docs/screenshots/app-messages.png) |
 | **库存操作流水**（append-only 审计） | **消息中心**（订单状态通知 · 未读标记） |
-| ![订单管理](gui-test-screenshots/admin-orders.png) | ![我的订单](gui-test-screenshots/app-orders.png) |
+| ![订单管理](docs/screenshots/admin-orders.png) | ![我的订单](docs/screenshots/app-orders.png) |
 | **订单管理**（状态机 + 取消/关闭） | **我的订单**（全生命周期状态） |
-| ![商品详情](gui-test-screenshots/app-product-promo.png) | ![店铺首页 · 暗色主题](gui-test-screenshots/app-home-dark.png) |
+| ![商品详情](docs/screenshots/app-product-promo.png) | ![店铺首页 · 暗色主题](docs/screenshots/app-home-dark.png) |
 | **商品详情**（拼团价划线 · 拼团角标 · 评论区） | **店铺首页 · 暗色主题**（一键切换） |
 
 ### 商品与交易
@@ -249,6 +249,8 @@ go-wind-shop/
 ├── frontend/                       # 前端项目
 │   ├── admin/                      # Vue 3 + Element Plus 后台
 │   └── app/                        # Nuxt + Vue 3 店铺前台
+├── deploy/                         # 生产部署（nginx 同源反代配置）
+├── docs/                           # 文档与界面截图
 └── README.md
 ```
 

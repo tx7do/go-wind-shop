@@ -89,9 +89,9 @@ core-service (gRPC, business implementation and data access)
 
 ### Environment Script Selection
 
-- Linux / macOS Development: `scripts/env/install_unix_dev.sh`
-- Linux / macOS Production: `scripts/env/install_unix_prod.sh`
-- Windows Development: `scripts/env/install_windows_dev.ps1`
+- Linux / macOS Development: `backend/scripts/env/install_unix_dev.sh`
+- Linux / macOS Production: `backend/scripts/env/install_unix_prod.sh`
+- Windows Development: `backend/scripts/env/install_windows_dev.ps1`
 
 ### Docker Deployment Modes
 
@@ -104,20 +104,20 @@ core-service (gRPC, business implementation and data access)
 
 ```shell
 # Grant script execution permissions
-chmod +x scripts/**/*.sh
+chmod +x backend/scripts/**/*.sh
 
 # Development (Recommended)
-./scripts/env/install_unix_dev.sh
-./scripts/docker/libs_only.sh
+./backend/scripts/env/install_unix_dev.sh
+./backend/scripts/docker/libs_only.sh
 cd backend/app/<admin|app|core>/service
 make run
 
 # Production
-./scripts/env/install_unix_prod.sh
-./scripts/docker/full_deploy.sh
+./backend/scripts/env/install_unix_prod.sh
+./backend/scripts/docker/full_deploy.sh
 
 # PM2 Process Management (Advanced Production)
-./scripts/deploy/pm2_service.sh
+./backend/scripts/deploy/pm2_service.sh
 ```
 
 **Windows (PowerShell Administrator):**
@@ -127,15 +127,15 @@ make run
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 # Initialize environment
-.\scripts\env\install_windows_dev.ps1
+.\backend\scripts\env\install_windows_dev.ps1
 
 # Local development
-.\scripts\docker\libs_only.ps1
+.\backend\scripts\docker\libs_only.ps1
 cd backend/app/<admin|app|core>/service
 make run
 
 # One-click full deployment
-.\scripts\docker\full_deploy.ps1
+.\backend\scripts\docker\full_deploy.ps1
 ```
 
 ### Frontend Startup
@@ -168,13 +168,13 @@ cd frontend/app && pnpm dev
 
 | Admin Console | Storefront |
 |:---:|:---:|
-| ![Promotion Management](gui-test-screenshots/admin-promotions.png) | ![Storefront Home](gui-test-screenshots/app-home.png) |
+| ![Promotion Management](docs/screenshots/admin-promotions.png) | ![Storefront Home](docs/screenshots/app-home.png) |
 | **Promotion Management** (special price / full reduction) | **Storefront Home** (unread badge · AI shopping assistant) |
-| ![Stock Operation Logs](gui-test-screenshots/admin-stock-op-logs.png) | ![My Messages](gui-test-screenshots/app-messages.png) |
+| ![Stock Operation Logs](docs/screenshots/admin-stock-op-logs.png) | ![My Messages](docs/screenshots/app-messages.png) |
 | **Stock Operation Logs** (append-only audit) | **Message Center** (order notifications · unread marks) |
-| ![Order Management](gui-test-screenshots/admin-orders.png) | ![My Orders](gui-test-screenshots/app-orders.png) |
+| ![Order Management](docs/screenshots/admin-orders.png) | ![My Orders](docs/screenshots/app-orders.png) |
 | **Order Management** (state machine + cancel/close) | **My Orders** (full lifecycle states) |
-| ![Product Detail](gui-test-screenshots/app-product-promo.png) | ![Storefront Home · Dark Theme](gui-test-screenshots/app-home-dark.png) |
+| ![Product Detail](docs/screenshots/app-product-promo.png) | ![Storefront Home · Dark Theme](docs/screenshots/app-home-dark.png) |
 | **Product Detail** (groupon price strike-through · promo badge · reviews) | **Storefront Home · Dark Theme** (one-click toggle) |
 
 ### Commerce
@@ -249,6 +249,8 @@ go-wind-shop/
 ├── frontend/                       # Frontend project
 │   ├── admin/                      # Vue 3 + Element Plus admin
 │   └── app/                        # Nuxt + Vue 3 storefront
+├── deploy/                         # Production deployment (same-origin nginx reverse proxy configs)
+├── docs/                           # Docs and UI screenshots
 └── README.md
 ```
 

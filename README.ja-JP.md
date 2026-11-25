@@ -89,9 +89,9 @@ core-service (gRPC、業務実装とデータアクセス)
 
 ### 環境スクリプト選択
 
-- Linux / macOS 開発環境：`scripts/env/install_unix_dev.sh`
-- Linux / macOS 本番環境：`scripts/env/install_unix_prod.sh`
-- Windows 開発環境：`scripts/env/install_windows_dev.ps1`
+- Linux / macOS 開発環境：`backend/scripts/env/install_unix_dev.sh`
+- Linux / macOS 本番環境：`backend/scripts/env/install_unix_prod.sh`
+- Windows 開発環境：`backend/scripts/env/install_windows_dev.ps1`
 
 ### Docker 2つのデプロイモード
 
@@ -104,20 +104,20 @@ core-service (gRPC、業務実装とデータアクセス)
 
 ```shell
 # スクリプトに実行権限を付与
-chmod +x scripts/**/*.sh
+chmod +x backend/scripts/**/*.sh
 
 # 開発環境（推奨）
-./scripts/env/install_unix_dev.sh
-./scripts/docker/libs_only.sh
+./backend/scripts/env/install_unix_dev.sh
+./backend/scripts/docker/libs_only.sh
 cd backend/app/<admin|app|core>/service
 make run
 
 # 本番環境
-./scripts/env/install_unix_prod.sh
-./scripts/docker/full_deploy.sh
+./backend/scripts/env/install_unix_prod.sh
+./backend/scripts/docker/full_deploy.sh
 
 # PM2 プロセス管理（本番上級）
-./scripts/deploy/pm2_service.sh
+./backend/scripts/deploy/pm2_service.sh
 ```
 
 **Windows（PowerShell 管理者）：**
@@ -127,15 +127,15 @@ make run
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 # 環境初期化
-.\scripts\env\install_windows_dev.ps1
+.\backend\scripts\env\install_windows_dev.ps1
 
 # ローカル開発
-.\scripts\docker\libs_only.ps1
+.\backend\scripts\docker\libs_only.ps1
 cd backend/app/<admin|app|core>/service
 make run
 
 # ワンクリック完全デプロイ
-.\scripts\docker\full_deploy.ps1
+.\backend\scripts\docker\full_deploy.ps1
 ```
 
 ### フロントエンド起動
@@ -168,13 +168,13 @@ cd frontend/app && pnpm dev
 
 | 管理コンソール | 店舗フロント |
 |:---:|:---:|
-| ![プロモーション管理](gui-test-screenshots/admin-promotions.png) | ![店舗ホーム](gui-test-screenshots/app-home.png) |
+| ![プロモーション管理](docs/screenshots/admin-promotions.png) | ![店舗ホーム](docs/screenshots/app-home.png) |
 | **プロモーション管理**（商品特価 / 満額減額） | **店舗ホーム**（未読バッジ · AI ショッピングアシスタント） |
-| ![在庫操作ログ](gui-test-screenshots/admin-stock-op-logs.png) | ![メッセージセンター](gui-test-screenshots/app-messages.png) |
+| ![在庫操作ログ](docs/screenshots/admin-stock-op-logs.png) | ![メッセージセンター](docs/screenshots/app-messages.png) |
 | **在庫操作ログ**（append-only 監査） | **メッセージセンター**（注文通知 · 未読マーク） |
-| ![注文管理](gui-test-screenshots/admin-orders.png) | ![マイ注文](gui-test-screenshots/app-orders.png) |
+| ![注文管理](docs/screenshots/admin-orders.png) | ![マイ注文](docs/screenshots/app-orders.png) |
 | **注文管理**（状態機械 + キャンセル/クローズ） | **マイ注文**（ライフサイクル全体の状態） |
-| ![商品詳細](gui-test-screenshots/app-product-promo.png) | ![店舗ホーム · ダークテーマ](gui-test-screenshots/app-home-dark.png) |
+| ![商品詳細](docs/screenshots/app-product-promo.png) | ![店舗ホーム · ダークテーマ](docs/screenshots/app-home-dark.png) |
 | **商品詳細**（グループ価格の取り消し線 · プロモバッジ · レビュー） | **店舗ホーム · ダークテーマ**（ワンクリック切替） |
 
 ### コマース
@@ -249,6 +249,8 @@ go-wind-shop/
 ├── frontend/                       # フロントエンドプロジェクト
 │   ├── admin/                      # Vue 3 + Element Plus 管理画面
 │   └── app/                        # Nuxt + Vue 3 店舗フロント
+├── deploy/                         # 本番デプロイ（同一オリジン nginx リバースプロキシ設定）
+├── docs/                           # ドキュメントと UI スクリーンショット
 └── README.md
 ```
 
