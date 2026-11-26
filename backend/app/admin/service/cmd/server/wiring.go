@@ -53,6 +53,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	cleanups = append(cleanups, cleanupRedis)
 
 	captcha := data.NewCaptcha(redisClient)
+	loginRateLimiter := data.NewLoginRateLimiter(ctx, redisClient)
 	minIOClient := data.NewMinIoClient(ctx)
 
 	// ═══════════════════════ 二、服务客户端(internal/data) ═══════════════════════
@@ -154,7 +155,7 @@ func initApp(ctx *bootstrap.Context) (*kratos.App, func(), error) {
 	permissionService := service.NewPermissionService(ctx, permissionServiceClient, permissionGroupServiceClient, roleServiceClient, apiServiceClient, menuServiceClient)
 	adminPortalService := service.NewRouterService(ctx, menuServiceClient, permissionServiceClient, roleServiceClient, userServiceClient)
 	taskService := service.NewTaskService(ctx, taskServiceClient)
-	authenticationService := service.NewAuthenticationService(ctx, authenticationServiceClient, captcha)
+	authenticationService := service.NewAuthenticationService(ctx, authenticationServiceClient, captcha, loginRateLimiter)
 	loginPolicyService := service.NewLoginPolicyService(ctx, loginPolicyServiceClient)
 	languageService := service.NewLanguageService(ctx, languageServiceClient)
 	categoryService := service.NewCategoryService(ctx, categoryServiceClient)

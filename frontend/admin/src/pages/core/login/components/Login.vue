@@ -16,6 +16,7 @@
         <el-input
           v-model.trim="loginFormData.tenant_code"
           :placeholder="t('core.login.tenantCode')"
+          autocomplete="off"
         >
           <template #prefix>
             <el-icon><User /></el-icon>
@@ -25,7 +26,11 @@
 
       <!-- 用户名 -->
       <el-form-item prop="username">
-        <el-input v-model.trim="loginFormData.username" :placeholder="t('core.login.username')">
+        <el-input
+          v-model.trim="loginFormData.username"
+          :placeholder="t('core.login.username')"
+          autocomplete="username"
+        >
           <template #prefix>
             <el-icon><User /></el-icon>
           </template>
@@ -38,24 +43,32 @@
           <el-input
             v-model.trim="loginFormData.password"
             :placeholder="t('core.login.password')"
-            type="password"
-            show-password
+            :type="passwordVisible ? 'text' : 'password'"
+            autocomplete="current-password"
             @keyup="checkCapsLock"
             @keyup.enter="handleLoginSubmit"
           >
             <template #prefix>
               <el-icon><Lock /></el-icon>
             </template>
+            <!-- 对齐 react/vben（antd defaultIconRender = visible ? Eye : EyeInvisible）：
+                 眼睛恒显、点按切明文，可见态显示睁眼（View）、隐藏态显示闭眼（Hide）。
+                 不用 el-input 的 show-password——2.14 起它含 !!nativeInputValue
+                 守卫，输入框为空时不渲染图标，与另两端行为不一致。 -->
+            <template #suffix>
+              <PasswordToggle v-model="passwordVisible" />
+            </template>
           </el-input>
         </el-form-item>
       </el-tooltip>
 
-      <!-- 验证码 -->
-      <el-form-item prop="captchaCode">
+      <!-- 验证码：渐进式，后端要求时才出现 -->
+      <el-form-item v-if="captchaRequired" prop="captchaCode">
         <div class="captcha-row">
           <el-input
             v-model.trim="loginFormData.captchaCode"
             :placeholder="t('core.login.captchaCode')"
+            autocomplete="off"
             @keyup.enter="handleLoginSubmit"
           >
             <template #prefix>
@@ -93,6 +106,7 @@
 <script setup lang="ts">
 import type { FormInstance } from "element-plus";
 import { useAuth } from "@/composables/use-auth";
+import { consumeLastLoginReject } from "@/api/composables";
 import { router } from "@/router";
 
 const { t } = useI18n();
@@ -103,7 +117,13 @@ const loginFormRef = ref<FormInstance>();
 const loading = ref(false);
 // 是否大写锁定
 const isCapsLock = ref(false);
-// 验证码状态
+// 密码明文开关（suffix 眼睛按钮，见模板注释）
+const passwordVisible = ref(false);
+
+// 验证码状态。渐进式（对齐上游基座）：初始不要求，后端对失败达阈值的登录
+// 投递 CAPTCHA_REQUIRED reason（经 gateway 的 consumeLastLoginReject 截获）
+// 才点亮验证码输入与图片，图片拉取随之懒加载。
+const captchaRequired = ref(false);
 const captchaId = ref("");
 const captchaImage = ref("");
 // 记住我
@@ -112,6 +132,9 @@ const loginFormData = ref<any>({
   username: "admin",
   password: "admin",
   captchaCode: "",
+  // 模板中 v-model="loginFormData.rememberMe" 会读写该字段，
+  // 显式初始化为 false 以保证响应式稳定（避免运行时动态新增属性）。
+  rememberMe: false,
 });
 
 const loginRules = computed(() => {
@@ -129,19 +152,20 @@ const loginRules = computed(() => {
         trigger: "blur",
         message: t("core.login.message.password.required"),
       },
-      {
-        min: 5,
-        message: t("core.login.message.password.min"),
-        trigger: "blur",
-      },
+      // 不设 min 长度规则：基座三端均只做必填（密码策略由后端管），
+      // 此前的 min:5 还与包文案「密码不能少于6位」互相矛盾。
     ],
-    captchaCode: [
-      {
-        required: true,
-        trigger: "blur",
-        message: t("core.login.message.captchaCode.required"),
-      },
-    ],
+    // 渐进式验证码：未要求时规则不出场（el-form validate-on-rule-change
+    // 已关，动态展开不会触发全表重校）。
+    captchaCode: captchaRequired.value
+      ? [
+          {
+            required: true,
+            trigger: "blur",
+            message: t("core.login.message.captchaCode.required"),
+          },
+        ]
+      : [],
   };
 });
 
@@ -157,13 +181,21 @@ async function refreshCaptcha() {
 }
 
 onMounted(() => {
-  refreshCaptcha();
+  if (captchaRequired.value) {
+    refreshCaptcha();
+  }
 });
 
 /**
  * 登录提交
  */
 async function handleLoginSubmit() {
+  // 函数入口即同步捕获 redirect：此时当前路由必然是登录页，读取最可靠。
+  // 登录请求返回后到 onSuccess 之间存在响应式更新时序竞态（route 与
+  // currentRoute.value 可能先行更新、丢掉 query），onSuccess 内再读会拿空，
+  // safePath 回退 "/" → 跳首页（即「登录成功不跳目标页、F5 才跳」的根因）。
+  const rawRedirect = (route.query.redirect as string) || "/";
+
   // 1. 表单验证
   const valid = await loginFormRef.value?.validate().then(
     () => true,
@@ -174,20 +206,45 @@ async function handleLoginSubmit() {
   loading.value = true;
   try {
     // 2. 执行登录（把验证码 id 和用户输入一并传入）
-    await authStore.login(
+    const result = await authStore.login(
       {
         ...loginFormData.value,
         captchaId: captchaId.value,
       },
       async () => {
         // 登录成功，跳转到目标页面
-        const redirectPath = (route.query.redirect as string) || "/";
-        await router.push(decodeURIComponent(redirectPath));
+        // 校验 redirect 必须为同源相对路径，防止开放重定向（如 ?redirect=https://evil.com 或 //evil.com）
+        // 使用入口捕获的 rawRedirect；decode 对畸形输入（如裸 %）抛 URIError，需兜底
+        let decodedPath: string;
+        try {
+          decodedPath = decodeURIComponent(rawRedirect);
+        } catch {
+          decodedPath = "/";
+        }
+        const safePath =
+          typeof decodedPath === "string" &&
+          decodedPath.startsWith("/") &&
+          !decodedPath.startsWith("//")
+            ? decodedPath
+            : "/";
+        await router.push(safePath);
       }
     );
-  } catch {
-    // 登录失败刷新验证码
-    refreshCaptcha();
+    // authStore.login 永不抛错：失败（含验证码错误、MFA 闸门）以 userInfo 缺失表达。
+    // 渐进式验证码：gateway 截获的 reject 带 CAPTCHA_REQUIRED reason 时点亮
+    // 验证码并拉图；已处于要求态的失败刷新图片。
+    if (!result?.userInfo) {
+      const reject = consumeLastLoginReject();
+      const required = reject?.reason === "CAPTCHA_REQUIRED" || reject?.metadata?.captchaRequired;
+      if (required && !captchaRequired.value) {
+        captchaRequired.value = true;
+        refreshCaptcha();
+        return;
+      }
+      if (captchaRequired.value) {
+        refreshCaptcha();
+      }
+    }
   } finally {
     loading.value = false;
   }
@@ -249,6 +306,12 @@ function checkCapsLock(event: KeyboardEvent) {
   &__placeholder {
     color: var(--el-text-color-placeholder);
     font-size: 12px;
+
+    // 浅底盒子（--el-fill-color-light #F5F7FA）上的占位档对比度不足（2.37:1），
+    // 浅色态取实底暗墨（对齐基座语义色档；暗色盒子仍是深底，保持占位档）。
+    html:not(.dark) & {
+      color: var(--gowind-solid-ink);
+    }
   }
 }
 </style>
