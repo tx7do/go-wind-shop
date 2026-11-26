@@ -83,8 +83,7 @@ const mall: RouteRecordRaw[] = [
         path: "product-attribute-values",
         name: "MallProductAttributeValueManagement",
         meta: {
-          order: 5,
-          icon: "lucide:list-checks",
+          hideInMenu: true,
           title: "routes.mall.productAttributeValue",
           authority: ["sys:platform_admin"],
         },

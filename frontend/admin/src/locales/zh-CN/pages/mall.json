@@ -41,6 +41,7 @@
     "sortOrder": "排序",
     "imageUrl": "图片地址",
     "createdAt": "创建时间",
+    "salesEntry": "销售信息",
     "button": {
       "create": "创建商品",
       "update": "编辑商品"
@@ -50,7 +51,41 @@
     "aiGenerateSuccess": "文案已生成并填入表单",
     "aiGenerateFailed": "AI 生成失败，请确认已在「AI 服务商」配置可用模型",
     "aiOverwriteConfirm": "将覆盖已有的商品简述与详情，是否继续？",
-    "discardConfirm": "表单内容已修改，离开将丢失未保存的修改，是否离开？"
+    "discardConfirm": "表单内容已修改，离开将丢失未保存的修改，是否离开？",
+    "wizard": {
+      "basic": "基本信息",
+      "sales": "销售信息",
+      "rich": "图文详情",
+      "prev": "上一步",
+      "next": "下一步",
+      "needSaveFirst": "请先保存基本信息（点击「下一步」自动建档）后再访问后续步骤"
+    },
+    "salesInfo": {
+      "specSection": "属性与规格",
+      "skuSection": "SKU 明细",
+      "addSpec": "+ 新增规格",
+      "addValue": "新增值",
+      "newValuePrompt": "输入「{0}」的新规格值名称",
+      "specValuePlaceholder": "从字典值中勾选规格值",
+      "specEmptyTip": "尚未选择销售规格。不选规格时将生成单个「默认规格」SKU。",
+      "defaultSpec": "默认规格",
+      "specCombo": "规格组合",
+      "price": "一口价(元)",
+      "pricePlaceholder": "未报价",
+      "stock": "库存",
+      "skuCode": "SKU 编码",
+      "skuCodePlaceholder": "自动生成，可修改",
+      "batchApply": "批量设置",
+      "batchPrice": "批量一口价",
+      "batchStock": "批量库存",
+      "applyAll": "应用到全部",
+      "clear": "清空价格",
+      "matrixTip": "规格组合由所选规格自动生成；已有 SKU 的库存修改将按变动量记入库存流水。",
+      "adjustRemark": "商品编辑页调整库存",
+      "needProductFirst": "请先在「基本信息」保存商品（点击「下一步」自动建档），再编辑销售信息。",
+      "errorRows": "以下 SKU 行保存失败",
+      "errorDelete": "删除 SKU #{0} 失败"
+    }
   },
   "productAttribute": {
     "moduleName": "属性管理",

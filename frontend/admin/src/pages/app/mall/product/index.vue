@@ -1,6 +1,12 @@
 <template>
   <div class="app-container h-full flex flex-1 flex-col">
-    <ProPage ref="pageRef" :config="pageConfig" @add="handleAdd" @edit="handleEdit">
+    <ProPage
+      ref="pageRef"
+      :config="pageConfig"
+      @add="handleAdd"
+      @edit="handleEdit"
+      @operate="handleOperate"
+    >
       <template #name="scope: any">
         <span>{{ getTranslationField(scope.row, "name") }}</span>
       </template>
@@ -44,9 +50,7 @@ const pageRef = ref();
 // 当前界面语言的文案；未命中则显示 "-"。
 function getTranslationField(row: any, field: string): string {
   const translations = Array.isArray(row?.translations) ? row.translations : [];
-  const matched = translations.find(
-    (t: any) => t?.languageCode === locale.value
-  );
+  const matched = translations.find((t: any) => t?.languageCode === locale.value);
   return matched?.[field] ?? "-";
 }
 
@@ -142,10 +146,15 @@ const pageConfig = computed<ProPageConfig>(() => ({
         prop: "action",
         label: $t("common.table.action"),
         fixed: "right",
-        width: 160,
+        width: 210,
         cellType: "tool",
         buttons: [
           { name: "edit", label: $t("common.button.edit"), icon: "lucide:pen-line" },
+          {
+            name: "sales",
+            label: $t("pages.mall.product.salesEntry"),
+            icon: "lucide:layers",
+          },
           {
             name: "delete",
             label: $t("common.button.delete"),
@@ -166,6 +175,12 @@ function handleEdit(row: any) {
   router.push(`/mall/products/${row.id}/edit`);
 }
 
+// 自定义行操作（ProPage 对未内置按钮统一派发 operate）：销售信息直达编辑页第 2 步
+function handleOperate(data: { name: string; row: any }) {
+  if (data.name === "sales") {
+    router.push(`/mall/products/${data.row.id}/edit?step=1`);
+  }
+}
 </script>
 
 <style lang="scss" scoped>

@@ -12,19 +12,29 @@
         </div>
         <div class="edit-header__actions">
           <ElButton @click="handleCancel">{{ $t("common.button.cancel") }}</ElButton>
-          <ElButton
-            type="primary"
-            :loading="submitLoading"
-            @click="handleSubmit"
-          >
+          <ElButton type="primary" :loading="submitLoading" @click="handleSubmit">
             {{ $t("common.button.confirm") }}
           </ElButton>
         </div>
       </div>
     </ElCard>
 
-    <ElRow :gutter="16" class="edit-body">
-      <!-- 左侧：主表单（多语言内容） -->
+    <!-- 步骤条 -->
+    <ElCard shadow="never" class="edit-steps">
+      <ElSteps :active="currentStep" align-center finish-status="success" process-status="process">
+        <ElStep
+          v-for="s in steps"
+          :key="s.key"
+          :title="$t(s.titleKey)"
+          class="cursor-pointer"
+          @click="handleStepClick(s.index)"
+        />
+      </ElSteps>
+    </ElCard>
+
+    <!-- ── Step 0：基本信息 ──（三步用 v-show 常驻：切步不销毁状态/丢失未保存编辑） -->
+    <ElRow v-show="currentStep === 0" :gutter="16" class="edit-body">
+      <!-- 左侧：主表单（多语言内容，不含详情富文本——它属第三步） -->
       <ElCol :xl="17" :lg="16" :md="24">
         <ElCard shadow="never" class="edit-card">
           <template #header>
@@ -32,7 +42,7 @@
               <div class="flex items-center gap-3">
                 <span>{{ $t("common.section.basic") }}</span>
                 <!-- 语言切换器（CMS 范式）：单表单实例，切换即编辑对应语言的翻译；
-                     ✓/✗ 标记该语言是否已有翻译（按 name 是否非空判定） -->
+                       ✓/✗ 标记该语言是否已有翻译（按 name 是否非空判定） -->
                 <ElSelect
                   :model-value="editingLocale"
                   size="small"
@@ -56,24 +66,9 @@
                   </ElOption>
                 </ElSelect>
               </div>
-              <ElButton
-                size="small"
-                type="primary"
-                plain
-                :loading="aiCopyLoading"
-                @click="handleAiGenerateCopy"
-              >
-                <IconifyIcon icon="lucide:sparkles" class="mr-1 h-4 w-4" />
-                {{ $t("pages.mall.product.aiGenerate") }}
-              </ElButton>
             </div>
           </template>
-          <ElForm
-            ref="formRef"
-            :model="formData"
-            :rules="formRules"
-            label-width="120px"
-          >
+          <ElForm ref="formRef" :model="formData" :rules="formRules" label-width="120px">
             <ElFormItem :label="$t('pages.mall.product.name')" prop="name">
               <ElInput
                 v-model="formData.name"
@@ -90,10 +85,7 @@
               />
             </ElFormItem>
 
-            <ElFormItem
-              :label="$t('pages.mall.product.shortDescription')"
-              prop="shortDescription"
-            >
+            <ElFormItem :label="$t('pages.mall.product.shortDescription')" prop="shortDescription">
               <ElInput
                 v-model="formData.shortDescription"
                 type="textarea"
@@ -101,18 +93,6 @@
                 :placeholder="$t('common.placeholder.input')"
                 maxlength="500"
                 show-word-limit
-              />
-            </ElFormItem>
-
-            <ElFormItem
-              :label="$t('pages.mall.product.longDescription')"
-              prop="longDescription"
-            >
-              <Editor
-                v-model="formData.longDescription"
-                :editor-type="EditorType.RICH_TEXT"
-                :height="360"
-                :placeholder="$t('common.placeholder.input')"
               />
             </ElFormItem>
           </ElForm>
@@ -125,12 +105,7 @@
           <template #header>
             <span>{{ $t("pages.mall.product.settings") }}</span>
           </template>
-          <ElForm
-            :model="formData"
-            :rules="formRules"
-            label-width="100px"
-            label-position="top"
-          >
+          <ElForm :model="formData" :rules="formRules" label-width="100px" label-position="top">
             <ElFormItem :label="$t('pages.mall.product.status')" prop="status">
               <ElSelect
                 v-model="formData.status"
@@ -198,6 +173,55 @@
         </ElCard>
       </ElCol>
     </ElRow>
+
+    <!-- ── Step 1：销售信息（属性规格 + SKU 明细）── -->
+    <StepSalesInfo
+      v-show="currentStep === 1"
+      ref="salesStepRef"
+      :product-id="currentId"
+      @loaded="handleSalesLoaded"
+    />
+
+    <!-- ── Step 2：图文详情 ── -->
+    <ElCard v-show="currentStep === 2" shadow="never" class="edit-card">
+      <template #header>
+        <div class="flex w-full items-center justify-between">
+          <span>{{ $t("pages.mall.product.longDescription") }}</span>
+          <ElButton
+            size="small"
+            type="primary"
+            plain
+            :loading="aiCopyLoading"
+            @click="handleAiGenerateCopy"
+          >
+            <IconifyIcon icon="lucide:sparkles" class="mr-1 h-4 w-4" />
+            {{ $t("pages.mall.product.aiGenerate") }}
+          </ElButton>
+        </div>
+      </template>
+      <Editor
+        v-model="formData.longDescription"
+        :editor-type="EditorType.RICH_TEXT"
+        :height="420"
+        :placeholder="$t('common.placeholder.input')"
+      />
+    </ElCard>
+
+    <!-- 底部导航 -->
+    <ElCard shadow="never" class="edit-footer">
+      <div class="edit-footer__inner">
+        <ElButton :disabled="currentStep === 0" @click="currentStep--">
+          {{ $t("pages.mall.product.wizard.prev") }}
+        </ElButton>
+        <ElButton v-if="currentStep < steps.length - 1" type="primary" plain @click="handleNext">
+          {{ $t("pages.mall.product.wizard.next") }}
+        </ElButton>
+        <span class="edit-footer__spacer" />
+        <ElButton type="primary" :loading="submitLoading" @click="handleSubmit">
+          {{ $t("common.button.confirm") }}
+        </ElButton>
+      </div>
+    </ElCard>
   </div>
 </template>
 
@@ -210,6 +234,7 @@ import {
   useCreateProduct,
   useUpdateProduct,
   fetchGetProduct,
+  fetchListProducts,
   fetchListCategories,
   fetchListBrands,
   fetchListLanguages,
@@ -219,6 +244,7 @@ import { $t, useI18n } from "@/core/i18n";
 import { PaginationQuery } from "@/core/transport/rest";
 import { generateAiText } from "@/api/composables/ai-chat";
 import { Icon as IconifyIcon } from "@iconify/vue";
+import StepSalesInfo from "./steps/StepSalesInfo.vue";
 
 defineOptions({ name: "MallProductEdit" });
 
@@ -229,17 +255,27 @@ const { locale } = useI18n();
 const { mutateAsync: createProduct } = useCreateProduct();
 const { mutateAsync: updateProduct } = useUpdateProduct();
 
-// 路由约定：/mall/products/create 新建；/mall/products/:id/edit 编辑
-const routeId = route.params.id as string | undefined;
-const isCreate = !routeId;
-const currentId = routeId ? Number(routeId) : undefined;
+// 路由约定：/mall/products/create 新建；/mall/products/:id/edit 编辑。
+// 新建商品在第一步「下一步/保存」时建档，建档后 currentId 就地更新（向导可继续第二、三步）。
+const currentId = ref<number | undefined>(route.params.id ? Number(route.params.id) : undefined);
+const isCreate = computed(() => !currentId.value);
 
 const pageTitle = computed(() =>
-  isCreate
-    ? $t("pages.mall.product.button.create")
-    : $t("pages.mall.product.button.update")
+  isCreate.value ? $t("pages.mall.product.button.create") : $t("pages.mall.product.button.update")
 );
 
+// ── 分步向导：基本信息 → 销售信息 → 图文详情 ──
+const steps = [
+  { key: "basic", titleKey: "pages.mall.product.wizard.basic", index: 0 },
+  { key: "sales", titleKey: "pages.mall.product.wizard.sales", index: 1 },
+  { key: "rich", titleKey: "pages.mall.product.wizard.rich", index: 2 },
+];
+const initialStep = Number(route.query.step);
+const currentStep = ref(
+  Number.isInteger(initialStep) && initialStep >= 0 && initialStep <= 2 ? initialStep : 0
+);
+
+const salesStepRef = ref<InstanceType<typeof StepSalesInfo>>();
 const submitLoading = ref(false);
 const formRef = ref<FormInstance>();
 
@@ -257,7 +293,8 @@ const languageOptions = computed(() =>
     hasTranslation:
       (formData.translations || []).some(
         (t: any) => t?.languageCode === l.languageCode && !!t?.name
-      ) || (isCreate && l.languageCode === editingLocale.value),
+      ) ||
+      (isCreate.value && l.languageCode === editingLocale.value),
   }))
 );
 
@@ -353,12 +390,17 @@ async function handleAiGenerateCopy() {
     ElMessage.warning($t("pages.mall.product.aiNeedName"));
     return;
   }
-  if ((shortDescription || longDescription) &&
-      !(await ElMessageBox.confirm($t("pages.mall.product.aiOverwriteConfirm"), { type: "warning" }).catch(() => false))) {
+  if (
+    (shortDescription || longDescription) &&
+    !(await ElMessageBox.confirm($t("pages.mall.product.aiOverwriteConfirm"), {
+      type: "warning",
+    }).catch(() => false))
+  ) {
     return;
   }
 
-  const categoryLabel = categoryOptions.value.find((c) => c.value === formData.categoryId)?.label ?? "";
+  const categoryLabel =
+    categoryOptions.value.find((c) => c.value === formData.categoryId)?.label ?? "";
   const brandLabel = brandOptions.value.find((b) => b.value === formData.brandId)?.label ?? "";
 
   aiCopyLoading.value = true;
@@ -371,12 +413,18 @@ async function handleAiGenerateCopy() {
       prompt:
         `商品名称：${name || "（未命名，参考下方提示）"}
 ` +
-        (categoryLabel ? `分类：${categoryLabel}
-` : "") +
-        (brandLabel ? `品牌：${brandLabel}
-` : "") +
-        (shortDescription ? `已有简述（可参考扩展）：${shortDescription}
-` : ""),
+        (categoryLabel
+          ? `分类：${categoryLabel}
+`
+          : "") +
+        (brandLabel
+          ? `品牌：${brandLabel}
+`
+          : "") +
+        (shortDescription
+          ? `已有简述（可参考扩展）：${shortDescription}
+`
+          : ""),
       maxTokens: 1200,
     });
 
@@ -426,9 +474,9 @@ async function loadOptions() {
 
 // 编辑模式：拉取商品详情回填（translations 全量留存，表单按 editingLocale 取值）
 async function loadProduct() {
-  if (isCreate || !currentId) return;
+  if (isCreate.value || !currentId.value) return;
   try {
-    const resp: any = await fetchGetProduct({ id: String(currentId) });
+    const resp: any = await fetchGetProduct({ id: String(currentId.value) });
     formData.translations = Array.isArray(resp.translations) ? resp.translations : [];
     loadLocaleIntoForm(editingLocale.value);
     formData.status = resp.status ?? "PRODUCT_STATUS_DRAFT";
@@ -445,12 +493,20 @@ async function loadProduct() {
 }
 
 // ── 脏数据守卫：回填完成记基线，离开（取消/路由跳转）前比对确认 ──
-// 基线只看 translations（表单字段已同步其中）+ locale 无关设置字段
+// 基线 = translations 表单字段 + locale 无关设置字段 + 销售信息（规格/SKU/待删）
 let formBaseline = "";
+
+// 销售信息异步回填完成后再重记基线（否则空的 sales 快照 vs 回填后会误报脏）
+function handleSalesLoaded() {
+  formBaseline = formSnapshot();
+}
 
 function formSnapshot(): string {
   const { status, categoryId, brandId, sortOrder, imageUrl, translations } = formData;
-  return JSON.stringify({ status, categoryId, brandId, sortOrder, imageUrl, translations });
+  return JSON.stringify({
+    basic: { status, categoryId, brandId, sortOrder, imageUrl, translations },
+    sales: salesStepRef.value?.snapshot() ?? "",
+  });
 }
 
 function isFormDirty(): boolean {
@@ -477,51 +533,109 @@ onBeforeRouteLeave(async () => {
   return await confirmDiscard();
 });
 
-async function handleSubmit() {
-  if (!formRef.value) return;
+// ── 新建商品建档：Create 返回 Empty，用「创建前后 id 差集」反查新商品 ID ──
+async function createProductAndGetId(values: Record<string, any>): Promise<number> {
+  const beforeQuery = new PaginationQuery({
+    paging: { page: 1, pageSize: 50 },
+    orderBy: ["-created_at"],
+  });
+  const before: any = await fetchListProducts(beforeQuery);
+  const beforeIds = new Set(((before?.items ?? []) as any[]).map((i) => String(i.id)));
 
+  await createProduct(values);
+
+  const afterQuery = new PaginationQuery({
+    paging: { page: 1, pageSize: 10 },
+    orderBy: ["-created_at"],
+  });
+  const after: any = await fetchListProducts(afterQuery);
+  const hit = ((after?.items ?? []) as any[]).find((i) => !beforeIds.has(String(i.id)));
+  if (!hit?.id) throw new Error("created product not found");
+  return Number(hit.id);
+}
+
+async function saveProduct(): Promise<boolean> {
+  if (!formRef.value) return false;
   try {
     await formRef.value.validate();
-    submitLoading.value = true;
+  } catch {
+    currentStep.value = 0; // 校验失败回落第一步
+    return false;
+  }
 
+  submitLoading.value = true;
+  try {
     // 表单编辑的翻译先落回 translations 对应语言条目，
-    // 只提交 Product 消息认识的字段（protojson 严格模式拒绝未知字段）。
+    // 只提交 Product 消息认识的字段（protojson 严格模式拒绝未知字段）：
+    // name/slug/描述属于翻译载荷，不在 Product 本体上提交。
     syncLocaleIntoTranslations(editingLocale.value);
-    const { name: _n, slug: _s, shortDescription: _sd, longDescription: _ld, ...values } = {
-      ...formData,
-    };
+    const values: Record<string, any> = { ...formData };
+    delete values.name;
+    delete values.slug;
+    delete values.shortDescription;
+    delete values.longDescription;
 
-    if (isCreate) {
-      await createProduct(values);
+    if (isCreate.value) {
+      currentId.value = await createProductAndGetId(values);
       ElMessage.success($t("common.notification.createSuccess"));
     } else {
-      await updateProduct({ id: currentId!, values });
+      await updateProduct({ id: currentId.value!, values });
       ElMessage.success($t("common.notification.updateSuccess"));
     }
-
-    // 已落库：以当前表单为新基线，否则跳转路由时脏守卫会把刚保存的内容误判为未保存改动
     formBaseline = formSnapshot();
-    router.push("/mall/products");
-  } catch (error) {
-    if (error !== false) {
-      ElMessage.error(
-        isCreate
-          ? $t("common.notification.createFailed")
-          : $t("common.notification.updateFailed")
-      );
-    }
+    return true;
+  } catch {
+    ElMessage.error(
+      isCreate.value
+        ? $t("common.notification.createFailed")
+        : $t("common.notification.updateFailed")
+    );
+    return false;
   } finally {
     submitLoading.value = false;
   }
 }
 
+// 「下一步」：第一步携带建档（新建商品先落库才有 productId 供销售信息使用）
+async function handleNext() {
+  if (currentStep.value === 0 && isCreate.value) {
+    if (!(await saveProduct())) return;
+  }
+  currentStep.value++;
+}
+
+// 步骤条点跳：未建档时只允许停留在第一步（销售信息/图文详情需要 productId）
+async function handleStepClick(index: number) {
+  if (index === currentStep.value) return;
+  if (index > 0 && isCreate.value) {
+    ElMessage.warning($t("pages.mall.product.wizard.needSaveFirst"));
+    return;
+  }
+  currentStep.value = index;
+}
+
+// 保存：商品基本信息 → 销售信息（规格/SKU/价格 diff 编排），全成功才跳列表
+async function handleSubmit() {
+  if (!(await saveProduct())) return;
+  if (salesStepRef.value) {
+    const salesOk = await salesStepRef.value.persistAll();
+    if (!salesOk) {
+      currentStep.value = 1;
+      return;
+    }
+  }
+  // 已落库：以当前状态为新基线，否则跳转路由时脏守卫会把刚保存的内容误判为未保存改动
+  formBaseline = formSnapshot();
+  ElMessage.success($t("common.notification.updateSuccess"));
+  router.push("/mall/products");
+}
 
 onMounted(() => {
   loadOptions();
   loadLanguages();
   loadProduct();
   // 新建模式没有异步回填，直接记基线；编辑模式在 loadProduct 回填后重记
-  if (isCreate) {
+  if (isCreate.value) {
     formBaseline = formSnapshot();
   }
 });
@@ -532,6 +646,23 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+// 基本信息步：左右两栏卡片等高（左栏表单短，拉伸与右栏「设置」卡齐平）
+.edit-body {
+  display: flex;
+  flex-wrap: wrap; // 小屏 md=24 时两栏换行
+  flex: 1;
+
+  :deep(.el-col) {
+    display: flex;
+  }
+
+  .edit-card {
+    flex: 1;
+    width: 100%;
+    margin-bottom: 0;
+  }
 }
 
 .edit-header {
@@ -558,11 +689,15 @@ onMounted(() => {
   }
 }
 
-.edit-body {
-  flex: 1;
-}
+.edit-footer {
+  .edit-footer__inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-.edit-card {
-  margin-bottom: 16px;
+  .edit-footer__spacer {
+    flex: 1;
+  }
 }
 </style>

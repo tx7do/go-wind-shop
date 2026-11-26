@@ -41,6 +41,7 @@
     "sortOrder": "Sort Order",
     "imageUrl": "Image URL",
     "createdAt": "Created At",
+    "salesEntry": "Sales Info",
     "button": {
       "create": "Create Product",
       "update": "Edit Product"
@@ -50,7 +51,41 @@
     "aiGenerateSuccess": "Copy generated and filled into the form",
     "aiGenerateFailed": "AI generation failed. Configure a provider in AI Providers first",
     "aiOverwriteConfirm": "This will overwrite the existing short/long description. Continue?",
-    "discardConfirm": "You have unsaved changes. Leave without saving?"
+    "discardConfirm": "You have unsaved changes. Leave without saving?",
+    "wizard": {
+      "basic": "Basic Info",
+      "sales": "Sales Info",
+      "rich": "Rich Content",
+      "prev": "Previous",
+      "next": "Next",
+      "needSaveFirst": "Save the basic info first (click \"Next\" to create the product automatically) before visiting later steps"
+    },
+    "salesInfo": {
+      "specSection": "Attributes & Specs",
+      "skuSection": "SKU Details",
+      "addSpec": "+ Add Spec",
+      "addValue": "Add Value",
+      "newValuePrompt": "Enter a new value name for \"{0}\"",
+      "specValuePlaceholder": "Select spec values from dictionary",
+      "specEmptyTip": "No sale specs selected yet. Without specs a single \"Default\" SKU will be generated.",
+      "defaultSpec": "Default Spec",
+      "specCombo": "Spec Combination",
+      "price": "Price (CNY)",
+      "pricePlaceholder": "Not priced",
+      "stock": "Stock",
+      "skuCode": "SKU Code",
+      "skuCodePlaceholder": "Auto-generated, editable",
+      "batchApply": "Batch Apply",
+      "batchPrice": "Batch price",
+      "batchStock": "Batch stock",
+      "applyAll": "Apply to All",
+      "clear": "Clear Prices",
+      "matrixTip": "Spec combinations are generated from selected specs; stock changes on existing SKUs are recorded into the stock ledger as deltas.",
+      "adjustRemark": "Stock adjusted from product editor",
+      "needProductFirst": "Save the product in \"Basic Info\" first (click \"Next\" to create automatically), then edit sales info.",
+      "errorRows": "Failed to save SKU rows",
+      "errorDelete": "Failed to delete SKU #{0}"
+    }
   },
   "productAttribute": {
     "moduleName": "Attribute Management",
